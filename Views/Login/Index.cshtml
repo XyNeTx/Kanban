@@ -1,0 +1,258 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+
+<html lang="en"
+      class="light-style layout-menu-fixed"
+      dir="ltr"
+      data-theme="theme-default"
+      data-assets-path="~/assets/"
+      data-template="vertical-menu-template-free">
+<head>
+    <title>@ViewData["AppName"] - @ViewData["Title"]</title>
+
+    <meta charset="utf-8" />
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+    <meta name="description" content="" />
+    <meta name="robots" content="noindex">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    @*
+    @if (ViewData["_DEV_"].ToString().ToUpper() == "TRUE")
+    {
+        <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
+    }
+    *@
+
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="@ViewData["Logo"]" />
+
+
+    <link rel="stylesheet" href="~/assets/vendor/bootstrap/5.1.0/dist/css/bootstrap.min.css" type="text/css" />
+
+    <!-- Icons. Uncomment required icon fonts -->
+    <link rel="stylesheet" href="~/assets/vendor/fontawesome-free/css/all.min.css" type="text/css">
+    <link rel="stylesheet" href="~/assets/vendor/fonts/boxicons.css" type="text/css" />
+    <link rel="stylesheet" href="~/assets/vendor/css/rtl/core.css" type="text/css" class="template-customizer-core-css" id="theme" />
+    <link rel="stylesheet" href="~/assets/vendor/css/rtl/theme-semi-dark.css" type="text/css" class="template-customizer-theme-css" id="theme_style" />
+
+    <link rel="stylesheet" href="~/assets/vendor/daterangepicker/daterangepicker.css" type="text/css" />
+    <link rel="stylesheet" href="~/assets/vendor/bootstrap/bootstrap-datepicker/1.9.14/css/bootstrap-datepicker.css" type="text/css" />
+    <link rel="stylesheet" href="~/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" type="text/css" />
+
+    <link rel="stylesheet" href="~/assets/.libs/class/lab.Splash/lab.Splash.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="~/assets/css/demo.css" type="text/css" />
+    <link rel="stylesheet" href="~/assets/css/Login.css" type="text/css" />
+
+
+    <script type="text/javascript" src="~/assets/vendor/libs/jquery/jquery.js"></script>
+
+    <!-- Bootstrap core JavaScript-->
+    <script type="text/javascript" src="~/assets/vendor/jquery/3.6.0/jquery.min.js"></script>
+    <script type="text/javascript" src="~/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script type="text/javascript" src="~/assets/vendor/bootstrap/5.1.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript" src="~/assets/vendor/bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript" src="~/assets/vendor/bootstrap/bootstrap-datepicker/1.9.14/js/bootstrap-datepicker.min.js"></script>
+
+
+    @*<script type="text/javascript" src="~/assets/.libs/class/lab.Splash/lab.Splash.js"></script>*@
+
+    
+    @*<script src="~/assets/js/config.js"></script>*@
+    <script type="text/javascript" src="~/assets/.libs/config.js"></script>
+    <script type="text/javascript" src="~/assets/.libs/function/AD.js"></script>
+    <script type="text/javascript" src="~/assets/.libs/function/func.Cookies.js"></script>
+    <script type="text/javascript" src="~/assets/.libs/class/lab.Ajax.js"></script>
+    <script type="text/javascript" src="~/assets/.libs/class/lab.ClockTimer.js"></script>
+    <script type="text/javascript" src="~/assets/.libs/class/lab.Date.js"></script>
+    <script type="text/javascript" src="~/assets/.libs/class/lab.Item.js"></script>
+
+
+</head>
+
+<body>
+    <div id="vueApp">
+
+        <div class="container">
+            <div class="screen-display">
+                <div class="bubbles">
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
+                </div>
+            </div>
+
+            <div class="login-container">
+                <div>
+                    <div class="avatar">
+                        <a href="Login/Hino">
+                            <img src="@ViewData["LogoImage"]" alt="HINO Logo" />
+                        </a>
+                    </div>
+                </div>
+                <p class="mt-4" style="color:red;">@ViewData["ErrorText"]</p>
+                <form id="formAuthentication" class="mb-3 needs-validation" method="POST" novalidate>
+                    <input type="hidden" id="txtDomain" name="txtDomain" :value="formAuthentication.txtDomain" />
+                    <input type="hidden" id="txtDeviceName" name="txtDeviceName" :value="formAuthentication.txtDeviceName" />
+                    <input type="hidden" id="txtFullDeviceName" name="txtFullDeviceName" :value="formAuthentication.txtFullDeviceName" />
+                    <input type="hidden" id="txtIPAddress" name="txtIPAddress" :value="formAuthentication.txtIPAddress" />
+                    <div class="mb-2">
+                        <h4>@ViewData["Title"]</h4>
+                    </div>
+                    <div class="mb-3 position-relative">
+                        <input type="text"
+                               class="form-control"
+                               id="txtUserName"
+                               name="txtUserName"
+                               :value="formAuthentication.txtUserName"
+                               autocomplete="off"
+                               required
+                               autofocus
+                               readonly />
+                    </div>
+                    <div class="position-relative">
+                        @*<div class="input-group">*@
+                        <input type="text"
+                               class="form-control"
+                               id="txtProcessDate"
+                               name="txtProcessDate"
+                               :value="formAuthentication.txtProcessDate"
+                               format="yyyy-mm-dd"
+                               style="margin-bottom: 0px;" />
+                        @*</div>*@
+                    </div>
+                    <div class="mb-3 position-relative">
+                        <select class="form-select" id="ddlFactory" name="ddlFactory"
+                                :value="formAuthentication.ddlFactory" readonly>
+                            <option value="1">Factory 1</option>
+                            <option value="2">Factory 2</option>
+                            <option value="3">Factory 3</option>
+                            <option value="4">Factory 4</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3 position-relative">
+                        <select class="form-select" id="ddlShift" name="ddlShift" :value="formAuthentication.ddlShift">
+                            <option value="D">1 : Day Shift</option>
+                            <option value="N">2 : Night Shift</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <button type="submit" class="btn d-grid w-100" style="background-color:#1abc9c; color:white;">Log On</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
+        <div id="splash-wrapper">
+            <div id="splash-text">LOADING</div>
+            <div id="splash-content"></div>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="~/assets/.libs/class/lab.Splash/lab.Splash.js"></script>
+    <script type="text/javascript" src="~/assets/.libs/display/display.DateBox.js"></script>
+    <script type="text/javascript" src="~/assets/.script/Login/Index.js"></script>
+    @*<script type="text/javascript" src="~/assets/adminty/vue@3/dist/vue.global.js"></script>
+    <script type="text/javascript" src="~/assets/adminty/vue@3/vueApp/Login/login.index.vue.js?@ViewData["Version"]"></script>*@
+    <style>
+
+        .gj-datepicker-bootstrap button[role=right-icon] .gj-icon, .gj-datepicker-bootstrap button[role=right-icon] .material-icons {
+            position: absolute;
+            font-size: 21px;
+            top: .55rem;
+            left: .55rem;
+        }
+    </style>
+    <script type="text/javascript">
+
+        $(document).ready(function (e, context) {
+
+            $('.btn-outline-secondary').attr('style', 'height:39px;');
+            $('.gj-datepicker').attr('style', 'height:39px;');
+            $('[role="right-icon"]').attr('style', 'height:39px;');
+            $('#txtProcessDate').attr('style', 'max-width: 220px;');
+            
+        });
+
+
+
+
+
+        (function () {
+            'use strict'
+            var forms = document.querySelectorAll('.needs-validation');
+
+            Array.prototype.slice.call(forms)
+                .forEach(function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (!form.checkValidity()) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+
+                        form.classList.add('was-validated')
+                    }, false)
+                })
+        })();
+
+
+
+
+
+    </script>
+
+</body>
+</html>

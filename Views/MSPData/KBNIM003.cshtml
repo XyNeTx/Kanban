@@ -1,0 +1,55 @@
+﻿<div class="row">
+
+    <div class="col-xl-12 col-md-12 col-sm-12">
+        <div class="card border-left-primary shadow h-100">
+            <div class="card-body">
+
+                <form id="frmCondition">
+@*
+                    <fieldset class="fieldset">
+                        <legend>Factory : </legend>
+
+                        <div class="row">
+                            <div class="col-6">
+                                <item type="select" id="F_Plant" label="Plant" value="@ViewData["_Plant"]" readonly></item>
+                            </div>
+                        </div>
+
+                    </fieldset>
+*@
+                    <div class="row">
+                        <div class="col mt-2">
+
+                            <fieldset class="fieldset">
+                                <legend>Import File : </legend>
+
+                                <div class="row">
+                                    <div class="col-8">
+                                        <item type="file" id="fileImport" filter=".txt"></item>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-8">
+                                        <item type="progress" id="pgsStatus" label="Processing: {{##.##}} %" max="142"></item>
+                                    </div>
+                                </div>
+
+                            </fieldset>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+@section Scripts{
+    <script type="text/javascript" src="~/assets/js/History/UserMaintenance.js"></script>
+    <script type="text/javascript" src="~/assets/.script/Template/Master.js"></script>
+    <script type="text/javascript" src="~/assets/.script/MSPData/KBNIM003.js?@ViewData["Version"]"></script>
+}

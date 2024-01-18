@@ -1,0 +1,213 @@
+﻿<!-- Modal Session Information -->
+<div class="modal fade" id="ModalSessionInfo" tabindex="-1" aria-labelledby="ModalSessionInfoLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="frmSessionInfo">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ModalSessionInfoLabel">Information</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="padding:20px;">
+
+
+                    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="pills-logon-tab" data-bs-toggle="pill" data-bs-target="#pills-logon" type="button" role="tab" aria-controls="pills-logon" aria-selected="true">
+                                User Log-On
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">
+                                Profile
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="pills-Session-tab" data-bs-toggle="pill" data-bs-target="#pills-Session" type="button" role="tab" aria-controls="pills-Session" aria-selected="false">
+                                Session
+                            </button>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="pills-tabContent">
+
+                        <div class="tab-pane fade show active" id="pills-logon" role="tabpanel" aria-labelledby="pills-logon-tab" tabindex="0">
+
+                            <div class="accordion-item">
+                                <div id="accordionLogon" class='accordion-collapse collapse show' data-bs-parent="#accordionLogon">
+                                    <div class="accordion-body">
+
+                                        <div class="row g-2">
+                                            <div class="col">
+                                                <div class="input-group mb-3">
+                                                    <label class="input-group-text" for="_LogOnID">Log-On ID</label>
+                                                    <input type="text" class="form-control" id="_LogOnID" name="_LogOnID" value="20223983" disabled />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row g-2">
+                                            <div class="col">
+                                                <div class="input-group mb-3">
+                                                    <label class="input-group-text" for="_ProcessDate">Process Date</label>
+                                                    <input type="text" class="form-control" id="_ProcessDate" name="_ProcessDate" value="2023-09-16" disabled />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row g-2">
+                                            <div class="col">
+                                                <div class="input-group mb-3">
+                                                    <label class="input-group-text" for="_Plant">Plant</label>
+                                                    <input type="text" class="form-control" id="_Plant" name="_Plant" value="3" disabled />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row g-2">
+                                            <div class="col">
+                                                <div class="input-group mb-5">
+                                                    <label class="input-group-text" for="_ProcessShift">Process Shift</label>
+                                                    <input type="text" class="form-control" id="_ProcessShift" name="_ProcessShift" value="D" disabled />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+
+
+                        <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab" tabindex="0">
+
+                            <div class="accordion-item">
+                                <div id="accordionProfile" class='accordion-collapse collapse show' data-bs-parent="#accordionProfile">
+                                    <div class="accordion-body">
+
+                                        <div class="row g-2">
+                                            <div class="col">
+                                                <div class="input-group mb-3">
+                                                    <label class="input-group-text" for="_UserCode">User Code</label>
+                                                    <input type="text" class="form-control" id="_UserCode" name="_UserCode" value="20223983" disabled />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row g-2">
+                                            <div class="col">
+                                                <div class="input-group mb-3">
+                                                    <label class="input-group-text" for="_DisplayName">Display Name</label>
+                                                    <input type="text" class="form-control" id="_DisplayName" name="_DisplayName" value="Prachaya Chotchoung" disabled />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row g-2">
+                                            <div class="col">
+                                                <div class="input-group mb-3">
+                                                    <label class="input-group-text" for="_Email">Email</label>
+                                                    <input type="text" class="form-control" id="_Email" name="_Email" value="Prachaya_C@hinothailand.com" disabled />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row g-2">
+                                            <div class="col">
+                                                <div class="input-group mb-3">
+                                                    <label class="input-group-text" for="_UILanguage">UI Language</label>
+                                                    <input type="text" class="form-control" id="_UILanguage" name="_UILanguage" value="EN" disabled />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row g-2">
+                                            <div class="col">
+                                                <div class="input-group mb-3">
+                                                    <label class="input-group-text" for="_UserID">User ID</label>
+                                                    <input type="text" class="form-control" id="_UserID" name="_UserID" value="3" disabled />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row g-2">
+                                            <div class="col">
+                                                <div class="input-group mb-3">
+                                                    <label class="input-group-text" for="_Token">Token</label>
+                                                    <input type="text" class="form-control" id="_Token" name="_Token" value="0xD8C81AF34885B50A937E039460986F51" disabled />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                        <div class="tab-pane fade" id="pills-Session" role="tabpanel" aria-labelledby="pills-Session-tab" tabindex="0">
+
+                            <div class="accordion-item">
+                                <div id="accordionSession" class='accordion-collapse collapse show' data-bs-parent="#accordionSession">
+                                    <div class="accordion-body">
+
+                                        <div class="row g-2">
+                                            <div class="col">
+                                                <div class="input-group mb-3">
+                                                    <label class="input-group-text" for="_System">System</label>
+                                                    <input type="text" class="form-control" id="_System" name="_System" value="KB3" disabled />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row g-2">
+                                            <div class="col">
+                                                <div class="input-group mb-3">
+                                                    <label class="input-group-text" for="_Domain">Domain</label>
+                                                    <input type="text" class="form-control" id="_Domain" name="_Domain" value="THI_DM_1" disabled />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row g-2">
+                                            <div class="col">
+                                                <div class="input-group mb-3">
+                                                    <label class="input-group-text" for="_Account">Domain Account</label>
+                                                    <input type="text" class="form-control" id="_Account" name="_Account" value="THI_DM_1\20223983" disabled />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row g-2">
+                                            <div class="col">
+                                                <div class="input-group mb-3">
+                                                    <label class="input-group-text" for="_Device">Device</label>
+                                                    <input type="text" class="form-control" id="_Device" name="_Device" value="HM22-44-013" disabled />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row g-2">
+                                            <div class="col">
+                                                <div class="input-group mb-3">
+                                                    <label class="input-group-text" for="_FullDeviceName">Full Device Name</label>
+                                                    <input type="text" class="form-control" id="_FullDeviceName" name="_FullDeviceName" value="HM22-44-013.hmmt.co.th" disabled />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row g-2">
+                                            <div class="col">
+                                                <div class="input-group mb-3">
+                                                    <label class="input-group-text" for="_IPAddress">IP Address</label>
+                                                    <input type="text" class="form-control" id="_IPAddress" name="_IPAddress" value="172.20.5.13" disabled />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade" id="pills-disabled" role="tabpanel" aria-labelledby="pills-disabled-tab" tabindex="0">
+                            Disabled
+                        </div>
+
+                    </div>
+
+
+
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

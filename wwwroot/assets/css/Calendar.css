@@ -1,0 +1,50 @@
+
+.calendar {
+    text-align: center;
+    margin-left: 8px;
+    margin-right: 8px;
+    color: black;
+}
+
+.workday {
+    background-color: chocolate;
+    text-align: center;
+}
+
+.holiday {
+    background-color: brown;
+    text-align: center;
+}
+
+.clear {
+    background-color: white;
+    text-align: center;
+}
+
+.colsun {
+    background-color: red;
+}
+
+.colmon {
+    background-color: yellow;
+}
+
+.coltue {
+    background-color: magenta;
+}
+
+.colwed {
+    background-color: greenyellow;
+}
+
+.colthu {
+    background-color: chocolate;
+}
+
+.colfri {
+    background-color: aqua;
+}
+
+.colsat {
+    background-color: cornflowerblue;
+}

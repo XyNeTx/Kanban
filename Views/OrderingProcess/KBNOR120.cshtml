@@ -1,0 +1,367 @@
+﻿<div class="row">
+
+    <!-- Left Panel -->
+    <div class="col-xl-6 col-md-6 col-sm-6 mb-2">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+
+                <div class="row g-2">
+
+                    <div class="accordion" id="acdProcess">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#acdProcesscl1" aria-expanded="true" aria-controls="acdProcesscl1">
+                                    Process of Normal Ordering
+                                </button>
+                            </h2>
+                            <div id="acdProcesscl1" class="accordion-collapse collapse show" data-bs-parent="#acdProcess">
+                                <div class="accordion-body">
+                                    <div class="form-group row g-2">
+                                        <div class="col">
+                                            <a href="../OrderingProcess/KBNOR101">
+                                                <button type="button" class="btn btn-primary" id="btnSave">
+                                                    1. Interface Daba from Import Order
+                                                </button>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row g-2">
+                                        <div class="col">
+                                            <button type="button" class="btn btn-primary" id="btnSave" data-bs-toggle="modal" data-bs-target="#modalMaster">
+                                                2. Calculate Normal Order
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row g-2">
+                                        <div class="col-md-12">
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <button type="button" class="btn btn-primary" id="btnSave" onclick="onSave();">
+                                                        3.1 Daily order
+                                                    </button>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <button type="button" class="btn btn-primary" id="btnSave" onclick="onSave();">
+                                                        3.2 Pattern order
+                                                    </button>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <button type="button" class="btn btn-primary" id="btnSave" onclick="onSave();">
+                                                        3.3 Non-Daily order
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row g-2">
+                                        <div class="col">
+                                            <button type="button" class="btn btn-primary" id="btnSave" onclick="onSave();">
+                                                4. Generate PDS for Normal Order Data
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row g-2">
+                                        <div class="col">
+                                            <button type="button" class="btn btn-primary" id="btnSave" onclick="onSave();">
+                                                5. Print PDS and Kanban Card for Normal
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row g-2">
+                                        <div class="col">
+                                            <button type="button" class="btn btn-primary" id="btnSave" onclick="onSave();">
+                                                6. Refistration Normal Order Data
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Middle Panel -->
+    <div class="col-xl-3 col-md-3 col-sm-3 mb-2">
+        <div class="card shadow h-100 py-2">
+            <div class="card-body">
+
+                <div class="accordion" id="acdReport">
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#acdReportcl1" aria-expanded="true" aria-controls="acdReportcl1">
+                                Report :
+                            </button>
+                        </h2>
+                        <div id="acdReportcl1" class="accordion-collapse collapse show" data-bs-parent="#acdReport">
+                            <div class="accordion-body">
+                                <div class="form-group row">
+                                    <div class="col">
+                                        <button type="button" class="btn btn-primary" id="btnSave" onclick="onSave();">
+                                            Checking MRP Data
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col">
+                                        <button type="button" class="btn btn-primary" id="btnSave" onclick="onSave();">
+                                            Export Order Data
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Right Panel -->
+    <div class="col-xl-3 col-md-3 col-sm-3 mb-2">
+        <div class="card shadow h-100 py-2">
+            <div class="card-body">
+
+                <div class="accordion" id="acdInformation">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#acdInformationcl1" aria-expanded="true" aria-controls="acdInformationcl1">
+                                Current Process Information :
+                            </button>
+                        </h2>
+                        <div id="acdInformationcl1" class="accordion-collapse collapse show" data-bs-parent="#acdInformation">
+                            <div class="accordion-body">
+                                <div class="form-group row">
+                                    <div class="col-md">
+                                        <div class="input-group">
+                                            <label class="input-group-text" for="F_OrderType">Date :</label>
+                                            <input type="text" class="form-control" id="F_OrderType" name="F_OrderType" value="15/08/2023" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-md">
+                                        <div class="input-group">
+                                            <label class="input-group-text" for="F_OrderType">Plant :</label>
+                                            <input type="text" class="form-control" id="F_OrderType" name="F_OrderType" value="3 : Fac-3" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-md">
+                                        <div class="input-group">
+                                            <label class="input-group-text" for="F_OrderType">Shift :</label>
+                                            <input type="text" class="form-control" id="F_OrderType" name="F_OrderType" value="1 : Day Shift" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-md">
+                                        <div class="input-group">
+                                            <label class="input-group-text" for="F_OrderType">Type :</label>
+                                            <input type="text" class="form-control" id="F_OrderType" name="F_OrderType" value="Normal Ordering" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#acdInformationcl2" aria-expanded="true" aria-controls="acdInformationcl2">
+                                Process For :
+                            </button>
+                        </h2>
+                        <div id="acdInformationcl2" class="accordion-collapse collapse show" data-bs-parent="#acdInformation">
+                            <div class="accordion-body">
+                                <div class="form-group row">
+                                    <div class="col-md">
+                                        <div class="input-group">
+                                            <label class="input-group-text" for="F_OrderType">Date :</label>
+                                            <input type="text" class="form-control" id="F_OrderType" name="F_OrderType" value="16/08/2023" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-md">
+                                        <div class="input-group">
+                                            <label class="input-group-text" for="F_OrderType">Shift :</label>
+                                            <input type="text" class="form-control" id="F_OrderType" name="F_OrderType" value="Day" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#acdInformationcl3" aria-expanded="true" aria-controls="acdInformationcl3">
+                                Last Process :
+                            </button>
+                        </h2>
+                        <div id="acdInformationcl3" class="accordion-collapse collapse show" data-bs-parent="#acdInformation">
+                            <div class="accordion-body">
+                                <div class="form-group row">
+                                    <div class="col-md">
+                                        <div class="input-group">
+                                            <label class="input-group-text" for="F_OrderType">Date :</label>
+                                            <input type="text" class="form-control" id="F_OrderType" name="F_OrderType" value="16/08/2023" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-md">
+                                        <div class="input-group">
+                                            <label class="input-group-text" for="F_OrderType">Shift :</label>
+                                            <input type="text" class="form-control" id="F_OrderType" name="F_OrderType" value="Night" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<!-- Modal New User -->
+<div class="modal fade" id="modalMaster" tabindex="-1" aria-labelledby="modalMasterLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalMasterLabel"> @ViewData["AppName"] <span></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="frmMaster" class="needs-validation" autocomplete="off" novalidate>
+                <div class="modal-body" style="padding-left:20px;padding-top:20px;padding-right:20px;">
+                    <input type="hidden" class="form-control" id="_Action" name="_Action" value="POST">
+                    <div class="row g-2">
+                        <div class="col-md-6">
+                            <div class="input-group mb-3">
+                                <label class="input-group-text" for="F_Plant">Plant</label>
+                                <select class="form-select" id="F_Plant" name="F_Plant" value="3" required noedit readonly></select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row g-2">
+                        <div class="col-md-6">
+                            <div class="input-group mb-3">
+                                <label class="input-group-text" for="F_OrderType">Order Type</label>
+                                <input type="text" class="form-control" id="F_OrderType" name="F_OrderType" required noedit>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row g-2">
+                        <div class="col-md-6">
+                            <div class="input-group mb-3">
+                                <label class="input-group-text" for="F_Effect_Date" noedit>Effective Date</label>
+                                <input type="text" class="form-control col-xl-8" id="F_Effect_Date" name="F_Effect_Date" format="yyyy-mm-dd" default="now" required noedit />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="input-group mb-3">
+                                <label class="input-group-text" for="F_End_Date">End Date</label>
+                                <input type="text" class="form-control" id="F_End_Date" name="F_End_Date" format="yyyy-mm-dd" default="2999-12-31" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+            <div class="modal-reference">
+                <i class="modal-reference mr-auto" style="padding-left:20px;">Reference Code : <i id="_REFERCODE_"></i></i>
+                @if (ViewData["UserGroupID"].ToString() == "1")
+                {
+                    <a href="#" data-bs-toggle="modal" data-bs-target="#ModalHistory" data-bs-remote="UserMaintenance">
+                        <i class="fas fa-scroll" style="padding-right: 20px;" title="View History Log"></i>
+                    </a>
+                }
+            </div>
+            <div class="modal-footer" style="padding-left:25px; padding-right:25px;">
+                <button type="button" class="btn btn-danger mr-auto" id="btnDelete" onclick="onDelete();">Delete</button>
+                <button type="button" class="btn btn-primary" id="btnSave" onclick="onSave();">Save</button>
+                <button type="button" class="btn btn-secondary" id="btnCancel" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts{
+
+    <script src="~/assets/js/History/UserMaintenance.js"></script>
+    <script src="~/assets/.script/Template/Master.js"></script>
+
+    <script language="javascript" type="text/javascript">
+
+        $(document).ready(function () {
+            var _i18n = '@ViewData["UserLanguage"].ToString()';
+            xi18n.initial(i18n['@ViewData["Action"].ToString()']);
+
+            const xKBNMS001 = new MasterTemplate({
+                Controller: _PAGE_,
+                Table: 'tblMaster',
+                ColumnTitle: {
+                    "EN": ['No.', 'Flag', 'Plant', 'Order Type', 'Effective Date', 'End Date'],
+                    "TH": ['No.', 'Flag', 'Plant', 'Order Type', 'Effective Date', 'End Date'],
+                },
+                ColumnValue: [
+                    { "data": "RunningNo" },
+                    { "data": "F_Plant" },
+                    { "data": "F_Plant" },
+                    { "data": "F_OrderType" },
+                    { "data": "F_Effect_Date" },
+                    { "data": "F_End_Date" }
+                ],
+                Modal: 'modalMaster',
+                Form: 'frmMaster',
+                PostData: [
+                    { name: 'F_Plant', value: '#frmCondition #F_Plant' }
+                ],
+            });
+
+            xKBNMS001.prepare();
+
+            xKBNMS001.initial(function (result) {
+                xDropDownList.bind('#frmCondition #F_Plant', result.data.TB_MS_Factory, 'F_Plant', 'F_Plant_Name');
+                xDropDownList.bind('#frmMaster #F_Plant', result.data.TB_MS_Factory, 'F_Plant', 'F_Plant_Name');
+
+                xKBNMS001.search();
+            });
+
+            onSave = function () {
+                xKBNMS001.save(function () {
+                    xKBNMS001.search();
+                });
+            }
+
+            onDelete = function () {
+                xKBNMS001.delete(function () {
+                    xKBNMS001.search();
+                });
+            }
+
+            xAjax.onChange('#frmCondition #F_Plant', function () {
+                $('#frmMaster #F_Plant').val($('#frmCondition #F_Plant').val());
+
+                xKBNMS001.search();
+            });
+
+
+
+        });
+
+    </script>
+}

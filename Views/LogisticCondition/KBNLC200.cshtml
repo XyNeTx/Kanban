@@ -1,0 +1,71 @@
+﻿<div class="row">
+
+    <div class="col-xl-12 col-md-12 col-sm-12">
+        <div class="card border-left-primary shadow h-100">
+            <div class="card-body">
+
+                <form id="frmCondition">
+@*
+                    <div class="row">
+                        <div class="col-6">
+                            <item type="select" id="selPlant" label="Plant" value="3" readonly></item>
+                        </div>
+                    </div>
+*@
+                    <div class="row">
+                        <div class="col mt-2">
+
+                            <fieldset class="fieldset">
+                                <legend>Select Data</legend>
+
+                                <div class="row">
+                                    <div class="col-2"></div>
+                                    <div class="col-3">
+                                        <item type="select" id="selSupplierFrom" label="Supplier From" value="0016-A"></item>
+                                    </div>
+                                    <div class="col">
+                                        <item type="button" id="btnReport" label="Report" style="width:103px"></item>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-2"></div>
+                                    <div class="col-3">
+                                        <item type="select" id="selSupplierTo" label="Supplier To" value="0068-Z"></item>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-2"></div>
+                                    <div class="col-3">
+                                        <item type="date" id="datPeriod" label="Production Month" format="yyyy"></item>
+                                    </div>
+                                </div>
+
+                            </fieldset>
+
+                        </div>
+                    </div>
+
+                    <div class="row" style="visibility:hidden;display:none;">
+                    @*<div class="row">*@
+                        <div class="col mt-2">
+                            <item type="table" id="tblMaster"></item>
+                        </div>
+                    </div>
+
+
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+@section Scripts{
+    <script type="text/javascript" src="~/assets/js/History/UserMaintenance.js"></script>
+    <script type="text/javascript" src="~/assets/.script/Template/Master.js"></script>
+    <script type="text/javascript" src="~/assets/.script/LogisticCondition/KBNLC200.js?@ViewData["Version"]"></script>
+}

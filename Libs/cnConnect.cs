@@ -1,0 +1,150 @@
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Configuration;
+using System.Data;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
+using HINOSystem.Controllers;
+
+
+
+namespace HINOSystem.Libs
+{
+    public class cnConnect
+    {
+
+        private readonly IConfiguration _config;
+        //public string system = "iss";
+
+        private string cnString;
+
+
+        public cnConnect(IConfiguration configuration)
+        {
+            _config = configuration;
+        }
+
+        public void setDatabase(string system = "iss")
+        {
+
+            if (system.ToLower() == "iss")
+            {
+                cnString = _config.GetValue<string>("ConnectionStrings:ServerISSConnection");
+            }
+            if (system.ToLower() == "invsm")
+            {
+                cnString = _config.GetValue<string>("ConnectionStrings:ServerINVSMConnection");
+            }
+            if (system.ToLower() == "ppm")
+            {
+                cnString = _config.GetValue<string>("ConnectionStrings:ServerPPMConnection");
+            }
+            if (system.ToLower() == "procweb")
+            {
+                cnString = _config.GetValue<string>("ConnectionStrings:ServerProcWebConnection");
+            }
+            if (system.ToLower() == "kanban")
+            {
+                cnString = _config.GetValue<string>("ConnectionStrings:ServerKanbanConnection");
+            }
+        }
+
+
+        public DataTable executeSQL(string pSQL)
+        {
+            SqlConnection _cn = null;
+            SqlCommand _cmd = null;
+            DataTable _dataTable = new DataTable();
+            try
+            {
+                _cn = new SqlConnection(cnString);
+                _cn.Open();
+
+                _cmd = new SqlCommand(pSQL, _cn);
+                using (SqlDataReader reader = _cmd.ExecuteReader())
+                {
+                    _dataTable.Load(reader);
+                    _cmd.Dispose();
+                    _cn.Close();
+
+                    return _dataTable;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                if (_cmd != null) _cmd.Dispose();
+                _cn.Close();
+                return _dataTable;
+            }
+        }
+
+
+        public string executeSQLJSON(string pSQL)
+        {
+            SqlConnection _cn = null;
+            SqlCommand _cmd = null;
+            DataTable _dataTable = new DataTable();
+            try
+            {
+                _cn = new SqlConnection(cnString);
+                _cn.Open();
+
+                _cmd = new SqlCommand(pSQL, _cn);
+                using (SqlDataReader reader = _cmd.ExecuteReader())
+                {
+                    _dataTable.Load(reader);
+                    _cmd.Dispose();
+                    _cn.Close();
+
+                    string JSONString = string.Empty;
+                    JSONString = JsonConvert.SerializeObject(_dataTable);
+                    return JSONString;
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                if (_cmd != null) _cmd.Dispose();
+                _cn.Close();
+                return "";
+            }
+        }
+
+
+        public void executeNonQuery(string pSQL)
+        {
+            SqlConnection _cn = null;
+            SqlCommand _cmd = null;
+            try
+            {
+                _cn = new SqlConnection(cnString);
+                _cn.Open();
+
+                _cmd = new SqlCommand(pSQL, _cn);
+                _cmd.ExecuteNonQuery();
+
+                _cmd.Dispose();
+                _cn.Close();
+            }
+            catch (Exception ex)
+            {
+                if (_cmd != null) _cmd.Dispose();
+                _cn.Close();
+            }
+
+        }
+
+    }
+
+
+}

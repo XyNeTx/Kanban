@@ -1,0 +1,79 @@
+﻿<!-- Modal History -->
+<div class="modal fade" id="ModalSystemHistory" tabindex="-1" aria-labelledby="ModalSystemHistoryLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            <form id="frmSystemHistory">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ModalSystemHistoryLabel">System History Log</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="padding:20px;">
+                    <fieldset class="fieldset">
+                        <legend>Information</legend>
+
+                        <ul class="nav nav-tabs md-tabs " role="tablist" id="pills-tab-system-history">
+                            <li class="nav-item">
+                                <a class="nav-link active" data-toggle="tab" href="#tab1-panel-system-history" role="tab" style="height:50px;" id="tab1-button-system-history">
+                                    <i class="icofont icofont-flash"></i>
+                                    Execute SQL
+                                </a>
+                                <div class="slide"></div>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#tab2-panel-system-history" role="tab" style="height:50px;" id="tab2-button-system-history">
+                                    <i class="icofont icofont-home"></i>
+                                    Action
+                                </a>
+                                <div class="slide"></div>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#tab3-panel-system-history" role="tab" style="height:50px;" id="tab3-button-system-history">
+                                    <i class="icofont icofont-foot-print"></i>
+                                    Login
+                                </a>
+                                <div class="slide"></div>
+                            </li>
+                        </ul>
+
+
+                        <div class="tab-content card-block">
+
+
+                            <div class="tab-pane active" id="tab1-panel-system-history" role="tabpanel">
+                                <div class="row">
+                                    <div class="col">
+                                        <item type="table" id="tblHistorySQLLog"></item>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="tab-pane" id="tab2-panel-system-history" role="tabpanel">
+                                <div class="row">
+                                    <div class="col">
+                                        <item type="table" id="tblHistoryAction"></item>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane" id="tab3-panel-system-history" role="tabpanel">
+                                <div class="row">
+                                    <div class="col">
+                                        <item type="table" id="tblHistoryLogin"></item>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="modal-footer" style="padding-left:25px; padding-right:25px;">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

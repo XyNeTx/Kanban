@@ -1,0 +1,136 @@
+﻿<div class="row">
+
+    <div class="col-xl-12 col-md-12 col-sm-12">
+        <div class="card border-left-primary shadow h-100">
+            <div class="card-body">
+
+                <form id="frmCondition">
+                    <div class="row">
+                        <div class="col mt-2">
+
+                            <fieldset class="fieldset">
+                                <legend>Import File : </legend>
+
+                                <div class="row mb-2">
+                                    <div class="col-3">
+                                        <item type="button" id="btnInterface" label="Interface Monthly Forecast Data"></item>
+                                    </div>
+                                    <div class="col" style="text-align:center;color:blue;font-size:16px;">
+                                        Current Data Interface : Production Month : 12/2023 Version : CONFIRM Revision No.: 2.0
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-3">
+                                        <item type="month" id="ImportMonth" label="Month" default="now"></item>
+                                    </div>
+                                    <div class="col-3">
+                                        <item type="text" id="ImportVersion" label="Version"></item>
+                                    </div>
+                                    <div class="col-3">
+                                        <item type="text" id="ImportRevision" label="Revision"></item>
+                                    </div>
+                                    <div class="col-3">
+                                        <item type="date" id="ImportDate" label="Date" format="yyyy-mm-dd" default="now"></item>
+                                    </div>
+                                </div>
+
+                            </fieldset>
+
+                            <fieldset class="fieldset">
+                                <legend>Condition : </legend>
+
+                                <div class="row">
+                                    <div class="col-3">
+                                        <item type="month" id="ConditionMonth" label="Month" default="now"></item>
+                                    </div>
+                                    <div class="col-3">
+                                        <item type="text" id="ConditionVersion" label="Version"></item>
+                                    </div>
+                                    <div class="col-3">
+                                        <item type="text" id="ConditionRevision" label="Revision"></item>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-2">
+                                    <div class="col-2">
+                                        <item type="radio" id="TypeForImport" value="ConditionDetail" label="Detail" checked></item>
+                                    </div>
+                                    <div class="col">
+                                        <fieldset class="fieldset" id="fldConditionDetail">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <item type="lov" id="ConditionDetailSupplierCode" label="Supplier Code" data-controller="LOVKB3.PartList" data-value="F_Part_No:Code" data-description="F_Part_Name" class="col-2"></item>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col">
+                                                    <item type="list" id="ConditionDetailKanban" label="Kanban No." data-controller="LOVKB3.PartList" data-value="F_Part_No:Code" data-description="F_Part_Name" class="col-2"></item>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col">
+                                                    <item type="list" id="ConditionDetailStoreCode" label="Store Code" data-controller="LOVKB3.PartList" data-value="F_Part_No:Code" data-description="F_Part_Name" class="col-2"></item>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col">
+                                                    <item type="lov" id="ConditionDetailPartNo" label="Part No" data-controller="LOVKB3.PartList" data-value="F_Part_No:Code" data-description="F_Part_Name" class="col-2"></item>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-2">
+                                    <div class="col-2">
+                                        <item type="radio" id="TypeForImport" value="ConditionSupplier" label="Supplier"></item>
+                                    </div>
+                                    <div class="col">
+                                        <fieldset class="fieldset" id="fldConditionSupplier">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <item type="lov" id="ConditionSupplierSupplierCode" label="Supplier Code" data-controller="LOVKB3.PartList" data-value="F_Part_No:Code" data-description="F_Part_Name" class="col-2"></item>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col">
+                                                    <item type="list" id="ConditionSupplierStoreCode" label="Store Code" data-controller="LOVKB3.PartList" data-value="F_Part_No:Code" data-description="F_Part_Name" class="col-2"></item>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-3">
+                                        <item type="button" id="btnNextMonth" label="Inf. FO From N+1 To Next Month"></item>
+                                    </div>
+                                </div>
+
+                            </fieldset>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col">
+                            <item type="table" id="tblMaster" class="cell-border"></item>
+                        </div>
+                    </div>
+
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+@section Scripts{
+    <script type="text/javascript" src="~/assets/js/History/UserMaintenance.js"></script>
+    <script type="text/javascript" src="~/assets/.script/Template/Master.js"></script>
+    <script type="text/javascript" src="~/assets/.script/MonthlyForcast/KBNIM012.js?@ViewData["Version"]"></script>
+}

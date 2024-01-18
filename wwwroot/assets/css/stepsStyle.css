@@ -1,0 +1,127 @@
+﻿/*#monthlyProcessForm {
+    max-width: 500px;
+    background-color: #ffffff;
+    margin: 40px auto;
+    padding: 40px;
+    box-shadow: 0px 6px 18px rgb(0 0 0 / 9%);
+    border-radius: 12px;
+}*/
+
+#monthlyProcessForm {
+    padding: 50px;
+}
+
+    #monthlyProcessForm .form-header {
+        gap: 5px;
+        text-align: center;
+        font-size: .9em;
+    }
+
+        #monthlyProcessForm .form-header .stepIndicator {
+            position: relative;
+            flex: 1;
+            padding-bottom: 30px;
+        }
+
+            #monthlyProcessForm .form-header .stepIndicator.active {
+                font-weight: 600;
+            }
+
+            #monthlyProcessForm .form-header .stepIndicator.finish {
+                font-weight: 600;
+                color: #009688;
+            }
+
+            #monthlyProcessForm .form-header .stepIndicator::before {
+                content: "";
+                position: absolute;
+                left: 50%;
+                bottom: 0;
+                transform: translateX(-50%);
+                z-index: 9;
+                width: 30px;
+                height: 30px;
+                background-color: #d5efed;
+                border-radius: 50%;
+                border: 3px solid #ecf5f4;
+            }
+
+            #monthlyProcessForm .form-header .stepIndicator.active::before {
+                background-color: #a7ede8;
+                border: 5px solid #d5f9f6;
+            }
+
+            #monthlyProcessForm .form-header .stepIndicator.finish::before {
+                background-color: #009688;
+                border: 1px solid #b7e1dd;
+            }
+
+            #monthlyProcessForm .form-header .stepIndicator::after {
+                content: "";
+                position: absolute;
+                left: 50%;
+                bottom: 12px;
+                width: 100%;
+                height: 4px;
+                background-color: #f3f3f3;
+            }
+
+            #monthlyProcessForm .form-header .stepIndicator.active::after {
+                background-color: #a7ede8;
+            }
+
+            #monthlyProcessForm .form-header .stepIndicator.finish::after {
+                background-color: #009688;
+            }
+
+            #monthlyProcessForm .form-header .stepIndicator:last-child:after {
+                display: none;
+            }
+
+    /*#monthlyProcessForm input {
+    padding: 15px 20px;
+    width: 100%;
+    font-size: 1em;
+    border: 1px solid #e3e3e3;
+    border-radius: 5px;
+}*/
+
+    #monthlyProcessForm input:focus {
+        border: 1px solid #009688;
+        outline: 0;
+    }
+
+    #monthlyProcessForm input.invalid {
+        border: 1px solid #ffaba5;
+    }
+
+    #monthlyProcessForm .step {
+        display: none;
+    }
+
+    #monthlyProcessForm .form-footer {
+        overflow: auto;
+        gap: 20px;
+    }
+
+        #monthlyProcessForm .form-footer button {
+            background-color: #009688;
+            border: 1px solid #009688 !important;
+            color: #ffffff;
+            border: none;
+            padding: 13px 30px;
+            font-size: 1em;
+            cursor: pointer;
+            border-radius: 5px;
+            flex: 1;
+            margin-top: 5px;
+        }
+
+            #monthlyProcessForm .form-footer button:hover {
+                opacity: 0.8;
+            }
+
+        #monthlyProcessForm .form-footer #prevBtn {
+            background-color: #fff;
+            color: #009688;
+        }

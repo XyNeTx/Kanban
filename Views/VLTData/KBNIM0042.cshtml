@@ -1,0 +1,101 @@
+﻿<div class="row">
+
+    <div class="col-xl-12 col-md-12 col-sm-12">
+        <div class="card border-left-primary shadow h-100">
+            <div class="card-body">
+
+                <form id="frmCondition">
+
+                    <fieldset class="fieldset">
+                        <legend>Management : </legend>
+
+                        <div class="row">
+                            <div class="col-4">
+                                <item type="select" id="F_Customer" label="Customer"></item>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">
+                                <item type="date" id="F_ProcessDate" label="Process Date" format="yyyy-mm-dd" default="now"></item>
+                            </div>
+                        </div>
+                        <div class="row" style="font-size:22px;text-align:center;">
+                            <div class="col"></div>
+                            <div class="col-2" style="border-style:solid;border-width:1px;">LINE</div>
+                            <div class="col-2" style="border-style:solid;border-width:1px;">FRAME</div>
+                            <div class="col-2" style="border-style:solid;border-width:1px;">Side Panel</div>
+                            <div class="col-2" style="border-style:solid;border-width:1px;">Tail Gate</div>
+                            <div class="col-2" style="border-style:solid;border-width:1px;">RR Axle</div>
+                            <div class="col"></div>
+                        </div>
+                        <div class="row" style="font-size:22px;text-align:center;">
+                            <div class="col"></div>
+                            <div class="col-2" style="border-style:solid;border-width:1px;">Start Jig-In Seq.</div>
+                            <div class="col-2" style="border-style:solid;border-width:1px;"></div>
+                            <div class="col-2" style="border-style:solid;border-width:1px;"></div>
+                            <div class="col-2" style="border-style:solid;border-width:1px;"></div>
+                            <div class="col-2" style="border-style:solid;border-width:1px;"></div>
+                            <div class="col"></div>
+                        </div>
+                        <div class="row" style="font-size:22px;text-align:center;">
+                            <div class="col"></div>
+                            <div class="col-2" style="border-style:solid;border-width:1px;">Remain Unit</div>
+                            <div class="col-2" style="border-style:solid;border-width:1px;"></div>
+                            <div class="col-2" style="border-style:solid;border-width:1px;"></div>
+                            <div class="col-2" style="border-style:solid;border-width:1px;"></div>
+                            <div class="col-2" style="border-style:solid;border-width:1px;"></div>
+                            <div class="col"></div>
+                        </div>
+                        <div class="row" style="font-size:22px;text-align:center;">
+                            <div class="col"></div>
+                            <div class="col-2" style="border-style:solid;border-width:1px;">End Jig-In Seq.</div>
+                            <div class="col-2" style="border-style:solid;border-width:1px;"></div>
+                            <div class="col-2" style="border-style:solid;border-width:1px;"></div>
+                            <div class="col-2" style="border-style:solid;border-width:1px;"></div>
+                            <div class="col-2" style="border-style:solid;border-width:1px;"></div>
+                            <div class="col"></div>
+                        </div>
+
+                    </fieldset>
+                    
+
+
+                    <fieldset class="fieldset">
+                        <legend>Confirmation for CKD - Inhouse Ordering : </legend>
+                        <div class="row" style="font-size:22px;text-align:center;">
+                            <div class="col"></div>
+                            <div class="col-2" style="border-style:solid;border-width:1px;">Start Jig-In Seq.</div>
+                            <div class="col-2" style="border-style:solid;border-width:1px;"></div>
+                            <div class="col-2" style="border-style:solid;border-width:1px;"></div>
+                            <div class="col-2" style="border-style:solid;border-width:1px;"></div>
+                            <div class="col-2" style="border-style:solid;border-width:1px;"></div>
+                            <div class="col"></div>
+                        </div>
+                        <div class="row" style="font-size:22px;text-align:center;">
+                            <div class="col"></div>
+                            <div class="col-2" style="border-style:solid;border-width:1px;">End Jig-In Seq.</div>
+                            <div class="col-2" style="border-style:solid;border-width:1px;"></div>
+                            <div class="col-2" style="border-style:solid;border-width:1px;"></div>
+                            <div class="col-2" style="border-style:solid;border-width:1px;"></div>
+                            <div class="col-2" style="border-style:solid;border-width:1px;"></div>
+                            <div class="col"></div>
+                        </div>
+
+                    </fieldset>
+                </form>
+
+
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+@section Scripts{
+    <script type="text/javascript" src="~/assets/js/History/UserMaintenance.js"></script>
+    <script type="text/javascript" src="~/assets/.script/Template/Master.js"></script>
+    <script type="text/javascript" src="~/assets/.script/VLTData/KBNIM0042.js?@ViewData["Version"]"></script>
+}

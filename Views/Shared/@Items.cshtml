@@ -1,0 +1,124 @@
+﻿
+<input type="hidden" class="form-control" id="_Action" name="_Action" value="POST">
+<input type="hidden" class="form-control" id="_ID" name="_ID">
+<input type="hidden" class="form-control" id="F_Plant" name="F_Plant">
+
+
+<fieldset class="fieldset">
+    <legend>Import File Data : </legend>
+
+</fieldset>
+
+
+<div class="row">
+    <div class="col">
+
+    </div>
+</div>
+
+
+@*text*@
+<item type="text" id="ItemID" label="ItemLabel"></item>
+
+
+@*textarea*@
+<item type="textarea" id="ItemID" label="ItemLabel"></item>
+
+
+@*number*@
+<item type="number" id="ItemID" label="ItemLabel"></item>
+
+
+@*currency*@
+<item type="currency" id="ItemID" label="ItemLabel"></item>
+
+
+@*date*@
+<item type="date" id="ItemID" label="ItemLabel" format="yyyy-mm-dd" default="now"></item>
+
+
+@*time*@
+
+
+@*month*@
+<item type="month" id="ItemID" label="ItemLabel" default="now"></item>
+
+
+@*color*@
+<item type="color" id="F_Color" label="F_Color"></item>
+
+
+@*select*@
+<item type="select" id="ItemID" label="ItemLabel"></item>
+
+
+@*list*@
+<item type="list" id="ItemID" label="ItemLabel" data-controller="LOVKB3.PartList" data-value="F_Part_No:Code" data-description="F_Part_Name" class="col-2"></item>
+
+
+@*lov*@
+<item type="lov" id="ItemID" label="ItemLabel" data-controller="LOVKB3.PartList" data-value="F_Part_No:Code" data-description="F_Part_Name" class="col-2"></item>
+
+
+@*file*@
+<item type="file" id="ItemID" filter=".txt"></item>
+
+
+@*button*@
+<item type="button" id="ItemID" label="ItemLabel"></item>
+
+
+@*progress*@
+<item type="progress" id="ItemID" label="ItemLabel: {{##.##}} %" max="100"></item>
+
+
+@*radio*@
+<item type="radio" id="ItemID" value="ConditionSupplier" label="ItemLabel"></item>
+
+
+@*check or checkbox*@
+<item type="checkbox" id="ItemID" label="ItemLabel"></item>
+
+
+@*table*@
+<item type="table" id="ItemID" legend=""></item>
+
+
+
+@*
+
+var tblSeparate = xDataTable.Initial({
+    name: 'tblSeparate',
+    checking: 0,
+    running: 0,
+    dom: '<"clear">',
+    columnTitle: {
+        "EN": ['Cut', 'Jig In Seq', 'Part Code'],
+        "TH": ['Cut', 'Jig In Seq', 'Part Code'],
+        "JP": ['Cut', 'Jig In Seq', 'Part Code'],
+    },
+    column: [
+        { "data": "F_Plant" },
+        { "data": "F_Plant" },
+        { "data": "F_OrderType" }
+    ],
+    addnew: false,
+    rowclick: (row) => {
+    }
+});
+
+
+*@
+
+
+
+
+
+
+
+
+
+
+
+
+

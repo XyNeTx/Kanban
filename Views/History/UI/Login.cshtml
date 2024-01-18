@@ -1,0 +1,628 @@
+﻿@*<div class="row">
+    <div class="col-xl-12 col-md-12 mb-12">
+        <div class="card border-left-primary shadow h-100 py-2">
+
+            <div class="card-body">
+
+
+                <form id="frmCriteria" class="needs-validated" action="" method="POST" novalidate>
+
+                    <div class="row">
+
+                        <div class="row">
+                            <div class="col-md-2">
+                                <label class="form-label" for="txtPONumber">System : </label>
+                            </div>
+                            <div class="col-md-4">
+                                <select class="form-select" aria-label="Default select example" id="ddlSystem">
+                                    <option selected>--- please select ---</option>
+                                    <option value="ISS">Sub-Material</option>
+                                    <option value="KBN">Kanban</option>
+                                    <option value="WRT">QA Warranty Claim Notification</option>
+                                </select>
+                            </div>
+
+                        </div>
+
+
+
+
+                    </div>
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+<br />*@
+
+
+<div class="row" id="divPOHDR">
+    <div class="col-xl-12 col-md-12 mb-12">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+
+
+                @*<ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true">
+                            PO
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">
+                            INVOICE
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">
+                            RECEIVE
+                        </button>
+                    </li>
+                </ul>*@
+                <div class="tab-content" id="pills-tabContent">
+
+                    <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab" tabindex="0">
+
+                        <div class="accordion-item">
+                            <h1 class='accordion-header active' id="headingOne">
+                                <button type="button" class="accordion-button" data-bs-toggle="collapse"
+                                        data-bs-target="#accordionOne" aria-expanded="true" aria-controls="accordionOne">
+                                    @*<h5 style="color:blue">POHDR</h5>*@
+                                </button>
+                            </h1>
+                            <div id="accordionOne" class='accordion-collapse collapse show' data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+
+                                    <div class="table-responsive text-nowrap">
+                                        <table id="tblData" class="display" row-click="true" style="width:100%"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div><br />
+                        @*<div class="accordion-item">
+                            <h1 class='accordion-header active' id="headingOne">
+                                <button type="button" class="accordion-button" data-bs-toggle="collapse"
+                                        data-bs-target="#accordionOne" aria-expanded="true" aria-controls="accordionOne">
+                                    <h5 style="color:blue">POLIN</span></h5>
+                                </button>
+                            </h1>
+                            <div id="accordionTwo" class='accordion-collapse collapse show' data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+
+                                    <div class="table-responsive text-nowrap">
+                                        <table id="tblPOLIN" class="display" style="width:100%"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>*@
+                    </div>
+
+                    @*<div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab" tabindex="0">
+
+                        <div class="accordion-item">
+                            <h1 class='accordion-header active' id="headingOne">
+                                <button type="button" class="accordion-button" data-bs-toggle="collapse"
+                                        data-bs-target="#accordionOne" aria-expanded="true" aria-controls="accordionOne">
+                                    <h5 style="color:blue">APTRANSID</h5>
+                                </button>
+                            </h1>
+                            <div id="accordionOne" class='accordion-collapse collapse show' data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+
+                                    <div class="table-responsive text-nowrap">
+                                        <table id="tblAPTRANSID" class="display" style="width:100%"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div><br />
+                        <div class="accordion-item">
+                            <h1 class='accordion-header active' id="headingOne">
+                                <button type="button" class="accordion-button" data-bs-toggle="collapse"
+                                        data-bs-target="#accordionOne" aria-expanded="true" aria-controls="accordionOne">
+                                    <h5 style="color:blue">APTRANS</h5>
+                                </button>
+                            </h1>
+                            <div id="accordionTwo" class='accordion-collapse collapse show' data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+
+                                    <div class="table-responsive text-nowrap">
+                                        <table id="tblAPTRANS" class="display" style="width:100%"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>*@
+
+                    @*<div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab" tabindex="0">
+
+                        <div class="accordion-item">
+                            <h1 class='accordion-header active' id="headingOne">
+                                <button type="button" class="accordion-button" data-bs-toggle="collapse"
+                                        data-bs-target="#accordionOne" aria-expanded="true" aria-controls="accordionOne">
+                                    <h5 style="color:blue">INTXCH</h5>
+                                </button>
+                            </h1>
+                            <div id="accordionOne" class='accordion-collapse collapse show' data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+
+                                    <div class="table-responsive text-nowrap">
+                                        <table id="tblINTXCH" class="display" style="width:100%"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>*@
+
+                    @*<div class="tab-pane fade" id="pills-disabled" role="tabpanel" aria-labelledby="pills-disabled-tab" tabindex="0">
+                        Disabled
+                    </div>*@
+
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal Data -->
+<div class="modal fade" id="ModalData" tabindex="-1" aria-labelledby="ModalDataLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <form id="frmModalData">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="frmModalDataLabel">History Logs<span></span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="padding:20px;">
+                    <input type="hidden" class="form-control" id="_ID" name="_ID">
+                    <div class="row g-2">
+                        <div class="col-md-3">
+                            <div class="form-floating mb-2">
+                                <input type="text" class="form-control" id="Code" name="Code" readonly>
+                                <label for="Code">Code<span style="color:red">*</span></label>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-floating mb-2">
+                                <input type="text" class="form-control" id="ActionAt" name="ActionAt" readonly>
+                                <label for="ActionAt">Date<span style="color:red">*</span></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row g-2">
+                        <div class="col-md">
+                            <div class="form-floating mb-2">
+                                <input type="text" class="form-control" id="Name" name="Name" readonly>
+                                <label for="Name">Name<span style="color:red">*</span></label>
+                            </div>
+                        </div>
+                        <div class="col-md">
+                            <div class="form-floating mb-2">
+                                <input type="text" class="form-control" id="Surname" name="Surname" readonly>
+                                <label for="Surname">Surname<span style="color:red">*</span></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row g-2">
+                        <div class="col-md">
+                            <div class="form-floating mb-2">
+                                <input type="text" class="form-control" id="NameTH" name="NameTH" readonly>
+                                <label for="NameTH">ชื่อ</label>
+                            </div>
+                        </div>
+                        <div class="col-md">
+                            <div class="form-floating mb-2">
+                                <input type="text" class="form-control" id="SurnameTH" name="SurnameTH" readonly>
+                                <label for="SurnameTH">นามสกุล</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row g-2">
+                        <div class="col-md">
+                            <div class="form-floating mb-2">
+                                <table id="tblDetail" class="display" style="width:100%"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-reference">
+                    <i class="modal-reference mr-auto" style="padding-left:20px;">Reference Code : <i id="_REFERCODE_">xxxxxxxx</i></i>
+                    @if (ViewData["UserGroupID"].ToString() == "1")
+                    {
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#ModalHistory" data-bs-remote="UserMaintenance">
+                            <i class="fas fa-scroll" style="padding-right: 20px;" title="View History Log"></i>
+                        </a>
+                    }
+                </div>
+                <div class="modal-footer" style="padding-left:25px; padding-right:25px;">
+                    <button type="button" class="btn btn-secondary" id="btnCancel" data-bs-dismiss="modal">@Html.i18nItem(language:ViewData["UserLanguage"].ToString(),item:"UserMaintenance.modal.user_detail.close")</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal Detail -->
+<div class="modal fade" id="ModalDetail" tabindex="-1" aria-labelledby="ModalDetailLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <form id="frmModalDetail">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="frmModalDetailLabel">History Logs<span></span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="padding:20px;">
+                    <div class="row g-2">
+                        <div class="col-md">
+                            <div class="form-floating mb-2">
+                                <table id="tblDescription" class="display" style="width:100%"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-reference">
+                    <i class="modal-reference mr-auto" style="padding-left:20px;">Reference Code : <i id="_REFERCODE_">xxxxxxxx</i></i>
+                    @if (ViewData["UserGroupID"].ToString() == "1")
+                    {
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#ModalHistory" data-bs-remote="UserMaintenance">
+                            <i class="fas fa-scroll" style="padding-right: 20px;" title="View History Log"></i>
+                        </a>
+                    }
+                </div>
+                <div class="modal-footer" style="padding-left:25px; padding-right:25px;">
+                    <button type="button" class="btn btn-secondary" id="btnCancel" data-bs-dismiss="modal">@Html.i18nItem(language:ViewData["UserLanguage"].ToString(),item:"UserMaintenance.modal.user_detail.close")</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal Detail -->
+<div class="modal fade" id="ModalDescription" tabindex="-1" aria-labelledby="ModalDescriptionLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <form id="frmModalDescription">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="frmModalDescriptionLabel">History Logs<span></span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="padding:20px;">
+                    <input type="hidden" class="form-control" id="_ID" name="_ID">
+                    <div class="row g-2">
+                        <div class="col-md-3">
+                            <div class="form-floating mb-2">
+                                <input type="text" class="form-control" id="ActionDate" name="ActionDate" readonly>
+                                <label for="ActionDate">Date<span style="color:red">*</span></label>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-floating mb-2">
+                                <input type="text" class="form-control" id="ActionAt" name="ActionAt" readonly>
+                                <label for="ActionAt">Time<span style="color:red">*</span></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row g-2">
+                        <div class="col-md">
+                            <div class="form-floating mb-2">
+                                <input type="text" class="form-control" id="ActionType" name="ActionType" readonly>
+                                <label for="ActionType">Action Type<span style="color:red">*</span></label>
+                            </div>
+                        </div>
+                        <div class="col-md">
+                            <div class="form-floating mb-2">
+                                <input type="text" class="form-control" id="SystemName" name="SystemName" readonly>
+                                <label for="SystemName">System Name<span style="color:red">*</span></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row g-2">
+                        <div class="col-md">
+                            <div class="form-floating mb-2">
+                                <input type="text" class="form-control" id="ControllerName" name="ControllerName" readonly>
+                                <label for="ControllerName">Controller Name</label>
+                            </div>
+                        </div>
+                        <div class="col-md">
+                            <div class="form-floating mb-2">
+                                <input type="text" class="form-control" id="ActionName" name="ActionName" readonly>
+                                <label for="ActionName">Action Name</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row g-2">
+                        <div class="col-md">
+                            <div class="form-floating mb-2">
+                                <input type="text" class="form-control" id="Result" name="Result" readonly>
+                                <label for="Result">Result</label>
+                            </div>
+                        </div>
+                        <div class="col-md">
+                            <div class="form-floating mb-2">
+                                <input type="text" class="form-control" id="Message" name="Message" readonly>
+                                <label for="Message">Message</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row g-2">
+                        <div class="col-md">
+                            <div class="form-floating mb-2">
+                                <textarea class="form-control" id="SQL" rows="3" style="height:100px;" readonly></textarea>
+                                <label for="SQL">SQL</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-reference">
+                    <i class="modal-reference mr-auto" style="padding-left:20px;">Reference Code : <i id="_REFERCODE_">xxxxxxxx</i></i>
+                    @if (ViewData["UserGroupID"].ToString() == "1")
+                    {
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#ModalHistory" data-bs-remote="UserMaintenance">
+                            <i class="fas fa-scroll" style="padding-right: 20px;" title="View History Log"></i>
+                        </a>
+                    }
+                </div>
+                <div class="modal-footer" style="padding-left:25px; padding-right:25px;">
+                    <button type="button" class="btn btn-secondary" id="btnCancel" data-bs-dismiss="modal">@Html.i18nItem(language:ViewData["UserLanguage"].ToString(),item:"UserMaintenance.modal.user_detail.close")</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+
+    <script type="text/javascript">
+
+
+        $(document).ready(function () {
+            var _i18n = i18n.Language;
+            xi18n.initial(i18n['@ViewData["Action"].ToString()']);
+
+            //console.log(i18n.System);
+
+            var tblData, tblDetail, tblDescription;
+            onInitial = function () {
+                xSplash.show();
+                xSplash.text('Loading data');
+
+                //### Data
+                tblData = xDataTable.Initial({
+                    name: 'tblData',
+                    running: 0,
+                    order :[[1, 'desc']],
+                    columnTitle: {
+                        "EN": ['No.', 'Action At', 'User Code', 'Name', 'Surname', 'ชื่อ', 'นามสกุล'],
+                        "TH": ['No.', 'วันที่', 'ชื่อผู้ใช้', 'ชื่อ (English)', 'นามสกุล (English)', 'ชื่อ', 'นามสกุล'],
+                    },
+                    column:
+                        [
+                            { "data": "RunningNo" },
+                            { "data": "ActionAt" },
+                            { "data": "Code" },
+                            { "data": "Name" },
+                            { "data": "Surname" },
+                            { "data": "NameTH" },
+                            { "data": "SurnameTH" }
+                        ],
+                    columnDefs:
+                        [
+                            { targets: 1, className: 'maskdate' }
+                        ],
+                    addnew: false,
+                    rowclick: function (row) {
+                        onClickData(row);
+                    },
+                    then: function (config) {
+                        xSplash.hide();
+                    }
+                });
+
+
+                //### Detail
+                tblDetail = xDataTable.Initial({
+                    name: 'tblDetail',
+                    running: 0,
+                    order: [[1, 'desc']],
+                    columnTitle: {
+                        "EN": ['No.', 'Start At', 'Finish At', 'Process Time (min)'],
+                        "TH": ['No.', 'เริ่มเมื่อ', 'สิ้นสุดเมื่อ', 'เวลาที่อยู่ในระบบ'],
+                    },
+                    column:
+                        [
+                            { "data": "RunningNo" },
+                            { "data": "StartAt" },
+                            { "data": "FinishAt" },
+                            { "data": "ProcessTime" }
+                        ],
+                    columnDefs:
+                        [
+                            { targets: 3, className: 'masknumber' }
+                        ],
+                    addnew: false,
+                    rowclick: function (row) {
+                        onClickDetail(row);
+                    },
+                    then: function (config) {
+                        xSplash.hide();
+                    }
+                });
+
+
+                //### Description
+                tblDescription = xDataTable.Initial({
+                    name: 'tblDescription',
+                    running: 0,
+                    //order: [[1, 'desc']],
+                    columnTitle: {
+                        "EN": ['No.', 'ActionAt', 'ActionType', 'ControllerName', 'ActionName', 'Result'],
+                        "TH": ['No.', 'ActionAt', 'ActionType', 'ControllerName', 'ActionName', 'Result'],
+                    },
+                    column:
+                        [
+                            { "data": "RunningNo" },
+                            { "data": "ActionAt" },
+                            { "data": "ActionType" },
+                            { "data": "ControllerName" },
+                            { "data": "ActionName" },
+                            { "data": "Result" }
+                        ],
+                    //columnDefs:
+                    //    [
+                    //        { targets: 3, className: 'masknumber' }
+                    //    ],
+                    addnew: false,
+                    rowclick: function (row) {
+                        onClickDescription(row);
+                    },
+                    then: function (config) {
+                        xSplash.hide();
+                    }
+                });
+
+
+            }
+            onInitial();
+
+
+
+            onLoad = function () {
+                xSplash.show();
+                xSplash.text('Loading data');
+
+                $.ajax({
+                    type: "POST",
+                    headers: ajexHeader,
+                    contentType: "application/json; charset=utf-8",
+                    url: '@Url.Action("getData","HistoryLogin")',
+                    data: ajaxPostData({
+                        'System': i18n.System
+                    }),
+                    success: function (response) {
+                        //console.log(response);
+
+                        if (response.response == 'OK') {
+
+                            $('#tblData').dataTable().fnClearTable();
+                            if (response.data.length > 0) {
+                                $('#tblData').dataTable().fnAddData(response.data);
+                            }
+                            xSplash.hide();
+
+                        } else {
+                            if (response.message != '') xSwal.error("Error", response.message);
+                            xSplash.hide();
+
+                        }
+
+                    },
+                    error: function (xhr, status, error) {
+                        console.error(error);
+                    }
+                });
+
+            }
+            onLoad();
+
+
+
+
+            onClickData = function (row = null) {
+                $('#frmModalData').removeClass('was-validated');
+                $('#frmModalDataLabel span').text(' [' + row.Code + ']');
+                $('#frmModalData #Code').attr('readonly', 'true');
+
+                $.each(row, function (key, value) {
+                    $('#frmModalData #' + key).val(value);
+                });
+
+                $.ajax({
+                    type: "POST",
+                    headers: ajexHeader,
+                    contentType: "application/json; charset=utf-8",
+                    url: '@Url.Action("getDetail","HistoryLogin")',
+                    data: ajaxPostData({
+                        'System': i18n.System,
+                        'UserCode': row.Code,
+                        'Date': row.ActionAt
+                    }),
+                    success: function (response) {
+                        //console.log(response);
+
+                        if (response.response == 'OK') {
+
+                            $('#tblDetail').dataTable().fnClearTable();
+                            if (response.data.length > 0) {
+                                $('#tblDetail').dataTable().fnAddData(response.data);
+                            }
+                            xSplash.hide();
+
+                        } else {
+                            if (response.message != '') xSwal.error("Error", response.message);
+                            xSplash.hide();
+
+                        }
+
+                        $('#ModalData').modal('toggle');
+                    }
+                });
+            }
+
+
+
+
+            onClickDetail = function (row = null) {
+                $.ajax({
+                    type: "POST",
+                    headers: ajexHeader,
+                    contentType: "application/json; charset=utf-8",
+                    url: '@Url.Action("getDescription","HistoryLogin")',
+                    data: ajaxPostData({
+                        'Session': row.Token
+                    }),
+                    success: function (response) {
+
+                        if (response.response == 'OK') {
+
+                            $('#tblDescription').dataTable().fnClearTable();
+                            if (response.data.length > 0) {
+                                $('#tblDescription').dataTable().fnAddData(response.data);
+                            }
+                            xSplash.hide();
+
+                        } else {
+                            if (response.message != '') xSwal.error("Error", response.message);
+                            xSplash.hide();
+
+                        }
+
+                        $('#ModalDetail').modal('toggle');
+                    }
+                });
+            }
+
+
+
+            onClickDescription = function (row = null) {
+                console.log(row);
+
+                $.each(row, function (key, value) {
+                    $('#frmModalDescription #' + key).val(value);
+                });
+
+                $('#ModalDescription').modal('toggle');
+                
+            }
+
+        });
+
+
+    </script>
+}

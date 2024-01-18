@@ -1,0 +1,136 @@
+﻿<div class="row">
+    <div class="col-xl-12 col-md-12 mb-12">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+
+                <div>
+                    <h4>Kanban Issue</h4>
+                </div>
+
+                <div class="row">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <label for="txtOrderNo" class="form-label">Order No</label>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="input-group">
+                                <input type="text" class="form-control"
+                                       placeholder="exam : 9Y22110901010"
+                                       id="txtPDSNo"
+                                       name="txtPDSNo"
+                                       aria-label="txtPDSNo"
+                                       aria-describedby="btnSearch" />
+                                <button class="btn btn-primary" type="button" id="btnSearch" name="btnSearch" onclick="onSearch()">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+
+
+<div class="row" id="divReceiveSpecial9Y">
+    <div class="col-xl-12 col-md-12 mb-12">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+
+                <div class="accordion-item">
+                    <h1 class='accordion-header active' id="headingOne">
+                        <button type="button" class="accordion-button" data-bs-toggle="collapse"
+                                data-bs-target="#accordionOne" aria-expanded="true" aria-controls="accordionOne">
+                            <h5>ปลด Receive Special 9Y</h5>&nbsp;
+                        </button>
+                    </h1>
+                    <div id="accordionOne" class='accordion-collapse collapse show' data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            <small class="text-primary">[New_Kanban].[dbo].[TB_REC_HEADER] (exec [QQ].[Chg_IssuedDate] '#F_OrderNo')</small>
+                            <div class="table-responsive text-nowrap">
+                                <table id="tblReceiveSpecial9Y" class="display" style="width:100%"></table>
+                            </div>
+                            <item type="button" id="btnSpecial9Y" label="ปลด Receive Special 9Y"></item>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+
+<div class="row" id="divReceiveDate">
+    <div class="col-xl-12 col-md-12 mb-12">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+
+                <div class="accordion-item">
+                    <h2 class='accordion-header active' id="headingTwo">
+                        <button type="button" class="accordion-button" data-bs-toggle="collapse"
+                                data-bs-target="#accordionTwo" aria-expanded="true" aria-controls="accordionTwo">
+                            <h5>เปลี่ยนวันที่ช่อง Receive (KBNRC220)</h5>
+                        </button>
+                    </h2>
+                    <div id="accordionTwo" class='accordion-collapse collapse show' data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            <small class="text-primary">[New_Kanban].[dbo].[TB_REC_DETAIL]</small>
+                            <div class="table-responsive text-nowrap">
+                                <table id="tblReceiveDate" class="display" style="width:100%"></table>
+                            </div>
+                            <item type="button" id="btnReceiveDate" label="เปลี่ยนวันที่ช่อง Receive"></item>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+
+
+<div class="row" id="divReceivePrice">
+    <div class="col-xl-12 col-md-12 mb-12">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+
+                <div class="accordion-item">
+                    <h2 class='accordion-header active' id="headingThree">
+                        <button type="button" class="accordion-button" data-bs-toggle="collapse"
+                                data-bs-target="#accordionThree" aria-expanded="true" aria-controls="accordionThree">
+                            <h5>
+                                ปรับยอด/ราคา Recieve
+                            </h5>
+                        </button>
+                    </h2>
+                    <div id="accordionThree" class='accordion-collapse collapse show' data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            <div class="table-responsive text-nowrap">
+                                <table id="tblReceivePrice" class="display" style="width:100%"></table>
+                            </div>
+                            <item type="button" id="execReceivePriceAmt" label="ปรับจำนวน Recieve"></item>
+                            <item type="button" id="execReceivePricePrc" label="ปรับราคา Recieve"></item>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+@section Scripts{
+    <script type="text/javascript" src="~/assets/js/History/UserMaintenance.js"></script>
+    <script type="text/javascript" src="~/assets/.script/Template/Master.js"></script>
+    <script type="text/javascript" src="~/assets/.script/Tools/KBNTL001.js?@ViewData["Version"]"></script>
+}

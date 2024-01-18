@@ -1,0 +1,76 @@
+﻿<div class="row">
+
+    <div class="col-xl-12 col-md-12 col-sm-12">
+        <div class="card border-left-primary shadow h-100">
+            <div class="card-body">
+
+                <form id="frmCondition">
+                    <div class="row">
+                        <div class="col mt-2">
+
+                            <fieldset class="fieldset">
+                                <legend>Import File : </legend>
+
+                                <div class="row">
+                                    <div class="col">
+
+                                        <fieldset class="fieldset">
+                                            <legend>Type For Import : </legend>
+                                            <div class="row">
+                                                <div class="col-3">
+                                                    <item type="radio" id="TypeForImport" value="Others" label="For Others ==> Normal Order"></item>
+                                                </div>
+                                                <div class="col-3">
+                                                    <item type="radio" id="TypeForImport" value="Pakistan" label="For Pakistan" checked></item>
+                                                </div>
+                                                <div class="col-3">
+                                                    <item type="radio" id="TypeForImport" value="Egypt" label="For Egypt"></item>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-3 mt-2">
+                                        <item type="month" id="F_ProductionMonth" label="Production Month" default="now"></item>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-4">
+                                        <item type="number" id="F_OrderType" label="Delivery Advanced" subfix="Day(s)"></item>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-8">
+                                        <item type="file" id="fileImport" filter=".txt"></item>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-8">
+                                        <item type="progress" id="pgsStatus" label="Processing: {{##.##}} %" max="142"></item>
+                                    </div>
+                                </div>
+
+                            </fieldset>
+                        </div>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+@section Scripts{
+    <script type="text/javascript" src="~/assets/js/History/UserMaintenance.js"></script>
+    <script type="text/javascript" src="~/assets/.script/Template/Master.js"></script>
+    <script type="text/javascript" src="~/assets/.script/V2VData/KBNIM002.js?@ViewData["Version"]"></script>
+}

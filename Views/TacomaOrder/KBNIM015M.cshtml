@@ -1,0 +1,241 @@
+﻿<div class="row">
+
+    <div class="col-xl-12 col-md-12 col-sm-12">
+        <div class="card border-left-primary shadow h-100">
+            <div class="card-body">
+
+                <form id="frmCondition">
+
+                    <div class="row">
+                        <div class="col">
+
+                            <div class="row">
+                                <div class="col-7">
+                                    <fieldset class="fieldset">
+                                        <legend>Header Data : </legend>
+
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <item type="month" id="txtOrderNo" label="Production Month" default="now"></item>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <item type="list" id="txtSupplierCode" label="Customer Order No." data-controller="LOVKB3.PartList" data-value="F_Part_No:Code" data-description="F_Part_Name"></item>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col">
+                                                <item type="lov" id="txtPartNo" label="Part No." data-controller="LOVKB3.PartList" data-value="F_Part_No:Code" data-description="F_Part_Name" class="col-2"></item>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <item type="select" id="txtStoreCode" label="Store Code"></item>
+                                            </div>
+                                            <div class="col-5">
+                                                <item type="date" id="txtIssueDate" label="Issue Date" format="yyyy-mm-dd" default="now"></item>
+                                            </div>
+                                        </div>
+
+
+
+                                    </fieldset>
+
+                                    <fieldset class="fieldset">
+                                        <legend>Detail Data : (Display Calendar by Store 1L)</legend>
+
+                                        <div class="row">
+                                            <div class="col calendar" style="margin-left:5px;">
+
+                                                <div class="row">
+                                                    <div class="col colsun">SUN</div>
+                                                    <div class="col colmon">MON</div>
+                                                    <div class="col coltue">TUE</div>
+                                                    <div class="col colwed">WED</div>
+                                                    <div class="col colthu">THU</div>
+                                                    <div class="col colfri">FRI</div>
+                                                    <div class="col colsat">SAT</div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <div class="row">
+                                                            <div class="col" id="day0"></div>
+                                                            <div class="col" id="day1"></div>
+                                                            <div class="col" id="day2"></div>
+                                                            <div class="col" id="day3"></div>
+                                                            <div class="col" id="day4"></div>
+                                                            <div class="col" id="day5"></div>
+                                                            <div class="col" id="day6"></div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col"><item type="number" id="txtDay0"></item></div>
+                                                            <div class="col"><item type="number" id="txtDay1"></item></div>
+                                                            <div class="col"><item type="number" id="txtDay2"></item></div>
+                                                            <div class="col"><item type="number" id="txtDay3"></item></div>
+                                                            <div class="col"><item type="number" id="txtDay4"></item></div>
+                                                            <div class="col"><item type="number" id="txtDay5"></item></div>
+                                                            <div class="col"><item type="number" id="txtDay6"></item></div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <div class="row">
+                                                            <div class="col" id="day7"></div>
+                                                            <div class="col" id="day8"></div>
+                                                            <div class="col" id="day9"></div>
+                                                            <div class="col" id="day10"></div>
+                                                            <div class="col" id="day11"></div>
+                                                            <div class="col" id="day12"></div>
+                                                            <div class="col" id="day13"></div>
+                                                        </div>
+
+                                                        <div class="row">
+                                                            <div class="col"><item type="number" id="txtDay7"></item></div>
+                                                            <div class="col"><item type="number" id="txtDay8"></item></div>
+                                                            <div class="col"><item type="number" id="txtDay9"></item></div>
+                                                            <div class="col"><item type="number" id="txtDay10"></item></div>
+                                                            <div class="col"><item type="number" id="txtDay11"></item></div>
+                                                            <div class="col"><item type="number" id="txtDay12"></item></div>
+                                                            <div class="col"><item type="number" id="txtDay13"></item></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <div class="row">
+                                                            <div class="col" id="day14"></div>
+                                                            <div class="col" id="day15"></div>
+                                                            <div class="col" id="day16"></div>
+                                                            <div class="col" id="day17"></div>
+                                                            <div class="col" id="day18"></div>
+                                                            <div class="col" id="day19"></div>
+                                                            <div class="col" id="day20"></div>
+                                                        </div>
+
+                                                        <div class="row">
+                                                            <div class="col"><item type="number" id="txtDay14"></item></div>
+                                                            <div class="col"><item type="number" id="txtDay15"></item></div>
+                                                            <div class="col"><item type="number" id="txtDay16"></item></div>
+                                                            <div class="col"><item type="number" id="txtDay17"></item></div>
+                                                            <div class="col"><item type="number" id="txtDay18"></item></div>
+                                                            <div class="col"><item type="number" id="txtDay19"></item></div>
+                                                            <div class="col"><item type="number" id="txtDay20"></item></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <div class="row">
+                                                            <div class="col" id="day21"></div>
+                                                            <div class="col" id="day22"></div>
+                                                            <div class="col" id="day23"></div>
+                                                            <div class="col" id="day24"></div>
+                                                            <div class="col" id="day25"></div>
+                                                            <div class="col" id="day26"></div>
+                                                            <div class="col" id="day27"></div>
+                                                        </div>
+
+                                                        <div class="row">
+                                                            <div class="col"><item type="number" id="txtDay21"></item></div>
+                                                            <div class="col"><item type="number" id="txtDay22"></item></div>
+                                                            <div class="col"><item type="number" id="txtDay23"></item></div>
+                                                            <div class="col"><item type="number" id="txtDay24"></item></div>
+                                                            <div class="col"><item type="number" id="txtDay25"></item></div>
+                                                            <div class="col"><item type="number" id="txtDay26"></item></div>
+                                                            <div class="col"><item type="number" id="txtDay27"></item></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <div class="row">
+                                                            <div class="col" id="day28"></div>
+                                                            <div class="col" id="day29"></div>
+                                                            <div class="col" id="day30"></div>
+                                                            <div class="col" id="day31"></div>
+                                                            <div class="col" id="day32"></div>
+                                                            <div class="col" id="day33"></div>
+                                                            <div class="col" id="day34"></div>
+                                                        </div>
+
+                                                        <div class="row">
+                                                            <div class="col"><item type="number" id="txtDay28"></item></div>
+                                                            <div class="col"><item type="number" id="txtDay29"></item></div>
+                                                            <div class="col"><item type="number" id="txtDay30"></item></div>
+                                                            <div class="col"><item type="number" id="txtDay31"></item></div>
+                                                            <div class="col"><item type="number" id="txtDay32"></item></div>
+                                                            <div class="col"><item type="number" id="txtDay33"></item></div>
+                                                            <div class="col"><item type="number" id="txtDay34"></item></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row" id="row6">
+                                                    <div class="col">
+                                                        <div class="row">
+                                                            <div class="col" id="day35"></div>
+                                                            <div class="col" id="day36"></div>
+                                                            <div class="col" id="day37"></div>
+                                                            <div class="col" id="day38"></div>
+                                                            <div class="col" id="day39"></div>
+                                                            <div class="col" id="day40"></div>
+                                                            <div class="col" id="day41"></div>
+                                                        </div>
+
+                                                        <div class="row">
+                                                            <div class="col"><item type="number" id="txtDay35"></item></div>
+                                                            <div class="col"><item type="number" id="txtDay36"></item></div>
+                                                            <div class="col"><item type="number" id="txtDay37"></item></div>
+                                                            <div class="col"><item type="number" id="txtDay38"></item></div>
+                                                            <div class="col"><item type="number" id="txtDay39"></item></div>
+                                                            <div class="col"><item type="number" id="txtDay40"></item></div>
+                                                            <div class="col"><item type="number" id="txtDay41"></item></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+
+                                            </div>
+                                        </div>
+
+                                    </fieldset>
+
+                                </div>
+
+
+                                <div class="col-5">
+                                    <item type="table" id="tblMaster" label="Detail Data"></item>
+                                </div>
+                            </div>
+
+
+
+                        </div>
+                    </div>
+
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts{
+    <link rel="stylesheet" href="~/assets/css/Calendar.css" type="text/css" />
+
+    <script type="text/javascript" src="~/assets/js/History/UserMaintenance.js"></script>
+    <script type="text/javascript" src="~/assets/.script/Template/Action.js"></script>
+    <script type="text/javascript" src="~/assets/.script/Template/Master.js"></script>
+    <script type="text/javascript" src="~/assets/.script/SpecialData/KBNIM007.js?@ViewData["Version"]"></script>
+}

@@ -1,0 +1,230 @@
+﻿<div class="row">
+    <div class="col-xl-12 col-md-12 mb-12">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+
+                <form id="frmCriteria" class="needs-validated" action="" method="POST" novalidate>
+
+                    <div class="step">
+                        <div class="row mb-2">
+                            <div class="col">
+                                <button type="button" class="btn btn-success" id="btnPrint" title="Print" onclick="validateForm()">
+                                    <i class="fas fa-print"></i>
+                                </button>
+                            </div>
+                        </div>
+
+
+
+                        <div class="row g-2 mb-2">
+                            <label for="ShortName" class="col-sm-2 col-form-label">Information :</label>
+                        </div>
+                        <div class="row g-2 mb-5">
+                            <label for="ItemKeyFrom" class="col-sm-1 col-form-label" style="text-align:right;">Tambon</label>
+                            <div class="col-sm-5">
+                                <input type="text"
+                                       class="form-control"
+                                       id="Tambon"
+                                       name="Tambon"
+                                       value="@ViewData["Tambon"]"
+                                       autocomplete="off"
+                                       required
+                                       autofocus />
+                                <div class="invalid-tooltip">
+                                    <small>Enter your username.</small>
+                                </div>
+                            </div>
+                            <label for="ItemKeyTo" class="col-sm-1 col-form-label" style="text-align:right;">District</label>
+                            <div class="col-sm-5">
+                                <input type="text" id="District" class="form-control"></input>
+                            </div>
+                        </div>
+
+                        <div class="row g-2 mb-5">
+                            <label for="ShortName" class="col-sm-1 col-form-label" style="text-align:right;">Province</label>
+                            <div class="col-sm-5">
+                                <input type="text" id="Province" class="form-control"></input>
+                            </div>
+                            <label for="ShortName" class="col-sm-1 col-form-label" style="text-align:right;">PostCode</label>
+                            <div class="col-sm-5">
+                                <input type="text" id="PostCode" class="form-control"></input>
+                            </div>
+                        </div>
+
+
+                        <div class="row" style="margin-top:20px;">
+                            <table id="tblMaster" class="display" style="width:100%"></table>
+                        </div>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script type="text/javascript">
+
+
+        $(document).ready(function () {
+            var _i18n = '@ViewData["UserLanguage"].ToString()';
+            //console.log(_i18n);
+
+            var tblMaster, tblDetail;
+            onLoad = function () {
+                xSplash.show();
+                xSplash.text('Loading data');
+
+
+                $.ajax({
+                    type: "GET",
+                    url: 'https://warranty.hinommt.com/ThailandCountry/Tambon?q=phuphirom',
+                    success: function (result) {
+                        //console.log(result);
+
+                        const ac = new Autocomplete(document.getElementById('Tambon')
+                            , {
+                                data: result.data,
+                                treshold: 1,
+                                maximumItems: 8,
+                                displayLabel: 'label' + (_i18n == 'EN' ? '' : _i18n),
+                                displayValue: 'Tambon' + (_i18n == 'EN' ? '' : _i18n),
+                                onSelectItem: ({ label, value, row, data }) => {
+                                    $('#District').val(data['District' + (_i18n == 'EN' ? '' : _i18n)]);
+                                    $('#Province').val(data['Province' + (_i18n == 'EN' ? '' : _i18n)]);
+                                    $('#PostCode').val(data.PostCode);
+                                    ////console.log(row);
+                                    //var _label = label.split(',')
+                                    //$('#Tambon').val(_label[0]);
+                                    //$('#District').val(_label[1]);
+                                    //$('#Province').val(_label[2]);
+                                    //$('#PostCode').val(data.PostCode);
+                                    //console.log(label.split(','));
+                                }
+                            });
+                    }
+                });
+
+
+
+                tblMaster = xDataTable.Initial({
+                    name: 'tblMaster',
+                    pageLength: 100,
+                    running: 0,
+                    //toolbar: "",
+                    columnTitle: {
+                        "EN": ['No.', 'ItemKey', 'ThisMonthQty', 'MovementQty', '=', 'QtyonHand', 'ThisMonthAmt', 'Status'],
+                        "TH": ['No.', 'ItemKey', 'ThisMonthQty', 'MovementQty', '=', 'QtyonHand', 'ThisMonthAmt', 'Status'],
+                    },
+                    column:
+                        [
+                            { "data": "RunningNo" },
+                            //{ "data": "LocationKey" },
+                            //{ "data": "ItemClassKey" },
+                            { "data": "ItemKey" },
+                            { "data": "ThisMonthQty" },
+                            { "data": "MovementQty" },
+                            { "data": "ThisMonthQty" },
+                            { "data": "QtyonHand" },
+                            //{ "data": "StockQty" },
+                            //{ "data": "IncDecFlag" },
+                            { "data": "ThisMonthAmt" },
+                            { "data": "Status" },
+                        ],
+                    columnDefs:
+                        [
+                            //{ targets: 0, width: '5%' },
+                            //{ targets: 2, className: 'dt-body-right' },
+                            //{ targets: 3, className: 'dt-body-right' },
+                            //{ targets: 4, className: 'dt-body-right' },
+                            //{ targets: 5, className: 'dt-body-center' },
+                            {
+                                targets: 4,
+                                render: function (data, type, row, meta) {
+                                    console.log(row.ThisMonthQty + row.MovementQty);
+
+                                    if (row.ThisMonthQty + row.MovementQty != row.QtyonHand) {
+
+                                        return `<span style="color:red">` + (row.ThisMonthQty + row.MovementQty) + `</span>`;
+                                    } else {
+                                        return row.ThisMonthQty + row.MovementQty;
+                                    }
+
+                                }
+                            }
+                        ],
+                    rowclick: function (data) {
+                        //onRowClickMaster(data);
+                    },
+                    then: function (config) {
+                        //xSplash.hide();
+                    }
+                });
+
+
+
+
+                //xSplash.hide();
+
+            }
+            onLoad();
+
+
+
+            loadData = function () {
+
+                console.log('xXx');
+
+                $.ajax(
+                    {
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        headers: ajexHeader,
+                        url: '@Url.Action("updateINLOC", "SubMat")',
+                        data: ajaxPostData({
+                            LocationKey: '40002'
+                        }),
+                        success: function (result) {
+                            console.log(result);
+
+                            if (result.response == "OK") {
+
+                                $('#tblMaster').dataTable().fnClearTable();
+                                if (result.data.INLOC.length > 0) {
+                                    $('#tblMaster').dataTable().fnAddData(result.data.INLOC);
+                                }
+
+                            } else {
+                                xSwal.error('Error', result.message);
+                            }
+
+                            xSplash.hide();
+
+                        }
+                    }
+                );
+            }
+            loadData();
+
+
+
+
+            $('#btnPrint').on('click', function (e) {
+                console.log('btnPrint Click');
+            });
+
+
+            validateForm = function () {
+
+                var _validate = xBootstrap.validation('frmCriteria');
+                console.log(_validate);
+            }
+
+
+        });
+
+    </script>
+}

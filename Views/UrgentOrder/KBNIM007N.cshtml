@@ -1,0 +1,112 @@
+﻿<div class="row">
+
+    <div class="col-xl-12 col-md-12 col-sm-12">
+        <div class="card border-left-primary shadow h-100">
+            <div class="card-body">
+
+                <form id="frmCondition">
+
+                    <div class="row">
+                        <div class="col">
+
+                            <fieldset class="fieldset">
+                                <legend>Detail : </legend>
+
+                                <div class="row">
+                                    <div class="col-6">
+                                        <item type="select" id="txtOrderNo" label="Order No."></item>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-8">
+                                        <item type="lov" id="txtSupplierCode" label="Supplier Code" data-controller="LOVKB3.PartList" data-value="F_Part_No:Code" data-description="F_Part_Name" class="col-2"></item>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-3">
+                                        <item type="text" id="txtCycleTime" label="Cycle Time"></item>
+                                    </div>
+                                </div>
+
+                            </fieldset>
+
+                        </div>
+                    </div>
+
+                    <div class="row mt-2">
+                        <div class="col">
+                            <item type="table" id="tblMaster"></item>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col">
+
+                            <fieldset class="fieldset">
+                                <legend>Data : </legend>
+
+                                <div class="row">
+                                    <div class="col-3">
+                                        <item type="select" id="txtPartNo" label="PART NO."></item>
+                                    </div>
+                                    <div class="col-3">
+                                        <item type="select" id="txtKanbanNo" label="KANBAN NO."></item>
+                                    </div>
+                                    <div class="col-2">
+                                        <item type="currency" id="txtQtyPack" label="QTY/PACK"></item>
+                                    </div>
+                                    <div class="col-2">
+                                        <item type="currency" id="txtPack" label="PACK"></item>
+                                    </div>
+                                    <div class="col-2">
+                                        <item type="currency" id="txtQty" label="QTY"></item>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-3">
+                                        <item type="date" id="txtDeliveryDate" label="DELIVERY DATE" format="yyyy-mm-dd" default="now"></item>
+                                    </div>
+                                    <div class="col-3">
+                                        <item type="text" id="txtDeliveryTrip" label="DELIVERY TRIP"></item>
+                                    </div>
+                                </div>
+
+                            </fieldset>
+
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col">
+
+                            <fieldset class="fieldset">
+                                <legend>Import Data : </legend>
+
+                                <div class="row">
+                                    <div class="col">
+                                        <item type="file" id="ItemID" filter=".txt"></item>
+                                    </div>
+                                </div>
+
+                            </fieldset>
+
+                        </div>
+                    </div>
+
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+@section Scripts{
+    <script type="text/javascript" src="~/assets/js/History/UserMaintenance.js"></script>
+    <script type="text/javascript" src="~/assets/.script/Template/Master.js"></script>
+    <script type="text/javascript" src="~/assets/.script/UrgentOrder/KBNIM007N.js?@ViewData["Version"]"></script>
+}

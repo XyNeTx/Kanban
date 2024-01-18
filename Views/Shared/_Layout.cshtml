@@ -1,0 +1,666 @@
+﻿@using System.Data
+@model System.Data.DataTable
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>@ViewData["AppName"] - @ViewData["Title"] </title>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="@ViewData["Logo"]" />
+
+
+    <link rel="stylesheet" href="~/assets/vendor/bootstrap/5.1.0/dist/css/bootstrap.min.css" />
+    @*<link rel="stylesheet" href="~/assets/vendor/bootstrap/5.0.2/dist/css/bootstrap.css" />*@
+
+
+
+    <!-- Custom fonts for this template-->
+    <link href="~/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+
+
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,800" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+          rel="stylesheet">
+
+
+    <!-- Adminty -->
+    @*<link rel="stylesheet" type="text/css" href="~/assets/adminty/bower_components/bootstrap/dist/css/bootstrap.min.css">*@
+
+    <link rel="stylesheet" type="text/css" href="~/assets/adminty/icon/themify-icons/themify-icons.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/adminty/icon/icofont/css/icofont.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/adminty/icon/feather/css/feather.css">
+
+
+    <link rel="stylesheet" type="text/css" href="~/assets/adminty/bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/adminty/bower_components/datatables.net-bs4/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/adminty/bower_components/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css">
+
+    <link rel="stylesheet" type="text/css" href="~/assets/adminty/pages/data-table/css/buttons.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/adminty/pages/data-table/css/select.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/adminty/pages/data-table/extensions/buttons/css/buttons.dataTables.min.css">
+
+    <link rel="stylesheet" type="text/css" href="~/assets/adminty/css/style.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/adminty/css/jquery.mCustomScrollbar.css">
+
+
+    <!-- Datatables -->
+    <link href="~/assets/vendor/datatables/1.13.4/css/jquery.dataTables.min.css" rel="stylesheet">
+    <link href="~/assets/vendor/datatables/1.13.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+
+    <link href="~/assets/vendor/datatables/buttons/2.4.1/css/buttons.dataTables.min.css" rel="stylesheet">
+    @*<link href="~/assets/vendor/datatables/1.10.24/css/jquery.dataTables.min.css" rel="stylesheet">*@
+    @*<link href="~/assets/vendor/datatables/1.10.24/css/dataTables.bootstrap4.min.css" rel="stylesheet">*@
+    <link href="~/assets/vendor/datatables/fixedcolumns/4.2.1/css/fixedColumns.dataTables.min.css" rel="stylesheet">
+    @*<link href="~/assets/vendor/twitter-bootstrap/5.2.0/css/bootstrap.min.css" rel="stylesheet">*@
+
+    <!-- Vendor CSS -->
+    <link href="~/assets/vendor/swal2/sweetalert2.min.css" rel="stylesheet">
+    <link href="~/assets/vendor/daterangepicker/daterangepicker.css" rel="stylesheet" />
+    <link href="~/assets/vendor/bootstrap/bootstrap-datepicker/1.9.14/css/bootstrap-datepicker.css" rel="stylesheet" type="text/css" />
+    @*<link href="~/assets/vendor/gijgo/1.9.14/css/gijgo.min.css" rel="stylesheet" />*@
+
+    <link href="~/assets/.libs/class/lab.Splash/lab.Splash.css" rel="stylesheet">
+
+
+    @*<link href="~/assets/vendor/bootstrap/bootstrap-typeahead/4.0.2/css/bootstrap-typeahead.css" rel="stylesheet" />*@
+    <!-- Custom styles for this template-->
+    <link href="~/assets/css/site.css" rel="stylesheet" />
+    <link href="~/assets/css/stepsStyle.css" rel="stylesheet" />
+    <link href="~/assets/css/sb-admin-kb3.css" rel="stylesheet">
+    @*<link href="@Url.Content("~/assets/css/sb-admin-" + ViewData["System"].ToString() + ".css")" rel="stylesheet">*@
+
+
+    <!-- Site level plugins -->
+    @*<link href="~/assets/css/site.css" rel="stylesheet" asp-append-version="true" />*@
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="~/assets/vendor/jquery/3.6.0/jquery.min.js"></script>
+    <script src="~/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="~/assets/vendor/bootstrap/5.1.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/assets/vendor/bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
+    <script src="~/assets/vendor/bootstrap/bootstrap-datepicker/1.9.14/js/bootstrap-datepicker.min.js"></script>
+    <script src="~/assets/vendor/bootstrap/bootstrap-autocomplete-typeahead/5.0.0/autocomplete.js"></script>
+    <script src="~/assets/vendor/gijgo/1.9.14/js/gijgo.min.js"></script>
+
+    @*<script src="~/assets/vendor/bootstrap/bootstrap-typeahead/4.0.2/js/typeahead.bundle.js"></script>
+    <script src="~/assets/vendor/bootstrap/bootstrap-typeahead/4.0.2/js/bootstrap-typeahead.min.js"></script>*@
+    @*<script src="https://code.jquery.com/jquery-3.5.1.js"></script>*@
+    @*<script src="~/assets/lib/jquery/dist/jquery.min.js"></script>*@
+
+    <!-- Vendor JScript -->
+    <script src="~/assets/vendor/swal2/sweetalert2.min.js"></script>
+    @*<script src="~/assets/vendor/splash/xSplash.js"></script>*@
+    <script src="~/assets/vendor/datatables/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script src="~/assets/vendor/datatables/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+    <script src="~/assets/vendor/datatables/1.13.4/js/dataTables.sum.js"></script>
+    <script src="~/assets/vendor/datatables/fixedcolumns/4.2.1/js/dataTables.fixedColumns.min.js"></script>
+
+
+
+    <script src="~/assets/vendor/moment/moment.js"></script>
+    @*<script src="~/assets/vendor/daterangepicker/jquery.min.js"></script>*@
+    @*<script src="~/assets/vendor/daterangepicker/daterangepicker.js"></script>*@
+    @*<script src="~/assets/vendor/chart.js/4.2.0/utils.js"></script>*@
+    <script src="~/assets/vendor/chart.js/4.2.0/chart-utils.min.js"></script>
+    <script src="~/assets/vendor/chart.js/4.2.0/Chart.js"></script>
+
+
+    <!-- Custom scripts for all pages-->
+    @*<script src="~/assets/js/sb-admin-2.min.js"></script>*@
+
+
+    @Html.Partial("_Script")
+
+
+    <!-- Site level plugins -->
+    <script type="text/javascript" src="~/assets/.libs/function/func.Cookies.js"></script>
+    <script type="text/javascript" src="~/assets/.libs/config.js"></script>
+    <script type="text/javascript" src="~/assets/.libs/function/AD.js"></script>
+    <script type="text/javascript" src="~/assets/.libs/function/Functions.js"></script>
+    <script type="text/javascript" src="~/assets/.libs/function/func.DataTable.Export.js"></script>
+
+
+
+
+</head>
+
+
+<body id="page-top">
+    <div id="vueApp">
+        <div id="pcoded" class="pcoded">
+            <div class="pcoded-overlay-box"></div>
+            <div class="pcoded-container navbar-wrapper">
+                <nav class="navbar header-navbar pcoded-header">
+                    <div class="navbar-wrapper">
+                        <div class="navbar-logo">
+                            <a class="mobile-menu" id="mobile-collapse" href="#!">
+                                <i class="feather icon-menu"></i>
+                            </a>
+                            <a href="~/Home">
+                                <img class="img-fluid" src="@ViewData["Logo"]" alt="HINO" />
+                                <b>@ViewData["Name"]</b>
+                            </a>
+                            <a class="mobile-options">
+                                <i class="feather icon-more-horizontal"></i>
+                            </a>
+                        </div>
+                        <div class="navbar-container">
+                            <ul class="nav-left">
+                                @*<li class="header-search">
+                                <div class="main-search morphsearch-search">
+                                <div class="input-group">
+                                <span class="input-group-addon search-close"><i class="feather icon-x"></i></span>
+                                <input type="text" class="form-control">
+                                <span class="input-group-addon search-btn"><i class="feather icon-search"></i></span>
+                                </div>
+                                </div>
+                                </li>*@
+                                <li>
+                                    <a href="#!" onclick="javascript:toggleFullScreen()">
+                                        <i class="feather icon-maximize full-screen"></i>
+                                    </a>
+                                </li>
+                                <li>
+                                    <h4 class="mt-3">@ViewData["AppName"]</h4>
+                                </li>
+                            </ul>
+                            <ul class="nav-right">
+                                @*<li class="header-notification">
+                                <div class="dropdown-primary dropdown">
+                                <div class="dropdown-toggle" data-toggle="dropdown">
+                                <i class="feather icon-bell"></i>
+                                <span class="badge bg-c-pink">5</span>
+                                </div>
+                                <ul class="show-notification notification-view dropdown-menu" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
+                                <li>
+                                <h6>Notifications</h6>
+                                <label class="label label-danger">New</label>
+                                </li>
+                                <li>
+                                <div class="media">
+                                <img class="d-flex align-self-center img-radius" src="~/assets/adminty/images/avatar-4.jpg" alt="Generic placeholder image">
+                                <div class="media-body">
+                                <h5 class="notification-user">John Doe</h5>
+                                <p class="notification-msg">
+                                Lorem ipsum dolor sit amet, consectetuer
+                                elit.
+                                </p>
+                                <span class="notification-time">30 minutes ago</span>
+                                </div>
+                                </div>
+                                </li>
+                                <li>
+                                <div class="media">
+                                <img class="d-flex align-self-center img-radius" src="~/assets/adminty/images/avatar-3.jpg" alt="Generic placeholder image">
+                                <div class="media-body">
+                                <h5 class="notification-user">Joseph William</h5>
+                                <p class="notification-msg">
+                                Lorem ipsum dolor sit amet, consectetuer
+                                elit.
+                                </p>
+                                <span class="notification-time">30 minutes ago</span>
+                                </div>
+                                </div>
+                                </li>
+                                <li>
+                                <div class="media">
+                                <img class="d-flex align-self-center img-radius" src="~/assets/adminty/images/avatar-4.jpg" alt="Generic placeholder image">
+                                <div class="media-body">
+                                <h5 class="notification-user">Sara Soudein</h5>
+                                <p class="notification-msg">
+                                Lorem ipsum dolor sit amet, consectetuer
+                                elit.
+                                </p>
+                                <span class="notification-time">30 minutes ago</span>
+                                </div>
+                                </div>
+                                </li>
+                                </ul>
+                                </div>
+                                </li>
+                                <li class="header-notification">
+                                <div class="dropdown-primary dropdown">
+                                <div class="displayChatbox dropdown-toggle" data-toggle="dropdown">
+                                <i class="feather icon-message-square"></i>
+                                <span class="badge bg-c-green">3</span>
+                                </div>
+                                </div>
+                                </li>*@
+                                <li style="font-size:0.7rem;font-weight:bold;line-height:1.5;padding-top:3px;color:blue;padding: 0 0px;">
+                                    <span>
+                                        <span style="color:#404e67;">Date :</span> @ViewData["_ProcessDate"] <br />
+                                        <span style="color:#404e67;">Plant :</span> @ViewData["_Plant"]  <br />
+                                        <span style="color:#404e67;">Shift :</span> @(ViewData["_ProcessShift"].ToString() == "D" ? "D - Day Shift" : "N - Night Shift")
+                                    </span>
+                                </li>
+                                <li class="user-profile header-notification">
+                                    <div class="dropdown-primary dropdown">
+                                        <div class="dropdown-toggle" data-toggle="dropdown" id="profileSetting">
+                                            <img 
+                                                 src="~/assets/img/avatars/@ViewData["UserAvatar"]"
+                                                 id="profile-avatar"
+                                                 class="rounded-circle"
+                                                 alt="profile-avatar"
+                                                 data-bs-toggle="tooltip" 
+                                                 data-bs-placement="bottom" 
+                                                 title="@ViewData["_DisplayName"]"><br />
+                                            @*<i>@ViewData["_DisplayName"]</i>*@
+                                            @*<span>@ViewData["_DisplayName"]</span>*@
+                                            @*<i class="feather icon-chevron-down"></i>*@
+                                        </div>
+                                        <ul class="show-notification profile-notification dropdown-menu"
+                                            aria-labelledby="profileSetting"
+                                            data-dropdown-in="fadeIn"
+                                            data-dropdown-out="fadeOut">
+                                            <li>
+                                                <a href="#" data-bs-toggle="modal" data-bs-target="#ModalUserProfile">
+                                                    <i class="feather icon-user"></i> Profile
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <div onclick="$('#styleSelector').attr('class','open')">
+                                                    <a href="#!">
+                                                        <i class="feather icon-settings"></i> Settings
+                                                    </a>
+                                                </div>
+                                            </li>
+                                            @*                                            <li>
+                                            <a href="email-inbox.html">
+                                            <i class="feather icon-mail"></i> My Messages
+                                            </a>
+                                            </li>
+                                            <li>
+                                            <a href="auth-lock-screen.html">
+                                            <i class="feather icon-lock"></i> Lock Screen
+                                            </a>
+                                            </li>*@
+                                            <li>
+                                                <a href="~/Login/Logout">
+                                                    <i class="feather icon-log-out"></i> Logout
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+
+                @*<div id="sidebar" class="users p-chat-user showChat">
+                    <div class="had-container">
+                        <div class="card card_main p-fixed users-main">
+                            <div class="user-box">
+                                <div class="chat-inner-header">
+                                    <div class="back_chatBox">
+                                        <div class="right-icon-control">
+                                            <input type="text" class="form-control  search-text" placeholder="Search Friend" id="search-friends">
+                                            <div class="form-icon">
+                                                <i class="icofont icofont-search"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="main-friend-list">
+                                    <div class="media userlist-box" data-id="1" data-status="online" data-username="Josephin Doe" data-toggle="tooltip" data-placement="left" title="Josephin Doe">
+                                        <a class="media-left" href="#!">
+                                            <img class="media-object img-radius img-radius" src="~/assets/adminty/images/avatar-3.jpg" alt="Generic placeholder image ">
+                                            <div class="live-status bg-success"></div>
+                                        </a>
+                                        <div class="media-body">
+                                            <div class="f-13 chat-header">Josephin Doe</div>
+                                        </div>
+                                    </div>
+                                    <div class="media userlist-box" data-id="2" data-status="online" data-username="Lary Doe" data-toggle="tooltip" data-placement="left" title="Lary Doe">
+                                        <a class="media-left" href="#!">
+                                            <img class="media-object img-radius" src="~/assets/adminty/images/avatar-2.jpg" alt="Generic placeholder image">
+                                            <div class="live-status bg-success"></div>
+                                        </a>
+                                        <div class="media-body">
+                                            <div class="f-13 chat-header">Lary Doe</div>
+                                        </div>
+                                    </div>
+                                    <div class="media userlist-box" data-id="3" data-status="online" data-username="Alice" data-toggle="tooltip" data-placement="left" title="Alice">
+                                        <a class="media-left" href="#!">
+                                            <img class="media-object img-radius" src="~/assets/adminty/images/avatar-4.jpg" alt="Generic placeholder image">
+                                            <div class="live-status bg-success"></div>
+                                        </a>
+                                        <div class="media-body">
+                                            <div class="f-13 chat-header">Alice</div>
+                                        </div>
+                                    </div>
+                                    <div class="media userlist-box" data-id="4" data-status="online" data-username="Alia" data-toggle="tooltip" data-placement="left" title="Alia">
+                                        <a class="media-left" href="#!">
+                                            <img class="media-object img-radius" src="~/assets/adminty/images/avatar-3.jpg" alt="Generic placeholder image">
+                                            <div class="live-status bg-success"></div>
+                                        </a>
+                                        <div class="media-body">
+                                            <div class="f-13 chat-header">Alia</div>
+                                        </div>
+                                    </div>
+                                    <div class="media userlist-box" data-id="5" data-status="online" data-username="Suzen" data-toggle="tooltip" data-placement="left" title="Suzen">
+                                        <a class="media-left" href="#!">
+                                            <img class="media-object img-radius" src="~/assets/adminty/images/avatar-2.jpg" alt="Generic placeholder image">
+                                            <div class="live-status bg-success"></div>
+                                        </a>
+                                        <div class="media-body">
+                                            <div class="f-13 chat-header">Suzen</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>*@
+
+@*                <div class="showChat_inner">
+                    <div class="media chat-inner-header">
+                        <a class="back_chatBox">
+                            <i class="feather icon-chevron-left"></i> Josephin Doe
+                        </a>
+                    </div>
+                    <div class="media chat-messages">
+                        <a class="media-left photo-table" href="#!">
+                            <img class="media-object img-radius img-radius m-t-5" src="~/assets/adminty/images/avatar-3.jpg" alt="Generic placeholder image">
+                        </a>
+                        <div class="media-body chat-menu-content">
+                            <div class>
+                                <p class="chat-cont">I'm just looking around. Will you tell me something about yourself?</p>
+                                <p class="chat-time">8:20 a.m.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="media chat-messages">
+                        <div class="media-body chat-menu-reply">
+                            <div class>
+                                <p class="chat-cont">I'm just looking around. Will you tell me something about yourself?</p>
+                                <p class="chat-time">8:20 a.m.</p>
+                            </div>
+                        </div>
+                        <div class="media-right photo-table">
+                            <a href="#!">
+                                <img class="media-object img-radius img-radius m-t-5" src="~/assets/adminty/images/avatar-4.jpg" alt="Generic placeholder image">
+                            </a>
+                        </div>
+                    </div>
+                    <div class="chat-reply-box p-b-20">
+                        <div class="right-icon-control">
+                            <input type="text" class="form-control search-text" placeholder="Share Your Thoughts">
+                            <div class="form-icon">
+                                <i class="feather icon-navigation"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>*@
+
+                <div class="pcoded-main-container">
+                    <div class="pcoded-wrapper">
+                        <nav class="pcoded-navbar">
+                            <div class="pcoded-inner-navbar main-menu">
+                                <div class="pcoded-navigatio-lavel">Navigation</div>
+
+                                <ul class="pcoded-item pcoded-left-item">
+                                    @Html.Raw(@ViewData["_MENU_"])
+                                </ul>
+
+                            </div>
+                            <div style="color:greenyellow;text-align:center;font-size:12px;" id="_NAVDATETIME_">Today : </div>
+                        </nav>
+                        <div class="pcoded-content">
+                            <div class="pcoded-inner-content">
+                                @if (ViewData["ComponentToolbar"].ToString() == "true")
+                                {
+                                    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar">
+                                        <div class="btn-group btn-group-sm me-2" role="group" aria-label="Toolbar">
+                                            
+                                            <button type="button" class="btn btn-success"
+                                                    id="ButtonLayoutSearch"
+                                                    title="@(ViewData["ComponentToolbarSearchText"].ToString() != "" ? ViewData["ComponentToolbarSearchText"].ToString() : "Search")"
+                                            @(ViewData["ComponentToolbarSearch"].ToString() == "true" ? "" : "disabled")>
+                                                <i class="ti-search"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-success"
+                                                    id="ButtonLayoutSave"
+                                                    onclick="onSave()"
+                                                    title="@(ViewData["ComponentToolbarSaveText"].ToString() != "" ? ViewData["ComponentToolbarSaveText"].ToString() : "Save")"
+                                            @(ViewData["ComponentToolbarSave"].ToString() == "true" ? "" : "disabled")>
+                                                <i class="ti-save"></i>
+                                            </button>
+                                            @*<div class="btn-group" role="group">*@
+                                            <button type="button" id="ButtonLayoutGroupExport" class="btn btn-success dropdown-toggle" 
+                                                    data-bs-toggle="dropdown" aria-expanded="false"
+                                                    title="@(ViewData["ComponentToolbarExportText"].ToString() != "" ? ViewData["ComponentToolbarExportText"].ToString() : "Export drop down menu")"
+                                            @(ViewData["ComponentToolbarExport"].ToString() == "true" ? "" : "disabled")>
+                                                <i class="fas fa-download"></i>
+                                            </button>
+                                            <ul class="dropdown-menu" aria-labelledby="btnGroupExport">
+                                                <li><a class="dropdown-item" id="ButtonLayoutExport_Copy" href="#"><i class="ti-clipboard"></i>Clipboard</a></li>
+                                                <li><a class="dropdown-item" id="ButtonLayoutExport_CSV" href="#"><i class="fas fa-file-download"></i>CSV</a></li>
+                                                <li><a class="dropdown-item" id="ButtonLayoutExport_XLS" href="#"><i class="far fa-file-excel"></i>Excel</a></li>
+                                                <li><a class="dropdown-item" id="ButtonLayoutExport_PDF" href="#"><i class="far fa-file-pdf"></i>PDF</a></li>
+                                            </ul>
+                                            @*</div>*@
+
+                                            <button type="button" class="btn btn-success"
+                                                    id="ButtonLayoutExport_Print"
+                                                    title="@(ViewData["ComponentToolbarPrintText"].ToString() != "" ? ViewData["ComponentToolbarPrintText"].ToString() : "Print")"
+                                            @(ViewData["ComponentToolbarPrint"].ToString() == "true" ? "" : "disabled")>
+                                                <i class="ti-printer"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-success" 
+                                                    id="ButtonLayoutExecute"
+                                                    onclick="onExecute()"
+                                                    title="@(ViewData["ComponentToolbarExecuteText"].ToString() != "" ? ViewData["ComponentToolbarExecuteText"].ToString() : "Run/Execute")"
+                                            @(ViewData["ComponentToolbarExecute"].ToString() == "true" ? "" : "disabled")>
+                                                <i class="fas fa-bolt"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-success" 
+                                                    id="ButtonLayoutDelete"
+                                                    onclick="onDeleteAll()"
+                                                    title="@(ViewData["ComponentToolbarDeleteText"].ToString() != "" ? ViewData["ComponentToolbarDeleteText"].ToString() : "Delete")"
+                                            @(ViewData["ComponentToolbarDelete"].ToString() == "true" ? "" : "disabled")>
+                                                <i class="far fa-trash-alt"></i>
+                                            </button>
+
+                                            <a href="#" data-bs-toggle="modal" data-bs-target="#ModalSystemHistory" data-bs-remote="ModalSQL" id="_SYSTEMHISTORY_">
+                                                <i class="fas fa-bug fa-2x" title="System History"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+
+
+                                    @*  <div class="btn-group" role="group" aria-label="Basic example">
+                                <div class="row">
+                                <div class="col" style="margin-bottom:5px;">
+                                @if (ViewData["ComponentToolbarPrint"].ToString() == "true")
+                                {
+                                <button type="button" @(ViewData["ComponentToolbarPrint"].ToString() == "true" ? "" : "disabled")
+                                class="btn btn-@(ViewData["ComponentToolbarPrint"].ToString() == "true" ? "success" : "secondary") dropdown-toggle"
+                                id="btnToolbarPrint"
+                                name="btnToolbarPrint"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-print"></i> Export
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                                <li><a class="dropdown-item" id="btnExport_Copy" href="#">Copy</a></li>
+                                <li><a class="dropdown-item" id="btnExport_CSV" href="#">CSV</a></li>
+                                <li><a class="dropdown-item" id="btnExport_XLS" href="#">Excel</a></li>
+                                <li><a class="dropdown-item" id="btnExport_PDF" href="#">PDF</a></li>
+                                <li><a class="dropdown-item" id="btnExport_Print" href="#">Print</a></li>
+                                </ul>
+                                }
+                                @if (ViewData["ComponentToolbarExecute"].ToString() == "true")
+                                {
+                                <button type="button" @(ViewData["ComponentToolbarExecute"].ToString() == "true" ? "" : "disabled")
+                                class="btn btn-@(ViewData["ComponentToolbarExecute"].ToString() == "true" ? "warning" : "secondary")"
+                                id="btnToolbarExecute"
+                                name="btnToolbarExecute"
+                                onclick="onExecute()">
+                                <i class="fas fa-bolt"></i> Run
+                                </button>
+                                }
+                                @if (ViewData["ComponentToolbarDelete"].ToString() == "true")
+                                {
+                                <button type="button" @(ViewData["ComponentToolbarDelete"].ToString() == "true" ? "" : "disabled")
+                                class="btn btn-@(ViewData["ComponentToolbarDelete"].ToString() == "true" ? "danger" : "secondary")"
+                                id="btnToolbarDelete"
+                                name="btnToolbarDelete"
+                                onclick="onDeleteAll()">
+                                <i class="far fa-trash-alt"></i> Delete
+                                </button>
+                                }
+                                </div>
+                                </div>
+                                </div>*@
+
+                                }
+                                @*<div>
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="#ModalSystemHistory" data-bs-remote="ModalSQL">
+                                        <i class="fas fa-scroll" title="SQL"></i>
+                                    </a>
+                                </div>*@
+                                @RenderBody()
+
+                                <div id="styleSelector"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="splash-wrapper">
+        <div id="splash-text">LOADING</div>
+        <div id="splash-content"></div>
+    </div>
+
+
+    
+    @Html.Partial("_Profile")
+    
+    @Html.Partial("_Password")
+
+    @Html.Partial("_ListOfValue")
+
+    @Html.Partial("_SystemHistory")
+
+    @Html.Partial("_History")
+
+    @Html.Partial("_SessionInformation")
+
+    
+
+    <script type="text/javascript" src="~/assets/adminty/bower_components/jquery-slimscroll/jquery.slimscroll.js"></script>
+
+    @*<script type="text/javascript" src="~/assets/adminty/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>*@
+    <script type="text/javascript" src="~/assets/adminty/bower_components/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" src="~/assets/adminty/bower_components/datatables.net-buttons/js/buttons.print.min.js"></script>
+    <script type="text/javascript" src="~/assets/adminty/bower_components/datatables.net-buttons/js/buttons.html5.min.js"></script>
+    <script type="text/javascript" src="~/assets/adminty/bower_components/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+    <script type="text/javascript" src="~/assets/adminty/bower_components/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
+
+    @*
+
+    <script type="text/javascript" src="~/assets/adminty/bower_components/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="~/assets/adminty/bower_components/jquery-ui/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="~/assets/adminty/bower_components/popper.js/dist/umd/popper.min.js"></script>
+    <script type="text/javascript" src="~/assets/adminty/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+
+
+
+    <script type="text/javascript" src="~/assets/adminty/bower_components/modernizr/modernizr.js"></script>
+    <script type="text/javascript" src="~/assets/adminty/bower_components/modernizr/feature-detects/css-scrollbars.js"></script>
+
+    <script type="text/javascript" src="~/assets/adminty/bower_components/chart.js/dist/Chart.js"></script>
+
+
+    <script type="text/javascript" src="~/assets/adminty/bower_components/i18next/i18next.min.js"></script>
+    <script type="text/javascript" src="~/assets/adminty/bower_components/i18next-xhr-backend/i18nextXHRBackend.min.js"></script>
+    <script type="text/javascript" src="~/assets/adminty/bower_components/i18next-browser-languagedetector/i18nextBrowserLanguageDetector.min.js"></script>
+
+    <script type="text/javascript" src="~/assets/adminty/bower_components/jquery-i18next/jquery-i18next.min.js"></script>
+
+
+    <script type="text/javascript" src="~/assets/adminty/pages/data-table/js/jszip.min.js"></script>
+    <script type="text/javascript" src="~/assets/adminty/pages/data-table/js/vfs_fonts.js"></script>
+    <script type="text/javascript" src="~/assets/adminty/pages/data-table/js/dataTables.bootstrap4.min.js"></script>
+    <script type="text/javascript" src="~/assets/adminty/pages/widget/amchart/amcharts.js"></script>
+    <script type="text/javascript" src="~/assets/adminty/pages/widget/amchart/serial.js"></script>
+    <script type="text/javascript" src="~/assets/adminty/pages/widget/amchart/light.js"></script>
+    *@
+    <script type="text/javascript" src="~/assets/adminty/pages/data-table/js/pdfmake.min.js"></script>
+    <script type="text/javascript" src="~/assets/adminty/pages/data-table/js/dataTables.select.min.js"></script>
+    <script type="text/javascript" src="~/assets/adminty/pages/data-table/extensions/buttons/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" src="~/assets/adminty/pages/data-table/extensions/buttons/js/buttons.flash.min.js"></script>
+    <script type="text/javascript" src="~/assets/adminty/pages/data-table/extensions/buttons/js/jszip.min.js"></script>
+    <script type="text/javascript" src="~/assets/adminty/pages/data-table/extensions/buttons/js/vfs_fonts.js"></script>
+    <script type="text/javascript" src="~/assets/adminty/pages/data-table/extensions/buttons/js/buttons.colVis.min.js"></script>
+    <script type="text/javascript" src="~/assets/adminty/pages/data-table/extensions/buttons/js/extension-btns-custom.js"></script>
+
+
+    <script type="text/javascript" src="~/assets/adminty/js/pcoded.min.js"></script>
+
+    <script type="text/javascript" src="~/assets/adminty/js/SmoothScroll.js"></script>
+    <script type="text/javascript" src="~/assets/adminty/js/jquery.mCustomScrollbar.concat.min.js"></script>
+    <script type="text/javascript" src="~/assets/adminty/js/vartical-layout.min.js"></script>
+
+    <script type="text/javascript" src="~/assets/adminty/js/script.js"></script>
+
+    <script type="text/javascript" src="~/assets/.libs/class/lab.Ajax.js"></script>
+    <script type="text/javascript" src="~/assets/.libs/class/lab.ChartJS.js"></script>
+    <script type="text/javascript" src="~/assets/.libs/class/lab.ClockTimer.js"></script>
+    <script type="text/javascript" src="~/assets/.libs/class/lab.DataTables.js?@ViewData["Version"]"></script>
+    <script type="text/javascript" src="~/assets/.libs/class/lab.DataTablesExport.js?@ViewData["Version"]"></script>
+    <script type="text/javascript" src="~/assets/.libs/class/lab.Date.js"></script>
+    <script type="text/javascript" src="~/assets/.libs/class/lab.DropDownList.js"></script>
+    <script type="text/javascript" src="~/assets/.libs/class/lab.i18n.js?@ViewData["Version"]"></script>
+    <script type="text/javascript" src="~/assets/.libs/class/lab.Item.js"></script>
+    <script type="text/javascript" src="~/assets/.libs/class/lab.Swal2.js"></script>
+    <script type="text/javascript" src="~/assets/.libs/class/lab.Splash/lab.Splash.js"></script>
+
+    <script type="text/javascript" src="~/assets/adminty/vue@3/dist/vue.global.js"></script>
+    @*<script type="text/javascript" src="~/assets/adminty/vue@3/vueApp/Home/home.index.vue.js?@ViewData["Version"]"></script>*@
+
+
+    @*
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    *@
+
+    <script language="javascript" type="text/javascript">
+        xSplash.show();
+
+        $(document).ready(function () {
+            //var _i18n = '@ViewData["UserLanguage"].ToString()';
+            xi18n.initial(_i18n['@ViewData["Action"].ToString()']);
+            //console.log(_i18n_._Layout.export);
+
+            setCookie('Avatar', '@ViewData["UserAvatar"].ToString()');
+
+            $('#_NAVDATETIME_').html('Today : ' + xDate.Now());
+
+        });
+
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+
+    
+    <script type="text/javascript" src="~/assets/.libs/display/display.Menu.js?@ViewData["Version"]"></script>
+    <script type="text/javascript" src="~/assets/.libs/display/display.DateBox.js?@ViewData["Version"]"></script>
+    <script type="text/javascript" src="~/assets/.libs/display/display.CheckBox.js?@ViewData["Version"]"></script>
+    <script type="text/javascript" src="~/assets/.libs/display/display.CurrencyBox.js?@ViewData["Version"]"></script>
+    <script type="text/javascript" src="~/assets/.libs/display/display.ListOfValues.js?@ViewData["Version"]"></script>
+    <script type="text/javascript" src="~/assets/.libs/display/display.SelectOption.js?@ViewData["Version"]"></script>
+    <script type="text/javascript" src="~/assets/.libs/display/display.Developer.js?@ViewData["Version"]"></script>
+    <script type="text/javascript" src="~/assets/.libs/display/display.DataTable.js?@ViewData["Version"]"></script>
+
+    <script type="text/javascript" src="~/assets/.script/_Layout.js?@ViewData["Version"]"></script>
+</body>
+</html>
