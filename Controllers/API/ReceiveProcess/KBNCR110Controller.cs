@@ -41,6 +41,7 @@ using static System.Net.Mime.MediaTypeNames;
 using NPOI.POIFS.Properties;
 using NuGet.Protocol;
 using Microsoft.AspNetCore.Http.HttpResults;
+using System.Text.Json.Nodes;
 //using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HINOSystem.Controllers.API.Master
@@ -114,55 +115,80 @@ namespace HINOSystem.Controllers.API.Master
 
 
 
+        //[HttpPost]
+        //public IActionResult search([FromBody] string pData = null)
+        //{
+        //    dynamic _json = null;
+        //    string _SQL = "";
+        //    try
+        //    {
+        //        //JObject _JBearer = _BearerClass.Authorization(Request.Headers.Authorization);
+        //        //if (_JBearer.GetValue("status").ToString() == "401") return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
+
+        //        _json = JsonConvert.DeserializeObject(pData);
+
+        //        BearerClass _JBearer = _BearerClass.Header(Request);
+        //        if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
+
+        //        _KBCN.Plant = _JBearer.Plant;
+
+        //        _SQL = @" EXEC [exec].[spKBNMS001_SEARCH] '" + _JBearer.Plant + "' ";
+        //        string _jsonData = _KBCN.executeJSON(_SQL, pUser: _JBearer, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+
+        //        string _result = @"{
+        //            ""status"":""200"",
+        //            ""response"":""OK"",
+        //            ""message"": ""Data Found"",
+        //            ""data"": " + _jsonData + @"
+        //        }";
+        //        return Content(_result, "application/json");
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return Content(e.Message.ToString(), "application/json");
+        //    }
+        //}
+
         [HttpPost]
-        public IActionResult search([FromBody] string pData = null)
-        {
-            dynamic _json = null;
-            string _SQL = "";
-            try
-            {
-                //JObject _JBearer = _BearerClass.Authorization(Request.Headers.Authorization);
-                //if (_JBearer.GetValue("status").ToString() == "401") return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
-
-                _json = JsonConvert.DeserializeObject(pData);
-
-                BearerClass _JBearer = _BearerClass.Header(Request);
-                if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
-
-                _KBCN.Plant = _JBearer.Plant;
-
-
-                _SQL = @" EXEC [exec].[spKBNMS001_SEARCH] '" + _JBearer.Plant + "' ";
-                string _jsonData = _KBCN.executeJSON(_SQL, pUser: _JBearer, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
-
-
-
-                string _result = @"{
-                    ""status"":""200"",
-                    ""response"":""OK"",
-                    ""message"": ""Data Found"",
-                    ""data"": " + _jsonData + @"
-                }";
-                return Content(_result, "application/json");
-            }
-            catch (Exception e)
-            {
-                return Content(e.Message.ToString(), "application/json");
-            }
-        }
-
-        public IActionResult SearchPDSNo([FromBody] JsonContent data)
+        public async Task<IActionResult> SearchPDSNo([FromBody] string data)
         {
             try
             {
-                string _jsonData = _KB3Context.TB_REC_HEADER.ToJson();
+                string _result = "";
+                if (data != null)
+                {
+                    dynamic _json = JsonConvert.DeserializeObject(data);
+                    if (_json != null)
+                    {
+                        string PDSNo = _json["F_PDS_No"];
+                        var queryData = await _KB3Context.TB_REC_HEADER.Where(x => x.F_OrderNo == PDSNo).ToListAsync();
+                        if (queryData == null)
+                        {
+                            _result = @"{
+                            ""status"":""200"",
+                            ""response"":""OK"",
+                            ""message"": ""Data Not Found""
+                            @}";
+                        }
+                        else
+                        {
+                            var resultData = queryData.Select((x, index) => new
+                            {
+                                No = index + 1,
+                                x.F_OrderNo,
+                                x.F_Delivery_Date,
+                                x.F_Delivery_Time
+                            }).ToList();
+                            string _jsonData = JsonConvert.SerializeObject(resultData);
 
-                string _result = @"{
-                ""status"":""200"",
-                ""response"":""OK"",
-                ""message"": ""Data Found"",
-                ""data"": " + _jsonData + @"}";
-
+                            _result = @"{
+                            ""status"":""200"",
+                            ""response"":""OK"",
+                            ""message"": ""Data Found"",
+                            ""data"": " + _jsonData + @"}";
+                        }
+                    }
+                }
                 return Ok(_result);
             }
             catch (Exception ex)

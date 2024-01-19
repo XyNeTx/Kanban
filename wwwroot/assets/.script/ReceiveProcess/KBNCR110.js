@@ -4,14 +4,14 @@
         Controller: _PAGE_,
         Table: 'tblMaster',
         ColumnTitle: {
-            "EN": ['PDS No.', 'Delivery Trip', 'Delivery Date'],
-            "TH": ['PDS No.', 'Delivery Trip', 'Delivery Date'],
-            "JP": ['PDS No.', 'Delivery Trip', 'Delivery Date'],
+            "EN": ['PDS No.', 'Delivery Date', 'Delivery Trip'],
+            "TH": ['PDS No.', 'Delivery Date', 'Delivery Trip'],
+            "JP": ['PDS No.', 'Delivery Date', 'Delivery Trip'],
         },
         ColumnValue: [
-            { "data": "F_OrderType" },
-            { "data": "F_Effect_Date" },
-            { "data": "F_End_Date" }
+            { "data": "F_OrderNo" },
+            { "data": "F_Delivery_Date" },
+            { "data": "F_Delivery_Time" }
         ],
         Modal: 'modalMaster',
         Form: 'frmMaster',
@@ -29,8 +29,8 @@
             if ($('#chkDeliveryDate').val() == 0) $('#fldDeliveryDate').prop('disabled', 'disabled');
             if ($('#chkDeliveryDate').val() == 1) $('#fldDeliveryDate').prop('disabled', false);
         });
-
-        KBNCR110.search();
+        xSplash.hide();
+        //KBNCR110.search();
     });
 
     onSave = function () {
@@ -71,25 +71,34 @@
 
     //)
 
-    xAjax.onEnter('F_PDS_No', function () {
+    xAjax.onEnter('#F_PDS_No', function () {
+        const _TableName = this.TableName;
+        console.log(this.TableName);
         xAjax.Post({
             url: 'KBNCR110/SearchPDSNo',
             data: {
-                'F_PDS_No': $('#F_PDS_No').val()
+                'F_PDS_No': $('#F_PDS_No').val(),
+                'F_Delivery_Date': $('#F_DeliveryFrom').val()
             },
             then: function (result) {
-                console.log(result)
+                console.log(result);
+                if (result.response == "OK") {
+                    if (result.data.length > 0) {
+                        $('#F_PDS_No').val("");
+                        console.log(result.data.length);
+                        $('#tblMaster').dataTable().fnAddData(result.data);
+                    }
+                }
+            },
+            error: function (result) {
+                console.error(_Controller + '.Search: ' + result.responseText);
+                xSplash.hide();
             }
-        })
-    })
+        });
+    });
 
     //$('#F_PDS_No').on('Keypress', function (e) {
     //    if (e.keycode == 13) {
-
-
-
-
     //    }
     //})
-
 });
