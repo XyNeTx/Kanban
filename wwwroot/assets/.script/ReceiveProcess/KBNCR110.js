@@ -1,5 +1,5 @@
 ﻿$(document).ready(function () {
-
+    var pdsSet = new Set();
     const KBNCR110 = new MasterTemplate({
         Controller: _PAGE_,
         Table: 'tblMaster',
@@ -11,7 +11,7 @@
         ColumnValue: [
             { "data": "F_OrderNo" },
             { "data": "F_Delivery_Date" },
-            { "data": "F_Delivery_Time" }
+            { "data": "F_Delivery_Trip" }
         ],
         Modal: 'modalMaster',
         Form: 'frmMaster',
@@ -72,33 +72,38 @@
     //)
 
     xAjax.onEnter('#F_PDS_No', function () {
-        const _TableName = this.TableName;
-        console.log(this.TableName);
+        var pdsNo = $('#F_PDS_No').val();
         xAjax.Post({
             url: 'KBNCR110/SearchPDSNo',
             data: {
-                'F_PDS_No': $('#F_PDS_No').val(),
+                'F_PDS_No': pdsNo,
                 'F_Delivery_Date': $('#F_DeliveryFrom').val()
             },
             then: function (result) {
-                console.log(result);
                 if (result.response == "OK") {
-                    if (result.data.length > 0) {
+                    if (result.data != null) {
                         $('#F_PDS_No').val("");
-                        console.log(result.data.length);
-                        $('#tblMaster').dataTable().fnAddData(result.data);
+                        console.log(pdsSet.size + "90");
+                        if (pdsSet.has(pdsNo)) {
+                            alert(result.message)
+                        }
+                        else {
+                            console.log(result + "line 88");
+                            $('#tblMaster').dataTable().fnAddData(result.data);
+                            pdsSet.add(pdsNo);
+                            console.log(pdsSet.size + "98")
+                        }
+                    }
+                    else {
+                        $('#F_PDS_No').val("");
+                        alert(result.message);
                     }
                 }
             },
             error: function (result) {
-                console.error(_Controller + '.Search: ' + result.responseText);
+                console.error(_Controller + '.SearchPDSNo: ' + result.responseText);
                 xSplash.hide();
             }
         });
     });
-
-    //$('#F_PDS_No').on('Keypress', function (e) {
-    //    if (e.keycode == 13) {
-    //    }
-    //})
 });

@@ -42,6 +42,7 @@ using NPOI.POIFS.Properties;
 using NuGet.Protocol;
 using Microsoft.AspNetCore.Http.HttpResults;
 using System.Text.Json.Nodes;
+using System.Linq;
 //using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HINOSystem.Controllers.API.Master
@@ -55,7 +56,6 @@ namespace HINOSystem.Controllers.API.Master
         private readonly PPMConnect _PPMConnect;
 
         private readonly KB3Context _KB3Context;
-
 
         private readonly string StoragePath = @"wwwroot\Storage\Uploads";
 
@@ -113,7 +113,126 @@ namespace HINOSystem.Controllers.API.Master
             }
         }
 
+        public async Task<IActionResult> KB3ReceiveAll(string data)
+        {
+            string _result = "";
+            if (data != null)
+            {
+                dynamic _json = JsonConvert.DeserializeObject(data);
+                if (_json != null)
+                {
+                    string PDSNo = _json["F_PDS_No"];
+                    if (PDSNo.Length == 13)
+                    {
+                        if (PDSNo.StartsWith("7Y") || PDSNo.StartsWith("7Z"))
+                        {
 
+                        }
+                        var queryData = await _KB3Context.TB_REC_HEADER.Where(x => x.F_OrderNo == PDSNo).ToListAsync();
+
+                        if (queryData.Count > 0)
+                        {
+                            var resultData = queryData.Select((x, index) => new
+                            {
+                                No = index + 1,
+                                x.F_OrderNo,
+                                x.F_Delivery_Date,
+                                x.F_Delivery_Trip
+                            }).ToList();
+
+                            string _jsonData = JsonConvert.SerializeObject(resultData);
+
+                            _result = @"{
+                                ""status"":""200"",
+                                ""response"":""OK"",
+                                ""message"": ""Data Found"",
+                                ""data"": " + _jsonData + @"}";
+                        }
+                        else
+                        {
+                            _result = @"{
+                                ""status"":""200"",
+                                ""response"":""OK"",
+                                ""message"": ""Data Not Found""
+                                }";
+                        }
+                    }
+                    else
+                    {
+                        _result = @"{
+                        ""status"":""200"",
+                        ""response"":""OK"",
+                        ""message"": ""PDS No. length is not equal 13""
+                        }";
+                    }
+                }
+            }
+            return Ok(_result);
+        }
+
+        public async Task<IActionResult> KB2ReceiveAll(string data)
+        {
+            string _result = "";
+            if (data != null)
+            {
+                dynamic _json = JsonConvert.DeserializeObject(data);
+                if (_json != null)
+                {
+                    string PDSNo = _json["F_PDS_No"];
+                    if (PDSNo.StartsWith("8Y") || PDSNo.StartsWith("8Z"))
+                    {
+
+                    }
+                    // wait for kanban2Context
+                    var queryData = await _KB3Context.TB_REC_HEADER.Where(x => x.F_OrderNo == PDSNo).ToListAsync();
+
+                    if (queryData.Count > 0)
+                    {
+                        var resultData = queryData.Select((x, index) => new
+                        {
+                            No = index + 1,
+                            x.F_OrderNo,
+                            x.F_Delivery_Date,
+                            x.F_Delivery_Trip
+                        }).ToList();
+
+                        string _jsonData = JsonConvert.SerializeObject(resultData);
+
+                        _result = @"{
+                        ""status"":""200"",
+                        ""response"":""OK"",
+                        ""message"": ""Data Found"",
+                        ""data"": " + _jsonData + @"}";
+                    }
+                    else
+                    {
+                        _result = @"{
+                        ""status"":""200"",
+                        ""response"":""OK"",
+                        ""message"": ""Data Not Found""
+                        }";
+                    }
+                }
+            }
+            return Ok(_result);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SearchPDSNo([FromBody] string data)  
+        {
+            try
+            {
+                if (_KBCN.Plant == "3")
+                {
+                    return await KB3ReceiveAll(data);
+                }
+                else return BadRequest();
+            }
+            catch (Exception ex)
+            {
+                return Content(ex.Message.ToString(), "application/json");
+            }
+        }
 
         //[HttpPost]
         //public IActionResult search([FromBody] string pData = null)
@@ -148,53 +267,5 @@ namespace HINOSystem.Controllers.API.Master
         //        return Content(e.Message.ToString(), "application/json");
         //    }
         //}
-
-        [HttpPost]
-        public async Task<IActionResult> SearchPDSNo([FromBody] string data)
-        {
-            try
-            {
-                string _result = "";
-                if (data != null)
-                {
-                    dynamic _json = JsonConvert.DeserializeObject(data);
-                    if (_json != null)
-                    {
-                        string PDSNo = _json["F_PDS_No"];
-                        var queryData = await _KB3Context.TB_REC_HEADER.Where(x => x.F_OrderNo == PDSNo).ToListAsync();
-                        if (queryData == null)
-                        {
-                            _result = @"{
-                            ""status"":""200"",
-                            ""response"":""OK"",
-                            ""message"": ""Data Not Found""
-                            @}";
-                        }
-                        else
-                        {
-                            var resultData = queryData.Select((x, index) => new
-                            {
-                                No = index + 1,
-                                x.F_OrderNo,
-                                x.F_Delivery_Date,
-                                x.F_Delivery_Time
-                            }).ToList();
-                            string _jsonData = JsonConvert.SerializeObject(resultData);
-
-                            _result = @"{
-                            ""status"":""200"",
-                            ""response"":""OK"",
-                            ""message"": ""Data Found"",
-                            ""data"": " + _jsonData + @"}";
-                        }
-                    }
-                }
-                return Ok(_result);
-            }
-            catch (Exception ex)
-            {
-                return Content(ex.Message.ToString(), "application/json");
-            }
-        }
     }
 }
