@@ -73,6 +73,7 @@
 
     xAjax.onEnter('#F_PDS_No', function () {
         var pdsNo = $('#F_PDS_No').val();
+        console.log(pdsNo);
         xAjax.Post({
             url: 'KBNCR110/SearchPDSNo',
             data: {
@@ -85,7 +86,7 @@
                         $('#F_PDS_No').val("");
                         console.log(pdsSet.size + "90");
                         if (pdsSet.has(pdsNo)) {
-                            alert(result.message)
+                            alert("Duplicate PDS No.")
                         }
                         else {
                             console.log(result + "line 88");
