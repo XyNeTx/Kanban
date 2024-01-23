@@ -43,6 +43,7 @@ using NuGet.Protocol;
 using Microsoft.AspNetCore.Http.HttpResults;
 using System.Text.Json.Nodes;
 using System.Linq;
+using Org.BouncyCastle.Utilities.IO.Pem;
 //using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HINOSystem.Controllers.API.Master
@@ -126,7 +127,18 @@ namespace HINOSystem.Controllers.API.Master
             }
             else
             {
-                var queryData = await _KB3Context.TB_REC_HEADER.Where(x => x.F_OrderNo == PDSNo).SingleOrDefaultAsync();
+                var queryData = await _KB3Context.TB_REC_HEADER
+                    .Where(x => x.F_OrderNo == PDSNo)
+                    .Select(x => new
+                    {
+                        x.F_OrderNo,
+                        x.F_Delivery_Date,
+                        x.F_Delivery_Trip,
+                        x.F_Issued_Date,
+                        x.F_Status,
+                        x.F_MRN_Flag
+                    })
+                    .SingleOrDefaultAsync();
 
                 if (queryData != null)
                 {
@@ -198,15 +210,18 @@ namespace HINOSystem.Controllers.API.Master
                         if (_json != null)
                         {
                             string PDSNo = _json["F_PDS_No"];
+                            // when user scan barcode
                             if (PDSNo.Trim().Length == 14)
                             {
                                 string pdsRemv = PDSNo.Trim().Remove(13,1);
                                 return await KB3ReceiveAll(pdsRemv);
                             }
+                            // when user enter manual
                             else if (PDSNo.Trim().Length == 13)
                             {
                                 return await KB3ReceiveAll(PDSNo.Trim());
                             }
+                            //No record for PDS NO.
                             else
                             {
                                 string _result = @"{
@@ -244,6 +259,52 @@ namespace HINOSystem.Controllers.API.Master
                 return Content(ex.Message.ToString(), "application/json");
             }
         }
+
+        [HttpPost]
+        public async Task<IActionResult> ReceiveAllPart([FromBody] string F_OrderNo)
+        {
+            try
+            {
+                if (_KBCN.Plant == "3")
+                {
+                    if (F_OrderNo != null)
+                    {
+                        dynamic _json = JsonConvert.DeserializeObject(F_OrderNo);
+                        string PDSNo = _json["F_PDS_No"];
+                        var receiveUpd = await _KB3Context.TB_REC_HEADER.SingleOrDefaultAsync(x => x.F_OrderNo == PDSNo);
+                        if (receiveUpd != null)
+                        {
+                            receiveUpd.F_MRN_Flag = "2";
+                            _KB3Context.TB_REC_HEADER.Update(receiveUpd);
+                            await _KB3Context.SaveChangesAsync();
+                            return Ok();
+                        }
+                        else
+                        {
+                            return BadRequest();
+                        }
+
+                        //foreach (var PDSNo in F_OrderNo)
+                        //{
+                        //}
+                    }
+                    else
+                    {
+                        return BadRequest();
+                    }
+                }
+                else
+                {
+                    return BadRequest();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return BadRequest(ex.Message);
+            }
+        }
+
 
         //[HttpPost]
         //public IActionResult search([FromBody] string pData = null)

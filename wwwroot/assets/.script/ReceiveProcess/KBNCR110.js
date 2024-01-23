@@ -73,26 +73,25 @@
 
     xAjax.onEnter('#F_PDS_No', function () {
         var pdsNo = $('#F_PDS_No').val();
-        console.log(pdsNo);
+        // console.log(pdsNo);
         xAjax.Post({
             url: 'KBNCR110/SearchPDSNo',
             data: {
-                'F_PDS_No': pdsNo,
-                'F_Delivery_Date': $('#F_DeliveryFrom').val()
+                'F_PDS_No': pdsNo
             },
             then: function (result) {
                 if (result.response == "OK") {
                     if (result.data != null) {
                         $('#F_PDS_No').val("");
-                        console.log(pdsSet.size + "90");
+                        // console.log(pdsSet.size + "90");
                         if (pdsSet.has(pdsNo)) {
                             alert("Duplicate PDS No.")
                         }
                         else {
-                            console.log(result + "line 88");
+                            // console.log(result + "line 88");
                             $('#tblMaster').dataTable().fnAddData(result.data);
                             pdsSet.add(pdsNo);
-                            console.log(pdsSet.size + "98")
+                            // console.log(pdsSet.size + "98")
                         }
                     }
                     else {
@@ -106,5 +105,30 @@
                 xSplash.hide();
             }
         });
+    });
+    xAjax.onClick("#ClearBtn", function () {
+        $('#tblMaster').DataTable().clear();
+        $('#tblMaster').DataTable().draw();
+        pdsSet.clear();
+    });
+    xAjax.onClick("#ReceiveBtn", function () {
+        var pdsNo = $('.sorting_1').prop('checked', true).text();
+        console.log(pdsNo);
+        xAjax.Post({
+            url: 'KBNCR110/ReceiveAllPart',
+            data: {
+                'F_PDS_No': pdsNo
+            },
+            success: function (result) {
+                console.log(result + "Success");
+            },
+            error: function (result) {
+                console.error(_Controller + '.SearchPDSNo: ' + result.responseText);
+                xSplash.hide();
+            }
+        });
+        $('#tblMaster').DataTable().clear();
+        $('#tblMaster').DataTable().draw();
+        pdsSet.clear();
     });
 });

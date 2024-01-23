@@ -3,9 +3,7 @@
     <div class="col-xl-12 col-md-12 col-sm-12">
         <div class="card border-left-primary shadow h-100">
             <div class="card-body">
-
-                <form id="frmCondition">
-
+                <form id="frmCondition" asp-controller="KBNCR110" asp-action="ReceiveAllPart">
                     <fieldset class="fieldset">
                         <legend>Select PDS No. : </legend>
 
@@ -23,6 +21,27 @@
                                 <item type="text" id="F_PDS_No" label="PDS No."></item>
                             </div>
                         </div>
+                    </fieldset>
+                    <div class="row">
+                        <div class="col mt-4">
+                            <item type="table" id="tblMaster"></item>
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col">
+                            <a id="uploadEpro" style="width:fit-content" class="btn page-link">Upload Receive To E-Pro</a>
+                        </div>
+                        <div class="col d-flex justify-content-end">
+                            <a id="ClearBtn" class="btn page-link me-4 text-danger">Clear</a>
+                            <a id="ReceiveBtn" class="btn page-link">Receive</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>
 
 
 
@@ -34,21 +53,6 @@
                                 <item type="select" id="F_OrderTo" label="To"></item>
                             </div>
                         </div>*@
-
-                    </fieldset>
-                </form>
-
-                <div class="row">
-                    <div class="col mt-4">
-                        <item type="table" id="tblMaster"></item>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </div>
-
-</div>
 
 
 <!-- Modal Master -->
