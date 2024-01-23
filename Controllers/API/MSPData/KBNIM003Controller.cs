@@ -91,7 +91,7 @@ namespace HINOSystem.Controllers.API.Master
                 if (pData != null) _json = JsonConvert.DeserializeObject(pData);
 
                 _SQL = @" EXEC [exec].[spTB_MS_FACTORY] ";
-                string _jsTB_MS_Factory = _KBCN.executeJSON(_SQL, pUser: _JBearer, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+                string _jsTB_MS_Factory = _KBCN.ExecuteJSON(_SQL, pUser: _JBearer, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
 
                 string _result = @"{
                     ""status"":""200"",
@@ -120,8 +120,8 @@ namespace HINOSystem.Controllers.API.Master
             VBController _VB = new VBController();
             try
             {
-                JObject _JBearer = _BearerClass.Authorization(Request.Headers.Authorization);
-                if (_JBearer.GetValue("status").ToString() == "401") return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
+                BearerClass _JBearer = _BearerClass.Header(Request);
+                if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
 
                 //_json = JsonConvert.DeserializeObject(pData);
 
@@ -184,8 +184,8 @@ namespace HINOSystem.Controllers.API.Master
             string _SQL = "", _result;
             try
             {
-                JObject _JBearer = _BearerClass.Authorization(Request.Headers.Authorization);
-                if (_JBearer.GetValue("status").ToString() == "401") return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
+                BearerClass _JBearer = _BearerClass.Header(Request);
+                if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
 
                 //_json = JsonConvert.DeserializeObject(pData);
 
@@ -194,14 +194,14 @@ namespace HINOSystem.Controllers.API.Master
 
 
                 _SQL = @" 
-    Delete From TB_Import_EKanban Where F_Update_BY='" + _JBearer.GetValue("user")["Code"] + @"' and F_TYpe ='EKanban'; 
+    Delete From TB_Import_EKanban Where F_Update_BY='" + _JBearer.UserCode.ToString() + @"' and F_TYpe ='EKanban'; 
 
-    Delete From TB_Import_Error Where F_Update_BY='" + _JBearer.GetValue("user")["Code"] + @"' and F_TYpe ='D_EKanban'; 
+    Delete From TB_Import_Error Where F_Update_BY='" + _JBearer.UserCode.ToString() + @"' and F_TYpe ='D_EKanban'; 
     
-    Delete From TB_Import_Error Where F_Update_BY='" + _JBearer.GetValue("user")["Code"] + @"' and F_TYpe ='EKanban'; 
+    Delete From TB_Import_Error Where F_Update_BY='" + _JBearer.UserCode.ToString() + @"' and F_TYpe ='EKanban'; 
 
     ";
-                _KBCN.executeNonQuery(_SQL);
+                _KBCN.Execute(_SQL);
 
 
                 int _current = 1, _typeP = 0, _lineCount = 0;
@@ -252,9 +252,9 @@ namespace HINOSystem.Controllers.API.Master
                             }
 
                         }
-                        _SQL = _SQL + "'" + _JBearer.GetValue("user")["Code"] + "', GETDATE())";
+                        _SQL = _SQL + "'" + _JBearer.UserCode.ToString() + "', GETDATE())";
 
-                        bool _res = _KBCN.executeNonQuery(_SQL);
+                        bool _res = _KBCN.Execute(_SQL);
                         if (!_res)
                         {
                             _result = _ActionResult.Failed(@"Line " + _lineCount + @" : " + _OneLine);
@@ -267,8 +267,8 @@ namespace HINOSystem.Controllers.API.Master
                             {
                                 string _SQLError = @"
     INSERT INTO TB_Import_Error (F_TYpe,F_PDS_CD, F_Row, F_Field, F_Remark, F_Update_By, F_Update_Date)
-    VALUES('EKanban','" + _PO + "','" + _Item + "','" + _PartNo + "','PART NOT FOUND IN MASTER','" + _JBearer.GetValue("user")["Code"] + "', GETDATE()) ";
-                                _KBCN.executeNonQuery(_SQL);
+    VALUES('EKanban','" + _PO + "','" + _Item + "','" + _PartNo + "','PART NOT FOUND IN MASTER','" + _JBearer.UserCode.ToString() + "', GETDATE()) ";
+                                _KBCN.Execute(_SQL);
 
                             }
 
@@ -284,9 +284,9 @@ namespace HINOSystem.Controllers.API.Master
 							    AND E.F_Type = T.F_Type
     WHERE 1=1
     AND E.F_TYpe ='EKanban' 
-    AND E.F_Update_By='" + _JBearer.GetValue("user")["Code"] + @"' 
+    AND E.F_Update_By='" + _JBearer.UserCode.ToString() + @"' 
 ";
-                _KBCN.executeNonQuery(_SQL);
+                _KBCN.Execute(_SQL);
 
 
                 _SQL = @"
@@ -297,15 +297,15 @@ namespace HINOSystem.Controllers.API.Master
 								    AND E.F_Type = T.F_Type
     WHERE 1=1
     AND E.F_TYpe ='EKanban' 
-    AND E.F_Update_By='" + _JBearer.GetValue("user")["Code"] + @"' 
+    AND E.F_Update_By='" + _JBearer.UserCode.ToString() + @"' 
 ";
-                _KBCN.executeNonQuery(_SQL);
+                _KBCN.Execute(_SQL);
 
 
 
                 //''Change to Data Filter : Store Procedure
-                _SQL = "EXEC dbo.SP_IM003_FilterData '" + _JBearer.GetValue("user")["Code"] + "' ";
-                _KBCN.executeNonQuery(_SQL);
+                _SQL = "EXEC dbo.SP_IM003_FilterData '" + _JBearer.UserCode.ToString() + "' ";
+                _KBCN.Execute(_SQL);
 
 
 
@@ -316,11 +316,11 @@ namespace HINOSystem.Controllers.API.Master
     SELECT Distinct F_Part_No,F_Ruibetsu,F_Store_Cd,F_Sebango 
     FROM TMP_Construction 
     WHERE 1=1
-    AND F_update_BY='" + _JBearer.GetValue("user")["Code"] + @"' 
+    AND F_update_BY='" + _JBearer.UserCode.ToString() + @"' 
     AND substring(F_TC_END,1,4) = '2999'
     GROUP BY F_Part_No, F_Ruibetsu, F_Store_Cd, F_Sebango
     HAVING COUNT(*) > 1";
-                DataTable _dtCon = _KBCN.executeSQL(_SQL);
+                DataTable _dtCon = _KBCN.ExecuteSQL(_SQL);
                 if (_dtCon.Rows.Count > 0)
                 {
                     for (int i = 0; i < _dtCon.Rows.Count; i++)
@@ -340,12 +340,12 @@ namespace HINOSystem.Controllers.API.Master
     SELECT Distinct F_Parent_part,F_Ruibetsu,F_Store_Cd,F_Child_Part,F_Ch_Ruibetsu,F_ch_store_cd 
     FROM TMP_Parents_Child 
     WHERE 1=1
-    AND F_update_BY='" + _JBearer.GetValue("user")["Code"] + @"' 
+    AND F_update_BY='" + _JBearer.UserCode.ToString() + @"' 
     AND substring(F_TC_END,1,4) = '2999'
     AND F_Store_Cd in ('00','01','05') and F_ch_store_cd <>'RM' 
     GROUP BY F_Parent_part,F_Ruibetsu,F_Store_Cd,F_Child_Part,F_Ch_Ruibetsu,F_ch_store_cd
     HAVING COUNT(*) > 1";
-                DataTable _dtPC = _KBCN.executeSQL(_SQL);
+                DataTable _dtPC = _KBCN.ExecuteSQL(_SQL);
 
 
                 if(_dtPC.Rows.Count > 0)
@@ -370,17 +370,17 @@ namespace HINOSystem.Controllers.API.Master
                 //'' === Check Have data in Parent Part
                 _SQL = @"
     INSERT INTO TB_IMPORT_ERROR(F_TYpe,F_PDS_CD, F_Row, F_Field, F_Remark, F_Update_By, F_Update_Date)
-    SELECT 'EKanban',S.F_PDS_NO,S.F_ITEM_NO,S.F_PART_NO AS F_Part_NO,'Not Found Data IN Parent Child','" + _JBearer.GetValue("user")["Code"] + @"',GETDATE()
+    SELECT 'EKanban',S.F_PDS_NO,S.F_ITEM_NO,S.F_PART_NO AS F_Part_NO,'Not Found Data IN Parent Child','" + _JBearer.UserCode.ToString() + @"',GETDATE()
     FROM TB_IMPORT_EKANBAN S 
         LEFT OUTER JOIN(
                 SELECT * 
                 FROM TMP_Parents_Child C 
-                WHERE C.F_Update_By  = '" + _JBearer.GetValue("user")["Code"] + @"' 
+                WHERE C.F_Update_By  = '" + _JBearer.UserCode.ToString() + @"' 
                 AND F_Store_Cd IN ('00','01') 
 			    AND F_TC_Str COLLATE Thai_CI_AS <= (
 												    SELECT MIN(SUBSTRING(F_Collect_Date, 7, 4) + SUBSTRING(F_Collect_Date, 4, 2) + SUBSTRING(F_Collect_Date, 1, 2))
 												    FROM TB_IMPORT_EKANBAN 
-												    WHERE F_Update_By = '" + _JBearer.GetValue("user")["Code"] + @"' 
+												    WHERE F_Update_By = '" + _JBearer.UserCode.ToString() + @"' 
 												    AND F_TYpe = 'EKanban'
 												    AND SUBSTRING(F_PART_NO,1,5)+SUBSTRING(F_PART_NO, 7, 5) = C.F_PARENT_PART COLLATE Thai_CI_AS
 												    AND SUBSTRING(F_PART_NO,13,2) = C.F_Ruibetsu COLLATE Thai_CI_AS
@@ -388,18 +388,18 @@ namespace HINOSystem.Controllers.API.Master
 			    AND F_TC_End COLLATE Thai_CI_AS >= (
 												    SELECT MAX(SUBSTRING(F_Collect_Date, 7, 4) + SUBSTRING(F_Collect_Date, 4, 2) + SUBSTRING(F_Collect_Date, 1, 2))
 												    FROM TB_IMPORT_EKANBAN 
-												    WHERE F_Update_By = '" + _JBearer.GetValue("user")["Code"] + @"' 
+												    WHERE F_Update_By = '" + _JBearer.UserCode.ToString() + @"' 
 												    AND F_TYpe = 'EKanban'
 												    AND SUBSTRING(F_PART_NO,1,5)+SUBSTRING(F_PART_NO, 7, 5) = C.F_PARENT_PART COLLATE Thai_CI_AS
 												    AND SUBSTRING(F_PART_NO,13,2) = C.F_Ruibetsu COLLATE Thai_CI_AS
 												    )
 	    ) P ON SUBSTRING(S.F_PART_NO, 1, 5) + SUBSTRING(S.F_PART_NO, 7, 5) = P.F_PArent_Part COLLATE Thai_CI_AS
 	    AND SUBSTRING(S.F_PART_NO,13,2) = P.F_Ruibetsu COLLATE Thai_CI_AS
-    WHERE S.F_Update_By = '" + _JBearer.GetValue("user")["Code"] + @"' 
+    WHERE S.F_Update_By = '" + _JBearer.UserCode.ToString() + @"' 
     AND F_TYpe = 'EKanban' 
     AND RTRIM(P.F_Parent_Part) IS NULL
 ";
-                _KBCN.executeNonQuery(_SQL);
+                _KBCN.Execute(_SQL);
 
                 //sql_Chk_Error = "Select * from TB_IMPORT_ERROR Where F_Update_BY='" & User_Logon & "' and F_Type ='D_" & Type_Import & "' "
                 //frmKBNIM_003_ERR.rpt
@@ -423,11 +423,11 @@ namespace HINOSystem.Controllers.API.Master
         , SUBSTRING(F_Collect_Time,1,2) + SUBSTRING(F_Collect_Time,4,2) as F_Collect_Time
         , SUBSTRING(F_Arrival_Date,7,4) + SUBSTRING(F_Arrival_Date,4,2) + SUBSTRING(F_Arrival_Date,1,2) as F_Arrival_Date
         , SUBSTRING(F_Arrival_Time,1,2) + SUBSTRING(F_Arrival_Time,4,2) as F_Arrival_Time
-        , '" + _JBearer.GetValue("user")["Code"] + @"' as F_Update_By
+        , '" + _JBearer.UserCode.ToString() + @"' as F_Update_By
         , GETDATE() as F_Update_Date
 		FROM TB_Import_EKanban 
 		WHERE 1=1
-		AND F_Update_BY='" + _JBearer.GetValue("user")["Code"] + @"' 
+		AND F_Update_BY='" + _JBearer.UserCode.ToString() + @"' 
 		AND F_TYpe='EKanban'
 		)E 
 		LEFT OUTER join (
@@ -439,7 +439,7 @@ namespace HINOSystem.Controllers.API.Master
             AND E.F_order_No = H.F_orderNo
     WHERE H.F_PDS_NO is null 
     ";
-                _KBCN.executeNonQuery(_SQL);
+                _KBCN.Execute(_SQL);
 
 
 
@@ -454,9 +454,9 @@ namespace HINOSystem.Controllers.API.Master
                                         AND rtrim(E.F_Date) + rtrim(E.F_OrderNO) = rtrim(I.F_EKBPDS_NO)
                                         AND E.F_Shipping_Date = Substring(I.F_Collect_Date,7,4)+Substring(I.F_Collect_Date,4,2)+Substring(I.F_Collect_Date,1,2) 
                                         AND E.F_Shipping_Time = substring(I.F_Collect_Time,1,2)+substring(I.F_Collect_Time,4,2)
-    WHERE I.F_Update_By='" + _JBearer.GetValue("user")["Code"] + @"' 
+    WHERE I.F_Update_By='" + _JBearer.UserCode.ToString() + @"' 
     AND I.F_TYPE='EKanban' ";
-                _KBCN.executeNonQuery(_SQL);
+                _KBCN.Execute(_SQL);
 
 
                 _SQL = @"
@@ -469,7 +469,7 @@ namespace HINOSystem.Controllers.API.Master
                                         and rtrim(E.F_Date) + rtrim(E.F_OrderNO) = rtrim(I.F_EKBPDS_NO)
                                         and E.F_Shipping_Date = Substring(I.F_Collect_Date,7,4)+Substring(I.F_Collect_Date,4,2)+Substring(I.F_Collect_Date,1,2) 
                                         and E.F_Shipping_Time = substring(I.F_Collect_Time,1,2)+substring(I.F_Collect_Time,4,2)
-    WHERE I.F_Update_By='" + _JBearer.GetValue("user")["Code"] + @"' 
+    WHERE I.F_Update_By='" + _JBearer.UserCode.ToString() + @"' 
     and I.F_TYPE='EKanban' 
     and E.F_CHG_SHipping_Date <> '' 
     and E.F_CHG_SHIPPING_DATE + E.F_CHG_SHIPPING_TIME in (
@@ -483,7 +483,7 @@ namespace HINOSystem.Controllers.API.Master
                                                         and F_Shipping_Date =  E.F_Shipping_Date 
                                                         and F_Shipping_Time = E.F_Shipping_Time
                                                         ) ";
-                _KBCN.executeNonQuery(_SQL);
+                _KBCN.Execute(_SQL);
 
 
 
@@ -519,7 +519,7 @@ namespace HINOSystem.Controllers.API.Master
 
 
 
-        private bool BreakDown(JObject _JBearer)
+        private bool BreakDown(BearerClass _JBearer)
         {
             string _SQL = "";
             try
@@ -544,19 +544,19 @@ namespace HINOSystem.Controllers.API.Master
     else substring(S.F_Collect_Date, 7, 4) + substring(S.F_Collect_Date, 4, 2) + substring(S.F_Collect_Date, 1, 2) end as F_Adv_Deli_Date,'N' as F_OrderType,S.F_Collect_Time as F_Country,'0' as F_Reg_Flg,
     '0' as F_Inventory_Flg, case when substring(P.F_CH_Store_Cd, 1, 1) = '0' then '' else Con.F_Supplier_Cd end F_Supplier_CD,case when substring(P.F_CH_Store_Cd, 1, 1) = '0' then '' else Con.F_Plant end F_Supplier_Plant, 
     '' as F_CycleTime,0 as F_Safety_Stk,
-    '' as F_Part_Refer,'' as F_Ruibetsu_Refer,'" + _JBearer.GetValue("user")["Code"] + @"' as F_Update_By,getdate() as F_Update_Date,'' as F_Remark
+    '' as F_Part_Refer,'' as F_Ruibetsu_Refer,'" + _JBearer.UserCode.ToString() + @"' as F_Update_By,getdate() as F_Update_Date,'' as F_Remark
     ,case when not(Con.F_Ratio_N) is null then cast(Con.F_Ratio_N as nchar(3)) else case when rtrim(P.F_Sel_Part) = '' then '' else cast(Con.F_Ratio as nchar(3)) end end F_ratio
-    from(Select F_PDS_NO, F_part_no, F_Collect_Date, F_Collect_Time, Sum(F_Qty) as F_QTY, substring(F_PDS_NO, 1, 2) as F_PDS_SUB From TB_Import_EKanban Where F_Update_BY = '" + _JBearer.GetValue("user")["Code"] + @"' and F_TYpe = 'EKanban'
+    from(Select F_PDS_NO, F_part_no, F_Collect_Date, F_Collect_Time, Sum(F_Qty) as F_QTY, substring(F_PDS_NO, 1, 2) as F_PDS_SUB From TB_Import_EKanban Where F_Update_BY = '" + _JBearer.UserCode.ToString() + @"' and F_TYpe = 'EKanban'
     Sql = Sql & Group by F_PDS_NO, F_part_no, F_Collect_Date, F_Collect_Time, substring(F_PDS_NO, 1, 2)
-    Sql = Sql & )S INNER JOIN(Select * from dbo.TMP_PARENTS_CHILD Where F_Update_BY = '" + _JBearer.GetValue("user")["Code"] + @"')P ON
+    Sql = Sql & )S INNER JOIN(Select * from dbo.TMP_PARENTS_CHILD Where F_Update_BY = '" + _JBearer.UserCode.ToString() + @"')P ON
     substring(S.F_PART_NO, 1, 5) + substring(S.F_PART_NO, 7, 5) = rtrim(P.F_PARENT_PART) collate Thai_CI_AS
     AND substring(S.F_PART_NO,13,2) = P.F_ruibetsu collate Thai_CI_AS
     and P.F_Store_Cd in ('05'),'01'
     and substring(S.F_Collect_Date,7,4)+substring(S.F_Collect_Date, 4, 2) + substring(S.F_Collect_Date, 1, 2) >= P.F_TC_Str collate Thai_CI_AS
     and substring(S.F_Collect_Date,7,4)+substring(S.F_Collect_Date, 4, 2) + substring(S.F_Collect_Date, 1, 2) <= P.F_TC_End collate Thai_CI_AS
     LEFT OUTER JOIN(select C.F_Part_No, C.F_Ruibetsu, C.F_Store_CD, C.F_TC_Str, C.F_TC_End, C.F_Supplier_Cd, C.F_Plant, C.F_Sebango, C.F_QTY_BOX, C.F_Ratio, C.F_Part_NM, P.F_Ratio_N from
-    (Select F_Part_NO, F_Ruibetsu, F_Store_Cd, F_TC_Str, F_TC_End, F_Supplier_Cd, F_Plant, F_Sebango, F_Ratio, F_Part_Nm, F_QTY_BOX from TMP_CONSTRUCTION Where F_Update_BY = '" + _JBearer.GetValue("user")["Code"] + @"' and  F_Supplier_CD<>'9997')C
-    LEFT OUTER JOIN(Select F_part_no, F_RUibetsu, F_Store_CD, F_Ratio_N from dbo.TMP_PRG006_parameter Where F_Update_BY = '" + _JBearer.GetValue("user")["Code"] + @"') P
+    (Select F_Part_NO, F_Ruibetsu, F_Store_Cd, F_TC_Str, F_TC_End, F_Supplier_Cd, F_Plant, F_Sebango, F_Ratio, F_Part_Nm, F_QTY_BOX from TMP_CONSTRUCTION Where F_Update_BY = '" + _JBearer.UserCode.ToString() + @"' and  F_Supplier_CD<>'9997')C
+    LEFT OUTER JOIN(Select F_part_no, F_RUibetsu, F_Store_CD, F_Ratio_N from dbo.TMP_PRG006_parameter Where F_Update_BY = '" + _JBearer.UserCode.ToString() + @"') P
     ON C.F_Part_no = P.F_Part_no and C.F_Ruibetsu = P.F_Ruibetsu and C.F_Store_Cd = P.F_Store_Cd)CON
     ON P.F_Child_Part = CON.F_Part_NO collate Thai_CI_AS
     and P.F_Ch_Ruibetsu = Con.F_ruibetsu collate Thai_CI_AS
@@ -568,7 +568,7 @@ namespace HINOSystem.Controllers.API.Master
     and substring(S.F_Collect_Date,7,4)+substring(S.F_Collect_Date, 4, 2) + substring(S.F_Collect_Date, 1, 2) >= PP.F_TC_Str collate Thai_CI_AS
     and substring(S.F_Collect_Date,7,4)+substring(S.F_Collect_Date, 4, 2) + substring(S.F_Collect_Date, 1, 2) <= PP.F_TC_End collate Thai_CI_AS
     Order by S.F_PDS_NO";
-                _KBCN.executeNonQuery(_SQL);
+                _KBCN.Execute(_SQL);
 
 
                 //''Insert to Data Temp in case Other : 00 : assy
@@ -588,34 +588,34 @@ namespace HINOSystem.Controllers.API.Master
     else substring(S.F_Collect_Date, 7, 4) + substring(S.F_Collect_Date, 4, 2) + substring(S.F_Collect_Date, 1, 2) end as F_Adv_Deli_Date,'N' as F_OrderType,S.F_Collect_Time as F_Country,'0' as F_Reg_Flg,
     '0' as F_Inventory_Flg, case when P.F_CH_Store_Cd = '00' then '' else Con.F_Supplier_Cd end F_Supplier_CD,case when P.F_CH_Store_Cd = '00' then '' else Con.F_Plant end F_Supplier_Plant, 
     '' as F_CycleTime,0 as F_Safety_Stk,
-    '' as F_Part_Refer,'' as F_Ruibetsu_Refer,'" + _JBearer.GetValue("user")["Code"] + @"' as F_Update_By,getdate() as F_Update_Date,'' as F_Remark
+    '' as F_Part_Refer,'' as F_Ruibetsu_Refer,'" + _JBearer.UserCode.ToString() + @"' as F_Update_By,getdate() as F_Update_Date,'' as F_Remark
     ,case when not(Con.F_Ratio_N) is null then cast(Con.F_Ratio_N as nchar(3)) else case when rtrim(P.F_Sel_Part) = '' then '' else cast(Con.F_Ratio as nchar(3)) end end F_ratio
-    from(Select F_PDS_NO, F_part_no, F_Collect_Date, F_Collect_Time, Sum(F_Qty) as F_QTY, substring(F_PDS_NO, 1, 2) as F_PDS_SUB From TB_Import_EKanban Where F_Update_BY = '" + _JBearer.GetValue("user")["Code"] + @"' and F_TYpe = 'EKanban'
+    from(Select F_PDS_NO, F_part_no, F_Collect_Date, F_Collect_Time, Sum(F_Qty) as F_QTY, substring(F_PDS_NO, 1, 2) as F_PDS_SUB From TB_Import_EKanban Where F_Update_BY = '" + _JBearer.UserCode.ToString() + @"' and F_TYpe = 'EKanban'
     Group by F_PDS_NO, F_part_no, F_Collect_Date, F_Collect_Time, substring(F_PDS_NO, 1, 2)
-    )S INNER JOIN(Select * from dbo.TMP_PARENTS_CHILD Where F_Update_BY = '" + _JBearer.GetValue("user")["Code"] + @"')P ON
+    )S INNER JOIN(Select * from dbo.TMP_PARENTS_CHILD Where F_Update_BY = '" + _JBearer.UserCode.ToString() + @"')P ON
     substring(S.F_PART_NO, 1, 5) + substring(S.F_PART_NO, 7, 5) = rtrim(P.F_PARENT_PART) collate Thai_CI_AS
     AND substring(S.F_PART_NO,13,2) = P.F_ruibetsu collate Thai_CI_AS
     and P.F_Store_Cd in ('00'),'01'
     and substring(S.F_Collect_Date,7,4)+substring(S.F_Collect_Date, 4, 2) + substring(S.F_Collect_Date, 1, 2) >= P.F_TC_Str collate Thai_CI_AS
     and substring(S.F_Collect_Date,7,4)+substring(S.F_Collect_Date, 4, 2) + substring(S.F_Collect_Date, 1, 2) <= P.F_TC_End collate Thai_CI_AS
     LEFT OUTER JOIN(select C.F_Part_No, C.F_Ruibetsu, C.F_Store_CD, C.F_TC_Str, C.F_TC_End, C.F_Supplier_Cd, C.F_Plant, C.F_Sebango, C.F_QTY_BOX, C.F_Ratio, C.F_Part_NM, P.F_Ratio_N from
-    (Select F_Part_NO, F_Ruibetsu, F_Store_Cd, F_TC_Str, F_TC_End, F_Supplier_Cd, F_Plant, F_Sebango, F_Ratio, F_Part_Nm, F_QTY_BOX from TMP_CONSTRUCTION Where F_Update_BY = '" + _JBearer.GetValue("user")["Code"] + @"' and F_Supplier_CD<>'9997')C
-    LEFT OUTER JOIN(Select F_part_no, F_RUibetsu, F_Store_CD, F_Ratio_N from TMP_PRG006_parameter WHERE F_Update_BY = '" + _JBearer.GetValue("user")["Code"] + @"') P
+    (Select F_Part_NO, F_Ruibetsu, F_Store_Cd, F_TC_Str, F_TC_End, F_Supplier_Cd, F_Plant, F_Sebango, F_Ratio, F_Part_Nm, F_QTY_BOX from TMP_CONSTRUCTION Where F_Update_BY = '" + _JBearer.UserCode.ToString() + @"' and F_Supplier_CD<>'9997')C
+    LEFT OUTER JOIN(Select F_part_no, F_RUibetsu, F_Store_CD, F_Ratio_N from TMP_PRG006_parameter WHERE F_Update_BY = '" + _JBearer.UserCode.ToString() + @"') P
     ON C.F_Part_no = P.F_Part_no and C.F_Ruibetsu = P.F_Ruibetsu and C.F_Store_Cd = P.F_Store_Cd)CON
     ON P.F_Child_Part = CON.F_Part_NO collate Thai_CI_AS
     and P.F_Ch_Ruibetsu = Con.F_ruibetsu collate Thai_CI_AS
     and P.F_Ch_Store_Cd = Con.F_Store_CD collate Thai_CI_AS
     and substring(S.F_Collect_Date,7,4)+substring(S.F_Collect_Date, 4, 2) + substring(S.F_Collect_Date, 1, 2) >= Con.F_TC_Str collate Thai_CI_AS
     and substring(S.F_Collect_Date,7,4)+substring(S.F_Collect_Date, 4, 2) + substring(S.F_Collect_Date, 1, 2) <= Con.F_TC_End  collate Thai_CI_AS
-    LEFT OUTER JOIN(Select * from dbo.TMP_PARENT_PART Where F_Update_BY = '" + _JBearer.GetValue("user")["Code"] + @"')PP ON
+    LEFT OUTER JOIN(Select * from dbo.TMP_PARENT_PART Where F_Update_BY = '" + _JBearer.UserCode.ToString() + @"')PP ON
     P.F_Parent_Part = PP.F_Parent_Part And P.F_Ruibetsu = PP.F_Ruibetsu And P.F_Store_CD = PP.F_Store_CD
     and substring(S.F_Collect_Date,7,4)+substring(S.F_Collect_Date, 4, 2) + substring(S.F_Collect_Date, 1, 2) >= PP.F_TC_Str collate Thai_CI_AS
     and substring(S.F_Collect_Date,7,4)+substring(S.F_Collect_Date, 4, 2) + substring(S.F_Collect_Date, 1, 2) <= PP.F_TC_End collate Thai_CI_AS
-    LEFT OUTER JOIN(Select * from TB_Transaction_TMP Where F_Update_By = '" + _JBearer.GetValue("user")["Code"] + @"' and F_Type = 'EKanban' and F_Plant = '" + @"')TMP
+    LEFT OUTER JOIN(Select * from TB_Transaction_TMP Where F_Update_By = '" + _JBearer.UserCode.ToString() + @"' and F_Type = 'EKanban' and F_Plant = '" + @"')TMP
     ON substring(S.F_PART_NO, 1, 5) + substring(S.F_PART_NO, 7, 5) = TMP.F_PART_ORDER and S.F_PDS_No = TMP.F_PDS_NO and substring(F_Collect_Date,7,4)+substring(F_Collect_Date, 4, 2) + substring(F_Collect_Date, 1, 2) = TMP.F_PDS_ISSUED_DATE
     Where TMP.F_PART_ORDER IS NULL and substring(S.F_PDS_NO, 1, 2) = S.F_PDS_SUB Order by S.F_PDS_NO
     ";
-                _KBCN.executeNonQuery(_SQL);
+                _KBCN.Execute(_SQL);
 
 
                 //'' for 01 Only
@@ -635,33 +635,33 @@ namespace HINOSystem.Controllers.API.Master
     else substring(S.F_Collect_Date, 7, 4) + substring(S.F_Collect_Date, 4, 2) + substring(S.F_Collect_Date, 1, 2) end as F_Adv_Deli_Date,'N' as F_OrderType,S.F_Collect_Time as F_Country,'0' as F_Reg_Flg,
     '0' as F_Inventory_Flg, case when P.F_CH_Store_Cd = '00' then '' else Con.F_Supplier_Cd end F_Supplier_CD,case when P.F_CH_Store_Cd = '00' then '' else Con.F_Plant end F_Supplier_Plant, 
     '' as F_CycleTime,0 as F_Safety_Stk,
-    '' as F_Part_Refer,'' as F_Ruibetsu_Refer,'" + _JBearer.GetValue("user")["Code"] + @"' as F_Update_By,getdate() as F_Update_Date,'' as F_Remark
+    '' as F_Part_Refer,'' as F_Ruibetsu_Refer,'" + _JBearer.UserCode.ToString() + @"' as F_Update_By,getdate() as F_Update_Date,'' as F_Remark
     ,case when not(Con.F_Ratio_N) is null then cast(Con.F_Ratio_N as nchar(3)) else case when rtrim(P.F_Sel_Part) = '' then '' else cast(Con.F_Ratio as nchar(3)) end end F_ratio
-    from(Select F_PDS_NO, F_part_no, F_Collect_Date, F_Collect_Time, Sum(F_Qty) as F_QTY, substring(F_PDS_NO, 1, 2) as F_PDS_SUB From TB_Import_EKanban Where F_Update_BY = '" + _JBearer.GetValue("user")["Code"] + @"' and F_TYpe = 'EKanban'
+    from(Select F_PDS_NO, F_part_no, F_Collect_Date, F_Collect_Time, Sum(F_Qty) as F_QTY, substring(F_PDS_NO, 1, 2) as F_PDS_SUB From TB_Import_EKanban Where F_Update_BY = '" + _JBearer.UserCode.ToString() + @"' and F_TYpe = 'EKanban'
     Sql = Sql & Group by F_PDS_NO, F_part_no, F_Collect_Date, F_Collect_Time, substring(F_PDS_NO, 1, 2)
-    Sql = Sql & )S INNER JOIN(Select * from dbo.TMP_PARENTS_CHILD Where F_Update_BY = '" + _JBearer.GetValue("user")["Code"] + @"')P ON
+    Sql = Sql & )S INNER JOIN(Select * from dbo.TMP_PARENTS_CHILD Where F_Update_BY = '" + _JBearer.UserCode.ToString() + @"')P ON
     substring(S.F_PART_NO, 1, 5) + substring(S.F_PART_NO, 7, 5) = rtrim(P.F_PARENT_PART) collate Thai_CI_AS
     AND substring(S.F_PART_NO,13,2) = P.F_ruibetsu collate Thai_CI_AS
     and P.F_Store_Cd in ('01') and substring(P.F_Ch_Store_Cd,1,1) in ('0', '1')
     and substring(S.F_Collect_Date,7,4)+substring(S.F_Collect_Date, 4, 2) + substring(S.F_Collect_Date, 1, 2) >= P.F_TC_Str collate Thai_CI_AS
     and substring(S.F_Collect_Date,7,4)+substring(S.F_Collect_Date, 4, 2) + substring(S.F_Collect_Date, 1, 2) <= P.F_TC_End collate Thai_CI_AS
     LEFT OUTER JOIN(select C.F_Part_No, C.F_Ruibetsu, C.F_Store_CD, C.F_TC_Str, C.F_TC_End, C.F_Supplier_Cd, C.F_Plant, C.F_Sebango, C.F_QTY_BOX, C.F_Ratio, C.F_Part_NM, P.F_Ratio_N from
-    (Select F_Part_NO, F_Ruibetsu, F_Store_Cd, F_TC_Str, F_TC_End, F_Supplier_Cd, F_Plant, F_Sebango, F_Ratio, F_Part_Nm, F_QTY_BOX from TMP_CONSTRUCTION Where F_Update_BY = '" + _JBearer.GetValue("user")["Code"] + @"' and F_Supplier_CD<>'9997')C
-    LEFT OUTER JOIN(Select F_part_no, F_RUibetsu, F_Store_CD, F_Ratio_N from TMP_PRG006_parameter WHERE F_Update_BY = '" + _JBearer.GetValue("user")["Code"] + @"') P
+    (Select F_Part_NO, F_Ruibetsu, F_Store_Cd, F_TC_Str, F_TC_End, F_Supplier_Cd, F_Plant, F_Sebango, F_Ratio, F_Part_Nm, F_QTY_BOX from TMP_CONSTRUCTION Where F_Update_BY = '" + _JBearer.UserCode.ToString() + @"' and F_Supplier_CD<>'9997')C
+    LEFT OUTER JOIN(Select F_part_no, F_RUibetsu, F_Store_CD, F_Ratio_N from TMP_PRG006_parameter WHERE F_Update_BY = '" + _JBearer.UserCode.ToString() + @"') P
     ON C.F_Part_no = P.F_Part_no and C.F_Ruibetsu = P.F_Ruibetsu and C.F_Store_Cd = P.F_Store_Cd)CON
     ON P.F_Child_Part = CON.F_Part_NO collate Thai_CI_AS
     and P.F_Ch_Ruibetsu = Con.F_ruibetsu collate Thai_CI_AS
     and P.F_Ch_Store_Cd = Con.F_Store_CD collate Thai_CI_AS
     and substring(S.F_Collect_Date,7,4)+substring(S.F_Collect_Date, 4, 2) + substring(S.F_Collect_Date, 1, 2) >= Con.F_TC_Str collate Thai_CI_AS
     and substring(S.F_Collect_Date,7,4)+substring(S.F_Collect_Date, 4, 2) + substring(S.F_Collect_Date, 1, 2) <= Con.F_TC_End  collate Thai_CI_AS
-    LEFT OUTER JOIN(Select * from dbo.TMP_PARENT_PART Where F_Update_BY = '" + _JBearer.GetValue("user")["Code"] + @"')PP ON
+    LEFT OUTER JOIN(Select * from dbo.TMP_PARENT_PART Where F_Update_BY = '" + _JBearer.UserCode.ToString() + @"')PP ON
     P.F_Parent_Part = PP.F_Parent_Part And P.F_Ruibetsu = PP.F_Ruibetsu And P.F_Store_CD = PP.F_Store_CD
     and substring(S.F_Collect_Date,7,4)+substring(S.F_Collect_Date, 4, 2) + substring(S.F_Collect_Date, 1, 2) >= PP.F_TC_Str collate Thai_CI_AS
     and substring(S.F_Collect_Date,7,4)+substring(S.F_Collect_Date, 4, 2) + substring(S.F_Collect_Date, 1, 2) <= PP.F_TC_End collate Thai_CI_AS and PP.F_Plant_Cd = ' + '
-    LEFT OUTER JOIN(Select * from TB_Transaction_TMP Where F_Update_By = '" + _JBearer.GetValue("user")["Code"] + @"' and F_Type = 'EKanban' and F_Plant = ' + ')TMP
+    LEFT OUTER JOIN(Select * from TB_Transaction_TMP Where F_Update_By = '" + _JBearer.UserCode.ToString() + @"' and F_Type = 'EKanban' and F_Plant = ' + ')TMP
     ON substring(S.F_PART_NO, 1, 5) + substring(S.F_PART_NO, 7, 5) = TMP.F_PART_ORDER and S.F_PDS_No = TMP.F_PDS_NO and substring(F_Collect_Date,7,4)+substring(F_Collect_Date, 4, 2) + substring(F_Collect_Date, 1, 2) = TMP.F_PDS_ISSUED_DATE
     Where TMP.F_PART_ORDER IS NULL and substring(S.F_PDS_NO, 1, 2) = S.F_PDS_SUB Order by S.F_PDS_NO";
-                _KBCN.executeNonQuery(_SQL);
+                _KBCN.Execute(_SQL);
 
 
 
@@ -688,8 +688,8 @@ namespace HINOSystem.Controllers.API.Master
         //        VBController _VB = new VBController();
         //        try
         //        {
-        //            JObject _JBearer = _BearerClass.Authorization(Request.Headers.Authorization);
-        //            if (_JBearer.GetValue("status").ToString() == "401") return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
+        //            BearerClass _JBearer = _BearerClass.Header(Request);
+        //            if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
 
         //            //_json = JsonConvert.DeserializeObject(pData);
 
@@ -719,14 +719,14 @@ namespace HINOSystem.Controllers.API.Master
 
 
         //            _SQL = @" 
-        //Delete From TB_Import_EKanban Where F_Update_BY='" + _JBearer.GetValue("user")["Code"] + @"' and F_TYpe ='EKanban'; 
+        //Delete From TB_Import_EKanban Where F_Update_BY='" + _JBearer.UserCode.ToString() + @"' and F_TYpe ='EKanban'; 
 
-        //Delete From TB_Import_Error Where F_Update_BY='" + _JBearer.GetValue("user")["Code"] + @"' and F_TYpe ='D_EKanban'; 
+        //Delete From TB_Import_Error Where F_Update_BY='" + _JBearer.UserCode.ToString() + @"' and F_TYpe ='D_EKanban'; 
 
-        //Delete From TB_Import_Error Where F_Update_BY='" + _JBearer.GetValue("user")["Code"] + @"' and F_TYpe ='EKanban'; 
+        //Delete From TB_Import_Error Where F_Update_BY='" + _JBearer.UserCode.ToString() + @"' and F_TYpe ='EKanban'; 
 
         //";
-        //            _KB3Connect.executeNonQuery(_SQL);
+        //            _KBCN.Execute(_SQL);
 
 
         //            int _current = 1, _typeP = 0;
@@ -773,9 +773,9 @@ namespace HINOSystem.Controllers.API.Master
         //                        }
 
         //                    }
-        //                    _SQL = _SQL + "'" + _JBearer.GetValue("user")["Code"] + "', GETDATE())";
+        //                    _SQL = _SQL + "'" + _JBearer.UserCode.ToString() + "', GETDATE())";
 
-        //                    _KB3Connect.executeNonQuery(_SQL);
+        //                    _KBCN.Execute(_SQL);
 
 
         //                    if(!Check_Parent(_PartNo, _Ruibetsu, _Delivery))
@@ -783,8 +783,8 @@ namespace HINOSystem.Controllers.API.Master
         //                        {
         //                            string _SQLError = @"
         //INSERT INTO TB_Import_Error (F_TYpe,F_PDS_CD, F_Row, F_Field, F_Remark, F_Update_By, F_Update_Date)
-        //VALUES('EKanban','" + _PO + "','" + _Item + "','" + _PartNo + "','PART NOT FOUND IN MASTER','" + _JBearer.GetValue("user")["Code"] + "', GETDATE()) ";
-        //                            _KB3Connect.executeNonQuery(_SQL);
+        //VALUES('EKanban','" + _PO + "','" + _Item + "','" + _PartNo + "','PART NOT FOUND IN MASTER','" + _JBearer.UserCode.ToString() + "', GETDATE()) ";
+        //                            _KBCN.Execute(_SQL);
 
         //                        }
 
@@ -813,15 +813,15 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                JObject _JBearer = _BearerClass.Authorization(Request.Headers.Authorization);
-                if (_JBearer.GetValue("status").ToString() == "401") return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
+                BearerClass _JBearer = _BearerClass.Header(Request);
+                if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
 
                 string _SQL = @"
     Select isnull(count(*),0) as cnt 
     from TB_Import_EKanban 
-    Where F_Update_BY='" + _JBearer.GetValue("user")["Code"] + @"' 
+    Where F_Update_BY='" + _JBearer.UserCode.ToString() + @"' 
     and F_TYpe ='EKanban' ";
-                string _js = _KBCN.executeJSON(_SQL, skipLog: true);
+                string _js = _KBCN.ExecuteJSON(_SQL, skipLog: true);
 
                 string _result = @"{
                     ""status"":""200"",
@@ -851,7 +851,7 @@ namespace HINOSystem.Controllers.API.Master
     AND F_Ruibetsu ='" + pRuibetsu + @"' ";
             _SQL = _SQL + " AND F_Local_Str <='" + pDelivery + "' ";
             _SQL = _SQL + " AND F_Local_End >='" + pDelivery + "' ";
-            DataTable _dt = _PPMCN.executeSQL(_SQL, skipLog: true);
+            DataTable _dt = _PPMCN.ExecuteSQL(_SQL, skipLog: true);
 
             if (_dt.Rows.Count > 0) _return = true;
 
@@ -869,7 +869,7 @@ namespace HINOSystem.Controllers.API.Master
     AND F_Store_Cd in ('00')";
             _SQL = _SQL + " AND F_TC_Str <='" + pDelivery + "' ";
             _SQL = _SQL + " AND F_TC_End >='" + pDelivery + "' ";
-            DataTable _dt = _PPMCN.executeSQL(_SQL, skipLog: true);
+            DataTable _dt = _PPMCN.ExecuteSQL(_SQL, skipLog: true);
 
             if (_dt.Rows.Count > 0) _return = true;
 

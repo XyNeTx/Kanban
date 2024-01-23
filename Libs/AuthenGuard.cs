@@ -22,7 +22,7 @@ namespace HINOSystem.Libs
     public class AuthenGuard : Controller
     {
         private readonly IConfiguration _config;
-        private readonly WarrantyClaimConnect _wrtConnect;
+        private readonly ERPConnection _erpConnect;
         //private readonly MyExtensions _myExtensions;
         private readonly CookieClass _cookie;
 
@@ -50,13 +50,13 @@ namespace HINOSystem.Libs
         public string _hostname_prod = @"";
 
         public AuthenGuard(
-            IConfiguration configuration
-            , WarrantyClaimConnect wrtConnect
-            , CookieClass cookieClass
+            IConfiguration configuration, 
+            ERPConnection erpConnect, 
+            CookieClass cookieClass
             )
         {
             _config = configuration;
-            _wrtConnect = wrtConnect;
+            _erpConnect = erpConnect;
             _cookie = cookieClass; 
 
             this._DB = _config.GetValue<string>("Application:Database");
@@ -110,7 +110,7 @@ namespace HINOSystem.Libs
             string _parent_id = "";
 
             string _SQL = "EXEC [erp].[AuthenGuardLoadPage] '" + _system + @"', '" + _controller + @"',  '" + _acton + @"' ";
-            DataTable _dataTable = _wrtConnect.executeSQL(_SQL, _context.HttpContext, pAction: "LOAD", pControllerName: _controller, pActionName: _acton, pSystem: _system);
+            DataTable _dataTable = _erpConnect.ExecuteSQL(_SQL, _context.HttpContext, pAction: "LOAD", pControllerName: _controller, pActionName: _acton, pSystem: _system);
 
             if (_dataTable.Rows.Count > 0)
             {
@@ -118,7 +118,7 @@ namespace HINOSystem.Libs
                 _parent_id = _dataTable.Rows[0]["mpID"].ToString();
                 //## get permission
                 _SQL = "EXEC [erp].[AuthenGuardLoadPagePermission] '" + _system + @"', '" + _context.HttpContext.Session.GetString("USER_GROUP_ID").ToString() + @"',  '" + _dataTable.Rows[0]["mID"].ToString() + @"' ";
-                DataTable _dtPermission = _wrtConnect.executeSQL(_SQL, _context.HttpContext, skipLog: true);
+                DataTable _dtPermission = _erpConnect.ExecuteSQL(_SQL, _context.HttpContext, skipLog: true);
                 if (_dtPermission.Rows.Count > 0)
                 {
                     if(this.ComponentToolbar) this.ComponentToolbar = (_dtPermission.Rows[0]["Toolbar"].ToString() == "1" ? true : false);
@@ -218,7 +218,7 @@ namespace HINOSystem.Libs
             ViewData["_System"] = _context.HttpContext.Session.GetString("SYSTEM").ToString();
             ViewData["_Token"] = _context.HttpContext.Session.GetString("TOKEN").ToString();
 
-            ViewData["ComputerNameSQL"] = _wrtConnect.executeSQLJSON("select Top(1)  HOST_NAME() from [New_Kanban_F3].[erp].[User]", skipLog: true);
+            ViewData["ComputerNameSQL"] = _erpConnect.ExecuteJSON("select Top(1)  HOST_NAME() from [New_Kanban_F3].[erp].[User]", skipLog: true);
 
 
 
@@ -255,7 +255,7 @@ namespace HINOSystem.Libs
             _SQL = "EXEC [erp].[AuthenGuardLoadMenu] '" + _system + "' ";
             if (ViewData["UserGroupID"].ToString() != "1") _SQL = @"EXEC [erp].[AuthenGuardLoadMenuByID] '" + _system + "', '"+ ViewData["UserCode"].ToString() + "'";
 
-            DataTable _dtMenuDisplay = _wrtConnect.executeSQL(_SQL, skipLog: true);
+            DataTable _dtMenuDisplay = _erpConnect.ExecuteSQL(_SQL, skipLog: true);
 
             string _sql = @"
     SELECT m.* 
@@ -275,7 +275,7 @@ namespace HINOSystem.Libs
     " + (int.Parse(ViewData["UserGroupID"].ToString()) > 2 ? "AND gm.Group_ID=" + ViewData["UserGroupID"].ToString() : "") + @"
     ORDER BY Seq
 ";
-            DataTable _dtMenu = _wrtConnect.executeSQL(_sql, skipLog: true);
+            DataTable _dtMenu = _erpConnect.ExecuteSQL(_sql, skipLog: true);
             string _s = @"", _menu="";
             for (int i = 0; i < _dtMenu.Rows.Count; i++)
             {
@@ -351,7 +351,7 @@ namespace HINOSystem.Libs
     " + (int.Parse(ViewData["UserGroupID"].ToString()) > 2 ? "AND gm.Group_ID=" + ViewData["UserGroupID"].ToString() : "") + @"
     ORDER BY Seq
 ";
-            DataTable _dtMenu = _wrtConnect.executeSQL(_SQL, skipLog: true);
+            DataTable _dtMenu = _erpConnect.ExecuteSQL(_SQL, skipLog: true);
             _s += @"
                                         <ul class=""pcoded-submenu"">";
             if (_dtMenu.Rows.Count > 0)
@@ -423,7 +423,7 @@ WHERE mp.Parent_ID=" + _id + @"
 AND mp.isDelete = 0
 ORDER BY Seq
 ";
-            DataTable _dtMenu = _wrtConnect.executeSQL(_SQL, skipLog: true);
+            DataTable _dtMenu = _erpConnect.ExecuteSQL(_SQL, skipLog: true);
             if (_dtMenu.Rows.Count > 0)
             {
                 for (int i = 0; i < _dtMenu.Rows.Count; i++)

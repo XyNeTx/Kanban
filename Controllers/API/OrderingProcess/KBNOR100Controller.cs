@@ -36,20 +36,20 @@ namespace HINOSystem.Controllers.API.Master
     {
         private readonly IConfiguration _configuration;
         private readonly BearerClass _BearerClass;
-        private readonly DefaultConnection _KB3Connect;
+        private readonly KanbanConnection _KBCN;
 
         private readonly KB3Context _KB3Context;
 
         public KBNOR100Controller(
             IConfiguration configuration,
             BearerClass bearerClass,
-            DefaultConnection defaultConnection,
+            KanbanConnection kanbanConnection,
             KB3Context kB3Context
             )
         {
             _configuration = configuration;
             _BearerClass = bearerClass;
-            _KB3Connect = defaultConnection;
+            _KBCN = kanbanConnection;
             _KB3Context = kB3Context;
 
         }
@@ -63,8 +63,8 @@ namespace HINOSystem.Controllers.API.Master
             string _SQL = "";
             try
             {
-                JObject _JBearer = _BearerClass.Authorization(Request.Headers.Authorization);
-                if (_JBearer.GetValue("status").ToString() == "401") return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
+                BearerClass _JBearer = _BearerClass.Header(Request);
+                if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
 
 
                 _SQL = @"
@@ -75,7 +75,7 @@ namespace HINOSystem.Controllers.API.Master
                         ,F_Update_Date
                     FROM [dbo].[TB_MS_Factory]
                 ";
-                string _jsTB_MS_Factory = _KB3Connect.executeSQLJSON(_SQL, pUser: _JBearer, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+                string _jsTB_MS_Factory = _KBCN.ExecuteJSON(_SQL, pUser: _JBearer, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
 
                 string _result = @"{
                     ""status"":""200"",
@@ -103,8 +103,8 @@ namespace HINOSystem.Controllers.API.Master
             string _SQL = "";
             try
             {
-                JObject _JBearer = _BearerClass.Authorization(Request.Headers.Authorization);
-                if (_JBearer.GetValue("status").ToString() == "401") return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
+                BearerClass _JBearer = _BearerClass.Header(Request);
+                if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
 
                 _json = JsonConvert.DeserializeObject(pData);
 
@@ -123,8 +123,8 @@ namespace HINOSystem.Controllers.API.Master
                     ORDER BY F_Plant
                 ";
 
-                _KB3Connect.Plant = _json.F_Plant;
-                string _jsonData = _KB3Connect.executeSQLJSON(_SQL, pUser: _JBearer, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+                _KBCN.Plant = _json.F_Plant;
+                string _jsonData = _KBCN.ExecuteJSON(_SQL, pUser: _JBearer, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
 
 
 
@@ -151,8 +151,8 @@ namespace HINOSystem.Controllers.API.Master
             string _SQL = "";
             try
             {
-                JObject _JBearer = _BearerClass.Authorization(Request.Headers.Authorization);
-                if (_JBearer.GetValue("status").ToString() == "401") return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
+                BearerClass _JBearer = _BearerClass.Header(Request);
+                if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
 
 
                 TB_MS_OrderType _TB_MS_OrderType = new TB_MS_OrderType();
@@ -160,7 +160,7 @@ namespace HINOSystem.Controllers.API.Master
                 _TB_MS_OrderType.F_OrderType = Request.Form["F_OrderType"].ToString();
                 _TB_MS_OrderType.F_Effect_Date = Request.Form["F_Effect_Date"].ToString().Replace("-", "");
                 _TB_MS_OrderType.F_End_Date = Request.Form["F_End_Date"].ToString().Replace("-", "");
-                _TB_MS_OrderType.F_Update_By = _JBearer.GetValue("user")["Code"].ToString();
+                _TB_MS_OrderType.F_Update_By = _JBearer.UserCode.ToString();
                 _TB_MS_OrderType.F_Update_Date = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss"));
                 _KB3Context.TB_MS_OrderType.Add(_TB_MS_OrderType);
                 _KB3Context.SaveChanges();
@@ -194,21 +194,21 @@ namespace HINOSystem.Controllers.API.Master
                     }";
             try
             {
-                JObject _JBearer = _BearerClass.Authorization(Request.Headers.Authorization);
-                if (_JBearer.GetValue("status").ToString() == "401") return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
+                BearerClass _JBearer = _BearerClass.Header(Request);
+                if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
 
 
                 _SQL = @"
                     UPDATE [dbo].[TB_MS_OrderType]
                     SET F_End_Date = '" + Request.Form["F_End_Date"].ToString().Replace("-", "") + @"'
-                        ,F_Update_By = '" + _JBearer.GetValue("user")["Code"].ToString() + @"'
+                        ,F_Update_By = '" + _JBearer.UserCode.ToString() + @"'
                         ,F_Update_Date = '" + DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss")) + @"'
                     WHERE 1=1
                     AND F_Plant = '" + Request.Form["F_Plant"].ToString() + @"'
                     AND F_OrderType = '" + Request.Form["F_OrderType"].ToString() + @"'
                     AND F_Effect_Date = '" + Request.Form["F_Effect_Date"].ToString().Replace("-", "") + @"'
                 ";
-                _KB3Connect.executeNonQuery(_SQL);
+                _KBCN.Execute(_SQL);
 
                 _result = @"{
                     ""status"":""200"",
@@ -238,8 +238,8 @@ namespace HINOSystem.Controllers.API.Master
                     }";
             try
             {
-                JObject _JBearer = _BearerClass.Authorization(Request.Headers.Authorization);
-                if (_JBearer.GetValue("status").ToString() == "401") return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
+                BearerClass _JBearer = _BearerClass.Header(Request);
+                if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
 
 
                 _SQL = @"
@@ -249,7 +249,7 @@ namespace HINOSystem.Controllers.API.Master
                     AND F_OrderType = '" + Request.Form["F_OrderType"].ToString() + @"'
                     AND F_Effect_Date = '" + Request.Form["F_Effect_Date"].ToString().Replace("-", "") + @"'
                 ";
-                _KB3Connect.executeNonQuery(_SQL);
+                _KBCN.Execute(_SQL);
 
                 _result = @"{
                     ""status"":""200"",

@@ -32,7 +32,7 @@ namespace HINOSystem.Controllers
     {
         private readonly IConfiguration _config;
         private readonly IHttpContextAccessor? _httpContextAccessor;
-        private readonly WarrantyClaimConnect _wrtConnect;
+        private readonly ERPConnection _erpConnect;
         private readonly BearerClass _bearerClass;
 
         private string Systems = "KB3";
@@ -46,13 +46,13 @@ namespace HINOSystem.Controllers
         public LoginController(
             IConfiguration configuration,
             IHttpContextAccessor? httpContextAccessor,
-            WarrantyClaimConnect wrtConnect,
+            ERPConnection erpConnect,
             BearerClass bearerClass
             )
         {
             _config = configuration;
             _httpContextAccessor = httpContextAccessor;
-            _wrtConnect = wrtConnect;
+            _erpConnect = erpConnect;
             _bearerClass = bearerClass;
 
             this._DB = _config.GetValue<string>(this.SystemCode + ":Database");
@@ -86,7 +86,7 @@ namespace HINOSystem.Controllers
                 FROM [erp].[User]
                 WHERE [ResetToken] = '" + Request.Query["ref"].ToString() + @"' 
             ";
-            DataTable _dataTable = _wrtConnect.executeSQL(_SQL, skipLog: true);
+            DataTable _dataTable = _erpConnect.ExecuteSQL(_SQL, skipLog: true);
 
             if (_dataTable == null) return View();
 
@@ -120,7 +120,7 @@ namespace HINOSystem.Controllers
             this.fncCheckEnvironment(_txtUserName);
 
             _SQL = @" EXEC [erp].[AuthenGuardLogin] '" + _txtUserName + @"', '" + _txtPassword + @"', '" + _txtIsHINO + @"'; ";
-            DataTable _dataTable = _wrtConnect.executeSQL(_SQL, skipLog: true);
+            DataTable _dataTable = _erpConnect.ExecuteSQL(_SQL, skipLog: true);
 
             if (_dataTable == null)
             {
@@ -266,7 +266,7 @@ namespace HINOSystem.Controllers
                 FROM [erp].[User]
                 WHERE [ResetToken] = '" + Request.Query["ref"].ToString() + @"' 
             ";
-            DataTable _dataTable = _wrtConnect.executeSQL(_SQL, skipLog: true);
+            DataTable _dataTable = _erpConnect.ExecuteSQL(_SQL, skipLog: true);
 
             if (_dataTable.Rows.Count > 0)
             {
@@ -348,7 +348,7 @@ namespace HINOSystem.Controllers
                                   , '" + Message + @"'
                                   , '" + (_SQL == null ? "" : _SQL.Replace("'", "''").Replace("\r", " ").Replace("\n", " ").Replace("\t", " ").ToString().Trim()) + @"'
                                 )";
-                _wrtConnect.executeNonQuery(_SQL_Log, skipLog: true);
+                _erpConnect.Execute(_SQL_Log, skipLog: true);
 
 
                 if (Action == "LOGIN")
@@ -360,13 +360,13 @@ namespace HINOSystem.Controllers
                                     ,[F_IPAddress]
                                     ,[F_Update]
                                 )VALUES(
-                                    'Hino Kanban F.3'
+                                    'HINO KANBAN Factory 3'
                                   , '" + HttpContext.Session.GetString("USER_CODE").ToString() + @"'
                                   , '" + HttpContext.Session.GetString("USER_DEVICENAME").ToString() + @"'
                                   , '" + HttpContext.Session.GetString("USER_IPADDRESS").ToString() + @"'
                                   , GETDATE()
                                 )";
-                    _wrtConnect.executeNonQuery(_SQL_Log, skipLog: true);
+                    _erpConnect.Execute(_SQL_Log, skipLog: true);
                 }
             }
             catch (Exception ex)
@@ -392,7 +392,7 @@ namespace HINOSystem.Controllers
                                   , '" + Message + @"'
                                   , '" + (_SQL == null ? "" : _SQL.Replace("'", "''").Replace("\r", " ").Replace("\n", " ").Replace("\t", " ").ToString().Trim()) + @"'
                                 )";
-                _wrtConnect.executeNonQuery(_SQL_Log, skipLog: true);
+                _erpConnect.Execute(_SQL_Log, skipLog: true);
 
 
                 PrincipalContext _pc = new PrincipalContext(ContextType.Domain, "THI_DM_1");
@@ -406,7 +406,7 @@ namespace HINOSystem.Controllers
 
                 _SQL_Log = @"SELECT Code FROM [erp].[User] WHERE 1=1 AND Code = '" + User + "' ";
 
-                DataTable _dtNewUser = _wrtConnect.executeSQL(_SQL_Log, skipLog: true);
+                DataTable _dtNewUser = _erpConnect.ExecuteSQL(_SQL_Log, skipLog: true);
 
                 if (_dtNewUser.Rows.Count <=0)
                 {
@@ -440,7 +440,7 @@ namespace HINOSystem.Controllers
                                   , GETDATE()
                                   , 'system'
                                 )";
-                    _wrtConnect.executeNonQuery(_SQL_Log, skipLog: true);
+                    _erpConnect.Execute(_SQL_Log, skipLog: true);
                 }
 
 

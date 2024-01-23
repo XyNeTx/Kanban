@@ -69,7 +69,7 @@ namespace HINOSystem.Controllers.API.Master
                 _KBCN.Plant = _JBearer.Plant;
 
                 _SQL = @" EXEC [exec].[spTB_MS_FACTORY] ";
-                string _jsTB_MS_Factory = _KBCN.executeJSON(_SQL, pUser: _JBearer, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+                string _jsTB_MS_Factory = _KBCN.ExecuteJSON(_SQL, pUser: _JBearer, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
 
                 string _result = @"{
                     ""status"":""200"",
@@ -106,7 +106,7 @@ namespace HINOSystem.Controllers.API.Master
 
                 if (_json.rdoOrder == "SET") _SQL = @" EXEC [exec].[spKBNMS012_SEARCH] '" + _json.F_Plant + "' ";
                 if (_json.rdoOrder == "PART") _SQL = @" EXEC [exec].[spKBNMS012_SEARCH_PART] '" + _json.F_Plant + "' ";
-                string _jsonData = _KBCN.executeJSON(_SQL, pUser: _JBearer, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+                string _jsonData = _KBCN.ExecuteJSON(_SQL, pUser: _JBearer, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
 
 
 
@@ -134,8 +134,8 @@ namespace HINOSystem.Controllers.API.Master
             string _SQL = "";
             try
             {
-                JObject _JBearer = _BearerClass.Authorization(Request.Headers.Authorization);
-                if (_JBearer.GetValue("status").ToString() == "401") return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
+                BearerClass _JBearer = _BearerClass.Header(Request);
+                if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
 
 
                 TB_MS_OldPart _TB_MS_OldPart = new TB_MS_OldPart();
@@ -146,7 +146,7 @@ namespace HINOSystem.Controllers.API.Master
                 _TB_MS_OldPart.F_Store_Cd = Request.Form["F_Store_Cd"].ToString();
                 _TB_MS_OldPart.F_Start_Date = Request.Form["F_Start_Date"].ToString();
                 _TB_MS_OldPart.F_End_Date = Request.Form["F_End_Date"].ToString();
-                _TB_MS_OldPart.F_Update_By = _JBearer.GetValue("user")["Code"].ToString();
+                _TB_MS_OldPart.F_Update_By = _JBearer.UserCode.ToString();
                 _TB_MS_OldPart.F_Update_Date = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss"));
                 _KB3Context.TB_MS_OldPart.Add(_TB_MS_OldPart);
                 _KB3Context.SaveChanges();
@@ -198,7 +198,7 @@ namespace HINOSystem.Controllers.API.Master
                     AND F_Store_Cd = '" + Request.Form["F_Store_Cd"].ToString().Replace("-", "") + @"'
                     AND F_Start_Date = '" + Request.Form["F_Start_Date"].ToString().Replace("-", "") + @"'
                 ";
-                _KBCN.executeNonQuery(_SQL);
+                _KBCN.Execute(_SQL);
 
 
                 _result = @"{
@@ -243,7 +243,7 @@ namespace HINOSystem.Controllers.API.Master
                     AND F_Store_Cd = '" + Request.Form["F_Store_Cd"].ToString().Replace("-", "") + @"'
                     AND F_Start_Date = '" + Request.Form["F_Start_Date"].ToString().Replace("-", "") + @"'
                 ";
-                _KBCN.executeNonQuery(_SQL);
+                _KBCN.Execute(_SQL);
 
 
                 _result = @"{

@@ -86,7 +86,7 @@ namespace HINOSystem.Controllers.API.Master
                     AND F_OrderNo = '" + _json.pdsno + @"' 
                 ";
                 _KBCN.Plant = 1;
-                string _jsonReceiveSpecial9Y = _KBCN.executeJSON(_SQL);
+                string _jsonReceiveSpecial9Y = _KBCN.ExecuteJSON(_SQL);
 
 
                 _SQL = @"
@@ -99,7 +99,7 @@ namespace HINOSystem.Controllers.API.Master
                     ORDER BY d.F_No 
                 ";
                 _KBCN.Plant = 1;
-                string _jsonReceiveDate = _KBCN.executeJSON(_SQL);
+                string _jsonReceiveDate = _KBCN.ExecuteJSON(_SQL);
 
 
                 _SQL = @"
@@ -119,7 +119,7 @@ namespace HINOSystem.Controllers.API.Master
                     WHERE 1=1 
                     ORDER BY b.F_No;
                 ";
-                string _jsonReceivePrice = _PCWCN.executeSQLJSON(_SQL, skipLog:true);
+                string _jsonReceivePrice = _PCWCN.ExecuteJSON(_SQL, skipLog:true);
 
 
                 string _result = @"{
@@ -161,9 +161,9 @@ namespace HINOSystem.Controllers.API.Master
 
 
                 _SQL = "EXEC [QQ].[Chg_IssuedDate] '" + _json.pdsno + "' ";
-                _kanbanConnect.executeNonQuery(_SQL);
+                _kanbanConnect.Execute(_SQL);
 
-                _PCWCN.executeNonQuery(_SQL, skipLog:true);
+                _PCWCN.Execute(_SQL, skipLog:true);
                 
 
                 _result = @"{
@@ -202,7 +202,7 @@ namespace HINOSystem.Controllers.API.Master
                         WHERE 1=1 
                         AND F_OrderNo = '" + _json.pdsno + @"' ;
                 ";
-                _kanbanConnect.executeNonQuery(_SQL);
+                _kanbanConnect.Execute(_SQL);
 
                 _result = @"{
                         ""status"":""200"",
@@ -242,7 +242,7 @@ namespace HINOSystem.Controllers.API.Master
                     AND RD.F_amount <> D.F_amount 
                     AND RH.F_pds_cd = '" + _json.pdsno + @"';
                 ";
-                _procwebConnect.executeNonQuery(_SQL);
+                _procwebConnect.Execute(_SQL);
 
                 _result = @"{
                         ""status"":""200"",
@@ -282,7 +282,7 @@ namespace HINOSystem.Controllers.API.Master
                     AND RD.F_amount <> D.F_amount 
                     AND RH.F_pds_cd = '" + _json.pdsno + @"';
                 ";
-                _procwebConnect.executeNonQuery(_SQL);
+                _procwebConnect.Execute(_SQL);
 
                 _result = @"{
                         ""status"":""200"",

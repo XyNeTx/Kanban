@@ -69,7 +69,7 @@ namespace HINOSystem.Controllers.API.Master
                 _KBCN.Plant = _JBearer.Plant;
 
                 _SQL = @" EXEC [exec].[spTB_MS_FACTORY] ";
-                string _jsTB_MS_Factory = _KBCN.executeJSON(_SQL, pUser: _JBearer, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+                string _jsTB_MS_Factory = _KBCN.ExecuteJSON(_SQL, pUser: _JBearer, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
 
                 string _result = @"{
                     ""status"":""200"",
@@ -106,7 +106,7 @@ namespace HINOSystem.Controllers.API.Master
 
 
                 _SQL = @" EXEC [exec].[spKBNMS001_SEARCH] '" + _JBearer.Plant + "' ";
-                string _jsonData = _KBCN.executeJSON(_SQL, pUser: _JBearer, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+                string _jsonData = _KBCN.ExecuteJSON(_SQL, pUser: _JBearer, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
 
 
 
@@ -133,8 +133,8 @@ namespace HINOSystem.Controllers.API.Master
             string _SQL = "";
             try
             {
-                JObject _JBearer = _BearerClass.Authorization(Request.Headers.Authorization);
-                if (_JBearer.GetValue("status").ToString() == "401") return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
+                BearerClass _JBearer = _BearerClass.Header(Request);
+                if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
 
 
                 TB_MS_OrderType _TB_MS_OrderType = new TB_MS_OrderType();
@@ -142,7 +142,7 @@ namespace HINOSystem.Controllers.API.Master
                 _TB_MS_OrderType.F_OrderType = Request.Form["F_OrderType"].ToString();
                 _TB_MS_OrderType.F_Effect_Date = Request.Form["F_Effect_Date"].ToString().Replace("-", "");
                 _TB_MS_OrderType.F_End_Date = Request.Form["F_End_Date"].ToString().Replace("-", "");
-                _TB_MS_OrderType.F_Update_By = _JBearer.GetValue("user")["Code"].ToString();
+                _TB_MS_OrderType.F_Update_By = _JBearer.UserCode.ToString();
                 _TB_MS_OrderType.F_Update_Date = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss"));
                 _KB3Context.TB_MS_OrderType.Add(_TB_MS_OrderType);
                 _KB3Context.SaveChanges();
@@ -191,7 +191,7 @@ namespace HINOSystem.Controllers.API.Master
                     AND F_OrderType = '" + Request.Form["F_OrderType"].ToString() + @"'
                     AND F_Effect_Date = '" + Request.Form["F_Effect_Date"].ToString().Replace("-", "") + @"'
                 ";
-                _KBCN.executeNonQuery(_SQL);
+                _KBCN.Execute(_SQL);
 
                 _result = @"{
                     ""status"":""200"",
@@ -234,7 +234,7 @@ namespace HINOSystem.Controllers.API.Master
                     AND F_OrderType = '" + Request.Form["F_OrderType"].ToString() + @"'
                     AND F_Effect_Date = '" + Request.Form["F_Effect_Date"].ToString().Replace("-", "") + @"'
                 ";
-                _KBCN.executeNonQuery(_SQL);
+                _KBCN.Execute(_SQL);
 
                 _result = @"{
                     ""status"":""200"",

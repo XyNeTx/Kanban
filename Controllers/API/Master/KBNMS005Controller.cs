@@ -76,7 +76,7 @@ namespace HINOSystem.Controllers.API.Master
                         ,F_Update_Date
                     FROM [dbo].[TB_MS_Factory]
                 ";
-                string _jsTB_Factory = _KBCN.executeJSON(_SQL, pUser: _JBearer, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+                string _jsTB_Factory = _KBCN.ExecuteJSON(_SQL, pUser: _JBearer, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
 
                 _SQL = @"
                     SELECT DISTINCT RTRIM(F_Supplier_Cd)+'-'+RTRIM(F_Supplier_Plant) AS F_Supplier_Code 
@@ -86,7 +86,7 @@ namespace HINOSystem.Controllers.API.Master
                     AND F_Store_Code LIKE '1%' 
                     ORDER BY F_Supplier_Code 
                 ";
-                string _jsTB_Supplier = _KBCN.executeJSON(_SQL, pUser: _JBearer, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+                string _jsTB_Supplier = _KBCN.ExecuteJSON(_SQL, pUser: _JBearer, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
 
                 string _result = @"{
                     ""status"":""200"",
@@ -132,7 +132,7 @@ namespace HINOSystem.Controllers.API.Master
                     EXEC [HMMT-E_KANBAN].[New_Kanban].[dbo].[sp_DT_DailyBalance] '" + _F_Start_Date.Replace("-", "").Replace("-", "") + @"','" + _F_End_Date.Replace("-", "").Replace("-", "") + @"', '" + _F_Supplier.Substring(0, 4) + @"', '" + _F_Supplier.Substring(5, 1) + @"'
                 ";
                     _KBCN.Plant = _json.F_Plant;
-                    _jsData = _KBCN.executeJSON(_SQL, pUser: _JBearer, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+                    _jsData = _KBCN.ExecuteJSON(_SQL, pUser: _JBearer, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
 
                 }
 
@@ -161,8 +161,8 @@ namespace HINOSystem.Controllers.API.Master
             string _SQL = "";
             try
             {
-                JObject _JBearer = _BearerClass.Authorization(Request.Headers.Authorization);
-                if (_JBearer.GetValue("status").ToString() == "401") return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
+                BearerClass _JBearer = _BearerClass.Header(Request);
+                if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
 
 
                 TB_MS_OldPart _TB_MS_OldPart = new TB_MS_OldPart();
@@ -173,7 +173,7 @@ namespace HINOSystem.Controllers.API.Master
                 _TB_MS_OldPart.F_Store_Cd = Request.Form["F_Store_Cd"].ToString();
                 _TB_MS_OldPart.F_Start_Date = Request.Form["F_Start_Date"].ToString();
                 _TB_MS_OldPart.F_End_Date = Request.Form["F_End_Date"].ToString();
-                _TB_MS_OldPart.F_Update_By = _JBearer.GetValue("user")["Code"].ToString();
+                _TB_MS_OldPart.F_Update_By = _JBearer.UserCode.ToString();
                 _TB_MS_OldPart.F_Update_Date = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss"));
                 _KB3Context.TB_MS_OldPart.Add(_TB_MS_OldPart);
                 _KB3Context.SaveChanges();
@@ -225,7 +225,7 @@ namespace HINOSystem.Controllers.API.Master
                     AND F_Store_Cd = '" + Request.Form["F_Store_Cd"].ToString().Replace("-", "") + @"'
                     AND F_Start_Date = '" + Request.Form["F_Start_Date"].ToString().Replace("-", "") + @"'
                 ";
-                _KBCN.executeNonQuery(_SQL);
+                _KBCN.Execute(_SQL);
 
 
                 _result = @"{
@@ -270,7 +270,7 @@ namespace HINOSystem.Controllers.API.Master
                     AND F_Store_Cd = '" + Request.Form["F_Store_Cd"].ToString().Replace("-", "") + @"'
                     AND F_Start_Date = '" + Request.Form["F_Start_Date"].ToString().Replace("-", "") + @"'
                 ";
-                _KBCN.executeNonQuery(_SQL);
+                _KBCN.Execute(_SQL);
 
 
                 _result = @"{

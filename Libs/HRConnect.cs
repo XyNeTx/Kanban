@@ -43,7 +43,7 @@ namespace HINOSystem.Libs
         public HRConnect(IConfiguration configuration)
         {
             _configuration = configuration;
-            _connectionStirng = _configuration.GetValue<string>("ConnectionStrings:ServerHRConnection");
+            _connectionStirng = _configuration.GetValue<string>("ConnectionStrings:WorkFlowConnection");
         }
 
         public string GetConncetionString() => _connectionStirng;
@@ -55,7 +55,7 @@ namespace HINOSystem.Libs
         }
 
 
-        public DataTable executeSQL(string SQL, HttpContext httpContext = null, bool skipLog = false, JObject pUser = null, string pAction = "EXECUTE")
+        public DataTable ExecuteSQL(string SQL, HttpContext httpContext = null, bool skipLog = false, BearerClass pUser = null, string pAction = "EXECUTE")
         {
             try
             {
@@ -85,7 +85,7 @@ namespace HINOSystem.Libs
         }
 
 
-        public string executeSQLJSON(string SQL, HttpContext httpContext = null, bool skipLog = false, JObject pUser = null, string pAction = "LOAD DATA")
+        public string ExecuteJSON(string SQL, HttpContext httpContext = null, bool skipLog = false, BearerClass pUser = null, string pAction = "LOAD DATA")
         {
             try
             {
@@ -122,7 +122,7 @@ namespace HINOSystem.Libs
         }
 
 
-        public void executeNonQuery(string SQL, HttpContext httpContext = null, bool skipLog = false, JObject pUser = null, string pAction = "EXECUTE")
+        public void Execute(string SQL, HttpContext httpContext = null, bool skipLog = false, BearerClass pUser = null, string pAction = "EXECUTE")
         {
             try
             {

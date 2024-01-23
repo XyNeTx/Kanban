@@ -49,9 +49,9 @@ namespace HINOSystem.Controllers
             string _statement = @"
                 SELECT * FROM [ISS].[dbo].[INLOCD] WHERE 1 = 1;
             ";
-            //DataTable _dataTable = _dbConnect.executeSQL(_statement);
+            //DataTable _dataTable = _dbConnect.ExecuteSQL(_statement);
 
-            string _jsonData = _dbConnect.executeSQLJSON(_statement);
+            string _jsonData = _dbConnect.ExecuteJSON(_statement);
 
             string _result = @"{
                 ""status"":""200"",
@@ -80,7 +80,7 @@ namespace HINOSystem.Controllers
                 SELECT * FROM [ISS].[dbo].[INLOCD] WHERE 1 = 1 AND [LocationKey] = '" + Request.Form["location"].ToString() + @"' ;
             ";
 
-            string _jsonData = _dbConnect.executeSQLJSON(_statement);
+            string _jsonData = _dbConnect.ExecuteJSON(_statement);
 
             string _result = @"{
                 ""status"":""200"",
@@ -110,7 +110,7 @@ namespace HINOSystem.Controllers
 				ORDER BY InEventID                
             ";
 
-            string _jsonData = _dbConnect.executeSQLJSON(_statement);
+            string _jsonData = _dbConnect.ExecuteJSON(_statement);
 
             string _result = @"{
                 ""status"":""200"",
@@ -152,7 +152,7 @@ namespace HINOSystem.Controllers
             ";
             // AND ItemKey IN ('EACFZTAK01','EACHNDE001','EACIPID002','EACIPID007','EACISSM001','EACISSM002','EACKEFU009','EACKEFU010','EACLMCM049','EACLMKI001','EACLMMC007','EACLMMC008','EACLMMC009','EACLMNA001','EACLMOM001')
 
-            DataTable _dtAOB = _dbConnect.executeSQL(_statement);
+            DataTable _dtAOB = _dbConnect.ExecuteSQL(_statement);
 
             string _jsonData = "";
 
@@ -177,7 +177,7 @@ namespace HINOSystem.Controllers
 				        AND ItemKey = '" + _dtAOB.Rows[i]["ItemKey"].ToString() + @"'
                         ORDER BY InEventID DESC
                     ";
-                DataTable _dtP = _dbConnect.executeSQL(_SQL);
+                DataTable _dtP = _dbConnect.ExecuteSQL(_SQL);
 
                 for (int p = 0; p < _dtP.Rows.Count; p++)
                 {
@@ -292,7 +292,7 @@ VALUES
 '" + _dtNew.Rows[p][43] + @"'
 );
 ";
-                    _dbConnect.executeNonQuery(_SQLINS);
+                    _dbConnect.Execute(_SQLINS);
 
 
 
@@ -316,14 +316,14 @@ VALUES
                 AND Split=0
 				AND ItemKey = '" + _ItemKey + @"'                
             ";
-                _dbConnect.executeNonQuery(_SQLUPDATE);
+                _dbConnect.Execute(_SQLUPDATE);
 
 
             }
 
 
 
-            //string _jsonData = _dbConnect.executeSQLJSON(_statement);
+            //string _jsonData = _dbConnect.ExecuteJSON(_statement);
 
             string _result = @"{
                 ""status"":""200"",
@@ -356,7 +356,7 @@ VALUES
             ";
             // AND ItemKey IN ('EACFZTAK01','EACHNDE001','EACIPID002','EACIPID007','EACISSM001','EACISSM002','EACKEFU009','EACKEFU010','EACLMCM049','EACLMKI001','EACLMMC007','EACLMMC008','EACLMMC009','EACLMNA001','EACLMOM001')
 
-            DataTable _dtAOB = _dbConnect.executeSQL(_statement);
+            DataTable _dtAOB = _dbConnect.ExecuteSQL(_statement);
 
             string _jsonData = "";
 
@@ -384,7 +384,7 @@ VALUES
 				        AND ItemKey = '" + _dtAOB.Rows[i]["ItemKey"].ToString() + @"'
                         ORDER BY InEventID DESC
                     ";
-                DataTable _dtP = _dbConnect.executeSQL(_SQL);
+                DataTable _dtP = _dbConnect.ExecuteSQL(_SQL);
 
                 for (int p = 0; p < _dtP.Rows.Count; p++)
                 {
@@ -458,7 +458,7 @@ VALUES
 
 
 
-            //string _jsonData = _dbConnect.executeSQLJSON(_statement);
+            //string _jsonData = _dbConnect.ExecuteJSON(_statement);
 
             string _result = @"{
                 ""status"":""200"",
@@ -494,7 +494,7 @@ VALUES
             ";
             // AND ItemKey IN ('EACFZTAK01','EACHNDE001','EACIPID002','EACIPID007','EACISSM001','EACISSM002','EACKEFU009','EACKEFU010','EACLMCM049','EACLMKI001','EACLMMC007','EACLMMC008','EACLMMC009','EACLMNA001','EACLMOM001')
 
-            DataTable _dtOld = _dbConnect.executeSQL(_statement);
+            DataTable _dtOld = _dbConnect.ExecuteSQL(_statement);
 
             //string _jsonData = "";
 
@@ -518,7 +518,7 @@ VALUES
                     WHERE 1=1
                     AND original = '" + _InEventID + @"'
                 ";
-                _dbConnect.executeNonQuery(_sql);
+                _dbConnect.Execute(_sql);
 
 
                 _statement = @"
@@ -527,7 +527,7 @@ VALUES
                     WHERE 1=1
                     AND original = '" + _InEventID + @"'
                 ";
-                DataTable _dtNew = _dbConnect.executeSQL(_statement);
+                DataTable _dtNew = _dbConnect.ExecuteSQL(_statement);
                 if(_dtNew.Rows.Count > 0)
                 {
                     string _InEventID_new = _dtNew.Rows[0]["InEventID"].ToString();
@@ -538,7 +538,7 @@ VALUES
                     WHERE 1=1
                     AND E_Apply = '" + _InEventID + @"'
                 ";
-                    _dbConnect.executeNonQuery(_sql);
+                    _dbConnect.Execute(_sql);
                 }
 
 
@@ -548,7 +548,7 @@ VALUES
                     WHERE 1=1
                     AND InEventID = '" + _InEventID + @"'
                 ";
-                _dbConnect.executeNonQuery(_sql);
+                _dbConnect.Execute(_sql);
 
 
 
@@ -558,7 +558,7 @@ VALUES
 
 
 
-            string _jsonData = _dbConnect.executeSQLJSON(_statement);
+            string _jsonData = _dbConnect.ExecuteJSON(_statement);
 
             string _result = @"{
                 ""status"":""200"",

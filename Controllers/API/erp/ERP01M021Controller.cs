@@ -18,7 +18,7 @@ namespace HINOSystem.Controllers.API.erp
     {
         private readonly IConfiguration _configuration;
         private readonly BearerClass _BearerClass;
-        private readonly DefaultConnection _KB3Connect;
+        private readonly KanbanConnection _KBCN;
 
         private readonly ERPContext _ERPContext;
         private readonly KB3Context _KB3Context;
@@ -26,14 +26,14 @@ namespace HINOSystem.Controllers.API.erp
         public ERP01M021Controller(
             IConfiguration configuration,
             BearerClass bearerClass,
-            DefaultConnection defaultConnection,
+            KanbanConnection kanbanConnection,
             ERPContext erpContext,
             KB3Context kb3Context
             )
         {
             _configuration = configuration;
             _BearerClass = bearerClass;
-            _KB3Connect = defaultConnection;
+            _KBCN = kanbanConnection;
             _ERPContext = erpContext;
             _KB3Context = kb3Context;
         }
@@ -46,12 +46,12 @@ namespace HINOSystem.Controllers.API.erp
             string _SQL = "";
             try
             {
-                JObject _JBearer = _BearerClass.Authorization(Request.Headers.Authorization);
-                if (_JBearer.GetValue("status").ToString() == "401") return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
+                BearerClass _JBearer = _BearerClass.Header(Request);
+                if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
 
 
                 _SQL = @" EXEC [exec].[spERP01M011_SEARCH] '3' ";
-                string _erpGroup = _KB3Connect.executeSQLJSON(_SQL, pUser: _JBearer, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+                string _erpGroup = _KBCN.ExecuteJSON(_SQL, pUser: _JBearer, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
 
                 string _result = @"{
                     ""status"":""200"",
@@ -79,14 +79,14 @@ namespace HINOSystem.Controllers.API.erp
             string _SQL = "";
             try
             {
-                JObject _JBearer = _BearerClass.Authorization(Request.Headers.Authorization);
-                if (_JBearer.GetValue("status").ToString() == "401") return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
+                BearerClass _JBearer = _BearerClass.Header(Request);
+                if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
 
                 //_json = JsonConvert.DeserializeObject(pData);
 
 
                 _SQL = @" EXEC [exec].[spERP01M010_SEARCH] '3' ";
-                string _erpGroup = _KB3Connect.executeSQLJSON(_SQL, pUser: _JBearer, pAction: "READ", pControllerName: ControllerContext.ActionDescriptor.ControllerName.ToString(), pActionName: MethodBase.GetCurrentMethod().Name.ToString());
+                string _erpGroup = _KBCN.ExecuteJSON(_SQL, pUser: _JBearer, pAction: "READ", pControllerName: ControllerContext.ActionDescriptor.ControllerName.ToString(), pActionName: MethodBase.GetCurrentMethod().Name.ToString());
                 //var _erpGroup = _ERPContext.erpGroup.Where(t => t.isDelete != 1);
 
 

@@ -106,7 +106,7 @@ namespace HINOSystem.Controllers
             }
 
             //string SQL = "SELECT 'Avg 2021', 'Jan-22', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'";
-            //string _jsonData = _wrtConnect.executeSQLJSON(SQL);
+            //string _jsonData = _wrtConnect.ExecuteJSON(SQL);
 
             //string _result = @"{
             //    ""status"":""200"",
@@ -166,7 +166,7 @@ namespace HINOSystem.Controllers
             }
 
             //string SQL = "SELECT 'Avg 2021', 'Jan-22', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'";
-            //string _jsonData = _wrtConnect.executeSQLJSON(SQL);
+            //string _jsonData = _wrtConnect.ExecuteJSON(SQL);
 
             //string _result = @"{
             //    ""status"":""200"",

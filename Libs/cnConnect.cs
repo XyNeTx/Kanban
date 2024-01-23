@@ -58,7 +58,7 @@ namespace HINOSystem.Libs
         }
 
 
-        public DataTable executeSQL(string pSQL)
+        public DataTable ExecuteSQL(string pSQL)
         {
             SqlConnection _cn = null;
             SqlCommand _cmd = null;
@@ -88,7 +88,7 @@ namespace HINOSystem.Libs
         }
 
 
-        public string executeSQLJSON(string pSQL)
+        public string ExecuteJSON(string pSQL)
         {
             SqlConnection _cn = null;
             SqlCommand _cmd = null;
@@ -121,7 +121,7 @@ namespace HINOSystem.Libs
         }
 
 
-        public void executeNonQuery(string pSQL)
+        public void Execute(string pSQL)
         {
             SqlConnection _cn = null;
             SqlCommand _cmd = null;

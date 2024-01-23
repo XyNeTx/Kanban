@@ -34,7 +34,7 @@ namespace HINOSystem.Libs
     {
         private readonly IConfiguration _config;
         private readonly ERPConnection _erpConnection;
-        private readonly KanbanConnection _kanbanConnection;
+        private readonly KanbanConnection _KBCN;
 
         protected IWorkbook workbook;
         protected IFormulaEvaluator formulaEvaluator;
@@ -58,7 +58,7 @@ namespace HINOSystem.Libs
         {
             _config = configuration;
             _erpConnection = erpConnection;
-            _kanbanConnection = kanbanConnection;
+            _KBCN = kanbanConnection;
 
         }
 
@@ -73,8 +73,8 @@ namespace HINOSystem.Libs
                                 }"
                 );
             }
-            _kanbanConnection.Plant = pRequest.Headers["Plant"].ToString();
-            DataTable _dt = _kanbanConnection.executeSQL("SELECT * FROM [erp].[User] WHERE Token = '" + pRequest.Headers.Authorization.ToString().Replace("Bearer ", "") + "' ", skipLog: true);
+            _KBCN.Plant = pRequest.Headers["Plant"].ToString();
+            DataTable _dt = _KBCN.ExecuteSQL("SELECT * FROM [erp].[User] WHERE Token = '" + pRequest.Headers["Authorization"].ToString().Replace("Bearer ", "") + "' ", skipLog: true);
             if (_dt.Rows.Count <= 0)
             {
                 return JObject.Parse(@"{
@@ -114,8 +114,8 @@ namespace HINOSystem.Libs
                                 }"
                 );
             }
-            _kanbanConnection.Plant = "3";
-            DataTable _dt = _kanbanConnection.executeSQL("SELECT * FROM [erp].[User] WHERE Token = '" + pHeader.Replace("Bearer ", "") + "' ", skipLog: true);
+            _KBCN.Plant = "3";
+            DataTable _dt = _KBCN.ExecuteSQL("SELECT * FROM [erp].[User] WHERE Token = '" + pHeader.Replace("Bearer ", "") + "' ", skipLog: true);
             if (_dt.Rows.Count <= 0)
             {
                 return JObject.Parse(@"{
@@ -151,8 +151,8 @@ namespace HINOSystem.Libs
                                 }"
                 );
             }
-            _kanbanConnection.Plant = "3";
-            DataTable _dt = _kanbanConnection.executeSQL("SELECT * FROM [erp].[User] WHERE Token = '" + pHeader.Replace("Bearer ", "") + "' ", skipLog: true);
+            _KBCN.Plant = "3";
+            DataTable _dt = _KBCN.ExecuteSQL("SELECT * FROM [erp].[User] WHERE Token = '" + pHeader.Replace("Bearer ", "") + "' ", skipLog: true);
             if (_dt.Rows.Count <= 0)
             {
                 return JObject.Parse(@"{

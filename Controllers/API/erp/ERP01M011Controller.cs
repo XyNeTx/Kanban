@@ -18,7 +18,7 @@ namespace HINOSystem.Controllers.API.erp
     {
         private readonly IConfiguration _configuration;
         private readonly BearerClass _BearerClass;
-        private readonly DefaultConnection _KB3Connect;
+        private readonly KanbanConnection _KBCN;
 
         private readonly ERPContext _ERPContext;
         private readonly KB3Context _KB3Context;
@@ -26,14 +26,14 @@ namespace HINOSystem.Controllers.API.erp
         public ERP01M011Controller(
             IConfiguration configuration,
             BearerClass bearerClass,
-            DefaultConnection defaultConnection,
+            KanbanConnection kanbanConnection,
             ERPContext erpContext,
             KB3Context kb3Context
             )
         {
             _configuration = configuration;
             _BearerClass = bearerClass;
-            _KB3Connect = defaultConnection;
+            _KBCN = kanbanConnection;
             _ERPContext = erpContext;
             _KB3Context = kb3Context;
         }
@@ -46,12 +46,12 @@ namespace HINOSystem.Controllers.API.erp
             string _SQL = "";
             try
             {
-                JObject _JBearer = _BearerClass.Authorization(Request.Headers.Authorization);
-                if (_JBearer.GetValue("status").ToString() == "401") return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
+                BearerClass _JBearer = _BearerClass.Header(Request);
+                if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
 
 
                 _SQL = @" EXEC [exec].[spTB_MS_FACTORY] ";
-                string _jsTB_MS_Factory = _KB3Connect.executeSQLJSON(_SQL, pUser: _JBearer, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+                string _jsTB_MS_Factory = _KBCN.ExecuteJSON(_SQL, pUser: _JBearer, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
 
                 string _result = @"{
                     ""status"":""200"",
@@ -79,14 +79,14 @@ namespace HINOSystem.Controllers.API.erp
             string _SQL = "";
             try
             {
-                JObject _JBearer = _BearerClass.Authorization(Request.Headers.Authorization);
-                if (_JBearer.GetValue("status").ToString() == "401") return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
+                BearerClass _JBearer = _BearerClass.Header(Request);
+                if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
 
                 //_json = JsonConvert.DeserializeObject(pData);
 
 
                 _SQL = @" EXEC [exec].[spERP01M011_SEARCH] '3' ";
-                string _erpGroup = _KB3Connect.executeSQLJSON(_SQL, pUser: _JBearer, pAction: "READ", pControllerName: ControllerContext.ActionDescriptor.ControllerName.ToString(), pActionName: MethodBase.GetCurrentMethod().Name.ToString());
+                string _erpGroup = _KBCN.ExecuteJSON(_SQL, pUser: _JBearer, pAction: "READ", pControllerName: ControllerContext.ActionDescriptor.ControllerName.ToString(), pActionName: MethodBase.GetCurrentMethod().Name.ToString());
                 //var _erpGroup = _ERPContext.erpGroup.Where(t => t.isDelete != 1);
 
 
@@ -113,8 +113,8 @@ namespace HINOSystem.Controllers.API.erp
             string _SQL = "";
             try
             {
-                JObject _JBearer = _BearerClass.Authorization(Request.Headers.Authorization);
-                if (_JBearer.GetValue("status").ToString() == "401") return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
+                BearerClass _JBearer = _BearerClass.Header(Request);
+                if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
 
 
                 erpGroup _erpGroup = new erpGroup();
@@ -122,7 +122,7 @@ namespace HINOSystem.Controllers.API.erp
                 _erpGroup.Name = Request.Form["Name"].ToString();
                 _erpGroup.NameTH = Request.Form["NameTH"].ToString();
                 _erpGroup.CreateAt = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss"));
-                _erpGroup.CreateBy = _JBearer.GetValue("user")["Code"].ToString();
+                _erpGroup.CreateBy = _JBearer.UserCode.ToString();
                 _erpGroup.Status = "ACTIVE";
                 _erpGroup.isDelete = 0;
                 _ERPContext.erpGroup.Add(_erpGroup);
@@ -230,16 +230,16 @@ namespace HINOSystem.Controllers.API.erp
             string _SQL = "";
             try
             {
-                JObject _JBearer = _BearerClass.Authorization(Request.Headers.Authorization);
-                if (_JBearer.GetValue("status").ToString() == "401") return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
+                BearerClass _JBearer = _BearerClass.Header(Request);
+                if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
 
                 _json = JsonConvert.DeserializeObject(pData);
 
                 _SQL = @" EXEC [exec].[spERP01M010_SEARCH] '3', '', '" + _json.GroupID + "' ";
-                string _erpUser = _KB3Connect.executeSQLJSON(_SQL, pUser: _JBearer, pAction: "READ", pControllerName: ControllerContext.ActionDescriptor.ControllerName.ToString(), pActionName: MethodBase.GetCurrentMethod().Name.ToString());
+                string _erpUser = _KBCN.ExecuteJSON(_SQL, pUser: _JBearer, pAction: "READ", pControllerName: ControllerContext.ActionDescriptor.ControllerName.ToString(), pActionName: MethodBase.GetCurrentMethod().Name.ToString());
 
                 _SQL = @" EXEC [exec].[spERP01M020_SEARCH] '3', '" + _json.GroupID + "' ";
-                string _erpMenu = _KB3Connect.executeSQLJSON(_SQL, pUser: _JBearer, pAction: "READ", pControllerName: ControllerContext.ActionDescriptor.ControllerName.ToString(), pActionName: MethodBase.GetCurrentMethod().Name.ToString());
+                string _erpMenu = _KBCN.ExecuteJSON(_SQL, pUser: _JBearer, pAction: "READ", pControllerName: ControllerContext.ActionDescriptor.ControllerName.ToString(), pActionName: MethodBase.GetCurrentMethod().Name.ToString());
 
                 string _result = @"{
                     ""status"":""200"",

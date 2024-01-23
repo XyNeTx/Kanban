@@ -63,7 +63,7 @@ namespace HINOSystem.Controllers.API.common
             //return Ok(response);
 
             //string SQL = "SELECT * FROM erp.[User] WHERE _ID NOT IN (1,2) AND isDelete=0 ORDER BY Code ";
-            //string _jsonData = _wrtConnect.executeSQLJSON(SQL);
+            //string _jsonData = _wrtConnect.ExecuteJSON(SQL);
 
 
 
@@ -115,7 +115,7 @@ namespace HINOSystem.Controllers.API.common
             //return Ok(response);
 
             //string SQL = "SELECT * FROM erp.[User] WHERE _ID NOT IN (1,2) AND isDelete=0 ORDER BY Code ";
-            //string _jsonData = _wrtConnect.executeSQLJSON(SQL);
+            //string _jsonData = _wrtConnect.ExecuteJSON(SQL);
 
 
 

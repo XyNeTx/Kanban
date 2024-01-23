@@ -98,7 +98,7 @@ namespace HINOSystem.Libs
                                   , '" + _result + @"'
                                   , GETDATE()
                                 )";
-                _wrtConnect.executeNonQuery(_SQL_Log, skipLog: true);
+                _wrtConnect.Execute(_SQL_Log, skipLog: true);
             }
         }
 

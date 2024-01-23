@@ -68,7 +68,7 @@ namespace HINOSystem.Libs
         //}
 
 
-        public DataTable executeSQL(string SQL, HttpContext httpContext = null, bool skipLog = false, JObject pUser = null, string pAction = "EXECUTE", string pControllerName = "", string pActionName = "", string pSystem = "")
+        public DataTable ExecuteSQL(string SQL, HttpContext httpContext = null, bool skipLog = false, BearerClass pUser = null, string pAction = "EXECUTE", string pControllerName = "", string pActionName = "", string pSystem = "")
         {
             try
             {
@@ -107,7 +107,7 @@ namespace HINOSystem.Libs
         }
 
 
-        public string executeSQLJSON(string SQL, HttpContext httpContext = null, bool skipLog = false, JObject pUser = null, string pAction = "EXECUTE JSON", string pControllerName = "", string pActionName = "", string pSystem = "")
+        public string ExecuteJSON(string SQL, HttpContext httpContext = null, bool skipLog = false, BearerClass pUser = null, string pAction = "EXECUTE JSON", string pControllerName = "", string pActionName = "", string pSystem = "")
         {
             if (this.Plant.ToString() == "1") this._connectionStirng = _cnKB1Stirng;
             if (this.Plant.ToString() == "2") this._connectionStirng = _cnKB2Stirng;
@@ -131,7 +131,7 @@ namespace HINOSystem.Libs
                     cmd.Dispose();
                     cn.Close();
 
-                    if (skipLog != true) this.executeLog(httpContext, SQL, pAction, "OK", "ExecuteSQLJSON", pUser: pUser, pControllerName: pControllerName, pActionName: pActionName, pSystem: pSystem);
+                    if (skipLog != true) this.executeLog(httpContext, SQL, pAction, "OK", "ExecuteJSON", pUser: pUser, pControllerName: pControllerName, pActionName: pActionName, pSystem: pSystem);
 
                     return JSONString;
 
@@ -155,7 +155,7 @@ namespace HINOSystem.Libs
         }
 
 
-        public Boolean executeNonQuery(string SQL, HttpContext httpContext = null, bool skipLog = false, JObject pUser = null, string pAction = "EXECUTE QUERY", string pControllerName = "", string pActionName = "", string pSystem = "")
+        public Boolean executeNonQuery(string SQL, HttpContext httpContext = null, bool skipLog = false, BearerClass pUser = null, string pAction = "EXECUTE QUERY", string pControllerName = "", string pActionName = "", string pSystem = "")
         {
             try
             {
@@ -188,7 +188,7 @@ namespace HINOSystem.Libs
 
 
 
-        public void executeLog(HttpContext httpContext, string pSQL, string pAction, string pResult, string pMessage, JObject pUser = null, string pControllerName = "", string pActionName = "", string pSystem = "")
+        public void executeLog(HttpContext httpContext, string pSQL, string pAction, string pResult, string pMessage, BearerClass pUser = null, string pControllerName = "", string pActionName = "", string pSystem = "")
         {
             string _user = "SYSTEM";
             string _token = "";
@@ -200,8 +200,8 @@ namespace HINOSystem.Libs
             }
             if (pUser != null)
             {
-                _user = pUser.GetValue("user")["Code"].ToString();
-                _token = pUser.GetValue("user")["Token"].ToString();
+                _user = pUser.UserCode.ToString();
+                _token = pUser.Token.ToString();
             }
 
             string _SQL_Log = @"INSERT INTO [log].[Action] ([UserCode]
@@ -296,7 +296,7 @@ namespace HINOSystem.Libs
         //                          , '" + Message + @"'
         //                          , '" + (_SQL == null ? "" : _SQL.Replace("'", "''").Replace("\r", " ").Replace("\n", " ").Replace("\t", " ")) + @"'
         //                        )";
-        //    _wrtConnect.executeNonQuery(_SQL_Log);
+        //    _wrtConnect.Execute(_SQL_Log);
 
         //}
 

@@ -95,7 +95,7 @@ namespace HINOSystem.Controllers.API.common
 
 
 //";
-//                DataTable _dtMenu = _wrtConnect.executeSQL(_sql, skipLog: true);
+//                DataTable _dtMenu = _wrtConnect.ExecuteSQL(_sql, skipLog: true);
 //                string _s = @"";
 //                for (int i = 0; i < _dtMenu.Rows.Count; i++)
 //                {
@@ -146,7 +146,7 @@ namespace HINOSystem.Controllers.API.common
 //AND mp.isDelete = 0
 //ORDER BY Seq
 //";
-//            DataTable _dtMenu = _wrtConnect.executeSQL(_SQL, skipLog: true);
+//            DataTable _dtMenu = _wrtConnect.ExecuteSQL(_SQL, skipLog: true);
 //            if (_dtMenu.Rows.Count > 0)
 //            {
 //                for (int i = 0; i < _dtMenu.Rows.Count; i++)

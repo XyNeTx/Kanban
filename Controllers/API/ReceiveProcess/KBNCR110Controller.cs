@@ -53,11 +53,12 @@ namespace HINOSystem.Controllers.API.Master
     {
         private readonly IConfiguration _configuration;
         private readonly BearerClass _BearerClass;
-        private readonly ActionResultClass _ActionResult;   
+        private readonly ActionResultClass _ActionResult;        
         private readonly KanbanConnection _KBCN;
         private readonly PPMConnect _PPMConnect;
 
         private readonly KB3Context _KB3Context;
+
 
         private readonly string StoragePath = @"wwwroot\Storage\Uploads";
 
@@ -88,15 +89,13 @@ namespace HINOSystem.Controllers.API.Master
             string _SQL = "";
             try
             {
-                if (pData != null) _json = JsonConvert.DeserializeObject(pData);
-
                 BearerClass _JBearer = _BearerClass.Header(Request);
                 if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
 
-                _KBCN.Plant = _JBearer.Plant;
+                if (pData != null) _json = JsonConvert.DeserializeObject(pData);
 
                 _SQL = @" EXEC [exec].[spTB_MS_FACTORY] ";
-                string _jsTB_MS_Factory = _KBCN.executeJSON(_SQL, pUser: _JBearer, pControllerName: ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+                string _jsTB_MS_Factory = _KBCN.ExecuteJSON(_SQL, pUser: _JBearer, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
 
                 string _result = @"{
                     ""status"":""200"",
@@ -207,6 +206,8 @@ namespace HINOSystem.Controllers.API.Master
         [HttpPost]
         public async Task<IActionResult> SearchPDSNo([FromBody] string data)  
         {
+            dynamic _json = null;
+            string _SQL = "";
             try
             {
                 if (_KBCN.Plant == "3")
@@ -323,8 +324,8 @@ namespace HINOSystem.Controllers.API.Master
                             }
                         }
                             _result = @"{
-                            ""status"":""200"",
-                            ""response"":""OK"",
+                    ""status"":""200"",
+                    ""response"":""OK"",
                             ""title"": ""Receive All Part Success"",
                             ""message"" : ""Receive All Part is Complete.!""
                             }";
@@ -338,7 +339,7 @@ namespace HINOSystem.Controllers.API.Master
                             ""response"":""OK"",
                             ""title"": ""Receive All Part Error"",
                             ""message"" : ""Please check the checkbox to Receive All Part""
-                            }";
+                }";
                         return Ok(_result);
                     }
                 }
@@ -374,7 +375,7 @@ namespace HINOSystem.Controllers.API.Master
             {
                 return Content(ex.ToString());
             }
-        } 
+        }
 
         //[HttpPost]
         //public IActionResult search([FromBody] string pData = null)

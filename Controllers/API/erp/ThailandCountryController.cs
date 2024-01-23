@@ -62,7 +62,7 @@ namespace HINOSystem.Controllers.API.wrt
             SQL += @"
                 ORDER BY Tambon";
 
-            string _jsonData = _wrtConnect.executeSQLJSON(SQL, skipLog: true);
+            string _jsonData = _wrtConnect.ExecuteJSON(SQL, skipLog: true);
             string _result = @"{
                 ""status"":""200"",
                 ""response"":""OK"",
@@ -99,7 +99,7 @@ namespace HINOSystem.Controllers.API.wrt
                 ORDER BY District;
             ";
 
-            string _jsonData = _wrtConnect.executeSQLJSON(SQL, skipLog: true);
+            string _jsonData = _wrtConnect.ExecuteJSON(SQL, skipLog: true);
             string _result = @"{
                 ""status"":""200"",
                 ""response"":""OK"",
@@ -132,7 +132,7 @@ namespace HINOSystem.Controllers.API.wrt
                 ORDER BY Province;
             ";
 
-            string _jsonData = _wrtConnect.executeSQLJSON(SQL, skipLog: true);
+            string _jsonData = _wrtConnect.ExecuteJSON(SQL, skipLog: true);
             string _result = @"{
                 ""status"":""200"",
                 ""response"":""OK"",
@@ -156,7 +156,7 @@ namespace HINOSystem.Controllers.API.wrt
                 ORDER BY _ID;
             ";
 
-            string _jsonData = _wrtConnect.executeSQLJSON(SQL, skipLog: true);
+            string _jsonData = _wrtConnect.ExecuteJSON(SQL, skipLog: true);
             string _result = @"{
                 ""status"":""200"",
                 ""response"":""OK"",

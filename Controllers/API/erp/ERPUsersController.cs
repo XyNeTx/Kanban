@@ -25,8 +25,8 @@ namespace HINOSystem.Controllers.API.wrt
         [HttpGet]  //Read
         public IActionResult Read(string _id = null)
         {
-            JObject _JBearer = _BearerClass.Authorization(Request.Headers.Authorization);
-            if (_JBearer.GetValue("status").ToString() == "401") return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
+            BearerClass _JBearer = _BearerClass.Header(Request);
+            if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
 
             string SQL = @"
                 SELECT '' AS RunningNo,*
@@ -37,7 +37,7 @@ namespace HINOSystem.Controllers.API.wrt
             ";
             if (_id != null) SQL = "SELECT * FROM [erp].[User] WHERE _ID = '" + _id + "' ";
 
-            string _jsonData = _wrtConnect.executeSQLJSON(SQL, pUser: _JBearer, pAction: "READ", pControllerName: ControllerContext.ActionDescriptor.ControllerName.ToString(), pActionName: MethodBase.GetCurrentMethod().Name.ToString());
+            string _jsonData = _wrtConnect.ExecuteJSON(SQL, pUser: _JBearer, pAction: "READ", pControllerName: ControllerContext.ActionDescriptor.ControllerName.ToString(), pActionName: MethodBase.GetCurrentMethod().Name.ToString());
             string _result = @"{
                 ""status"":""200"",
                 ""response"":""OK"",
@@ -52,18 +52,18 @@ namespace HINOSystem.Controllers.API.wrt
         [HttpPost] //Create
         public IActionResult Save()
         {
-            JObject _JBearer = _BearerClass.Authorization(Request.Headers.Authorization);
-            if (_JBearer.GetValue("status").ToString() == "401") return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
+            BearerClass _JBearer = _BearerClass.Header(Request);
+            if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
 
             string _SQL = @"INSERT INTO [erp].[Group] (Code, Name, NameTH, CreateAt, CreateBy)
                 VALUES('" + Request.Form["Code"].ToString() + @"'
                     ,  '" + Request.Form["Name"].ToString() + @"'
                     ,  '" + Request.Form["NameTH"].ToString() + @"'
                     , GETDATE()
-                    , '" + _JBearer.GetValue("user")["Code"].ToString() + @"'
+                    , '" + _JBearer.UserCode.ToString() + @"'
                 );
             ";
-            _wrtConnect.executeNonQuery(_SQL, pUser: _JBearer, pAction: "CREATE", pControllerName: ControllerContext.ActionDescriptor.ControllerName.ToString(), pActionName: MethodBase.GetCurrentMethod().Name.ToString());
+            _wrtConnect.Execute(_SQL, pUser: _JBearer, pAction: "CREATE", pControllerName: ControllerContext.ActionDescriptor.ControllerName.ToString(), pActionName: MethodBase.GetCurrentMethod().Name.ToString());
 
             return this.Read();
         }
@@ -72,18 +72,18 @@ namespace HINOSystem.Controllers.API.wrt
         [HttpPatch] //Update
         public IActionResult Save(int id = 0)
         {
-            JObject _JBearer = _BearerClass.Authorization(Request.Headers.Authorization);
-            if (_JBearer.GetValue("status").ToString() == "401") return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
+            BearerClass _JBearer = _BearerClass.Header(Request);
+            if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
 
             string _SQL = @"UPDATE [erp].[Group]
                 SET Code = '" + Request.Form["Code"].ToString() + @"'
                     ,  Name = '" + Request.Form["Name"].ToString() + @"'
                     ,  NameTH = '" + Request.Form["NameTH"].ToString() + @"'
                     ,  UpdateAt = GETDATE()
-                    ,  UpdateBy = '" + _JBearer.GetValue("user")["Code"].ToString() + @"'
+                    ,  UpdateBy = '" + _JBearer.UserCode.ToString() + @"'
                 WHERE _ID = '" + Request.Form["_ID"].ToString() + @"';
             ";
-            _wrtConnect.executeNonQuery(_SQL, pUser: _JBearer, pAction: "UPDATE", pControllerName: ControllerContext.ActionDescriptor.ControllerName.ToString(), pActionName: MethodBase.GetCurrentMethod().Name.ToString());
+            _wrtConnect.Execute(_SQL, pUser: _JBearer, pAction: "UPDATE", pControllerName: ControllerContext.ActionDescriptor.ControllerName.ToString(), pActionName: MethodBase.GetCurrentMethod().Name.ToString());
 
             return this.Read();
         }
@@ -94,16 +94,16 @@ namespace HINOSystem.Controllers.API.wrt
         [HttpDelete]  //Delete
         public IActionResult Delete(int _id)
         {
-            JObject _JBearer = _BearerClass.Authorization(Request.Headers.Authorization);
-            if (_JBearer.GetValue("status").ToString() == "401") return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
+            BearerClass _JBearer = _BearerClass.Header(Request);
+            if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
 
             string _SQL = @"UPDATE [erp].[Group]
                 SET isDelete = 1
                     ,  UpdateAt = GETDATE()
-                    ,  UpdateBy = '" + _JBearer.GetValue("user")["Code"].ToString() + @"'
+                    ,  UpdateBy = '" + _JBearer.UserCode.ToString() + @"'
                 WHERE _ID = '" + _id + @"';
             ";
-            _wrtConnect.executeNonQuery(_SQL, pUser: _JBearer, pAction: "DELETE", pControllerName: ControllerContext.ActionDescriptor.ControllerName.ToString(), pActionName: MethodBase.GetCurrentMethod().Name.ToString());
+            _wrtConnect.Execute(_SQL, pUser: _JBearer, pAction: "DELETE", pControllerName: ControllerContext.ActionDescriptor.ControllerName.ToString(), pActionName: MethodBase.GetCurrentMethod().Name.ToString());
 
             return this.Read();
         }

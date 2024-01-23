@@ -36,7 +36,7 @@ namespace HINOSystem.Controllers.API.Master
     {
         private readonly IConfiguration _configuration;
         private readonly BearerClass _BearerClass;
-        private readonly DefaultConnection _KB3Connect;
+        private readonly KanbanConnection _KBCN;
         private readonly DBConnection _ppmConnect;
 
         private readonly KB3Context _KB3Context;
@@ -44,13 +44,13 @@ namespace HINOSystem.Controllers.API.Master
         public KBNLC200Controller(
             IConfiguration configuration,
             BearerClass bearerClass,
-            DefaultConnection defaultConnection,
+            KanbanConnection kanbanConnection,
             KB3Context kB3Context
             )
         {
             _configuration = configuration;
             _BearerClass = bearerClass;
-            _KB3Connect = defaultConnection;
+            _KBCN = kanbanConnection;
             _KB3Context = kB3Context;
 
             _ppmConnect = new DBConnection(_configuration, "ppm");
@@ -65,14 +65,14 @@ namespace HINOSystem.Controllers.API.Master
             string _SQL = "";
             try
             {
-                JObject _JBearer = _BearerClass.Authorization(Request.Headers.Authorization);
-                if (_JBearer.GetValue("status").ToString() == "401") return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
+                BearerClass _JBearer = _BearerClass.Header(Request);
+                if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
 
                 _SQL = @" EXEC [exec].[spTB_MS_FACTORY] ";
-                string _jsMS_Factory = _KB3Connect.executeSQLJSON(_SQL, pUser: _JBearer, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+                string _jsMS_Factory = _KBCN.ExecuteJSON(_SQL, pUser: _JBearer, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
 
                 _SQL = @" EXEC [exec].[spPPM_T_Supplier] ";
-                string _jsPPM_T_Supplier = _KB3Connect.executeSQLJSON(_SQL, pUser: _JBearer, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+                string _jsPPM_T_Supplier = _KBCN.ExecuteJSON(_SQL, pUser: _JBearer, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
 
                 string _result = @"{
                     ""status"":""200"",
@@ -101,8 +101,8 @@ namespace HINOSystem.Controllers.API.Master
             string _SQL = "";
             try
             {
-                JObject _JBearer = _BearerClass.Authorization(Request.Headers.Authorization);
-                if (_JBearer.GetValue("status").ToString() == "401") return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
+                BearerClass _JBearer = _BearerClass.Header(Request);
+                if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
 
                 _json = JsonConvert.DeserializeObject(pData);
 
@@ -111,10 +111,10 @@ namespace HINOSystem.Controllers.API.Master
                             , '"+ _json.Period + @"'
                             , '"+ _json.SupplierFrom + @"'
                             , '"+ _json.SupplierTo + @"'
-                            , '" + _JBearer.GetValue("user")["Code"].ToString() + @"'
+                            , '" + _JBearer.UserCode.ToString() + @"'
                             ";
-                _KB3Connect.Plant = _json.F_Plant;
-                string _jsonData = _KB3Connect.executeSQLJSON(_SQL, pUser: _JBearer, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+                _KBCN.Plant = _json.F_Plant;
+                string _jsonData = _KBCN.ExecuteJSON(_SQL, pUser: _JBearer, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
 
 
 

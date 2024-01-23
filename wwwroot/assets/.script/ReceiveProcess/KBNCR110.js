@@ -24,6 +24,7 @@
     KBNCR110.prepare();
 
     KBNCR110.initial(function (result) {
+        console.log(result);
 
         xAjax.onCheck('#chkDeliveryDate', function () {
             if ($('#chkDeliveryDate').val() == 0) $('#fldDeliveryDate').prop('disabled', 'disabled');

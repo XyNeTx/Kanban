@@ -48,7 +48,7 @@ namespace HINOSystem.Controllers.API.Master
         private readonly IConfiguration _configuration;
         private readonly BearerClass _BearerClass;
         private readonly ActionResultClass _ActionResult;        
-        private readonly DefaultConnection _KB3Connect;
+        private readonly KanbanConnection _KBCN;
         private readonly PPMConnect _PPMConnect;
 
         private readonly KB3Context _KB3Context;
@@ -60,7 +60,7 @@ namespace HINOSystem.Controllers.API.Master
             IConfiguration configuration,
             BearerClass bearerClass,
             ActionResultClass actionResultClass,
-            DefaultConnection defaultConnection,
+            KanbanConnection kanbanConnection,
             PPMConnect ppmConnect,
             KB3Context kB3Context
             )
@@ -69,7 +69,7 @@ namespace HINOSystem.Controllers.API.Master
             _BearerClass = bearerClass;
             _ActionResult = actionResultClass;
             _KB3Context = kB3Context;
-            _KB3Connect = defaultConnection;
+            _KBCN = kanbanConnection;
             _PPMConnect = ppmConnect;
 
         }
@@ -83,14 +83,14 @@ namespace HINOSystem.Controllers.API.Master
             string _SQL = "";
             try
             {
-                JObject _JBearer = _BearerClass.Authorization(Request.Headers.Authorization);
-                if (_JBearer.GetValue("status").ToString() == "401") return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
+                BearerClass _JBearer = _BearerClass.Header(Request);
+                if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
 
                 if (pData != null) _json = JsonConvert.DeserializeObject(pData);
 
                 _SQL = @" EXEC [exec].[spKBNIM003C_INITIAL] ";
-                _KB3Connect.Plant = _json.F_Plant;
-                string _jsTB_TRANSACTION_TMP = _KB3Connect.executeSQLJSON(_SQL, pUser: _JBearer, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+                _KBCN.Plant = _json.F_Plant;
+                string _jsTB_TRANSACTION_TMP = _KBCN.ExecuteJSON(_SQL, pUser: _JBearer, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
 
                 string _result = @"{
                     ""status"":""200"",
@@ -117,15 +117,15 @@ namespace HINOSystem.Controllers.API.Master
             string _SQL = "";
             try
             {
-                JObject _JBearer = _BearerClass.Authorization(Request.Headers.Authorization);
-                if (_JBearer.GetValue("status").ToString() == "401") return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
+                BearerClass _JBearer = _BearerClass.Header(Request);
+                if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
 
                 _json = JsonConvert.DeserializeObject(pData);
 
 
                 _SQL = @" EXEC [exec].[spKBNIM003C_SEARCH] '" + _json.F_Plant + "' ";
-                _KB3Connect.Plant = _json.F_Plant;
-                string _jsonData = _KB3Connect.executeSQLJSON(_SQL, pUser: _JBearer, pControllerName: ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+                _KBCN.Plant = _json.F_Plant;
+                string _jsonData = _KBCN.ExecuteJSON(_SQL, pUser: _JBearer, pControllerName: ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
 
 
 
@@ -151,8 +151,8 @@ namespace HINOSystem.Controllers.API.Master
             string _SQL = "";
             try
             {
-                JObject _JBearer = _BearerClass.Authorization(Request.Headers.Authorization);
-                if (_JBearer.GetValue("status").ToString() == "401") return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
+                BearerClass _JBearer = _BearerClass.Header(Request);
+                if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
 
                 _json = JsonConvert.DeserializeObject(pData);
 
@@ -162,9 +162,9 @@ namespace HINOSystem.Controllers.API.Master
                     @" '" + _json.F_Type + "' " +
                     @" '" + _json.F_Start_Date + "' " +
                     @" '" + _json.F_End_Date + "' " +
-                    @" '" + _JBearer.GetValue("user")["Code"].ToString() + "' ";
-                _KB3Connect.Plant = _json.F_Plant;
-                string _jsonData = _KB3Connect.executeSQLJSON(_SQL, pUser: _JBearer, pControllerName: ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+                    @" '" + _JBearer.UserCode.ToString() + "' ";
+                _KBCN.Plant = _json.F_Plant;
+                string _jsonData = _KBCN.ExecuteJSON(_SQL, pUser: _JBearer, pControllerName: ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
 
                 string _result = @"{
                     ""status"":""200"",
@@ -187,8 +187,8 @@ namespace HINOSystem.Controllers.API.Master
             string _SQL = "";
             try
             {
-                JObject _JBearer = _BearerClass.Authorization(Request.Headers.Authorization);
-                if (_JBearer.GetValue("status").ToString() == "401") return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
+                BearerClass _JBearer = _BearerClass.Header(Request);
+                if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
 
                 _json = JsonConvert.DeserializeObject(pData);
 
@@ -199,9 +199,9 @@ namespace HINOSystem.Controllers.API.Master
                     @" '" + _json.F_PDS_NO + "' " +
                     @" '" + _json.F_PDS_Issued_Date + "' " +
                     @" '" + _json.F_Delivery_Date + "' " +
-                    @" '" + _JBearer.GetValue("user")["Code"].ToString() + "' ";
-                _KB3Connect.Plant = _json.F_Plant;
-                string _jsonData = _KB3Connect.executeSQLJSON(_SQL, pUser: _JBearer, pControllerName: ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+                    @" '" + _JBearer.UserCode.ToString() + "' ";
+                _KBCN.Plant = _json.F_Plant;
+                string _jsonData = _KBCN.ExecuteJSON(_SQL, pUser: _JBearer, pControllerName: ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
 
                 string _result = @"{
                     ""status"":""200"",

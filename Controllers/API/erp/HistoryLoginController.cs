@@ -31,13 +31,13 @@ namespace HINOSystem.Controllers.API.erp
             try
             {
                 _sql = @" EXEC [erp].[HistorySQL] '" + _json.Action + @"' ";
-                string _HistorySQL = _wrtConnect.executeSQLJSON(_sql, skipLog: true);
+                string _HistorySQL = _wrtConnect.ExecuteJSON(_sql, skipLog: true);
 
                 _sql = @" EXEC [erp].[HistoryAction] '" + _json.Action + @"', '" + _json.Date + @"' ";
-                string _HistoryAction = _wrtConnect.executeSQLJSON(_sql, skipLog: true);
+                string _HistoryAction = _wrtConnect.ExecuteJSON(_sql, skipLog: true);
 
                 _sql = @" EXEC [erp].[HistoryLogin] 'KB3', '" + _json.UserCode + @"', '" + _json.Date + @"' ";
-                string _HistoryLogin = _wrtConnect.executeSQLJSON(_sql, skipLog: true);
+                string _HistoryLogin = _wrtConnect.ExecuteJSON(_sql, skipLog: true);
 
                 _result = @"{
                     ""status"":""200"",
@@ -95,7 +95,7 @@ namespace HINOSystem.Controllers.API.erp
                     ORDER BY FORMAT(ActionAt, 'yyyy-MM-dd') DESC
 
                 ";
-                string _strSystem = _wrtConnect.executeSQLJSON(_sql);
+                string _strSystem = _wrtConnect.ExecuteJSON(_sql);
 
 
                 _result = @"{
@@ -153,7 +153,7 @@ namespace HINOSystem.Controllers.API.erp
                     ORDER BY StartAt DESC
 
                 ";
-                string _strSystem = _wrtConnect.executeSQLJSON(_sql);
+                string _strSystem = _wrtConnect.ExecuteJSON(_sql);
 
 
                 _result = @"{
@@ -205,7 +205,7 @@ namespace HINOSystem.Controllers.API.erp
 					AND Token = '" + _json.Session + @"'
 					ORDER BY ActionAt ASC
                 ";
-                string _strSystem = _wrtConnect.executeSQLJSON(_sql);
+                string _strSystem = _wrtConnect.ExecuteJSON(_sql);
 
 
                 _result = @"{

@@ -15,7 +15,7 @@
         public string? F_Surname { get; set; }
         public string? F_Email { get; set; }
         public string? F_Path_File { get; set; }
-        public string? F_Sign { get; set; }
+        public Blob? F_Sign { get; set; }
         public string? F_RecUser { get; set; }
         public DateTime? F_RecDate { get; set; }
 

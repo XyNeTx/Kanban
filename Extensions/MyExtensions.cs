@@ -68,7 +68,7 @@ namespace HINOSystem.Extensions
 
             
 
-        //    DataTable _table = _wrtConnect.executeSQL(_sql);
+        //    DataTable _table = _wrtConnect.ExecuteSQL(_sql);
 
         //    return _table;
         //}

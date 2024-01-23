@@ -43,8 +43,8 @@ namespace HINOSystem.Controllers.API
         [HttpPatch] //Update profile
         public IActionResult Profile(int id = 0)
         {
-            JObject _JBearer = _BearerClass.Authorization(Request.Headers.Authorization);
-            if (_JBearer.GetValue("status").ToString() == "401") return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
+            BearerClass _JBearer = _BearerClass.Header(Request);
+            if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
 
             string _sql = @"UPDATE [erp].[User]
                 SET Code = '" + Request.Form["Code"].ToString() + @"'
@@ -58,7 +58,7 @@ namespace HINOSystem.Controllers.API
 
                 SELECT * FROM [erp].[User] WHERE _ID NOT IN (1,2) AND isDelete=0 AND _ID = " + Request.Form["_ID"].ToString() + @" ORDER BY Code;
             ";
-            string _jsonData = _wrtConnect.executeSQLJSON(_sql, pUser: _JBearer, pAction: "CHANGE PROFILE", pControllerName: ControllerContext.ActionDescriptor.ControllerName.ToString(), pActionName: MethodBase.GetCurrentMethod().Name.ToString());
+            string _jsonData = _wrtConnect.ExecuteJSON(_sql, pUser: _JBearer, pAction: "CHANGE PROFILE", pControllerName: ControllerContext.ActionDescriptor.ControllerName.ToString(), pActionName: MethodBase.GetCurrentMethod().Name.ToString());
             string _result = @"{
                 ""status"":""200"",
                 ""response"":""OK"",
@@ -94,7 +94,7 @@ namespace HINOSystem.Controllers.API
                 SET Avatar = '" + fileName + @"'
                 WHERE _ID = '" + userid + @"';
             ";
-            string _jsonData = _wrtConnect.executeSQLJSON(_sql, pAction: "CHANGE PROFILE IMAGE");
+            string _jsonData = _wrtConnect.ExecuteJSON(_sql, pAction: "CHANGE PROFILE IMAGE");
 
             string _result = @"{
                 ""status"":""200"",

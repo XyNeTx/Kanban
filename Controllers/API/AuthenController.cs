@@ -58,7 +58,7 @@ namespace HINOSystem.Controllers.API
 
                 SELECT * FROM [erp].[User] WHERE _ID NOT IN (1,2) AND isDelete=0 AND [Code] = '" + Request.Form["txtResetUserName"].ToString() + @"';
             ";
-            DataTable _dataTable = _wrtConnect.executeSQL(_statement);
+            DataTable _dataTable = _wrtConnect.ExecuteSQL(_statement);
 
             string _result = "";
             if (_dataTable.Rows.Count > 0)
@@ -140,7 +140,7 @@ namespace HINOSystem.Controllers.API
 
                 SELECT * FROM [erp].[User] WHERE _ID NOT IN (1,2) AND isDelete=0 AND [Code] = '" + Request.Form["txtRecoveryUserName"].ToString() + @"';
             ";
-            DataTable _dataTable = _wrtConnect.executeSQL(_statement);
+            DataTable _dataTable = _wrtConnect.ExecuteSQL(_statement);
 
             string _result = "";
             if (_dataTable.Rows.Count > 0)
