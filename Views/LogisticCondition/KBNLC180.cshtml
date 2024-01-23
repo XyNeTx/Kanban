@@ -1,0 +1,125 @@
+﻿<div class="row">
+
+    <div class="col-xl-12 col-md-12 col-sm-12">
+        <div class="card border-left-primary shadow h-100">
+            <div class="card-body">
+
+                <form id="frmCondition">
+@*
+                    <div class="row">
+                        <div class="col-6">
+                            <item type="select" id="F_Plant" label="Plant" value="3" readonly></item>
+                        </div>
+                    </div>
+*@
+                    <div class="row">
+                        <div class="col mt-2">
+
+
+                            <fieldset class="fieldset">
+                                <legend>Select Data</legend>
+
+                                <div class="row">
+                                    <div class="col-3">
+                                        <item type="month" id="F_Period" label="Production Month" default="now"></item>
+                                    </div>
+                                    <div class="col-2">
+                                        <item type="select" id="F_Rev" label="Rev"></item>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col">
+
+                                        <fieldset class="fieldset">
+                                            <legend>Print Dock Sheet</legend>
+
+                                            <div class="row">
+                                                <div class="col-2">
+                                                </div>
+                                                <div class="col-3">
+                                                    <item type="select" id="F_DockFrom" label="Dock From"></item>
+                                                </div>
+                                                <div class="col-3">
+                                                    <item type="select" id="F_DockTo" label="To"></item>
+                                                </div>
+                                                <div class="col">
+                                                    <item type="button" id="btnPrintDock" label="Print Dock Sheet"></item>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-2">
+                                                </div>
+                                                <div class="col-3">
+                                                    <item type="select" id="F_RouteFrom" label="Route From"></item>
+                                                </div>
+                                                <div class="col-3">
+                                                    <item type="select" id="F_RouteTo" label="To"></item>
+                                                </div>
+                                            </div>
+
+                                        </fieldset>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-2">
+                                    <div class="col">
+
+                                        <fieldset class="fieldset">
+                                            <legend>Print Truck Card</legend>
+
+                                            <div class="row">
+                                                <div class="col-2">
+                                                </div>
+                                                <div class="col-3">
+                                                    <item type="select" id="F_Route1" label="Route 1"></item>
+                                                </div>
+                                                <div class="col-3">
+                                                    <item type="select" id="F_Route2" label="Route 2"></item>
+                                                </div>
+                                                <div class="col">
+                                                    <item type="button" id="btnPrintTruck" label="Print Truck Card"></item>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-2">
+                                                </div>
+                                                <div class="col-6">
+                                                    <item type="text" id="txtIncharge" label="Incharge" value="Parinya Nuansai"></item>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-2">
+                                                </div>
+                                                <div class="col-6">
+                                                    <item type="text" id="txtDepartment" label="Department" value="Domestic Parts Logistics Operation Control Team"></item>
+                                                </div>
+                                            </div>
+
+                                        </fieldset>
+
+                                    </div>
+                                </div>
+
+                            </fieldset>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+@section Scripts{
+    <script type="text/javascript" src="~/assets/js/History/UserMaintenance.js"></script>
+    <script type="text/javascript" src="~/assets/.script/Template/Master.js"></script>
+    <script type="text/javascript" src="~/assets/.script/LogisticCondition/KBNLC180.js?@ViewData["Version"]"></script>
+    @*<script type="text/javascript" src="~/assets/adminty/vue@3/vueApp/LogisticCondition/KBNLC180.vue.js?@ViewData["Version"]"></script>*@
+}

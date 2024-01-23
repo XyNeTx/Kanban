@@ -1,0 +1,132 @@
+﻿<div class="row">
+
+    <div class="col-xl-12 col-md-12 col-sm-12">
+        <div class="card border-left-primary shadow h-100">
+            <div class="card-body">
+
+                <div class="row">
+                    <div class="col mt-4">
+                        <div class="bg-white border rounded-3">
+                            <section class="w-100 p-2">
+                                <item type="table" id="tblMaster"></item>
+                            </section>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<!-- Modal Master -->
+<div class="modal fade" id="modalMaster" tabindex="-1" aria-labelledby="modalMasterLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalMasterLabel"> @ViewData["AppName"] <span></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="frmMaster" class="needs-validation" autocomplete="off" novalidate>
+                <div class="modal-body" style="padding-left:10px;padding-top:5px;padding-right:10px;">
+
+                    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar">
+                        <div class="btn-group btn-group-sm me-2" role="group" aria-label="Toolbar">
+
+                            <button type="button" class="btn btn-success" id="btnSave" name="btnSave" onclick="onSave();" title="Save data" @(ViewData["ComponentToolbarSave"].ToString() == "true" ? "" : "disabled")>
+                                <i class="ti-save"></i>
+                            </button>
+                            <button type="button" class="btn btn-success" id="btnPrint" name="btnPrint" onclick="onPrint();" title="Print" @(ViewData["ComponentToolbarPrint"].ToString() == "true" ? "" : "disabled")>
+                                <i class="ti-printer"></i>
+                            </button>
+                            <button type="button" class="btn btn-success" id="btnExecute" name="btnExecute" onclick="onExecute()" title="Execute/Run" @(ViewData["ComponentToolbarExecute"].ToString() == "true" ? "" : "disabled")>
+                                <i class="fas fa-bolt"></i>
+                            </button>
+                            <button type="button" class="btn btn-success" id="btnDelete" name="btnDelete" onclick="onDelete();" title="Delete" @(ViewData["ComponentToolbarDelete"].ToString() == "true" ? "" : "disabled")>
+                                <i class="far fa-trash-alt"></i>
+                            </button>
+
+                        </div>
+                    </div>
+
+                    <input type="hidden" class="form-control" id="_Action" name="_Action" value="POST">
+                    <input type="hidden" class="form-control" id="_ID" name="_ID">
+                    <div class="bg-white border rounded-3">
+                        <section class="w-100 p-2">
+                            <div class="row g-2">
+                                <div class="col-md-6">
+                                    <item type="text" id="Code" label="Code"></item>
+                                </div>
+                            </div>
+                            <div class="row g-2">
+                                <div class="col-md-6">
+                                    <item type="text" id="Name" label="Name"></item>
+                                </div>
+                                <div class="col-md-6">
+                                    <item type="text" id="Surname" label="Surname"></item>
+                                </div>
+                            </div>
+                            <div class="row g-2">
+                                <div class="col-md-6">
+                                    <item type="text" id="NameTH" label="Name (Thai)"></item>
+                                </div>
+                                <div class="col-md-6">
+                                    <item type="text" id="SurnameTH" label="Surname (Thai)"></item>
+                                </div>
+                            </div>
+                            <div class="row g-2">
+                                <div class="col-md-6">
+                                    <item type="text" id="NameJP" label="Name (Japan)"></item>
+                                </div>
+                                <div class="col-md-6">
+                                    <item type="text" id="SurnameJP" label="Surname (Japan)"></item>
+                                </div>
+                            </div>
+                            <div class="row g-2">
+                                <div class="col-md-6">
+                                    <item type="text" id="Email" label="E-mail"></item>
+                                </div>
+                            </div>
+                            <div class="row g-2">
+                                <div class="col-md-6">
+                                    <item type="select" id="GroupID" label="Group" value="1"></item>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <label class="input-group-text" for="Status">Status</label>
+                                        <select class="form-select" id="Status" name="Status" value="ACTIVE">
+                                            <option value="ACTIVE">ACTIVE</option>
+                                            <option value="REGISTER">REGISTER</option>
+                                            <option value="HOLD">HOLD</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+
+                </div>
+            </form>
+
+            <div class="modal-footer" style="padding-left:20px; padding-right:20px;">
+                <i class="modal-reference mr-auto">Reference Code : <i id="_REFERCODE_"></i></i>
+                @if (ViewData["UserGroupID"].ToString() == "1" || ViewData["UserGroupID"].ToString() == "2")
+                {
+                    <a href="#" data-bs-toggle="modal" data-bs-target="#ModalHistory" data-bs-remote="UserMaintenance">
+                        <i class="fas fa-scroll" title="History Log"></i>
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts{
+    <script type="text/javascript" src="~/assets/js/History/UserMaintenance.js"></script>
+    <script type="text/javascript" src="~/assets/.script/Template/Master.js"></script>
+    <script type="text/javascript" src="~/assets/.script/ERP/ERP01M010.js?@ViewData["Version"]"></script>
+}

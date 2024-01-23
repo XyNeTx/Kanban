@@ -1,0 +1,608 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>@ViewData["AppName"] - @ViewData["Title"]</title>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="@ViewData["Logo"]" />
+
+
+    <link rel="stylesheet" href="~/assets/vendor/bootstrap/5.1.0/dist/css/bootstrap.min.css" />
+    @*<link rel="stylesheet" href="~/HinoHINOSystem.styles.css" asp-append-version="true" />*@
+
+
+    <!-- Custom fonts for this template-->
+    <link href="~/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+          rel="stylesheet">
+
+    <!-- Datatables -->
+    <link href="~/assets/vendor/datatables/1.13.4/css/jquery.dataTables.min.css" rel="stylesheet">
+    <link href="~/assets/vendor/datatables/1.13.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    @*<link href="~/assets/vendor/datatables/1.10.24/css/jquery.dataTables.min.css" rel="stylesheet">*@
+    @*<link href="~/assets/vendor/datatables/1.10.24/css/dataTables.bootstrap4.min.css" rel="stylesheet">*@
+    <link href="~/assets/vendor/datatables/fixedcolumns/4.2.1/css/fixedColumns.dataTables.min.css" rel="stylesheet">
+    <link href="~/assets/vendor/twitter-bootstrap/5.2.0/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Vendor CSS -->
+    <link href="~/assets/vendor/swal2/sweetalert2.min.css" rel="stylesheet">
+    <link href="~/assets/vendor/splash/xSplash.css" rel="stylesheet">
+    <link href="~/assets/vendor/daterangepicker/daterangepicker.css" rel="stylesheet" />
+    <link href="~/assets/vendor/bootstrap/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" rel="stylesheet" />
+
+    <!-- Custom styles for this template-->
+    <link href="~/assets/css/stepsStyle.css" rel="stylesheet" />
+    <link href="~/assets/css/sb-admin-2.css" rel="stylesheet">
+
+    <!-- Site level plugins -->
+    <link href="~/assets/css/site.css" rel="stylesheet" asp-append-version="true" />
+    <style type="text/css">
+        thead th, tbody td {
+            white-space: nowrap;
+            /*font-size: 10pt;*/
+        }
+    </style>
+
+
+
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="~/assets/vendor/jquery/3.6.0/jquery.min.js"></script>
+    <script src="~/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="~/assets/vendor/bootstrap/5.1.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/assets/vendor/bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
+    @*<script src="https://code.jquery.com/jquery-3.5.1.js"></script>*@
+    @*<script src="~/assets/lib/jquery/dist/jquery.min.js"></script>*@
+
+
+    <!-- Vendor JScript -->
+    <script src="~/assets/vendor/swal2/sweetalert2.min.js"></script>
+    <script src="~/assets/vendor/splash/xSplash.js"></script>
+    <script src="~/assets/vendor/datatables/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script src="~/assets/vendor/datatables/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+    <script src="~/assets/vendor/datatables/fixedcolumns/4.2.1/js/dataTables.fixedColumns.min.js"></script>
+    <script src="~/assets/vendor/bootstrap/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+    <script src="~/assets/vendor/moment/moment.js"></script>
+    @*<script src="~/assets/vendor/daterangepicker/jquery.min.js"></script>*@
+    @*<script src="~/assets/vendor/daterangepicker/daterangepicker.js"></script>*@
+    @*<script src="~/assets/vendor/chart.js/4.2.0/utils.js"></script>*@
+    <script src="~/assets/vendor/chart.js/4.2.0/chart-utils.min.js"></script>
+    <script src="~/assets/vendor/chart.js/4.2.0/Chart.js"></script>
+    <script src="~/assets/vendor/js/helpers.js"></script>
+    <script src="~/assets/js/config.js"></script>
+
+
+    <!-- Custom scripts for all pages-->
+    <script src="~/assets/js/sb-admin-2.min.js"></script>
+
+
+
+
+
+
+    <script language="javascript" type="text/javascript">
+        var system = 'KBN';
+        var i18n = {
+            "Language": "EN",
+            "System": "KBN",
+        }
+        var i18nLayout = '';
+        var _swal = '';
+
+        var assets = '@ViewData["Assets"]';
+        var storage = '@ViewData["Storage"]';
+
+    </script>
+
+
+    <!-- Site level plugins -->
+    <script src="~/assets/js/libFunction.js"></script>
+    <script src="~/assets/js/libi18n.js"></script>
+    <script src="~/assets/js/libSwal2.js"></script>
+    <script src="~/assets/js/libCookies.js"></script>
+    <script src="~/assets/js/libChartJS.js"></script>
+    <script src="~/assets/js/libDataTables.js"></script>
+    <script src="~/assets/js/libSelectOption.js"></script>
+    <script src="~/assets/js/libModal.js"></script>
+    <script src="~/assets/js/libComponent.js"></script>
+    <script src="~/assets/js/libListOfValues.js"></script>
+    <script src="~/assets/js/site.js" asp-append-version="true"></script>
+
+    <script src="~/assets/js/ui-theme.js"></script>
+
+
+    <style>
+
+        .avatar {
+            width: 100px;
+            height: 75px;
+            box-sizing: border-box;
+            border: 5px white solid;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 5px 15px 0px rgba(0, 0, 0, 0.6);
+            transform: translatey(0px);
+            -webkit-animation: float 6s ease-in-out infinite;
+            animation: float 6s ease-in-out infinite;
+            z-index: 0;
+        }
+
+            .avatar img {
+                width: 100%;
+                height: 70px;
+                /*height: auto;*/
+            }
+
+
+
+        li {
+            list-style-type: none;
+        }
+
+        .slider-box {
+            float: right;
+            margin: 10px 20px;
+            position: relative;
+            z-index: 1000;
+        }
+
+        #range {
+            margin-top: 5px;
+            color: #eee;
+            font-size: 10pt;
+            margin-left: 10px;
+            position: relative;
+        }
+
+        .img {
+            position: absolute;
+            height: 100000px;
+            width: 100000px;
+            top: -8500px;
+            left: -8000px;
+            animation-timing-function: cubic-bezier(0.250, 0.250, 0.750, 0.750);
+            animation-name: dust_float;
+            animation-iteration-count: infinite;
+        }
+
+        #img-1 {
+            opacity: 0.25;
+            background: url('../../assets/img/dust1.jpg');
+            background-repeat: repeat;
+            animation-duration: 350s;
+        }
+
+        #img-2 {
+            opacity: 0.2;
+            background: url('../../assets/img/dust2.jpg');
+            background-repeat: repeat;
+            animation-duration: 250s;
+        }
+
+        #img-3 {
+            opacity: 0.15;
+            background: url('../../assets/img/dust3.jpg');
+            background-repeat: repeat;
+            animation-duration: 150s;
+        }
+        /*ANIMATIONS*/
+
+
+        @@-webkit-keyframes float {
+            0% {
+                box-shadow: 0 5px 15px 0px rgba(0, 0, 0, 0.6);
+                transform: translatey(0px);
+            }
+
+            50% {
+                box-shadow: 0 25px 15px 0px rgba(0, 0, 0, 0.2);
+                transform: translatey(-20px);
+            }
+
+            100% {
+                box-shadow: 0 5px 15px 0px rgba(0, 0, 0, 0.6);
+                transform: translatey(0px);
+            }
+        }
+
+        @@keyframes float {
+            0% {
+                box-shadow: 0 5px 15px 0px rgba(0, 0, 0, 0.6);
+                transform: translatey(0px);
+            }
+
+            50% {
+                box-shadow: 0 25px 15px 0px rgba(0, 0, 0, 0.2);
+                transform: translatey(-20px);
+            }
+
+            100% {
+                box-shadow: 0 5px 15px 0px rgba(0, 0, 0, 0.6);
+                transform: translatey(0px);
+            }
+        }
+
+        @@keyframes dust_float {
+            0% {
+                transform: translate(0px, 0px);
+            }
+
+            100% {
+                transform: translate(8000px, 4000px);
+            }
+        }
+
+        .screen-title {
+            font-family: "Helvetica", sans-serif;
+            color: white;
+            text-align: right;
+            padding-top: 6rem;
+            padding-left: 6rem;
+            padding-right: 2rem;
+            padding-bottom: 6rem;
+            width: 100%;
+        }
+
+
+        .screen-display {
+            /*background: linear-gradient(135deg, #2B7594 0%, #655900 100%);*/
+            background: #1abc9c;
+            background: linear-gradient(135deg, #2B7594 0%, #111827 100%);
+            fixed;
+            overflow: hidden;
+            /*font-family: 'Orbitron', sans-serif;*/
+            font-family: "Helvetica", sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: center;
+            position: fixed;
+            width: 65%;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            /*background-color: #111827;
+                                                                                                                    color: #F9FAFB;*/
+            z-index: 9;
+            pointer-events: none;
+            opacity: 1;
+            visibility: visible;
+            transition: opacity 400ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+
+        .screen-login {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: fixed;
+            width: 35%;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            height: 100%;
+            margin: 0;
+            padding-bottom: 90px;
+            /*padding: 0;*/
+            font-family: "Helvetica", sans-serif;
+            /*background: #1abc9c;
+                                                                                                                    background: linear-gradient(135deg, #1abc9c 0%, #8e44ad 100%);*/
+            background-color: #2B7594;
+            color: #F9FAFB;
+            transition: opacity 400ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+
+        a {
+            color: #1abc9c;
+        }
+
+            a:hover {
+                color: red;
+            }
+
+    </style>
+    @*<link href="assets/styles/splash-screen.css" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="assets/styles/splash-screen.css"></noscript>*@
+
+
+</head>
+
+<body>
+
+
+
+    <div class="container">
+
+        <div class="screen-display">
+            <div class="screen-title">
+                <h1><span style="color:#fff">@ViewData["Title"].ToString().ToUpper()</span></h1>
+                @*<p>
+                Fuse helps developers to build organized and well coded dashboards full of beautiful and rich modules. Join us and start building your application today.
+                </p>*@
+                <p>
+                    Hino Motors Manufacturing (Thailand) Ltd.
+                </p>
+            </div>
+            <ul id="scene" data-friction-x="0.1" data-friction-y="0.1">
+                <li class="layer" id="layer-1" data-depth="0.15">
+                    <div class="img" id="img-1"></div>
+                </li>
+                <li class="layer" id="layer-2" data-depth="0.25">
+                    <div class="img" id="img-2"></div>
+                </li>
+                <li class="layer" id="layer-3" data-depth="0.45">
+                    <div class="img" id="img-3"></div>
+                </li>
+            </ul>
+        </div>
+
+
+        <div class="screen-login">
+
+
+            <!-- /Logo -->
+            <div>
+                <div class="avatar">
+                    <a href="#">
+                        <img src="@ViewData["LogoImage"]" alt="HINO Logo" />
+                    </a>
+                </div>
+            </div>
+            <div id="divErrorText">
+            <p class="mt-4" style="color:red;" id="vErrorText">@ViewData["ErrorText"]</p>
+            <p class="mb-4">Please try to <a href="/Login">login</a>.</p>
+            </div>
+
+            <form id="frmModalRecovery" class="mb-3 needs-validation" action="" method="POST" novalidate>
+                <div class="mb-3 position-relative">
+                    <input type="hidden" id="ref" name="ref" value="@ViewData["ref"]" />
+                    <label class="form-label" for="txtRecoveryUserName" style="color:white">Username</label>
+                    <input type="text"
+                           class="form-control"
+                           id="txtRecoveryUserName"
+                           name="txtRecoveryUserName"
+                           placeholder="Username"
+                           value="@ViewData["txtUserName"]"
+                           autocomplete="off"
+                           readonly
+                           required
+                           autofocus />
+                    <div class="invalid-tooltip">
+                        <small>Enter your username.</small>
+                    </div>
+                    <div id="div-diffaccount" style="visibility:hidden;display:none;">
+                        or sign-in with <a href="#" onclick="onOtherAccount();">
+                            other account
+                        </a>
+                    </div>
+                </div>
+                <div class="mb-3 form-password-toggle position-relative">
+                    <div class="d-flex justify-content-between">
+                        <label class="form-label" for="txtRecoveryPassword" style="color:white">New Password</label>
+                    </div>
+                    <input type="password"
+                           class="form-control"
+                           id="txtRecoveryPassword"
+                           name="txtRecoveryPassword"
+                           required
+                           autofocus />
+                    <div class="invalid-tooltip">
+                        <small>Password is not blank.</small>
+                    </div>
+                </div>
+                <div class="mb-3 form-password-toggle position-relative">
+                    <div class="d-flex justify-content-between">
+                        <label class="form-label" for="txtPassword" style="color:white">Confirm Password</label>
+                    </div>
+                    <input type="password"
+                           class="form-control"
+                           id="txtPasswordConfirm"
+                           name="txtPasswordConfirm"
+                           required
+                           autofocus />
+                    <div class="invalid-tooltip">
+                        <small>Password is not blank.</small>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <button type="button" class="btn d-grid w-100" style="background-color:#1abc9c; color:white;" id="btnChangePassword">Change Password</button>
+                </div>
+                @*<div class="mb-3">
+                    Password format : 
+
+
+                </div>*@
+            </form>
+        </div>
+
+
+
+
+    </div>
+
+
+
+
+
+    <!-- Modal Profile -->
+    <div class="modal fade" id="ModalForgotPassword" tabindex="-1" aria-labelledby="ModalForgotPasswordLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <form id="frmModalForgotPassword">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="ModalForgotPasswordLabel">Forgot Password</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" style="padding:20px;">
+                        <input type="hidden" class="form-control" id="_ID" name="_ID" value="">
+                        <div class="row g-2">
+                            <div class="col-md-3">
+                                <div class="form-floating mb-2">
+                                    <input type="text" class="form-control" id="Code" name="Code" placeholder="Code" value="" readonly>
+                                    <label for="inputCode">Code</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-md">
+                                <div class="form-floating mb-2">
+                                    <input type="text" class="form-control" id="NameTH" name="NameTH" placeholder="NameTH" value="">
+                                    <label for="inputNameTH">Name (Thai)</label>
+                                </div>
+                            </div>
+                            <div class="col-md">
+                                <div class="form-floating mb-2">
+                                    <input type="text" class="form-control" id="SurnameTH" name="SurnameTH" placeholder="SurnameTH" value="">
+                                    <label for="inputSurnameTH">Surname (Thai)</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-md">
+                                <div class="form-floating mb-2">
+                                    <input type="text" class="form-control" id="Name" name="Name" placeholder="Name" value="">
+                                    <label for="inputName">Name</label>
+                                </div>
+                            </div>
+                            <div class="col-md">
+                                <div class="form-floating mb-2">
+                                    <input type="text" class="form-control" id="Surname" name="Surname" placeholder="Surname" value="">
+                                    <label for="inputSurname">Surname</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-md">
+                                <div class="form-floating mb-2">
+                                    <input type="email" class="form-control" id="Email" name="Email" placeholder="Email" value="">
+                                    <label for="inputEmail">Email</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer" style="padding-left:25px; padding-right:25px;">
+                        <button type="button" class="btn btn-primary" onclick="onSaveProfile();">Send</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+    <!-- / Layout wrapper -->
+    <!-- Main JS -->
+    <script src="~/assets/js/main.js"></script>
+
+    <!-- Page JS -->
+    <script src="~/assets/js/dashboards-analytics.js"></script>
+
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <script type="text/javascript">
+
+
+
+
+
+
+        $(document).ready(function () {
+
+
+            //console.log(i18nLayout);
+
+
+            onLoad = function () {
+                console.log($('#divErrorText').html());
+                $('#frmModalRecovery').attr('style', 'visibility:hidden;display:none;');
+                $('#divErrorText').attr('style', 'visibility:visible;display:block;');
+
+                if ($('#vErrorText').html() == '') {
+                    $('#frmModalRecovery').attr('style', 'visibility:visible;display:block;');        
+                    $('#divErrorText').attr('style', 'visibility:hidden;display:none;');
+                }
+            }
+            onLoad();
+
+            $('#btnChangePassword').on('click', function () {
+
+                xSwal.question(
+                    "Question",
+                    "Do you want to change password?",
+                    function (result) {
+                        //console.log(result);
+
+                        if (result.isConfirmed) {
+
+                            $.ajax(
+                                {
+                                    type: "POST",
+                                    url: '@Url.Action("ResetPassword","Authen")',
+                                    data: $("#frmModalRecovery").serialize(),
+                                    success: function (result) {
+                                        console.log(result);
+
+                                        if (result.response == "OK") {
+                                            window.document.location.replace('/Login');
+                                            //$('#btnConfirm').attr('disabled', 'disabled');
+
+
+                                            //$('#ModalApprove').modal('hide');
+                                            //onSelectProcessYM($('txtProcessYM').val());
+                                        }
+
+                                        xSplash.hide();
+
+                                    }
+                                }
+                            );
+                        }
+                    }
+
+                )
+            });
+
+
+
+
+        });
+
+
+
+        (function () {
+            'use strict'
+
+            var forms = document.querySelectorAll('.needs-validation');
+
+            Array.prototype.slice.call(forms)
+                .forEach(function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (!form.checkValidity()) {
+                            event.preventDefault()
+                            event.stopPropagation()
+                            console.log('validation');
+                        }
+
+                        form.classList.add('was-validated')
+                    }, false)
+                })
+        })()
+    </script>
+
+
+</body>
+</html>

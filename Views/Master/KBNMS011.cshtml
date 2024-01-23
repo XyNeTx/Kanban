@@ -1,0 +1,186 @@
+﻿<div class="row">
+
+    <div class="col-xl-12 col-md-12 col-sm-12">
+        <div class="card border-left-primary shadow h-100">
+            <div class="card-body">
+
+                <form id="frmCondition">
+@*
+                    <div class="row">
+                        <div class="col-6">
+                            <item type="select" id="F_Plant" label="Plant" value="3" readonly></item>
+                        </div>
+                    </div>
+*@
+                    <div class="row">
+                        <div class="col-3">
+                            <item type="month" id="F_Plant_Date" label="Monthly" default="now"></item>
+                        </div>
+                        <div class="col-3">
+                            <item type="text" id="F_Supplier_Code" label="Supplier Code"></item>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="row">
+                    <div class="col mt-3">
+
+                        <div class="bg-white border rounded-3">
+                            <section class="w-100 p-2">
+
+                                <table id="tblCalendar" style="width:100%" border="1" cellpadding="1" cellspacing="1">
+                                    <thead>
+                                        <tr>
+                                            <td colspan="2"><center>SUN</center></td>
+                                            <td colspan="2"><center>MON</center></td>
+                                            <td colspan="2"><center>TUE</center></td>
+                                            <td colspan="2"><center>WED</center></td>
+                                            <td colspan="2"><center>THU</center></td>
+                                            <td colspan="2"><center>FRI</center></td>
+                                            <td colspan="2"><center>SAT</center></td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><center>Day</center></td>
+                                            <td><center>Night</center></td>
+                                            <td><center>Day</center></td>
+                                            <td><center>Night</center></td>
+                                            <td><center>Day</center></td>
+                                            <td><center>Night</center></td>
+                                            <td><center>Day</center></td>
+                                            <td><center>Night</center></td>
+                                            <td><center>Day</center></td>
+                                            <td><center>Night</center></td>
+                                            <td><center>Day</center></td>
+                                            <td><center>Night</center></td>
+                                            <td><center>Day</center></td>
+                                            <td><center>Night</center></td>
+                                        </tr>
+                                        <tr>
+                                            <td id="0D" class="Calendar_Delivery"></td>
+                                            <td id="0N" class="Calendar_Delivery"></td>
+                                            <td id="1D" class="Calendar_Delivery"></td>
+                                            <td id="1N" class="Calendar_Delivery"></td>
+                                            <td id="2D" class="Calendar_Delivery"></td>
+                                            <td id="2N" class="Calendar_Delivery"></td>
+                                            <td id="3D" class="Calendar_Delivery"></td>
+                                            <td id="3N" class="Calendar_Delivery"></td>
+                                            <td id="4D" class="Calendar_Delivery"></td>
+                                            <td id="4N" class="Calendar_Delivery"></td>
+                                            <td id="5D" class="Calendar_Delivery"></td>
+                                            <td id="5N" class="Calendar_Delivery"></td>
+                                            <td id="6D" class="Calendar_Delivery"></td>
+                                            <td id="6N" class="Calendar_Delivery"></td>
+                                        </tr>
+                                        <tr>
+                                            <td id="7D" class="Calendar_Delivery"></td>
+                                            <td id="7N" class="Calendar_Delivery"></td>
+                                            <td id="8D" class="Calendar_Delivery"></td>
+                                            <td id="8N" class="Calendar_Delivery"></td>
+                                            <td id="9D" class="Calendar_Delivery"></td>
+                                            <td id="9N" class="Calendar_Delivery"></td>
+                                            <td id="10D" class="Calendar_Delivery"></td>
+                                            <td id="10N" class="Calendar_Delivery"></td>
+                                            <td id="11D" class="Calendar_Delivery"></td>
+                                            <td id="11N" class="Calendar_Delivery"></td>
+                                            <td id="12D" class="Calendar_Delivery"></td>
+                                            <td id="12N" class="Calendar_Delivery"></td>
+                                            <td id="13D" class="Calendar_Delivery"></td>
+                                            <td id="13N" class="Calendar_Delivery"></td>
+                                        </tr>
+                                        <tr>
+                                            <td id="14D" class="Calendar_Delivery"></td>
+                                            <td id="14N" class="Calendar_Delivery"></td>
+                                            <td id="15D" class="Calendar_Delivery"></td>
+                                            <td id="15N" class="Calendar_Delivery"></td>
+                                            <td id="16D" class="Calendar_Delivery"></td>
+                                            <td id="16N" class="Calendar_Delivery"></td>
+                                            <td id="17D" class="Calendar_Delivery"></td>
+                                            <td id="17N" class="Calendar_Delivery"></td>
+                                            <td id="18D" class="Calendar_Delivery"></td>
+                                            <td id="18N" class="Calendar_Delivery"></td>
+                                            <td id="19D" class="Calendar_Delivery"></td>
+                                            <td id="19N" class="Calendar_Delivery"></td>
+                                            <td id="20D" class="Calendar_Delivery"></td>
+                                            <td id="20N" class="Calendar_Delivery"></td>
+                                        </tr>
+                                        <tr>
+                                            <td id="21D" class="Calendar_Delivery"></td>
+                                            <td id="21N" class="Calendar_Delivery"></td>
+                                            <td id="22D" class="Calendar_Delivery"></td>
+                                            <td id="22N" class="Calendar_Delivery"></td>
+                                            <td id="23D" class="Calendar_Delivery"></td>
+                                            <td id="23N" class="Calendar_Delivery"></td>
+                                            <td id="24D" class="Calendar_Delivery"></td>
+                                            <td id="24N" class="Calendar_Delivery"></td>
+                                            <td id="25D" class="Calendar_Delivery"></td>
+                                            <td id="25N" class="Calendar_Delivery"></td>
+                                            <td id="26D" class="Calendar_Delivery"></td>
+                                            <td id="26N" class="Calendar_Delivery"></td>
+                                            <td id="27D" class="Calendar_Delivery"></td>
+                                            <td id="27N" class="Calendar_Delivery"></td>
+                                        </tr>
+                                        <tr>
+                                            <td id="28D" class="Calendar_Delivery"></td>
+                                            <td id="28N" class="Calendar_Delivery"></td>
+                                            <td id="29D" class="Calendar_Delivery"></td>
+                                            <td id="29N" class="Calendar_Delivery"></td>
+                                            <td id="30D" class="Calendar_Delivery"></td>
+                                            <td id="30N" class="Calendar_Delivery"></td>
+                                            <td id="31D" class="Calendar_Delivery"></td>
+                                            <td id="31N" class="Calendar_Delivery"></td>
+                                            <td id="32D" class="Calendar_Delivery"></td>
+                                            <td id="32N" class="Calendar_Delivery"></td>
+                                            <td id="33D" class="Calendar_Delivery"></td>
+                                            <td id="33N" class="Calendar_Delivery"></td>
+                                            <td id="34D" class="Calendar_Delivery"></td>
+                                            <td id="34N" class="Calendar_Delivery"></td>
+                                        </tr>
+                                        <tr>
+                                            <td id="35D" class="Calendar_Delivery"></td>
+                                            <td id="35N" class="Calendar_Delivery"></td>
+                                            <td id="36D" class="Calendar_Delivery"></td>
+                                            <td id="36N" class="Calendar_Delivery"></td>
+                                            <td id="37D" class="Calendar_Delivery"></td>
+                                            <td id="37N" class="Calendar_Delivery"></td>
+                                            <td id="38D" class="Calendar_Delivery"></td>
+                                            <td id="38N" class="Calendar_Delivery"></td>
+                                            <td id="39D" class="Calendar_Delivery"></td>
+                                            <td id="39N" class="Calendar_Delivery"></td>
+                                            <td id="40D" class="Calendar_Delivery"></td>
+                                            <td id="40N" class="Calendar_Delivery"></td>
+                                            <td id="41D" class="Calendar_Delivery"></td>
+                                            <td id="41N" class="Calendar_Delivery"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <br />
+                                <div class="row">
+                                    <div class="col-2">
+                                        <div class="Calendar_Delivery">Delivery Day</div>
+                                    </div>
+                                    <div class="col-2">
+                                        <div class="Calendar_NonDelivery">Non-Delivery Day</div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+@section Scripts{
+    <script type="text/javascript" src="~/assets/js/History/UserMaintenance.js"></script>
+    <script type="text/javascript" src="~/assets/.script/Template/Master.js"></script>
+    <script type="text/javascript" src="~/assets/.script/Master/KBNMS011.js?@ViewData["Version"]"></script>
+    @*<script type="text/javascript" src="~/assets/adminty/vue@3/vueApp/Master/KBNMS011.vue.js?@ViewData["Version"]"></script>*@
+}

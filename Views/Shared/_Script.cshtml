@@ -1,0 +1,58 @@
+﻿<script language="javascript" type="text/javascript">
+    var _CONTROLLER_ = '@ViewData["Controller"].ToString()';
+    var _PAGE_ = '@ViewData["Action"].ToString()';
+    var _APPNAME_ = '@ViewData["AppName"].ToString()';
+    var _PLANT_ = '@ViewData["_Plant"].ToString()';
+
+    var _PERMISSION_ = {
+        "toolbar": @ViewData["ComponentToolbar"].ToString(),
+        "search": @ViewData["ComponentToolbarSearch"].ToString(),
+        "new": @ViewData["ComponentToolbarNew"].ToString(),
+        "save": @ViewData["ComponentToolbarSave"].ToString(),
+        "delete": @ViewData["ComponentToolbarDelete"].ToString(),
+        "print": @ViewData["ComponentToolbarPrint"].ToString(),
+        "execute": @ViewData["ComponentToolbarExecute"].ToString(),
+        "export": @ViewData["ComponentToolbarExport"].ToString(),
+        "searchtext": '@ViewData["ComponentToolbarSearchText"].ToString()',
+        "newtext": '@ViewData["ComponentToolbarNewText"].ToString()',
+        "savetext": '@ViewData["ComponentToolbarSaveText"].ToString()',
+        "deletetext": '@ViewData["ComponentToolbarDeleteText"].ToString()',
+        "printtext": '@ViewData["ComponentToolbarPrintText"].ToString()',
+        "executetext": '@ViewData["ComponentToolbarExecuteText"].ToString()',
+        "exporttext": '@ViewData["ComponentToolbarExportText"].ToString()',
+    }
+
+    var _UID_ = '@ViewData["UserCode"]';
+    var _DISPLAY_ = '@ViewData["_DisplayName"]';
+    var _USER_ = {
+        "UserCode": "@ViewData["UserCode"]",
+        "DisplayName": "@ViewData["_DisplayName"]",
+        "UserGroupID": "@ViewData["UserGroupID"]"
+    }
+    var _PROCESSDATE_ = '@ViewData["_ProcessDate"].ToString()';
+    var _SHIFT_ = '@ViewData["_ProcessShift"].ToString()';
+
+    var _EXPORTING_ = false;
+
+    var system = '@ViewData["System"].ToString()';
+    var _i18n = {
+        "Language": "@ViewData["UserLanguage"].ToString()",
+        "System": "@ViewData["System"].ToString()",
+        "Controller": "@ViewData["Controller"].ToString()",
+        "Action": "@ViewData["Action"].ToString()"
+    }
+    var _i18n_ = '';
+    var i18nLayout = '';
+    var _swal = '';
+
+    var assets = '@ViewData["Assets"]';
+    var storage = '@ViewData["Storage"]';
+
+    var ajexHeader = {
+        "Authorization": "Bearer @ViewData["Bearer"]",
+        "UserCode": "@ViewData["UserCode"]",
+        "Plant": "@ViewData["_Plant"]",
+        "ProcessDate": "@ViewData["_ProcessDate"]",
+        "Shift": "@ViewData["_ProcessShift"]"
+    }
+</script>

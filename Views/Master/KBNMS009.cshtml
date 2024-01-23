@@ -1,0 +1,100 @@
+﻿<div class="row">
+
+    <div class="col-xl-12 col-md-12 col-sm-12">
+        <div class="card border-left-primary shadow h-100">
+            <div class="card-body">
+
+                <form id="frmCondition">
+@*
+                    <div class="row">
+                        <div class="col-6">
+                            <item type="select" id="F_Plant" label="Plant" value="3" readonly></item>
+                        </div>
+                    </div>
+*@
+                </form>
+
+
+                <div class="row">
+                    <div class="col mt-2">
+                        <div class="bg-white border rounded-3">
+                            <section class="w-100 p-2">
+                                <div class="row">
+                                    <div class="col-2">
+                                        <div class="bg-white border rounded-3">
+                                            <section class="w-100 p-1">
+                                                <table id="tblMaster" class="display" style="width:100%"></table>
+                                            </section>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="bg-white border rounded-3">
+                                            <section class="w-100 p-1">
+                                                <table id="tblDetail" class="display" style="width:100%"></table>
+                                            </section>
+                                        </div>
+                                    </div>
+                                    <div class="col-2">
+                                        <div class="row">
+                                            <div class="col">
+                                                <item type="button" id="btnClearData" label="Clear Data"></item>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col mt-5"></div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col mt-5">
+                                                <item type="button" id="btnSave" label="Save"></item>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col mt-2">
+                                                <item type="button" id="btnCancel" label="Cancel"></item>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col mt-2">
+                                                <item type="button" id="btnCheckList" label="Check List"></item>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col mt-2">
+                                                <item type="button" id="btnPrint" label="Print"></item>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col mt-2">
+                        <div class="bg-white border rounded-3">
+                            <section class="w-100 p-2">
+                                <div class="row">
+                                    <div class="col-8">
+                                        <item type="file" id="fileUpload"></item>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+@section Scripts{
+    <script type="text/javascript" src="~/assets/js/History/UserMaintenance.js"></script>
+    <script type="text/javascript" src="~/assets/.script/Template/Master.js"></script>
+    <script type="text/javascript" src="~/assets/.script/Master/KBNMS009.js?@ViewData["Version"]"></script>
+    @*<script type="text/javascript" src="~/assets/adminty/vue@3/vueApp/Master/KBNMS009.vue.js?@ViewData["Version"]"></script>*@
+}

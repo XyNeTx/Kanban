@@ -1,0 +1,100 @@
+﻿<div class="row">
+
+    <div class="col-xl-12 col-md-12 col-sm-12">
+        <div class="card border-left-primary shadow h-100">
+            <div class="card-body">
+
+                <form id="frmCondition">
+
+
+                    <div class="row">
+                        <div class="col-5">
+                            <div class="row">
+                                <div class="col">
+                                    <fieldset class="fieldset">
+                                        <legend>Header | Order Vanning Date </legend>
+                                        <item type="table" id="tblPDS"></item>
+                                    </fieldset>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-6">
+                                    <item type="checkbox" id="chkSingle" label="Type Part - Single" checked></item>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-6">
+                                    <item type="checkbox" id="chkAssy" label="Type Part - Assy" checked></item>
+                                </div>
+                                <div class="col-6">
+                                    <item type="checkbox" id="chkUrgent" label="Type Part - Urgent" checked></item>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <fieldset class="fieldset">
+                                        <legend>Advance Delivery Date : </legend>
+                                        <div class="row">
+                                            <div class="col" style="text-align:center;">
+                                                For Component Part (Small)                                                
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col"></div>
+                                            <div class="col-5">
+                                                <item type="number" id="txtComponent" label="" value="1" subfix="Day(s)"></item>
+                                            </div>
+                                            <div class="col"></div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col" style="text-align:center;">
+                                                    *For Assy Part (Big)
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col"></div>
+                                            <div class="col-5">
+                                                <item type="number" id="txtAssy" label="" value="1" subfix="Day(s)"></item>
+                                            </div>
+                                            <div class="col"></div>
+                                        </div>
+
+                                        @*<div class="row">
+                                            <div class="col" style="text-align:center;">
+                                                <item type="button" id="btnSearch" label="Search Data"></item>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mt-2">
+                                            <div class="col" style="text-align:center;">
+                                                <item type="button" id="btnSimulate" label="Simulate Confirm"></item>
+                                            </div>
+                                        </div>*@
+                                    </fieldset>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-7">
+                            <fieldset class="fieldset" style="margin-left:15px;">
+                                <legend>Detail | Order Vanning Date <span style="color:blue;">* Boldface Character can edit data</span> </legend>
+                                <item type="table" id="tblSeparate"></item>
+                            </fieldset>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+
+@section Scripts{
+    <script type="text/javascript" src="~/assets/js/History/UserMaintenance.js"></script>
+    <script type="text/javascript" src="~/assets/.script/Template/Action.js"></script>
+    <script type="text/javascript" src="~/assets/.script/Template/Master.js"></script>
+    <script type="text/javascript" src="~/assets/.script/TacomaOrder/KBNIM015.js?@ViewData["Version"]"></script>
+}

@@ -1,0 +1,169 @@
+﻿
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Home</h1>
+</div>
+
+<div class="row">
+    <div class="card shadow mb-4 py-2">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Warranty Claim Information</h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="row mb-3 text-right">
+                    <h5 for="datepicker" class="col-sm-7 col-form-label font-weight-bold">Warranty Claim Information of Year</h5>
+                    <div class="col-sm-5">
+                        <div class="input-group">
+                            <input type="text" class="col-sm-2 form-control" name="datepicker" id="datepicker" />
+                            <div class="input-group-text"><i class="fas fa-calendar"></i></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="chart-area h-100">
+                <canvas id="myAreaChart1"></canvas>
+                <canvas id="myAreaChart2" style="padding-top:20px;"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <environment names="Development,Staging,Production">
+        <!-- Date Picker -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" integrity="sha512-mSYUmp1HYZDFaVKK//63EcZq4iFWFjxSL+Z3T/aCt4IO9Cejm03q3NKKYN6pFQzY0SBOr8h+eCIAZHPXcpZaNw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    </environment>
+
+    <environment names="Development,Staging,Production">
+
+        @*<!-- Page level plugins -->
+        <script src="~/vendor/chart.js/Chart.min.js"></script>*@
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/2.1.0/chartjs-plugin-annotation.min.js"></script>
+
+        <!-- Date Picker -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js" integrity="sha512-T/tUfKSV1bihCnd+MxKD0Hm1uBBroVYBOYSk1knyvQ9VyZJpc/ALb4P0r6ubwVPSGB2GvjeoMAJJImBG12TiaQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    </environment>
+
+    <script type="text/javascript">
+
+        const ctx1 = document.getElementById('myAreaChart1');
+
+        const annotation = {
+            type: 'line',
+            borderColor: 'red',
+            borderDash: [6, 6],
+            borderDashOffset: 0,
+            borderWidth: 3,
+            label: {
+                display: true,
+                content: "PPM Target. (PPM เป้าหมาย)",
+                position: 'end'
+            },
+            scaleID: 'y',
+            value: 11
+        };
+
+        new Chart(ctx1, {
+            type: 'line',
+            data: {
+                labels: ["Avg2021", "Jan-22", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+                datasets: [{
+                    label: '# PPM',
+                    data: [5.44, 1.71, 7.31, 3.72, 3.37, 0, 0, 0, 0, 0, 0, 0, 0],
+                    borderWidth: 3
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 16
+                    }
+                },
+                plugins: {
+                    annotation: {
+                        annotations: {
+                            annotation
+                        }
+                    }
+                }
+            }
+        });
+
+        const ctx2 = document.getElementById('myAreaChart2');
+
+        const data = {
+            labels: ["Avg2021", "Jan-22", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+            datasets: [
+                {
+                    label: 'CKD',
+                    data: [99.96, 8.71, 33.72, 8.26, 0.28, 0, 0, 0, 0, 0, 0, 0, 0],
+                    backgroundColor: "#b3bfd1",
+                    order: 3
+                },
+                {
+                    label: 'HMMT',
+                    data: [641.57, 51.76, 928.13, 524.01, 451.60, 0, 0, 0, 0, 0, 0, 0, 0],
+                    backgroundColor: "#a4a2a8",
+                    order: 2
+                },
+                {
+                    label: 'Supplier',
+                    data: [565.47, 430.53, 657.15, 496.73, 392.12, 0, 0, 0, 0, 0, 0, 0, 0],
+                    backgroundColor: "#df8879",
+                    order: 1
+                },
+                {
+                    label: 'Total',
+                    data: [1307, 491, 1619, 1029, 844, 0, 0, 0, 0, 0, 0, 0, 0],
+                    borderColor: "#1a53ff",
+                    backgroundColor: "#1a53ff",
+                    type: 'line',
+                    order: 0
+                }
+            ]
+        };
+
+        new Chart(ctx2, {
+            type: 'bar',
+            data: data,
+            options: {
+                interaction: {
+                    intersect: false,
+                    mode: 'index',
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        //text: 'Chart.js Bar Chart - Stacked'
+                    },
+                },
+                responsive: true,
+                scales: {
+                    x: {
+                        stacked: true,
+                    },
+                    y: {
+                        stacked: true
+                    }
+                }
+            }
+        })
+
+        const d = new Date();
+        let year = d.getFullYear();
+        $("#datepicker").datepicker({
+            format: "yyyy",
+            viewMode: "years",
+            minViewMode: "years",
+            autoclose: true //to close picker once year is selected
+        }).on("show", function () {
+            
+            $(this).val(year).datepicker('update');
+        });;
+
+        $("#datepicker").val(year);
+    </script>
+}

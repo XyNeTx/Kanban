@@ -1,0 +1,26 @@
+{
+  "Language": "EN",
+  "System": "KB3",
+
+  "KBNMS001": {
+    "frmMaster": {
+      "h5": "Check PO Information",
+      "label": {
+        "txtPONumber": "Document Number",
+        "summary": "PO Number",
+        "detail": "Invoice Number"
+      }
+    },
+    "divPOHDR": {
+      "tab": {
+        "pills-home-tab": "PO Information",
+        "pills-profile-tab": "Invoice Information",
+        "pills-contact-tab": "Receive Information"
+      }
+    }
+
+  }
+
+
+}
+

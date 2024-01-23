@@ -1,0 +1,129 @@
+html {
+    /*font-size: 14px;*/
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 14px;
+    }
+}
+
+@media (min-width: 1768px) {
+    html {
+        font-size: 14px;
+    }
+}
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    /*margin-bottom: 60px;*/
+}
+
+.dataTables_wrapper {
+    font-size: 8pt;
+}
+
+table thead th, tbody td {
+    white-space: nowrap;
+    font-size: 8pt;
+}
+
+table tbody tr {
+    cursor: pointer;
+    font-size: 8pt;
+}
+
+#tblMain tbody tr {
+    cursor: pointer;
+    font-size: 8pt;
+}
+
+#tblDetail tbody tr {
+    cursor: pointer;
+    font-size: 8pt;
+}
+
+#_tblLOV tbody tr {
+    cursor: pointer;
+    font-size: 8pt;
+}
+
+#tblExcelData tbody tr {
+    font-size: 8pt;
+}
+
+#tblEmployee tbody tr {
+    cursor: pointer;
+}
+
+.error-code {
+    color: red;
+}
+
+
+
+.input-group.LOV .input-group-text {
+    cursor: pointer;
+}
+
+    .input-group.LOV .input-group-text :disabled {
+        cursor:default;
+    }
+
+    .input-group.LOV .input-group-text .fas.fa-list {
+        cursor: pointer;
+    }
+
+        .input-group.LOV .input-group-text .fas.fa-list :disabled {
+            cursor:default;
+        }
+
+
+[readonly] {
+    pointer-events: none;
+    background-color: #eaecf4;
+}
+
+.col5px {
+    width: 5px;
+}
+.col10px {
+    width: 10px;
+}
+.col15px {
+    width: 15px;
+}
+.col20px {
+    width: 20px;
+}
+.col25px {
+    width: 25px;
+}
+.col30px {
+    width: 30px;
+}
+.col35px {
+    width: 35px;
+}
+.col40px {
+    width: 40px;
+}
+.col45px {
+    width: 45px;
+}
+.col50px {
+    width: 50px;
+}
+.col55px {
+    width: 55px;
+}
+.col60px {
+    width: 60px;
+}
+.col65px {
+    width: 65px;
+}

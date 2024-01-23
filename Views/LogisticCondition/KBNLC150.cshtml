@@ -1,0 +1,61 @@
+﻿<div class="row">
+
+    <div class="col-xl-12 col-md-12 col-sm-12">
+        <div class="card border-left-primary shadow h-100">
+            <div class="card-body">
+
+                <form id="frmCondition">
+@*
+                    <div class="row">
+                        <div class="col-6">
+                            <item type="select" id="F_Plant" label="Plant" value="@ViewData["_Plant"]" readonly></item>
+                        </div>
+                    </div>
+*@
+                    <div class="row">
+                        <div class="col mt-2">
+
+                            <fieldset class="fieldset">
+                                <legend>Select Data</legend>
+
+                                <div class="row">
+                                    <div class="col-3">
+                                        <item type="month" id="F_Production_Month" label="Production Month" default="now"></item>
+                                    </div>
+                                    <div class="col-2">
+                                        <item type="select" id="F_Reversion" label="Reversion"></item>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-8">
+                                        <item type="file" id="txtFile"></item>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-8">
+                                        <item type="progress" id="pgsStatus" label="Processing: {{##.##}} %" max="278"></item>
+                                    </div>
+                                </div>
+
+                            </fieldset>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+
+@section Scripts{
+    <script type="text/javascript" src="~/assets/js/History/UserMaintenance.js"></script>
+    <script type="text/javascript" src="~/assets/.script/Template/Master.js"></script>
+    <script type="text/javascript" src="~/assets/.script/LogisticCondition/KBNLC150.js?@ViewData["Version"]"></script>
+    @*<script type="text/javascript" src="~/assets/adminty/vue@3/vueApp/LogisticCondition/KBNLC150.vue.js?@ViewData["Version"]"></script>*@
+}

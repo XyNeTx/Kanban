@@ -1,0 +1,71 @@
+﻿<div class="row">
+
+    <div class="col-xl-12 col-md-12 col-sm-12">
+        <div class="card border-left-primary shadow h-100">
+            <div class="card-body">
+
+                <form id="frmCondition">
+
+                    <fieldset class="fieldset">
+                        <legend>Detail Data : </legend>
+
+                        <div class="row">
+                            <div class="col-6">
+                                <item type="table" id="tblPDS"></item>
+                            </div>
+                            <div class="col">
+                                <item type="text" id="ItemID" label="ItemLabel"></item>                                
+                            </div>
+                        </div>
+
+                        <div class="row mt-2">
+                            <div class="col">
+                                <item type="table" id="tblSeparate"></item>
+                            </div>
+                        </div>
+
+                        <div class="row mt-2">
+                            <div class="col-2">
+                                GENERATE PDS :
+                            </div>
+                            <div class="col-3">
+                                <item type="radio" id="rdoPDS" value="twoPDS" label="2 PDS (Include Remaion Qty)" checked></item>
+                            </div>
+                            <div class="col">
+                                <item type="radio" id="rdoPDS" value="onePDS" label="1 PDS"></item>
+                            </div>
+                        </div>
+
+                    </fieldset>
+
+                    <div class="row mt-2">
+                        <div class="col">
+                            <fieldset class="fieldset" id="fldDeliveryDate" disabled>
+                                <legend><item type="check" id="chkDeliveryDate" label="Change Delivery Date :"></item></legend>
+
+                                <div class="row">
+                                    <div class="col-3">
+                                        <item type="date" id="F_DeliveryFrom" label="From" format="yyyy-mm-dd" default="now"></item>
+                                    </div>
+                                </div>
+                            </fieldset>
+
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+
+@section Scripts{
+    <script type="text/javascript" src="~/assets/js/History/UserMaintenance.js"></script>
+    <script type="text/javascript" src="~/assets/.script/Template/Action.js"></script>
+    <script type="text/javascript" src="~/assets/.script/Template/Master.js"></script>
+    <script type="text/javascript" src="~/assets/.script/UrgentOrder/KBNIM013VAN.js?@ViewData["Version"]"></script>
+}

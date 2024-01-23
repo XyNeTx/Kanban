@@ -1,0 +1,120 @@
+{
+  "Language": "EN",
+  "System": "Layout",
+  "Menu": {
+    "Home": {
+      "name": "Home"
+    }
+  },
+  "modal": {
+    "button": {
+      "save": "OK",
+      "close": "NO",
+      "delete": "DELETE",
+      "print": "PRINT",
+      "display": "DISPLAY",
+      "process": "PROCESS",
+      "run": "RUN",
+      "preview": "PREVIEW",
+      "detail": "DETAIL",
+      "swal_save": {
+        "title": "Save",
+        "text": "Do you want to save data?",
+        "save": "YES",
+        "cancel": "NO"
+      },
+      "swal_process": {
+        "title": "Process",
+        "text": "Do you want to process or excute?",
+        "save": "YES",
+        "cancel": "NO"
+      },
+      "swal_delete": {
+        "title": "Delete",
+        "text": "Do you want to delete data?",
+        "save": "YES",
+        "cancel": "NO"
+      },
+      "swal_deleteall": {
+        "title": "Delete selected data",
+        "text": "Do you want to delete selected data?",
+        "save": "YES",
+        "cancel": "NO"
+      },
+      "swal_delete_info": {
+        "title": "Delete",
+        "text": "Please select data for delete!",
+        "save": "YES",
+        "cancel": "NO"
+      }
+    },
+    "swal": {
+      "info": {
+        "title": "Information",
+        "text": "We have an information!"
+      },
+      "error": {
+        "title": "Error",
+        "text": "We have some error!"
+      },
+      "question": {
+        "title": "Question",
+        "text": "We have a question",
+        "confirm": "Yes",
+        "cancel": "Cancel"
+      }
+    }
+  },
+  "_Layout": {
+    "profile": "Profile",
+    "password": "Password",
+    "logout": "Logout",
+    "modal": {
+      "profile": {
+        "name": "Your Profile",
+        "save": "Save",
+        "close": "Close",
+        "swal": {
+          "title": "Want to change your profile?",
+          "text": "Please log-in again for refresh UI.",
+          "save": "Yes, save it",
+          "cancel": "cancel"
+        }
+      },
+      "password": {
+        "name": "Your Profile (Password)",
+        "description": "Procedures to change password will be sent to registered email. Press \"Send\" to proceed to next step.",
+        "save": "Send",
+        "close": "Close",
+        "swal": {
+          "title": "Please check you email.",
+          "text": "We have sent the password setting process to your email address.",
+          "ok": "Close"
+        }
+      }
+    },
+    "export": {
+      "swal_csv": {
+        "title": "Export CSV",
+        "text": "Do you want to export data to CSV file?",
+        "save": "YES",
+        "cancel": "NO"
+      },
+      "swal_xls": {
+        "title": "Export XLS",
+        "text": "Do you want to export data to excel file?",
+        "save": "YES",
+        "cancel": "NO"
+      },
+      "swal_pdf": {
+        "title": "Export PDF",
+        "text": "Do you want to export data to PDF file?",
+        "save": "YES",
+        "cancel": "NO"
+      }
+    }
+  }
+
+
+}
+

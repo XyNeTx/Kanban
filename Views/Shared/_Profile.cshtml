@@ -1,0 +1,111 @@
+﻿<!-- Modal Profile -->
+<div class="modal fade" id="ModalUserProfile" tabindex="-1" aria-labelledby="ModalUserProfileLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <form id="frmModalUserProfile">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ModalUserProfileLabel">Profile : @ViewData["UserDisplay"] (@ViewData["UserCode"])</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="padding:20px;">
+                    <input type="hidden" class="form-control" id="_ID" name="_ID" value="@ViewData["UserID"]">
+
+
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="cover-profile">
+                                <div class="profile-bg-img">
+                                    <img class="profile-bg-img img-fluid"
+                                         src="~/assets/adminty/images/bg-img1.jpg"
+                                         alt="bg-img">
+                                    <div class="card-block user-info">
+                                        <div class="col-md-12">
+                                            <div class="media-left">
+                                                <a href="#" class="profile-image" onclick="document.getElementById('fileImage').click()">
+                                                    <img class="user-img img-radius"
+                                                         style="height:120px"
+                                                         src="~/assets/img/avatars/@ViewData["UserAvatar"]"
+                                                         id="profile-image"
+                                                         alt="user-img">
+                                                </a>
+                                                <input type="file" id="fileImage" name="fileImage" style="visibility:hidden;display:none;" />
+                                            </div>
+                                            <div class="media-body row">
+                                                <div class="col-lg-12">
+                                                    <div class="user-title">
+                                                        <h2>@ViewData["UserDisplay"]</h2>
+                                                        <span class="text-white">@ViewData["UserCode"]</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="row g-2">
+                        <div class="col-md-3">
+                            <div class="form-floating mb-2">
+                                <input type="text" class="form-control" id="Code" name="Code" placeholder="Code" value="@ViewData["UserCode"]" readonly>
+                                <label for="inputCode">Code</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row g-2">
+                        <div class="col-md">
+                            <div class="form-floating mb-2">
+                                <input type="text" class="form-control" id="Name" name="Name" placeholder="Name" value="@ViewData["UserName"]">
+                                <label for="inputName">Name</label>
+                            </div>
+                        </div>
+                        <div class="col-md">
+                            <div class="form-floating mb-2">
+                                <input type="text" class="form-control" id="Surname" name="Surname" placeholder="Surname" value="@ViewData["UserSurname"]">
+                                <label for="inputSurname">Surname</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row g-2">
+                        <div class="col-md">
+                            <div class="form-floating mb-2">
+                                <input type="text" class="form-control" id="NameTH" name="NameTH" placeholder="NameTH" value="@ViewData["UserNameTH"]">
+                                <label for="inputNameTH">Name (Thai)</label>
+                            </div>
+                        </div>
+                        <div class="col-md">
+                            <div class="form-floating mb-2">
+                                <input type="text" class="form-control" id="SurnameTH" name="SurnameTH" placeholder="SurnameTH" value="@ViewData["UserSurnameTH"]">
+                                <label for="inputSurnameTH">Surname (Thai)</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row g-2">
+                        <div class="col-md">
+                            <div class="form-floating mb-2">
+                                <input type="email" class="form-control" id="Email" name="Email" placeholder="Email" value="@ViewData["UserEmail"]">
+                                <label for="inputEmail">Email</label>
+                            </div>
+                        </div>
+                        <div class="col-md">
+                            <div class="form-floating mb-2">
+                                <select class="form-select" id="UILanguage" name="UILanguage" value="@ViewData["UserLanguage"]">
+                                    <option value="EN">English</option>
+                                    <option value="TH">ไทย</option>
+                                    <option value="JP">Japanese</option>
+                                </select>
+                                <label for="inputUILanguage">Language</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="padding-left:25px; padding-right:25px;">
+                    <button type="button" class="btn btn-primary" onclick="onSaveProfile();">Save</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

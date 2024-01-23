@@ -1,0 +1,580 @@
+﻿@{
+    Layout = null;
+}
+
+
+<!DOCTYPE html>
+
+<html lang="en"
+      class="light-style layout-menu-fixed"
+      dir="ltr"
+      data-theme="theme-default"
+      data-assets-path="~/assets/"
+      data-template="vertical-menu-template-free">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+
+    <title>@ViewData["AppName"] - @ViewData["Title"]</title>
+
+    <meta name="description" content="" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="@ViewData["Logo"]" />
+    @*<link rel="icon" type="image/x-icon" href="~/assets/img/hino_logo.ico" />*@
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
+          rel="stylesheet" />
+
+    <!-- Icons. Uncomment required icon fonts -->
+    <link rel="stylesheet" href="~/assets/vendor/fonts/boxicons.css" />
+
+
+    <!-- Core JS -->
+    <!-- build:js assets/vendor/js/core.js -->
+    <script src="~/assets/vendor/libs/jquery/jquery.js"></script>
+    <script src="~/assets/vendor/libs/popper/popper.js"></script>
+    <script src="~/assets/vendor/js/bootstrap.js"></script>
+    <script src="~/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+
+    <script src="~/assets/vendor/js/menu.js"></script>
+    <!-- endbuild -->
+    <!-- Vendors JS -->
+    <script src="~/assets/vendor/libs/apex-charts/apexcharts.js"></script>
+
+
+
+
+    <!-- Core CSS -->
+    <link rel="stylesheet" id="theme" href="~/assets/vendor/css/rtl/core.css" class="template-customizer-core-css" />
+    @*<link rel="stylesheet" href="~/assets/vendor/css/rtl/core-dark.css" class="template-customizer-core-css" />*@
+
+    <!-- <link rel="stylesheet" href="~/assets/vendor/css/rtl/theme-default.css" class="template-customizer-theme-css" /> -->
+    <link rel="stylesheet" id="theme_style" href="~/assets/vendor/css/rtl/theme-semi-dark.css" class="template-customizer-theme-css" />
+    <!-- <!-- <link rel="stylesheet" href="~/assets/vendor/css/rtl/theme-bordered.css" class="template-customizer-theme-css" /> -->
+    <!-- <link rel="stylesheet" href="~/assets/vendor/css/rtl/theme-default-dark.css" class="template-customizer-theme-css" /> -->
+    <!-- <link rel="stylesheet" href="~/assets/vendor/css/rtl/theme-semi-dark-dark.css" class="template-customizer-theme-css" /> -->
+    @*<link rel="stylesheet" href="~/assets/vendor/css/rtl/theme-bordered-dark.css" class="template-customizer-theme-css" />*@
+
+    <link rel="stylesheet" href="~/assets/css/demo.css" />
+
+    <!-- Vendors CSS -->
+    <link rel="stylesheet" href="~/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
+
+    <link rel="stylesheet" href="~/assets/vendor/libs/apex-charts/apex-charts.css" />
+
+    <!-- Page CSS -->
+    <!-- Helpers -->
+    <script src="~/assets/vendor/js/helpers.js"></script>
+
+    <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
+    <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
+    <script src="~/assets/js/config.js"></script>
+
+
+
+    <script src="~/assets/js/libCookies.js"></script>
+    <script src="~/assets/js/ui-theme.js"></script>
+
+
+
+    <style>
+
+        .avatar {
+            width: 100px;
+            height: 75px;
+            box-sizing: border-box;
+            border: 5px white solid;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 5px 15px 0px rgba(0, 0, 0, 0.6);
+            transform: translatey(0px);
+            -webkit-animation: float 6s ease-in-out infinite;
+            animation: float 6s ease-in-out infinite;
+            z-index: 0;
+        }
+
+            .avatar img {
+                width: 100%;
+                height: 70px;
+                /*height: auto;*/
+            }
+
+
+
+        li {
+            list-style-type: none;
+        }
+
+        .slider-box {
+            float: right;
+            margin: 10px 20px;
+            position: relative;
+            z-index: 1000;
+        }
+
+        #range {
+            margin-top: 5px;
+            color: #eee;
+            font-size: 10pt;
+            margin-left: 10px;
+            position: relative;
+        }
+
+        .img {
+            position: absolute;
+            height: 100000px;
+            width: 100000px;
+            top: -8500px;
+            left: -8000px;
+            animation-timing-function: cubic-bezier(0.250, 0.250, 0.750, 0.750);
+            animation-name: dust_float;
+            animation-iteration-count: infinite;
+        }
+
+        #img-1 {
+            opacity: 0.25;
+            background: url('../assets/img/dust1.jpg');
+            background-repeat: repeat;
+            animation-duration: 350s;
+        }
+
+        #img-2 {
+            opacity: 0.2;
+            background: url('../assets/img/dust2.jpg');
+            background-repeat: repeat;
+            animation-duration: 250s;
+        }
+
+        #img-3 {
+            opacity: 0.15;
+            background: url('../assets/img/dust3.jpg');
+            background-repeat: repeat;
+            animation-duration: 150s;
+        }
+        /*ANIMATIONS*/
+
+
+        @@-webkit-keyframes float {
+            0% {
+                box-shadow: 0 5px 15px 0px rgba(0, 0, 0, 0.6);
+                transform: translatey(0px);
+            }
+
+            50% {
+                box-shadow: 0 25px 15px 0px rgba(0, 0, 0, 0.2);
+                transform: translatey(-20px);
+            }
+
+            100% {
+                box-shadow: 0 5px 15px 0px rgba(0, 0, 0, 0.6);
+                transform: translatey(0px);
+            }
+        }
+
+        @@keyframes float {
+            0% {
+                box-shadow: 0 5px 15px 0px rgba(0, 0, 0, 0.6);
+                transform: translatey(0px);
+            }
+
+            50% {
+                box-shadow: 0 25px 15px 0px rgba(0, 0, 0, 0.2);
+                transform: translatey(-20px);
+            }
+
+            100% {
+                box-shadow: 0 5px 15px 0px rgba(0, 0, 0, 0.6);
+                transform: translatey(0px);
+            }
+        }
+
+        @@keyframes dust_float {
+            0% {
+                transform: translate(0px, 0px);
+            }
+
+            100% {
+                transform: translate(8000px, 4000px);
+            }
+        }
+
+        .screen-title {
+            font-family: "Helvetica", sans-serif;
+            color: white;
+            text-align: right;
+            padding-top: 6rem;
+            padding-left: 6rem;
+            padding-right: 2rem;
+            padding-bottom: 6rem;
+            width: 100%;
+        }
+
+
+        .screen-display {
+            /*background: linear-gradient(135deg, #2B7594 0%, #655900 100%);*/
+            background: #1abc9c;
+            background: linear-gradient(135deg, #1abc9c 0%, #2B7594 100%);
+            fixed;
+            overflow: hidden;
+            /*font-family: 'Orbitron', sans-serif;*/
+            font-family: "Helvetica", sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: center;
+            position: fixed;
+            width: 65%;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            /*background-color: #111827;
+                                                                                                    color: #F9FAFB;*/
+            z-index: 9;
+            pointer-events: none;
+            opacity: 1;
+            visibility: visible;
+            transition: opacity 400ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+
+        .screen-login {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: fixed;
+            width: 35%;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            height: 100%;
+            margin: 0;
+            padding-bottom: 90px;
+            /*padding: 0;*/
+            font-family: "Helvetica", sans-serif;
+            /*background: #1abc9c;
+                                                                                                    background: linear-gradient(135deg, #1abc9c 0%, #8e44ad 100%);*/
+            background-color: #ec8f03;
+            color: #F9FAFB;
+            transition: opacity 400ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+
+        a {
+            color: #1abc9c;
+        }
+
+            a:hover {
+                color: red;
+            }
+
+    </style>
+    @*<link href="assets/styles/splash-screen.css" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="assets/styles/splash-screen.css"></noscript>*@
+
+
+</head>
+
+<body>
+
+
+
+    <div class="container">
+
+        <div class="screen-display">
+            <div class="screen-title">
+                <h1><span style="color:#fff">@ViewData["Title"].ToString().ToUpper()</span></h1>
+                @*<p>
+                    Fuse helps developers to build organized and well coded dashboards full of beautiful and rich modules. Join us and start building your application today.
+                </p>*@
+                <p>
+                    Hino Motors Manufacturing (Thailand) Ltd.
+                </p>
+            </div>
+            <ul id="scene" data-friction-x="0.1" data-friction-y="0.1">
+                <li class="layer" id="layer-1" data-depth="0.15">
+                    <div class="img" id="img-1"></div>
+                </li>
+                <li class="layer" id="layer-2" data-depth="0.25">
+                    <div class="img" id="img-2"></div>
+                </li>
+                <li class="layer" id="layer-3" data-depth="0.45">
+                    <div class="img" id="img-3"></div>
+                </li>
+            </ul>
+        </div>
+
+
+        <div class="screen-login">
+
+
+            <!-- /Logo -->
+            <div>
+                <div class="avatar">
+                    <a href="../Login/Hino">
+                        <img src="@ViewData["LogoImage"]" alt="HINO Logo" />
+                    </a>
+                </div>
+            </div>
+            <p class="mt-4" style="color:red;">@ViewData["ErrorText"]</p>
+            @*<p class="mb-4">Please sign-in to your account.</p>*@
+
+
+            <form id="formAuthentication" class="mb-3 needs-validation" action="" method="POST" novalidate>
+                <div class="mb-3 position-relative">
+                    <label class="form-label" for="txtUsername" style="color:white">Username</label>
+                    <input type="text"
+                           class="form-control"
+                           id="txtUserName"
+                           name="txtUserName"
+                           placeholder="Username"
+                           value="@ViewData["txtUserName"]"
+                           autocomplete="off"
+                           readonly
+                           required
+                           autofocus />
+                    <div class="invalid-tooltip">
+                        <small>Enter your username.</small>
+                    </div>
+                    <div id="div-diffaccount">
+                        or sign-in with <a href="../Login">
+                            other account
+                        </a>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <button class="btn d-grid w-100" style="background-color:#1abc9c; color:white;" type="submit">Sign in</button>
+                </div>
+            </form>
+        </div>
+
+
+
+
+    </div>
+
+
+
+
+
+    <!-- Modal Profile -->
+    <div class="modal fade" id="ModalForgot" tabindex="-1" aria-labelledby="ModalForgotLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form id="frmModalForgot">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="ModalForgotLabel">Reset Password</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" style="padding:20px;">
+                        <div class="row g-2">
+                            <div class="col-md">
+                                If you forgot your password. Click "Reset Password"</br>
+                                System will send email confirmation to reset password to your email.</br>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-md">
+                                <div class="form-floating mb-2">
+                                    <input type="text" class="form-control" id="txtResetUserName" name="txtResetUserName" placeholder="Username" value="">
+                                    <label for="txtResetUserName">Username</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer" style="padding-left:25px; padding-right:25px;">
+                        <button type="button" class="btn btn-primary" onclick="onReset();">Reset Password</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <!-- Modal Recovery -->
+    @*<div class="modal fade" id="ModalRecovery" tabindex="-1" aria-labelledby="ModalRecoveryLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form id="frmModalRecovery">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="ModalRecoveryLabel">Recovery Password</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" style="padding:20px;">
+                        <input type="hidden" class="form-control" id="_ID" name="_ID" value="">
+                        <div class="row g-2">
+                            <div class="col-md">
+                                <div class="form-floating mb-2">
+                                    <input type="text" class="form-control"
+                                           id="txtRecoveryUserName"
+                                           name="txtRecoveryUserName"
+                                           placeholder="Username"
+                                           value="@ViewBag.txtUserName"
+                                           readonly>
+                                    <label for="txtRecoveryUserName">Username</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-md">
+                                <div class="form-floating mb-2">
+                                    <input type="password" class="form-control" id="txtRecoveryPassword" name="txtRecoveryPassword" placeholder="Password" value="">
+                                    <label for="txtRecoveryPassword">Password</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-md">
+                                <div class="form-floating mb-2">
+                                    <input type="password" class="form-control" id="txtRecoveryConfirm" name="txtRecoveryConfirm" placeholder="Confirm Password" value="">
+                                    <label for="txtRecoveryConfirm">Confirm Password</label>
+                                </div>
+                            </div>
+                        </div>
+                        <small>
+                            Password format :</br>
+                            - Be a minimun length of eight(8) characters.</br>
+                            - Must include at leat one of alphabet characters (A-Z).</br>
+                            - Must include at leat one of numeric characters (0-9).</br>
+                            - Must include at leat one of special characters (ex. @@,$,%,!,&,*,?).
+                        </small>
+                    </div>
+                    <div class="modal-footer" style="padding-left:25px; padding-right:25px;">
+                        <button type="button" class="btn btn-primary" onclick="onRecovery();">Save Password</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>*@
+
+
+
+
+    <!-- / Layout wrapper -->
+    <!-- Main JS -->
+    <script src="~/assets/js/main.js"></script>
+
+    <!-- Page JS -->
+    <script src="~/assets/js/dashboards-analytics.js"></script>
+
+    <!-- Place this tag in your head or just before your close body tag. -->
+
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <script type="text/javascript">
+        
+
+        $(document).ready(function (e, context) {
+            //console.log(Request.ServerVariables["REMOTE_USER"]);
+
+
+            //if ($('#hsso').val() == 'hsso') {
+            //    //console.log('HINO User');
+            //    $('#div-password').attr('style', 'display:none;visibility:hidden;');
+            //    $('.screen-login').attr('style', 'padding-bottom:150px;');
+            //    $('#div-diffaccount').attr('style', 'display:block;visibility:visible;');
+            //    $('#txtPassword').removeAttr('required');
+
+            //} else {
+            //    //console.log('Supplier');
+            //    $('#txtUserName').removeAttr('readonly');
+            //    $('#div-password').attr('style', 'display:block;visibility:visible;');
+            //    $('.screen-login').attr('style', 'padding-bottom:90px;');
+            //    $('#div-diffaccount').attr('style', 'display:none;visibility:hidden;');
+
+            //}
+
+
+            onOtherAccount = function () {
+                window.document.location.replace('../');
+                //$('#hsso').val('');
+                //$('#txtUserName').removeAttr('readonly');
+                //$('#txtPassword').attr('required', '');
+                //$('#div-password').attr('style', 'display:block;visibility:visible;');
+                //$('.screen-login').attr('style', 'padding-bottom:90px;');
+                //$('#div-diffaccount').attr('style', 'display:none;visibility:hidden;');
+                //$('#txtUserName').focus();
+            }
+
+
+            $('#ModalForgot').on('shown.bs.modal', function (e) {
+                //console.log('shown');
+                $('#txtResetUserName').val($('#txtUserName').val());
+            });
+            onReset = function () {
+
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("ForgotPassword","Authen")',
+                    data: $("#frmModalForgot").serialize(),
+                    dataType: "json",
+                    success: function (result) {
+
+                        $('#ModalForgot').modal('hide');
+                    },
+                    error: function () {
+                        console.log('error handling here');
+                    }
+                });
+            }
+
+
+
+
+            //if ($('#ref').val() != '') {
+            //    $('#ModalRecovery').modal('show');
+            //}
+            //onRecovery = function () {
+            //    //console.log('Reset Password');
+            //    $.ajax({
+            //        type: 'POST',
+            //        url: '@Url.Action("ResetPassword","Authen")',
+            //        data: $("#frmModalRecovery").serialize(),
+            //        dataType: "json",
+            //        success: function (result) {
+
+            //            $('#ModalRecovery').modal('hide');
+            //        },
+            //        error: function () {
+            //            console.log('error handling here');
+            //        }
+            //    });
+            //}
+
+        });
+
+
+
+        (function () {
+            'use strict'
+
+            var forms = document.querySelectorAll('.needs-validation');
+
+            Array.prototype.slice.call(forms)
+                .forEach(function (form) {
+                    form.addEventListener('submit', function (event) {
+                        console.log(event);
+                        if (!form.checkValidity()) {
+                            event.preventDefault()
+                            event.stopPropagation()
+                            console.log('validation');
+                        }
+
+                        form.classList.add('was-validated')
+                    }, false)
+                })
+        })()
+
+
+
+    </script>
+
+
+</body>
+</html>

@@ -1,0 +1,70 @@
+﻿<div class="row">
+
+    <div class="col-xl-12 col-md-12 col-sm-12">
+        <div class="card border-left-primary shadow h-100">
+            <div class="card-body">
+
+                <form id="frmCondition">
+                    <div class="row">
+                        <div class="col mt-2">
+
+                            <fieldset class="fieldset">
+                                <legend>Import File : </legend>
+
+                                <div class="row">
+                                    <div class="col-3">
+                                        <item type="text" id="AdvanceDate" label="Advance Delivery Date" value="1"></item>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-8">
+                                        <item type="file" id="fileImport" filter=".txt"></item>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-8">
+                                        <item type="progress" id="pgsStatus" label="Processing: {{##.##}} %" max="142"></item>
+                                    </div>
+                                </div>
+
+                            </fieldset>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col"></div>
+                        <div class="col-5" style="text-align:center;color:red;font-size:16px;">
+                            ERROR FILE
+                        </div>
+                        <div class="col-5" style="text-align:center;color:blue;font-size:16px;">
+                            COMPLETE FILE
+                        </div>
+                        <div class="col"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col"></div>
+                        <div class="col-5">
+                            <item type="table" id="tblERROR"></item>
+                        </div>
+                        <div class="col-5">
+                            <item type="table" id="tblCOMPLETE"></item>
+                        </div>
+                        <div class="col"></div>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+@section Scripts{
+    <script type="text/javascript" src="~/assets/js/History/UserMaintenance.js"></script>
+    <script type="text/javascript" src="~/assets/.script/Template/Master.js"></script>
+    <script type="text/javascript" src="~/assets/.script/ServiceData/KBNIM001.js?@ViewData["Version"]"></script>
+}

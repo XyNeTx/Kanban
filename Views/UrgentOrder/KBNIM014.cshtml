@@ -1,0 +1,59 @@
+﻿<div class="row">
+
+    <div class="col-xl-12 col-md-12 col-sm-12">
+        <div class="card border-left-primary shadow h-100">
+            <div class="card-body">
+
+                <form id="frmCondition">
+                    @*
+                    <fieldset class="fieldset">
+                    <legend>Factory : </legend>
+
+                    </fieldset>
+                    *@
+                    <div class="row">
+                        <div class="col mt-2">
+
+                            <fieldset class="fieldset">
+                                <legend>Import File : </legend>
+
+                                <div class="row">
+                                    <div class="col-8">
+                                        <item type="file" id="fileImport" filter=".txt"></item>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-8">
+                                        <item type="progress" id="pgsStatus" label="Processing: {{##.##}} %" max="142"></item>
+                                    </div>
+                                </div>
+
+                            </fieldset>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col mt-2">
+                            <span style="color:blue;font-size:20px;">REMARK : กรุณานำไฟล์ที่มี Packing Code เข้าระบบด้วยค่ะ</span><br />
+                            <span style="color:blue;font-size:16px;">**สำหรับข้อมูลที่นำเข้านั้น รูปแบบจะต้องใช้ | กั้นเท่านั้น เช่น</span><br />
+                            <span style="color:blue;font-size:14px;">1|HMT1|E|HINO MOTORS MANUFACTURING (THAILAND) LIMITED|P|BANPHO|PN|1|1P HMT1EPNA2694|2018052401|</span><br /><br />
+                            <span style="color:red;font-size:16px;">**สำหรับข้อมูลผิดรูปแบบและไม่สามารถนำเข้าได้ เช่น</span><br />
+                            <span style="color:red;font-size:14px;">1	HMT1	E	HINO MOTORS MANUFACTURING (THAILAND) LIMITED	P	BANPHO	PN	1	1P HMT1EPNA2694	2018052401</span>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+@section Scripts{
+    <script type="text/javascript" src="~/assets/js/History/UserMaintenance.js"></script>
+    <script type="text/javascript" src="~/assets/.script/Template/Master.js"></script>
+    <script type="text/javascript" src="~/assets/.script/UrgentOrder/KBNIM014.js?@ViewData["Version"]"></script>
+}

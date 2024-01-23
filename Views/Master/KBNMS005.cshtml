@@ -1,0 +1,131 @@
+﻿<div class="row">
+
+    <div class="col-xl-12 col-md-12 col-sm-12">
+        <div class="card border-left-primary shadow h-100">
+            <div class="card-body">
+
+                <form id="frmCondition">
+                    <div class="row">
+                        <div class="col-6">
+                            <item type="select" id="F_Plant" label="Plant" value="3" readonly></item>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <item type="select" id="F_Supplier" label="Supplier"></item>
+                        </div>
+                    </div>
+@*                    <div class="row">
+                        <div class="col-md-3">
+                            <item type="date" id="F_Start_Date" label="Start Date" format="yyyy-mm-dd" default="now" noedit required></item>
+                        </div>
+                        <div class="col-md-3">
+                            <item type="date" id="F_End_Date" label="To" format="yyyy-mm-dd" default="now" noedit required></item>
+                        </div>
+                    </div>*@
+                </form>
+
+                <div class="row">
+                    <div class="col mt-4">
+                        <table id="tblMaster" class="display" style="width:100%"></table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<!-- Modal Master -->
+<div class="modal fade" id="modalMaster" tabindex="-1" aria-labelledby="modalMasterLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalMasterLabel"> @ViewData["AppName"] <span></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="frmMaster" class="needs-validation" autocomplete="off" novalidate>
+                <div class="modal-body" style="padding-left:10px;padding-top:5px;padding-right:10px;">
+
+                    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar">
+                        <div class="btn-group btn-group-sm me-2" role="group" aria-label="Toolbar">
+
+                            <button type="button" class="btn btn-success" id="btnSave" name="btnSave" onclick="onSave();" title="Save data" @(ViewData["ComponentToolbarSave"].ToString() == "true" ? "" : "disabled")>
+                                <i class="ti-save"></i>
+                            </button>
+                            <button type="button" class="btn btn-success" id="btnPrint" name="btnPrint" onclick="onPrint();" title="Print" @(ViewData["ComponentToolbarPrint"].ToString() == "true" ? "" : "disabled")>
+                                <i class="ti-printer"></i>
+                            </button>
+                            <button type="button" class="btn btn-success" id="btnExecute" name="btnExecute" onclick="onExecute()" title="Execute/Run" @(ViewData["ComponentToolbarExecute"].ToString() == "true" ? "" : "disabled")>
+                                <i class="fas fa-bolt"></i>
+                            </button>
+                            <button type="button" class="btn btn-success" id="btnDelete" name="btnDelete" onclick="onDelete();" title="Delete" @(ViewData["ComponentToolbarDelete"].ToString() == "true" ? "" : "disabled")>
+                                <i class="far fa-trash-alt"></i>
+                            </button>
+
+                        </div>
+                    </div>
+
+                    <input type="hidden" class="form-control" id="_Action" name="_Action" value="POST">
+                    <div class="bg-white border rounded-3">
+                        <section class="w-100 p-2">
+                            <div class="row g-2">
+                                <div class="col-md-6">
+                                    <div class="input-group mb-3">
+                                        <label class="input-group-text" for="F_Plant">Plant</label>
+                                        <select class="form-select" id="F_Plant" name="F_Plant" value="3" required noedit></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row g-2">
+                                <div class="col-md-6">
+                                    <div class="input-group mb-3">
+                                        <label class="input-group-text" for="F_OrderType">Order Type</label>
+                                        <input type="text" class="form-control" id="F_OrderType" name="F_OrderType" autocomplete="off" required noedit>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row g-2">
+                                <div class="col-md-6">
+                                    <div class="input-group mb-3">
+                                        <label class="input-group-text" for="F_Effect_Date">Effective Date</label>
+                                        <input type="text" class="form-control col-xl-8" id="F_Effect_Date" name="F_Effect_Date" format="yyyy-mm-dd" noedit />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group mb-3">
+                                        <label class="input-group-text" for="F_End_Date">End Date</label>
+                                        <input type="text" class="form-control" id="F_End_Date" name="F_End_Date" format="yyyy-mm-dd">
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+
+                </div>
+            </form>
+
+            <div class="modal-footer" style="padding-left:20px; padding-right:20px;">
+                <i class="modal-reference mr-auto">Reference Code : <i id="_REFERCODE_"></i></i>
+                @if (ViewData["UserGroupID"].ToString() == "1" || ViewData["UserGroupID"].ToString() == "2")
+                {
+                    <a href="#" data-bs-toggle="modal" data-bs-target="#ModalHistory" data-bs-remote="UserMaintenance">
+                        <i class="fas fa-scroll" title="History Log"></i>
+                    </a>
+                }
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts{
+    <script type="text/javascript" src="~/assets/js/History/UserMaintenance.js"></script>
+    <script type="text/javascript" src="~/assets/.script/Template/Master.js"></script>
+    <script type="text/javascript" src="~/assets/.script/Master/KBNMS005.js?@ViewData["Version"]"></script>
+    @*<script type="text/javascript" src="~/assets/adminty/vue@3/vueApp/Master/KBNMS005.vue.js?@ViewData["Version"]"></script>*@
+}
