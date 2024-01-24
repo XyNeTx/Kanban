@@ -56,6 +56,7 @@ namespace HINOSystem.Context
         public DbSet<TB_MS_VLT_Customer> TB_MS_VLT_Customer { get; set; } = null!;
         public DbSet<TB_MS_ZeroOrder> TB_MS_ZeroOrder { get; set; } = null!;
         public DbSet<TB_REC_HEADER> TB_REC_HEADER {  get; set; } = null!;
+        public DbSet<TB_REC_DETAIL> TB_REC_DETAIL {  get; set; } = null!;
 
 
 

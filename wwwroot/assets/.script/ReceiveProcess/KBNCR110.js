@@ -85,7 +85,7 @@
                         $('#F_PDS_No').val("");
                         // console.log(pdsSet.size + "90");
                         if (pdsSet.has(pdsNo)) {
-                            alert("Duplicate PDS No.")
+                            xSwal.error("Duplicate PDS No.", "Please enter other PDS No.");
                         }
                         else {
                             // console.log(result + "line 88");
@@ -96,7 +96,7 @@
                     }
                     else {
                         $('#F_PDS_No').val("");
-                        alert(result.message);
+                        xSwal.error(result.title, result.message);
                     }
                 }
             },
@@ -106,29 +106,46 @@
             }
         });
     });
+
     xAjax.onClick("#ClearBtn", function () {
         $('#tblMaster').DataTable().clear();
         $('#tblMaster').DataTable().draw();
         pdsSet.clear();
     });
+
     xAjax.onClick("#ReceiveBtn", function () {
-        var pdsNo = $('.sorting_1').prop('checked', true).text();
-        console.log(pdsNo);
+        var _selData = [];
+        var allPages = $('#tblMaster').DataTable().cells().nodes();
+        $(allPages).find('input[type="checkbox"]').each(function () {
+            if ($(this).prop('checked')) {
+                var _val = $($(this)).val();
+                _selData.push(JSON.parse(`{` + ReplaceAll(_val, `'`, `"`) + `}`));
+            }
+        });
+
+        console.log(_selData);
+
         xAjax.Post({
             url: 'KBNCR110/ReceiveAllPart',
             data: {
-                'F_PDS_No': pdsNo
+                'F_PDS_No': _selData,
             },
-            success: function (result) {
-                console.log(result + "Success");
+            then: function (result) {
+                console.log(result)
+                if (result.status == "200") {
+                    xSwal.success(result.title, result.message);
+                    $('#tblMaster').DataTable().clear();
+                    $('#tblMaster').DataTable().draw();
+                    pdsSet.clear();
+                }
+                else {
+                    xSwal.error(result.title, result.message);
+                }
             },
             error: function (result) {
-                console.error(_Controller + '.SearchPDSNo: ' + result.responseText);
+                console.error(_Controller + '.ReceiveAllPart: ' + result.responseText);
                 xSplash.hide();
             }
         });
-        $('#tblMaster').DataTable().clear();
-        $('#tblMaster').DataTable().draw();
-        pdsSet.clear();
     });
 });

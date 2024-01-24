@@ -44,6 +44,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using System.Text.Json.Nodes;
 using System.Linq;
 using Org.BouncyCastle.Utilities.IO.Pem;
+using System.Reflection;
 //using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HINOSystem.Controllers.API.Master
@@ -120,8 +121,9 @@ namespace HINOSystem.Controllers.API.Master
             if (PDSNo.StartsWith("7Y") || PDSNo.StartsWith("7Z"))
             {
                 _result = @"{
-                            ""status"":""200"",
+                            ""status"":""400"",
                             ""response"":""OK"",
+                            ""title"": ""KB3 Receive All Error"",
                             ""message"": ""ไม่สามารถรับชิ้นส่วนประเภท Special ได้ กรุณารับชิ้นส่วนใน Function Receive Special Part""
                             }";
             }
@@ -145,32 +147,36 @@ namespace HINOSystem.Controllers.API.Master
                     if (queryData.F_Issued_Date > DateTime.Now)
                     {
                         _result = @"{
-                            ""status"":""200"",
+                            ""status"":""400"",
                             ""response"":""OK"",
+                            ""title"": ""KB3 Receive All Error"",
                             ""message"": ""Can not receive because Issued Date More Than Receive Date!""
                             }";
                     }
                     else if(queryData.F_MRN_Flag == "1")
                     {
                         _result = @"{
-                            ""status"":""200"",
+                            ""status"":""400"",
                             ""response"":""OK"",
+                            ""title"": ""KB3 Receive All Error"",
                             ""message"": ""PDS ฉบับนี้ Receive แบบ Seperate""
                             }";
                     }
                     else if(queryData.F_MRN_Flag == "2")
                     {
                         _result = @"{
-                            ""status"":""200"",
+                            ""status"":""400"",
                             ""response"":""OK"",
+                            ""title"": ""KB3 Receive All Error"",
                             ""message"": ""PDS ฉบับนี้ Receive All ครบแล้ว""
                             }";
                     }
                     else if (queryData.F_Status == 'D')
                     {
                         _result = @"{
-                        ""status"":""200"",
+                        ""status"":""400"",
                         ""response"":""OK"",
+                        ""title"": ""KB3 Receive All Error"",
                         ""message"": ""PDS have been deleted! Please check Data again!""
                         }";
                     }
@@ -188,8 +194,9 @@ namespace HINOSystem.Controllers.API.Master
                 else
                 {
                     _result = @"{
-                                ""status"":""200"",
+                                ""status"":""400"",
                                 ""response"":""OK"",
+                                ""title"": ""KB3 Receive All Error"",
                                 ""message"": ""Data Not Found""
                                 }";
                 }
@@ -225,9 +232,10 @@ namespace HINOSystem.Controllers.API.Master
                             else
                             {
                                 string _result = @"{
-                                    ""status"":""200"",
+                                    ""status"":""400"",
                                     ""response"":""OK"",
-                                    ""message"": ""Don't Have This PDS No.""
+                                    ""title"": ""Search PDS Error"",
+                                    ""message"" : ""Don't Have This PDS No.""
                                     }";
                                 return Ok(_result);
                             }
@@ -235,9 +243,10 @@ namespace HINOSystem.Controllers.API.Master
                         else
                         {
                             string _result = @"{
-                                ""status"":""200"",
+                                ""status"":""500"",
                                 ""response"":""OK"",
-                                ""message"": ""JSON Parse Error""
+                                ""title"": ""Search PDS Error"",
+                                ""message"" : ""JSON Parse Error""
                                 }";
                             return Ok(_result);
                         }
@@ -245,9 +254,10 @@ namespace HINOSystem.Controllers.API.Master
                     else
                     {
                         string _result = @"{
-                            ""status"":""200"",
+                            ""status"":""400"",
                             ""response"":""OK"",
-                            ""message"": ""Please Input PDS No.""
+                            ""title"": ""Search PDS Error"",
+                            ""message"" : ""Please Input PDS No.""
                             }";
                         return Ok(_result);
                     }
@@ -261,41 +271,86 @@ namespace HINOSystem.Controllers.API.Master
         }
 
         [HttpPost]
-        public async Task<IActionResult> ReceiveAllPart([FromBody] string F_OrderNo)
+        public async Task<IActionResult> ReceiveAllPart([FromBody] string data)
         {
+            string _result = "";
             try
             {
                 if (_KBCN.Plant == "3")
                 {
-                    if (F_OrderNo != null)
+                    if (data != null)
                     {
-                        dynamic _json = JsonConvert.DeserializeObject(F_OrderNo);
-                        string PDSNo = _json["F_PDS_No"];
-                        var receiveUpd = await _KB3Context.TB_REC_HEADER.SingleOrDefaultAsync(x => x.F_OrderNo == PDSNo);
-                        if (receiveUpd != null)
+                        dynamic _json = JsonConvert.DeserializeObject(data);
+                        foreach (var item in _json.F_PDS_No)
                         {
-                            receiveUpd.F_MRN_Flag = "2";
-                            _KB3Context.TB_REC_HEADER.Update(receiveUpd);
-                            await _KB3Context.SaveChangesAsync();
-                            return Ok();
+                            string PDSNo = item.F_OrderNo.ToString();
+                            var recHeader = await _KB3Context.TB_REC_HEADER.SingleOrDefaultAsync(x => x.F_OrderNo == PDSNo);
+                            var recDetail = await _KB3Context.TB_REC_DETAIL.Where(x => x.F_OrderNo == PDSNo).ToListAsync();
+                            if (recHeader != null)
+                            {
+                                recHeader.F_MRN_Flag = "2";
+                                _KB3Context.TB_REC_HEADER.Update(recHeader);
+                                if(recDetail.Count == 0)
+                                {
+                                    _result = @"{
+                                        ""status"":""500"",
+                                        ""response"":""OK"",
+                                        ""title"": ""Receive All Part Error"",
+                                        ""message"" : ""No Record from Receive Detail""
+                                        }";
+                                    return Ok(_result);
+                                }
+                                else
+                                {
+                                    foreach (var singleRecDet in recDetail)
+                                    {
+                                        singleRecDet.F_Receive_amount = singleRecDet.F_Unit_Amount;
+                                        singleRecDet.F_Receive_Date = DateTime.Now.Date;
+                                        _KB3Context.TB_REC_DETAIL.Update(singleRecDet);
+                                    }
+                                    await InsToRecLocal(PDSNo);
+                                }
+                            }
+                            else
+                            {
+                                _result = @"{
+                                    ""status"":""400"",
+                                    ""response"":""OK"",
+                                    ""title"": ""Receive All Part Error"",
+                                    ""message"" : ""No Record from PDS No.""
+                                    }";
+                                return Ok(_result);
+                            }
                         }
-                        else
-                        {
-                            return BadRequest();
-                        }
-
-                        //foreach (var PDSNo in F_OrderNo)
-                        //{
-                        //}
+                            _result = @"{
+                            ""status"":""200"",
+                            ""response"":""OK"",
+                            ""title"": ""Receive All Part Success"",
+                            ""message"" : ""Receive All Part is Complete.!""
+                            }";
+                        await _KB3Context.SaveChangesAsync();
+                        return Ok(_result);
                     }
                     else
                     {
-                        return BadRequest();
+                        _result = @"{
+                            ""status"":""400"",
+                            ""response"":""OK"",
+                            ""title"": ""Receive All Part Error"",
+                            ""message"" : ""Please check the checkbox to Receive All Part""
+                            }";
+                        return Ok(_result);
                     }
                 }
                 else
                 {
-                    return BadRequest();
+                    _result = @"{
+                        ""status"":""403"",
+                        ""response"":""OK"",
+                        ""title"": ""Receive All Part Error"",
+                        ""message"" : ""Please correct your factory""
+                        }";
+                    return Ok(_result);
                 }
             }
             catch (Exception ex)
@@ -305,6 +360,21 @@ namespace HINOSystem.Controllers.API.Master
             }
         }
 
+        public async Task<IActionResult> InsToRecLocal(string PDSNo)
+        {
+            try
+            {
+                if (PDSNo != null)
+                {
+
+                }
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return Content(ex.ToString());
+            }
+        } 
 
         //[HttpPost]
         //public IActionResult search([FromBody] string pData = null)
