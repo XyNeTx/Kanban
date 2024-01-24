@@ -206,8 +206,6 @@ namespace HINOSystem.Controllers.API.Master
         [HttpPost]
         public async Task<IActionResult> SearchPDSNo([FromBody] string data)  
         {
-            dynamic _json = null;
-            string _SQL = "";
             try
             {
                 if (_KBCN.Plant == "3")

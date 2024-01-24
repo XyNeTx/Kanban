@@ -50,7 +50,6 @@ namespace HINOSystem.Controllers.API.Master
         private readonly ActionResultClass _ActionResult;        
         private readonly KanbanConnection _KBCN;
         private readonly PPMConnect _PPMConnect;
-
         private readonly KB3Context _KB3Context;
 
 
