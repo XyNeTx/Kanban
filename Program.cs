@@ -6,6 +6,7 @@ using HINOSystem.Models.ERP;
 
 using Microsoft.AspNetCore.Server.IISIntegration;
 using Microsoft.AspNetCore.Authentication.Negotiate;
+using KANBAN.Context;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +22,12 @@ builder.Services.AddDbContext<ERPContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection") ??
         throw new InvalidOperationException("Connection string 'ERPContext' not found.")
+        )
+);
+builder.Services.AddDbContext<PPM3Context>(options =>
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("PPM3Connection") ??
+        throw new InvalidOperationException("Connection String PPM3Context not found.")
         )
 );
 

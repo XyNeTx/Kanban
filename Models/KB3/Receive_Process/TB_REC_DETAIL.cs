@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace KANBAN.Models.KB3.Master
+namespace KANBAN.Models.KB3.Receive_Process
 {
     [PrimaryKey(nameof(F_OrderNo), nameof(F_Part_No), nameof(F_Ruibetsu), nameof(F_Kanban_No), nameof(F_No))]
     public class TB_REC_DETAIL

@@ -45,6 +45,8 @@ using System.Text.Json.Nodes;
 using System.Linq;
 using Org.BouncyCastle.Utilities.IO.Pem;
 using System.Reflection;
+using KANBAN.Models.KB3.Receive_Process;
+using KANBAN.Context;
 //using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HINOSystem.Controllers.API.Master
@@ -56,7 +58,7 @@ namespace HINOSystem.Controllers.API.Master
         private readonly ActionResultClass _ActionResult;        
         private readonly KanbanConnection _KBCN;
         private readonly PPMConnect _PPMConnect;
-
+        private readonly PPM3Context _PPM3Context;
         private readonly KB3Context _KB3Context;
 
 
@@ -68,6 +70,7 @@ namespace HINOSystem.Controllers.API.Master
             ActionResultClass actionResultClass,
             KanbanConnection kanbanConnection,
             PPMConnect ppmConnect,
+            PPM3Context pPM3Context,
             KB3Context kB3Context
             )
         {
@@ -77,7 +80,7 @@ namespace HINOSystem.Controllers.API.Master
             _KB3Context = kB3Context;
             _KBCN = kanbanConnection;
             _PPMConnect = ppmConnect;
-
+            _PPM3Context = pPM3Context;
         }
 
 
@@ -90,6 +93,7 @@ namespace HINOSystem.Controllers.API.Master
             try
             {
                 BearerClass _JBearer = _BearerClass.Header(Request);
+                var user = _JBearer.UserCode.ToString();
                 if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
 
                 if (pData != null) _json = JsonConvert.DeserializeObject(pData);
@@ -322,8 +326,8 @@ namespace HINOSystem.Controllers.API.Master
                             }
                         }
                             _result = @"{
-                    ""status"":""200"",
-                    ""response"":""OK"",
+                            ""status"":""200"",
+                            ""response"":""OK"",
                             ""title"": ""Receive All Part Success"",
                             ""message"" : ""Receive All Part is Complete.!""
                             }";
@@ -361,10 +365,43 @@ namespace HINOSystem.Controllers.API.Master
 
         public async Task<IActionResult> InsToRecLocal(string PDSNo)
         {
+            BearerClass _JBearer = _BearerClass.Header(Request);
+            var user = _JBearer.UserCode.ToString();
             try
             {
                 if (PDSNo != null)
                 {
+                    var recHead = await _KB3Context.TB_REC_HEADER.Where(x => x.F_OrderNo == PDSNo).SingleOrDefaultAsync();
+                    var recDetail = await _KB3Context.TB_REC_DETAIL.Where(x => x.F_OrderNo == PDSNo).ToListAsync();
+
+                    List<T_Receive_Local> _trlList = new List<T_Receive_Local>();
+                    foreach (var receive in recDetail)
+                    {
+                        T_Receive_Local _trl = new T_Receive_Local
+                        {
+                            F_Order_No = recHead.F_OrderNo,
+                            F_Part_No = receive.F_Part_No,
+                            F_Ruibetsu = receive.F_Ruibetsu,
+                            F_System_Type = "KBN",
+                            F_Cycle = "00",
+                            F_Plant_CD = recHead.F_Plant,
+                            F_Store_CD = recHead.F_Delivery_Dock,
+                            F_Receive_Qty = (decimal)receive.F_Receive_amount,
+                            F_Receive_date = receive.F_Receive_Date?.ToString("yyyyMMdd").Trim(),
+                            F_Supplier_Code = recHead.F_Supplier_Code,
+                            F_Supplier_Plant = recHead.F_Supplier_Plant,
+                            F_Inventory_Flg = '0',
+                            F_Upload_Flg = '0',
+                            F_UpdateBy = user,
+                            F_UpdateDate = DateTime.Now,
+                            F_Pds_No = "",
+                            F_Pack_Code = ""
+                        };
+                        _trlList.Add(_trl);
+                    }
+                    _PPM3Context.T_Receive_Local.UpdateRange(_trlList);
+                    _PPMConnect.ExecuteSQL($"Exec dbo.SP_UploadReceiveNormal_All 'k24124','{user}'");
+                    await _PPM3Context.SaveChangesAsync();
 
                 }
                 return Ok();

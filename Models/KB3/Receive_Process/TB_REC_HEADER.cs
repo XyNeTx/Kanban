@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace KANBAN.Models.KB3.Master
+namespace KANBAN.Models.KB3.Receive_Process
 {
     [PrimaryKey(nameof(F_OrderNo), nameof(F_Plant), nameof(F_Supplier_Code), nameof(F_Supplier_Plant), nameof(F_Delivery_Date), nameof(F_Delivery_Trip), nameof(F_Delivery_Time), nameof(F_OrderType))]
     public class TB_REC_HEADER
@@ -43,20 +43,20 @@ namespace KANBAN.Models.KB3.Master
 
         public required string F_Dept { get; set; }
 
-        public string? F_CR {  get; set; }
-        
-        public string? F_DR {  get; set; }
+        public string? F_CR { get; set; }
 
-        public string? F_WK_CODE {  get; set; }
-        public char? F_Status {  get; set; }
-        public int? F_Vat {  get; set; }
-        public string? F_Dock_Code {  get; set; }
-        public string? F_MRN_Flag {  get; set; }
-        public int? F_Printed {  get; set; }
-        public required string F_Remark {  get; set; }
-        public required string F_Remark2 {  get; set; }
-        public required string F_Remark3 {  get; set; }
-        public required char F_Flg_Epro {  get; set; }
+        public string? F_DR { get; set; }
+
+        public string? F_WK_CODE { get; set; }
+        public char? F_Status { get; set; }
+        public int? F_Vat { get; set; }
+        public string? F_Dock_Code { get; set; }
+        public string? F_MRN_Flag { get; set; }
+        public int? F_Printed { get; set; }
+        public required string F_Remark { get; set; }
+        public required string F_Remark2 { get; set; }
+        public required string F_Remark3 { get; set; }
+        public required char F_Flg_Epro { get; set; }
         public required string F_Remark_KB { get; set; }
         public required string F_Transportor { get; set; }
         public required string F_Collect_Date { get; set; }
@@ -74,7 +74,7 @@ namespace KANBAN.Models.KB3.Master
         public bool? F_Flag_Transfer { get; set; }
         public required string F_Delay_Invoice_Date { get; set; }
         public string? F_Logistic_YM { get; set; }
-        public Int16? F_Logistic_Rev { get; set; }
+        public short? F_Logistic_Rev { get; set; }
         public string? F_PDS_Group { get; set; }
 
 
