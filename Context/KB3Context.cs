@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using HINOSystem.Models.KB3.Master;
+using KANBAN.Models.KB3.Receive_Process;
 
 namespace HINOSystem.Context
 {
@@ -48,14 +49,15 @@ namespace HINOSystem.Context
         public DbSet<TB_MS_Route> TB_MS_Route { get; set; } = null!;
         public DbSet<TB_MS_Route_Delivery> TB_MS_Route_Delivery { get; set; } = null!;
         public DbSet<TB_MS_SendMail> TB_MS_SendMail { get; set; } = null!;
-        public DbSet<TB_MS_SpcApprover> TB_MS_SpcApprover { get; set; } = null!;
+
+        // public DbSet<TB_MS_SpcApprover> TB_MS_SpcApprover { get; set; } = null!;
         public DbSet<TB_MS_SupplierAttn> TB_MS_SupplierAttn { get; set; } = null!;
         public DbSet<TB_MS_TagColor> TB_MS_TagColor { get; set; } = null!;
         public DbSet<TB_MS_TruckType> TB_MS_TruckType { get; set; } = null!;
         public DbSet<TB_MS_VLT_Customer> TB_MS_VLT_Customer { get; set; } = null!;
         public DbSet<TB_MS_ZeroOrder> TB_MS_ZeroOrder { get; set; } = null!;
-
-
+        public DbSet<TB_REC_HEADER> TB_REC_HEADER {  get; set; } = null!;
+        public DbSet<TB_REC_DETAIL> TB_REC_DETAIL {  get; set; } = null!;
 
         //protected override void OnModelCreating(ModelBuilder modelBuilder)
         //{
