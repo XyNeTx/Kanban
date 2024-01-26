@@ -118,94 +118,6 @@ namespace HINOSystem.Controllers.API.Master
             }
         }
 
-        public async Task<IActionResult> KB3ReceiveAll(string PDSNo)
-        {
-            string _result = "";
-            if (PDSNo.StartsWith("7Y") || PDSNo.StartsWith("7Z"))
-            {
-                _result = @"{
-                            ""status"":""400"",
-                            ""response"":""OK"",
-                            ""title"": ""KB3 Receive All Error"",
-                            ""message"": ""ไม่สามารถรับชิ้นส่วนประเภท Special ได้ กรุณารับชิ้นส่วนใน Function Receive Special Part""
-                            }";
-            }
-            else
-            {
-                var queryData = await _KB3Context.TB_REC_HEADER
-                    .Where(x => x.F_OrderNo == PDSNo)
-                    .Select(x => new
-                    {
-                        x.F_OrderNo,
-                        x.F_Delivery_Date,
-                        x.F_Delivery_Trip,
-                        x.F_Issued_Date,
-                        x.F_Status,
-                        x.F_MRN_Flag
-                    })
-                    .SingleOrDefaultAsync();
-
-                if (queryData != null)
-                {
-                    if (queryData.F_Issued_Date > DateTime.Now)
-                    {
-                        _result = @"{
-                            ""status"":""400"",
-                            ""response"":""OK"",
-                            ""title"": ""KB3 Receive All Error"",
-                            ""message"": ""Can not receive because Issued Date More Than Receive Date!""
-                            }";
-                    }
-                    else if(queryData.F_MRN_Flag == "1")
-                    {
-                        _result = @"{
-                            ""status"":""400"",
-                            ""response"":""OK"",
-                            ""title"": ""KB3 Receive All Error"",
-                            ""message"": ""PDS ฉบับนี้ Receive แบบ Seperate""
-                            }";
-                    }
-                    else if(queryData.F_MRN_Flag == "2")
-                    {
-                        _result = @"{
-                            ""status"":""400"",
-                            ""response"":""OK"",
-                            ""title"": ""KB3 Receive All Error"",
-                            ""message"": ""PDS ฉบับนี้ Receive All ครบแล้ว""
-                            }";
-                    }
-                    else if (queryData.F_Status == 'D')
-                    {
-                        _result = @"{
-                        ""status"":""400"",
-                        ""response"":""OK"",
-                        ""title"": ""KB3 Receive All Error"",
-                        ""message"": ""PDS have been deleted! Please check Data again!""
-                        }";
-                    }
-                    else
-                    {
-                        string _jsonData = JsonConvert.SerializeObject(queryData);
-
-                        _result = @"{
-                        ""status"":""200"",
-                        ""response"":""OK"",
-                        ""message"": ""Data Found"",
-                        ""data"": " + _jsonData + @"}";
-                    }
-                }
-                else
-                {
-                    _result = @"{
-                                ""status"":""400"",
-                                ""response"":""OK"",
-                                ""title"": ""KB3 Receive All Error"",
-                                ""message"": ""Data Not Found""
-                                }";
-                }
-            }
-            return Ok(_result);
-        }
 
         [HttpPost]
         public async Task<IActionResult> SearchPDSNo([FromBody] string data)  
@@ -220,16 +132,26 @@ namespace HINOSystem.Controllers.API.Master
                         if (_json != null)
                         {
                             string PDSNo = _json["F_PDS_No"];
+                            if (PDSNo.StartsWith("7Y") || PDSNo.StartsWith("7Z"))
+                            {
+                                string _result = @"{
+                                    ""status"":""400"",
+                                    ""response"":""OK"",
+                                    ""title"": ""KB3 Receive All Error"",
+                                    ""message"": ""ไม่สามารถรับชิ้นส่วนประเภท Special ได้ กรุณารับชิ้นส่วนใน Function Receive Special Part""
+                                    }";
+                                return Ok(_result);
+                            }
                             // when user scan barcode
                             if (PDSNo.Trim().Length == 14)
                             {
                                 string pdsRemv = PDSNo.Trim().Remove(13,1);
-                                return await KB3ReceiveAll(pdsRemv);
+                                return await SearchPDSData(pdsRemv);
                             }
                             // when user enter manual
                             else if (PDSNo.Trim().Length == 13)
                             {
-                                return await KB3ReceiveAll(PDSNo.Trim());
+                                return await SearchPDSData(PDSNo.Trim());
                             }
                             //No record for PDS NO.
                             else
@@ -270,6 +192,94 @@ namespace HINOSystem.Controllers.API.Master
             catch (Exception ex)
             {
                 return Content(ex.Message.ToString(), "application/json");
+            }
+        }
+
+        public async Task<IActionResult> SearchPDSData(string PDSNo)
+        {
+            string _result = "";
+            try
+            {
+                var queryData = await _KB3Context.TB_REC_HEADER.Where(x => x.F_OrderNo == PDSNo)
+                .Select(x => new
+                {
+                    x.F_OrderNo,
+                    x.F_Delivery_Date,
+                    x.F_Delivery_Trip,
+                    x.F_Issued_Date,
+                    x.F_Status,
+                    x.F_MRN_Flag
+                }).SingleOrDefaultAsync();
+
+                if (queryData != null)
+                {
+                    if (queryData.F_Issued_Date > DateTime.Now)
+                    {
+                        _result = @"{
+                            ""status"":""400"",
+                            ""response"":""OK"",
+                            ""title"": ""KB3 Receive All Error"",
+                            ""message"": ""Can not receive because Issued Date More Than Receive Date!""
+                            }";
+                    }
+                    else if (queryData.F_MRN_Flag == "1")
+                    {
+                        _result = @"{
+                            ""status"":""400"",
+                            ""response"":""OK"",
+                            ""title"": ""KB3 Receive All Error"",
+                            ""message"": ""PDS ฉบับนี้ Receive แบบ Seperate""
+                            }";
+                    }
+                    else if (queryData.F_MRN_Flag == "2")
+                    {
+                        _result = @"{
+                            ""status"":""400"",
+                            ""response"":""OK"",
+                            ""title"": ""KB3 Receive All Error"",
+                            ""message"": ""PDS ฉบับนี้ Receive All ครบแล้ว""
+                            }";
+                    }
+                    else if (queryData.F_Status == 'D')
+                    {
+                        _result = @"{
+                        ""status"":""400"",
+                        ""response"":""OK"",
+                        ""title"": ""KB3 Receive All Error"",
+                        ""message"": ""PDS have been deleted! Please check Data again!""
+                        }";
+                    }
+                    else
+                    {
+                        string _jsonData = JsonConvert.SerializeObject(queryData);
+
+                        _result = @"{
+                        ""status"":""200"",
+                        ""response"":""OK"",
+                        ""message"": ""Data Found"",
+                        ""data"": " + _jsonData + @"}";
+                    }
+                }
+                else
+                {
+                    _result = @"{
+                                ""status"":""400"",
+                                ""response"":""OK"",
+                                ""title"": ""KB3 Receive All Error"",
+                                ""message"": ""Data Not Found""
+                                }";
+                }
+                return Ok(_result);
+            }
+            catch (Exception ex)
+            {
+                _result = @"{
+                    ""status"":""400"",
+                    ""response"":""OK"",
+                    ""title"": ""KB3 Receive All Error"",
+                    ""message"": ""Unexpected Error""
+                    }";
+                return BadRequest(ex.Message);
             }
         }
 
@@ -400,15 +410,57 @@ namespace HINOSystem.Controllers.API.Master
                         _trlList.Add(_trl);
                     }
                     _PPM3Context.T_Receive_Local.UpdateRange(_trlList);
-                    _PPMConnect.ExecuteSQL($"Exec dbo.SP_UploadReceiveNormal_All 'k24124','{user}'");
+                    UploadToEpro(user);
                     await _PPM3Context.SaveChangesAsync();
-
                 }
                 return Ok();
             }
             catch (Exception ex)
             {
                 return Content(ex.ToString());
+            }
+        }
+
+        public IActionResult UploadToEpro(string user)
+        {
+            try
+            {
+                BearerClass _JBearer = _BearerClass.Header(Request);
+                string dateTime = DateTime.Now.ToString("yyyyMMdd");
+                string RecCd = "K" + dateTime.Substring(2, 2);
+                if (dateTime.Substring(4, 2) == "10")
+                {
+                    RecCd = RecCd + "X";
+                }
+                else if (dateTime.Substring(4, 2) == "11")
+                {
+                    RecCd = RecCd + "Y";
+                }
+                else if (dateTime.Substring(4, 2) == "12")
+                {
+                    RecCd = RecCd + "Z";
+                }
+                else { RecCd = RecCd + dateTime.Substring(5, 1); }
+                RecCd += dateTime.Substring(6, 2);
+                _PPMConnect.ExecuteSQL($"EXEC [dbo].[SP_UploadReceiveNormal_All] '{RecCd}','{user}'", pUser: _JBearer, pControllerName: ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+                _KBCN.ExecuteSQL("EXEC [dbo].[SP_UploadReceivetoProcWeb_Normal]");
+                string _result = @"{
+                    ""status"":""200"",
+                    ""response"":""OK"",
+                    ""title"": ""Upload Receive To E-Pro Success"",
+                    ""message"" : ""Upload to E-Pro Complete""
+                    }";
+                return Ok(_result);
+            }
+            catch (Exception ex)
+            {
+                string _result = @"{
+                    ""status"":""400"",
+                    ""response"":""OK"",
+                    ""title"": ""Upload Receive To E-Pro Error!"",
+                    ""message"" : {" + ex + @"}
+                    }";
+                return Content(_result);
             }
         }
 

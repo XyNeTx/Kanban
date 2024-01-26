@@ -39,6 +39,7 @@ using Microsoft.CodeAnalysis.Differencing;
 using Microsoft.VisualBasic;
 using static System.Net.Mime.MediaTypeNames;
 using NPOI.POIFS.Properties;
+using KANBAN.Context;
 //using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HINOSystem.Controllers.API.Master
@@ -50,7 +51,7 @@ namespace HINOSystem.Controllers.API.Master
         private readonly ActionResultClass _ActionResult;        
         private readonly KanbanConnection _KBCN;
         private readonly PPMConnect _PPMConnect;
-
+        private readonly PPM3Context _PPM3Context;
         private readonly KB3Context _KB3Context;
 
 
@@ -62,7 +63,8 @@ namespace HINOSystem.Controllers.API.Master
             ActionResultClass actionResultClass,
             KanbanConnection kanbanConnection,
             PPMConnect ppmConnect,
-            KB3Context kB3Context
+            KB3Context kB3Context,
+            PPM3Context pPM3Context
             )
         {
             _configuration = configuration;
@@ -71,7 +73,7 @@ namespace HINOSystem.Controllers.API.Master
             _KB3Context = kB3Context;
             _KBCN = kanbanConnection;
             _PPMConnect = ppmConnect;
-
+            _PPM3Context = pPM3Context;
         }
 
 
@@ -84,12 +86,13 @@ namespace HINOSystem.Controllers.API.Master
             try
             {
                 BearerClass _JBearer = _BearerClass.Header(Request);
+                var user = _JBearer.UserCode.ToString();
                 if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
 
                 if (pData != null) _json = JsonConvert.DeserializeObject(pData);
 
                 _SQL = @" EXEC [exec].[spTB_MS_FACTORY] ";
-                string _jsTB_MS_Factory = _KBCN.ExecuteJSON(_SQL, pUser: _JBearer, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+                string _jsTB_MS_Factory = _KBCN.ExecuteJSON(_SQL, pUser: _JBearer, pControllerName: ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
 
                 string _result = @"{
                     ""status"":""200"",
@@ -108,38 +111,201 @@ namespace HINOSystem.Controllers.API.Master
             }
         }
 
-
-
         [HttpPost]
-        public IActionResult search([FromBody] string pData = null)
+        public async Task<IActionResult> SearchPDSNo([FromBody] string data)
         {
-            dynamic _json = null;
-            string _SQL = "";
             try
             {
-                BearerClass _JBearer = _BearerClass.Header(Request);
-                if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
+                if (_KBCN.Plant.ToString() == "3")
+                {
+                    if (data != null)
+                    {
+                        dynamic _json = JsonConvert.DeserializeObject(data);
+                        if (_json != null)
+                        {
+                            string PDSNo = _json["F_PDS_No"];
+                            if (PDSNo == null || PDSNo == "")
+                            {
+                                string _result = @"{
+                                    ""status"":""400"",
+                                    ""response"":""OK"",
+                                    ""title"": ""Check PDS No. Error"",
+                                    ""message"": ""Please Input PDS No.""
+                                    }";
 
-                _json = JsonConvert.DeserializeObject(pData);
+                                return Ok(_result);
+                            }
+                            if (PDSNo.StartsWith("7Y") || PDSNo.StartsWith("7Z"))
+                            {
+                                string _result = @"{
+                                    ""status"":""400"",
+                                    ""response"":""OK"",
+                                    ""title"": ""Check PDS No. Error"",
+                                    ""message"": ""ไม่สามารถรับชิ้นส่วนประเภท Special ได้ กรุณารับชิ้นส่วนใน Function Receive Special Part""
+                                    }";
 
-
-                _SQL = @" EXEC [exec].[spKBNMS001_SEARCH] '" + _json.F_Plant + "' ";
-                _KBCN.Plant = _json.F_Plant;
-                string _jsonData = _KBCN.ExecuteJSON(_SQL, pUser: _JBearer, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
-
-
-
-                string _result = @"{
-                    ""status"":""200"",
-                    ""response"":""OK"",
-                    ""message"": ""Data Found"",
-                    ""data"": " + _jsonData + @"
-                }";
-                return Content(_result, "application/json");
+                                return Ok(_result);
+                            }
+                            // when user scan barcode
+                            if (PDSNo.Trim().Length == 14)
+                            {
+                                string pdsRemv = PDSNo.Trim().Remove(13, 1);
+                                return await SearchPDSData(pdsRemv);
+                            }
+                            // when user enter manual
+                            else if (PDSNo.Trim().Length == 13)
+                            {
+                                return await SearchPDSData(PDSNo.Trim());
+                            }
+                            //No record for PDS NO.
+                            else
+                            {
+                                string _result = @"{
+                                    ""status"":""400"",
+                                    ""response"":""OK"",
+                                    ""title"": ""Check PDS No. Error"",
+                                    ""message"" : ""Don't Have This PDS No.""
+                                    }";
+                                return Ok(_result);
+                            }
+                        }
+                        else
+                        {
+                            string _result = @"{
+                                ""status"":""500"",
+                                ""response"":""OK"",
+                                ""title"": ""Check PDS No. Error"",
+                                ""message"" : ""JSON Parse Error""
+                                }";
+                            return Ok(_result);
+                        }
+                    }
+                    else
+                    {
+                        string _result = @"{
+                            ""status"":""400"",
+                            ""response"":""OK"",
+                            ""title"": ""Get Data from PDS No. Error"",
+                            ""message"" : ""Please Input PDS No.""
+                            }";
+                        return Ok(_result);
+                    }
+                }
+                else return BadRequest();
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                return Content(e.Message.ToString(), "application/json");
+                return Content(ex.Message.ToString(), "application/json");
+            }
+        }
+
+
+        public async Task<IActionResult> SearchPDSData(string PDSNo)
+        {
+            string _result = "";
+            try
+            {
+                var queryData = await _KB3Context.TB_REC_HEADER.Where(x => x.F_OrderNo == PDSNo)
+                .Select(x => new
+                {
+                    x.F_OrderNo,
+                    x.F_Delivery_Date,
+                    x.F_Delivery_Trip,
+                    x.F_Issued_Date,
+                    x.F_Status,
+                    x.F_MRN_Flag
+                }).SingleOrDefaultAsync();
+
+                if (queryData != null)
+                {
+                    if (queryData.F_Issued_Date > DateTime.Now)
+                    {
+                        _result = @"{
+                            ""status"":""400"",
+                            ""response"":""OK"",
+                            ""title"": ""Get Data from PDS No. Error"",
+                            ""message"": ""Can not receive because Issued Date More Than Receive Date!""
+                            }";
+                    }
+                    //else if (queryData.F_MRN_Flag == "1")
+                    //{
+                    //    _result = @"{
+                    //        ""status"":""400"",
+                    //        ""response"":""OK"",
+                    //        ""title"": ""KB3 Receive All Error"",
+                    //        ""message"": ""PDS ฉบับนี้ Receive แบบ Seperate""
+                    //        }";
+                    //        }
+                    else if (queryData.F_MRN_Flag == "2")
+                    {
+                        _result = @"{
+                            ""status"":""400"",
+                            ""response"":""OK"",
+                            ""title"": ""Get Data from PDS No. Error"",
+                            ""message"": ""PDS ฉบับนี้ Receive All ครบแล้ว""
+                            }";
+                    }
+                    else if (queryData.F_Status == 'D')
+                    {
+                        _result = @"{
+                            ""status"":""400"",
+                            ""response"":""OK"",
+                            ""title"": ""Get Data from PDS No. Error"",
+                            ""message"": ""PDS have been deleted! Please check Data again!""
+                            }";
+                    }
+                    else
+                    {
+                        var receiveDetail = _KB3Context.TB_REC_DETAIL.Where(x=>x.F_OrderNo == PDSNo)
+                            .Select(x=> new
+                            {
+                                x.F_OrderNo,
+                                x.F_Part_No,
+                                x.F_Receive_Date,
+                                x.F_Unit_Amount,
+                                x.F_Receive_amount,
+                                F_Dev_Qty = x.F_Unit_Amount - x.F_Receive_amount
+                            }).ToList(); //ดึง Data มา Add Column
+
+                        var recDetailCustom = receiveDetail.Select((x, Index) => new //เปลี่ยน data จาก model เพราะต้องการ No มาแสดง
+                        {
+                            No = Index + 1,
+                            x.F_OrderNo,
+                            x.F_Part_No,
+                            F_Receive_Date = x.F_Receive_Date.Value.ToString("dd/MM/yyyy"), // เอาแค่วันเดือนปี
+                            x.F_Unit_Amount,
+                            x.F_Receive_amount,
+                            F_Dev_Qty = x.F_Unit_Amount - x.F_Receive_amount
+                        }).ToList(); //เปลี่ยน data จาก model เพราะต้องการ No มาแสดง
+                        string _jsonData = JsonConvert.SerializeObject(recDetailCustom);
+
+                        _result = @"{
+                            ""status"":""200"",
+                            ""response"":""OK"",
+                            ""message"": ""Data Found"",
+                            ""data"": " + _jsonData + @"}";
+                    }
+                }
+                else
+                {
+                    _result = @"{
+                        ""status"":""400"",
+                        ""response"":""OK"",
+                        ""title"": ""Get Data from PDS No. Error"",
+                        ""message"": ""Data Not Found""
+                        }";
+                }
+                return Ok(_result);
+            }
+            catch (Exception ex)
+            {
+                _result = @"{
+                    ""status"":""400"",
+                    ""response"":""OK"",
+                    ""title"": ""Get Data from PDS No. Error"",
+                    ""message"": ""Unexpected Error""
+                    }";
+                return BadRequest(ex.Message);
             }
         }
 

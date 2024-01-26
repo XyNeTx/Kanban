@@ -21,6 +21,8 @@
     });
 
 
+
+
     KBNCR110.prepare();
 
     KBNCR110.initial(function (result) {
@@ -123,9 +125,7 @@
                 _selData.push(JSON.parse(`{` + ReplaceAll(_val, `'`, `"`) + `}`));
             }
         });
-
-        console.log(_selData);
-
+        // console.log(_selData);
         xAjax.Post({
             url: 'KBNCR110/ReceiveAllPart',
             data: {
@@ -138,6 +138,39 @@
                     $('#tblMaster').DataTable().clear();
                     $('#tblMaster').DataTable().draw();
                     pdsSet.clear();
+                }
+                else {
+                    xSwal.error(result.title, result.message);
+                }
+            },
+            error: function (result) {
+                console.error(_Controller + '.ReceiveAllPart: ' + result.responseText);
+                xSplash.hide();
+            }
+        });
+    });
+
+    xAjax.onClick("#uploadEpro", function () {
+        var _selData = [];
+        var allPages = $('#tblMaster').DataTable().cells().nodes();
+        $(allPages).find('input[type="checkbox"]').each(function () {
+            if ($(this).prop('checked')) {
+                var _val = $($(this)).val();
+                _selData.push(JSON.parse(`{` + ReplaceAll(_val, `'`, `"`) + `}`));
+            }
+        });
+        xAjax.Post({
+            url: 'KBNCR110/UploadToEpro',
+            data: {
+                'F_PDS_No': _selData,
+            },
+            then: function (result) {
+                console.log(result)
+                if (result.status == "200") {
+                    xSwal.success(result.title, result.message);
+                    //$('#tblMaster').DataTable().clear();
+                    //$('#tblMaster').DataTable().draw();
+                    //pdsSet.clear();
                 }
                 else {
                     xSwal.error(result.title, result.message);
