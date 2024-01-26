@@ -39,7 +39,7 @@
                             cell.data(0).draw();
                             isEditing = false;
                         }
-                        else if (parseInt(devQty) > (parseInt(orderQty) - parseInt(alreadyQty))) {
+                        else if (parseInt(devQty) + parseInt(alreadyQty) > (parseInt(orderQty))) {
                             xSwal.error("Input Delivery Qty Error!", "Dont't input Delivery Qty. more than difference of Order Qty. and Dev. Qty.");
                         }
                         else {
@@ -171,6 +171,22 @@
             data: {
                 'JsonData': _selData,
             },
+            then: function (result) {
+                console.log(result)
+                if (result.status == "200") {
+                    xSwal.success(result.title, result.message);
+                    $('#tblMaster').DataTable().clear();
+                    $('#tblMaster').DataTable().draw();
+                    pdsSet.clear();
+                }
+                else {
+                    xSwal.error(result.title, result.message);
+                }
+            },
+            error: function (result) {
+                console.error(_Controller + '.ReceiveSeparate: ' + result.responseText);
+                xSplash.hide();
+            }
          });
     });
 

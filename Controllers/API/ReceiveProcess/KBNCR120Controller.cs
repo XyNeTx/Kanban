@@ -40,6 +40,7 @@ using Microsoft.VisualBasic;
 using static System.Net.Mime.MediaTypeNames;
 using NPOI.POIFS.Properties;
 using KANBAN.Context;
+using KANBAN.Models.KB3.Receive_Process;
 //using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HINOSystem.Controllers.API.Master
@@ -307,18 +308,25 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
+                string _result = "";
+                BearerClass _JBearer = _BearerClass.Header(Request);
+                var user = _JBearer.UserCode.ToString();
                 if (_KBCN.Plant.ToString() == "3")
                 {
                     if (data != null)
                     {
                         dynamic _json = JsonConvert.DeserializeObject(data);
-                        DateTime now = DateTime.Now;
+                        DateTime now = DateTime.Now.Date;
                         if (_json != null)
                         {
                             var JsonData = _json["JsonData"];
                             int index = (JsonData.Count)-1; //get index for last index to get PDSNo
                             string PDSNo = JsonData[index].PDSNo.ToString();
-                            JsonData.Remove(index);
+                            if(PDSNo.Length == 14)
+                            {
+                                PDSNo = PDSNo.Remove(13, 1);
+                            }
+                            JsonData.RemoveAt(index);
                             bool _isReceiveAll = true;
                             foreach (var detail in JsonData)
                             {
@@ -330,10 +338,10 @@ namespace HINOSystem.Controllers.API.Master
                                     x => x.F_OrderNo == PDSNo && x.F_Part_No == partNo
                                     && x.F_Unit_Amount != sumQty)
                                     .SingleOrDefaultAsync();
-                                if( pdsDetailSingle != null)
+                                if (pdsDetailSingle != null)
                                 {
                                     var header = await _KB3Context.TB_REC_HEADER.SingleOrDefaultAsync(x => x.F_OrderNo == PDSNo);
-                                    if( header != null )
+                                    if (header != null)
                                     {
                                         header.F_MRN_Flag = "1";
                                         _KB3Context.TB_REC_HEADER.Update(header);
@@ -341,6 +349,32 @@ namespace HINOSystem.Controllers.API.Master
                                         pdsDetailSingle.F_Receive_Date = DateTime.Now.Date;
                                         _KB3Context.TB_REC_DETAIL.Update(pdsDetailSingle);
                                         _isReceiveAll = false;
+
+                                        if (devQty != 0)
+                                        {
+                                            T_Receive_Local local = new T_Receive_Local
+                                            {
+                                                F_Order_No = PDSNo,
+                                                F_Part_No = pdsDetailSingle.F_Part_No,
+                                                F_Ruibetsu = pdsDetailSingle.F_Ruibetsu,
+                                                F_System_Type = "KBN",
+                                                F_Cycle = header.F_Delivery_Trip.ToString(),
+                                                F_Plant_CD = header.F_Plant,
+                                                F_Store_CD = header.F_Delivery_Dock,
+                                                F_Receive_Qty = devQty,
+                                                F_Receive_date = pdsDetailSingle.F_Receive_Date.Value.ToString("yyyyMMdd").Trim(),
+                                                F_Supplier_Code = header.F_Supplier_Code,
+                                                F_Supplier_Plant = header.F_Supplier_Plant,
+                                                F_Inventory_Flg = '0',
+                                                F_Upload_Flg = '0',
+                                                F_UpdateBy = "KBN",
+                                                F_UpdateDate = DateTime.Now.Date,
+                                                F_ID = 0,
+                                                F_Pds_No = "",
+                                                F_Pack_Code = ""
+                                            };
+                                            await _PPM3Context.AddAsync(local);
+                                        }
                                     }
                                     else
                                     {
@@ -349,10 +383,49 @@ namespace HINOSystem.Controllers.API.Master
                                 }
                                 else
                                 {
-                                    pdsDetailSingle.F_Receive_amount = sumQty;
-                                    pdsDetailSingle.F_Receive_Date = DateTime.Now.Date;
-                                    _KB3Context.TB_REC_DETAIL.Update(pdsDetailSingle);
+                                    var _singleReceiveAll = await _KB3Context.TB_REC_DETAIL.Where(
+                                                x => x.F_OrderNo == PDSNo && x.F_Part_No == partNo
+                                                && x.F_Unit_Amount == sumQty)
+                                                .SingleOrDefaultAsync();
+                                    _singleReceiveAll.F_Receive_amount = sumQty;
+                                    _singleReceiveAll.F_Receive_Date = DateTime.Now.Date;
+                                    _KB3Context.TB_REC_DETAIL.Update(_singleReceiveAll);
+
+                                    var header = await _KB3Context.TB_REC_HEADER.SingleOrDefaultAsync(x => x.F_OrderNo == PDSNo);
+                                    if (header != null)
+                                    {
+                                        if (devQty != 0)
+                                        {
+                                            T_Receive_Local local = new T_Receive_Local
+                                            {
+                                                F_Order_No = PDSNo,
+                                                F_Part_No = _singleReceiveAll.F_Part_No,
+                                                F_Ruibetsu = _singleReceiveAll.F_Ruibetsu,
+                                                F_System_Type = "KBN",
+                                                F_Cycle = header.F_Delivery_Trip.ToString(),
+                                                F_Plant_CD = header.F_Plant,
+                                                F_Store_CD = header.F_Delivery_Dock,
+                                                F_Receive_Qty = devQty,
+                                                F_Receive_date = _singleReceiveAll.F_Receive_Date.Value.ToString("yyyyMMdd").Trim(),
+                                                F_Supplier_Code = header.F_Supplier_Code,
+                                                F_Supplier_Plant = header.F_Supplier_Plant,
+                                                F_Inventory_Flg = '0',
+                                                F_Upload_Flg = '0',
+                                                F_UpdateBy = "KBN",
+                                                F_UpdateDate = DateTime.Now.Date,
+                                                F_ID = 0,
+                                                F_Pds_No = "",
+                                                F_Pack_Code = ""
+                                            };
+                                            await _PPM3Context.AddAsync(local);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        return NotFound();
+                                    }
                                 }
+                                    
                             }
                             if (_isReceiveAll)
                             {
@@ -361,15 +434,31 @@ namespace HINOSystem.Controllers.API.Master
                                 {
                                     header.F_MRN_Flag = "2";
                                     _KB3Context.TB_REC_HEADER.Update(header);
-                                    await _KB3Context.SaveChangesAsync();
                                 }
                             }
-                            return Ok();
+                            
+                            //_PPM3Context.T_Receive_Local.Add
+
+                            _result = @"{
+                                ""status"":""200"",
+                                ""response"":""OK"",
+                                ""title"": ""Receive Separate Success"",
+                                ""message"": ""Receive Separate Complete""
+                                }";
+                            await _KB3Context.SaveChangesAsync();
+                            await _PPM3Context.SaveChangesAsync();
+                            return Ok(_result);
                         }
                     }
                     else
                     {
-                        return BadRequest();
+                        _result = @"{
+                            ""status"":""400"",
+                            ""response"":""OK"",
+                            ""title"": ""Receive Separate Error"",
+                            ""message"": ""Receive Separate Complete""
+                            }";
+                        return BadRequest(_result);
                     }
                 }
                 return Ok();
