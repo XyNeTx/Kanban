@@ -46,6 +46,10 @@
                             isEditing = false;
                         }
                     }
+                    else if (e.which === 99) {
+                        cell.data(orderQty).draw();
+                        isEditing = false;
+                    }
                 });
                 isEditing = true; 
             }
@@ -130,6 +134,54 @@
         pdsSet.clear();
         isEditing = false;
     });
+
+
+    xAjax.onClick("#ReceiveBtn", function () {
+        var _selData = [];
+
+        // Get the column names from the DataTable
+        var columnNames = $('#tblMaster').DataTable().columns().header().toArray().map(function (th) {
+            return $(th).text().trim();
+        });
+
+        console.log(columnNames);
+
+        // Iterate over the rows of the DataTable
+        $('#tblMaster').DataTable().rows().nodes().each(function (row, index) {
+            var rowData = {};
+
+            // Iterate over each cell in the row
+            $(row).find('td').each(function (cellIndex) {
+                // Add the data to the rowData object using the corresponding column name
+                rowData[columnNames[cellIndex]] = $(this).text().trim();
+            });
+
+            // Push the rowData object to the _selData array
+            _selData.push(rowData);
+        });
+
+        console.log(_selData);
+    });
+
+
+    //xAjax.onClick("#ReceiveBtn", function () {
+    //    var _selData = [];
+    //    var allPages = $('#tblMaster').DataTable().tables().nodes();
+    //    console.log(allPages);
+    //    $(allPages).find('td').each(function () {
+    //        var _val = $($(this)).text();
+    //        console.log(_val);
+    //        _selData.push(JSON.parse(`{` + ReplaceAll(_val, `'`, `"`) + `}`));;
+    //    });
+    //    console.log(_selData);
+
+    //    xAjax.Post({
+    //        url: 'test',
+    //        data: {
+    //            'F_PDS_No': _selData,
+    //        },
+    //    });
+    //});
 
 
     //const KBNCR120 = new MasterTemplate({
