@@ -48,7 +48,7 @@ namespace HINOSystem.Controllers.API.Master
     {
         private readonly IConfiguration _configuration;
         private readonly BearerClass _BearerClass;
-        private readonly ActionResultClass _ActionResult;        
+        private readonly ActionResultClass _ActionResult;
         private readonly KanbanConnection _KBCN;
         private readonly PPMConnect _PPMConnect;
         private readonly PPM3Context _PPM3Context;
@@ -227,15 +227,6 @@ namespace HINOSystem.Controllers.API.Master
                             ""message"": ""Can not receive because Issued Date More Than Receive Date!""
                             }";
                     }
-                    //else if (queryData.F_MRN_Flag == "1")
-                    //{
-                    //    _result = @"{
-                    //        ""status"":""400"",
-                    //        ""response"":""OK"",
-                    //        ""title"": ""KB3 Receive All Error"",
-                    //        ""message"": ""PDS ฉบับนี้ Receive แบบ Seperate""
-                    //        }";
-                    //        }
                     else if (queryData.F_MRN_Flag == "2")
                     {
                         _result = @"{
@@ -256,8 +247,8 @@ namespace HINOSystem.Controllers.API.Master
                     }
                     else
                     {
-                        var receiveDetail = _KB3Context.TB_REC_DETAIL.Where(x=>x.F_OrderNo == PDSNo)
-                            .Select(x=> new
+                        var receiveDetail = _KB3Context.TB_REC_DETAIL.Where(x => x.F_OrderNo == PDSNo)
+                            .Select(x => new
                             {
                                 x.F_OrderNo,
                                 x.F_Part_No,
@@ -310,5 +301,88 @@ namespace HINOSystem.Controllers.API.Master
         }
 
 
+
+        [HttpPost]
+        public async Task<IActionResult> ReceiveSeparate([FromBody] string data)
+        {
+            try
+            {
+                if (_KBCN.Plant.ToString() == "3")
+                {
+                    if (data != null)
+                    {
+                        dynamic _json = JsonConvert.DeserializeObject(data);
+                        DateTime now = DateTime.Now;
+                        if (_json != null)
+                        {
+                            var JsonData = _json["JsonData"];
+                            int index = (JsonData.Count)-1; //get index for last index to get PDSNo
+                            string PDSNo = JsonData[index].PDSNo.ToString();
+                            JsonData.Remove(index);
+                            bool _isReceiveAll = true;
+                            foreach (var detail in JsonData)
+                            {
+                                string partNo = detail["Part No."].ToString();
+                                int devQty = detail["Dev. Qty"];
+                                int alrQty = detail["Already Dev."];
+                                int sumQty = devQty + alrQty;
+                                var pdsDetailSingle = await _KB3Context.TB_REC_DETAIL.Where(
+                                    x => x.F_OrderNo == PDSNo && x.F_Part_No == partNo
+                                    && x.F_Unit_Amount != sumQty)
+                                    .SingleOrDefaultAsync();
+                                if( pdsDetailSingle != null)
+                                {
+                                    var header = await _KB3Context.TB_REC_HEADER.SingleOrDefaultAsync(x => x.F_OrderNo == PDSNo);
+                                    if( header != null )
+                                    {
+                                        header.F_MRN_Flag = "1";
+                                        _KB3Context.TB_REC_HEADER.Update(header);
+                                        pdsDetailSingle.F_Receive_amount = sumQty;
+                                        pdsDetailSingle.F_Receive_Date = DateTime.Now.Date;
+                                        _KB3Context.TB_REC_DETAIL.Update(pdsDetailSingle);
+                                        _isReceiveAll = false;
+                                    }
+                                    else
+                                    {
+                                        return BadRequest();
+                                    }
+                                }
+                                else
+                                {
+                                    pdsDetailSingle.F_Receive_amount = sumQty;
+                                    pdsDetailSingle.F_Receive_Date = DateTime.Now.Date;
+                                    _KB3Context.TB_REC_DETAIL.Update(pdsDetailSingle);
+                                }
+                            }
+                            if (_isReceiveAll)
+                            {
+                                var header = await _KB3Context.TB_REC_HEADER.SingleOrDefaultAsync(x => x.F_OrderNo == PDSNo);
+                                if (header != null)
+                                {
+                                    header.F_MRN_Flag = "2";
+                                    _KB3Context.TB_REC_HEADER.Update(header);
+                                    await _KB3Context.SaveChangesAsync();
+                                }
+                            }
+                            return Ok();
+                        }
+                    }
+                    else
+                    {
+                        return BadRequest();
+                    }
+                }
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        //public async Task<IActionResult> InsToRecLocal(string PDSNo)
+        //{
+
+        //}
     }
 }

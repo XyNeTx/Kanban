@@ -23,33 +23,34 @@
             var cell = table.cell(this);
             var originalValue = cell.data();
             const orderQty = table.cell({ row: cell.index().row, column: 3 }).data();
-            console.log(orderQty);
+            const alreadyQty = table.cell({ row: cell.index().row, column: 4 }).data();
 
             if (columnIndex === 5) {
 
-                var inputField = $('<input class="form-control F_Delivery_Qty_Class" type="number" id="F_Delivery_Qty" min="0" max="5000"/>').val(originalValue);
+                var inputField = $('<input class="form-control F_Delivery_Qty_Class" type="number" id="F_Delivery_Qty"/>').val(originalValue);
 
                 cell.data(inputField[0].outerHTML).draw();
                 $('.F_Delivery_Qty_Class').focus();
                 $('.F_Delivery_Qty_Class').on('keypress', function (e) {
-                    if (e.which === 13) {
-                        var newValue = $(this).val();
-                        //console.log(newValue);
-                        if (newValue === "0" || newValue === null || newValue === '' || newValue < 0) {
-                            alert("Please Input Delivery Qty Correctly.");
+                    if (e.which == 13) {
+                        var devQty = $(this).val();
+                        //console.log(devQty);
+                        if (devQty === "0" || devQty === null || devQty === '' || devQty < 0) {
+                            cell.data(0).draw();
+                            isEditing = false;
                         }
-                        else if (parseInt(newValue) > parseInt(orderQty)) {
-                            alert("Can't Input Delivery Qty more than Order Qty.");
+                        else if (parseInt(devQty) > (parseInt(orderQty) - parseInt(alreadyQty))) {
+                            xSwal.error("Input Delivery Qty Error!", "Dont't input Delivery Qty. more than difference of Order Qty. and Dev. Qty.");
                         }
                         else {
-                            cell.data(newValue).draw();
+                            cell.data(devQty).draw();
                             isEditing = false;
                         }
                     }
-                    else if (e.which === 99) {
-                        cell.data(orderQty).draw();
+                    else if (e.which == 99){
+                        cell.data(originalValue).draw();
                         isEditing = false;
-                    }
+                    } //for on keypress
                 });
                 isEditing = true; 
             }
@@ -144,7 +145,7 @@
             return $(th).text().trim();
         });
 
-        console.log(columnNames);
+        //console.log(columnNames);
 
         // Iterate over the rows of the DataTable
         $('#tblMaster').DataTable().rows().nodes().each(function (row, index) {
@@ -159,8 +160,18 @@
             // Push the rowData object to the _selData array
             _selData.push(rowData);
         });
+        _selData.push({ "PDSNo": pdsSet.values().next().value });
+
+        //add data to _selData
 
         console.log(_selData);
+
+        xAjax.Post({
+            url: 'KBNCR120/ReceiveSeparate',
+            data: {
+                'JsonData': _selData,
+            },
+         });
     });
 
 
