@@ -25,35 +25,38 @@
             const orderQty = table.cell({ row: cell.index().row, column: 3 }).data();
             const alreadyQty = table.cell({ row: cell.index().row, column: 4 }).data();
 
-            if (columnIndex === 5) {
+        if (columnIndex === 5 && orderQty == alreadyQty) {
+            return xSwal.error("Receive Seperate Error", "This Part Have Been Received.!");
+        }
+        else if (columnIndex === 5) {
 
-                var inputField = $('<input class="form-control F_Delivery_Qty_Class" type="number" id="F_Delivery_Qty"/>').val(originalValue);
+            var inputField = $('<input class="form-control F_Delivery_Qty_Class" type="number" id="F_Delivery_Qty"/>').val(originalValue);
 
-                cell.data(inputField[0].outerHTML).draw();
-                $('.F_Delivery_Qty_Class').focus();
-                $('.F_Delivery_Qty_Class').on('keypress', function (e) {
-                    if (e.which == 13) {
-                        var devQty = $(this).val();
-                        //console.log(devQty);
-                        if (devQty === "0" || devQty === null || devQty === '' || devQty < 0) {
-                            cell.data(0).draw();
-                            isEditing = false;
-                        }
-                        else if (parseInt(devQty) + parseInt(alreadyQty) > (parseInt(orderQty))) {
-                            xSwal.error("Input Delivery Qty Error!", "Dont't input Delivery Qty. more than difference of Order Qty. and Dev. Qty.");
-                        }
-                        else {
-                            cell.data(devQty).draw();
-                            isEditing = false;
-                        }
-                    }
-                    else if (e.which == 99){
-                        cell.data(originalValue).draw();
+            cell.data(inputField[0].outerHTML).draw();
+            isEditing = true;
+            $('.F_Delivery_Qty_Class').focus();
+            $('.F_Delivery_Qty_Class').on('keypress', function (e) {
+                if (e.which == 13) {
+                    var devQty = $(this).val();
+                    //console.log(devQty);
+                    if (devQty === "0" || devQty === null || devQty === '' || devQty < 0) {
+                        cell.data(0).draw();
                         isEditing = false;
-                    } //for on keypress
-                });
-                isEditing = true; 
-            }
+                    }
+                    else if (parseInt(devQty) + parseInt(alreadyQty) > (parseInt(orderQty))) {
+                        xSwal.error("Input Delivery Qty Error!", "Dont't input Delivery Qty. more than difference of Order Qty. and Already Dev.");
+                    }
+                    else {
+                        cell.data(devQty).draw();
+                        isEditing = false;
+                    }
+                }
+                else if (e.which == 99) {
+                    cell.data(originalValue).draw();
+                    isEditing = false;
+                } //for on keypress
+            });
+        }
     });
 
     document.addEventListener("wheel", function (event) {
@@ -91,9 +94,6 @@
     }
 
     xAjax.onEnter('#F_PDS_No', function () {
-        if (isEditing) {
-            return alert("Please Save Edit Dev.Qty Before Receive Part!");
-        }
         var pdsNo = $('#F_PDS_No').val();
         // console.log(pdsNo);
         xAjax.Post({
@@ -138,6 +138,9 @@
 
 
     xAjax.onClick("#ReceiveBtn", function () {
+        if (isEditing) {
+            return alert("Please Save Edit Dev.Qty Before Receive Part!");
+        }
         var _selData = [];
 
         // Get the column names from the DataTable
@@ -162,9 +165,7 @@
         });
         _selData.push({ "PDSNo": pdsSet.values().next().value });
 
-        //add data to _selData
-
-        console.log(_selData);
+        // console.log(_selData);
 
         xAjax.Post({
             url: 'KBNCR120/ReceiveSeparate',
@@ -172,7 +173,7 @@
                 'JsonData': _selData,
             },
             then: function (result) {
-                console.log(result)
+                // console.log(result)
                 if (result.status == "200") {
                     xSwal.success(result.title, result.message);
                     $('#tblMaster').DataTable().clear();
