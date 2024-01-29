@@ -3,12 +3,13 @@
 
     const table = $('#tblMaster').DataTable({
         columns: [
-            { data: "F_No"},
+            { data: "F_No" },
             { data: "F_Part_No" },
+            { data: "F_Part_Name" },
             { data: "F_Receive_Date" },
             { data: "F_Unit_Amount" },
             { data: "F_Receive_amount" },
-            { data: "F_Dev_Qty"}
+            { data: "F_Dev_Qty" }
         ],
         order: [[0, 'asc']],
         paging: false,
@@ -20,16 +21,16 @@
         if (isEditing) {
             return;
         }
-            var columnIndex = table.cell(this).index().column;
-            var cell = table.cell(this);
-            var originalValue = cell.data();
-            const orderQty = table.cell({ row: cell.index().row, column: 3 }).data();
-            const alreadyQty = table.cell({ row: cell.index().row, column: 4 }).data();
+        var columnIndex = table.cell(this).index().column;
+        var cell = table.cell(this);
+        var originalValue = cell.data();
+        const orderQty = table.cell({ row: cell.index().row, column: 4 }).data();
+        const alreadyQty = table.cell({ row: cell.index().row, column: 5 }).data();
 
-        if (columnIndex === 5 && orderQty == alreadyQty) {
+        if (columnIndex === 6 && orderQty == alreadyQty) {
             return xSwal.error("Receive Seperate Error", "This Part Have Been Received.!");
         }
-        else if (columnIndex === 5) {
+        else if (columnIndex === 6) {
 
             var inputField = $('<input class="form-control F_Delivery_Qty_Class" type="number" id="F_Delivery_Qty"/>').val(originalValue);
 
@@ -71,7 +72,7 @@
         var pdsNo = $('#F_PDS_No').val();
         // console.log(pdsNo);
         xAjax.Post({
-            url: 'KBNCR120/CheckPDSNo',
+            url: 'KBNCR210/CheckPDSNo',
             data: {
                 'F_PDS_No': pdsNo
             },
@@ -141,7 +142,7 @@
         // console.log(_selData);
 
         xAjax.Post({
-            url: 'KBNCR120/ReceiveSeparate',
+            url: 'KBNCR210/Receive',
             data: {
                 'JsonData': _selData,
             },
@@ -161,7 +162,6 @@
                 console.error(_Controller + '.ReceiveSeparate: ' + result.responseText);
                 xSplash.hide();
             }
-         });
+        });
     });
-
 });

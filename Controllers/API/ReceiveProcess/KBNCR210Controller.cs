@@ -1,52 +1,15 @@
-﻿using Microsoft.AspNetCore.Http.Extensions;
-using Microsoft.AspNetCore.Mvc;
-using System.Data;
-using System;
-using System.Web;
-using System.Security.Principal;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-
-using System.Reflection.PortableExecutable;
-using System.DirectoryServices;
-using System.DirectoryServices.AccountManagement;
-using Microsoft.Net.Http.Headers;
-using System.Collections.Specialized;
-using System.Net;
-using System.DirectoryServices.ActiveDirectory;
-using System.Net.Http;
-using Microsoft.AspNetCore.Authorization;
-
-using System.Security.Claims;
-using Org.BouncyCastle.Asn1.Ocsp;
-
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-
-using System.Threading.Tasks;
-
+﻿using HINOSystem.Context;
 using HINOSystem.Libs;
-using HINOSystem.Context;
-using HINOSystem.Models.KB3;
-using NPOI.HPSF;
-using Humanizer;
-using NPOI.SS.Formula.Functions;
-using NPOI.SS.Formula.Eval;
-using PdfSharp.Pdf.Filters;
-using MathNet.Numerics.LinearAlgebra.Factorization;
-using Microsoft.CodeAnalysis.Differencing;
-using Microsoft.VisualBasic;
-using static System.Net.Mime.MediaTypeNames;
-using NPOI.POIFS.Properties;
 using KANBAN.Context;
 using KANBAN.Models.KB3.Receive_Process;
-using Microsoft.AspNetCore.Http.HttpResults;
-//using static System.Runtime.InteropServices.JavaScript.JSType;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using NPOI.SS.Formula.Functions;
 
-namespace HINOSystem.Controllers.API.Master
+namespace KANBAN.Controllers.API.ReceiveProcess
 {
-    public class KBNCR120Controller : Controller
+    public class KBNCR210Controller : Controller
     {
         private readonly IConfiguration _configuration;
         private readonly BearerClass _BearerClass;
@@ -54,19 +17,21 @@ namespace HINOSystem.Controllers.API.Master
         private readonly KanbanConnection _KBCN;
         private readonly PPMConnect _PPMConnect;
         private readonly PPM3Context _PPM3Context;
+        private readonly PPMContext _PPMContext;
         private readonly KB3Context _KB3Context;
 
 
         private readonly string StoragePath = @"wwwroot\Storage\Uploads";
 
-        public KBNCR120Controller(
+        public KBNCR210Controller(
             IConfiguration configuration,
             BearerClass bearerClass,
             ActionResultClass actionResultClass,
             KanbanConnection kanbanConnection,
             PPMConnect ppmConnect,
-            KB3Context kB3Context,
-            PPM3Context pPM3Context
+            PPMContext pPMContext,
+            PPM3Context pPM3Context,
+            KB3Context kB3Context
             )
         {
             _configuration = configuration;
@@ -76,6 +41,7 @@ namespace HINOSystem.Controllers.API.Master
             _KBCN = kanbanConnection;
             _PPMConnect = ppmConnect;
             _PPM3Context = pPM3Context;
+            _PPMContext = pPMContext;
         }
 
 
@@ -101,9 +67,9 @@ namespace HINOSystem.Controllers.API.Master
                     ""response"":""OK"",
                     ""message"": ""Data Found"",
                     ""data"":
-                            {
-                                ""TB_MS_Factory"" : " + _jsTB_MS_Factory + @"
-                            }
+                {
+                    ""TB_MS_Factory"" : " + _jsTB_MS_Factory + @"
+                }
                 }";
                 return Content(_result, "application/json");
             }
@@ -135,18 +101,16 @@ namespace HINOSystem.Controllers.API.Master
                                     ""title"": ""Check PDS No. Error"",
                                     ""message"": ""Please Input PDS No.""
                                     }";
-
                                 return Ok(_result);
                             }
-                            if (PDSNo.StartsWith("7Y") || PDSNo.StartsWith("7Z"))
+                            if (!PDSNo.StartsWith("7Y") && !PDSNo.StartsWith("7Z"))
                             {
                                 string _result = @"{
                                     ""status"":""400"",
                                     ""response"":""OK"",
                                     ""title"": ""Check PDS No. Error"",
-                                    ""message"": ""ไม่สามารถรับชิ้นส่วนประเภท Special ได้ กรุณารับชิ้นส่วนใน Function Receive Special Part""
+                                    ""message"": ""ไม่สามารถรับชิ้นส่วนประเภท Normal,Urgent ได้ กรุณารับชิ้นส่วนใน Receive Part""
                                     }";
-
                                 return Ok(_result);
                             }
                             // when user scan barcode
@@ -160,11 +124,11 @@ namespace HINOSystem.Controllers.API.Master
                                 else
                                 {
                                     string _result = @"{
-                                    ""status"":""400"",
-                                    ""response"":""OK"",
-                                    ""title"": ""Receive Separate Error"",
-                                    ""message"": ""Didn't have data for this Barcode""
-                                    }";
+                                        ""status"":""400"",
+                                        ""response"":""OK"",
+                                        ""title"": ""Receive Separate Error"",
+                                        ""message"": ""Please Check Barcode Again!!! Read Data Error""
+                                        }";
                                     return Ok(_result);
                                 }
                             }
@@ -215,44 +179,24 @@ namespace HINOSystem.Controllers.API.Master
             }
         }
 
-
         public async Task<IActionResult> SearchDataFromPDS(string PDSNo)
         {
             string _result = "";
             try
             {
-                var queryData = await _KB3Context.TB_REC_HEADER.Where(x => x.F_OrderNo == PDSNo)
-                .Select(x => new
+                var recHeader = await _KB3Context.TB_REC_HEADER.SingleOrDefaultAsync(x => x.F_OrderNo == PDSNo);
+                if (recHeader != null)
                 {
-                    x.F_OrderNo,
-                    x.F_Delivery_Date,
-                    x.F_Delivery_Trip,
-                    x.F_Issued_Date,
-                    x.F_Status,
-                    x.F_MRN_Flag
-                }).SingleOrDefaultAsync();
-
-                if (queryData != null)
-                {
-                    if (queryData.F_Issued_Date > DateTime.Now)
+                    if (recHeader.F_Issued_Date > DateTime.Now)
                     {
                         _result = @"{
-                            ""status"":""400"",
-                            ""response"":""OK"",
-                            ""title"": ""Get Data from PDS No. Error"",
-                            ""message"": ""Can not receive because Issued Date More Than Receive Date!""
-                            }";
+                        ""status"":""400"",
+                        ""response"":""OK"",
+                        ""title"": ""Get Data from PDS No. Error"",
+                        ""message"": ""Can not receive because Issued Date More Than Receive Date!""
+                        }";
                     }
-                    else if (queryData.F_MRN_Flag == "2")
-                    {
-                        _result = @"{
-                            ""status"":""400"",
-                            ""response"":""OK"",
-                            ""title"": ""Get Data from PDS No. Error"",
-                            ""message"": ""PDS ฉบับนี้ Receive All ครบแล้ว""
-                            }";
-                    }
-                    else if (queryData.F_Status == 'D')
+                    else if (recHeader.F_Status == 'D')
                     {
                         _result = @"{
                             ""status"":""400"",
@@ -260,63 +204,68 @@ namespace HINOSystem.Controllers.API.Master
                             ""title"": ""Get Data from PDS No. Error"",
                             ""message"": ""PDS have been deleted! Please check Data again!""
                             }";
+                        return Ok(_result);
                     }
-                    else
+                    else if (recHeader.F_MRN_Flag == "2")
                     {
-                        var receiveDetail = _KB3Context.TB_REC_DETAIL.Where(x => x.F_OrderNo == PDSNo).ToList(); //ดึง Data มา Add Column
-
-                        var recDetailCustom = receiveDetail.Select((x, Index) => new //เปลี่ยน data จาก model เพราะต้องการ No มาแสดง
+                        _result = @"{
+                            ""status"":""400"",
+                            ""response"":""OK"",
+                            ""title"": ""Get Data from PDS No. Error"",
+                            ""message"": ""This PDS No : " + PDSNo + " Already Received" + @"""
+                            }";
+                        return Ok(_result);
+                    }
+                    var recDetail = await _KB3Context.TB_REC_DETAIL
+                        .Where(x=>x.F_OrderNo == PDSNo).ToListAsync();
+                    if (recDetail != null)
+                    {
+                        var recDetailCustom = recDetail.Select(x => new
                         {
                             x.F_No,
                             x.F_OrderNo,
                             x.F_Part_No,
+                            x.F_Part_Name,
                             F_Receive_Date = x.F_Receive_Date.Value.ToString("dd/MM/yyyy"), // เอาแค่วันเดือนปี
                             x.F_Unit_Amount,
                             x.F_Receive_amount,
                             F_Dev_Qty = x.F_Unit_Amount - x.F_Receive_amount
-                        }).ToList(); //เปลี่ยน data จาก model เพราะต้องการ No มาแสดง
+                        });
                         string _jsonData = JsonConvert.SerializeObject(recDetailCustom);
-
                         _result = @"{
-                            ""status"":""200"",
-                            ""response"":""OK"",
-                            ""message"": ""Data Found"",
-                            ""data"": " + _jsonData + @"}";
-                    }
-                }
-                else
-                {
-                    _result = @"{
-                        ""status"":""400"",
+                        ""status"":""200"",
                         ""response"":""OK"",
-                        ""title"": ""Get Data from PDS No. Error"",
-                        ""message"": ""Data Not Found""
-                        }";
+                        ""message"": ""Data Found"",
+                        ""data"": " + _jsonData + @"}";
+                    }
                 }
                 return Ok(_result);
             }
             catch (Exception ex)
             {
-                _result = @"{
-                    ""status"":""400"",
-                    ""response"":""OK"",
-                    ""title"": ""Get Data from PDS No. Error"",
-                    ""message"": ""Unexpected Error""
-                    }";
                 return Content(ex.Message.ToString(), "application/json");
             }
         }
-
-
-
-        [HttpPost]
-        public async Task<IActionResult> ReceiveSeparate([FromBody] string data)
+        public async Task<IActionResult> Receive([FromBody] string data)
         {
             try
             {
                 string _result = "";
+                var systemControl = await _PPMContext.T_System_Control.SingleOrDefaultAsync(x => x.F_Code == "CTL");
+                string isMonthEnd = systemControl.F_Value1;
+                if (Int32.Parse(DateTime.Now.ToString("yyyyMM")) > Int32.Parse(isMonthEnd))
+                {
+                        _result = @"{
+                        ""status"":""400"",
+                        ""response"":""OK"",
+                        ""title"": ""Get Data from PDS No. Error"",
+                        ""message"": ""Can not Receive Data.Because This Receive Date less than Month-End of Inventory.""
+                        }";
+                    return Ok(_result);
+                }
                 BearerClass _JBearer = _BearerClass.Header(Request);
                 var user = _JBearer.UserCode.ToString();
+                var plant = _JBearer.Plant.ToString();
                 if (_KBCN.Plant.ToString() == "3")
                 {
                     if (data != null)
@@ -326,20 +275,37 @@ namespace HINOSystem.Controllers.API.Master
                         if (_json != null)
                         {
                             var JsonData = _json["JsonData"];
-                            int index = (JsonData.Count)-1; //get index for last index to get PDSNo
+                            int index = (JsonData.Count) - 1; //get index for last index to get PDSNo
                             string PDSNo = JsonData[index].PDSNo.ToString().Trim();
-                            if(PDSNo.Length == 14)
+                            char dr = ' ';
+                            if (PDSNo.Length == 14)
                             {
-                                if (await _KB3Context.TB_REC_HEADER.SingleOrDefaultAsync(x => x.F_Barcode == PDSNo) != null)
+                                var recHead = await _KB3Context.TB_REC_HEADER.SingleOrDefaultAsync(x => x.F_Barcode == PDSNo);
+                                if (recHead != null)
                                 {
                                     PDSNo = PDSNo.Remove(13, 1);
+                                    if (PDSNo.StartsWith("7Z"))
+                                    {
+                                        if (recHead.F_DR == "1144001" || recHead.F_DR == "1144002" || recHead.F_DR == "1145007")
+                                        {
+                                            dr = '9';
+                                        }
+                                        else
+                                        {
+                                            dr = '0';
+                                        }
+                                    }
+                                    else
+                                    {
+                                        dr = '0';
+                                    }
                                 }
                                 else
                                 {
                                     _result = @"{
                                         ""status"":""400"",
                                         ""response"":""OK"",
-                                        ""title"": ""Receive Separate Error"",
+                                        ""title"": ""Receive Special Error"",
                                         ""message"": ""Didn't have data for this Barcode""
                                         }";
                                     return Ok(_result);
@@ -347,56 +313,59 @@ namespace HINOSystem.Controllers.API.Master
                             }
                             JsonData.RemoveAt(index);
                             bool _isReceiveAll = true;
+                            bool _isZeroRec = true;
                             foreach (var detail in JsonData)
                             {
                                 string partNo = detail["Part No."].ToString();
-                                int devQty = detail["Dev. Qty"];
-                                int alrQty = detail["Already Dev."];
+                                int devQty = detail["Receive Qty"];
+                                int alrQty = detail["Already Received"];
                                 int sumQty = devQty + alrQty;
                                 var pdsDetailSingle = await _KB3Context.TB_REC_DETAIL
                                     .SingleOrDefaultAsync(x => x.F_OrderNo == PDSNo && x.F_Part_No == partNo
                                     && x.F_Unit_Amount != sumQty);
                                 if (pdsDetailSingle != null)
                                 {
-                                    var header = await _KB3Context.TB_REC_HEADER.SingleOrDefaultAsync(x => x.F_OrderNo == PDSNo);
-                                    if (header != null)
+                                    string packCode = pdsDetailSingle.F_Address;
+                                    if (packCode.StartsWith("Pack:"))
                                     {
+                                        packCode = packCode.Substring(5, 5).Trim();
+                                    }
+                                    else
+                                    {
+                                        packCode = "";
+                                    }
+                                    if (devQty != 0)
+                                    {
+                                        var header = await _KB3Context.TB_REC_HEADER.SingleOrDefaultAsync(x => x.F_OrderNo == PDSNo);
                                         header.F_MRN_Flag = "1";
                                         _KB3Context.TB_REC_HEADER.Update(header);
                                         pdsDetailSingle.F_Receive_amount = sumQty;
                                         pdsDetailSingle.F_Receive_Date = now;
                                         _KB3Context.TB_REC_DETAIL.Update(pdsDetailSingle);
                                         _isReceiveAll = false;
-
-                                        if (devQty != 0)
+                                        _isZeroRec = false;
+                                        T_Receive_Local local = new T_Receive_Local
                                         {
-                                            T_Receive_Local local = new T_Receive_Local
-                                            {
-                                                F_Order_No = header.F_OrderNo,
-                                                F_Part_No = pdsDetailSingle.F_Part_No,
-                                                F_Ruibetsu = pdsDetailSingle.F_Ruibetsu,
-                                                F_System_Type = "KBN",
-                                                F_Cycle = header.F_Delivery_Trip.ToString(),
-                                                F_Plant_CD = header.F_Plant,
-                                                F_Store_CD = header.F_Delivery_Dock,
-                                                F_Receive_Qty = devQty,
-                                                F_Receive_date = pdsDetailSingle.F_Receive_Date.Value.ToString("yyyyMMdd").Trim(),
-                                                F_Supplier_Code = header.F_Supplier_Code,
-                                                F_Supplier_Plant = header.F_Supplier_Plant,
-                                                F_Inventory_Flg = '0',
-                                                F_Upload_Flg = '0',
-                                                F_UpdateBy = "KBN",
-                                                F_UpdateDate = DateTime.Now.Date,
-                                                F_ID = 0,
-                                                F_Pds_No = "",
-                                                F_Pack_Code = ""
-                                            };
-                                            await _PPM3Context.AddAsync(local);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        return BadRequest();
+                                            F_Order_No = header.F_OrderNo,
+                                            F_Part_No = pdsDetailSingle.F_Part_No,
+                                            F_Ruibetsu = pdsDetailSingle.F_Ruibetsu,
+                                            F_System_Type = "SPC",
+                                            F_Cycle = "00",
+                                            F_Plant_CD = header.F_Plant,
+                                            F_Store_CD = header.F_Delivery_Dock,
+                                            F_Receive_Qty = devQty,
+                                            F_Receive_date = pdsDetailSingle.F_Receive_Date.Value.ToString("yyyyMMdd").Trim(),
+                                            F_Supplier_Code = header.F_Supplier_Code,
+                                            F_Supplier_Plant = header.F_Supplier_Plant,
+                                            F_Inventory_Flg = dr,
+                                            F_Upload_Flg = '0',
+                                            F_UpdateBy = user,
+                                            F_UpdateDate = DateTime.Now.Date,
+                                            F_ID = 0,
+                                            F_Pds_No = "",
+                                            F_Pack_Code = packCode
+                                        };
+                                        await _PPM3Context.AddAsync(local);
                                     }
                                 }
                                 else
@@ -406,55 +375,60 @@ namespace HINOSystem.Controllers.API.Master
                                                 x => x.F_OrderNo == PDSNo && x.F_Part_No == partNo
                                                 && x.F_Unit_Amount == sumQty);
 
-                                    if (_singleReceiveAll != null) 
+                                    if (_singleReceiveAll != null)
                                     {
                                         _singleReceiveAll.F_Receive_amount = sumQty;
                                         _singleReceiveAll.F_Receive_Date = now;
                                         _KB3Context.TB_REC_DETAIL.Update(_singleReceiveAll);
-
-                                        var header = await _KB3Context.TB_REC_HEADER.SingleOrDefaultAsync(x => x.F_OrderNo == PDSNo);
-                                        if (header != null)
+                                        string packCode = _singleReceiveAll.F_Address;
+                                        if (packCode.StartsWith("Pack:"))
                                         {
-                                            if (devQty != 0)
-                                            {
-                                                T_Receive_Local local = new T_Receive_Local
-                                                {
-                                                    F_Order_No = header.F_OrderNo,
-                                                    F_Part_No = _singleReceiveAll.F_Part_No,
-                                                    F_Ruibetsu = _singleReceiveAll.F_Ruibetsu,
-                                                    F_System_Type = "KBN",
-                                                    F_Cycle = header.F_Delivery_Trip.ToString(),
-                                                    F_Plant_CD = header.F_Plant,
-                                                    F_Store_CD = header.F_Delivery_Dock,
-                                                    F_Receive_Qty = devQty,
-                                                    F_Receive_date = _singleReceiveAll.F_Receive_Date.Value.ToString("yyyyMMdd").Trim(),
-                                                    F_Supplier_Code = header.F_Supplier_Code,
-                                                    F_Supplier_Plant = header.F_Supplier_Plant,
-                                                    F_Inventory_Flg = '0',
-                                                    F_Upload_Flg = '0',
-                                                    F_UpdateBy = "KBN",
-                                                    F_UpdateDate = DateTime.Now.Date,
-                                                    F_ID = 0,
-                                                    F_Pds_No = "",
-                                                    F_Pack_Code = ""
-                                                };
-                                                await _PPM3Context.AddAsync(local);
-                                            }
+                                            packCode = packCode.Substring(5, 5).Trim();
                                         }
                                         else
                                         {
-                                            _result = @"{
-                                                ""status"":""400"",
-                                                ""response"":""OK"",
-                                                ""title"": ""Receive Separate Error"",
-                                                ""message"": ""No Data from Receive Header""
-                                                }";
-                                            return Ok(_result);
+                                            packCode = "";
+                                        }
+                                        var header = await _KB3Context.TB_REC_HEADER.SingleOrDefaultAsync(x => x.F_OrderNo == PDSNo);
+                                        if (devQty != 0)
+                                        {
+                                            _isZeroRec = false;
+                                            T_Receive_Local local = new T_Receive_Local
+                                            {
+                                                F_Order_No = header.F_OrderNo,
+                                                F_Part_No = _singleReceiveAll.F_Part_No,
+                                                F_Ruibetsu = _singleReceiveAll.F_Ruibetsu,
+                                                F_System_Type = "SPC",
+                                                F_Cycle = "00",
+                                                F_Plant_CD = header.F_Plant,
+                                                F_Store_CD = header.F_Delivery_Dock,
+                                                F_Receive_Qty = devQty,
+                                                F_Receive_date = _singleReceiveAll.F_Receive_Date.Value.ToString("yyyyMMdd").Trim(),
+                                                F_Supplier_Code = header.F_Supplier_Code,
+                                                F_Supplier_Plant = header.F_Supplier_Plant,
+                                                F_Inventory_Flg = dr,
+                                                F_Upload_Flg = '0',
+                                                F_UpdateBy = user,
+                                                F_UpdateDate = DateTime.Now.Date,
+                                                F_ID = 0,
+                                                F_Pds_No = "",
+                                                F_Pack_Code = packCode
+                                            };
+                                            await _PPM3Context.AddAsync(local);
                                         }
                                     }
                                     else { return BadRequest(); }
                                 }
-                                    
+                            }
+                            if (_isZeroRec)
+                            {
+                                _result = @"{
+                                    ""status"":""400"",
+                                    ""response"":""OK"",
+                                    ""title"": ""Receive Special Error"",
+                                    ""message"": ""Can't Receive 0 Qty in all part""
+                                    }";
+                                return Content(_result, "application/json");
                             }
                             if (_isReceiveAll)
                             {
@@ -465,17 +439,18 @@ namespace HINOSystem.Controllers.API.Master
                                     _KB3Context.TB_REC_HEADER.Update(header);
                                 }
                             }
-                            
+
                             //_PPM3Context.T_Receive_Local.Add
 
                             _result = @"{
                                 ""status"":""200"",
                                 ""response"":""OK"",
                                 ""title"": ""Receive Special Success"",
-                                ""message"": ""Receive Special Complete""
+                                ""message"": ""Receive Separate Complete""
                                 }";
                             await _KB3Context.SaveChangesAsync();
                             await _PPM3Context.SaveChangesAsync();
+                            _PPMConnect.ExecuteSQL($"EXEC [dbo].[SP_Interface_Inven_Special] {plant}, {PDSNo}, {user}");
                             return Ok(_result);
                         }
                     }
@@ -484,17 +459,17 @@ namespace HINOSystem.Controllers.API.Master
                         _result = @"{
                             ""status"":""400"",
                             ""response"":""OK"",
-                            ""title"": ""Receive Separate Error"",
-                            ""message"": "" " +_result+ @"}""
+                            ""title"": ""Receive Special Error"",
+                            ""message"": ""Receive Separate Complete""
                             }";
                         return BadRequest(_result);
                     }
                 }
                 return Ok();
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                return Content(ex.Message.ToString(), "application/json");
+                return Content(e.Message.ToString(), "application/json");
             }
         }
     }

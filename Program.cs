@@ -30,6 +30,12 @@ builder.Services.AddDbContext<PPM3Context>(options =>
         throw new InvalidOperationException("Connection String PPM3Context not found.")
         )
 );
+builder.Services.AddDbContext<PPMContext>(options =>
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("PPMInvenConnection") ??
+        throw new InvalidOperationException("Connection String PPM3Context not found.")
+        )
+);
 
 
 

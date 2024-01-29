@@ -1,12 +1,69 @@
-﻿<div class="row">
+﻿<header>
+    <style>
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+    </style>
+</header>
+
+<div class="row">
+
+    <div class="col-xl-12 col-md-12 col-sm-12">
+        <div class="card border-left-primary shadow h-100">
+            <div class="card-body">
+                <form id="frmCondition">
+                    <fieldset class="fieldset">
+                        <legend>Select PDS No. : </legend>
+                        <div class="row">
+                            <div class="col-3">
+                                <item type="date" id="F_DeliveryFrom" label="Receive Date" format="yyyy-mm-dd" default="now" readonly></item>
+                            </div>
+                            <div class="col-3">
+                                <item type="time" id="F_DeliveryTo" label="Receive Time" format="hh:mm" default="now" readonly></item>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-3">
+                                <item type="text" id="F_PDS_No" label="PDS No."></item>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <fieldset class="fieldset mt-2">
+                    <legend>Receive Special Table : </legend>
+                        <div class="row">
+                            <div class="col mt-4">
+                                <table id="tblMaster" class="w-100">
+                                    <thead>
+                                        <tr>
+                                            <th>Serial No.</th>
+                                            <th>Part No.</th>
+                                            <th width="30%">Part Name</th>
+                                            <th>Delivery Date</th>
+                                            <th>Order Qty</th>
+                                            <th>Already Received</th>
+                                            <th>Receive Qty</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                    </fieldset>
+                </form>
+                <div class="row mt-4">
+                    <div class="col d-flex justify-content-end">
+                        <a id="ClearBtn" class="btn page-link me-4 text-danger">Clear</a>
+                        <a id="ReceiveBtn" class="btn page-link">Receive</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-
-<script type="text/javascript">
-    $(document).ready(function () {
-
-        xSplash.hide();
-
-    });
-
-</script>
+@section Scripts {
+    <script type="text/javascript" src="~/assets/js/History/UserMaintenance.js"></script>
+    <script type="text/javascript" src="~/assets/.script/Template/Master.js"></script>
+    <script type="text/javascript" src="~/assets/.script/ReceiveProcess/KBNCR210.js?@ViewData["Version"]"></script>
+}
