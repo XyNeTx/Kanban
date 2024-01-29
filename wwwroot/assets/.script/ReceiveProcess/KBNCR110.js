@@ -78,7 +78,7 @@
         var pdsNo = $('#F_PDS_No').val();
         // console.log(pdsNo);
         xAjax.Post({
-            url: 'KBNCR110/SearchPDSNo',
+            url: 'KBNCR110/CheckPDSNo',
             data: {
                 'F_PDS_No': pdsNo
             },

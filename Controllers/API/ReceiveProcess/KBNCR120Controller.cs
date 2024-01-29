@@ -41,6 +41,7 @@ using static System.Net.Mime.MediaTypeNames;
 using NPOI.POIFS.Properties;
 using KANBAN.Context;
 using KANBAN.Models.KB3.Receive_Process;
+using Microsoft.AspNetCore.Http.HttpResults;
 //using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HINOSystem.Controllers.API.Master
@@ -113,7 +114,7 @@ namespace HINOSystem.Controllers.API.Master
         }
 
         [HttpPost]
-        public async Task<IActionResult> SearchPDSNo([FromBody] string data)
+        public async Task<IActionResult> CheckPDSNo([FromBody] string data)
         {
             try
             {
@@ -124,7 +125,8 @@ namespace HINOSystem.Controllers.API.Master
                         dynamic _json = JsonConvert.DeserializeObject(data);
                         if (_json != null)
                         {
-                            string PDSNo = _json["F_PDS_No"];
+                            string getPDSNo = _json["F_PDS_No"];
+                            string PDSNo = getPDSNo.Trim();
                             if (PDSNo == null || PDSNo == "")
                             {
                                 string _result = @"{
@@ -148,15 +150,28 @@ namespace HINOSystem.Controllers.API.Master
                                 return Ok(_result);
                             }
                             // when user scan barcode
-                            if (PDSNo.Trim().Length == 14)
+                            if (PDSNo.Length == 14)
                             {
-                                string pdsRemv = PDSNo.Trim().Remove(13, 1);
-                                return await SearchPDSData(pdsRemv);
+                                if (await _KB3Context.TB_REC_HEADER.SingleOrDefaultAsync(x => x.F_Barcode == PDSNo) != null)
+                                {
+                                    string pdsRemv = PDSNo.Remove(13, 1);
+                                    return await SearchDataFromPDS(pdsRemv);
+                                }
+                                else
+                                {
+                                    string _result = @"{
+                                    ""status"":""400"",
+                                    ""response"":""OK"",
+                                    ""title"": ""Receive Separate Error"",
+                                    ""message"": ""Didn't have data for this Barcode""
+                                    }";
+                                    return Ok(_result);
+                                }
                             }
                             // when user enter manual
-                            else if (PDSNo.Trim().Length == 13)
+                            else if (PDSNo.Length == 13)
                             {
-                                return await SearchPDSData(PDSNo.Trim());
+                                return await SearchDataFromPDS(PDSNo);
                             }
                             //No record for PDS NO.
                             else
@@ -201,7 +216,7 @@ namespace HINOSystem.Controllers.API.Master
         }
 
 
-        public async Task<IActionResult> SearchPDSData(string PDSNo)
+        public async Task<IActionResult> SearchDataFromPDS(string PDSNo)
         {
             string _result = "";
             try
@@ -321,10 +336,23 @@ namespace HINOSystem.Controllers.API.Master
                         {
                             var JsonData = _json["JsonData"];
                             int index = (JsonData.Count)-1; //get index for last index to get PDSNo
-                            string PDSNo = JsonData[index].PDSNo.ToString();
+                            string PDSNo = JsonData[index].PDSNo.ToString().trim();
                             if(PDSNo.Length == 14)
                             {
-                                PDSNo = PDSNo.Remove(13, 1);
+                                if (await _KB3Context.TB_REC_HEADER.SingleOrDefaultAsync(x => x.F_Barcode == PDSNo) != null)
+                                {
+                                    PDSNo = PDSNo.Remove(13, 1);
+                                }
+                                else
+                                {
+                                    _result = @"{
+                                        ""status"":""400"",
+                                        ""response"":""OK"",
+                                        ""title"": ""Receive Separate Error"",
+                                        ""message"": ""Didn't have data for this Barcode""
+                                        }";
+                                    return Ok(_result);
+                                }
                             }
                             JsonData.RemoveAt(index);
                             bool _isReceiveAll = true;
@@ -478,10 +506,5 @@ namespace HINOSystem.Controllers.API.Master
                 return BadRequest(ex.Message);
             }
         }
-
-        //public async Task<IActionResult> InsToRecLocal(string PDSNo)
-        //{
-
-        //}
     }
 }

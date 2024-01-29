@@ -120,7 +120,7 @@ namespace HINOSystem.Controllers.API.Master
 
 
         [HttpPost]
-        public async Task<IActionResult> SearchPDSNo([FromBody] string data)  
+        public async Task<IActionResult> CheckPDSNo([FromBody] string data)  
         {
             try
             {
@@ -145,13 +145,27 @@ namespace HINOSystem.Controllers.API.Master
                             // when user scan barcode
                             if (PDSNo.Trim().Length == 14)
                             {
-                                string pdsRemv = PDSNo.Trim().Remove(13,1);
-                                return await SearchPDSData(pdsRemv);
+                                
+                                if(await _KB3Context.TB_REC_HEADER.SingleOrDefaultAsync(x => x.F_Barcode == PDSNo) != null)
+                                {
+                                    string pdsRemv = PDSNo.Trim().Remove(13, 1);
+                                    return await SearchDataFromPDS(pdsRemv);
+                                }
+                                else
+                                {
+                                    string _result = @"{
+                                        ""status"":""400"",
+                                        ""response"":""OK"",
+                                        ""title"": ""KB3 Receive All Error"",
+                                        ""message"": ""Didn't have data for this Barcode""
+                                        }";
+                                    return Ok(_result);
+                                }
                             }
                             // when user enter manual
                             else if (PDSNo.Trim().Length == 13)
                             {
-                                return await SearchPDSData(PDSNo.Trim());
+                                return await SearchDataFromPDS(PDSNo.Trim());
                             }
                             //No record for PDS NO.
                             else
@@ -195,7 +209,7 @@ namespace HINOSystem.Controllers.API.Master
             }
         }
 
-        public async Task<IActionResult> SearchPDSData(string PDSNo)
+        public async Task<IActionResult> SearchDataFromPDS(string PDSNo)
         {
             string _result = "";
             try
