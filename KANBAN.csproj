@@ -173,6 +173,7 @@
     <None Include="wwwroot\assets\.libs\splash\splash.min.js" />
     <None Include="wwwroot\assets\.libs\splash\splash.min.js.map" />
     <None Include="wwwroot\assets\.script\ReceiveProcess\KBNCR210.js" />
+    <None Include="wwwroot\assets\.script\ReceiveProcess\KBNCR220.js" />
     <None Include="wwwroot\assets\adminty\bower_components\bootstrap-datepicker\bootstrap-datepicker.js" />
     <None Include="wwwroot\assets\adminty\bower_components\bootstrap-daterangepicker\daterangepicker.js" />
     <None Include="wwwroot\assets\adminty\bower_components\bootstrap\dist\css\bootstrap.min.css.map" />

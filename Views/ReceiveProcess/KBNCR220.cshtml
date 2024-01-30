@@ -16,48 +16,55 @@
                 <form id="frmCondition">
                     <fieldset class="fieldset">
                         <legend>Select Condition</legend>
-                        <div class="row">
+                        <div class="row mb-2">
                             <div class="col-3">
                                 <b>Type Order : </b>
                             </div>
                             <div class="col-3">
-                                <input type="radio" id="allRad" name="radio" value="All" />
+                                <input type="radio" class="form-check-input me-1" id="allRad" name="radio" value="All" /><label class="form-check-lable" style="margin-top: 0.2rem !important;" for="allRad">All</label>
                             </div>
                             <div class="col-3">
-                                <input type="radio" id="7zRad" name="radio" value="7Z" />
+                                <input type="radio" class="form-check-input me-1" id="7zRad" name="radio" value="7Z" /><label class="form-check-lable mt-1" style="margin-top: 0.2rem !important;" for="7zRad">7Z</label>
                             </div>
                             <div class="col-3">
-                                <input type="radio" id="7yRad" name="radio" value="7Y" />
+                                <input type="radio" class="form-check-input me-1" id="7yRad" name="radio" value="7Y" /><label class="form-check-lable mt-1" style="margin-top: 0.2rem !important;" for="7yRad">7Y</label>
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-4">
+                                <item type="date" id="F_DeliveryFrom" label="Delivery Date From : " format="yyyy-mm-dd" default="now"></item>
+                            </div>
+                            <div class="col-3">
+                                <item type="date" id="F_DeliveryTo" label="To : " format="yyyy-mm-dd" default="now"></item>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-3">
-                                <item type="date" id="F_DeliveryFrom" label="Delivery Date From : " format="dd/mm/yyyy" default="now"></item>
+                            <div class="col-4">
+                                <item type="lov" id="F_SupplierFrom" label="Supplier From : "></item>
                             </div>
-                            <div class="col-3">
-                                <item type="date" id="F_DeliveryTo" label="To : " format="dd/mm/yyyy" default="now"></item>
+                            <div class="col-4">
+                                <item type="lov" id="F_SupplierTo" label="To : "></item>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-3">
-                                <item type="text" id="F_PDS_No" label="PDS No."></item>
+                            <div class="col d-flex justify-content-end">
+                                <item class="me-2" type="button" id="SearchBtn" label="Search"></item>
+                                <item type="button" id="ReportBtn" label="Report"></item>
                             </div>
                         </div>
                     </fieldset>
                     <fieldset class="fieldset mt-2">
-                        <legend>Receive Special Table : </legend>
+                        <legend>Receive Special Report Table : </legend>
                         <div class="row">
                             <div class="col mt-4">
                                 <table id="tblMaster" class="w-100">
                                     <thead>
                                         <tr>
-                                            <th>Serial No.</th>
-                                            <th>Part No.</th>
-                                            <th width="30%">Part Name</th>
+                                            <th>No.</th>
+                                            <th width="15%">Order No.</th>
+                                            <th width="15%">Supplier</th>
                                             <th>Delivery Date</th>
-                                            <th>Order Qty</th>
-                                            <th>Already Received</th>
-                                            <th>Receive Qty</th>
+                                            <th>Receive Date</th>
+                                            <th>PDS Status</th>
+                                            <th>Receive Status</th>
                                         </tr>
                                     </thead>
                                 </table>
