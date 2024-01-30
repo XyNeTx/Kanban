@@ -103,7 +103,7 @@ namespace KANBAN.Controllers.API.ReceiveProcess
                                     }";
                                 return Ok(_result);
                             }
-                            if (!PDSNo.StartsWith("7Y") && !PDSNo.StartsWith("7Z"))
+                             if (!PDSNo.StartsWith("7Y") && !PDSNo.StartsWith("7Z"))
                             {
                                 string _result = @"{
                                     ""status"":""400"",
@@ -253,7 +253,7 @@ namespace KANBAN.Controllers.API.ReceiveProcess
                 string _result = "";
                 var systemControl = await _PPMContext.T_System_Control.SingleOrDefaultAsync(x => x.F_Code == "CTL");
                 string isMonthEnd = systemControl.F_Value1;
-                if (Int32.Parse(DateTime.Now.ToString("yyyyMM")) > Int32.Parse(isMonthEnd))
+                if (Int32.Parse(DateTime.Now.ToString("yyyyMM")) < Int32.Parse(isMonthEnd))
                 {
                         _result = @"{
                         ""status"":""400"",
