@@ -59,7 +59,6 @@
                 $('#supFromBlank').hide();
                 $('#supToBlank').hide();
                 console.log(result);
-                xSplash.hide();
             },
             error: function (result) {
                 console.error(result);
@@ -71,10 +70,12 @@
         var devDate = $("#F_DeliveryFrom").val();
         var toDate = $("#F_DeliveryTo").val();
         var type = $('input[name="radio"]').filter(":checked").val();
+
         console.log(devDate + "devdateeeeeee \n" + toDate + "toDateeeeee \n");
         if (toDate < devDate) {
             console.error("วันเกินแล้ววววววววว");
         }
+
         var type = document.querySelector('input[name="radio"]:checked').value;
         xAjax.Post({
             url: 'KBNCR220/Initial',
@@ -83,10 +84,15 @@
                 toDate: toDate,
                 type: type
             },
-            success: function (result) {
-                console.log(result + "Line 60");
-                $.each(result, function (e, t) {
-                    $("#supFromBlank").append($("<option>", { value: t.id, text: t.id + ": " + t.name }));
+            then: function (result) {
+                console.log(result);
+                $('#F_SupplierFrom').find('option').remove().end();
+                $('#F_SupplierTo').find('option').remove().end();
+                $("#F_SupplierFrom").append($('<option id="supFromBlank"></option>'));
+                $("#F_SupplierTo").append($('<option id="supToBlank"></option>'));
+                $.each(result.data, function (e, t) {
+                    $("#F_SupplierFrom").append($("<option>", { value: t, text: t }, "</option>"));
+                    $("#F_SupplierTo").append($("<option>", { value: t, text: t }, "</option>"));
                 });
                 $('#supFromBlank').hide();
                 $('#supToBlank').hide();

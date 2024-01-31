@@ -121,7 +121,7 @@ namespace KANBAN.Controllers.API.ReceiveProcess
                         }).Where(x => x.F_OrderNo.StartsWith("7Z") || x.F_OrderNo.StartsWith("7Y"))
                             .OrderBy(x => x.F_Supplier_Code).ToListAsync();
 
-                        var supplierHead = _supplierHead.Where(x => Int32.Parse(x.F_Delivery_Date) <= fromDate && Int32.Parse(x.F_Delivery_Date) <= toDate)
+                        var supplierHead = _supplierHead.Where(x => Int32.Parse(x.F_Delivery_Date) >= fromDate && Int32.Parse(x.F_Delivery_Date) <= toDate)
                             .DistinctBy(x => new { x.F_Supplier_Code, x.F_Supplier_Plant });
 
                         List<string> supplierList = new();
@@ -169,7 +169,7 @@ namespace KANBAN.Controllers.API.ReceiveProcess
                         }).Where(x => x.F_OrderNo.StartsWith("7Y"))
                         .OrderBy(x => x.F_Supplier_Code).ToListAsync();
 
-                        var supplierHead = _supplierHead.Where(x => Int32.Parse(x.F_Delivery_Date) <= fromDate && Int32.Parse(x.F_Delivery_Date) <= toDate)
+                        var supplierHead = _supplierHead.Where(x => Int32.Parse(x.F_Delivery_Date) >= fromDate && Int32.Parse(x.F_Delivery_Date) <= toDate)
                             .DistinctBy(x => new { x.F_Supplier_Code, x.F_Supplier_Plant });
 
                         List<string> supplierList = new();
