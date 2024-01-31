@@ -20,7 +20,13 @@
     xAjax.Post({
         url: 'KBNCR220/Initial',
         then: function (result) {
-            console.log(result);
+            //console.log(result);
+            $.each(result.data, function (e, t) {
+                $("#F_SupplierFrom").append($("<option>", { value: t, text: t }, "</option>"));
+                $("#F_SupplierTo").append($("<option>", { value: t, text: t }, "</option>"));
+            });
+            $('#supFromBlank').hide();
+            $('#supToBlank').hide();
             xSplash.hide();
         },
         error: function (result) {
@@ -29,16 +35,66 @@
         },
     });
 
-    xAjax.onClick("#radio", function () {
-        var data = $("#radio").prop("checked", true).val();
-        xAjax.post({
+    xAjax.onChange("allRad, #7zRad, #7yRad", function () {
+        var type = $('input[name="radio"]').filter(":checked").val();
+        var devDate = $("#F_DeliveryFrom").val();
+        var toDate = $("#F_DeliveryTo").val();
+        console.log(type);
+        xAjax.Post({
             url: 'KBNCR220/Initial',
-            data: data,
+            data: {
+                devDate: devDate,
+                toDate: toDate,
+                type: type
+            },
             then: function (result) {
+                $('#F_SupplierFrom').find('option').remove().end();
+                $('#F_SupplierTo').find('option').remove().end();
+                $("#F_SupplierFrom").append($('<option id="supFromBlank"></option>'));
+                $("#F_SupplierTo").append($('<option id="supToBlank"></option>'));
+                $.each(result.data, function (e, t) {
+                    $("#F_SupplierFrom").append($("<option>", { value: t, text: t }, "</option>"));
+                    $("#F_SupplierTo").append($("<option>", { value: t, text: t }, "</option>"));
+                });
+                $('#supFromBlank').hide();
+                $('#supToBlank').hide();
                 console.log(result);
                 xSplash.hide();
             },
-        })
+            error: function (result) {
+                console.error(result);
+            },
+        });
+    });
+
+    xAjax.onChange("F_DeliveryFrom, #F_DeliveryTo", function () { //, #
+        var devDate = $("#F_DeliveryFrom").val();
+        var toDate = $("#F_DeliveryTo").val();
+        var type = $('input[name="radio"]').filter(":checked").val();
+        console.log(devDate + "devdateeeeeee \n" + toDate + "toDateeeeee \n");
+        if (toDate < devDate) {
+            console.error("วันเกินแล้ววววววววว");
+        }
+        var type = document.querySelector('input[name="radio"]:checked').value;
+        xAjax.Post({
+            url: 'KBNCR220/Initial',
+            data: {
+                devDate: devDate,
+                toDate: toDate,
+                type: type
+            },
+            success: function (result) {
+                console.log(result + "Line 60");
+                $.each(result, function (e, t) {
+                    $("#supFromBlank").append($("<option>", { value: t.id, text: t.id + ": " + t.name }));
+                });
+                $('#supFromBlank').hide();
+                $('#supToBlank').hide();
+            },
+            error: function (result) {
+                console.error(result);
+            },
+        });
     });
 
     xAjax.onClick("#SearchBtn", function () {

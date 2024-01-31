@@ -246,6 +246,7 @@ namespace KANBAN.Controllers.API.ReceiveProcess
                 return Content(ex.Message.ToString(), "application/json");
             }
         }
+
         public async Task<IActionResult> Receive([FromBody] string data)
         {
             try
@@ -437,6 +438,7 @@ namespace KANBAN.Controllers.API.ReceiveProcess
                                 {
                                     header.F_MRN_Flag = "2";
                                     _KB3Context.TB_REC_HEADER.Update(header);
+                                    _PPMConnect.ExecuteSQL($"EXEC [dbo].[SP_Interface_Inven_Special] {plant}, {PDSNo}, {user}");
                                 }
                             }
 
@@ -450,7 +452,6 @@ namespace KANBAN.Controllers.API.ReceiveProcess
                                 }";
                             await _KB3Context.SaveChangesAsync();
                             await _PPM3Context.SaveChangesAsync();
-                            _PPMConnect.ExecuteSQL($"EXEC [dbo].[SP_Interface_Inven_Special] {plant}, {PDSNo}, {user}");
                             return Ok(_result);
                         }
                     }
@@ -472,5 +473,6 @@ namespace KANBAN.Controllers.API.ReceiveProcess
                 return Content(e.Message.ToString(), "application/json");
             }
         }
+
     }
 }

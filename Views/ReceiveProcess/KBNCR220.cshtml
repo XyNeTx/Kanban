@@ -21,13 +21,13 @@
                                 <b>Type Order : </b>
                             </div>
                             <div class="col-3">
-                                <input type="radio" class="form-check-input radio me-1" id="allRad" name="radio" checked value="All" /><label class="form-check-lable" style="margin-top: 0.2rem !important;" for="allRad">All</label>
+                                <input type="radio" class="form-check-input me-1" id="allRad" name="radio" checked value="All" /><label class="form-check-label" style="margin-top: 0.2rem !important;" for="allRad">All</label>
                             </div>
                             <div class="col-3">
-                                <input type="radio" class="form-check-input radio me-1" id="7zRad" name="radio" value="7Z" /><label class="form-check-lable mt-1" style="margin-top: 0.2rem !important;" for="7zRad">7Z</label>
+                                <input type="radio" class="form-check-input me-1" id="7zRad" name="radio" value="7Z" /><label class="form-check-label" style="margin-top: 0.2rem !important;" for="7zRad">7Z</label>
                             </div>
                             <div class="col-3">
-                                <input type="radio" class="form-check-input radio me-1" id="7yRad" name="radio" value="7Y" /><label class="form-check-lable mt-1" style="margin-top: 0.2rem !important;" for="7yRad">7Y</label>
+                                <input type="radio" class="form-check-input me-1" id="7yRad" name="radio" value="7Y" /><label class="form-check-label" style="margin-top: 0.2rem !important;" for="7yRad">7Y</label>
                             </div>
                         </div>
                         <div class="row mb-2">
@@ -40,14 +40,24 @@
                         </div>
                         <div class="row">
                             <div class="col-4">
-                                <item type="lov" id="F_SupplierFrom" label="Supplier From : "></item>
+                                <label class="input-group-text" style="width:82%" for="F_SupplierFrom">
+                                    Supplier From : &nbsp;
+                                    <select id="F_SupplierFrom" class="form-select" style="width:82%" label="Supplier From : ">
+                                        <option id="supFromBlank"></option>
+                                    </select>
+                                </label>
                             </div>
                             <div class="col-4">
-                                <item type="lov" id="F_SupplierTo" label="To : "></item>
+                                <label class="input-group-text" style="width:60%" for="F_SupplierFrom">
+                                    To : &nbsp;
+                                    <select id="F_SupplierTo" class="form-select" style="width:100%" label="To : ">
+                                        <option id="supToBlank"></option>
+                                    </select>
+                                </label>
                             </div>
-                            <div class="col d-flex justify-content-end">
-                                <item class="me-2" type="button" id="SearchBtn" label="Search"></item>
-                                <item type="button" id="ReportBtn" label="Report"></item>
+                            <div class="col d-flex justify-content-end align-text-bottom align-items-end align-content-end">
+                                <item class="me-2" style="height:fit-content" type="button" id="SearchBtn" label="Search"></item>
+                                <item type="button" style="height:fit-content" id="ReportBtn" label="Report"></item>
                             </div>
                         </div>
                     </fieldset>
