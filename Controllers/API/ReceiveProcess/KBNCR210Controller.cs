@@ -289,11 +289,11 @@ namespace KANBAN.Controllers.API.ReceiveProcess
                                     {
                                         if (recHead.F_DR == "1144001" || recHead.F_DR == "1144002" || recHead.F_DR == "1145007")
                                         {
-                                            dr = '9';
+                                            dr = '0';
                                         }
                                         else
                                         {
-                                            dr = '0';
+                                            dr = '9';
                                         }
                                     }
                                     else

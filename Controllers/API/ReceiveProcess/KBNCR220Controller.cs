@@ -262,5 +262,92 @@ namespace KANBAN.Controllers.API.ReceiveProcess
             }
         }
 
+
+        public async Task<IActionResult> Search([FromBody] string data)
+        {
+            try
+            {
+                dynamic _json = JsonConvert.DeserializeObject(data);
+                string strDateFrom = _json["devDate"];
+                string strDateTo = _json["toDate"];
+                string strSupFrom = _json["supFrom"];
+                string strSupTo = _json["supTo"];
+                if (strSupFrom == "" || strSupFrom == null)
+                {
+                    strSupFrom = "0000";
+                }
+                if (strSupTo == "" || strSupTo == null)
+                {
+                    strSupTo = "9999";
+                }
+                string type = _json["type"];
+                int dateFrom = int.Parse(strDateFrom);
+                int dateTo = int.Parse(strDateTo);
+                int supFrom = int.Parse(strSupFrom);
+                int supTo = int.Parse(strSupTo);
+                string queryOrder1 = "";
+                string queryOrder2 = "";
+                string _result = "";
+
+                if (type == "All")
+                {
+                    queryOrder1 = "7Z";
+                    queryOrder2 = "7Y";
+                }
+                else if (type == "7Z")
+                {
+                    queryOrder1 = "7Z";
+                    queryOrder2 = "7Z";
+                }
+                else
+                {
+                    queryOrder1 = "7Y";
+                    queryOrder2 = "7Y";
+                }
+                var datalist = await _KB3Context.VW_KBNRC_220_RPT
+                        .Where(x => x.F_OrderNo.StartsWith(queryOrder1) || x.F_OrderNo.StartsWith(queryOrder2))
+                        .ToListAsync();
+
+                var dataListWhere = datalist.Where(x => int.Parse(x.F_Delivery_Date) >= dateFrom && int.Parse(x.F_Delivery_Date) <= dateTo)
+                .Where(x => int.Parse(x.F_Supplier.Substring(0, 4)) >= supFrom && int.Parse(x.F_Supplier.Substring(0, 4)) <= supTo)
+                .OrderBy(x => x.F_OrderNo).ThenBy(x => x.F_Delivery_Date).ThenBy(x => x.F_Supplier);
+
+                if (!dataListWhere.Any())
+                {
+                    _result = @"{
+                                ""status"":""400"",
+                                ""response"":""OK"",
+                                ""title"":""Search Special Report Error"",
+                                ""message"": ""Data Not Found"" }";
+                    return Ok(_result);
+                }
+                else
+                {
+                    var dataWithNo = dataListWhere.Select((x, index) => new
+                    {
+                        No = index + 1,
+                        x.F_OrderNo,
+                        x.F_Supplier,
+                        x.F_Delivery_Date,
+                        x.F_Receive_Date,
+                        x.F_PDS_Status,
+                        x.F_Receive_Status,
+                        x.F_OrderType
+                    }).ToList();
+
+                    string _jsonData = JsonConvert.SerializeObject(dataWithNo);
+                    _result = @"{
+                                    ""status"":""200"",
+                                    ""response"":""OK"",
+                                    ""message"": ""Data Found"",
+                                    ""data"": " + _jsonData + @"}";
+                }
+                return Ok(_result);
+            }
+            catch (Exception ex)
+            {
+                return Content(ex.Message.ToString());
+            }
+        }
     }
 }
