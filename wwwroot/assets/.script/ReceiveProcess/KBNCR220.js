@@ -149,4 +149,46 @@
             }
         });
     });
+
+    xAjax.onClick("#ReportBtn", function () {
+        var devDate = $("#F_DeliveryFrom").val().replaceAll('-', '');
+        var toDate = $("#F_DeliveryTo").val().replaceAll('-', '');
+        if (devDate > toDate) {
+            return alert("Please Don't select Delivery date to less than Delivery date from");
+        }
+        var supFrom = $("#F_SupplierFrom").val().substring(0, 4);
+        var supTo = $("#F_SupplierTo").val().substring(0, 4);
+        if (supFrom > supTo) {
+            return alert("Please Don't select Supplier To less than Supplier From");
+        }
+        if (supFrom == "") {
+            supFrom = "0000";
+        }
+        if (supTo == "") {
+            supTo = "9999";
+        }
+
+        var type = $('input[name="radio"]').filter(":checked").val();
+        var start1 = "";
+        var start2 = "";
+
+        if (type === "All") {
+            start1 = "7Z"
+            start2 = "7Y"
+        }
+        else if (type === "7Z") {
+            start1 = "7Z"
+            start2 = "7Z"
+        }
+        else if (type === "7Y") {
+            start1 = "7Y"
+            start2 = "7Y"
+        }
+
+        var reportUrl = "http://hmmt-app03/Reportserver/report/KB3/";
+
+        window.location.href = reportUrl + 'KBNCR220' + '?spcDateFrom=' + devDate + '&spcDateTo=' + toDate +
+            '&spcSupFrom=' + supFrom + '&spcSupTo=' + supTo + '&spcType=' + type +
+            '&spcStart1=' + start1 + '&spcStart2=' + start2;
+    });
 });

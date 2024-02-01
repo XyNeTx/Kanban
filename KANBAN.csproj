@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
@@ -9615,6 +9615,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Models\PPM3\" />
     <Folder Include="wwwroot\assets\.script\Home\" />
     <Folder Include="wwwroot\assets\i18n\JP\KB3\LogisticCondition\" />
     <Folder Include="wwwroot\assets\i18n\TH\KB3\LogisticCondition\" />
