@@ -2,6 +2,8 @@
 using HINOSystem.Libs;
 using KANBAN.Context;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace KANBAN.Controllers.API.ReceiveProcess
 {
@@ -38,6 +40,31 @@ namespace KANBAN.Controllers.API.ReceiveProcess
             _PPMConnect = ppmConnect;
             _PPM3Context = pPM3Context;
             _PPMContext = pPMContext;
+        }
+
+        public async Task<IActionResult> Initial()
+        {
+            try
+            {
+                string _result = "";
+                var supList = await _KB3Context.TB_MS_PartOrder.Select(x => new
+                {
+                    F_Supplier_Code = x.F_Supplier_Cd + '-' + x.F_Supplier_Plant
+                }).OrderBy(x => x.F_Supplier_Code).Distinct().ToListAsync();
+
+                string _jsonData = JsonConvert.SerializeObject(supList);
+                _result = @"{
+                                ""status"":""200"",
+                                ""response"":""OK"",
+                                ""message"": ""Data Found"",
+                                ""data"": " + _jsonData + @"}";
+
+                return Ok(_result);
+            }
+            catch (Exception ex)
+            {
+                return Content(ex.ToString());
+            }
         }
     }
 }
