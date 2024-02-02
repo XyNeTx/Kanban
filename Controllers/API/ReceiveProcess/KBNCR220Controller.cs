@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Newtonsoft.Json;
 using NPOI.SS.Formula.Functions;
+using Org.BouncyCastle.Math.EC.Multiplier;
 using System.Globalization;
 
 namespace KANBAN.Controllers.API.ReceiveProcess
@@ -49,55 +50,11 @@ namespace KANBAN.Controllers.API.ReceiveProcess
         {
             try
             {
-                Int32 now = Int32.Parse(DateTime.Now.ToString("yyyyMMdd"));
-                string _result = "";
                 //first load page
                 if (data == null)
                 {
-                    var _supplierHead = await _KB3Context.TB_REC_HEADER.Select(x => new
-                    {
-                        x.F_OrderNo,
-                        x.F_Delivery_Date,
-                        x.F_Supplier_Code,
-                        x.F_Supplier_Plant
-                    }).Where(x => x.F_OrderNo.StartsWith("7Y") || x.F_OrderNo.StartsWith("7Z"))
-                    .OrderBy(x => x.F_Supplier_Code).ToListAsync();
-
-                    var supplierHead = _supplierHead.Where(x => Int32.Parse(x.F_Delivery_Date) == now && now == Int32.Parse(x.F_Delivery_Date))
-                        .DistinctBy(x => new { x.F_Supplier_Code, x.F_Supplier_Plant });
-
-                    List<string> supplierList = new();
-
-                    foreach (var sup in supplierHead)
-                    {
-                        var T_Supplier = await _PPM3Context.T_Supplier_MS.Select(x => new
-                        {
-                            x.F_supplier_cd,
-                            x.F_Plant_cd,
-                            x.F_short_name,
-                            x.F_TC_Str,
-                            x.F_TC_End
-                        }).Where(x => x.F_supplier_cd == sup.F_Supplier_Code && x.F_Plant_cd == sup.F_Supplier_Plant)
-                        .OrderBy(x => x.F_supplier_cd).ToListAsync(); //Int32.Parse(x.F_TC_Str) <= now && now >= Int32.Parse(x.F_TC_End) &&
-
-                        var singleSupplier = T_Supplier.OrderByDescending(x => x.F_TC_Str).DistinctBy(x => new
-                        {
-                            x.F_supplier_cd,
-                            x.F_Plant_cd,
-                            x.F_short_name
-                        }).SingleOrDefault();
-                        if (Int32.Parse(singleSupplier.F_TC_Str) <= now && Int32.Parse(singleSupplier.F_TC_End) >= now)
-                        {
-                            var _supplier = singleSupplier.F_supplier_cd + '-' + singleSupplier.F_Plant_cd + " : " + singleSupplier.F_short_name;
-                            supplierList.Add(_supplier);
-                        }
-                    }
-                    string _jsonData = JsonConvert.SerializeObject(supplierList);
-                    _result = @"{
-                                ""status"":""200"",
-                                ""response"":""OK"",
-                                ""message"": ""Data Found"",
-                                ""data"": " + _jsonData + @"}";
+                    Int32 now = Int32.Parse(DateTime.Now.ToString("yyyyMMdd"));
+                    return await Supplier(now, now, "7Y", "7Z");
                 }
                 else
                 {
@@ -127,53 +84,8 @@ namespace KANBAN.Controllers.API.ReceiveProcess
                         queryOrder1 = "7Y";
                         queryOrder2 = "7Y";
                     }
-                    var _supplierHead = await _KB3Context.TB_REC_HEADER.Select(x => new
-                    {
-                        x.F_OrderNo,
-                        x.F_Supplier_Code,
-                        x.F_Supplier_Plant,
-                        x.F_Delivery_Date
-                    }).Where(x => x.F_OrderNo.StartsWith(queryOrder1) || x.F_OrderNo.StartsWith(queryOrder2))
-                        .OrderBy(x => x.F_Supplier_Code).ToListAsync();
-
-                    var supplierHead = _supplierHead.Where(x => Int32.Parse(x.F_Delivery_Date) >= fromDate && Int32.Parse(x.F_Delivery_Date) <= toDate)
-                        .DistinctBy(x => new { x.F_Supplier_Code, x.F_Supplier_Plant });
-
-                    List<string> supplierList = new();
-
-                    foreach (var sup in supplierHead)
-                    {
-                        var T_Supplier = await _PPM3Context.T_Supplier_MS.Select(x => new
-                        {
-                            x.F_supplier_cd,
-                            x.F_Plant_cd,
-                            x.F_short_name,
-                            x.F_TC_Str,
-                            x.F_TC_End
-                        }).Where(x => x.F_supplier_cd == sup.F_Supplier_Code && x.F_Plant_cd == sup.F_Supplier_Plant)
-                        .OrderBy(x => x.F_supplier_cd).ToListAsync(); //Int32.Parse(x.F_TC_Str) <= now && now >= Int32.Parse(x.F_TC_End) &&
-
-                        var singleSupplier = T_Supplier.OrderByDescending(x => x.F_TC_Str).DistinctBy(x => new
-                        {
-                            x.F_supplier_cd,
-                            x.F_Plant_cd,
-                            x.F_short_name
-                        }).SingleOrDefault();
-
-                        if (Int32.Parse(singleSupplier.F_TC_Str) <= now && Int32.Parse(singleSupplier.F_TC_End) >= now)
-                        {
-                            var _supplier = singleSupplier.F_supplier_cd + '-' + singleSupplier.F_Plant_cd + " : " + singleSupplier.F_short_name;
-                            supplierList.Add(_supplier);
-                        }
-                    }
-                    string _jsonData = JsonConvert.SerializeObject(supplierList);
-                    _result = @"{
-                                ""status"":""200"",
-                                ""response"":""OK"",
-                                ""message"": ""Data Found"",
-                                ""data"": " + _jsonData + @"}";
+                    return await Supplier(fromDate, toDate, queryOrder1, queryOrder2);
                 }
-                return Ok(_result);
             }
             catch (Exception ex)
             {
@@ -181,6 +93,61 @@ namespace KANBAN.Controllers.API.ReceiveProcess
             }
         }
 
+        public async Task<IActionResult> Supplier(int fromDate, int toDate, string queryOrder1, string queryOrder2)
+        {
+            string _result = "";
+            Int32 now = Int32.Parse(DateTime.Now.ToString("yyyyMMdd"));
+
+            var _supplierHead = await _KB3Context.TB_REC_HEADER.Select(x => new
+            {
+                x.F_OrderNo,
+                x.F_Supplier_Code,
+                x.F_Supplier_Plant,
+                x.F_Delivery_Date
+            }).Where(x => x.F_OrderNo.StartsWith(queryOrder1) || x.F_OrderNo.StartsWith(queryOrder2))
+                        .OrderBy(x => x.F_Supplier_Code).ToListAsync();
+
+            var supplierHead = _supplierHead.Where(x => Int32.Parse(x.F_Delivery_Date) >= fromDate && Int32.Parse(x.F_Delivery_Date) <= toDate)
+                .DistinctBy(x => new { x.F_Supplier_Code, x.F_Supplier_Plant });
+
+            List<string> supplierList = new();
+
+            foreach (var sup in supplierHead)
+            {
+                var T_Supplier = await _PPM3Context.T_Supplier_MS.Select(x => new
+                {
+                    x.F_supplier_cd,
+                    x.F_Plant_cd,
+                    x.F_short_name,
+                    x.F_TC_Str,
+                    x.F_TC_End
+                }).Where(x => x.F_supplier_cd == sup.F_Supplier_Code && x.F_Plant_cd == sup.F_Supplier_Plant)
+                .OrderBy(x => x.F_supplier_cd).ToListAsync(); //Int32.Parse(x.F_TC_Str) <= now && now >= Int32.Parse(x.F_TC_End) &&
+
+                var singleSupplier = T_Supplier.OrderByDescending(x => x.F_TC_Str).DistinctBy(x => new
+                {
+                    x.F_supplier_cd,
+                    x.F_Plant_cd,
+                    x.F_short_name
+                }).SingleOrDefault();
+
+                if (Int32.Parse(singleSupplier.F_TC_Str) <= now && Int32.Parse(singleSupplier.F_TC_End) >= now)
+                {
+                    var _supplier = singleSupplier.F_supplier_cd + '-' + singleSupplier.F_Plant_cd + " : " + singleSupplier.F_short_name;
+                    supplierList.Add(_supplier);
+                }
+            }
+
+            string _jsonData = JsonConvert.SerializeObject(supplierList);
+
+            _result = @"{
+                                ""status"":""200"",
+                                ""response"":""OK"",
+                                ""message"": ""Data Found"",
+                                ""data"": " + _jsonData + @"}";
+
+            return Ok(_result);
+        }
 
         public async Task<IActionResult> Search([FromBody] string data)
         {
@@ -228,7 +195,7 @@ namespace KANBAN.Controllers.API.ReceiveProcess
                         .ToListAsync();
 
                 var dataListWhere = datalist.Where(x => int.Parse(x.F_Delivery_Date) >= dateFrom && int.Parse(x.F_Delivery_Date) <= dateTo)
-                .Where(x => int.Parse(x.F_Supplier.Substring(0, 4)) >= supFrom && int.Parse(x.F_Supplier.Substring(0, 4)) <= supTo)
+                .Where(x => int.Parse(x.F_Supplier[..4]) >= supFrom && int.Parse(x.F_Supplier[..4]) <= supTo)
                 .OrderBy(x => x.F_OrderNo).ThenBy(x => x.F_Delivery_Date).ThenBy(x => x.F_Supplier);
 
                 if (!dataListWhere.Any())

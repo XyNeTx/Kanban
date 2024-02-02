@@ -28,10 +28,8 @@
 
         var supFrom = $("#F_SupplierFrom").val();
         var supTo = $("#F_SupplierTo").val();
-        var supFromInt = $("#F_SupplierFrom").val().substring(0, 4);
-        var supToInt = $("#F_SupplierTo").val().substring(0, 4);
 
-        if (supFromInt > supToInt) {
+        if (supFrom > supTo) {
             return alert("Please Don't select Supplier To less than Supplier From");
         }
         if (supFrom == "") {

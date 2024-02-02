@@ -52,7 +52,7 @@
         var type = $('input[name="radio"]').filter(":checked").val();
         var devDate = $("#F_DeliveryFrom").val();
         var toDate = $("#F_DeliveryTo").val();
-        console.log(type);
+        //console.log(type);
         xAjax.Post({
             url: 'KBNCR220/Initial',
             data: {
@@ -74,7 +74,7 @@
                 else {
                     xSwal.error(result.title, result.message);
                 }
-                console.log(result);
+                //console.log(result);
             },
             error: function (result) {
                 console.error(result);
@@ -116,7 +116,7 @@
         if (devDate > toDate) {
             return alert("Please Don't select Delivery date to less than Delivery date from");
         }
-        var supFrom = $("#F_SupplierFrom").val().substring(0,4);
+        var supFrom = $("#F_SupplierFrom").val().substring(0, 4);
         var supTo = $("#F_SupplierTo").val().substring(0, 4);
         if (supFrom > supTo) {
             return alert("Please Don't select Supplier To less than Supplier From");
