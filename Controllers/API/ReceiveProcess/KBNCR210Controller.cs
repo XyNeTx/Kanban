@@ -3,6 +3,7 @@ using HINOSystem.Libs;
 using KANBAN.Context;
 using KANBAN.Models.KB3.Receive_Process;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using NPOI.SS.Formula.Functions;
@@ -103,7 +104,7 @@ namespace KANBAN.Controllers.API.ReceiveProcess
                                     }";
                                 return Ok(_result);
                             }
-                             if (!PDSNo.StartsWith("7Y") && !PDSNo.StartsWith("7Z"))
+                            if (!PDSNo.StartsWith("7Y") && !PDSNo.StartsWith("7Z"))
                             {
                                 string _result = @"{
                                     ""status"":""400"",
@@ -217,7 +218,7 @@ namespace KANBAN.Controllers.API.ReceiveProcess
                         return Ok(_result);
                     }
                     var recDetail = await _KB3Context.TB_REC_DETAIL
-                        .Where(x=>x.F_OrderNo == PDSNo).ToListAsync();
+                        .Where(x => x.F_OrderNo == PDSNo).ToListAsync();
                     if (recDetail != null)
                     {
                         var recDetailCustom = recDetail.Select(x => new
@@ -256,7 +257,7 @@ namespace KANBAN.Controllers.API.ReceiveProcess
                 string isMonthEnd = systemControl.F_Value1;
                 if (Int32.Parse(DateTime.Now.ToString("yyyyMM")) < Int32.Parse(isMonthEnd))
                 {
-                        _result = @"{
+                    _result = @"{
                         ""status"":""400"",
                         ""response"":""OK"",
                         ""title"": ""Get Data from PDS No. Error"",
@@ -266,7 +267,7 @@ namespace KANBAN.Controllers.API.ReceiveProcess
                 }
                 BearerClass _JBearer = _BearerClass.Header(Request);
                 var user = _JBearer.UserCode.ToString();
-                var plant = _JBearer.Plant.ToString();
+                char plant = _JBearer.Plant[0];
                 if (_KBCN.Plant.ToString() == "3")
                 {
                     if (data != null)
@@ -418,7 +419,16 @@ namespace KANBAN.Controllers.API.ReceiveProcess
                                             await _PPM3Context.AddAsync(local);
                                         }
                                     }
-                                    else { return BadRequest(); }
+                                    else
+                                    {
+                                        _result = @"{
+                                        ""status"":""400"",
+                                        ""response"":""OK"",
+                                        ""title"": ""Receive Special Error"",
+                                        ""message"": ""Receive Special Not Complete""
+                                        }";
+                                        return Ok(_result);
+                                    }
                                 }
                             }
                             if (_isZeroRec)
@@ -431,6 +441,7 @@ namespace KANBAN.Controllers.API.ReceiveProcess
                                     }";
                                 return Content(_result, "application/json");
                             }
+
                             if (_isReceiveAll)
                             {
                                 var header = await _KB3Context.TB_REC_HEADER.SingleOrDefaultAsync(x => x.F_OrderNo == PDSNo);
@@ -438,11 +449,15 @@ namespace KANBAN.Controllers.API.ReceiveProcess
                                 {
                                     header.F_MRN_Flag = "2";
                                     _KB3Context.TB_REC_HEADER.Update(header);
-                                    _PPMConnect.ExecuteSQL($"EXEC [dbo].[SP_Interface_Inven_Special] {plant}, {PDSNo}, {user}");
+                                    _PPM3Context.Database.ExecuteSqlRaw(
+                                        "exec [dbo].[SP_Interface_Inven_Special] @Plant, @PDS, @User",
+                                        new SqlParameter("@Plant", plant),
+                                        new SqlParameter("@PDS", PDSNo),
+                                        new SqlParameter("@User", user)
+                                    );
+                                    // _PPMConnect.ExecuteSQL("EXEC [dbo].[SP_Interface_Inven_Special] '"+plant+"','"+PDSNo+"','"+user+"'");
                                 }
                             }
-
-                            //_PPM3Context.T_Receive_Local.Add
 
                             _result = @"{
                                 ""status"":""200"",

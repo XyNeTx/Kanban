@@ -3,12 +3,12 @@
 
     const table = $('#tblMaster').DataTable({
         columns: [
-            { data: "F_No"},
+            { data: "F_No" },
             { data: "F_Part_No" },
             { data: "F_Receive_Date" },
             { data: "F_Unit_Amount" },
             { data: "F_Receive_amount" },
-            { data: "F_Dev_Qty"}
+            { data: "F_Dev_Qty" }
         ],
         order: [[0, 'asc']],
         paging: false,
@@ -20,11 +20,11 @@
         if (isEditing) {
             return;
         }
-            var columnIndex = table.cell(this).index().column;
-            var cell = table.cell(this);
-            var originalValue = cell.data();
-            const orderQty = table.cell({ row: cell.index().row, column: 3 }).data();
-            const alreadyQty = table.cell({ row: cell.index().row, column: 4 }).data();
+        var columnIndex = table.cell(this).index().column;
+        var cell = table.cell(this);
+        var originalValue = cell.data();
+        const orderQty = table.cell({ row: cell.index().row, column: 3 }).data();
+        const alreadyQty = table.cell({ row: cell.index().row, column: 4 }).data();
 
         if (columnIndex === 5 && orderQty == alreadyQty) {
             return xSwal.error("Receive Seperate Error", "This Part Have Been Received.!");
@@ -161,7 +161,7 @@
                 console.error(_Controller + '.ReceiveSeparate: ' + result.responseText);
                 xSplash.hide();
             }
-         });
+        });
     });
 
 });

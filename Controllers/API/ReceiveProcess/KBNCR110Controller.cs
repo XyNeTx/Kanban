@@ -47,6 +47,7 @@ using Org.BouncyCastle.Utilities.IO.Pem;
 using System.Reflection;
 using KANBAN.Models.KB3.Receive_Process;
 using KANBAN.Context;
+using Microsoft.Data.SqlClient;
 //using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HINOSystem.Controllers.API.Master
@@ -456,8 +457,13 @@ namespace HINOSystem.Controllers.API.Master
                 }
                 else { RecCd = RecCd + dateTime.Substring(5, 1); }
                 RecCd += dateTime.Substring(6, 2);
-                _PPMConnect.ExecuteSQL($"EXEC [dbo].[SP_UploadReceiveNormal_All] '{RecCd}','{user}'", pUser: _JBearer, pControllerName: ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
-                _KBCN.ExecuteSQL("EXEC [dbo].[SP_UploadReceivetoProcWeb_Normal]");
+                //_PPMConnect.ExecuteSQL($"EXEC [dbo].[SP_UploadReceiveNormal_All] '{RecCd}','{user}'", pUser: _JBearer, pControllerName: ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+                _PPM3Context.Database.ExecuteSqlRaw(
+                    "exec [dbo].[SP_UploadReceiveNormal_All] @RecCd, @user",
+                    new SqlParameter("@RecCd", RecCd),
+                    new SqlParameter("@user", user)
+                );
+                _KB3Context.Database.ExecuteSqlRaw("EXEC [dbo].[SP_UploadReceivetoProcWeb_Normal]");
                 string _result = @"{
                     ""status"":""200"",
                     ""response"":""OK"",

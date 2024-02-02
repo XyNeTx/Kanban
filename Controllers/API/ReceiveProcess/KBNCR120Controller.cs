@@ -265,6 +265,17 @@ namespace HINOSystem.Controllers.API.Master
                     {
                         var receiveDetail = _KB3Context.TB_REC_DETAIL.Where(x => x.F_OrderNo == PDSNo).ToList(); //ดึง Data มา Add Column
 
+                        if (receiveDetail.Count == 0)
+                        {
+                            _result = @"{
+                            ""status"":""400"",
+                            ""response"":""OK"",
+                            ""title"": ""Get Data from PDS No. Error"",
+                            ""message"": ""No Receive Detail from this PDS No.""
+                            }";
+                            return Ok(_result);
+                        }
+
                         var recDetailCustom = receiveDetail.Select((x, Index) => new //เปลี่ยน data จาก model เพราะต้องการ No มาแสดง
                         {
                             x.F_No,
@@ -274,7 +285,8 @@ namespace HINOSystem.Controllers.API.Master
                             x.F_Unit_Amount,
                             x.F_Receive_amount,
                             F_Dev_Qty = x.F_Unit_Amount - x.F_Receive_amount
-                        }).ToList(); //เปลี่ยน data จาก model เพราะต้องการ No มาแสดง
+                        }).ToList();
+
                         string _jsonData = JsonConvert.SerializeObject(recDetailCustom);
 
                         _result = @"{
@@ -347,15 +359,18 @@ namespace HINOSystem.Controllers.API.Master
                             }
                             JsonData.RemoveAt(index);
                             bool _isReceiveAll = true;
+                            bool _isZeroRec = true;
                             foreach (var detail in JsonData)
                             {
                                 string partNo = detail["Part No."].ToString();
                                 int devQty = detail["Dev. Qty"];
                                 int alrQty = detail["Already Dev."];
                                 int sumQty = devQty + alrQty;
+
                                 var pdsDetailSingle = await _KB3Context.TB_REC_DETAIL
                                     .SingleOrDefaultAsync(x => x.F_OrderNo == PDSNo && x.F_Part_No == partNo
                                     && x.F_Unit_Amount != sumQty);
+
                                 if (pdsDetailSingle != null)
                                 {
                                     var header = await _KB3Context.TB_REC_HEADER.SingleOrDefaultAsync(x => x.F_OrderNo == PDSNo);
@@ -370,6 +385,7 @@ namespace HINOSystem.Controllers.API.Master
 
                                         if (devQty != 0)
                                         {
+                                            _isZeroRec = false;
                                             T_Receive_Local local = new T_Receive_Local
                                             {
                                                 F_Order_No = header.F_OrderNo,
@@ -396,7 +412,13 @@ namespace HINOSystem.Controllers.API.Master
                                     }
                                     else
                                     {
-                                        return BadRequest();
+                                        _result = @"{
+                                        ""status"":""400"",
+                                        ""response"":""OK"",
+                                        ""title"": ""Receive Separate Error"",
+                                        ""message"": ""Receive Separate Not Complete""
+                                        }";
+                                        return Ok(_result);
                                     }
                                 }
                                 else
@@ -417,6 +439,7 @@ namespace HINOSystem.Controllers.API.Master
                                         {
                                             if (devQty != 0)
                                             {
+                                                _isZeroRec = false;
                                                 T_Receive_Local local = new T_Receive_Local
                                                 {
                                                     F_Order_No = header.F_OrderNo,
@@ -447,14 +470,33 @@ namespace HINOSystem.Controllers.API.Master
                                                 ""status"":""400"",
                                                 ""response"":""OK"",
                                                 ""title"": ""Receive Separate Error"",
-                                                ""message"": ""No Data from Receive Header""
+                                                ""message"": ""No Data from TB Receive Header""
                                                 }";
                                             return Ok(_result);
                                         }
                                     }
-                                    else { return BadRequest(); }
+                                    else 
+                                    {
+                                        _result = @"{
+                                        ""status"":""400"",
+                                        ""response"":""OK"",
+                                        ""title"": ""Receive Separate Error"",
+                                        ""message"": ""Receive Separate Not Complete""
+                                        }";
+                                        return Ok(_result);
+                                    }
                                 }
                                     
+                            }
+                            if (_isZeroRec)
+                            {
+                                _result = @"{
+                                        ""status"":""400"",
+                                        ""response"":""OK"",
+                                        ""title"": ""Receive Separate Error"",
+                                        ""message"": ""Did't have Any Delivery Qty to Receive""
+                                        }";
+                                return Ok(_result);
                             }
                             if (_isReceiveAll)
                             {
@@ -465,8 +507,6 @@ namespace HINOSystem.Controllers.API.Master
                                     _KB3Context.TB_REC_HEADER.Update(header);
                                 }
                             }
-                            
-                            //_PPM3Context.T_Receive_Local.Add
 
                             _result = @"{
                                 ""status"":""200"",
@@ -481,13 +521,19 @@ namespace HINOSystem.Controllers.API.Master
                     }
                     else
                     {
+                        //_result = @"{
+                        //    ""status"":""400"",
+                        //    ""response"":""OK"",
+                        //    ""title"": ""Receive Separate Error"",
+                        //    ""message"": "" " +_result+ @"}""
+                        //    }";
                         _result = @"{
                             ""status"":""400"",
                             ""response"":""OK"",
                             ""title"": ""Receive Separate Error"",
-                            ""message"": "" " +_result+ @"}""
+                            ""message"": ""No Data""
                             }";
-                        return BadRequest(_result);
+                        return Ok(_result);
                     }
                 }
                 return Ok();
