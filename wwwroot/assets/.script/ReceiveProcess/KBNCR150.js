@@ -1,12 +1,12 @@
 ﻿$(document).ready(function () {
     xAjax.Post({
-        url: 'KBNCR140/Initial',
+        url: 'KBNCR150/Initial',
         then: function (result) {
             // console.log(result);
             $.each(result.data, function (e, t) {
                 // console.log(e + " eeeeeeeeeeeee ", t.F_Supplier_Code + " tttttttttttt ")
-                $("#F_SupplierFrom").append($("<option>", { value: t.F_Supplier_Code, text: t.F_Supplier_Code }, "</option>"));
-                $("#F_SupplierTo").append($("<option>", { value: t.F_Supplier_Code, text: t.F_Supplier_Code }, "</option>"));
+                $("#F_PartFrom").append($("<option>", { value: t.F_Part_No, text: t.F_Part_No }, "</option>"));
+                $("#F_PartTo").append($("<option>", { value: t.F_Part_No, text: t.F_Part_No }, "</option>"));
             });
             $('#supFromBlank').hide();
             $('#supToBlank').hide();
@@ -21,30 +21,31 @@
     xAjax.onClick("#ReportBtn", function () {
         var devDate = $("#F_DeliveryFrom").val().replaceAll('-', '');
         var toDate = $("#F_DeliveryTo").val().replaceAll('-', '');
-        var type = $('input[name="radioType"]').filter(":checked").val();
 
         if (devDate > toDate) {
             return alert("Please Don't select Delivery date to less than Delivery date from");
         }
 
-        var supFrom = $("#F_SupplierFrom").val();
-        var supTo = $("#F_SupplierTo").val();
+        var partFrom = $("#F_PartFrom").val();
+        var partTo = $("#F_PartTo").val();
 
-        if (supFrom > supTo) {
+        if (partFrom > partTo) {
             return alert("Please Don't select Supplier To less than Supplier From");
         }
-        if (supFrom == "") {
-            supFrom = "0000-Z";
+        if (partFrom == "") {
+            partFrom = "1215710010-00";
         }
-        if (supTo == "") {
-            supTo = "9999-Z";
+        if (partTo == "") {
+            partTo = "C92290K010-00";
         }
+
+        //console.log(partTo + " ", partFrom + " ");
 
         // console.log(devDate + " devDate ", toDate + " toDate ", type + " type ", supFrom + " supfrom ", supTo + " supto ");
 
         var reportUrl = "http://hmmt-app03/Reportserver/report/KB3/";
 
-        window.location.href = reportUrl + 'KBNCR140' + '?spcDateFrom=' + devDate + '&spcDateTo=' + toDate +
-            '&spcSupFrom=' + supFrom + '&spcSupTo=' + supTo + '&spcType=' + type;
+        window.location.href = reportUrl + 'KBNCR150' + '?spcDateFrom=' + devDate + '&spcDateTo=' + toDate +
+            '&spcPartFrom=' + partFrom + '&spcPartTo=' + partTo;
     });
 });
