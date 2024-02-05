@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using HINOSystem.Models.KB3.Master;
 using KANBAN.Models.KB3.Receive_Process;
+using KANBAN.Models.KB3.ReportOrder;
 
 namespace HINOSystem.Context
 {
@@ -56,10 +57,11 @@ namespace HINOSystem.Context
         public DbSet<TB_MS_TruckType> TB_MS_TruckType { get; set; } = null!;
         public DbSet<TB_MS_VLT_Customer> TB_MS_VLT_Customer { get; set; } = null!;
         public DbSet<TB_MS_ZeroOrder> TB_MS_ZeroOrder { get; set; } = null!;
-        public DbSet<TB_REC_HEADER> TB_REC_HEADER { get; set; } = null!;
-        public DbSet<TB_REC_DETAIL> TB_REC_DETAIL { get; set; } = null!;
+        public DbSet<TB_REC_HEADER> TB_REC_HEADER { get; set; }
+        public DbSet<TB_REC_DETAIL> TB_REC_DETAIL { get; set; }
         public DbSet<VW_KBNRC_220_RPT> VW_KBNRC_220_RPT { get; set; }
-        public DbSet<KANBAN.Models.KB3.Receive_Process.TB_MS_PartOrder> TB_MS_PartOrder { get; set; } = null!;
+        public DbSet<KANBAN.Models.KB3.Receive_Process.TB_MS_PartOrder> TB_MS_PartOrder { get; set; }
+        public DbSet<TB_Import_Delivery> TB_Import_Delivery { get; set; }
 
         //protected override void OnModelCreating(ModelBuilder modelBuilder)
         //{
