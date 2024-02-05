@@ -18,7 +18,7 @@ namespace KANBAN.Controllers.API.ReceiveProcess
         private readonly KanbanConnection _KBCN;
         private readonly PPMConnect _PPMConnect;
         private readonly PPM3Context _PPM3Context;
-        private readonly PPMContext _PPMContext;
+        private readonly PPMInvenContext _PPMInvenContext;
         private readonly KB3Context _KB3Context;
 
 
@@ -30,7 +30,7 @@ namespace KANBAN.Controllers.API.ReceiveProcess
             ActionResultClass actionResultClass,
             KanbanConnection kanbanConnection,
             PPMConnect ppmConnect,
-            PPMContext pPMContext,
+            PPMInvenContext pPMInvenContext,
             PPM3Context pPM3Context,
             KB3Context kB3Context
             )
@@ -42,7 +42,7 @@ namespace KANBAN.Controllers.API.ReceiveProcess
             _KBCN = kanbanConnection;
             _PPMConnect = ppmConnect;
             _PPM3Context = pPM3Context;
-            _PPMContext = pPMContext;
+            _PPMInvenContext = pPMInvenContext;
         }
 
 
@@ -80,12 +80,44 @@ namespace KANBAN.Controllers.API.ReceiveProcess
             }
         }
 
+        public void setConString()
+        {
+            try
+            {
+                if (_KBCN.Plant.ToString() == "3")
+                {
+                    var KBConnectString = _configuration.GetConnectionString("KB3Connection");
+                    var PPMConnectString = _configuration.GetConnectionString("PPM3Connection");
+                    _KB3Context.Database.SetConnectionString(KBConnectString);
+                    _PPM3Context.Database.SetConnectionString(PPMConnectString);
+                }
+                else if (_KBCN.Plant.ToString() == "2")
+                {
+                    var KBConnectString = _configuration.GetConnectionString("KB2Connection");
+                    var PPMConnectString = _configuration.GetConnectionString("PPMConnection");
+                    _KB3Context.Database.SetConnectionString(KBConnectString);
+                    _PPM3Context.Database.SetConnectionString(PPMConnectString);
+                }
+                else if (_KBCN.Plant.ToString() == "1")
+                {
+                    var KBConnectString = _configuration.GetConnectionString("KB1Connection");
+                    var PPMConnectString = _configuration.GetConnectionString("PPMConnection");
+                    _KB3Context.Database.SetConnectionString(KBConnectString);
+                    _PPM3Context.Database.SetConnectionString(PPMConnectString);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+        }
+
         [HttpPost]
         public async Task<IActionResult> CheckPDSNo([FromBody] string data)
         {
             try
             {
-                if (_KBCN.Plant.ToString() == "3")
+                setConString();
                 {
                     if (data != null)
                     {
@@ -172,7 +204,6 @@ namespace KANBAN.Controllers.API.ReceiveProcess
                         return Ok(_result);
                     }
                 }
-                else return BadRequest();
             }
             catch (Exception ex)
             {
@@ -185,6 +216,7 @@ namespace KANBAN.Controllers.API.ReceiveProcess
             string _result = "";
             try
             {
+                setConString();
                 var recHeader = await _KB3Context.TB_REC_HEADER.SingleOrDefaultAsync(x => x.F_OrderNo == PDSNo);
                 if (recHeader != null)
                 {
@@ -252,8 +284,9 @@ namespace KANBAN.Controllers.API.ReceiveProcess
         {
             try
             {
+                setConString();
                 string _result = "";
-                var systemControl = await _PPMContext.T_System_Control.SingleOrDefaultAsync(x => x.F_Code == "CTL");
+                var systemControl = await _PPMInvenContext.T_System_Control.SingleOrDefaultAsync(x => x.F_Code == "CTL");
                 string isMonthEnd = systemControl.F_Value1;
                 if (Int32.Parse(DateTime.Now.ToString("yyyyMM")) < Int32.Parse(isMonthEnd))
                 {
@@ -268,66 +301,119 @@ namespace KANBAN.Controllers.API.ReceiveProcess
                 BearerClass _JBearer = _BearerClass.Header(Request);
                 var user = _JBearer.UserCode.ToString();
                 char plant = _JBearer.Plant[0];
-                if (_KBCN.Plant.ToString() == "3")
+                if (data != null)
                 {
-                    if (data != null)
+                    dynamic _json = JsonConvert.DeserializeObject(data);
+                    DateTime now = DateTime.Now.Date;
+                    if (_json != null)
                     {
-                        dynamic _json = JsonConvert.DeserializeObject(data);
-                        DateTime now = DateTime.Now.Date;
-                        if (_json != null)
+                        var JsonData = _json["JsonData"];
+                        int index = (JsonData.Count) - 1; //get index for last index to get PDSNo
+                        string PDSNo = JsonData[index].PDSNo.ToString().Trim();
+                        char dr = ' ';
+                        if (PDSNo.Length == 14)
                         {
-                            var JsonData = _json["JsonData"];
-                            int index = (JsonData.Count) - 1; //get index for last index to get PDSNo
-                            string PDSNo = JsonData[index].PDSNo.ToString().Trim();
-                            char dr = ' ';
-                            if (PDSNo.Length == 14)
+                            var recHead = await _KB3Context.TB_REC_HEADER.SingleOrDefaultAsync(x => x.F_Barcode == PDSNo);
+                            if (recHead != null)
                             {
-                                var recHead = await _KB3Context.TB_REC_HEADER.SingleOrDefaultAsync(x => x.F_Barcode == PDSNo);
-                                if (recHead != null)
+                                PDSNo = PDSNo.Remove(13, 1);
+                                if (PDSNo.StartsWith("7Z"))
                                 {
-                                    PDSNo = PDSNo.Remove(13, 1);
-                                    if (PDSNo.StartsWith("7Z"))
+                                    if (recHead.F_DR == "1144001" || recHead.F_DR == "1144002" || recHead.F_DR == "1145007")
                                     {
-                                        if (recHead.F_DR == "1144001" || recHead.F_DR == "1144002" || recHead.F_DR == "1145007")
-                                        {
-                                            dr = '0';
-                                        }
-                                        else
-                                        {
-                                            dr = '9';
-                                        }
+                                        dr = '0';
                                     }
                                     else
                                     {
-                                        dr = '0';
+                                        dr = '9';
                                     }
                                 }
                                 else
                                 {
-                                    _result = @"{
+                                    dr = '0';
+                                }
+                            }
+                            else
+                            {
+                                _result = @"{
                                         ""status"":""400"",
                                         ""response"":""OK"",
                                         ""title"": ""Receive Special Error"",
                                         ""message"": ""Didn't have data for this Barcode""
                                         }";
-                                    return Ok(_result);
+                                return Ok(_result);
+                            }
+                        }
+                        JsonData.RemoveAt(index);
+                        bool _isReceiveAll = true;
+                        bool _isZeroRec = true;
+                        foreach (var detail in JsonData)
+                        {
+                            string partNo = detail["Part No."].ToString();
+                            int devQty = detail["Receive Qty"];
+                            int alrQty = detail["Already Received"];
+                            int sumQty = devQty + alrQty;
+                            var pdsDetailSingle = await _KB3Context.TB_REC_DETAIL
+                                .SingleOrDefaultAsync(x => x.F_OrderNo == PDSNo && x.F_Part_No == partNo
+                                && x.F_Unit_Amount != sumQty);
+                            if (pdsDetailSingle != null)
+                            {
+                                string packCode = pdsDetailSingle.F_Address;
+                                if (packCode.StartsWith("Pack:"))
+                                {
+                                    packCode = packCode.Substring(5, 5).Trim();
+                                }
+                                else
+                                {
+                                    packCode = "";
+                                }
+                                if (devQty != 0)
+                                {
+                                    var header = await _KB3Context.TB_REC_HEADER.SingleOrDefaultAsync(x => x.F_OrderNo == PDSNo);
+                                    header.F_MRN_Flag = "1";
+                                    _KB3Context.TB_REC_HEADER.Update(header);
+                                    pdsDetailSingle.F_Receive_amount = sumQty;
+                                    pdsDetailSingle.F_Receive_Date = now;
+                                    _KB3Context.TB_REC_DETAIL.Update(pdsDetailSingle);
+                                    _isReceiveAll = false;
+                                    _isZeroRec = false;
+                                    T_Receive_Local local = new T_Receive_Local
+                                    {
+                                        F_Order_No = header.F_OrderNo,
+                                        F_Part_No = pdsDetailSingle.F_Part_No,
+                                        F_Ruibetsu = pdsDetailSingle.F_Ruibetsu,
+                                        F_System_Type = "SPC",
+                                        F_Cycle = "00",
+                                        F_Plant_CD = header.F_Plant,
+                                        F_Store_CD = header.F_Delivery_Dock,
+                                        F_Receive_Qty = devQty,
+                                        F_Receive_date = pdsDetailSingle.F_Receive_Date.Value.ToString("yyyyMMdd").Trim(),
+                                        F_Supplier_Code = header.F_Supplier_Code,
+                                        F_Supplier_Plant = header.F_Supplier_Plant,
+                                        F_Inventory_Flg = dr,
+                                        F_Upload_Flg = '0',
+                                        F_UpdateBy = user,
+                                        F_UpdateDate = DateTime.Now.Date,
+                                        F_ID = 0,
+                                        F_Pds_No = "",
+                                        F_Pack_Code = packCode
+                                    };
+                                    await _PPM3Context.AddAsync(local);
                                 }
                             }
-                            JsonData.RemoveAt(index);
-                            bool _isReceiveAll = true;
-                            bool _isZeroRec = true;
-                            foreach (var detail in JsonData)
+                            else
                             {
-                                string partNo = detail["Part No."].ToString();
-                                int devQty = detail["Receive Qty"];
-                                int alrQty = detail["Already Received"];
-                                int sumQty = devQty + alrQty;
-                                var pdsDetailSingle = await _KB3Context.TB_REC_DETAIL
-                                    .SingleOrDefaultAsync(x => x.F_OrderNo == PDSNo && x.F_Part_No == partNo
-                                    && x.F_Unit_Amount != sumQty);
-                                if (pdsDetailSingle != null)
+                                var _singleReceiveAll = await _KB3Context.TB_REC_DETAIL
+                                            .SingleOrDefaultAsync(
+                                            x => x.F_OrderNo == PDSNo && x.F_Part_No == partNo
+                                            && x.F_Unit_Amount == sumQty);
+
+                                if (_singleReceiveAll != null)
                                 {
-                                    string packCode = pdsDetailSingle.F_Address;
+                                    _singleReceiveAll.F_Receive_amount = sumQty;
+                                    _singleReceiveAll.F_Receive_Date = now;
+                                    _KB3Context.TB_REC_DETAIL.Update(_singleReceiveAll);
+                                    string packCode = _singleReceiveAll.F_Address;
                                     if (packCode.StartsWith("Pack:"))
                                     {
                                         packCode = packCode.Substring(5, 5).Trim();
@@ -336,27 +422,21 @@ namespace KANBAN.Controllers.API.ReceiveProcess
                                     {
                                         packCode = "";
                                     }
+                                    var header = await _KB3Context.TB_REC_HEADER.SingleOrDefaultAsync(x => x.F_OrderNo == PDSNo);
                                     if (devQty != 0)
                                     {
-                                        var header = await _KB3Context.TB_REC_HEADER.SingleOrDefaultAsync(x => x.F_OrderNo == PDSNo);
-                                        header.F_MRN_Flag = "1";
-                                        _KB3Context.TB_REC_HEADER.Update(header);
-                                        pdsDetailSingle.F_Receive_amount = sumQty;
-                                        pdsDetailSingle.F_Receive_Date = now;
-                                        _KB3Context.TB_REC_DETAIL.Update(pdsDetailSingle);
-                                        _isReceiveAll = false;
                                         _isZeroRec = false;
                                         T_Receive_Local local = new T_Receive_Local
                                         {
                                             F_Order_No = header.F_OrderNo,
-                                            F_Part_No = pdsDetailSingle.F_Part_No,
-                                            F_Ruibetsu = pdsDetailSingle.F_Ruibetsu,
+                                            F_Part_No = _singleReceiveAll.F_Part_No,
+                                            F_Ruibetsu = _singleReceiveAll.F_Ruibetsu,
                                             F_System_Type = "SPC",
                                             F_Cycle = "00",
                                             F_Plant_CD = header.F_Plant,
                                             F_Store_CD = header.F_Delivery_Dock,
                                             F_Receive_Qty = devQty,
-                                            F_Receive_date = pdsDetailSingle.F_Receive_Date.Value.ToString("yyyyMMdd").Trim(),
+                                            F_Receive_date = _singleReceiveAll.F_Receive_Date.Value.ToString("yyyyMMdd").Trim(),
                                             F_Supplier_Code = header.F_Supplier_Code,
                                             F_Supplier_Plant = header.F_Supplier_Plant,
                                             F_Inventory_Flg = dr,
@@ -372,114 +452,63 @@ namespace KANBAN.Controllers.API.ReceiveProcess
                                 }
                                 else
                                 {
-                                    var _singleReceiveAll = await _KB3Context.TB_REC_DETAIL
-                                                .SingleOrDefaultAsync(
-                                                x => x.F_OrderNo == PDSNo && x.F_Part_No == partNo
-                                                && x.F_Unit_Amount == sumQty);
-
-                                    if (_singleReceiveAll != null)
-                                    {
-                                        _singleReceiveAll.F_Receive_amount = sumQty;
-                                        _singleReceiveAll.F_Receive_Date = now;
-                                        _KB3Context.TB_REC_DETAIL.Update(_singleReceiveAll);
-                                        string packCode = _singleReceiveAll.F_Address;
-                                        if (packCode.StartsWith("Pack:"))
-                                        {
-                                            packCode = packCode.Substring(5, 5).Trim();
-                                        }
-                                        else
-                                        {
-                                            packCode = "";
-                                        }
-                                        var header = await _KB3Context.TB_REC_HEADER.SingleOrDefaultAsync(x => x.F_OrderNo == PDSNo);
-                                        if (devQty != 0)
-                                        {
-                                            _isZeroRec = false;
-                                            T_Receive_Local local = new T_Receive_Local
-                                            {
-                                                F_Order_No = header.F_OrderNo,
-                                                F_Part_No = _singleReceiveAll.F_Part_No,
-                                                F_Ruibetsu = _singleReceiveAll.F_Ruibetsu,
-                                                F_System_Type = "SPC",
-                                                F_Cycle = "00",
-                                                F_Plant_CD = header.F_Plant,
-                                                F_Store_CD = header.F_Delivery_Dock,
-                                                F_Receive_Qty = devQty,
-                                                F_Receive_date = _singleReceiveAll.F_Receive_Date.Value.ToString("yyyyMMdd").Trim(),
-                                                F_Supplier_Code = header.F_Supplier_Code,
-                                                F_Supplier_Plant = header.F_Supplier_Plant,
-                                                F_Inventory_Flg = dr,
-                                                F_Upload_Flg = '0',
-                                                F_UpdateBy = user,
-                                                F_UpdateDate = DateTime.Now.Date,
-                                                F_ID = 0,
-                                                F_Pds_No = "",
-                                                F_Pack_Code = packCode
-                                            };
-                                            await _PPM3Context.AddAsync(local);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        _result = @"{
+                                    _result = @"{
                                         ""status"":""400"",
                                         ""response"":""OK"",
                                         ""title"": ""Receive Special Error"",
                                         ""message"": ""Receive Special Not Complete""
                                         }";
-                                        return Ok(_result);
-                                    }
+                                    return Ok(_result);
                                 }
                             }
-                            if (_isZeroRec)
-                            {
-                                _result = @"{
+                        }
+                        if (_isZeroRec)
+                        {
+                            _result = @"{
                                     ""status"":""400"",
                                     ""response"":""OK"",
                                     ""title"": ""Receive Special Error"",
                                     ""message"": ""Can't Receive 0 Qty in all part""
                                     }";
-                                return Content(_result, "application/json");
-                            }
+                            return Content(_result, "application/json");
+                        }
 
-                            if (_isReceiveAll)
+                        if (_isReceiveAll)
+                        {
+                            var header = await _KB3Context.TB_REC_HEADER.SingleOrDefaultAsync(x => x.F_OrderNo == PDSNo);
+                            if (header != null)
                             {
-                                var header = await _KB3Context.TB_REC_HEADER.SingleOrDefaultAsync(x => x.F_OrderNo == PDSNo);
-                                if (header != null)
-                                {
-                                    header.F_MRN_Flag = "2";
-                                    _KB3Context.TB_REC_HEADER.Update(header);
-                                    _PPM3Context.Database.ExecuteSqlRaw(
-                                        "exec [dbo].[SP_Interface_Inven_Special] @Plant, @PDS, @User",
-                                        new SqlParameter("@Plant", plant),
-                                        new SqlParameter("@PDS", PDSNo),
-                                        new SqlParameter("@User", user)
-                                    );
-                                    // _PPMConnect.ExecuteSQL("EXEC [dbo].[SP_Interface_Inven_Special] '"+plant+"','"+PDSNo+"','"+user+"'");
-                                }
+                                header.F_MRN_Flag = "2";
+                                _KB3Context.TB_REC_HEADER.Update(header);
+                                _PPM3Context.Database.ExecuteSqlRaw(
+                                    "exec [dbo].[SP_Interface_Inven_Special] @Plant, @PDS, @User",
+                                    new SqlParameter("@Plant", plant),
+                                    new SqlParameter("@PDS", PDSNo),
+                                    new SqlParameter("@User", user)
+                                );
                             }
+                        }
 
-                            _result = @"{
+                        _result = @"{
                                 ""status"":""200"",
                                 ""response"":""OK"",
                                 ""title"": ""Receive Special Success"",
                                 ""message"": ""Receive Separate Complete""
                                 }";
-                            await _KB3Context.SaveChangesAsync();
-                            await _PPM3Context.SaveChangesAsync();
-                            return Ok(_result);
-                        }
+                        await _KB3Context.SaveChangesAsync();
+                        await _PPM3Context.SaveChangesAsync();
+                        return Ok(_result);
                     }
-                    else
-                    {
-                        _result = @"{
+                }
+                else
+                {
+                    _result = @"{
                             ""status"":""400"",
                             ""response"":""OK"",
                             ""title"": ""Receive Special Error"",
                             ""message"": ""Receive Separate Complete""
                             }";
-                        return BadRequest(_result);
-                    }
+                    return BadRequest(_result);
                 }
                 return Ok();
             }

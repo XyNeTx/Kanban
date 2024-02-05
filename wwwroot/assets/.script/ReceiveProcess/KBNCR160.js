@@ -21,6 +21,7 @@
     xAjax.onClick("#ReportBtn", function () {
         var devDate = $("#F_DeliveryFrom").val().replaceAll('-', '');
         var toDate = $("#F_DeliveryTo").val().replaceAll('-', '');
+        var userName = $("#profile-avatar").prop("title");
 
         if (devDate > toDate) {
             return alert("Please Don't select Delivery date to less than Delivery date from");
@@ -45,7 +46,7 @@
 
         var reportUrl = "http://hmmt-app03/Reportserver/report/KB3/";
 
-        window.location.href = reportUrl + 'KBNCR160' + '?spcDateFrom=' + devDate + '&spcDateTo=' + toDate +
-            '&spcPartFrom=' + partFrom + '&spcPartTo=' + partTo;
+        window.location.href = reportUrl + 'KBNCR160' + '?DateFrom=' + devDate + '&DateTo=' + toDate +
+            '&PartFrom=' + partFrom + '&PartTo=' + partTo + '&UserName=' + userName;
     });
 });

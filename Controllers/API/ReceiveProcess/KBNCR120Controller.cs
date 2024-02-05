@@ -78,6 +78,37 @@ namespace HINOSystem.Controllers.API.Master
             _PPM3Context = pPM3Context;
         }
 
+        public void setConString()
+        {
+            try
+            {
+                if (_KBCN.Plant.ToString() == "3")
+                {
+                    var KBConnectString = _configuration.GetConnectionString("KB3Connection");
+                    var PPMConnectString = _configuration.GetConnectionString("PPM3Connection");
+                    _KB3Context.Database.SetConnectionString(KBConnectString);
+                    _PPM3Context.Database.SetConnectionString(PPMConnectString);
+                }
+                else if (_KBCN.Plant.ToString() == "2")
+                {
+                    var KBConnectString = _configuration.GetConnectionString("KB2Connection");
+                    var PPMConnectString = _configuration.GetConnectionString("PPMConnection");
+                    _KB3Context.Database.SetConnectionString(KBConnectString);
+                    _PPM3Context.Database.SetConnectionString(PPMConnectString);
+                }
+                else if (_KBCN.Plant.ToString() == "1")
+                {
+                    var KBConnectString = _configuration.GetConnectionString("KB1Connection");
+                    var PPMConnectString = _configuration.GetConnectionString("PPMConnection");
+                    _KB3Context.Database.SetConnectionString(KBConnectString);
+                    _PPM3Context.Database.SetConnectionString(PPMConnectString);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+        }
 
 
         [HttpPost]
@@ -95,7 +126,6 @@ namespace HINOSystem.Controllers.API.Master
 
                 _SQL = @" EXEC [exec].[spTB_MS_FACTORY] ";
                 string _jsTB_MS_Factory = _KBCN.ExecuteJSON(_SQL, pUser: _JBearer, pControllerName: ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
-
                 string _result = @"{
                     ""status"":""200"",
                     ""response"":""OK"",
@@ -118,96 +148,93 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                if (_KBCN.Plant.ToString() == "3")
+                setConString();
+                if (data != null)
                 {
-                    if (data != null)
+                    dynamic _json = JsonConvert.DeserializeObject(data);
+                    if (_json != null)
                     {
-                        dynamic _json = JsonConvert.DeserializeObject(data);
-                        if (_json != null)
+                        string getPDSNo = _json["F_PDS_No"];
+                        string PDSNo = getPDSNo.Trim();
+                        if (PDSNo == null || PDSNo == "")
                         {
-                            string getPDSNo = _json["F_PDS_No"];
-                            string PDSNo = getPDSNo.Trim();
-                            if (PDSNo == null || PDSNo == "")
-                            {
-                                string _result = @"{
+                            string _result = @"{
                                     ""status"":""400"",
                                     ""response"":""OK"",
                                     ""title"": ""Check PDS No. Error"",
                                     ""message"": ""Please Input PDS No.""
                                     }";
 
-                                return Ok(_result);
-                            }
-                            if (PDSNo.StartsWith("7Y") || PDSNo.StartsWith("7Z"))
-                            {
-                                string _result = @"{
+                            return Ok(_result);
+                        }
+                        if (PDSNo.StartsWith("7Y") || PDSNo.StartsWith("7Z"))
+                        {
+                            string _result = @"{
                                     ""status"":""400"",
                                     ""response"":""OK"",
                                     ""title"": ""Check PDS No. Error"",
                                     ""message"": ""ไม่สามารถรับชิ้นส่วนประเภท Special ได้ กรุณารับชิ้นส่วนใน Function Receive Special Part""
                                     }";
 
-                                return Ok(_result);
-                            }
-                            // when user scan barcode
-                            if (PDSNo.Length == 14)
+                            return Ok(_result);
+                        }
+                        // when user scan barcode
+                        if (PDSNo.Length == 14)
+                        {
+                            if (await _KB3Context.TB_REC_HEADER.SingleOrDefaultAsync(x => x.F_Barcode == PDSNo) != null)
                             {
-                                if (await _KB3Context.TB_REC_HEADER.SingleOrDefaultAsync(x => x.F_Barcode == PDSNo) != null)
-                                {
-                                    string pdsRemv = PDSNo.Remove(13, 1);
-                                    return await SearchDataFromPDS(pdsRemv);
-                                }
-                                else
-                                {
-                                    string _result = @"{
-                                    ""status"":""400"",
-                                    ""response"":""OK"",
-                                    ""title"": ""Receive Separate Error"",
-                                    ""message"": ""Didn't have data for this Barcode""
-                                    }";
-                                    return Ok(_result);
-                                }
+                                string pdsRemv = PDSNo.Remove(13, 1);
+                                return await SearchDataFromPDS(pdsRemv);
                             }
-                            // when user enter manual
-                            else if (PDSNo.Length == 13)
-                            {
-                                return await SearchDataFromPDS(PDSNo);
-                            }
-                            //No record for PDS NO.
                             else
                             {
                                 string _result = @"{
                                     ""status"":""400"",
                                     ""response"":""OK"",
-                                    ""title"": ""Check PDS No. Error"",
-                                    ""message"" : ""Don't Have This PDS No.""
+                                    ""title"": ""Receive Separate Error"",
+                                    ""message"": ""Didn't have data for this Barcode""
                                     }";
                                 return Ok(_result);
                             }
                         }
+                        // when user enter manual
+                        else if (PDSNo.Length == 13)
+                        {
+                            return await SearchDataFromPDS(PDSNo);
+                        }
+                        //No record for PDS NO.
                         else
                         {
                             string _result = @"{
-                                ""status"":""500"",
-                                ""response"":""OK"",
-                                ""title"": ""Check PDS No. Error"",
-                                ""message"" : ""JSON Parse Error""
-                                }";
+                                    ""status"":""400"",
+                                    ""response"":""OK"",
+                                    ""title"": ""Check PDS No. Error"",
+                                    ""message"" : ""Don't Have This PDS No.""
+                                    }";
                             return Ok(_result);
                         }
                     }
                     else
                     {
                         string _result = @"{
+                                ""status"":""500"",
+                                ""response"":""OK"",
+                                ""title"": ""Check PDS No. Error"",
+                                ""message"" : ""JSON Parse Error""
+                                }";
+                        return Ok(_result);
+                    }
+                }
+                else
+                {
+                    string _result = @"{
                             ""status"":""400"",
                             ""response"":""OK"",
                             ""title"": ""Get Data from PDS No. Error"",
                             ""message"" : ""Please Input PDS No.""
                             }";
-                        return Ok(_result);
-                    }
+                    return Ok(_result);
                 }
-                else return BadRequest();
             }
             catch (Exception ex)
             {
@@ -221,6 +248,7 @@ namespace HINOSystem.Controllers.API.Master
             string _result = "";
             try
             {
+                setConString();
                 var queryData = await _KB3Context.TB_REC_HEADER.Where(x => x.F_OrderNo == PDSNo)
                 .Select(x => new
                 {
@@ -326,6 +354,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
+                setConString();
                 string _result = "";
                 BearerClass _JBearer = _BearerClass.Header(Request);
                 var user = _JBearer.UserCode.ToString();
@@ -338,9 +367,9 @@ namespace HINOSystem.Controllers.API.Master
                         if (_json != null)
                         {
                             var JsonData = _json["JsonData"];
-                            int index = (JsonData.Count)-1; //get index for last index to get PDSNo
+                            int index = (JsonData.Count) - 1; //get index for last index to get PDSNo
                             string PDSNo = JsonData[index].PDSNo.ToString().Trim();
-                            if(PDSNo.Length == 14)
+                            if (PDSNo.Length == 14)
                             {
                                 if (await _KB3Context.TB_REC_HEADER.SingleOrDefaultAsync(x => x.F_Barcode == PDSNo) != null)
                                 {
@@ -428,7 +457,7 @@ namespace HINOSystem.Controllers.API.Master
                                                 x => x.F_OrderNo == PDSNo && x.F_Part_No == partNo
                                                 && x.F_Unit_Amount == sumQty);
 
-                                    if (_singleReceiveAll != null) 
+                                    if (_singleReceiveAll != null)
                                     {
                                         _singleReceiveAll.F_Receive_amount = sumQty;
                                         _singleReceiveAll.F_Receive_Date = now;
@@ -475,7 +504,7 @@ namespace HINOSystem.Controllers.API.Master
                                             return Ok(_result);
                                         }
                                     }
-                                    else 
+                                    else
                                     {
                                         _result = @"{
                                         ""status"":""400"",
@@ -486,7 +515,7 @@ namespace HINOSystem.Controllers.API.Master
                                         return Ok(_result);
                                     }
                                 }
-                                    
+
                             }
                             if (_isZeroRec)
                             {
@@ -521,12 +550,6 @@ namespace HINOSystem.Controllers.API.Master
                     }
                     else
                     {
-                        //_result = @"{
-                        //    ""status"":""400"",
-                        //    ""response"":""OK"",
-                        //    ""title"": ""Receive Separate Error"",
-                        //    ""message"": "" " +_result+ @"}""
-                        //    }";
                         _result = @"{
                             ""status"":""400"",
                             ""response"":""OK"",

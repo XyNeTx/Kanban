@@ -15,7 +15,7 @@ namespace KANBAN.Controllers.API.ReceiveProcess
         private readonly KanbanConnection _KBCN;
         private readonly PPMConnect _PPMConnect;
         private readonly PPM3Context _PPM3Context;
-        private readonly PPMContext _PPMContext;
+        private readonly PPMInvenContext _PPMInvenContext;
         private readonly KB3Context _KB3Context;
 
 
@@ -27,7 +27,7 @@ namespace KANBAN.Controllers.API.ReceiveProcess
             ActionResultClass actionResultClass,
             KanbanConnection kanbanConnection,
             PPMConnect ppmConnect,
-            PPMContext pPMContext,
+            PPMInvenContext pPMInvenContext,
             PPM3Context pPM3Context,
             KB3Context kB3Context
             )
@@ -39,7 +39,33 @@ namespace KANBAN.Controllers.API.ReceiveProcess
             _KBCN = kanbanConnection;
             _PPMConnect = ppmConnect;
             _PPM3Context = pPM3Context;
-            _PPMContext = pPMContext;
+            _PPMInvenContext = pPMInvenContext;
+        }
+
+        public void setConString()
+        {
+            try
+            {
+                if (_KBCN.Plant.ToString() == "3")
+                {
+                    var connectString = _configuration.GetConnectionString("KB3Connection");
+                    _KB3Context.Database.SetConnectionString(connectString);
+                }
+                else if (_KBCN.Plant.ToString() == "2")
+                {
+                    var connectString = _configuration.GetConnectionString("KB2Connection");
+                    _KB3Context.Database.SetConnectionString(connectString);
+                }
+                else if (_KBCN.Plant.ToString() == "1")
+                {
+                    var connectString = _configuration.GetConnectionString("KB1Connection");
+                    _KB3Context.Database.SetConnectionString(connectString);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
         }
 
         public async Task<IActionResult> Initial()
@@ -47,6 +73,7 @@ namespace KANBAN.Controllers.API.ReceiveProcess
             try
             {
                 string _result = "";
+                setConString();
                 var supList = await _KB3Context.TB_MS_PartOrder.Select(x => new
                 {
                     F_Supplier_Code = x.F_Supplier_Cd + '-' + x.F_Supplier_Plant
@@ -54,11 +81,10 @@ namespace KANBAN.Controllers.API.ReceiveProcess
 
                 string _jsonData = JsonConvert.SerializeObject(supList);
                 _result = @"{
-                                ""status"":""200"",
-                                ""response"":""OK"",
-                                ""message"": ""Data Found"",
-                                ""data"": " + _jsonData + @"}";
-
+                            ""status"":""200"",
+                            ""response"":""OK"",
+                            ""message"": ""Data Found"",
+                            ""data"": " + _jsonData + @"}";
                 return Ok(_result);
             }
             catch (Exception ex)

@@ -111,7 +111,7 @@
     });
 
     xAjax.onClick("#SearchBtn", function () {
-        var devDate = $("#F_DeliveryFrom").val().replaceAll('-','');
+        var devDate = $("#F_DeliveryFrom").val().replaceAll('-', '');
         var toDate = $("#F_DeliveryTo").val().replaceAll('-', '');
         if (devDate > toDate) {
             return alert("Please Don't select Delivery date to less than Delivery date from");
@@ -187,8 +187,8 @@
 
         var reportUrl = "http://hmmt-app03/Reportserver/report/KB3/";
 
-        window.location.href = reportUrl + 'KBNCR220' + '?spcDateFrom=' + devDate + '&spcDateTo=' + toDate +
-            '&spcSupFrom=' + supFrom + '&spcSupTo=' + supTo + '&spcType=' + type +
-            '&spcStart1=' + start1 + '&spcStart2=' + start2;
+        window.location.href = reportUrl + 'KBNCR220' + '?DateFrom=' + devDate + '&DateTo=' + toDate +
+            '&SupFrom=' + supFrom + '&SupTo=' + supTo + '&Type=' + type +
+            '&Start1=' + start1 + '&Start2=' + start2;
     });
 });

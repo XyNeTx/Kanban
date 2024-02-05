@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace KANBAN.Context
 {
-    public class PPMContext : DbContext
+    public class PPMInvenContext : DbContext
     {
-        public PPMContext(DbContextOptions<PPMContext> options ) : base (options) { }
+        public PPMInvenContext(DbContextOptions<PPMInvenContext> options ) : base (options) { }
 
         public DbSet<T_System_Control> T_System_Control { get; set; }
     }
