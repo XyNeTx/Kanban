@@ -87,8 +87,8 @@ namespace KANBAN.Controllers.API.OrderReport
                     Year_Month = x.F_YM.Substring(4, 2) + '/' + x.F_YM.Substring(0, 4),
                     Supplier_CD = x.F_Supplier_Code + '-' + x.F_Supplier_Plant + " : " + x.F_Supplier_Name
                 }).ToListAsync();
-                var resultYM = result.Select(x=>x.Year_Month).Distinct().ToList();
-                var resultSup = result.OrderBy(x=>x.Supplier_CD).Select(x=>x.Supplier_CD).Distinct().ToList();
+                var resultYM = result.Select(x => x.Year_Month).Distinct().ToList();
+                var resultSup = result.OrderBy(x => x.Supplier_CD).Select(x => x.Supplier_CD).Distinct().ToList();
                 string _jsonData = JsonConvert.SerializeObject(resultYM);
                 string _jsonData2 = JsonConvert.SerializeObject(resultSup);
 
@@ -105,6 +105,5 @@ namespace KANBAN.Controllers.API.OrderReport
                 return Content(ex.Message);
             }
         }
-
     }
 }
