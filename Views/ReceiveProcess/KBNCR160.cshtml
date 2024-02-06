@@ -7,28 +7,28 @@
                     <fieldset class="fieldset">
                         <legend>Search Data</legend>
                         <div class="row mb-4">
-                            <div class="col-4 d-flex justify-content-start">
-                                <label class="input-group-text" style="width:82%" for="F_PartFrom">
+                            <div class="col d-flex justify-content-start">
+                                <label class="input-group-text" for="F_PartFrom">
                                     Part No. From : &nbsp;
-                                    <select id="F_PartFrom" class="form-select" style="width:82%" label="Supplier From : ">
+                                    <select id="F_PartFrom" class="form-select" label="Supplier From : ">
                                         <option id="supFromBlank"></option>
                                     </select>
                                 </label>
                             </div>
-                            <div class="col-4 d-flex justify-content-end">
-                                <label class="input-group-text" style="width:60%" for="F_PartTo">
+                            <div class="col d-flex justify-content">
+                                <label class="input-group-text" for="F_PartTo">
                                     To : &nbsp;
-                                    <select id="F_PartTo" class="form-select" style="width:100%" label="To : ">
+                                    <select id="F_PartTo" class="form-select" label="To : ">
                                         <option id="supToBlank"></option>
                                     </select>
                                 </label>
                             </div>
                         </div>
                         <div class="row mt-4 mb-2">
-                            <div class="col-5">
+                            <div class="col d-flex justify-content">
                                 <item type="date" id="F_DeliveryFrom" label="Receive Date From : " format="yyyy-mm-dd" default="now" readonly></item>
                             </div>
-                            <div class="col-4" style="margin-left:2.8rem !important">
+                            <div class="col d-flex justify-content">
                                 <item type="date" id="F_DeliveryTo" label="To : " format="yyyy-mm-dd" default="now" readonly></item>
                             </div>
                         </div>
