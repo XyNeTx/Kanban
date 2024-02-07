@@ -62,6 +62,7 @@ namespace HINOSystem.Context
         public DbSet<VW_KBNRC_220_RPT> VW_KBNRC_220_RPT { get; set; }
         public DbSet<KANBAN.Models.KB3.Receive_Process.TB_MS_PartOrder> TB_MS_PartOrder { get; set; }
         public DbSet<TB_Import_Delivery> TB_Import_Delivery { get; set; }
+        public DbSet<V_KBNRT_130> V_KBNRT_130_rpt { get; set; }
 
         //protected override void OnModelCreating(ModelBuilder modelBuilder)
         //{

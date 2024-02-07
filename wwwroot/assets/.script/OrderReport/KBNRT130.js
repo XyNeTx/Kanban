@@ -1,27 +1,61 @@
 ﻿$(document).ready(function () {
     xAjax.Post({
-        url: 'KBNRT110/Initial',
+        url: 'KBNRT130/Initial',
         then: function (result) {
-            console.log(result);
+            // console.log(result);
             $.each(result.data, function (i, v) {
-                $("#F_ProdFrom").append($("<option>", { value: v, text: v }, "</option>"));
-                $("#F_ProdTo").append($("<option>", { value: v, text: v }, "</option>"));
+                $("#F_MonthFrom").append($("<option>", { value: v.Month_Year, text: v.Month_Year }, "</option>"));
+                $("#F_MonthTo").append($("<option>", { value: v.Month_Year, text: v.Month_Year }, "</option>"));
             });
             $.each(result.data2, function (i, v) {
                 $("#F_SupFrom").append($("<option>", { value: v, text: v }, "</option>"));
                 $("#F_SupTo").append($("<option>", { value: v, text: v }, "</option>"));
             });
 
+            $('#monthFromBlank').hide();
+            $('#monthToBlank').hide();
             $('#supFromBlank').hide();
             $('#supToBlank').hide();
-            $('#prodFromBlank').hide();
-            $('#prodToBlank').hide();
             xSplash.hide();
         },
         error: function (result) {
-            console.error("Initial Error from Receive Special Report");
+            console.error("Initial Error from Order Report");
             xSplash.hide();
         },
+    });
+    xAjax.onChange("#F_MonthFrom , #F_MonthTo", function () {
+        var monthFromVal = $("#F_MonthFrom").val();
+        var monthToVal = $("#F_MonthTo").val();
+        if (monthToVal == "" || monthToVal == null) {
+            $("#F_MonthTo").val(monthFromVal);
+            monthToVal = $("#F_MonthTo").val();
+        }
+        var monthFrom = monthFromVal.split('/')[1] + monthFromVal.split('/')[0];
+        var monthTo = monthToVal.split('/')[1] + monthToVal.split('/')[0];
+        xAjax.Post({
+            url: 'KBNRT130/OnMonthChange',
+            data: {
+                monthFrom: monthFrom,
+                monthTo: monthTo
+            },
+            then: function (result) {
+                console.log(result);
+                $("#F_SupFrom").empty();
+                $("#F_SupTo").empty();
+                $("#F_SupFrom").append($("<option id='supFromBlank'></option>"));
+                $("#F_SupTo").append($("<option id='supToBlank'></option>"));
+                $.each(result.data, function (i, v) {
+                    $("#F_SupFrom").append($("<option>", { value: v, text: v }, "</option>"));
+                    $("#F_SupTo").append($("<option>", { value: v, text: v }, "</option>"));
+                });
+
+                $('#supFromBlank').hide();
+                $('#supToBlank').hide();
+            },
+            error: function (result) {
+                console.error(result);
+            },
+        });
     });
 
     xAjax.onClick("#ReportBtn", function () {

@@ -4,11 +4,10 @@ using KANBAN.Context;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using NuGet.Packaging;
 
 namespace KANBAN.Controllers.API.OrderReport
 {
-    public class KBNRT110Controller : Controller
+    public class KBNRT130Controller : Controller
     {
         private readonly IConfiguration _configuration;
         private readonly BearerClass _BearerClass;
@@ -22,7 +21,7 @@ namespace KANBAN.Controllers.API.OrderReport
 
         private readonly string StoragePath = @"wwwroot\Storage\Uploads";
 
-        public KBNRT110Controller(
+        public KBNRT130Controller(
             IConfiguration configuration,
             BearerClass bearerClass,
             ActionResultClass actionResultClass,
@@ -75,29 +74,31 @@ namespace KANBAN.Controllers.API.OrderReport
             }
         }
 
-
         public async Task<IActionResult> Initial()
         {
             try
             {
                 setConString();
                 string _result = "";
-                var result = await _KB3Context.TB_Import_Delivery.OrderByDescending(x => x.F_YM).Select(x => new
+
+                var MonthYear = await _KB3Context.V_KBNRT_130_rpt.Select(x => new
                 {
-                    Year_Month = x.F_YM.Substring(4, 2) + '/' + x.F_YM.Substring(0, 4),
-                    Supplier_CD = x.F_Supplier_Code + '-' + x.F_Supplier_Plant + " : " + x.F_Supplier_Name
-                }).ToListAsync();
-                var resultYM = result.Select(x => x.Year_Month).Distinct().ToList();
-                var resultSup = result.OrderBy(x => x.Supplier_CD).Select(x => x.Supplier_CD).Distinct().ToList();
-                string _jsonData = JsonConvert.SerializeObject(resultYM);
-                string _jsonData2 = JsonConvert.SerializeObject(resultSup);
+                    chk_VM = x.chk_YM,
+                    Month_Year = x.Month_Year
+                }).Distinct().ToListAsync();
+                var monthYearSorted = MonthYear.OrderByDescending(x=>x.chk_VM).ToList();
+                var supDB = await _KB3Context.V_KBNRT_130_rpt.OrderBy(x => x.Supplier).Select(x => x.Supplier).Distinct().ToListAsync();
+
+                string _jsonData = JsonConvert.SerializeObject(monthYearSorted);
+                string _jsonData2 = JsonConvert.SerializeObject(supDB);
 
                 _result = @"{
                                     ""status"":""200"",
                                     ""response"":""OK"",
                                     ""message"": ""Data Found"",
                                     ""data"": " + _jsonData + @",
-                                    ""data2"": " + _jsonData2 + @"}";
+                                    ""data2"": " + _jsonData2 + @"
+                                    }";
                 return Ok(_result);
             }
             catch (Exception ex)
@@ -105,20 +106,28 @@ namespace KANBAN.Controllers.API.OrderReport
                 return Content(ex.Message);
             }
         }
-        public async Task<IActionResult> OnReportClick([FromBody] string data)
+        public async Task<IActionResult> OnMonthChange([FromBody] string data)
         {
             try
             {
-                if(data != null)
-                {
-                    dynamic _json = JsonConvert.DeserializeObject(data);
-                    string monthFrom = _json["monthFrom"];
-                    string monthTo = _json["monthTo"];
-                    string supFrom = _json["supFrom"];
-                    string supTo = _json["supTo"];
-                    
-                }
-                return Ok();
+                setConString();
+                string _result = "";
+                dynamic _json = JsonConvert.DeserializeObject(data);
+                string monthFrom = _json["monthFrom"];
+                string monthTo = _json["monthTo"];
+                var supDB = await _KB3Context.V_KBNRT_130_rpt.OrderBy(x => x.Supplier)
+                    .Where(x => x.chk_YM.CompareTo(monthFrom) >= 0 && x.chk_YM.CompareTo(monthTo) <= 0)
+                    .Select(x => x.Supplier).Distinct().ToListAsync();
+
+                string _jsonData = JsonConvert.SerializeObject(supDB);
+
+                _result = @"{
+                                    ""status"":""200"",
+                                    ""response"":""OK"",
+                                    ""message"": ""Data Found"",
+                                    ""data"": " + _jsonData + @"
+                                    }";
+                return Ok(_result);
             }
             catch (Exception ex)
             {

@@ -158,14 +158,14 @@
         }
         var supFrom = $("#F_SupplierFrom").val().substring(0, 4);
         var supTo = $("#F_SupplierTo").val().substring(0, 4);
-        if (supFrom > supTo) {
-            return alert("Please Don't select Supplier To less than Supplier From");
-        }
         if (supFrom == "") {
             supFrom = "0000";
         }
         if (supTo == "") {
             supTo = "9999";
+        }
+        if (supFrom > supTo) {
+            return alert("Please Don't select Supplier To less than Supplier From");
         }
 
         var type = $('input[name="radio"]').filter(":checked").val();
