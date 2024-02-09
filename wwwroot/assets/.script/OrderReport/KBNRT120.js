@@ -166,4 +166,113 @@
             $("#F_StoreTo").val($("#F_StoreFrom").val()).change();
         }
     });
+
+    xAjax.onClick("#ReportStatusBtn", function () {
+        var supFrom = $("#F_SupFrom").val();
+        var supTo = $("#F_SupTo").val();
+        var kbnFrom = $("#F_KBNFrom").val();
+        var kbnTo = $("#F_KBNTo").val();
+        var partFrom = $("#F_PartFrom").val();
+        var partTo = $("#F_PartTo").val();
+        var storeFrom = $("#F_StoreFrom").val();
+        var storeTo = $("#F_StoreTo").val();
+
+        if (supFrom == "" || supFrom == null || supTo == "" || supTo == null) {
+            return xSwal.error("Data Error", "Please Select Supplier Code From And Supplier Code To");
+        }
+
+        if (supFrom > supTo) {
+            return xSwal.error("Data Error", "Please Select Supplier Code From Less than Supplier Code To");
+        }
+
+
+        if (kbnFrom == "" || kbnFrom == null || kbnTo == "" || kbnTo == null) {
+            return xSwal.error("Data Error", "Please Select Kanban No. From And Kanban No. To");
+        }
+
+        if (kbnFrom > kbnTo) {
+            return xSwal.error("Data Error", "Please Select Kanban No. From Less than Kanban No. To");
+        }
+
+        if (partFrom == "" || partFrom == null || partTo == "" || partTo == null) {
+            return xSwal.error("Data Error", "Please Select Part No. From And Part No. To");
+        }
+
+        if (partFrom > partTo) {
+            return xSwal.error("Data Error", "Please Select Part No. From Less than Part No. To");
+        }
+
+
+        if (storeFrom == "" || storeFrom == null || storeTo == "" || storeTo == null) {
+            console.log(storeFrom, storeTo);
+            return xSwal.error("Data Error", "Please Select Store Code From And Store Code To");
+        }
+
+        if (storeFrom > storeTo) {
+            return xSwal.error("Data Error", "Please Select Store Code From Less than Store Code To");
+        }
+
+        var userName = $("#profile-avatar").prop("title");
+
+        var filename = location.pathname.substring(location.pathname.lastIndexOf('/') + 1);
+        var reportUrl = "http://hmmt-app03/Reportserver/report/KB3/";
+
+        window.location.href = reportUrl + filename + '_Status' + '?SupFrom=' + supFrom + '&SupTo=' + supTo
+            + '&KBNFrom=' + kbnFrom + '&KBNTo=' + kbnTo + '&PartFrom=' + partFrom + '&PartTo=' + partTo
+            + '&StoreFrom=' + storeFrom + '&StoreTo=' + storeTo + '&UserName=' + userName;
+    });
+    xAjax.onClick("#ReportDetailBtn", function () {
+        var supFrom = $("#F_SupFrom").val();
+        var supTo = $("#F_SupTo").val();
+        var kbnFrom = $("#F_KBNFrom").val();
+        var kbnTo = $("#F_KBNTo").val();
+        var partFrom = $("#F_PartFrom").val();
+        var partTo = $("#F_PartTo").val();
+        var storeFrom = $("#F_StoreFrom").val();
+        var storeTo = $("#F_StoreTo").val();
+
+        if (supFrom == "" || supFrom == null || supTo == "" || supTo == null) {
+            return xSwal.error("Data Error", "Please Select Supplier Code From And Supplier Code To");
+        }
+
+        if (supFrom > supTo) {
+            return xSwal.error("Data Error", "Please Select Supplier Code From Less than Supplier Code To");
+        }
+
+
+        if (kbnFrom == "" || kbnFrom == null || kbnTo == "" || kbnTo == null) {
+            return xSwal.error("Data Error", "Please Select Kanban No. From And Kanban No. To");
+        }
+
+        if (kbnFrom > kbnTo) {
+            return xSwal.error("Data Error", "Please Select Kanban No. From Less than Kanban No. To");
+        }
+
+        if (partFrom == "" || partFrom == null || partTo == "" || partTo == null) {
+            return xSwal.error("Data Error", "Please Select Part No. From And Part No. To");
+        }
+
+        if (partFrom > partTo) {
+            return xSwal.error("Data Error", "Please Select Part No. From Less than Part No. To");
+        }
+
+
+        if (storeFrom == "" || storeFrom == null || storeTo == "" || storeTo == null) {
+            console.log(storeFrom, storeTo);
+            return xSwal.error("Data Error", "Please Select Store Code From And Store Code To");
+        }
+
+        if (storeFrom > storeTo) {
+            return xSwal.error("Data Error", "Please Select Store Code From Less than Store Code To");
+        }
+
+        var userName = $("#profile-avatar").prop("title");
+
+        var filename = location.pathname.substring(location.pathname.lastIndexOf('/') + 1);
+        var reportUrl = "http://hmmt-app03/Reportserver/report/KB3/";
+
+        window.location.href = reportUrl + filename + '_Detail' + '?SupFrom=' + supFrom + '&SupTo=' + supTo
+            + '&KBNFrom=' + kbnFrom + '&KBNTo=' + kbnTo + '&PartFrom=' + partFrom + '&PartTo=' + partTo
+            + '&StoreFrom=' + storeFrom + '&StoreTo=' + storeTo + '&UserName=' + userName;
+    });
 });
