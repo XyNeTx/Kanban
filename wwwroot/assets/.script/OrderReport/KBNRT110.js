@@ -25,8 +25,8 @@
     });
 
     xAjax.onClick("#ReportBtn", function () {
-        var monthFromVal = $("#F_MonthFrom").val();
-        var monthToVal = $("#F_MonthTo").val();
+        var monthFromVal = $("#F_ProdFrom").val();
+        var monthToVal = $("#F_ProdTo").val();
 
         if (monthFromVal == "" || monthFromVal == null || monthToVal == "" || monthToVal == null) {
             return xSwal.error("Data Error", "Please Select Month From And Month To");
@@ -52,11 +52,26 @@
 
         var userName = $("#profile-avatar").prop("title");
 
-        var filename = location.pathname.substring(location.pathname.lastIndexOf('/') + 1);
+        xAjax.Post({
+            url: 'KBNRT110/OnReportClick',
+            data: {
+                monthFrom: monthFrom,
+                monthTo: monthTo,
+                supFrom: supFrom,
+                supTo: supTo
+            },
+            then: function (result) {
+                console.log(result);
+                var filename = location.pathname.substring(location.pathname.lastIndexOf('/') + 1);
+                var reportUrl = "http://hmmt-app03/Reportserver/report/KB3/";
 
-        var reportUrl = "http://hmmt-app03/Reportserver/report/KB3/";
+                window.location.href = reportUrl + filename + '?MonthFrom=' + monthFrom + '&MonthTo=' + monthTo +
+                    '&SupFrom=' + supFrom + '&SupTo=' + supTo + '&UserName=' + userName;
+            },
+            error: function (result) {
+                console.error(result);
+            },
+        });
 
-        window.location.href = reportUrl + filename + '?MonthFrom=' + monthFrom + '&MonthTo=' + monthTo +
-            '&SupFrom=' + supFrom + '&SupTo=' + supTo + '&UserName=' + userName;
     });
 });
