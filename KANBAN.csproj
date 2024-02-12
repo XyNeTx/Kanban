@@ -172,10 +172,12 @@
     <None Include="wwwroot\assets\.libs\splash\splash.js.map" />
     <None Include="wwwroot\assets\.libs\splash\splash.min.js" />
     <None Include="wwwroot\assets\.libs\splash\splash.min.js.map" />
+    <None Include="wwwroot\assets\.script\OrderReport\KBNRT160.js" />
     <None Include="wwwroot\assets\.script\OrderReport\KBNRT140.js" />
     <None Include="wwwroot\assets\.script\OrderReport\KBNRT110.js" />
     <None Include="wwwroot\assets\.script\OrderReport\KBNRT120.js" />
     <None Include="wwwroot\assets\.script\OrderReport\KBNRT130.js" />
+    <None Include="wwwroot\assets\.script\OrderReport\KBNRT150.js" />
     <None Include="wwwroot\assets\.script\ReceiveProcess\KBNCR130.js" />
     <None Include="wwwroot\assets\.script\ReceiveProcess\KBNCR140.js" />
     <None Include="wwwroot\assets\.script\ReceiveProcess\KBNCR150.js" />

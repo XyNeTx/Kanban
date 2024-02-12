@@ -66,6 +66,7 @@ namespace HINOSystem.Context
         public DbSet<V_KBNRT_140> V_KBNRT_140_rpt { get; set; }
         public DbSet<RPT_KBNRT_110> RPT_KBNRT_110 { get; set; }
         public DbSet<V_KBNRT_110_rpt> V_KBNRT_110_rpt { get; set; }
+        public DbSet<TB_Transaction> TB_Transaction { get; set; }
 
         //protected override void OnModelCreating(ModelBuilder modelBuilder)
         //{

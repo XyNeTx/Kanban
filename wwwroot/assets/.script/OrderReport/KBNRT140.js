@@ -42,10 +42,14 @@
                 console.log(result);
                 $("#F_StoreFrom").empty();
                 $("#F_StoreTo").empty();
+                $("#F_StoreFrom").append($("<option id='StoreFromBlank'></option>"));
+                $("#F_StoreTo").append($("<option id='StoreToBlank'></option>"));
                 $.each(result.data, function (i, v) {
                     $("#F_StoreFrom").append($("<option>", { value: v, text: v }, "</option>"));
                     $("#F_StoreTo").append($("<option>", { value: v, text: v }, "</option>"));
                 });
+                $('#StoreFromBlank').hide();
+                $('#StoreToBlank').hide();
             },
             error: function (result) {
                 return console.error(result);
