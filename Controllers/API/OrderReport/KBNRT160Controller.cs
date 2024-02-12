@@ -350,12 +350,15 @@ namespace KANBAN.Controllers.API.OrderReport
                     new SqlParameter("@ShiftTo", shiftTo)
                     );
 
+                string _jsonData = JsonConvert.SerializeObject(userName);
+                string _jsonData2 = JsonConvert.SerializeObject(hostName);
+
                 _result = @"{
                                     ""status"":""200"",
                                     ""response"":""OK"",
                                     ""message"": ""Data Found"",
-                                    ""data"": " + userName + @",
-                                    ""data2"": " + hostName + @"
+                                    ""data"": " + _jsonData + @",
+                                    ""data2"": " + _jsonData2 + @"
                                     }";
 
                 return Ok(_result);

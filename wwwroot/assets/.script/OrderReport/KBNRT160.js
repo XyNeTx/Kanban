@@ -233,12 +233,11 @@
                 shiftTo: shiftTo
             },
             then: function (result) {
-                console.log(result.data);
-                console.log(result.data2);
-                //var filename = location.pathname.substring(location.pathname.lastIndexOf('/') + 1);
-                //var reportUrl = "http://hmmt-app03/Reportserver/report/KB3/";
-                //window.location.href = reportUrl + filename + '?MonthFrom=' + monthFrom + '&MonthTo=' + monthTo +
-                //    '&SupFrom=' + supFrom + '&SupTo=' + supTo + '&UserName=' + userName;
+                console.log(result);
+                console.log(result);
+                var filename = location.pathname.substring(location.pathname.lastIndexOf('/') + 1);
+                var reportUrl = "http://hmmt-app03/Reportserver/report/KB3/";
+                window.location.href = reportUrl + filename + '?HostName=' + result.data2 + '&UserName=' + result.data;
             },
             error: function (result) {
                 console.error(result);
