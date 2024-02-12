@@ -63,6 +63,7 @@ namespace HINOSystem.Context
         public DbSet<KANBAN.Models.KB3.Receive_Process.TB_MS_PartOrder> TB_MS_PartOrder { get; set; }
         public DbSet<TB_Import_Delivery> TB_Import_Delivery { get; set; }
         public DbSet<V_KBNRT_130> V_KBNRT_130_rpt { get; set; }
+        public DbSet<V_KBNRT_140> V_KBNRT_140_rpt { get; set; }
         public DbSet<RPT_KBNRT_110> RPT_KBNRT_110 { get; set; }
         public DbSet<V_KBNRT_110_rpt> V_KBNRT_110_rpt { get; set; }
 
