@@ -30,7 +30,6 @@
     $("#DeliveryDiv").click(function () {
         $("#F_CycleFrom").attr("disabled", false);
         $("#F_CycleTo").attr("disabled", false);
-
     });
 
     xAjax.onChange("#F_SupFrom , #F_DateFrom, #F_DateTo", function () {
