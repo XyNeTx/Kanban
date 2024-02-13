@@ -56,4 +56,28 @@
             }
         });
     });
+    xAjax.onChange("#F_StoreFrom", function () {
+        var storeFrom = $("#F_StoreFrom").val();
+        var storeTo = $("#F_StoreTo").val();
+        if (storeTo == "" || storeTo == null) {
+            $("#F_StoreTo").val(storeFrom);
+            storeTo = $("#F_StoreTo").val();
+        }
+    });
+    xAjax.onClick("#ReportBtn", function () {
+        var storeFrom = $("#F_StoreFrom").val();
+        var storeTo = $("#F_StoreTo").val();
+        var monthFromVal = $("#F_MonthFrom").val();
+        var monthToVal = $("#F_MonthTo").val();
+        var monthFrom = monthFromVal.split('/')[1] + monthFromVal.split('/')[0];
+        var monthTo = monthToVal.split('/')[1] + monthToVal.split('/')[0];
+
+        var filename = location.pathname.substring(location.pathname.lastIndexOf('/') + 1);
+
+        var userName = $("#profile-avatar").prop("title");
+
+        var reportUrl = "http://hmmt-app03/Reportserver/report/KB3/";
+        window.location.href = reportUrl + filename + '?StoreFrom=' + storeFrom + '&StoreTo=' + storeTo +
+        '&MonthFrom=' + monthFrom + '&MonthTo=' + monthTo + '&UserName=' + userName;
+    });
 });

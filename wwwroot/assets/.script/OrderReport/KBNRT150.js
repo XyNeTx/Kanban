@@ -48,4 +48,39 @@
             },
         });
     });
+    xAjax.onClick("#ReportBtn", function () {
+        var typeFrom = $("#F_ImpTypeFrom").val();
+        var typeTo = $("#F_ImpTypeTo").val();
+        var orderFrom = $("#F_OrderFrom").val().replaceAll('-', '');
+        var orderTo = $("#F_OrderTo").val().replaceAll('-', '');
+
+        if (typeFrom == null || typeFrom == undefined || typeTo == null || typeTo == undefined) {
+            xSwal.error("Supplier Code is empty", "Please Select Supplier Code");
+        }
+        if (typeFrom > typeTo) {
+            xSwal.error("Invalid Input Supplier Code", "Please Select Supplier Code From less than Supplier Code To");
+        }
+        if (orderFrom > orderTo) {
+            xSwal.error("Invalid Input Order Date", "Please Select Order Date From less than Order Date To");
+        }
+
+        xAjax.Post({
+            url: 'KBNRT150/OnReportBtnClick',
+            data: {
+                orderFrom: orderFrom,
+                orderTo: orderTo,
+                typeFrom: typeFrom,
+                typeTo: typeTo
+            },
+            then: function (result) {
+                console.log(result);
+                var filename = location.pathname.substring(location.pathname.lastIndexOf('/') + 1);
+                var reportUrl = "http://hmmt-app03/Reportserver/report/KB3/";
+                window.location.href = reportUrl + filename + '?HostName=' + result.data2 + '&UserName=' + result.data;
+            },
+            error: function (result) {
+                console.error(result);
+            }
+        });
+    });
 });
