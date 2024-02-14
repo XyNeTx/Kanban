@@ -55,13 +55,13 @@
         var orderTo = $("#F_OrderTo").val().replaceAll('-', '');
 
         if (typeFrom == null || typeFrom == undefined || typeTo == null || typeTo == undefined) {
-            xSwal.error("Supplier Code is empty", "Please Select Supplier Code");
+            return xSwal.error("Supplier Code is empty", "Please Select Supplier Code");
         }
         if (typeFrom > typeTo) {
-            xSwal.error("Invalid Input Supplier Code", "Please Select Supplier Code From less than Supplier Code To");
+            return xSwal.error("Invalid Input Supplier Code", "Please Select Supplier Code From less than Supplier Code To");
         }
         if (orderFrom > orderTo) {
-            xSwal.error("Invalid Input Order Date", "Please Select Order Date From less than Order Date To");
+            return xSwal.error("Invalid Input Order Date", "Please Select Order Date From less than Order Date To");
         }
 
         xAjax.Post({

@@ -1,5 +1,4 @@
 ﻿$(document).ready(function () {
-    xSplash.hide();
 
     function hideBlank() {
         $('#supFromBlank').hide();
@@ -43,20 +42,6 @@
         },
     });
 
-    //xAjax.Post({
-    //    url: 'KBNRT190/Initial',
-    //    then: function (result) {
-    //        //console.log(result);
-    //        $.each(result.data, function (i, v) {
-    //            $("#F_TripFrom").append($("<option>", { value: v, text: v }, "</option>"));
-    //            $("#F_TripTo").append($("<option>", { value: v, text: v }, "</option>"));
-    //        });
-    //        hideBlank();
-    //    },
-    //    error: function (result) {
-    //        console.error("Initial Error from Receive Special Report");
-    //    },
-    //});
 
     xAjax.onChange("#F_SupFrom, #F_SupTo", function () {
         if ($("#F_SupTo").val() == null || $("#F_SupTo").val() == "") {
@@ -266,45 +251,45 @@
             var dateTo = $("#F_OrderDateTo").val().replaceAll('-', '');
             var tripFrom = null;
             var tripTo = null;
-            var url = "KBNRT160/OnReportBtnClickDelivery";
+            var url = "KBNRT190/OnReportBtnOrder";
         }
         else if (checked === "Delivery") {
             var dateFrom = $("#F_DeliDateFrom").val().replaceAll('-', '');
             var dateTo = $("#F_DeliDateTo").val().replaceAll('-', '');
             var tripFrom = $("#F_TripFrom").val();
             var tripTo = $("#F_TripTo").val();
-            var url = "KBNRT160/OnReportBtnClickOrder";
+            var url = "KBNRT190/OnReportBtnDelivery";
         }
 
         if (supFrom == null || supFrom == undefined || supTo == null || supTo == undefined) {
-            xSwal.error("Supplier Code is empty", "Please Select Supplier Code");
+            return xSwal.error("Supplier Code is empty", "Please Select Supplier Code");
         }
         if (supFrom > supTo) {
-            xSwal.error("Invalid Input Supplier Code", "Please Select Supplier Code From less than Supplier Code To");
+            return xSwal.error("Invalid Input Supplier Code", "Please Select Supplier Code From less than Supplier Code To");
         }
         if (kbnFrom == null || kbnFrom == undefined || kbnTo == null || kbnTo == undefined) {
-            xSwal.error("Kanban No is empty", "Please Select Kanban No");
+            return xSwal.error("Kanban No is empty", "Please Select Kanban No");
         }
         if (kbnFrom > kbnTo) {
-            xSwal.error("Invalid Input Kanban No", "Please Select Kanban No From less than Kanban No To");
+            return xSwal.error("Invalid Input Kanban No", "Please Select Kanban No From less than Kanban No To");
         }
         if (storeFrom == null || storeFrom == undefined || storeTo == null || storeTo == undefined) {
-            xSwal.error("Store Code is empty", "Please Select Store Code");
+            return xSwal.error("Store Code is empty", "Please Select Store Code");
         }
         if (storeFrom > storeTo) {
-            xSwal.error("Invalid Input Store Code", "Please Select Store Code From less than Store Code To");
+            return xSwal.error("Invalid Input Store Code", "Please Select Store Code From less than Store Code To");
         }
-        if (orderFrom > orderTo) {
-            xSwal.error("Invalid Input Order Date", "Please Select Order Date From less than Order Date To");
+        if (dateFrom > dateTo) {
+            return xSwal.error("Invalid Input Date", "Please Select Date From less than Date To");
         }
         if (partFrom == null || partFrom == undefined || partTo == null || partTo == undefined) {
-            xSwal.error("Part No. is empty", "Please Select Part No.");
+            return xSwal.error("Part No. is empty", "Please Select Part No.");
         }
         if (partFrom > partTo) {
-            xSwal.error("Invalid Input Part No", "Please Select Part No From less than Part No To");
+            return xSwal.error("Invalid Input Part No", "Please Select Part No From less than Part No To");
         }
         if (tripFrom == null || tripFrom == undefined || tripTo == null || tripTo == undefined) {
-            xSwal.error("Delivery Trip is empty", "Please Select Delivery Trip");
+            return xSwal.error("Delivery Trip is empty", "Please Select Delivery Trip");
         }
         xAjax.Post({
             url: url,
@@ -330,7 +315,7 @@
                 window.location.href = reportUrl + filename + '?HostName=' + result.data2 + '&UserName=' + result.data;
             },
             error: function (result) {
-                console.error(result);
+                return console.error(result);
             }
         });
     });

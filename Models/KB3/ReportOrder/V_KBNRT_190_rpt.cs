@@ -20,7 +20,7 @@ namespace KANBAN.Models.KB3.ReportOrder
         public int Qty_KB { get; set; }
         public int Deli_trip { get; set; }
         public int F_Box_Qty { get; set; }
-        public int F_Box_Amount { get; set; }
+        public int F_Unit_Amount { get; set; }
         public int F_Receive_amount { get; set; }
     }
 }

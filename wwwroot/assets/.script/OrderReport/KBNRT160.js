@@ -187,34 +187,34 @@
         var shiftTo = $("#F_ShiftTo").val().substring(0, 1);
 
         if (supFrom == null || supFrom == undefined || supTo == null || supTo == undefined) {
-            xSwal.error("Supplier Code is empty", "Please Select Supplier Code");
+            return xSwal.error("Supplier Code is empty", "Please Select Supplier Code");
         }
         if (supFrom > supTo) {
-            xSwal.error("Invalid Input Supplier Code", "Please Select Supplier Code From less than Supplier Code To");
+            return xSwal.error("Invalid Input Supplier Code", "Please Select Supplier Code From less than Supplier Code To");
         }
         if (kbnFrom == null || kbnFrom == undefined || kbnTo == null || kbnTo == undefined) {
-            xSwal.error("Kanban No is empty", "Please Select Kanban No");
+            return xSwal.error("Kanban No is empty", "Please Select Kanban No");
         }
         if (kbnFrom > kbnTo) {
-            xSwal.error("Invalid Input Kanban No", "Please Select Kanban No From less than Kanban No To");
+            return xSwal.error("Invalid Input Kanban No", "Please Select Kanban No From less than Kanban No To");
         }
         if (storeFrom == null || storeFrom == undefined || storeTo == null || storeTo == undefined) {
-            xSwal.error("Store Code is empty", "Please Select Store Code");
+            return xSwal.error("Store Code is empty", "Please Select Store Code");
         }
         if (storeFrom > storeTo) {
-            xSwal.error("Invalid Input Store Code", "Please Select Store Code From less than Store Code To");
+            return xSwal.error("Invalid Input Store Code", "Please Select Store Code From less than Store Code To");
         }
         if (orderFrom > orderTo) {
-            xSwal.error("Invalid Input Order Date", "Please Select Order Date From less than Order Date To");
+            return xSwal.error("Invalid Input Order Date", "Please Select Order Date From less than Order Date To");
         }
         if (partFrom == null || partFrom == undefined || partTo == null || partTo == undefined) {
-            xSwal.error("Part No. is empty", "Please Select Part No.");
+            return xSwal.error("Part No. is empty", "Please Select Part No.");
         }
         if (partFrom > partTo) {
-            xSwal.error("Invalid Input Part No", "Please Select Part No From less than Part No To");
+            return xSwal.error("Invalid Input Part No", "Please Select Part No From less than Part No To");
         }
         if (shiftFrom == null || shiftFrom == undefined || shiftTo == null || shiftTo == undefined) {
-            xSwal.error("Order Shift is empty", "Please Select Order Shift");
+            return xSwal.error("Order Shift is empty", "Please Select Order Shift");
         }
         xAjax.Post({
             url: 'KBNRT160/OnReportBtnClick',
