@@ -160,6 +160,11 @@ namespace KANBAN.Controllers.API.OrderReport
                 //string shiftTo = _json["shiftTo"];
 
                 var kanbanDB = await _KB3Context.TB_MS_PartOrder
+                    .Select(x => new
+                    {
+                        F_Supplier_Cd = x.F_Supplier_Cd + '-' + x.F_Supplier_Plant,
+                        F_Kanban_No = x.F_Kanban_No
+                    })
                     .Where(x => x.F_Supplier_Cd.CompareTo(supFrom) >= 0 && x.F_Supplier_Cd.CompareTo(supTo) <= 0)
                     .Select(x => new
                     {
@@ -167,6 +172,11 @@ namespace KANBAN.Controllers.API.OrderReport
                     }).OrderBy(x => x.F_Sebango).Distinct().ToListAsync();
 
                 var storeDB = await _KB3Context.TB_MS_PartOrder
+                    .Select(x => new
+                    {
+                        F_Supplier_Cd = x.F_Supplier_Cd + '-' + x.F_Supplier_Plant,
+                        F_Store_Code = x.F_Store_Code
+                    })
                     .Where(x => x.F_Supplier_Cd.CompareTo(supFrom) >= 0 && x.F_Supplier_Cd.CompareTo(supTo) <= 0)
                     .Select(x => new
                     {
@@ -174,6 +184,12 @@ namespace KANBAN.Controllers.API.OrderReport
                     }).OrderBy(x => x.F_Store_CD).Distinct().ToListAsync();
 
                 var partDB = await _KB3Context.TB_MS_PartOrder
+                    .Select(x => new
+                    {
+                        F_Supplier_Cd = x.F_Supplier_Cd + '-' + x.F_Supplier_Plant,
+                        F_Part_No = x.F_Part_No,
+                        F_Ruibetsu = x.F_Ruibetsu
+                    })
                     .Where(x => x.F_Supplier_Cd.CompareTo(supFrom) >= 0 && x.F_Supplier_Cd.CompareTo(supTo) <= 0)
                     .Select(x => new
                     {
@@ -218,6 +234,12 @@ namespace KANBAN.Controllers.API.OrderReport
                 string kbnTo = _json["kbnTo"];
 
                 var storeDB = await _KB3Context.TB_MS_PartOrder
+                    .Select(x => new
+                    {
+                        F_Supplier_Cd = x.F_Supplier_Cd + '-' + x.F_Supplier_Plant,
+                        F_Kanban_No = x.F_Kanban_No,
+                        F_Store_Code = x.F_Store_Code
+                    })
                     .Where(x => x.F_Supplier_Cd.CompareTo(supFrom) >= 0 && x.F_Supplier_Cd.CompareTo(supTo) <= 0)
                     .Where(x => x.F_Kanban_No.CompareTo(kbnFrom) >= 0 && x.F_Kanban_No.CompareTo(kbnTo) <= 0)
                     .Select(x => new
@@ -226,6 +248,13 @@ namespace KANBAN.Controllers.API.OrderReport
                     }).OrderBy(x => x.F_Store_CD).Distinct().ToListAsync();
 
                 var partDB = await _KB3Context.TB_MS_PartOrder
+                    .Select(x => new
+                    {
+                        F_Supplier_Cd = x.F_Supplier_Cd + '-' + x.F_Supplier_Plant,
+                        F_Kanban_No = x.F_Kanban_No,
+                        F_Part_No = x.F_Part_No,
+                        F_Ruibetsu = x.F_Ruibetsu
+                    })
                     .Where(x => x.F_Supplier_Cd.CompareTo(supFrom) >= 0 && x.F_Supplier_Cd.CompareTo(supTo) <= 0)
                     .Where(x => x.F_Kanban_No.CompareTo(kbnFrom) >= 0 && x.F_Kanban_No.CompareTo(kbnTo) <= 0)
                     .Select(x => new
@@ -271,6 +300,14 @@ namespace KANBAN.Controllers.API.OrderReport
                 string storeTo = _json["storeTo"];
 
                 var partDB = await _KB3Context.TB_MS_PartOrder
+                    .Select(x => new
+                    {
+                        F_Supplier_Cd = x.F_Supplier_Cd + '-' + x.F_Supplier_Plant,
+                        F_Kanban_No = x.F_Kanban_No,
+                        F_Store_Code = x.F_Store_Code,
+                        F_Part_No = x.F_Part_No,
+                        F_Ruibetsu = x.F_Ruibetsu
+                    })
                     .Where(x => x.F_Supplier_Cd.CompareTo(supFrom) >= 0 && x.F_Supplier_Cd.CompareTo(supTo) <= 0)
                     .Where(x => x.F_Kanban_No.CompareTo(kbnFrom) >= 0 && x.F_Kanban_No.CompareTo(kbnTo) <= 0)
                     .Where(x => x.F_Store_Code.CompareTo(storeFrom) >= 0 && x.F_Store_Code.CompareTo(storeTo) <= 0)

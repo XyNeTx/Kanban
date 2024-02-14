@@ -8,6 +8,7 @@
                 $("#F_SupTo").append($("<option>", { value: v.F_Supplier, text: v.F_Supplier }, "</option>"));
             });
             $("#SupFromBlank").hide();
+            $("#SupToBlank").hide();
             xSplash.hide();
         },
         error: function (result) {
@@ -20,16 +21,22 @@
     $("#F_DeliDateTo").attr("disabled", true);
 
     $("#OrderDiv").click(function () {
-        $("#F_DeliDateFrom").attr("disabled", true);
-        $("#F_DeliDateTo").attr("disabled", true);
-        $("#F_OrderDateFrom").attr("disabled", false);
-        $("#F_OrderDateTo").attr("disabled", false);
+        var checked = $("input[name='radDate']:checked").val();
+        if (checked === "Order") {
+            $("#F_DeliDateFrom").attr("disabled", true);
+            $("#F_DeliDateTo").attr("disabled", true);
+            $("#F_OrderDateFrom").attr("disabled", false);
+            $("#F_OrderDateTo").attr("disabled", false);
+        }
     });
     $("#DeliveryDiv").click(function () {
-        $("#F_OrderDateFrom").attr("disabled", true);
-        $("#F_OrderDateTo").attr("disabled", true);
-        $("#F_DeliDateFrom").attr("disabled", false);
-        $("#F_DeliDateTo").attr("disabled", false);
+        var checked = $("input[name='radDate']:checked").val();
+        if (checked === "Delivery") {
+            $("#F_OrderDateFrom").attr("disabled", true);
+            $("#F_OrderDateTo").attr("disabled", true);
+            $("#F_DeliDateFrom").attr("disabled", false);
+            $("#F_DeliDateTo").attr("disabled", false);
+        }
     });
 
 });
