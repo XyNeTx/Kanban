@@ -161,7 +161,8 @@ namespace HINOSystem.Controllers.API.Master
 
 
                 _SQL = "EXEC [QQ].[Chg_IssuedDate] '" + _json.pdsno + "' ";
-                _kanbanConnect.Execute(_SQL);
+                _KBCN.Plant = 1;
+                _KBCN.Execute(_SQL);
 
                 _PCWCN.Execute(_SQL, skipLog:true);
                 
@@ -196,13 +197,12 @@ namespace HINOSystem.Controllers.API.Master
             {
                 dynamic _json = JsonConvert.DeserializeObject(pData);
 
-                _SQL = @"
-                        UPDATE TB_REC_DETAIL 
-                        SET [F_Receive_Date] = '" + _json.receivedate + @"' 
-                        WHERE 1=1 
-                        AND F_OrderNo = '" + _json.pdsno + @"' ;
-                ";
-                _kanbanConnect.Execute(_SQL);
+                _SQL = "EXEC [QQ].[Chg_ReceiveDate] '" + _json.pdsno + "', '" + _json.receivedate + "' ";
+                _KBCN.Plant = 1;
+                _KBCN.Execute(_SQL);
+
+                _PCWCN.Execute(_SQL, skipLog: true);
+
 
                 _result = @"{
                         ""status"":""200"",

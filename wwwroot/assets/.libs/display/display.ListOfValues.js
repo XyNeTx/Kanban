@@ -43,12 +43,14 @@ $(document).ready(function () {
         }
 
 
-        var _columnTitle = Array('No.');
-        var _column = Array({ "data": "RunningNo" });
+        //var _columnTitle = Array('No.');
+        //var _column = Array({ "data": "RunningNo" });
+        var _columnTitle = Array({});
+        var _column = Array({});
         for (var i = 0; i < _value.length; i++) {
             var _description = _value[i].split(':')[1];
-            _columnTitle[i + 1] = _description;
-            _column[i + 1] = { "data": _description };
+            _columnTitle[i] = ReplaceAll(_description,'_',' ');
+            _column[i] = { "data": _description };
         }
 
         //console.log('/' + _controller + '/' + _method);
@@ -59,7 +61,6 @@ $(document).ready(function () {
             {
                 type: "POST",
                 headers: ajexHeader,
-                //url: 'https://localhost:7267/LOVKB3/PartList',
                 url: '../' + _controller + '/' + _method,
                 success: function (result) {
                     //console.log(result);

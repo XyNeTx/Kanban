@@ -21,6 +21,7 @@ const _NAMESPACE_ = (window.location.host.indexOf('localhost') >= 0 ? '' : 'kanb
 const _HOSTNAME_ = (_NAMESPACE_ == '' ? _hostname_dev : _hostname_prod);
 const _DEV_ = (_NAMESPACE_ == '' ? true : (queryString == '?dev' ? true : false));
 
+const _SYSTEMNAME_ = 'Hino Kanban F.3';
 
 
 const _DEVELOPER_ = {

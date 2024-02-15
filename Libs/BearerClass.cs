@@ -80,8 +80,7 @@ namespace HINOSystem.Libs
                 return JObject.Parse(@"{
                                         ""status"":""401"",
                                         ""response"":""Unauthorized"",
-                                        ""message"": ""Unauthorized"",
-                                        ""data"": null
+                                        ""message"": ""Unauthorized""
                                     }"
                 );
             }

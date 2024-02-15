@@ -44,7 +44,7 @@ namespace HINOSystem.Controllers.API.lov
                 BearerClass _JBearer = _BearerClass.Header(Request);
                 if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
 
-                _SQL = "SELECT '' AS RunningNo, Number AS Code, Name AS Description FROM [mst].[Part] WHERE isDelete=0 ORDER BY _ID ";
+                _SQL = "SELECT F_Supplier_Code AS Supplier_Code, F_Short_Name AS Supplier_Name FROM [dbo].[TB_MS_SupplierAttn] ";
                 string _jsPartList = _KBCN.ExecuteJSON(_SQL, pUser: _JBearer, skipLog: true);
 
                 string _result = @"{

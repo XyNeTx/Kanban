@@ -508,7 +508,7 @@ class libDataTable {
     bind = function (pTable = null, pData = null) {
         pTable = CheckObject(pTable);
 
-        console.log(pTable);
+        //console.log(pTable);
 
         if (pTable != null) {
 

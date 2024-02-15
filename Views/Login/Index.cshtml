@@ -70,13 +70,15 @@
     <script type="text/javascript" src="~/assets/.libs/class/lab.ClockTimer.js"></script>
     <script type="text/javascript" src="~/assets/.libs/class/lab.Date.js"></script>
     <script type="text/javascript" src="~/assets/.libs/class/lab.Item.js"></script>
+    <script type="text/javascript" src="~/assets/.libs/class/lab.API.js"></script>
+    @*<script type="text/javascript" src="http://hmmt-app07/api/assets/.libs/class/lab.API.js"></script>*@
 
 
 </head>
 
 <body>
     <div id="vueApp">
-
+        
         <div class="container">
             <div class="screen-display">
                 <div class="bubbles">
@@ -184,8 +186,8 @@
 
                     <div class="mb-3 position-relative">
                         <select class="form-select" id="ddlShift" name="ddlShift" :value="formAuthentication.ddlShift">
-                            <option value="D">1 : Day Shift</option>
-                            <option value="N">2 : Night Shift</option>
+                            <option value="1">1 : Day Shift</option>
+                            <option value="2">2 : Night Shift</option>
                         </select>
                     </div>
                     <div class="mb-3">
@@ -224,7 +226,7 @@
             $('.gj-datepicker').attr('style', 'height:39px;');
             $('[role="right-icon"]').attr('style', 'height:39px;');
             $('#txtProcessDate').attr('style', 'max-width: 220px;');
-            
+
         });
 
 
@@ -247,10 +249,6 @@
                     }, false)
                 })
         })();
-
-
-
-
 
     </script>
 

@@ -202,6 +202,7 @@ namespace HINOSystem.Libs
             ViewData["_ProcessDate"] = _context.HttpContext.Session.GetString("USER_PROCESSDATE").ToString();
             ViewData["_Plant"] = _context.HttpContext.Session.GetString("USER_PLANT").ToString();
             ViewData["_ProcessShift"] = _context.HttpContext.Session.GetString("USER_SHIFT").ToString();
+            ViewData["_ShiftTitle"] = (_context.HttpContext.Session.GetString("USER_SHIFT").ToString() =="1" ? "1 - Day Shift" : "2 - Night Shift");
             //# Session
             ViewData["_Domain"] = _context.HttpContext.Session.GetString("USER_DOMAIN").ToString();
             ViewData["_Account"] = (_context.HttpContext.Session.GetString("USER_DOMAIN").ToString() != "" ? _context.HttpContext.Session.GetString("USER_DOMAIN").ToString() + @"\" : "") + _context.HttpContext.Session.GetString("USER_CODE").ToString();
