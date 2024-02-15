@@ -22,14 +22,20 @@
     });
 
     $("#OrderDiv").click(function () {
-        $("#F_CycleFrom").val("");
-        $("#F_CycleTo").val("");
-        $("#F_CycleFrom").attr("disabled", true);
-        $("#F_CycleTo").attr("disabled", true);
+        var checked = $("input[name='radDate']:checked").val();
+        if (checked === "Order") {
+            $("#F_CycleFrom").val("");
+            $("#F_CycleTo").val("");
+            $("#F_CycleFrom").attr("disabled", true);
+            $("#F_CycleTo").attr("disabled", true);
+        }
     });
     $("#DeliveryDiv").click(function () {
-        $("#F_CycleFrom").attr("disabled", false);
-        $("#F_CycleTo").attr("disabled", false);
+        var checked = $("input[name='radDate']:checked").val();
+        if (checked === "Delivery") {
+            $("#F_CycleFrom").attr("disabled", false);
+            $("#F_CycleTo").attr("disabled", false);
+        }
     });
 
     xAjax.onChange("#F_SupFrom , #F_DateFrom, #F_DateTo", function () {
