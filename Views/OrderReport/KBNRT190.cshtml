@@ -1,12 +1,142 @@
 ﻿<div class="row">
+
+    <div class="col-xl-12 col-md-12 col-sm-12">
+        <div class="card border-left-primary shadow h-100">
+            <div class="card-body">
+                <form id="frmCondition">
+                        <div class="row mb-3 ms-1">
+                            <div class="col">
+                                <label class="input-group-text w-75" for="F_SubFrom">
+                                    Supplier Code From : &nbsp;
+                                    <select id="F_SupFrom" class="form-select" label="Supplier From : ">
+                                        <option id="supFromBlank"></option>
+                                    </select>
+                                </label>
+                            </div>
+                            <div class="col">
+                                <label class="input-group-text w-50" for="F_SubTo">
+                                    To : &nbsp;
+                                    <select id="F_SupTo" class="form-select" label="To : ">
+                                        <option id="supToBlank"></option>
+                                    </select>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="row mb-3 ms-1">
+                            <div class="col">
+                                <label class="input-group-text w-75" for="F_KBNFrom">
+                                    Kanban No. From : &nbsp;
+                                    <select id="F_KBNFrom" class="form-select" label="Supplier From : ">
+                                        <option id="KBNFromBlank"></option>
+                                    </select>
+                                </label>
+                            </div>
+                            <div class="col">
+                                <label class="input-group-text w-50" for="F_KBNTo">
+                                    To : &nbsp;
+                                    <select id="F_KBNTo" class="form-select" label="Supplier To : ">
+                                        <option id="KBNToBlank"></option>
+                                    </select>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="row mb-3 ms-1">
+                            <div class="col">
+                                <label class="input-group-text w-75" for="F_StoreFrom">
+                                    Store Code From : &nbsp;
+                                    <select id="F_StoreFrom" class="form-select">
+                                        <option id="StoreFromBlank"></option>
+                                    </select>
+                                </label>
+                            </div>
+                            <div class="col">
+                                <label class="input-group-text w-50" for="F_StoreTo">
+                                    To : &nbsp;
+                                    <select id="F_StoreTo" class="form-select">
+                                        <option id="StoreToBlank"></option>
+                                    </select>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="row mb-3 ms-1">
+                            <div class="col">
+                                <label class="input-group-text w-75" for="F_PartFrom">
+                                    Part No. From : &nbsp;
+                                    <select id="F_PartFrom" class="form-select">
+                                        <option id="PartFromBlank"></option>
+                                    </select>
+                                </label>
+                            </div>
+                            <div class="col">
+                                <label class="input-group-text w-50" for="F_PartTo">
+                                    To : &nbsp;
+                                    <select id="F_PartTo" class="form-select">
+                                        <option id="PartToBlank"></option>
+                                    </select>
+                                </label>
+                            </div>
+                        </div>
+                    <fieldset class="fieldset mb-3">
+                        <legend class="row">
+                            <div id="DeliveryDiv" class="col ms-2">
+                                <input type="radio" class="form-check-input" name="radDate" id="DeliDate" value="Delivery" checked /><label class="form-check-label" style="margin-top: 0.2rem !important;" for="DeliDate">Delivery Date</label>
+                            </div>
+                        </legend>
+                        <div class="row mb-3">
+                            <div class="col">
+                                <item type="date" id="F_DeliDateFrom" label="Delivery Date From : " format="yyyy-mm-dd" default="now"></item>
+                            </div>
+                            <div class="col">
+                                <item type="date" id="F_DeliDateTo" label="To : " format="yyyy-mm-dd" default="now"></item>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label class="input-group-text w-75" for="F_TripFrom">
+                                    Delivery Trip From : &nbsp;
+                                    <select id="F_TripFrom" class="form-select">
+                                        <option id="TripFromBlank"></option>
+                                    </select>
+                                </label>
+                            </div>
+                            <div class="col">
+                                <label class="input-group-text w-50" for="F_TripTo">
+                                    To : &nbsp;                                             
+                                    <select id="F_TripTo" class="form-select">
+                                        <option id="TripToBlank"></option>
+                                    </select>
+                                </label>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <fieldset class="fieldset">
+                        <legend class="row">
+                            <div id="OrderDiv" class="col ms-2">
+                                <input type="radio" class="form-check-input" name="radDate" id="OrderDate" value="Order" /><label class="form-check-label" style="margin-top: 0.2rem !important;" for="OrderDate">Order Date</label>
+                            </div>
+                        </legend>
+                        <div class="row mb-2">
+                            <div class="col">
+                                <item type="date" id="F_OrderDateFrom" label="Order Date From : " format="yyyy-mm-dd" default="now"></item>
+                            </div>
+                            <div class="col">
+                                <item type="date" id="F_OrderDateTo" label="To : " format="yyyy-mm-dd" default="now"></item>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <div class="row mt-4">
+                        <div class="col d-flex justify-content-end align-text-bottom align-items-end align-content-end">
+                            <item type="button" style="height:fit-content" id="ReportBtn" label="Report"></item>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
-
-<script type="text/javascript">
-    $(document).ready(function () {
-
-        xSplash.hide();
-
-    });
-
-</script>
+@section Scripts {
+    <script type="text/javascript" src="~/assets/js/History/UserMaintenance.js"></script>
+    <script type="text/javascript" src="~/assets/.script/Template/Master.js"></script>
+    <script type="text/javascript" src="~/assets/.script/OrderReport/KBNRT190.js?@ViewData["Version"]"></script>
+}

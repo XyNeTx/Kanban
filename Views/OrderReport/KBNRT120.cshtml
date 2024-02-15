@@ -1,12 +1,98 @@
 ﻿<div class="row">
+
+    <div class="col-xl-12 col-md-12 col-sm-12">
+        <div class="card border-left-primary shadow h-100">
+            <div class="card-body">
+                <form id="frmCondition">
+                    <fieldset class="fieldset">
+                        <legend>Search Condition</legend>
+                        <div class="row mb-4">
+                            <div class="col-5">
+                                <label class="input-group-text" for="F_SubFrom">
+                                    Supplier Code From : &nbsp;
+                                    <select id="F_SupFrom" class="form-select" label="Supplier From : ">
+                                        <option id="supFromBlank"></option>
+                                    </select>
+                                </label>
+                            </div>
+                            <div class="col-4 ps-4 pe-4">
+                                <label class="input-group-text" for="F_SubTo">
+                                    To : &nbsp;
+                                    <select id="F_SupTo" class="form-select" label="To : ">
+                                        <option id="supToBlank"></option>
+                                    </select>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="row mb-4">
+                            <div class="col-5">
+                                <label class="input-group-text" for="F_KBNFrom">
+                                    Kanban No. From : &nbsp;
+                                    <select id="F_KBNFrom" class="form-select" label="Supplier From : ">
+                                        <option id="KBNFromBlank"></option>
+                                    </select>
+                                </label>
+                            </div>
+                            <div class="col-4 ps-4 pe-4">
+                                <label class="input-group-text" for="F_KBNTo">
+                                    To : &nbsp;
+                                    <select id="F_KBNTo" class="form-select" label="Supplier To : ">
+                                        <option id="KBNToBlank"></option>
+                                    </select>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="row mb-4">
+                            <div class="col-5">
+                                <label class="input-group-text" for="F_PartFrom">
+                                    Part No. From : &nbsp;
+                                    <select id="F_PartFrom" class="form-select">
+                                        <option id="PartFromBlank"></option>
+                                    </select>
+                                </label>
+                            </div>
+                            <div class="col-4 ps-4 pe-4">
+                                <label class="input-group-text" for="F_PartTo">
+                                    To : &nbsp;
+                                    <select id="F_PartTo" class="form-select">
+                                        <option id="PartToBlank"></option>
+                                    </select>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="row mb-4">
+                            <div class="col-5">
+                                <label class="input-group-text" for="F_StoreFrom">
+                                    Store Code From : &nbsp;
+                                    <select id="F_StoreFrom" class="form-select">
+                                        <option id="StoreFromBlank"></option>
+                                    </select>
+                                </label>
+                            </div>
+                            <div class="col-4 ps-4 pe-4">
+                                <label class="input-group-text" for="F_StoreTo">
+                                    To : &nbsp;
+                                    <select id="F_StoreTo" class="form-select">
+                                        <option id="StoreToBlank"></option>
+                                    </select>
+                                </label>
+                            </div>
+                        </div>
+                    </fieldset>
+                </form>
+                <div class="row mt-4">
+                    <div class="col d-flex justify-content-end align-text-bottom align-items-end align-content-end">
+                        <item type="button" style="height:fit-content" id="ReportStatusBtn" label="Report Status"></item>
+                        <item type="button" style="height:fit-content" id="ReportDetailBtn" label="Report Detail"></item>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-
-<script type="text/javascript">
-    $(document).ready(function () {
-
-        xSplash.hide();
-
-    });
-
-</script>
+@section Scripts {
+    <script type="text/javascript" src="~/assets/js/History/UserMaintenance.js"></script>
+    <script type="text/javascript" src="~/assets/.script/Template/Master.js"></script>
+    <script type="text/javascript" src="~/assets/.script/OrderReport/KBNRT120.js?@ViewData["Version"]"></script>
+}

@@ -1,12 +1,94 @@
-﻿<div class="row">
+﻿<header>
+    <style>
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+    </style>
+</header>
+
+<div class="row">
+
+    <div class="col-xl-12 col-md-12 col-sm-12">
+        <div class="card border-left-primary shadow h-100">
+            <div class="card-body">
+                <form id="frmCondition">
+                    <fieldset class="fieldset">
+                        <legend>Select Condition</legend>
+                        <div class="row mb-2">
+                            <div class="col">
+                                <b>Type Order : </b>
+                            </div>
+                            <div class="col">
+                                <input type="radio" class="form-check-input" id="allRad" name="radio" checked value="All" /><label class="form-check-label" style="margin-top: 0.2rem !important;" for="allRad">All</label>
+                            </div>
+                            <div class="col">
+                                <input type="radio" class="form-check-input" id="7zRad" name="radio" value="7Z" /><label class="form-check-label" style="margin-top: 0.2rem !important;" for="7zRad">7Z</label>
+                            </div>
+                            <div class="col">
+                                <input type="radio" class="form-check-input" id="7yRad" name="radio" value="7Y" /><label class="form-check-label" style="margin-top: 0.2rem !important;" for="7yRad">7Y</label>
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-4">
+                                <item type="date" id="F_DeliveryFrom" label="Delivery Date From : " format="yyyy-mm-dd" default="now" readonly></item>
+                            </div>
+                            <div class="col-4 ms-4">
+                                <item type="date" id="F_DeliveryTo" label="To : " format="yyyy-mm-dd" default="now" readonly></item>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">
+                                <label class="input-group-text w-75" for="F_SupplierFrom">
+                                    Supplier From : &nbsp;
+                                    <select id="F_SupplierFrom" class="form-select" label="Supplier From : ">
+                                        <option id="supFromBlank"></option>
+                                    </select>
+                                </label>
+                            </div>
+                            <div class="col-4 ms-4">
+                                <label class="input-group-text w-50" for="F_SupplierFrom">
+                                    To : &nbsp;
+                                    <select id="F_SupplierTo" class="form-select" label="To : ">
+                                        <option id="supToBlank"></option>
+                                    </select>
+                                </label>
+                            </div>
+                            <div class="col d-flex justify-content-end align-text-bottom align-items-end align-content-end">
+                                <item class="me-2" style="height:fit-content" type="button" id="SearchBtn" label="Search"></item>
+                                <item type="button" style="height:fit-content" id="ReportBtn" label="Report"></item>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <fieldset class="fieldset mt-2">
+                        <legend>Receive Special Report Table : </legend>
+                        <div class="row">
+                            <div class="col mt-4">
+                                <table id="tblMaster" class="w-100">
+                                    <thead>
+                                        <tr>
+                                            <th>No.</th>
+                                            <th width="15%">Order No.</th>
+                                            <th width="15%">Supplier</th>
+                                            <th>Delivery Date</th>
+                                            <th>Receive Date</th>
+                                            <th>PDS Status</th>
+                                            <th>Receive Status</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
-
-<script type="text/javascript">
-    $(document).ready(function () {
-
-        xSplash.hide();
-
-    });
-
-</script>
+@section Scripts {
+    <script type="text/javascript" src="~/assets/js/History/UserMaintenance.js"></script>
+    <script type="text/javascript" src="~/assets/.script/Template/Master.js"></script>
+    <script type="text/javascript" src="~/assets/.script/ReceiveProcess/KBNCR220.js?@ViewData["Version"]"></script>
+}

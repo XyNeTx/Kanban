@@ -1,12 +1,55 @@
 ﻿<div class="row">
+
+    <div class="col-xl-12 col-md-12 col-sm-12">
+        <div class="card border-left-primary shadow h-100">
+            <div class="card-body">
+                <form id="frmCondition">
+                    <fieldset class="fieldset">
+                        <legend>Search Condition</legend>
+                        <div class="row mb-4">
+                                <div class="col ms-2">
+                                    <item type="date" id="F_OrderFrom" label="Order Date From : " format="yyyy-mm-dd" default="now" readonly></item>
+                                </div>
+                                <div class="col">
+                                    <item type="date" id="F_OrderTo" label="To : " format="yyyy-mm-dd" default="now" readonly></item>
+                                </div>
+                        </div>
+                        <div class="row mb-4">
+                            <div class="col ms-2">
+                                <div class="d-flex justify-content">
+                                    <label class="input-group-text" for="F_ImpTypeFrom">
+                                        Import Type From : &nbsp;
+                                        <select id="F_ImpTypeFrom" class="form-select">
+                                            <option id="ImpTypeFromBlank"></option>
+                                        </select>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="d-flex justify-content">
+                                    <label class="input-group-text" for="F_ImpTypeTo">
+                                        To : &nbsp;
+                                        <select id="F_ImpTypeTo" class="form-select">
+                                            <option id="ImpTypeToBlank"></option>
+                                        </select>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </form>
+                <div class="row mt-4">
+                    <div class="col d-flex justify-content-end align-text-bottom align-items-end align-content-end">
+                        <item type="button" style="height:fit-content" id="ReportBtn" label="Report"></item>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-
-<script type="text/javascript">
-    $(document).ready(function () {
-
-        xSplash.hide();
-
-    });
-
-</script>
+@section Scripts {
+    <script type="text/javascript" src="~/assets/js/History/UserMaintenance.js"></script>
+    <script type="text/javascript" src="~/assets/.script/Template/Master.js"></script>
+    <script type="text/javascript" src="~/assets/.script/OrderReport/KBNRT150.js?@ViewData["Version"]"></script>
+}

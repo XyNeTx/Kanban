@@ -1,12 +1,73 @@
 ﻿<div class="row">
+
+    <div class="col-xl-12 col-md-12 col-sm-12">
+        <div class="card border-left-primary shadow h-100">
+            <div class="card-body">
+                <form id="frmCondition">
+                    <fieldset class="fieldset">
+                        <legend>Search Condition</legend>
+                        <div class="row mb-4">
+                            <div class="col ms-2">
+                                <div class="d-flex justify-content">
+                                    <label class="input-group-text" for="F_SupFrom">
+                                        Supplier From : &nbsp;
+                                        <select id="F_SupFrom" class="form-select">
+                                            <option id="SupFromBlank"></option>
+                                        </select>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="d-flex justify-content">
+                                    <label class="input-group-text" for="F_SupTo">
+                                        To : &nbsp;
+                                        <select id="F_SupTo" class="form-select">
+                                            <option id="SupToBlank"></option>
+                                        </select>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-4">
+                            <div id="OrderDiv" class="col ms-4">
+                                <input type="radio" class="form-check-input" name="radDate" id="OrderDate" value="Order" checked /><label class="form-check-label" style="margin-top: 0.2rem !important;" for="OrderDate">Order Date</label>
+                            </div>
+                        </div>
+                        <div class="row mb-4">
+                            <div class="col ms-2">
+                                <item type="date" id="F_OrderDateFrom" label="Order Date From : " format="yyyy-mm-dd" default="now"></item>
+                            </div>
+                            <div class="col">
+                                <item type="date" id="F_OrderDateTo" label="To : " format="yyyy-mm-dd" default="now"></item>
+                            </div>
+                        </div>
+                        <div class="row mb-4">
+                            <div id="DeliveryDiv" class="col ms-4">
+                                <input type="radio" class="form-check-input" name="radDate" id="DeliDate" value="Delivery" /><label class="form-check-label" style="margin-top: 0.2rem !important;" for="DeliDate">Delivery Date</label>
+                            </div>
+                        </div>
+                        <div class="row mb-4">
+                            <div class="col ms-2">
+                                <item type="date" id="F_DeliDateFrom" label="Delivery Date From : " format="yyyy-mm-dd" default="now"></item>
+                            </div>
+                            <div class="col">
+                                <item type="date" id="F_DeliDateTo" label="To : " format="yyyy-mm-dd" default="now"></item>
+                            </div>
+                        </div>
+                    </fieldset>
+                </form>
+                <div class="row mt-4">
+                    <div class="col d-flex justify-content-end align-text-bottom align-items-end align-content-end">
+                        <item type="button" style="height:fit-content" id="ReportBtn" label="Report"></item>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-
-<script type="text/javascript">
-    $(document).ready(function () {
-
-        xSplash.hide();
-
-    });
-
-</script>
+@section Scripts {
+    <script type="text/javascript" src="~/assets/js/History/UserMaintenance.js"></script>
+    <script type="text/javascript" src="~/assets/.script/Template/Master.js"></script>
+    <script type="text/javascript" src="~/assets/.script/OrderReport/KBNRT180.js?@ViewData["Version"]"></script>
+}

@@ -3,9 +3,7 @@
     <div class="col-xl-12 col-md-12 col-sm-12">
         <div class="card border-left-primary shadow h-100">
             <div class="card-body">
-
                 <form id="frmCondition">
-
                     <fieldset class="fieldset">
                         <legend>Select PDS No. : </legend>
 
@@ -20,36 +18,29 @@
 
                         <div class="row">
                             <div class="col-3">
-                                <item type="text" id="F_OrderFrom" label="PDS No."></item>
+                                <item type="text" id="F_PDS_No" label="PDS No."></item>
                             </div>
                         </div>
-
-
-
-@*                        <div class="row">
-                            <div class="col-3">
-                                <item type="select" id="F_OrderFrom" label="Order No."></item>
-                            </div>
-                            <div class="col-3">
-                                <item type="select" id="F_OrderTo" label="To"></item>
-                            </div>
-                        </div>*@
-
                     </fieldset>
-                </form>
-
-                <div class="row">
-                    <div class="col mt-4">
-                        <item type="table" id="tblMaster"></item>
+                    <div class="row">
+                        <div class="col mt-4">
+                            <item type="table" id="tblMaster"></item>
+                        </div>
                     </div>
-                </div>
-
+                    <div class="row mt-4">
+                        <div class="col">
+                            <a id="uploadEpro" style="width:fit-content" class="btn page-link">Upload Receive To E-Pro</a>
+                        </div>
+                        <div class="col d-flex justify-content-end">
+                            <a id="ClearBtn" class="btn page-link me-4 text-danger">Clear</a>
+                            <a id="ReceiveBtn" class="btn page-link">Receive</a>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
-
 </div>
-
 
 <!-- Modal Master -->
 <div class="modal fade" id="modalMaster" tabindex="-1" aria-labelledby="modalMasterLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
@@ -89,15 +80,15 @@
                         <section class="w-100 p-2">
                             <div class="row g-2">
                                 <div class="col-md-6">
-                                    <item type="text" id="F_OrderType" label="Order Type"></item>
+                                    <item type="text" id="F_PDS_No" label="PDS No."></item>
                                 </div>
                             </div>
                             <div class="row g-2">
                                 <div class="col-md-6">
-                                    <item type="date" id="F_Effect_Date" label="Effective Date" format="yyyy-mm-dd" default="now" noedit required></item>
+                                    <item type="date" id="F_Delivery_Date" label="Delivery Date" format="yyyy-mm-dd" default="now" noedit required></item>
                                 </div>
                                 <div class="col-md-6">
-                                    <item type="date" id="F_End_Date" label="End Date" format="yyyy-mm-dd" default="now" noedit required></item>
+                                    <item type="date" id="F_Delivery_Trip" label="Delivery Trip" format="yyyy-mm-dd" default="now" noedit required></item>
                                 </div>
                             </div>
                         </section>

@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using HINOSystem.Models.KB3.Master;
+using KANBAN.Models.KB3.Receive_Process;
+using KANBAN.Models.KB3.ReportOrder;
 
 namespace HINOSystem.Context
 {
@@ -11,7 +13,7 @@ namespace HINOSystem.Context
     {
         public KB3Context(DbContextOptions<KB3Context> options)
             : base(options)
-        {}
+        { }
 
         public DbSet<TB_MS_CodeOrder> TB_MS_CodeOrder { get; set; } = null!;
         public DbSet<TB_MS_Company> TB_MS_Company { get; set; } = null!;
@@ -23,7 +25,7 @@ namespace HINOSystem.Context
         public DbSet<TB_MS_Inform_News> TB_MS_Inform_News { get; set; } = null!;
         public DbSet<TB_MS_Kanban> TB_MS_Kanban { get; set; } = null!;
         public DbSet<TB_MS_Label> TB_MS_Label { get; set; } = null!;
-        public DbSet<TB_MS_LinecodeMSP> TB_MS_LinecodeMSP { get; set; } = null!;        
+        public DbSet<TB_MS_LinecodeMSP> TB_MS_LinecodeMSP { get; set; } = null!;
         public DbSet<TB_MS_LPSupplier> TB_MS_LPSupplier { get; set; } = null!;
         public DbSet<TB_MS_Matching_Supplier> TB_MS_Matching_Supplier { get; set; } = null!;
         public DbSet<TB_MS_MAXAREA> TB_MS_MAXAREA { get; set; } = null!;
@@ -37,7 +39,7 @@ namespace HINOSystem.Context
         public DbSet<TB_MS_Parameter> TB_MS_Parameter { get; set; } = null!;
         public DbSet<TB_MS_PartCode> TB_MS_PartCode { get; set; } = null!;
         public DbSet<TB_MS_PartCurrent> TB_MS_PartCurrent { get; set; } = null!;
-        public DbSet<TB_MS_PartOrder> TB_MS_PartOrder { get; set; } = null!;
+        //public DbSet<Models.KB3.Master.TB_MS_PartOrder> TB_MS_PartOrder { get; set; } = null!;
         public DbSet<TB_MS_PartPackage> TB_MS_PartPackage { get; set; } = null!;
         public DbSet<TB_MS_PartSet> TB_MS_PartSet { get; set; } = null!;
         public DbSet<TB_MS_PartSpecial> TB_MS_PartSpecial { get; set; } = null!;
@@ -48,14 +50,25 @@ namespace HINOSystem.Context
         public DbSet<TB_MS_Route> TB_MS_Route { get; set; } = null!;
         public DbSet<TB_MS_Route_Delivery> TB_MS_Route_Delivery { get; set; } = null!;
         public DbSet<TB_MS_SendMail> TB_MS_SendMail { get; set; } = null!;
-        public DbSet<TB_MS_SpcApprover> TB_MS_SpcApprover { get; set; } = null!;
+
+        // public DbSet<TB_MS_SpcApprover> TB_MS_SpcApprover { get; set; } = null!;
         public DbSet<TB_MS_SupplierAttn> TB_MS_SupplierAttn { get; set; } = null!;
         public DbSet<TB_MS_TagColor> TB_MS_TagColor { get; set; } = null!;
         public DbSet<TB_MS_TruckType> TB_MS_TruckType { get; set; } = null!;
         public DbSet<TB_MS_VLT_Customer> TB_MS_VLT_Customer { get; set; } = null!;
         public DbSet<TB_MS_ZeroOrder> TB_MS_ZeroOrder { get; set; } = null!;
-
-
+        public DbSet<TB_REC_HEADER> TB_REC_HEADER { get; set; }
+        public DbSet<TB_REC_DETAIL> TB_REC_DETAIL { get; set; }
+        public DbSet<VW_KBNRC_220_RPT> VW_KBNRC_220_RPT { get; set; }
+        public DbSet<KANBAN.Models.KB3.Receive_Process.TB_MS_PartOrder> TB_MS_PartOrder { get; set; }
+        public DbSet<TB_Import_Delivery> TB_Import_Delivery { get; set; }
+        public DbSet<V_KBNRT_130> V_KBNRT_130_rpt { get; set; }
+        public DbSet<V_KBNRT_140> V_KBNRT_140_rpt { get; set; }
+        public DbSet<RPT_KBNRT_110> RPT_KBNRT_110 { get; set; }
+        public DbSet<V_KBNRT_110_rpt> V_KBNRT_110_rpt { get; set; }
+        public DbSet<TB_Transaction> TB_Transaction { get; set; }
+        public DbSet<V_KBNRT_180_rpt> V_KBNRT_180_Rpt { get; set; }
+        public DbSet<V_KBNRT_190_rpt> V_KBNRT_190_Rpt { get; set; }
 
         //protected override void OnModelCreating(ModelBuilder modelBuilder)
         //{
