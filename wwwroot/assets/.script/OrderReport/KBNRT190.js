@@ -259,6 +259,9 @@
             var tripFrom = $("#F_TripFrom").val();
             var tripTo = $("#F_TripTo").val();
             var url = "KBNRT190/OnReportBtnDelivery";
+            if (tripFrom == null || tripFrom == undefined || tripTo == null || tripTo == undefined) {
+                return xSwal.error("Delivery Trip is empty", "Please Select Delivery Trip");
+            }
         }
 
         if (supFrom == null || supFrom == undefined || supTo == null || supTo == undefined) {
@@ -287,9 +290,6 @@
         }
         if (partFrom > partTo) {
             return xSwal.error("Invalid Input Part No", "Please Select Part No From less than Part No To");
-        }
-        if (tripFrom == null || tripFrom == undefined || tripTo == null || tripTo == undefined) {
-            return xSwal.error("Delivery Trip is empty", "Please Select Delivery Trip");
         }
         xAjax.Post({
             url: url,

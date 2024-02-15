@@ -189,6 +189,17 @@ namespace KANBAN.Controllers.API.OrderReport
                         );
                 }
 
+                string _jsonData = JsonConvert.SerializeObject(UserName);
+                string _jsonData2 = JsonConvert.SerializeObject(HostName);
+
+                _result = @"{
+                                    ""status"":""200"",
+                                    ""response"":""OK"",
+                                    ""message"": ""Data Found"",
+                                    ""data"": " + _jsonData + @",
+                                    ""data2"": " + _jsonData2 + @"
+                                    }";
+
                 return Ok(_result);
             }
             catch (Exception ex)
@@ -243,6 +254,17 @@ namespace KANBAN.Controllers.API.OrderReport
                         rpt.Deli_Date, rpt.Deli_trip, rpt.F_Box_Qty, rpt.Qty_KB, rpt.F_Unit_Amount, rpt.F_Receive_amount, UserName, HostName
                         );
                 }
+
+                string _jsonData = JsonConvert.SerializeObject(UserName);
+                string _jsonData2 = JsonConvert.SerializeObject(HostName);
+
+                _result = @"{
+                                    ""status"":""200"",
+                                    ""response"":""OK"",
+                                    ""message"": ""Data Found"",
+                                    ""data"": " + _jsonData + @",
+                                    ""data2"": " + _jsonData2 + @"
+                                    }";
 
                 return Ok(_result);
             }
