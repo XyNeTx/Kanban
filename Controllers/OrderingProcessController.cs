@@ -58,10 +58,66 @@ namespace HINOSystem.Controllers
             return _authenGuard.guard(ControllerContext);
         }
 
+
+
+
+        //KBNOR400 : Urgent Ordering
         public IActionResult KBNOR400()
         {
             return _authenGuard.guard(ControllerContext);
         }
+
+        public IActionResult KBNOR410()
+        {
+            return _authenGuard.guard(ControllerContext);
+        }
+
+        public IActionResult KBNOR420()
+        {
+            return _authenGuard.guard(ControllerContext);
+        }
+
+        public IActionResult KBNOR440()
+        {
+            return _authenGuard.guard(ControllerContext);
+        }
+
+        public IActionResult KBNOR450()
+        {
+            return _authenGuard.guard(ControllerContext);
+        }
+
+        public IActionResult KBNOR460()
+        {
+            return _authenGuard.guard(ControllerContext);
+        }
+
+        public IActionResult KBNOR460EX()
+        {
+            return _authenGuard.guard(ControllerContext);
+        }
+
+        public IActionResult KBNOR470()
+        {
+            return _authenGuard.guard(ControllerContext);
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         public IActionResult KBNOR300()
         {

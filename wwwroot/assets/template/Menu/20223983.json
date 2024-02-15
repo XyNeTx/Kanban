@@ -904,7 +904,84 @@
     "hasChildren": false,
     "parent": false,
     "url": "~/kanban/OrderingProcess/KBNOR400",
+    "children": [
+{
+    "id": 163,
+    "text": "Interface Data from Import Order",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OrderingProcess/KBNOR410",
     "children": []
+},
+{
+    "id": 164,
+    "text": "Calculate Urgent Order",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OrderingProcess/KBNOR420",
+    "children": []
+},
+{
+    "id": 165,
+    "text": "Generate PDS Data for Urgent",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OrderingProcess/KBNOR440",
+    "children": []
+},
+{
+    "id": 166,
+    "text": "Print PDS/Kanban Card for Urgent",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OrderingProcess/KBNOR450",
+    "children": []
+},
+{
+    "id": 167,
+    "text": "Registration Data for Urgent Order",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OrderingProcess/KBNOR460",
+    "children": []
+},
+{
+    "id": 168,
+    "text": "Export Order Data",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OrderingProcess/KBNOR460EX",
+    "children": []
+},
+{
+    "id": 169,
+    "text": "Unlock : PDS Not Price (Interface to E-Pro)",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OrderingProcess/KBNOR470",
+    "children": []
+}]
 },
 {
     "id": 91,

@@ -123,8 +123,18 @@
         if (pValue != '' && pValue != null) pValue = pValue.toString().replace(/^\s+|\s+$/gm, '');
         return pValue;
     }
+    Trim(pValue) {
+        trim(pValue);
+    }
 
 
+    redirect(pURL) {
+        console.log(pURL);
+        window.document.location.replace(pURL);
+    }
+    Redirect(pURL) {
+        redirect(pURL);
+    }
 
 
 
@@ -153,7 +163,8 @@
                         if (typeof (pConfig.callback) === 'function') pConfig.callback(result);
 
                     } else {
-                        xSwal.error('Error', result.message);
+                        if (result.status == 401) window.document.location.replace('../Logout');
+                        xSwal.error('Error', result.message + ' [Ajax.Post]');
                         xSplash.hide();
                     }
 
@@ -171,6 +182,51 @@
 
         }
     }
+    PostData(pData) {
+    try {
+        const jsonObject = JSON.parse(pData);
+
+        if (typeof (pData) === 'string') {
+            // pData : var _string = `{ "id": "String" }`;
+            return JSON.stringify(JSON.stringify(JSON.parse(pData)));
+
+        } else if (typeof (pData) === 'object') {
+            // pData : var _json = { "id": "JSON" };
+            return JSON.stringify(JSON.stringify(pData));
+        }
+
+    } catch (error) {
+
+        if (pData.length > 0) {
+            // pData : $('#frmCondition')
+
+            const _formData = $('#' + pData.attr('id')).serializeArray();
+            const _jsonData = {};
+
+            $(_formData).each(function (index, obj) {
+                _jsonData[obj.name] = obj.value;
+            });
+            return JSON.stringify(JSON.stringify(_jsonData));
+
+        } else {
+            //console.log(pData);
+            var _jObject = JSON.stringify(JSON.stringify(pData));
+
+            if (_jObject === '"{}"') {
+                // pData : var _formData = new FormData();
+                return JSON.stringify(JSON.stringify(Object.fromEntries(pData)));
+
+            } else {
+                // pData :  var _object = {};   _object.id = "Object.id";
+                return _jObject;
+            }
+
+        }
+
+    }
+
+
+}
 
 
 

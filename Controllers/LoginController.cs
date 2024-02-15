@@ -71,6 +71,10 @@ namespace HINOSystem.Controllers
             //ViewData["ddlShift"] = (int.Parse(DateTime.Now.ToString("Hmm")) <1930 ? "D" : "N");
             //ViewData["ddlFactory"] = 3;
 
+            //var xhr = new XMLHttpRequest();
+            //xhr.open("get", "http://hmmta-tpcap/ad");
+            //xhr.withCredentials = true;
+
             if (HttpContext.Request.Query["CN"].ToString() != "")
             {
                 string _CN = _bearerClass.Decrypt(HttpContext.Request.Query["CN"].ToString());

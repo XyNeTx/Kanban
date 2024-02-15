@@ -7,6 +7,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="wwwroot\assets\img\avatars\**" />
+    <Content Remove="wwwroot\assets\img\avatars\**" />
+    <EmbeddedResource Remove="wwwroot\assets\img\avatars\**" />
+    <None Remove="wwwroot\assets\img\avatars\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Controllers\API\common\SSOController.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="wwwroot\assets\.libs\class\lab.API.js">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
     <Content Include="wwwroot\assets\.libs\class\lab.DataTablesExport.js" />
     <Content Include="wwwroot\assets\.libs\class\lab.DataTablesExport.min.js" />
     <Content Include="wwwroot\assets\.libs\class\lab.Ajax.js" />
@@ -36,6 +51,7 @@
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
     <Content Include="wwwroot\assets\.libs\function\func.DataTable.Export.js" />
+    <Content Include="wwwroot\assets\.libs\function\func.VB.Net.js" />
     <Content Include="wwwroot\assets\.libs\function\Functions.js" />
     <Content Include="wwwroot\assets\.libs\function\func.Cookies.js">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
@@ -53,6 +69,7 @@
     <Content Include="wwwroot\assets\.script\ERP\ERP01M020.js" />
     <Content Include="wwwroot\assets\.script\ERP\ERP01M011.js" />
     <Content Include="wwwroot\assets\.script\ERP\ERP01M010.js" />
+    <Content Include="wwwroot\assets\.script\Home\Index.js" />
     <Content Include="wwwroot\assets\.script\Login\Index.js" />
     <Content Include="wwwroot\assets\.script\MonthlyForcast\KBNIM012M.js" />
     <Content Include="wwwroot\assets\.script\MonthlyForcast\KBNIM012.js" />
@@ -61,6 +78,14 @@
     <Content Include="wwwroot\assets\.script\MSPData\KBNIM003S.js" />
     <Content Include="wwwroot\assets\.script\MSPData\KBNIM003M.js" />
     <Content Include="wwwroot\assets\.script\MSPData\KBNIM003.js" />
+    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR440.js" />
+    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR450.js" />
+    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR470.js" />
+    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR460.js" />
+    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR460EX.js" />
+    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR420.js" />
+    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR410.js" />
+    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR400.js" />
     <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR100.js" />
     <Content Include="wwwroot\assets\.script\ReceiveProcess\KBNCR110.js" />
     <Content Include="wwwroot\assets\.script\ReceiveProcess\KBNCR120.js" />
@@ -2160,6 +2185,7 @@
     <PackageReference Include="EASendMail" Version="7.9.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Negotiate" Version="6.0.13" />
     <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.15" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.15" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.15">
@@ -9613,7 +9639,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\assets\.script\Home\" />
     <Folder Include="wwwroot\assets\i18n\JP\KB3\LogisticCondition\" />
     <Folder Include="wwwroot\assets\i18n\TH\KB3\LogisticCondition\" />
     <Folder Include="wwwroot\Storage\DownloadFile\" />

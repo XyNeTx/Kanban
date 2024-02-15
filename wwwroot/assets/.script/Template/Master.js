@@ -34,7 +34,7 @@
         //console.log(this.DOM);
 
         this.tblMaster = xDataTable.Initial({
-        //this.tblMaster = xDataTable.InitialOld({
+            //this.tblMaster = xDataTable.InitialOld({
             name: this.TableName,
             checking: 0,
             running: 0,
@@ -98,7 +98,9 @@
                     if (typeof (pCallback) === 'function') pCallback(result);
 
                 } else {
-                    xSwal.error('Error', result.message);
+                    //console.log(result);
+                    if (result.status == 401) xAjax.redirect('../Login/Logout');
+                    xSwal.error('Error', 'Master.Initial: ' + result.message);
                     xSplash.hide();
                 }
 
@@ -144,6 +146,11 @@
                     xSplash.hide();
                     if (typeof (pCallback) === 'function') pCallback(result);
 
+                } else {
+                    //console.log(result);
+                    if (result.status == 401) xAjax.redirect('../Login/Logout');
+                    xSwal.error('Error', 'Master.Search: ' + result.message);
+                    xSplash.hide();
                 }
 
             },
@@ -193,7 +200,7 @@
                     if (row[this.id] == 1 || row[this.id] == true || row[this.id] == 'true') $("#" + this.id).prop('checked', true);
 
                     //console.log(this.id+'>>>'+row[this.id]);
-                    
+
                 } else {
 
                     //console.log(this.id + ' >>> ' + $('#' + this.id).attr('default'));
@@ -261,6 +268,9 @@
         $('#' + _FormName).removeClass('was-validated');
         $('#' + _ModalName).modal('toggle');
 
+
+
+
         this.editCallback();
 
         xSplash.hide();
@@ -296,7 +306,7 @@
                         type: ($('#' + _FormName + ' #_Action').val() != '' ? $('#' + _FormName + ' #_Action').val() : 'POST'),
                         dataType: "json",
                         headers: ajexHeader,
-                        url: (_NAMESPACE_ != '' ? '/' + _NAMESPACE_ : '') + '/' + _Controller +'/save',
+                        url: (_NAMESPACE_ != '' ? '/' + _NAMESPACE_ : '') + '/' + _Controller + '/save',
                         data: $('#' + _FormName).serialize(),
                         success: function (result) {
 
@@ -334,7 +344,7 @@
                         type: "DELETE",
                         dataType: "json",
                         headers: ajexHeader,
-                        url: (_NAMESPACE_ != '' ? '/' + _NAMESPACE_ : '') + '/' + _Controller +'/delete',
+                        url: (_NAMESPACE_ != '' ? '/' + _NAMESPACE_ : '') + '/' + _Controller + '/delete',
                         data: $('#' + _FormName).serialize(),
                         success: function (result) {
 
@@ -362,7 +372,7 @@
         $(allPages).find('input[type="checkbox"]').each(function () {
             if ($(this).prop('checked')) {
                 var _val = $($(this)).val();
-                _delData.push(JSON.parse(`{` + ReplaceAll(_val,`'`,`"`) + `}`));
+                _delData.push(JSON.parse(`{` + ReplaceAll(_val, `'`, `"`) + `}`));
             }
         });
         if (_delData.length <= 0) {
@@ -424,4 +434,9 @@
 //xKBNMS001.prepare();
 
 
+
+
 xItem.render();
+
+
+

@@ -108,6 +108,14 @@ var tblSeparate = xDataTable.Initial({
 });
 
 
+xAjax.Post({
+    url: 'KBNOR410/search',
+    //data: '',
+    then: function (result) {
+        console.log(result);
+    }
+})
+
 *@
 
 
