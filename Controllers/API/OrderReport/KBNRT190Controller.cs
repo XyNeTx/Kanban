@@ -165,6 +165,11 @@ namespace KANBAN.Controllers.API.OrderReport
                 string UserName = HttpContext.Session.GetString("USER_NAME");
                 string HostName = HttpContext.Session.GetString("USER_DEVICENAME");
 
+                if (string.IsNullOrWhiteSpace(UserName) || string.IsNullOrWhiteSpace(HostName))
+                {
+                    return Redirect($"{Request.Path.ToString()}{Request.QueryString.Value.ToString()}");
+                }
+
                 await _KB3Context.Database.ExecuteSqlRawAsync("DELETE FROM RPT_KBNRT_190 WHERE F_Update_By = @UserName " +
                     " AND F_Host_name = @HostName",
                     new SqlParameter("@UserName", UserName),

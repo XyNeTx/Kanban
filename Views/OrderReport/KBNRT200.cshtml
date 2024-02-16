@@ -1,12 +1,48 @@
 ﻿<div class="row">
+
+    <div class="col-xl-12 col-md-12 col-sm-12">
+        <div class="card border-left-primary shadow h-100">
+            <div class="card-body">
+                <form id="frmCondition">
+                    <div class="row mb-3">
+                        <div class="col">
+                            <label class="input-group-text w-75" for="F_SubFrom">
+                                Supplier Code From : &nbsp;
+                                <select id="F_SupFrom" class="form-select" label="Supplier From : ">
+                                    <option id="supFromBlank"></option>
+                                </select>
+                            </label>
+                        </div>
+                        <div class="col">
+                            <label class="input-group-text w-50" for="F_SubTo">
+                                To : &nbsp;
+                                <select id="F_SupTo" class="form-select" label="To : ">
+                                    <option id="supToBlank"></option>
+                                </select>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col">
+                            <item type="date" id="F_OrderDateFrom" label="Order Date From : " format="yyyy-mm-dd" default="now"></item>
+                        </div>
+                        <div class="col">
+                            <item type="date" id="F_OrderDateTo" label="To : " format="yyyy-mm-dd" default="now"></item>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col d-flex justify-content-end align-text-bottom align-items-end align-content-end">
+                            <item type="button" style="height:fit-content" id="ReportBtn" label="Report"></item>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
-
-<script type="text/javascript">
-    $(document).ready(function () {
-
-        xSplash.hide();
-
-    });
-
-</script>
+@section Scripts {
+    <script type="text/javascript" src="~/assets/js/History/UserMaintenance.js"></script>
+    <script type="text/javascript" src="~/assets/.script/Template/Master.js"></script>
+    <script type="text/javascript" src="~/assets/.script/OrderReport/KBNRT200.js?@ViewData["Version"]"></script>
+}
