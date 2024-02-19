@@ -79,6 +79,7 @@ namespace KANBAN.Controllers.API.OrderReport
         {
             try
             {
+                setConString();
                 string _result = "";
                 var tripDB = await _KB3Context.V_KBNRT_190_Rpt.Select(x => x.Deli_trip).Distinct().OrderBy(x => x).ToListAsync();
 
@@ -108,6 +109,7 @@ namespace KANBAN.Controllers.API.OrderReport
             }
             try
             {
+                setConString();
                 string _result = "";
                 dynamic _json = JsonConvert.DeserializeObject<dynamic>(data);
                 string dateFrom = _json["dateFrom"];
@@ -147,6 +149,7 @@ namespace KANBAN.Controllers.API.OrderReport
             }
             try
             {
+                setConString();
                 string _result = "";
                 dynamic _json = JsonConvert.DeserializeObject(data);
                 string supFrom = _json["supFrom"];
@@ -221,6 +224,7 @@ namespace KANBAN.Controllers.API.OrderReport
             }
             try
             {
+                setConString();
                 string _result = "";
                 dynamic _json = JsonConvert.DeserializeObject(data);
                 string supFrom = _json["supFrom"];

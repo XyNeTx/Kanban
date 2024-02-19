@@ -82,6 +82,7 @@ namespace KANBAN.Controllers.API.OrderReport
         {
             try
             {
+                setConString();
                 string _result = "";
                 string UserName = HttpContext.Session.GetString("USER_NAME");
                 string HostName = HttpContext.Session.GetString("USER_DEVICENAME");
@@ -113,6 +114,7 @@ namespace KANBAN.Controllers.API.OrderReport
         {
             try
             {
+                setConString();
                 string _result = "";
                 dynamic _json = JsonConvert.DeserializeObject<dynamic>(data);
                 string supFrom = _json["supFrom"];

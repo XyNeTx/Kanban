@@ -120,6 +120,7 @@ namespace KANBAN.Controllers.API.OrderReport
             }
             try
             {
+                setConString();
                 dynamic _json = JsonConvert.DeserializeObject(data);
                 string supFrom = _json["supFrom"];
                 string dateFrom = _json["dateFrom"];
