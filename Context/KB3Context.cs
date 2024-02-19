@@ -71,6 +71,8 @@ namespace HINOSystem.Context
         public DbSet<V_KBNRT_190_rpt> V_KBNRT_190_Rpt { get; set; }
         public DbSet<V_KBNRT_210_rpt_Dev> V_KBNRT_210_rpt_Dev { get; set; }
         public DbSet<TB_Inquriy_KB_rpt_TMP> TB_Inquriy_KB_rpt_TMP { get; set; }
+        public DbSet<TB_Import_Forecast> TB_Import_Forecast { get; set; }
+
 
         //protected override void OnModelCreating(ModelBuilder modelBuilder)
         //{

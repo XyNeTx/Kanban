@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-
+using NPOI.SS.Formula.Functions;
 namespace KANBAN.Controllers.API.OrderReport
 {
     public class KBNRT210Controller : Controller
@@ -141,36 +141,161 @@ namespace KANBAN.Controllers.API.OrderReport
 
                 List<TB_Inquriy_KB_rpt_TMP> InquriyList = new();
                 InquriyList = await _KB3Context.TB_Inquriy_KB_rpt_TMP.Where(x => x.F_Update_by == UserName && x.F_Host_Name == HostName).ToListAsync();
-
                 foreach (var inquriy in InquriyList)
                 {
+                    var processDate = inquriy.F_Deli_date.Trim();
+                    var deliDate = inquriy.chk_deli_date.Trim().Substring(0, 6);
+                    var chkDeliDate = inquriy.chk_deli_date.Trim();
+                    var partNo = inquriy.F_Part_No.Trim().Replace("-", string.Empty).Substring(0, 10);
+                    var partNoDash = inquriy.F_Part_No.Trim();
+                    var KanbanNo = inquriy.F_kb_no.Trim();
+                    var SupCode = inquriy.F_Sup_cd.Trim().Split('-')[0];
+                    char SupPlant = inquriy.F_Sup_cd.Trim().Split('-')[1][0];
+                    var SupCodePlant = inquriy.F_Sup_cd.Trim();
+                    var revision = inquriy.F_revision_no.Trim();
+                    var StoreCode = inquriy.F_str_cd.Trim();
+                    var Ruibetsu = inquriy.F_Part_No.Trim().Substring(inquriy.F_Part_No.Trim().Length - 2);
 
-                    await _KB3Context.Database.ExecuteSqlRawAsync("SELECT P.F_Amount_MD1, P.F_Amount_MD2, P.F_Amount_MD3, P.F_Amount_MD4, P.F_Amount_MD5, P.F_Amount_MD6," +
-                        " P.F_Amount_MD7, P.F_Amount_MD8, P.F_Amount_MD9, P.F_Amount_MD10, P.F_Amount_MD11, P.F_Amount_MD12," +
-                        " P.F_Amount_MD13, P.F_Amount_MD14, P.F_Amount_MD15, P.F_Amount_MD16, P.F_Amount_MD17, P.F_Amount_MD18," +
-                        " P.F_Amount_MD19, P.F_Amount_MD20, P.F_Amount_MD21, P.F_Amount_MD22, P.F_Amount_MD23, P.F_Amount_MD24," +
-                        " P.F_Amount_MD25, P.F_Amount_MD26, P.F_Amount_MD27, P.F_Amount_MD28, P.F_Amount_MD29, P.F_Amount_MD30, P.F_Amount_MD31" +
-                        " FROM TB_IMPORT_FORECAST P" +
-                        " WHERE RTRIM(P.F_production_date) collate Thai_CS_AI = @Deli_Date AND RTRIM(P.F_part_no) collate Thai_CS_AI = @PartNo" +
-                        " AND '0'+RTRIM(P.F_sebango) collate Thai_CS_AI = @KanbanNo AND RIGHT(RTRIM(P.F_Supplier_code),4)+'-'+RTRIM(P.F_supplier_plant) collate Thai_CS_AI = @SupCode" +
-                        " AND RTRIM(P.F_revision_no) collate Thai_CS_AI = @Revision AND RTRIM(P.F_Store_cd) collate Thai_CS_AI = @StoreCode AND RTRIM(P.F_ruibetsu) collate Thai_CS_AI = @Ruibetsu",
-                        new SqlParameter("@Deli_Date", inquriy.F_Part_No.Trim().Substring(0, 10)),
-                        new SqlParameter("@PartNo", inquriy.chk_deli_date.Trim().Substring(0, 6)),
-                        new SqlParameter("@KanbanNo", inquriy.F_kb_no.Trim()),
-                        new SqlParameter("@SupCode", inquriy.F_Sup_cd.Trim()),
-                        new SqlParameter("@Revision", inquriy.F_revision_no.Trim()),
-                        new SqlParameter("@StoreCode", inquriy.F_str_cd.Trim()),
-                        new SqlParameter("@Ruibetsu", inquriy.F_Part_No.Trim().Substring(inquriy.F_Part_No.Trim().Length - 2))
-                        );
+                    var forecast = await _KB3Context.TB_Import_Forecast
+                        .Where(x =>
+                            x.F_Production_date.TrimEnd() == deliDate &&
+                            x.F_part_no.TrimEnd() == partNo &&
+                            '0' + x.F_sebango.TrimEnd() == KanbanNo &&
+                            x.F_Supplier_code.TrimEnd().Substring(1, 4) == SupCode &&
+                            x.F_supplier_plant == SupPlant &&
+                            x.F_revision_no.TrimEnd() == revision &&
+                            x.F_Store_cd.TrimEnd() == StoreCode &&
+                            x.F_ruibetsu.TrimEnd() == Ruibetsu
+                        )
+                        .Select(x => new
+                        {
+                            x.F_Amount_MD1,
+                            x.F_Amount_MD2,
+                            x.F_Amount_MD3,
+                            x.F_Amount_MD4,
+                            x.F_Amount_MD5,
+                            x.F_Amount_MD6,
+                            x.F_Amount_MD7,
+                            x.F_Amount_MD8,
+                            x.F_Amount_MD9,
+                            x.F_Amount_MD10,
+                            x.F_Amount_MD11,
+                            x.F_Amount_MD12,
+                            x.F_Amount_MD13,
+                            x.F_Amount_MD14,
+                            x.F_Amount_MD15,
+                            x.F_Amount_MD16,
+                            x.F_Amount_MD17,
+                            x.F_Amount_MD18,
+                            x.F_Amount_MD19,
+                            x.F_Amount_MD20,
+                            x.F_Amount_MD21,
+                            x.F_Amount_MD22,
+                            x.F_Amount_MD23,
+                            x.F_Amount_MD24,
+                            x.F_Amount_MD25,
+                            x.F_Amount_MD26,
+                            x.F_Amount_MD27,
+                            x.F_Amount_MD28,
+                            x.F_Amount_MD29,
+                            x.F_Amount_MD30,
+                            x.F_Amount_MD31,
+                        })
+                        .SingleOrDefaultAsync();
+
+                    if (forecast != null)
+                    {
+                        int j = int.Parse(processDate.Substring(0, 2));
+                        string property = "F_Amount_MD" + processDate.Substring(0, 2);
+                        int Max_Std = 0;
+                        string MaxForecastDate = "";
+                        if (Max_Std == 0)
+                        {
+                            Max_Std = (int)forecast.GetType().GetProperty(property).GetValue(forecast);
+                            int Use_Day = Max_Std;
+                            await _KB3Context.Database.ExecuteSqlRawAsync("UPDATE TB_Inquriy_KB_rpt_TMP SET F_max_forcast = @Max_Std " +
+                                                "WHERE chk_deli_date = @Deli_Date AND F_Part_no = @PartNo AND F_kb_no = @KanbanNo AND F_Sup_cd = @SupCodePlant " +
+                                                "AND F_revision_no = @RevisionNo AND F_str_cd = @StoreCode AND F_Part_no = @PartNo ",
+                                                new SqlParameter("@Max_Std", Max_Std),
+                                                new SqlParameter("@Deli_Date", chkDeliDate),
+                                                new SqlParameter("@PartNo", partNoDash),
+                                                new SqlParameter("@KanbanNo", KanbanNo),
+                                                new SqlParameter("@SupCodePlant", SupCodePlant),
+                                                new SqlParameter("@RevisionNo", revision),
+                                                new SqlParameter("@StoreCode", StoreCode)
+                                                );
+                        }
+                        if (Max_Std != 0)
+                        {
+                            for (int k = j - 1; k != j - 6; k--)
+                            {
+                                if (k >= 1)
+                                {
+                                    string propertyLoop = "F_Amount_MD" + k.ToString();
+                                    int Max_Std_Loop = (int)forecast.GetType().GetProperty(propertyLoop).GetValue(forecast);
+                                    if (Max_Std_Loop > Max_Std)
+                                    {
+                                        Max_Std = Max_Std_Loop;
+                                        MaxForecastDate = processDate.Substring(processDate.Length - 4, 4) + processDate.Substring(3, 2) + k;
+                                        await _KB3Context.Database.ExecuteSqlRawAsync("UPDATE TB_Inquriy_KB_rpt_TMP SET F_max_forcast = @Max_Std " +
+                                                "WHERE chk_deli_date = @Deli_Date AND F_Part_no = @PartNo AND F_kb_no = @KanbanNo AND F_Sup_cd = @SupCodePlant " +
+                                                "AND F_revision_no = @RevisionNo AND F_str_cd = @StoreCode AND F_Part_no = @PartNo ",
+                                                new SqlParameter("@Max_Std", Max_Std),
+                                                new SqlParameter("@Deli_Date", chkDeliDate),
+                                                new SqlParameter("@PartNo", partNoDash),
+                                                new SqlParameter("@KanbanNo", KanbanNo),
+                                                new SqlParameter("@SupCodePlant", SupCodePlant),
+                                                new SqlParameter("@RevisionNo", revision),
+                                                new SqlParameter("@StoreCode", StoreCode)
+                                                );
+                                    }
+                                }
+                                else if (k < 1)
+                                {
+                                    break;
+                                }
+                            }
+                            for (int k = j + 1; k != j + 6; k++)
+                            {
+                                if (k <= 31)
+                                {
+                                    string propertyLoop = "F_Amount_MD" + k.ToString();
+                                    int Max_Std_Loop = (int)forecast.GetType().GetProperty(propertyLoop).GetValue(forecast);
+                                    if (Max_Std_Loop > Max_Std)
+                                    {
+                                        Max_Std = Max_Std_Loop;
+                                        MaxForecastDate = processDate.Substring(processDate.Length - 4, 4) + processDate.Substring(3, 2) + k;
+                                        await _KB3Context.Database.ExecuteSqlRawAsync("UPDATE TB_Inquriy_KB_rpt_TMP SET F_max_forcast = @Max_Std " +
+                                                "WHERE chk_deli_date = @Deli_Date AND F_Part_no = @PartNo AND F_kb_no = @KanbanNo AND F_Sup_cd = @SupCodePlant " +
+                                                "AND F_revision_no = @RevisionNo AND F_str_cd = @StoreCode AND F_Part_no = @PartNo ",
+                                                new SqlParameter("@Max_Std", Max_Std),
+                                                new SqlParameter("@Deli_Date", chkDeliDate),
+                                                new SqlParameter("@PartNo", partNoDash),
+                                                new SqlParameter("@KanbanNo", KanbanNo),
+                                                new SqlParameter("@SupCodePlant", SupCodePlant),
+                                                new SqlParameter("@RevisionNo", revision),
+                                                new SqlParameter("@StoreCode", StoreCode)
+                                                );
+                                    }
+                                }
+                                else if (k > 31)
+                                {
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
                 }
-
-                string _jsonData = "Success";
+                string _jsonData = JsonConvert.SerializeObject(UserName);
+                string _jsonData2 = JsonConvert.SerializeObject(HostName);
 
                 _result = @"{
                                     ""status"":""200"",
                                     ""response"":""OK"",
                                     ""message"": ""Data Found"",
-                                    ""data"": " + _jsonData + @"
+                                    ""data"": " + _jsonData + @",
+                                    ""data2"": " + _jsonData2 + @"
                                     }";
 
 

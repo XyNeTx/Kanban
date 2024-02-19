@@ -229,10 +229,9 @@
             },
             then: function (result) {
                 console.log(result);
-                //console.log(result);
-                //var filename = location.pathname.substring(location.pathname.lastIndexOf('/') + 1);
-                //var reportUrl = "http://hmmt-app03/Reportserver/report/KB3/";
-                //window.location.href = reportUrl + filename + '?HostName=' + result.data2 + '&UserName=' + result.data;
+                var filename = location.pathname.substring(location.pathname.lastIndexOf('/') + 1);
+                var reportUrl = "http://hmmt-app03/Reportserver/report/KB3/";
+                window.location.href = reportUrl + filename + '?HostName=' + result.data2 + '&UserName=' + result.data;
             },
             error: function (result) {
                 return console.error(result);
