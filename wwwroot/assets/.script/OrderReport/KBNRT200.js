@@ -26,4 +26,40 @@
             $("#F_SupTo").val($("#F_SupFrom").val()).change();
         }
     });
+
+    xAjax.onClick("#ReportBtn", function () {
+        var supFrom = $("#F_SupFrom").val();
+        var supTo = $("#F_SupTo").val();
+        var dateFrom = $("#F_OrderDateFrom").val();
+        var dateTo = $("#F_OrderDateTo").val();
+        var dateFromPrced = dateFrom.split("-")[0] + dateFrom.split("-")[1] + dateFrom.split("-")[2];
+        var dateToPrced = dateTo.split("-")[0] + dateTo.split("-")[1] + dateTo.split("-")[2];
+        if (supFrom == null || supFrom == undefined || supTo == null || supTo == undefined) {
+            return xSwal.error("Supplier Code is empty", "Please Select Supplier Code");
+        }
+        if (supFrom > supTo) {
+            return xSwal.error("Invalid Input Supplier Code", "Please Select Supplier Code From less than Supplier Code To");
+        }
+        if (dateFrom > dateTo) {
+            return xSwal.error("Invalid Input Date", "Please Select Date From less than Date To");
+        }
+        xAjax.Post({
+            url: "KBNRT200/OnReportBtnClick",
+            data: {
+                supFrom: supFrom,
+                supTo: supTo,
+                dateFrom: dateFromPrced,
+                dateTo: dateToPrced,
+            },
+            then: function (result) {
+                console.log(result);
+                var filename = location.pathname.substring(location.pathname.lastIndexOf('/') + 1);
+                var reportUrl = "http://hmmt-app03/Reportserver/report/KB3/";
+                window.location.href = reportUrl + filename + '?HostName=' + result.data2 + '&UserName=' + result.data;
+            },
+            error: function (result) {
+                return console.error(result);
+            }
+        });
+    });
 });
