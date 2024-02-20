@@ -110,6 +110,25 @@ namespace KANBAN.Controllers.API.OrderReport
                     new SqlParameter("@DateTo", dateTo)
                     );
 
+                var tempList = await _KB3Context.TB_Late_Deli_Rpt_TMP.ToListAsync();
+
+                foreach (var each in tempList)
+                {
+                    DateTime date = DateTime.Parse(each.F_Date);
+
+                    int currentUse = await _KB3Context.Database.ExecuteSqlRawAsync("EXEC [dbo].[sp_getCurrentUse] {0} {1} {2} {3} {4} {5} {6} {7}",
+                        each.F_Plant,
+                        each.F_Supplier_cd.Trim().Substring(0, 4),
+                        each.F_Supplier_cd.Trim().Substring(5, 1),
+                        each.F_Part_no,
+                        each.F_Ruibetsu,
+                        each.F_Code,
+                        each.F_Store_Code,
+                        date);
+
+                    double safety_STK = currentUse * double.Parse(each.F_Safety_stk_day);
+                }
+
                 string _jsonData = JsonConvert.SerializeObject(UserName);
                 string _jsonData2 = JsonConvert.SerializeObject(HostName);
 

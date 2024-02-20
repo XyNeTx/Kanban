@@ -13,7 +13,7 @@ namespace KANBAN.Models.KB3.ReportOrder
         public string? F_Code { get; set; }
         public string? F_Store_Code { get; set; }
         public string? F_Part_no { get; set; }
-        public string? F_Ruibetus { get; set; }
+        public string? F_Ruibetsu { get; set; }
         public string? F_Part_Name { get; set; }
         public string? F_PDS_no { get; set; }
         public string? F_Usage_line { get; set; }
