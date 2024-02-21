@@ -7,7 +7,7 @@ namespace KANBAN.Models.KB3.ReportOrder
     {
         public string? F_Date { get; set; }
         public string? F_Trip { get; set; }
-        public char F_Shift { get; set; }
+        public char? F_Shift { get; set; }
         public string? F_Supplier_cd { get; set; }
         public string? F_Supplier { get; set; }
         public string? F_Code { get; set; }
@@ -30,6 +30,6 @@ namespace KANBAN.Models.KB3.ReportOrder
         public string? F_EVA { get; set; }
         public string? F_Update_By { get; set; }
         public string? F_Host_Name { get; set; }
-        public char F_Plant { get; set; }
+        public char? F_Plant { get; set; }
     }
 }
