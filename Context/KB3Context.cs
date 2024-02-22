@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using HINOSystem.Models.KB3.Master;
 using KANBAN.Models.KB3.Receive_Process;
 using KANBAN.Models.KB3.ReportOrder;
+using KANBAN.Models;
 
 namespace HINOSystem.Context
 {
@@ -74,6 +75,7 @@ namespace HINOSystem.Context
         public DbSet<TB_Import_Forecast> TB_Import_Forecast { get; set; }
         public DbSet<TB_Late_Deli_Rpt_TMP> TB_Late_Deli_Rpt_TMP { get; set; }
         public DbSet<V_KBNRT_220_rpt> V_KBNRT_220_rpt { get; set; }
+        public DbSet<TB_BL> TB_BL { get; set; }
 
 
         //protected override void OnModelCreating(ModelBuilder modelBuilder)
