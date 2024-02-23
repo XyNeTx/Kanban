@@ -44,7 +44,7 @@
 
 
     xAjax.onChange("#F_SupFrom, #F_SupTo", function () {
-        if ($("#F_SupTo").val() == null || $("#F_SupTo").val() == "") {
+        if ($("#F_SupTo").val() === null || $("#F_SupTo").val() === "") {
             $("#F_SupTo").val($("#F_SupFrom").val()).change();
         }
         var supFrom = $("#F_SupFrom").val();
@@ -90,7 +90,7 @@
     });
 
     xAjax.onChange("#F_KBNFrom, #F_KBNTo", function () {
-        if ($("#F_KBNTo").val() == null || $("#F_KBNTo").val() == "") {
+        if ($("#F_KBNTo").val() === null || $("#F_KBNTo").val() === "") {
             $("#F_KBNTo").val($("#F_KBNFrom").val()).change();
         }
         var supFrom = $("#F_SupFrom").val();
@@ -131,7 +131,7 @@
     });
 
     xAjax.onChange("#F_StoreFrom, #F_StoreTo", function () {
-        if ($("#F_StoreTo").val() == null || $("#F_StoreTo").val() == "") {
+        if ($("#F_StoreTo").val() === null || $("#F_StoreTo").val() === "") {
             $("#F_StoreTo").val($("#F_StoreFrom").val()).change();
         }
         var supFrom = $("#F_SupFrom").val();
@@ -169,7 +169,7 @@
     });
 
     xAjax.onChange("#F_PartFrom, #F_PartTo", function () {
-        if ($("#F_PartTo").val() == null || $("#F_PartTo").val() == "") {
+        if ($("#F_PartTo").val() === null || $("#F_PartTo").val() === "") {
             $("#F_PartTo").val($("#F_PartFrom").val()).change();
         }
     });
@@ -185,20 +185,20 @@
         var partTo = $("#F_PartTo").val();
         var dateFrom = $("#F_DeliDateFrom").val();
         var dateTo = $("#F_DeliDateTo").val();
-
-        if (supFrom == null || supFrom == undefined || supTo == null || supTo == undefined) {
-            return xSwal.error("Supplier Code is empty", "Please Select Supplier Code");
+        console.log(supFrom);
+        if (supFrom === "" || supFrom === undefined || supTo === "" || supTo === undefined) {
+            return xSwal.Error("Supplier Code is empty", "Please Select Supplier Code");
         }
         if (supFrom > supTo) {
             return xSwal.error("Invalid Input Supplier Code", "Please Select Supplier Code From less than Supplier Code To");
         }
-        if (kbnFrom == null || kbnFrom == undefined || kbnTo == null || kbnTo == undefined) {
+        if (kbnFrom === "" || kbnFrom === undefined || kbnTo === "" || kbnTo === undefined) {
             return xSwal.error("Kanban No is empty", "Please Select Kanban No");
         }
         if (kbnFrom > kbnTo) {
             return xSwal.error("Invalid Input Kanban No", "Please Select Kanban No From less than Kanban No To");
         }
-        if (storeFrom == null || storeFrom == undefined || storeTo == null || storeTo == undefined) {
+        if (storeFrom === "" || storeFrom === undefined || storeTo === "" || storeTo === undefined) {
             return xSwal.error("Store Code is empty", "Please Select Store Code");
         }
         if (storeFrom > storeTo) {
@@ -207,7 +207,7 @@
         if (dateFrom > dateTo) {
             return xSwal.error("Invalid Input Date", "Please Select Date From less than Date To");
         }
-        if (partFrom == null || partFrom == undefined || partTo == null || partTo == undefined) {
+        if (partFrom === "" || partFrom === undefined || partTo === "" || partTo === undefined) {
             return xSwal.error("Part No. is empty", "Please Select Part No.");
         }
         if (partFrom > partTo) {
@@ -229,9 +229,14 @@
             },
             then: function (result) {
                 console.log(result);
-                var filename = location.pathname.substring(location.pathname.lastIndexOf('/') + 1);
-                var reportUrl = "http://hmmt-app03/Reportserver/report/KB3/";
-                window.location.href = reportUrl + filename + '?HostName=' + result.data2 + '&UserName=' + result.data;
+                if (result.status === 200) {
+                    var filename = location.pathname.substring(location.pathname.lastIndexOf('/') + 1);
+                    var reportUrl = "http://hmmt-app03/Reportserver/report/KB3/";
+                    window.location.href = reportUrl + filename + '?HostName=' + result.data2 + '&UserName=' + result.data;
+                }
+                else {
+                    return xSwal.Error(result.title, result.message);
+                }
             },
             error: function (result) {
                 return console.error(result);

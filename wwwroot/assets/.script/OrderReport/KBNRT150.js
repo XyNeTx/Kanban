@@ -54,7 +54,7 @@
         var orderFrom = $("#F_OrderFrom").val().replaceAll('-', '');
         var orderTo = $("#F_OrderTo").val().replaceAll('-', '');
 
-        if (typeFrom == null || typeFrom == undefined || typeTo == null || typeTo == undefined) {
+        if (typeFrom === "" || typeFrom === undefined || typeTo === "" || typeTo === undefined) {
             return xSwal.error("Supplier Code is empty", "Please Select Supplier Code");
         }
         if (typeFrom > typeTo) {
@@ -74,9 +74,14 @@
             },
             then: function (result) {
                 console.log(result);
-                var filename = location.pathname.substring(location.pathname.lastIndexOf('/') + 1);
-                var reportUrl = "http://hmmt-app03/Reportserver/report/KB3/";
-                window.location.href = reportUrl + filename + '?HostName=' + result.data2 + '&UserName=' + result.data;
+                if (result.status === 200) {
+                    var filename = location.pathname.substring(location.pathname.lastIndexOf('/') + 1);
+                    var reportUrl = "http://hmmt-app03/Reportserver/report/KB3/";
+                    window.location.href = reportUrl + filename + '?HostName=' + result.data2 + '&UserName=' + result.data;
+                }
+                else {
+                    xSwal.error(result.title, result.message);
+                }
             },
             error: function (result) {
                 console.error(result);

@@ -162,7 +162,7 @@
         });
     });
     xAjax.onChange("#F_StoreFrom, #F_StoreTo", function () {
-        if ($("#F_StoreTo").val() == null || $("#F_StoreTo").val() == "") {
+        if ($("#F_StoreTo").val() === null || $("#F_StoreTo").val() === "") {
             $("#F_StoreTo").val($("#F_StoreFrom").val()).change();
         }
     });
@@ -177,7 +177,7 @@
         var storeFrom = $("#F_StoreFrom").val();
         var storeTo = $("#F_StoreTo").val();
 
-        if (supFrom == "" || supFrom == null || supTo == "" || supTo == null) {
+        if (supFrom === "" || supFrom === null || supTo === "" || supTo === null) {
             return xSwal.error("Data Error", "Please Select Supplier Code From And Supplier Code To");
         }
 
@@ -186,7 +186,7 @@
         }
 
 
-        if (kbnFrom == "" || kbnFrom == null || kbnTo == "" || kbnTo == null) {
+        if (kbnFrom === "" || kbnFrom === null || kbnTo === "" || kbnTo === null) {
             return xSwal.error("Data Error", "Please Select Kanban No. From And Kanban No. To");
         }
 
@@ -194,7 +194,7 @@
             return xSwal.error("Data Error", "Please Select Kanban No. From Less than Kanban No. To");
         }
 
-        if (partFrom == "" || partFrom == null || partTo == "" || partTo == null) {
+        if (partFrom === "" || partFrom === null || partTo === "" || partTo === null) {
             return xSwal.error("Data Error", "Please Select Part No. From And Part No. To");
         }
 
@@ -203,7 +203,7 @@
         }
 
 
-        if (storeFrom == "" || storeFrom == null || storeTo == "" || storeTo == null) {
+        if (storeFrom === "" || storeFrom === null || storeTo === "" || storeTo === null) {
             console.log(storeFrom, storeTo);
             return xSwal.error("Data Error", "Please Select Store Code From And Store Code To");
         }
@@ -231,7 +231,7 @@
         var storeFrom = $("#F_StoreFrom").val();
         var storeTo = $("#F_StoreTo").val();
 
-        if (supFrom == "" || supFrom == null || supTo == "" || supTo == null) {
+        if (supFrom === "" || supFrom === null || supTo === "" || supTo === null) {
             return xSwal.error("Data Error", "Please Select Supplier Code From And Supplier Code To");
         }
 
@@ -240,7 +240,7 @@
         }
 
 
-        if (kbnFrom == "" || kbnFrom == null || kbnTo == "" || kbnTo == null) {
+        if (kbnFrom === "" || kbnFrom === null || kbnTo === "" || kbnTo === null) {
             return xSwal.error("Data Error", "Please Select Kanban No. From And Kanban No. To");
         }
 
@@ -248,7 +248,7 @@
             return xSwal.error("Data Error", "Please Select Kanban No. From Less than Kanban No. To");
         }
 
-        if (partFrom == "" || partFrom == null || partTo == "" || partTo == null) {
+        if (partFrom === "" || partFrom === null || partTo === "" || partTo === null) {
             return xSwal.error("Data Error", "Please Select Part No. From And Part No. To");
         }
 
@@ -257,7 +257,7 @@
         }
 
 
-        if (storeFrom == "" || storeFrom == null || storeTo == "" || storeTo == null) {
+        if (storeFrom === "" || storeFrom === null || storeTo === "" || storeTo === null) {
             console.log(storeFrom, storeTo);
             return xSwal.error("Data Error", "Please Select Store Code From And Store Code To");
         }

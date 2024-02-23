@@ -4,8 +4,10 @@ using KANBAN.Context;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using NPOI.HSSF.UserModel;
 using NPOI.SS.Formula.Functions;
 using Org.BouncyCastle.Crypto.Tls;
+using System.Data;
 
 namespace KANBAN.Controllers.API.OrderReport
 {
@@ -111,10 +113,10 @@ namespace KANBAN.Controllers.API.OrderReport
         public IActionResult CustomNotFound()
         {
             string _result = @"{
-                                    ""status"":""401"",
+                                    ""status"":""404"",
                                     ""response"":""OK"",
                                     ""Title"":""Data Not Found"",
-                                    ""message"": ""Data Not Found""
+                                    ""message"": ""Please Select Other Option then Try Again""
                              }";
 
             return Ok(_result);
@@ -320,6 +322,19 @@ namespace KANBAN.Controllers.API.OrderReport
                         "{6},{7},{8},{9},{10},{11},{12},{13},{14},{15},{16},{17}", Str_cdReal, KbnRpt, SupCode, SupplierName, partNoRpt, partName
                         , Location, use_line, BL, Order, sum_PEFF, sum_msp, sum_v2v, sum_srv, difference, BL_stock, UserName, HostName);
 
+                }
+
+                DataTable _dt = _KBCN.ExecuteSQL($"SELECT * FROM TB_Stock_planing_rpt_TMP WHERE F_Update_By = '{UserName}' AND F_Host_name = '{HostName}'", skipLog: true);
+                if (_dt.Rows.Count == 0)
+                {
+                    _result = @"{
+                                    ""status"":""404"",
+                                    ""response"":""OK"",
+                                    ""title"":""Report Data Not Found"",
+                                    ""message"": ""Please Try Other Option!""
+                                    }";
+
+                    return Ok(_result);
                 }
 
                 string _jsonData = JsonConvert.SerializeObject(UserName);

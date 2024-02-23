@@ -22,7 +22,7 @@
         },
     });
     xAjax.onChange("#F_SupFrom, #F_SupTo", function () {
-        if ($("#F_SupTo").val() == null || $("#F_SupTo").val() == "") {
+        if ($("#F_SupTo").val() === null || $("#F_SupTo").val() === "") {
             $("#F_SupTo").val($("#F_SupFrom").val()).change();
         }
     });
@@ -34,7 +34,7 @@
         var dateTo = $("#F_OrderDateTo").val();
         var dateFromPrced = dateFrom.split("-")[0] + dateFrom.split("-")[1] + dateFrom.split("-")[2];
         var dateToPrced = dateTo.split("-")[0] + dateTo.split("-")[1] + dateTo.split("-")[2];
-        if (supFrom == null || supFrom == undefined || supTo == null || supTo == undefined) {
+        if (supFrom === "" || supFrom === undefined || supTo === "" || supTo == undefined) {
             return xSwal.error("Supplier Code is empty", "Please Select Supplier Code");
         }
         if (supFrom > supTo) {

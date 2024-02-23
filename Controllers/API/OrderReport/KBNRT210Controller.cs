@@ -289,6 +289,20 @@ namespace KANBAN.Controllers.API.OrderReport
                     }
 
                 }
+
+                var haveData = await _KB3Context.TB_Inquriy_KB_rpt_TMP.Where(x => x.F_Host_Name == HostName && x.F_Update_by == UserName).ToListAsync();
+
+                if (haveData.Count == 0)
+                {
+                    _result = @"{
+                                    ""status"":""404"",
+                                    ""response"":""OK"",
+                                    ""title"":""Data Not Found"",
+                                    ""message"": ""Please try other option!""
+                                    }";
+
+                    return Ok(_result);
+                }
                 string _jsonData = JsonConvert.SerializeObject(UserName);
                 string _jsonData2 = JsonConvert.SerializeObject(HostName);
 

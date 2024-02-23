@@ -4,6 +4,7 @@ using KANBAN.Context;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using NPOI.Util;
 
 namespace KANBAN.Controllers.API.OrderReport
 {
@@ -138,6 +139,18 @@ namespace KANBAN.Controllers.API.OrderReport
                 var reportList = await _KB3Context.V_KBNRT_180_Rpt.Where(x => x.F_Supplier.CompareTo(supFrom) >= 0 && x.F_Supplier.CompareTo(supTo) <= 0)
                     .Where(x => x.Chk_ord_date.CompareTo(dateFrom) >= 0 && x.Chk_ord_date.CompareTo(dateTo) <= 0).OrderBy(x => x.F_Supplier).ToListAsync();
 
+                if (reportList.Count == 0)
+                {
+                    _result = @"{
+                                    ""status"":""404"",
+                                    ""response"":""OK"",
+                                    ""title"":""Report Data Not Found"",
+                                    ""message"": ""Please Try Other Option!""
+                                    }";
+
+                    return Ok(_result);
+                }
+
                 foreach (var report in reportList)
                 {
                     await _KB3Context.Database.ExecuteSqlRawAsync("INSERT INTO RPT_KBNRT_180 (Supplier_name, Supplier_code, Part_no, Kanban_no, Store_code, " +
@@ -195,6 +208,18 @@ namespace KANBAN.Controllers.API.OrderReport
 
                 var reportList = await _KB3Context.V_KBNRT_180_Rpt.Where(x => x.F_Supplier.CompareTo(supFrom) >= 0 && x.F_Supplier.CompareTo(supTo) <= 0)
                     .Where(x => x.Chk_deli_date.CompareTo(dateFrom) >= 0 && x.Chk_deli_date.CompareTo(dateTo) <= 0).OrderBy(x => x.F_Supplier).ToListAsync();
+
+                if (reportList.Count == 0)
+                {
+                    _result = @"{
+                                    ""status"":""404"",
+                                    ""response"":""OK"",
+                                    ""title"":""Report Data Not Found"",
+                                    ""message"": ""Please Try Other Option!""
+                                    }";
+
+                    return Ok(_result);
+                }
 
                 foreach (var report in reportList)
                 {

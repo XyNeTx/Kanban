@@ -178,10 +178,10 @@ namespace KANBAN.Controllers.API.OrderReport
                 else
                 {
                     _result = @"{
-                                    ""status"":""400"",
+                                    ""status"":""404"",
                                     ""response"":""OK"",
-                                    ""title"":""No Data Found"",
-                                    ""message"": ""Please select other option and try again""
+                                    ""title"":""Report Data not Found"",
+                                    ""message"": ""Please Select Other Option and Try Again""
                                     }";
 
                     return Ok(_result);

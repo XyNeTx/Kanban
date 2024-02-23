@@ -8,6 +8,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using NPOI.HSSF.UserModel;
+using System.Data;
 using System.Net.NetworkInformation;
 
 namespace KANBAN.Controllers.API.OrderReport
@@ -417,6 +418,19 @@ namespace KANBAN.Controllers.API.OrderReport
                     new SqlParameter("@ShiftFrom", shiftFrom),
                     new SqlParameter("@ShiftTo", shiftTo)
                     );
+
+                DataTable _dt = _KBCN.ExecuteSQL($"SELECT * FROM RPT_KBNRT_160 WHERE F_Update_By = '{userName}' AND F_Host_name = '{hostName}'", skipLog: true);
+                if(_dt.Rows.Count == 0)
+                {
+                    _result = @"{
+                                    ""status"":""404"",
+                                    ""response"":""OK"",
+                                    ""title"":""Report Data Not Found"",
+                                    ""message"": ""Please Try Other Option!""
+                                    }";
+
+                    return Ok(_result);
+                }
 
                 string _jsonData = JsonConvert.SerializeObject(userName);
                 string _jsonData2 = JsonConvert.SerializeObject(hostName);
