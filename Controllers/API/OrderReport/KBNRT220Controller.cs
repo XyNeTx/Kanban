@@ -8,6 +8,7 @@ using NPOI.HSSF.UserModel;
 using NPOI.SS.Formula.Functions;
 using Org.BouncyCastle.Crypto.Tls;
 using System.Data;
+using System.Globalization;
 
 namespace KANBAN.Controllers.API.OrderReport
 {
@@ -133,6 +134,23 @@ namespace KANBAN.Controllers.API.OrderReport
                 string supTo = _json["supTo"];
                 string dateFrom = _json["dateFrom"];
                 string dateTo = _json["dateTo"];
+                string format = "yyyy/MM/dd";
+                string DeliveryDateRPT = "";
+                CultureInfo provider = CultureInfo.InvariantCulture;
+                try
+                {
+                    string DateFromPrc;
+                    string DateToPrc;
+                    DateTime DateFromTry = DateTime.ParseExact(dateFrom, format, provider);
+                    DateFromPrc = DateFromTry.ToString("dd/MM/yyyy");
+                    DateFromTry = DateTime.ParseExact(dateTo, format, provider);
+                    DateToPrc = DateFromTry.ToString("dd/MM/yyyy");
+                    DeliveryDateRPT = DateFromPrc + "-" + DateToPrc;
+                }
+                catch (FormatException)
+                {
+                    Console.WriteLine("{0} is not in the correct format.", dateFrom);
+                }
                 string UserName = HttpContext.Session.GetString("USER_NAME");
                 string HostName = HttpContext.Session.GetString("USER_DEVICENAME");
                 string Location = "";
@@ -339,13 +357,15 @@ namespace KANBAN.Controllers.API.OrderReport
 
                 string _jsonData = JsonConvert.SerializeObject(UserName);
                 string _jsonData2 = JsonConvert.SerializeObject(HostName);
+                string _jsonData3 = JsonConvert.SerializeObject(DeliveryDateRPT);
 
                 _result = @"{
                                     ""status"":""200"",
                                     ""response"":""OK"",
                                     ""message"": ""Data Found"",
                                     ""data"": " + _jsonData + @",
-                                    ""data2"": " + _jsonData2 + @"
+                                    ""data2"": " + _jsonData2 + @",
+                                    ""data3"": " + _jsonData3 + @"
                                     }";
 
                 return Ok(_result);

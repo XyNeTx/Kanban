@@ -83,25 +83,10 @@
         if (supFrom > supTo) {
             return xSwal.error("Data Error", "Please Select 'Supplier Code From' Less than 'Supplier Code To");
         }
-
-        xAjax.Post({
-            url: 'KBNRT130/ReportClicked',
-            then: function (result) {
-                if (result.status === 200) {
-                    var userName = $("#profile-avatar").prop("title");
-                    var filename = location.pathname.substring(location.pathname.lastIndexOf('/') + 1);
-                    var reportUrl = "http://hmmt-app03/Reportserver/report/KB3/";
-                    window.location.href = reportUrl + filename + '?MonthFrom=' + monthFrom + '&MonthTo=' + monthTo +
-                        '&SupFrom=' + supFrom + '&SupTo=' + supTo + '&UserName=' + userName;
-                }
-                else {
-                    xSwal.error(result.title, result.message);
-                }
-            },
-            error: function (result) {
-                console.error(result);
-            }
-        });
-
+        var userName = $("#profile-avatar").prop("title");
+        var filename = location.pathname.substring(location.pathname.lastIndexOf('/') + 1);
+        var reportUrl = "http://hmmt-app03/Reportserver/report/KB3/";
+        window.location.href = reportUrl + filename + '?MonthFrom=' + monthFrom + '&MonthTo=' + monthTo +
+            '&SupFrom=' + supFrom + '&SupTo=' + supTo + '&UserName=' + userName;
     });
 });
