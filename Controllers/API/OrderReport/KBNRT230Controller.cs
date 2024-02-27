@@ -4,6 +4,8 @@ using KANBAN.Context;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Data;
+using System.Data.SqlClient;
 
 namespace KANBAN.Controllers.API.OrderReport
 {
@@ -17,7 +19,7 @@ namespace KANBAN.Controllers.API.OrderReport
         private readonly PPM3Context _PPM3Context;
         private readonly PPMInvenContext _PPMInvenContext;
         private readonly KB3Context _KB3Context;
-
+        private readonly FillDataTable _FillDT;
 
         private readonly string StoragePath = @"wwwroot\Storage\Uploads";
 
@@ -29,7 +31,8 @@ namespace KANBAN.Controllers.API.OrderReport
             PPMConnect ppmConnect,
             PPMInvenContext pPMInvenContext,
             PPM3Context pPM3Context,
-            KB3Context kB3Context
+            KB3Context kB3Context,
+            FillDataTable fillDataTable
             )
         {
             _configuration = configuration;
@@ -40,6 +43,7 @@ namespace KANBAN.Controllers.API.OrderReport
             _PPMConnect = ppmConnect;
             _PPM3Context = pPM3Context;
             _PPMInvenContext = pPMInvenContext;
+            _FillDT = fillDataTable;
         }
 
         public void setConString()
@@ -98,7 +102,7 @@ namespace KANBAN.Controllers.API.OrderReport
                                     ""status"":""400"",
                                     ""response"":""OK"",
                                     ""title"":""Initial Data not Found"",
-                                    ""message"": ""Data Error"",
+                                    ""message"": ""Data Error""
                                     }";
 
                     return Ok(_result);
@@ -144,6 +148,20 @@ namespace KANBAN.Controllers.API.OrderReport
 
                 await _KB3Context.Database.ExecuteSqlRawAsync("EXEC [dbo].[SP_KBNRT230_RPT_TB_Seq_ord_rpt_tmp] {0},{1},{2},{3},{4},{5},{6}"
                     , UserName, HostName, Type, cusFrom, cusTo, dateFrom, dateTo);
+
+                DataTable dt = _FillDT.ExecuteSQL($"SELECT * FROM TB_Seq_ord_rpt_tmp WHERE F_Update_By = '{UserName}' AND F_Host_name = '{HostName}'");
+
+                if (dt.Rows.Count == 0)
+                {
+                    _result = @"{
+                                    ""status"":""404"",
+                                    ""response"":""OK"",
+                                    ""title"":""Report Data Not Found"",
+                                    ""message"": ""Please Try Other Option!""
+                                    }";
+
+                    return Ok(_result);
+                }
 
                 string _JsonData = JsonConvert.SerializeObject(UserName);
                 string _JsonData2 = JsonConvert.SerializeObject(HostName);

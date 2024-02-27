@@ -85,7 +85,7 @@ builder.Services.AddSingleton<NPOIClass>();
 builder.Services.AddSingleton<PdfSharpClass>();
 builder.Services.AddSingleton<CookieClass>();
 builder.Services.AddSingleton<ActionResultClass>();
-
+builder.Services.AddScoped<FillDataTable>();
 
 
 builder.Services.AddSession(options =>

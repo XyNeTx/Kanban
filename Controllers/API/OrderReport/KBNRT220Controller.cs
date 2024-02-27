@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using NPOI.HSSF.UserModel;
 using NPOI.SS.Formula.Functions;
+using NuGet.LibraryModel;
 using Org.BouncyCastle.Crypto.Tls;
 using System.Data;
 using System.Globalization;
@@ -23,6 +24,7 @@ namespace KANBAN.Controllers.API.OrderReport
         private readonly PPM3Context _PPM3Context;
         private readonly PPMInvenContext _PPMInvenContext;
         private readonly KB3Context _KB3Context;
+        private readonly FillDataTable _FillDT;
 
 
         private readonly string StoragePath = @"wwwroot\Storage\Uploads";
@@ -35,6 +37,7 @@ namespace KANBAN.Controllers.API.OrderReport
             PPMConnect ppmConnect,
             PPMInvenContext pPMInvenContext,
             PPM3Context pPM3Context,
+            FillDataTable fillDataTable,
             KB3Context kB3Context
             )
         {
@@ -46,6 +49,7 @@ namespace KANBAN.Controllers.API.OrderReport
             _PPMConnect = ppmConnect;
             _PPM3Context = pPM3Context;
             _PPMInvenContext = pPMInvenContext;
+            _FillDT = fillDataTable;
         }
 
         public void setConString()
@@ -342,7 +346,7 @@ namespace KANBAN.Controllers.API.OrderReport
 
                 }
 
-                DataTable _dt = _KBCN.ExecuteSQL($"SELECT * FROM TB_Stock_planing_rpt_TMP WHERE F_Update_By = '{UserName}' AND F_Host_name = '{HostName}'", skipLog: true);
+                DataTable _dt = _FillDT.ExecuteSQL($"SELECT * FROM TB_Stock_planing_rpt_TMP WHERE F_Update_By = '{UserName}' AND F_Host_name = '{HostName}'");
                 if (_dt.Rows.Count == 0)
                 {
                     _result = @"{
