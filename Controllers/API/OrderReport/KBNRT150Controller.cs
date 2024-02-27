@@ -174,7 +174,7 @@ namespace KANBAN.Controllers.API.OrderReport
                     " Group by F_Type,F_part_No+'-'+F_Ruibetsu,F_Store_Cd,F_part_name,F_kanban_No,F_PDS_NO,F_REMARK,F_PDS_Issued_Date,F_Part_Order+'-'+F_Ruibetsu_Order ",
                     new SqlParameter("@UserName", userName),
                     new SqlParameter("@HostName", hostName),
-                    new SqlParameter("@Plant", 1),//for test only
+                    new SqlParameter("@Plant", 3),//for test only
                     new SqlParameter("@OrderFrom", orderFrom),
                     new SqlParameter("@OrderTo", orderTo),
                     new SqlParameter("@TypeFrom", typeFrom),
