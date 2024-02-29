@@ -61,6 +61,7 @@ namespace HINOSystem.Controllers.API.Master
         private readonly PPMConnect _PPMConnect;
         private readonly PPM3Context _PPM3Context;
         private readonly KB3Context _KB3Context;
+        private readonly SerilogLibs _Serilog;
 
 
         private readonly string StoragePath = @"wwwroot\Storage\Uploads";
@@ -72,7 +73,8 @@ namespace HINOSystem.Controllers.API.Master
             KanbanConnection kanbanConnection,
             PPMConnect ppmConnect,
             PPM3Context pPM3Context,
-            KB3Context kB3Context
+            KB3Context kB3Context,
+            SerilogLibs serilogLibs
             )
         {
             _configuration = configuration;
@@ -82,6 +84,7 @@ namespace HINOSystem.Controllers.API.Master
             _KBCN = kanbanConnection;
             _PPMConnect = ppmConnect;
             _PPM3Context = pPM3Context;
+            _Serilog = serilogLibs;
         }
 
         public void setConString()
@@ -452,11 +455,13 @@ namespace HINOSystem.Controllers.API.Master
             }
         }
 
-        public IActionResult UploadToEpro(string user)
+        public async Task<IActionResult> UploadToEpro(string user)
         {
             try
             {
                 setConString();
+                string UserName = HttpContext.Session.GetString("USER_NAME");
+                string HostName = HttpContext.Session.GetString("USER_DEVICENAME");
                 BearerClass _JBearer = _BearerClass.Header(Request);
                 string dateTime = DateTime.Now.ToString("yyyyMMdd");
                 string RecCd = "K" + dateTime.Substring(2, 2);
@@ -475,12 +480,18 @@ namespace HINOSystem.Controllers.API.Master
                 else { RecCd = RecCd + dateTime.Substring(5, 1); }
                 RecCd += dateTime.Substring(6, 2);
                 //_PPMConnect.ExecuteSQL($"EXEC [dbo].[SP_UploadReceiveNormal_All] '{RecCd}','{user}'", pUser: _JBearer, pControllerName: ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
-                _PPM3Context.Database.ExecuteSqlRaw(
+                await _PPM3Context.Database.ExecuteSqlRawAsync(
                     "exec [dbo].[SP_UploadReceiveNormal_All] @RecCd, @user",
                     new SqlParameter("@RecCd", RecCd),
                     new SqlParameter("@user", user)
                 );
-                _KB3Context.Database.ExecuteSqlRaw("EXEC [dbo].[SP_UploadReceivetoProcWeb_Normal]");
+
+                await _KB3Context.Database.ExecuteSqlRawAsync("EXEC [dbo].[SP_UploadReceiveNormal_All]");
+                _Serilog.WriteLog("EXEC [dbo].[SP_UploadReceiveNormal_All]", UserName, HostName);
+
+                await _KB3Context.Database.ExecuteSqlRawAsync("EXEC [dbo].[SP_UploadReceivetoProcWeb_Normal]");
+                _Serilog.WriteLog("EXEC [dbo].[SP_UploadReceivetoProcWeb_Normal]", UserName, HostName);
+
                 string _result = @"{
                     ""status"":""200"",
                     ""response"":""OK"",

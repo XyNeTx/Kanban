@@ -183,50 +183,50 @@
         }
     }
     PostData(pData) {
-    try {
-        const jsonObject = JSON.parse(pData);
+        try {
+            const jsonObject = JSON.parse(pData);
 
-        if (typeof (pData) === 'string') {
-            // pData : var _string = `{ "id": "String" }`;
-            return JSON.stringify(JSON.stringify(JSON.parse(pData)));
+            if (typeof (pData) === 'string') {
+                // pData : var _string = `{ "id": "String" }`;
+                return JSON.stringify(JSON.stringify(JSON.parse(pData)));
 
-        } else if (typeof (pData) === 'object') {
-            // pData : var _json = { "id": "JSON" };
-            return JSON.stringify(JSON.stringify(pData));
-        }
+            } else if (typeof (pData) === 'object') {
+                // pData : var _json = { "id": "JSON" };
+                return JSON.stringify(JSON.stringify(pData));
+            }
 
-    } catch (error) {
+        } catch (error) {
 
-        if (pData.length > 0) {
-            // pData : $('#frmCondition')
+            if (pData.length > 0) {
+                // pData : $('#frmCondition')
 
-            const _formData = $('#' + pData.attr('id')).serializeArray();
-            const _jsonData = {};
+                const _formData = $('#' + pData.attr('id')).serializeArray();
+                const _jsonData = {};
 
-            $(_formData).each(function (index, obj) {
-                _jsonData[obj.name] = obj.value;
-            });
-            return JSON.stringify(JSON.stringify(_jsonData));
-
-        } else {
-            //console.log(pData);
-            var _jObject = JSON.stringify(JSON.stringify(pData));
-
-            if (_jObject === '"{}"') {
-                // pData : var _formData = new FormData();
-                return JSON.stringify(JSON.stringify(Object.fromEntries(pData)));
+                $(_formData).each(function (index, obj) {
+                    _jsonData[obj.name] = obj.value;
+                });
+                return JSON.stringify(JSON.stringify(_jsonData));
 
             } else {
-                // pData :  var _object = {};   _object.id = "Object.id";
-                return _jObject;
+                //console.log(pData);
+                var _jObject = JSON.stringify(JSON.stringify(pData));
+
+                if (_jObject === '"{}"') {
+                    // pData : var _formData = new FormData();
+                    return JSON.stringify(JSON.stringify(Object.fromEntries(pData)));
+
+                } else {
+                    // pData :  var _object = {};   _object.id = "Object.id";
+                    return _jObject;
+                }
+
             }
 
         }
 
+
     }
-
-
-}
 
 
 
@@ -267,7 +267,7 @@
     }
 
 
-    
+
     ToClipboard(pText) {
         try {
             // Create a temporary textarea element
@@ -291,8 +291,8 @@
                 .catch(err => {
                 });
 
-        //// Remove the temporary textarea
-        //document.body.removeChild(textarea);
+            //// Remove the temporary textarea
+            //document.body.removeChild(textarea);
 
         } catch (err) {
             console.clear();
@@ -352,7 +352,7 @@ class AjaxItemProperties {
         }
         //console.log(pAttribute);
         if (pValue != null) {
-            if (pAttribute == 'id') this.id= pValue;
+            if (pAttribute == 'id') this.id = pValue;
             if (pAttribute == 'name') this.name = pValue;
             if (pAttribute == 'type') this.type = pValue;
             if (pAttribute == 'value') this.value = pValue;
@@ -376,7 +376,7 @@ class AjaxItemProperties {
 
             if (this.type == 'radio') {
                 $('input[name=' + this.name + ']').each(function (index, obj) {
-                    $('#' + obj.id).prop('checked',false);
+                    $('#' + obj.id).prop('checked', false);
                     //console.log($(this).id +'=>>'+ $(this).prop('checked'));
                 });
 
@@ -384,7 +384,7 @@ class AjaxItemProperties {
             } else {
                 $('#' + this.id).val(this.value);
             }
-            
+
 
         }
         return this.value;

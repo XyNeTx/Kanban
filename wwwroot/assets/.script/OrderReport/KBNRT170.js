@@ -51,7 +51,7 @@
                 supFrom: supFrom,
                 typeDate: typeDate,
                 dateFrom: dateFrom,
-                dateTo:dateTo
+                dateTo: dateTo
             },
             then: function (result) {
                 //console.log(result);
@@ -71,5 +71,58 @@
                 console.error(result);
             }
         });
+    });
+    async function ReportClick() {
+        var supFrom = $("#F_SupFrom").val();
+        var typeDate = $("input[type='radio'][name='radDate']:checked").val();
+        var dateFrom = $("#F_DateFrom").val().replaceAll('-', '');
+        var dateTo = $("#F_DateTo").val().replaceAll('-', '');
+        var dateFromShow = dateFrom.substring(6, 8) + "/" + dateFrom.substring(4, 6) + "/" + dateFrom.substring(0, 4);
+        var dateToShow = dateTo.substring(6, 8) + "/" + dateTo.substring(4, 6) + "/" + dateTo.substring(0, 4);
+        var cycleFrom = $("#F_CycleFrom").val().trim();
+        var cycleTo = $("#F_CycleTo").val().trim();
+        if (supFrom == "" || supFrom == undefined) {
+            return xSwal.error("Invalid Select Supplier", "Please Select Supplier then try again!");
+        }
+        if (typeDate === "Delivery") {
+            if (cycleFrom == "" || cycleFrom == undefined || cycleTo == "" || cycleTo == undefined) {
+                return xSwal.error("Invalid Select Cycle", "Please Select Cycle then try again!");
+            }
+        }
+        if (cycleFrom > cycleTo) {
+            return xSwal.error("Select System Cycle ERROR!", "Please System Cycle From less than System Cycle To");
+        }
+        if (dateFrom > dateTo) {
+            return xSwal.error("Select Order Date ERROR!", "Please Select Order Date From less than Order Date To");
+        }
+        xAjax.Post({
+            url: 'KBNRT170/OnClickReport',
+            data: {
+                supFrom: supFrom,
+                typeDate: typeDate,
+                dateFrom: dateFrom,
+                dateTo: dateTo,
+                cycleFrom: cycleFrom,
+                cycleTo: cycleTo
+            },
+            then: function (result) {
+                if (result.status === "200") {
+                    var filename = location.pathname.substring(location.pathname.lastIndexOf('/') + 1);
+                    var reportUrl = "http://hmmt-app03/Reportserver/report/KB3/";
+                    //window.location.href = reportUrl + filename + typeDate + '?Sup=' + supFrom + '&DateFrom=' + dateFrom +
+                    //    '&DateTo=' + dateTo + '&CycleFrom=' + cycleFrom + '&CycleTo=' + cycleTo + '&DateFromShow=' + dateFromShow +
+                    //    '&DateToShow=' + dateToShow;
+                }
+                else {
+                    return xSwal.Error(result.title, result.message);
+                }
+            },
+            error: function (result) {
+                console.error("Initial Error " + result);
+            },
+        });
+    }
+    xAjax.onClick("#ReportBtn", async function () {
+        await ReportClick();
     });
 });

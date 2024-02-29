@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Data;
+using System.Linq;
 
 namespace KANBAN.Controllers.API.OrderReport
 {
@@ -18,6 +20,8 @@ namespace KANBAN.Controllers.API.OrderReport
         private readonly PPM3Context _PPM3Context;
         private readonly PPMInvenContext _PPMInvenContext;
         private readonly KB3Context _KB3Context;
+        private readonly SerilogLibs _Serilog;
+        private readonly FillDataTable _FillDT;
 
 
         private readonly string StoragePath = @"wwwroot\Storage\Uploads";
@@ -30,7 +34,9 @@ namespace KANBAN.Controllers.API.OrderReport
             PPMConnect ppmConnect,
             PPMInvenContext pPMInvenContext,
             PPM3Context pPM3Context,
-            KB3Context kB3Context
+            KB3Context kB3Context,
+            SerilogLibs serilogLibs,
+            FillDataTable fillDataTable
             )
         {
             _configuration = configuration;
@@ -41,6 +47,8 @@ namespace KANBAN.Controllers.API.OrderReport
             _PPMConnect = ppmConnect;
             _PPM3Context = pPM3Context;
             _PPMInvenContext = pPMInvenContext;
+            _Serilog = serilogLibs;
+            _FillDT = fillDataTable;
         }
 
         public void setConString()
@@ -91,7 +99,8 @@ namespace KANBAN.Controllers.API.OrderReport
                         F_Supplier = x.F_Supplier_Cd.Trim() + '-' + x.F_Supplier_Plant
                     }).Distinct().ToListAsync();
 
-                var cycleDB = await _KB3Context.TB_REC_HEADER.Select(x => x.F_Delivery_Trip).Distinct().ToListAsync();
+                var sortTrip = await _KB3Context.TB_REC_HEADER.OrderBy(x=>x.F_Delivery_Trip).ToListAsync();
+                var cycleDB = sortTrip.Select(x => x.F_Delivery_Trip).Distinct();
 
                 string _jsonData = JsonConvert.SerializeObject(supDB);
                 string _jsonData2 = JsonConvert.SerializeObject(cycleDB);
@@ -135,7 +144,8 @@ namespace KANBAN.Controllers.API.OrderReport
                 })
                     .Where(x => x.Sup_Code == supFrom)
                     .Where(x => x.Deli_Date.CompareTo(dateFrom) >= 0 && x.Deli_Date.CompareTo(dateTo) <= 0)
-                    .Select(x => x.Deli_Trip).Distinct().OrderBy(x => x).ToListAsync();
+                    .OrderBy(x=>x.Deli_Trip)
+                    .Select(x => x.Deli_Trip).Distinct().ToListAsync();
                 string _jsonData = JsonConvert.SerializeObject(cycleDB);
 
 
@@ -147,6 +157,65 @@ namespace KANBAN.Controllers.API.OrderReport
                                     }";
 
                 return Ok(_result);
+            }
+            catch (Exception ex)
+            {
+                return Content(ex.Message);
+            }
+        }
+        [HttpPost]
+        public IActionResult OnClickReport([FromBody] string data)
+        {
+            try
+            {
+                setConString();
+                string _result = "";
+                dynamic _json = JsonConvert.DeserializeObject(data);
+                string supFrom = _json["supFrom"];
+                string typeDate = _json["typeDate"];
+                string dateFrom = _json["dateFrom"];
+                string dateTo = _json["dateTo"];
+                string cycleFrom = _json["cycleFrom"];
+                string cycleTo = _json["cycleTo"];
+                string fromTable = "";
+                DataTable dt = new();
+                if (typeDate == "Delivery")
+                {
+                    fromTable = "V_KBNRT_170_Deli_rpt";
+                    dt = _FillDT.ExecuteSQL($"SELECT * FROM {fromTable} WHERE Sup = '{supFrom}' " +
+                    $"AND (chk_Deli_Date >= '{dateFrom}' AND chk_Deli_Date <= '{dateTo}') AND (F_Delivery_Trip >= '{cycleFrom}' " +
+                    $"AND F_Delivery_Trip <= '{cycleTo}' ) ORDER BY F_Delivery_Dock,F_Kanban_No,Prt_no ");
+                }
+                else
+                {
+                    fromTable = "V_KBNRT_170_Ord_rpt";
+                    dt = _FillDT.ExecuteSQL($"SELECT * FROM {fromTable} WHERE Sup = '{supFrom}' " +
+                        $"AND (chk_Order_Date >= '{dateFrom}' AND chk_Order_Date <= '{dateTo}') ORDER BY F_Delivery_Dock,F_Kanban_No,Prt_no ");
+                }
+
+
+                if (dt.Rows.Count == 0)
+                {
+                    _result = @"{
+                                    ""status"":""404"",
+                                    ""response"":""OK"",
+                                    ""title"":""Report Data Not Found"",
+                                    ""message"": ""Please Try Other Option!""
+                                    }";
+
+                    return Ok(_result);
+                }
+                else
+                {
+                    _result = @"{
+                                    ""status"":""200"",
+                                    ""response"":""OK"",
+                                    ""title"" : ""Check Database Complete"",
+                                    ""message"": ""Data Found""
+                                    }";
+
+                    return Ok(_result);
+                }
             }
             catch (Exception ex)
             {

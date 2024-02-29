@@ -55,6 +55,7 @@ namespace HINOSystem.Controllers.API.Master
         private readonly PPMConnect _PPMConnect;
         private readonly PPM3Context _PPM3Context;
         private readonly KB3Context _KB3Context;
+        private readonly SerilogLibs _Serilog;
 
 
         private readonly string StoragePath = @"wwwroot\Storage\Uploads";
@@ -66,7 +67,8 @@ namespace HINOSystem.Controllers.API.Master
             KanbanConnection kanbanConnection,
             PPMConnect ppmConnect,
             KB3Context kB3Context,
-            PPM3Context pPM3Context
+            PPM3Context pPM3Context,
+            SerilogLibs serilogLibs
             )
         {
             _configuration = configuration;
@@ -76,6 +78,7 @@ namespace HINOSystem.Controllers.API.Master
             _KBCN = kanbanConnection;
             _PPMConnect = ppmConnect;
             _PPM3Context = pPM3Context;
+            _Serilog = serilogLibs;
         }
 
         public void setConString()
@@ -357,6 +360,8 @@ namespace HINOSystem.Controllers.API.Master
                 setConString();
                 string _result = "";
                 BearerClass _JBearer = _BearerClass.Header(Request);
+                string UserName = HttpContext.Session.GetString("USER_NAME");
+                string HostName = HttpContext.Session.GetString("USER_DEVICENAME");
                 var user = _JBearer.UserCode.ToString();
                 if (_KBCN.Plant.ToString() == "3")
                 {
@@ -437,6 +442,7 @@ namespace HINOSystem.Controllers.API.Master
                                                 F_Pack_Code = ""
                                             };
                                             await _PPM3Context.AddAsync(local);
+                                            _Serilog.WriteLog($"Receive Part Seperate : {PDSNo} T_Receive_Local Line 445", UserName, HostName);
                                         }
                                     }
                                     else
@@ -491,6 +497,7 @@ namespace HINOSystem.Controllers.API.Master
                                                     F_Pack_Code = ""
                                                 };
                                                 await _PPM3Context.AddAsync(local);
+                                                _Serilog.WriteLog($"Receive Part Seperate : {PDSNo} T_Receive_Local Line 500", UserName, HostName);
                                             }
                                         }
                                         else
@@ -545,6 +552,7 @@ namespace HINOSystem.Controllers.API.Master
                                 }";
                             await _KB3Context.SaveChangesAsync();
                             await _PPM3Context.SaveChangesAsync();
+
                             return Ok(_result);
                         }
                     }
