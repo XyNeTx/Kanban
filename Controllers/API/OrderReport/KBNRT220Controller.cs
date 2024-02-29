@@ -138,23 +138,8 @@ namespace KANBAN.Controllers.API.OrderReport
                 string supTo = _json["supTo"];
                 string dateFrom = _json["dateFrom"];
                 string dateTo = _json["dateTo"];
-                string format = "yyyy/MM/dd";
-                string DeliveryDateRPT = "";
-                CultureInfo provider = CultureInfo.InvariantCulture;
-                try
-                {
-                    string DateFromPrc;
-                    string DateToPrc;
-                    DateTime DateFromTry = DateTime.ParseExact(dateFrom, format, provider);
-                    DateFromPrc = DateFromTry.ToString("dd/MM/yyyy");
-                    DateFromTry = DateTime.ParseExact(dateTo, format, provider);
-                    DateToPrc = DateFromTry.ToString("dd/MM/yyyy");
-                    DeliveryDateRPT = DateFromPrc + "-" + DateToPrc;
-                }
-                catch (FormatException)
-                {
-                    Console.WriteLine("{0} is not in the correct format.", dateFrom);
-                }
+                string DeliveryDateRPT = dateFrom.Substring(6, 2) + "/" + dateFrom.Substring(4, 2) + "/" + dateFrom.Substring(0, 4)
+                    + " - " + dateTo.Substring(6, 2) + "/" + dateTo.Substring(4, 2) + "/" + dateTo.Substring(0, 4);
                 string UserName = HttpContext.Session.GetString("USER_NAME");
                 string HostName = HttpContext.Session.GetString("USER_DEVICENAME");
                 string Location = "";

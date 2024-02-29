@@ -2218,6 +2218,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="NPOI" Version="2.6.0" />
     <PackageReference Include="PdfSharp" Version="1.50.5147" />
+    <PackageReference Include="Serilog.AspNetCore" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup>

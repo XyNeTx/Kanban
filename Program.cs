@@ -6,6 +6,7 @@ using HINOSystem.Models.ERP;
 using Microsoft.AspNetCore.Server.IISIntegration;
 using Microsoft.AspNetCore.Authentication.Negotiate;
 using KANBAN.Context;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,6 +37,9 @@ builder.Services.AddDbContext<PPMInvenContext>(options =>
         )
 );
 
+//Add Support to logging with SERILOG
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration).CreateLogger();
 
 
 
@@ -86,6 +90,7 @@ builder.Services.AddSingleton<PdfSharpClass>();
 builder.Services.AddSingleton<CookieClass>();
 builder.Services.AddSingleton<ActionResultClass>();
 builder.Services.AddScoped<FillDataTable>();
+builder.Services.AddScoped<SerilogLibs>();
 
 
 builder.Services.AddSession(options =>
