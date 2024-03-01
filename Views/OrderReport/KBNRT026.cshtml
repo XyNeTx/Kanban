@@ -1,12 +1,66 @@
 ﻿<div class="row">
+
+    <div class="col-xl-12 col-md-12 col-sm-12">
+        <div class="card border-left-primary shadow h-100">
+            <div class="card-body">
+                <form id="frmCondition">
+                    <fieldset class="fieldset">
+                        <legend>Main Report :: </legend>
+                        <div class="text-center">
+                            <div class="mb-4">
+                                <div class="d-inline-block" style="width:25%">
+                                    <item type="month" id="F_ProdMonth" label="Production Month : " format="yyyy-mm" default="now"></item>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <div class="d-inline-block col-3">
+                                    <label class="input-group-text" for="Revision" noedit="">Revision : &nbsp;&nbsp;&nbsp;<input type="text" class="form-control" id="Revision" value="" readonly /></label>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <div class="d-inline-block col-3">
+                                    <label class="input-group-text" for="Version" noedit="">Version : &nbsp;&nbsp;&nbsp;<input type="text" class="form-control" id="Version" value="" readonly /></label>
+                                </div>
+                            </div>
+                        </div>
+                        <fieldset class="fieldset">
+                            <legend>Condition Report :: </legend>
+                            <div class="row mb-4">
+                                <div id="AllDiv" class="col ms-4">
+                                    <input type="radio" class="form-check-input" name="radio" id="All" value="all" checked /><label class="form-check-label" style="margin-top: 0.2rem !important;" for="all">All Data</label>
+                                </div>
+                            </div>
+                            <div class="row mb-4">
+                                <div id="VolIn100Div" class="col ms-4">
+                                    <input type="radio" class="form-check-input" name="radio" id="increase100" value="100" /><label class="form-check-label" style="margin-top: 0.2rem !important;" for="increase100">Volume Increase 100%</label>
+                                </div>
+                                <div id="VolIn75Div" class="col ms-3">
+                                    <input type="radio" class="form-check-input" name="radio" id="increase75" value="75" /><label class="form-check-label" style="margin-top: 0.2rem !important;" for="increase75">Volume Increase 75%</label>
+                                </div>
+                            </div>
+                            <div class="row mb-4">
+                                <div id="VolDe100Div" class="col ms-4">
+                                    <input type="radio" class="form-check-input" name="radio" id="decrease100" value="-100" /><label class="form-check-label" style="margin-top: 0.2rem !important;" for="decrease100">Volume Decrease 100%</label>
+                                </div>
+                                <div id="VolDe75Div" class="col ms-3">
+                                    <input type="radio" class="form-check-input" name="radio" id="decrease75" value="-75" /><label class="form-check-label" style="margin-top: 0.2rem !important;" for="decrease75">Volume Decrease 75%</label>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </fieldset>
+                </form>
+                <div class="row mt-4">
+                    <div class="col d-flex justify-content-end align-text-bottom align-items-end align-content-end">
+                        <item type="button" style="height:fit-content" id="ReportBtn" label="Report"></item>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-
-<script type="text/javascript">
-    $(document).ready(function () {
-
-        xSplash.hide();
-
-    });
-
-</script>
+@section Scripts {
+    <script type="text/javascript" src="~/assets/js/History/UserMaintenance.js"></script>
+    <script type="text/javascript" src="~/assets/.script/Template/Master.js"></script>
+    <script type="text/javascript" src="~/assets/.script/OrderReport/KBNRT260.js?@ViewData["Version"]"></script>
+}

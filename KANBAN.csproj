@@ -212,6 +212,7 @@
     <None Include="wwwroot\assets\.script\OrderReport\KBNRT230.js" />
     <None Include="wwwroot\assets\.script\OrderReport\KBNRT240.js" />
     <None Include="wwwroot\assets\.script\OrderReport\KBNRT250.js" />
+    <None Include="wwwroot\assets\.script\OrderReport\KBNRT260.js" />
     <None Include="wwwroot\assets\.script\ReceiveProcess\KBNCR130.js" />
     <None Include="wwwroot\assets\.script\ReceiveProcess\KBNCR140.js" />
     <None Include="wwwroot\assets\.script\ReceiveProcess\KBNCR150.js" />
