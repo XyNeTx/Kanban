@@ -14,6 +14,8 @@ xAjax.onChange("#F_ProdMonth", async function () {
 
 function ProdMonthChange() {
     var prodMonth = $("#F_ProdMonth").val().trim();
+    $("#Revision").val("");
+    $("#Version").val("");
     return xAjax.Post({
         url: 'KBNRT260/Display_Detail',
         data: { prodMonth: prodMonth },
