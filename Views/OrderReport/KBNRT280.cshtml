@@ -1,12 +1,54 @@
 ﻿<div class="row">
+
+    <div class="col-xl-12 col-md-12 col-sm-12">
+        <div class="card border-left-primary shadow h-100">
+            <div class="card-body">
+                <form id="frmCondition">
+                    <fieldset class="fieldset mt-4">
+                        <legend>Type Report : </legend>
+                        <div class="row" id="ReportRadioDiv">
+                            <div id="SummaryDiv" class="col ms-4">
+                                <input type="radio" class="form-check-input" name="ReportRadio" id="Summary" value="S" checked /><label class="form-check-label" style="margin-top: 0.2rem !important;" for="Summary">Summary Report</label>
+                            </div>
+                            <div id="DetailDiv" class="col ms-3">
+                                <input type="radio" class="form-check-input" name="ReportRadio" id="Detail" value="D" /><label class="form-check-label" style="margin-top: 0.2rem !important;" for="Detail">Detail Report</label>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <fieldset class="fieldset mt-4">
+                        <legend>Type Order : </legend>
+                        <div class="row" id="OrderRadioDiv">
+                            <div id="AllDiv" class="col ms-4">
+                                <input type="radio" class="form-check-input" name="OrderRadio" id="All" value="A" checked /><label class="form-check-label" style="margin-top: 0.2rem !important;" for="All">All Type</label>
+                            </div>
+                            <div id="SpcDiv" class="col ms-3">
+                                <input type="radio" class="form-check-input" name="OrderRadio" id="Special" value="S" /><label class="form-check-label" style="margin-top: 0.2rem !important;" for="Special">Special Order</label>
+                            </div>
+                            <div id="NorUrgDiv" class="col ms-3">
+                                <input type="radio" class="form-check-input" name="OrderRadio" id="NorUrg" value="N" /><label class="form-check-label" style="margin-top: 0.2rem !important;" for="NorUrg">Normal Order, Urgent Order</label>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <div class="d-flex mt-4">
+                        <item type="date" style="width:35%" id="F_DeliDateFrom" label="Delivery Date : " format="yyyy-mm-dd" default="now"></item>
+                        <item type="date" style="width:25%" id="F_DeliDateTo" label="To : " format="yyyy-mm-dd" default="now"></item>
+                    </div>
+                </form>
+                <div class="row mt-4">
+                    <div class ="col ms-4 d-flex justify-content-start align-items-start align-content-start">
+                        <input type="checkbox" class="form-check-input" style="border-color:black;" id="delayCheckBox" /><label for="delayCheckBox"> Delay Only <span style="font-size:small;color:royalblue">*กรณีเลือกแบบ Detail Report ระบบจะแสดงเฉพาะ Delay เท่านั้น</span></label>
+                    </div>
+                    <div class="col d-flex justify-content-end align-text-bottom align-items-end align-content-end">
+                        <item type="button" style="height:fit-content" id="ReportBtn" label="Report"></item>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-
-<script type="text/javascript">
-    $(document).ready(function () {
-
-        xSplash.hide();
-
-    });
-
-</script>
+@section Scripts {
+    <script type="text/javascript" src="~/assets/js/History/UserMaintenance.js"></script>
+    <script type="text/javascript" src="~/assets/.script/Template/Master.js"></script>
+    <script type="text/javascript" src="~/assets/.script/OrderReport/KBNRT280.js?@ViewData["Version"]"></script>
+}
