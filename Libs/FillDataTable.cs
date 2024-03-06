@@ -14,13 +14,17 @@ namespace HINOSystem.Libs
         private readonly KanbanConnection _KBCN;
         private readonly IConfiguration _configuration;
         private readonly PPM3Context _PPM3Context;
+        private readonly ProcDBContext _ProcDB;
 
-        public FillDataTable(KB3Context kB3Context, KanbanConnection kBCN, IConfiguration configuration, PPM3Context pPM3Context)
+        public FillDataTable(
+            KB3Context kB3Context, KanbanConnection kBCN, IConfiguration configuration, PPM3Context pPM3Context
+            , ProcDBContext procDB)
         {
             _KB3Context = kB3Context;
             _KBCN = kBCN;
             _configuration = configuration;
             _PPM3Context = pPM3Context;
+            _ProcDB = procDB;
         }
 
         public void setConString()
@@ -55,6 +59,25 @@ namespace HINOSystem.Libs
             }
         }
 
+        public DataTable ExecuteSQLProcDB(string sql)
+        {
+            setConString();
+            SqlConnection con = new SqlConnection(_ProcDB.Database.GetConnectionString());
+            DataTable dt = new DataTable();
+
+            using (SqlCommand cmd = new SqlCommand(sql, con))
+            {
+                cmd.CommandType = CommandType.Text;
+                using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
+                {
+                    using (dt)
+                    {
+                        sda.Fill(dt);
+                        return dt;
+                    }
+                }
+            }
+        }
         public DataTable ExecuteSQL(string sql)
         {
             setConString();

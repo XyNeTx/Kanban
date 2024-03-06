@@ -1,12 +1,58 @@
 ﻿<div class="row">
+    <div class="col-xl-12 col-md-12 col-sm-12">
+        <div class="card border-left-primary shadow h-100">
+            <div class="card-body">
+                <form id="frmCondition">
+                    <div class="text-center">
+                        <div class="mb-4">
+                            <div class="d-flex" style="width:25%">
+                                <item type="month" id="F_DeliMonth" label="Delivery in Month : " format="yyyy-mm" default="now"></item>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col-5">
+                            <label class="input-group-text" for="F_Order">
+                                Order Type : &nbsp
+                                <select id="F_Order" class="form-select" label="Order Type : ">
+                                    <option id="Normal" value="NORMAL" >NORMAL</option>
+                                    <option id="Special" value="SPECIAL" >SPECIAL</option>
+                                </select>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col-5">
+                            <label class="input-group-text" for="F_SubFrom">
+                                Supplier Code From : &nbsp;
+                                <select id="F_SupFrom" class="form-select" label="Supplier From : ">
+                                    <option id="supFromBlank"></option>
+                                </select>
+                            </label>
+                        </div>
+                        <div class="col-4">
+                            <label class="input-group-text" for="F_SubTo">
+                                Supplier Code To : &nbsp;
+                                <select id="F_SupTo" class="form-select" label="To : ">
+                                    <option id="supToBlank"></option>
+                                </select>
+                            </label>
+                        </div>
+                    </div>
+                </form>
+                <div class="row mt-4">
+                    <div class="col d-flex justify-content-end align-text-bottom align-items-end align-content-end">
+                        <item type="button" style="height:fit-content" id="SummaryReportBtn" label="Summary Report"></item>
+                        <item type="button" style="height:fit-content" id="DetailReportBtn" label="Detail Report"></item>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-
-<script type="text/javascript">
-    $(document).ready(function () {
-
-        xSplash.hide();
-
-    });
-
-</script>
+@section Scripts {
+    <script type="text/javascript" src="~/assets/js/History/UserMaintenance.js"></script>
+    <script type="text/javascript" src="~/assets/.script/Template/Master.js"></script>
+    <script type="text/javascript" src="~/assets/.script/OrderReport/KBNRT296.js?@ViewData["Version"]"></script>
+}

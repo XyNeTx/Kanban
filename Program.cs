@@ -36,6 +36,12 @@ builder.Services.AddDbContext<PPMInvenContext>(options =>
         throw new InvalidOperationException("Connection String PPM3Context not found.")
         )
 );
+builder.Services.AddDbContext<ProcDBContext>(options =>
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("ProcDBConnection") ??
+        throw new InvalidOperationException("Connection String ProcDBContext not found.")
+        )
+);
 
 //Add Support to logging with SERILOG
 Log.Logger = new LoggerConfiguration()
