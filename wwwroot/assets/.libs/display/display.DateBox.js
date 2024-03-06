@@ -303,7 +303,7 @@
         $(this).off("click");
 
 
-        if ($('#' + this.id).attr('style') != 'free') $('#' + this.id).attr('style', 'max-width: 80px;');
+        if ($('#' + this.id).attr('style') != 'free') $('#' + this.id).attr('style', 'max-width: 90px;');
         if ($('[for="' + this.id + '"]').html() == undefined || $('[for="' + this.id + '"]').html() == '') $('#' + this.id).attr('style', 'max-width: 90px;');
 
 

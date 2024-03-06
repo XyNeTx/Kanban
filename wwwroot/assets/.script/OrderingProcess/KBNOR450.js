@@ -1,6 +1,6 @@
 ﻿$(document).ready(function () {
 
-    const xKBNMS003 = new MasterTemplate({
+    const xKBNOR450 = new MasterTemplate({
         Controller: _PAGE_,
         Table: 'tblMaster',
         ColumnTitle: {
@@ -22,44 +22,100 @@
         ],
     });
 
-    xKBNMS003.prepare();
+    xKBNOR450.prepare();
 
-    xKBNMS003.initial(function (result) {
-        //xDropDownList.bind('#frmCondition #F_Plant', result.data.TB_MS_Factory, 'F_Plant', 'F_Plant_Name');
-        //xDropDownList.bind('#frmMaster #F_Plant', result.data.TB_MS_Factory, 'F_Plant', 'F_Plant_Name');
+    xKBNOR450.initial(function (result) {
+        //console.log(result);
+        xDropDownList.bind('#frmCondition #itmPDSFrom', result.data.PDSNo, 'F_OrderNo', 'F_OrderNo');
+        xDropDownList.bind('#frmCondition #itmPDSTo', result.data.PDSNo, 'F_OrderNo', 'F_OrderNo');
+        xDropDownList.bind('#frmCondition #itmSupplierFrom', result.data.Supplier, 'F_Supplier_Code', 'F_Supplier_Plant');
+        xDropDownList.bind('#frmCondition #itmSupplierTo', result.data.Supplier, 'F_Supplier_Code', 'F_Supplier_Plant');
 
-        xKBNMS003.search();
+        xAjax.onClick('#chkPDSNo', function () {
+            if ($('#chkPDSNo').val() == 0) $('#fldPDSNo').prop('disabled', 'disabled');
+            if ($('#chkPDSNo').val() == 1) $('#fldPDSNo').prop('disabled', false);
+        });
+
+        xAjax.onClick('#chkSupplierCode', function () {
+            if ($('#chkSupplierCode').val() == 0) $('#fldSupplierCode').prop('disabled', 'disabled');
+            if ($('#chkSupplierCode').val() == 1) $('#fldSupplierCode').prop('disabled', false);
+        });
+
+        xAjax.onClick('#chkDeliveryDate', function () {
+            if ($('#chkDeliveryDate').val() == 0) $('#fldDeliveryDate').prop('disabled', 'disabled');
+            if ($('#chkDeliveryDate').val() == 1) $('#fldDeliveryDate').prop('disabled', false);
+        });
+
+
+        xSplash.hide();
     });
 
-    onSave = function () {
-        xKBNMS003.save(function () {
-            xKBNMS003.search();
+
+
+    xAjax.onClick('#btnPrintPDS', async function () {
+        if ($('#chkPDSNo').val() == 1 && ($('#itmPDSFrom').val() != '' || $('#itmPDSTo').val() != ''))
+            MsgBox("Please input PDS From, To before print PDS...", MsgBoxStyle.Exclamation, "Exclamation");
+
+        if ($('#chkSupplierCode').val() == 1 && ($('#itmSupplierFrom').val() != '' || $('#itmSupplierTo').val() != ''))
+            MsgBox("Please input Supplier From, To before print PDS...", MsgBoxStyle.Exclamation, "Exclamation");
+
+
+
+        await xAjax.Execute({
+            data: {
+                "StoreName": "[exec].[spKBNOR450_RPT_PDS]",
+                "@OrderType": "U",
+                "@Plant": ajexHeader.Plant,
+                "@UserCode": ajexHeader.UserCode,
+                "@itmPDSFrom": $('#itmPDSFrom').val(),
+                "@itmPDSTo": $('#itmPDSTo').val(),
+                "@itmSupplierFrom": $('#itmSupplierFrom').val(),
+                "@itmSupplierTo": $('#itmSupplierTo').val(),
+                "@itmDeliveryFrom": $('#itmDeliveryFrom').val(),
+                "@itmDeliveryTo": $('#itmDeliveryTo').val()
+            },
         });
-    }
 
-    onDelete = function () {
-        xKBNMS003.delete(function () {
-            xKBNMS003.search();
+
+        console.log('spKBNOR450_RPT_PDS');
+
+
+    });
+
+
+
+    xAjax.onClick('#btnPrintKanban', async function () {
+        if ($('#chkPDSNo').val() == 1 && ($('#itmPDSFrom').val() != '' || $('#itmPDSTo').val() != ''))
+            MsgBox("Please input PDS From, To before print PDS...", MsgBoxStyle.Exclamation, "Exclamation");
+
+        if ($('#chkSupplierCode').val() == 1 && ($('#itmSupplierFrom').val() != '' || $('#itmSupplierTo').val() != ''))
+            MsgBox("Please input Supplier From, To before print PDS...", MsgBoxStyle.Exclamation, "Exclamation");
+
+
+
+        await xAjax.Execute({
+            data: {
+                "StoreName": "[exec].[spKBNOR450_RPT_KANBAN]",
+                "@OrderType": "U",
+                "@Plant": ajexHeader.Plant,
+                "@UserCode": ajexHeader.UserCode,
+                "@itmPDSFrom": $('#itmPDSFrom').val(),
+                "@itmPDSTo": $('#itmPDSTo').val(),
+                "@itmSupplierFrom": $('#itmSupplierFrom').val(),
+                "@itmSupplierTo": $('#itmSupplierTo').val(),
+                "@itmDeliveryFrom": $('#itmDeliveryFrom').val(),
+                "@itmDeliveryTo": $('#itmDeliveryTo').val()
+            },
         });
-    }
-
-    onDeleteAll = function () {
-        xKBNMS003.deleteall(function () {
-            xKBNMS003.search();
-        });
-    }
-
-    onPrint = function () { }
-
-    onExecute = function () { }
-
-    //xAjax.onChange('#frmCondition #F_Plant', function () {
-    //    $('#frmMaster #F_Plant').val($('#frmCondition #F_Plant').val());
-
-    //    xKBNMS003.search();
-    //});
 
 
+        console.log('spKBNOR450_RPT_KANBAN');
+    });
+
+
+    xAjax.onClick('btnExit', function () {
+        xAjax.redirect('KBNOR400');
+    });
 
 
 

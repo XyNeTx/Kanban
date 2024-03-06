@@ -63,7 +63,7 @@ namespace HINOSystem.Libs
         }
 
 
-        public DataTable ExecuteSQL(string SQL, HttpContext httpContext = null, bool skipLog = false, BearerClass pUser = null, string pAction = "EXECUTE", string pControllerName = "", string pActionName = "", string pSystem = "")
+        public DataTable ExecuteSQL(string SQL, HttpContext httpContext = null, bool skipLog = false, BearerClass pUser = null, string pAction = "EXECUTE QUERY", string pControllerName = "", string pActionName = "", string pSystem = "")
         {
             try
             {
@@ -153,7 +153,7 @@ namespace HINOSystem.Libs
         }
 
 
-        public Boolean Execute(string SQL, HttpContext httpContext = null, bool skipLog = false, BearerClass pUser = null, string pAction = "EXECUTE QUERY", string pControllerName = "", string pActionName = "", string pSystem = "")
+        public Boolean Execute(string SQL, HttpContext httpContext = null, bool skipLog = false, BearerClass pUser = null, string pAction = "EXECUTE", string pControllerName = "", string pActionName = "", string pSystem = "")
         {
             try
             {
@@ -217,7 +217,7 @@ namespace HINOSystem.Libs
                                   , '" + _token + @"'
                                   , '" + pAction + @"'
                                   , GETDATE()
-                                  , '" + pSystem + @"'
+                                  , '" + (pSystem == "" ? "KB3" : pSystem) + @"'
                                   , '" + pControllerName.Replace("'", "''").Replace("\r", " ").Replace("\n", " ").Replace("\t", " ") + @"'
                                   , '" + pActionName.Replace("'", "''").Replace("\r", " ").Replace("\n", " ").Replace("\t", " ") + @"'
                                   , '" + pResult.Replace("'", "''").Replace("\r", " ").Replace("\n", " ").Replace("\t", " ") + @"'

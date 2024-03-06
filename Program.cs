@@ -97,6 +97,8 @@ builder.Services.AddSingleton<CookieClass>();
 builder.Services.AddSingleton<ActionResultClass>();
 builder.Services.AddScoped<FillDataTable>();
 builder.Services.AddScoped<SerilogLibs>();
+builder.Services.AddSingleton<TextFileClass>();
+
 
 
 builder.Services.AddSession(options =>
@@ -137,6 +139,10 @@ app.MapControllerRoute(
 app.MapControllerRoute(
     name: "KBN",
     pattern: "KBN/{controller=Home}/{action=Index}/{id?}");
+
+//app.MapControllerRoute(
+//    name: "action",
+//    pattern: "action/{controller=Home}/{action=Index}/{id?}");
 
 
 app.MapControllerRoute(

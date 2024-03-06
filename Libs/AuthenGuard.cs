@@ -73,7 +73,10 @@ namespace HINOSystem.Libs
             this.ComponentToolbarExport = false;
         }
 
-        public IActionResult guard(ControllerContext _context, string redirectView = "", string pViewPath = "")
+        public IActionResult guard(ControllerContext _context, 
+            string redirectView = "",
+            string pViewPath = "",
+            string pViewPage = "")
         {
             this.initial();
 
@@ -326,6 +329,7 @@ namespace HINOSystem.Libs
 
             if (_controller.ToUpper() == "REPORTS") return View("/Views/" + _system + "/" + _controller + "/" + _acton + ".cshtml", _dtMenuDisplay);
             if (pViewPath != "") return View(pViewPath + "/" + _acton, _dtMenuDisplay);
+            if (pViewPage != "") return View("/Views/" + pViewPage, _dtMenuDisplay);
 
             return View(_dtMenuDisplay);
         }

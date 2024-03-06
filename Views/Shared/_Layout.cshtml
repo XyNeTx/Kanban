@@ -166,7 +166,12 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <h4 class="mt-3">@ViewData["AppName"]</h4>
+                                    <h4 class="mt-3">
+                                        @ViewData["AppName"]
+                                        <a href="#" data-bs-toggle="modal" data-bs-target="#ModalSystemHistory" data-bs-remote="ModalSQL" id="_SYSTEMHISTORY_">
+                                            <i class="fas fa-bug" title="System History"></i>
+                                        </a>
+                                    </h4>
                                 </li>
                             </ul>
                             <ul class="nav-right">
@@ -259,13 +264,13 @@
                                             data-dropdown-out="fadeOut">
                                             <li>
                                                 <a href="#" data-bs-toggle="modal" data-bs-target="#ModalUserProfile">
-                                                    <i class="feather icon-user"></i> Profile
+                                                    <i class="feather icon-user"></i>Profile
                                                 </a>
                                             </li>
                                             <li>
                                                 <div onclick="$('#styleSelector').attr('class','open')">
                                                     <a href="#!">
-                                                        <i class="feather icon-settings"></i> Settings
+                                                        <i class="feather icon-settings"></i>Settings
                                                     </a>
                                                 </div>
                                             </li>
@@ -273,15 +278,15 @@
                                             <a href="email-inbox.html">
                                             <i class="feather icon-mail"></i> My Messages
                                             </a>
+                                            </li>*@
+                                            <li id="_SYSTEMHISTORYMENU_">
+                                                <a href="#" data-bs-toggle="modal" data-bs-target="#ModalSystemHistory" data-bs-remote="ModalSQL">
+                                                    <i class="fas fa-bug"></i>History
+                                                </a>
                                             </li>
                                             <li>
-                                            <a href="auth-lock-screen.html">
-                                            <i class="feather icon-lock"></i> Lock Screen
-                                            </a>
-                                            </li>*@
-                                            <li>
                                                 <a href="~/Login/Logout">
-                                                    <i class="feather icon-log-out"></i> Logout
+                                                    <i class="feather icon-log-out"></i>Logout
                                                 </a>
                                             </li>
                                         </ul>
@@ -413,6 +418,8 @@
                         </nav>
                         <div class="pcoded-content">
                             <div class="pcoded-inner-content">
+
+                                
                                 @if (ViewData["ComponentToolbar"].ToString() == "true")
                                 {
                                     <div class="btn-toolbar" role="toolbar" aria-label="Toolbar">
@@ -466,10 +473,6 @@
                                             @(ViewData["ComponentToolbarDelete"].ToString() == "true" ? "" : "disabled")>
                                                 <i class="far fa-trash-alt"></i>
                                             </button>
-
-                                            <a href="#" data-bs-toggle="modal" data-bs-target="#ModalSystemHistory" data-bs-remote="ModalSQL" id="_SYSTEMHISTORY_">
-                                                <i class="fas fa-bug fa-2x" title="System History"></i>
-                                            </a>
                                         </div>
                                     </div>
 
@@ -524,6 +527,7 @@
                                         <i class="fas fa-scroll" title="SQL"></i>
                                     </a>
                                 </div>*@
+                                
                                 @RenderBody()
 
                                 <div id="styleSelector"></div>
@@ -532,6 +536,18 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+    
+    <div id="load-wrapper" class="d-flex justify-content-center">
+        <div class="spinner-border" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
+
+    <div id="table-wrapper" class="d-flex justify-content-center" style="">
+        <div class="spinner-border text-dark table-wrapper-content" role="status">
+            <span class="sr-only">Loading...</span>
         </div>
     </div>
 

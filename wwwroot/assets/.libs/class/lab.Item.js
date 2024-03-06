@@ -40,7 +40,7 @@
             let _effect = ($(this).attr('effect') != undefined ? $(this).attr('effect') : 'fade-in-');
 
             //for DataTable
-            let _regend = ($(this).attr('regend') != undefined ? $(this).attr('regend') : ($(this).attr('label') != undefined ? $(this).attr('label') : ''));
+            let _legend = ($(this).attr('legend') != undefined ? $(this).attr('legend') : ($(this).attr('label') != undefined ? $(this).attr('label') : ''));
 
 
             //console.info(_label);
@@ -257,6 +257,19 @@
                         </div>
                         <div id="` + _id + `_label_" style="text-align:` + (_label_align == 'c' ? 'center' : (_label_align == 'l' ? 'left' : (_label_align == 'r' ? 'right' : _label_align))) + `;">` + _label + `</div>
                         `;
+            } else if (_type == 'submit') {
+                _item = `
+                        <button type="submit" class="btn btn-success `+ _classvalue + `" id="` + _id + `" name="` + _id + `" title="` + _title + `" ` + _style + `>
+                            `+ _label + `
+                        </button>
+                        `;
+            } else if (_type == 'progress') {
+                _item = `
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated `+ _classvalue + ` " id="` + _id + `" role="progressbar" style="width: ` + _current + `%" aria-valuenow="` + _current + `" aria-valuemin="` + _min + `" aria-valuemax="` + _max + `" label="` + _label + `"></div>
+                        </div>
+                        <div id="` + _id + `_label_" style="text-align:` + (_label_align == 'c' ? 'center' : (_label_align == 'l' ? 'left' : (_label_align == 'r' ? 'right' : _label_align))) + `;">` + _label + `</div>
+                        `;
             } else if (_type == 'radio') {
                 _item = `
                         <div class="input-group">
@@ -283,8 +296,8 @@
                         </div>
                         `;
             } else if (_type == 'table') {
-                //console.log(_regend);
-                if (_regend == '') {
+                //console.log(_legend);
+                if (_legend == '') {
                     _item = `
                         <div class="bg-white border rounded-3">
                             <section class="w-100 p-2">
@@ -295,7 +308,7 @@
                 } else {
                     _item = `
                         <fieldset class="fieldset">
-                            <legend>` + _regend + `</legend>
+                            <legend>` + _legend + `</legend>
                             <table id="` + _id + `" class="display ` + _classvalue + `" style="width:100%"></table>
                         </fieldset>
                         `;
@@ -329,7 +342,7 @@
         //console.log(pConfig);
 
         let _id = CheckObject(pConfig.id);
-        let _label = $(_id).attr('label');
+        let _label = (pConfig.label != undefined ? pConfig.label : $(_id).attr('label'));
         let _min = (pConfig.min != undefined ? pConfig.min : $(_id).attr('aria-valuemin'));
         let _max = (pConfig.max != undefined ? pConfig.max : $(_id).attr('aria-valuemax'));
         let _current = (pConfig.current != undefined ? pConfig.current : '0');

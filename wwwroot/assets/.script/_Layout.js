@@ -11,6 +11,7 @@
     var _debug = getCookie('debug');
     if ((_debug == undefined) || (_debug == '')) setCookie('debug', '0');
     if (_debug != 1) $('#_SYSTEMHISTORY_').attr('style', 'visibility:hidden;display:none;');
+    if (_debug != 1) $('#_SYSTEMHISTORYMENU_').attr('style', 'visibility:hidden;display:none;');
     
 
     $('#_REFERCODE_').parent().after('<i class="modal-reference mr-auto">Plant :&nbsp;<i id="_MODALPLANT_">' + _PLANT_ + '</i></i>');
@@ -143,6 +144,10 @@
 
 
     }
+
+    $('#load-wrapper').attr("style", "visibility:hidden;");
+    $('#table-wrapper').attr("style", "visibility:hidden;");
+
 
 
 

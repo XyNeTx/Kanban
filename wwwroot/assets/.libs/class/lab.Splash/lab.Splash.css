@@ -116,3 +116,31 @@
         transform: rotate(360deg);
     }
 }
+
+#table-wrapper {
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    background-color: #aaa;
+    vertical-align: middle;
+    opacity: 0.75;
+}
+
+#table-wrapper-content {
+    display: block;
+    position: relative;
+    left: 50%;
+    top: 50%;
+}
+
+#load-wrapper {
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    background-color: #fff;
+    z-index: 9999999;
+}
+
+.spinner-border{
+
+}

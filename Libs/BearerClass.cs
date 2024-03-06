@@ -48,6 +48,8 @@ namespace HINOSystem.Libs
         public string Plant = "";
         public string ProcessDate = "";
         public string Shift = "";
+        public string ControllerName = "";
+        public string ActionName = "";
         public JObject Data = null;
 
         public BearerClass(
@@ -94,6 +96,8 @@ namespace HINOSystem.Libs
             this.Plant = pRequest.Headers["Plant"].ToString();
             this.ProcessDate = pRequest.Headers["ProcessDate"].ToString();
             this.Shift = pRequest.Headers["Shift"].ToString();
+            this.ControllerName = pRequest.Headers["Controller"].ToString();
+            this.ActionName = pRequest.Headers["Action"].ToString();
             this.Data = JObject.Parse(JsonConvert.SerializeObject(_dr));
 
             return this;

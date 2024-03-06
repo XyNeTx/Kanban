@@ -1,12 +1,148 @@
 ﻿<div class="row">
+
+    <div class="col-xl col-md col-sm mb-2">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+
+
+                <div class="row">
+                    <div class="col"></div>
+
+                    <div class="col-6">
+
+
+                        <fieldset class="fieldset bg-secondary text-white">
+                            <div class="row">
+                                <div class="col" style="text-align:center;">
+                                    <h3>CKD IN-HOUSE ORDER</h3>
+                                </div>
+                            </div>
+                        </fieldset>
+
+
+                        <fieldset class="fieldset">
+                            <legend>Current Process Information :</legend>
+
+                            <div class="row">
+                                <div class="col">
+
+                                    <div class="row">
+                                        <div class="col">
+                                            <item type="text" id="txtProcessDate" label="Process Date :" value="@ViewData["_ProcessDate"]" readonly></item>
+                                        </div>
+                                        <div class="col">
+                                            <item type="text" id="txtPlant" label="Plant :" value="@ViewData["_Plant"]" readonly></item>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col">
+                                            <item type="text" id="txtProcessShift" label="Process Shift :" value="@ViewData["_ShiftTitle"]?.ToString()" readonly></item>
+                                        </div>
+                                        <div class="col">
+                                            <item type="text" id="txtOrderType" label="Order Type :" value="CKD In-House Order" readonly></item>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </fieldset>
+
+
+                        <fieldset class="fieldset">
+                            <legend>Process of Normal Ordering : </legend>
+
+                            <div class="row mb-2">
+                                <div class="col">
+                                </div>
+                                <div class="col-6">
+                                    <a href="../OrderingProcess/KBNOR110">
+                                        <item type="button" id="btnInterface" label="1. Interface Daba from Import Order" style="width:100%"></item>
+                                    </a>
+                                </div>
+                                <div class="col">
+                                </div>
+                            </div>
+
+                            <div class="row mb-2">
+                                <div class="col">
+                                </div>
+                                <div class="col-6">
+                                    <a href="../OrderingProcess/KBNOR120">
+                                        <item type="button" id="btnCalculate" label="2. Calculate CKD In-House Order" style="width:100%"></item>
+                                    </a>
+                                </div>
+                                <div class="col">
+                                </div>
+                            </div>
+
+                            <div class="row mb-2">
+                                <div class="col">
+                                </div>
+                                <div class="col-6">
+                                    <a href="../OrderingProcess/KBNOR450">
+                                        <item type="button" id="btnKBNOR330" label="3. Maintenance CKD In-House Order" style="width:100%"></item>
+                                    </a>
+                                </div>
+                                <div class="col">
+                                </div>
+                            </div>
+
+                            <div class="row mb-2">
+                                <div class="col">
+                                </div>
+                                <div class="col-6">
+                                    <a href="../OrderingProcess/KBNOR450">
+                                        <item type="button" id="btnKBNOR130" label="4. Generate PDS for CKD In-House Order" style="width:100%"></item>
+                                    </a>
+                                </div>
+                                <div class="col">
+                                </div>
+                            </div>
+
+                            <div class="row mb-2">
+                                <div class="col">
+                                </div>
+                                <div class="col-6">
+                                    <a href="../OrderingProcess/KBNOR460">
+                                        <item type="button" id="btnKBNOR140" label="5. Registration CKD In-House Order" style="width:100%"></item>
+                                    </a>
+                                </div>
+                                <div class="col">
+                                </div>
+                            </div>
+
+                            <div class="row mb-2">
+                                <div class="col">
+                                </div>
+                                <div class="col-6">
+                                    <a href="../OrderingProcess/KBNOR460">
+                                        <item type="button" id="btnKBNOR150" label="6. Print Registed PDS and Kanban Card" style="width:100%"></item>
+                                    </a>
+                                </div>
+                                <div class="col">
+                                </div>
+                            </div>
+
+                        </fieldset>
+
+                    </div>
+
+                    <div class="col"></div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+
 </div>
 
 
-<script type="text/javascript">
-    $(document).ready(function () {
 
-        xSplash.hide();
-
-    });
-
-</script>
+@section Scripts{
+    <script type="text/javascript" src="~/assets/js/History/UserMaintenance.js"></script>
+    @*<script type="text/javascript" src="~/assets/.script/Template/Master.js"></script>*@
+    <script type="text/javascript" src="~/assets/.script/OrderingProcess/KBNOR400.js?@ViewData["Version"]"></script>
+}

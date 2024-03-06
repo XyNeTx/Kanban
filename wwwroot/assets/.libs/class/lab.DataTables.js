@@ -33,14 +33,14 @@ class libDataTable {
         if (pConfig.checking >= 0) {
             _column.unshift({
                 "data": null,
-                "title": "<span style='vertical-align:middle;text-align:left;' ><center><input type='checkbox' id='" + pConfig.name + "_DELETEALL' name='" + pConfig.name + "_DELETEALL' onchange='onCheck_DELETEALL(" + pConfig.name + ")' ></center></span>",
+                "title": `<span style="vertical-align:middle;text-align:left;" ><center><input type="checkbox" id="` + pConfig.name + `_SELECTALL_" name="` + pConfig.name + `_SELECTALL_" onchange="func_onChange_SELECTALL_('` + pConfig.name + `')" ></center></span>`,
                 "searchable": false,
                 "orderable": false,
                 "width": "5px",
                 "className": 'datatable-delete',
                 "render": function (data, type, full, meta) {
                     var _row = ReplaceAll(JSON.stringify(full).replace('{', '').replace('}', ''), '"', "'");
-                    return `<center><input type="checkbox" id="` + pConfig.name + `_DELETE_` + (meta.row + 1) + `" name="` + pConfig.name + `_DELETE_` + (meta.row + 1) + `" value="` + _row + `"></center>`;
+                    return `<center><input type="checkbox" id="` + pConfig.name + `_SELECTALL_` + (meta.row + 1) + `" name="` + pConfig.name + `_SELECTALL_` + (meta.row + 1) + `" value="` + _row + `"></center>`;
                 },
             });
             _orderColumn += 1;
@@ -100,7 +100,7 @@ class libDataTable {
             "autoWidth": false,
             "deferRender": true,
             "processing": true,
-            //"stateSave": true,
+            "stateSave": true,
             "paging": _paging,              //scrollbars to show=false/hide=true
             "scrollCollapse": _scrollCollapse,
             "scrollY": _scrollY,
@@ -508,13 +508,23 @@ class libDataTable {
     bind = function (pTable = null, pData = null) {
         pTable = CheckObject(pTable);
 
+        xSplash.table(pTable);
         //console.log(pTable);
 
         if (pTable != null) {
 
             $(pTable).dataTable().fnClearTable();
             if (pData.length > 0) {
+
                 $(pTable).dataTable().fnAddData(pData);
+
+
+                var _table = new DataTable(pTable);
+                var _page_info = _table.page.info();
+
+                _table.page.len(-1).draw();
+                _table.page.len(_page_info.length).draw();
+                _table.page(_page_info.page).draw('page');
             }
 
         }
@@ -537,43 +547,102 @@ class libDataTable {
             }
         });
 
-        return _delData;
-
         console.log(_delData);
+
+        return _delData;
     }
+
+    selects = function (pTable = null) {
+        Selects(pTable);
+    }
+
+    Selected = function (pTable = null) {
+        pTable = CheckObject(pTable);
+        var table = new DataTable(pTable);
+
+        var data = table
+            .rows(function (idx, data, node) {
+                return $(node).find('input[type="checkbox"][name^="' + pTable.replace('#', '') + '_SELECTALL_"]').prop('checked');
+            })
+            .data()
+            .toArray();
+
+        return data;
+    }
+    selected = async function (pTable = null) {
+        return await this.Selected(pTable);
+    }
+
+
+
+    Draw = function (pTable = null, pCallback = null) {
+        if (pCallback != undefined && typeof (pCallback) == 'function') {
+            pTable = CheckObject(pTable);
+            var _table = new DataTable(pTable);
+            pCallback(_table);
+        }
+    }
+    draw = function (pTable = null, pCallback = null) {
+        this.Draw(pTable, pCallback);
+    }
+
+
 
 }
 
 
 onCheck_DELETEALL = function (pTable) {
+    pTable = CheckObject(pTable);
+    //console.log(pTable);
+    //console.log($(pTable));
+
+
     let _tid = $(pTable)[0].id;
-
-    //console.log(_tid);
-
+    console.log(_tid);
     //$('#' + _tid).DataTable().page.len(-1).draw();
 
+    console.log($('#tblDetail').dataTable().fnGetNodes());
+
     //let allPages = $('#' + _tid).DataTable().cells().nodes();
+    //let allPages = $(_tid).dataTable().fnGetNodes();
     let allPages = $('#' + _tid).dataTable().fnGetNodes();
 
+    console.log(allPages);
 
     //console.log($('#' + _tid).DataTable().data().count());
 
     if ($('input[id=' + _tid + '_DELETEALL]').prop('checked')) {
-        $(allPages).find('input[type="checkbox"]').prop('checked', true);
+        //$(allPages).find('input[type="checkbox"]').prop('checked', true);
+        $('input[type="checkbox"]', allPages).prop('checked', true);
         //that.setState({ buttstate: false });
     } else {
-        $(allPages).find('input[type="checkbox"]').prop('checked', false);
+        //$(allPages).find('input[type="checkbox"]').prop('checked', false);
+        $('input[type="checkbox"]', allPages).prop('checked', false);
         //that.setState({ buttstate: false });
     }
 
     //$('#' + _tid).DataTable().page.len(10).draw();
 }
 
+func_onChange_SELECTALL_ = function (pTable) {
+    //console.clear();
+    pTable = CheckObject(pTable);
+    var _table = new DataTable(pTable);
+    var _page_info = _table.page.info();
+
+    _table.page.len(-1).draw();
+    _table.page.len(_page_info.length).draw();
+
+    _table.cells().every(function () {
+        var cell = this.node();
+        $(cell).find('input[type="checkbox"][name^="' + pTable.replace('#','') + '_SELECTALL_"]').prop('checked', $(pTable +'_SELECTALL_').prop('checked'));
+
+    });
+
+    _table.page(_page_info.page).draw('page');
+}
+
+
 
 var xDataTable = new libDataTable();
-
-
-
-
-
 

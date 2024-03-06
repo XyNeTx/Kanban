@@ -43,8 +43,10 @@ class labSplashScreen {
         //$('#splash-wrapper').attr("style", "visibility:hidden;");
         $('#splash-wrapper').fadeOut('slow', function () {
             $('#splash-wrapper').attr("style", "visibility:hidden;");
-            //console.log('xXx');
-            //$(this).remove();
+
+            $('#table-wrapper').attr("style", "visibility:hidden;");
+
+            $('#load-wrapper').attr("style", "visibility:hidden;");
         });
     }
 
@@ -57,6 +59,48 @@ class labSplashScreen {
 
         //console.log($('#splash-text').html());
     }
+
+
+    table(pTable) {
+        $(pTable).on('draw.dt', function () {
+            $('#table-wrapper').height($(pTable).height());
+            $('#table-wrapper').width($(pTable).width());
+        });
+
+        $('#table-wrapper').attr("style", "visibility:visible;");
+
+        $("#table-wrapper").parent().css({ position: 'relative' });
+        $("#table-wrapper").css({
+            top: $(pTable).offset().top,
+            left: $(pTable).offset().left,
+            right: 0,
+            position: 'absolute'
+        });
+
+    }
+
+    loading(pElement) {
+        console.log('loading');
+
+        $('#load-wrapper').attr("style", "visibility:visible;");
+
+        $('#load-wrapper').height($(pElement).height());
+        $('#load-wrapper').width($(pElement).width());
+
+        console.log($('#tblMaster_wrapper .dataTables_scroll').height());
+        //////$('#load-wrapper').position.left($('.pcoded-inner-content').position.left());
+
+        $("#load-wrapper").parent().css({ position: 'relative' });
+        $("#load-wrapper").css({
+            top: $(pElement).offset().top,
+            left: $(pElement).offset().left,
+            right: 0,
+            position: 'absolute'
+        });
+
+    }
+
 }
 
 var xSplash = new labSplashScreen();
+
