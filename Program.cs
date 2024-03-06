@@ -86,6 +86,7 @@ builder.Services.AddSingleton<NPOIClass>();
 builder.Services.AddSingleton<PdfSharpClass>();
 builder.Services.AddSingleton<CookieClass>();
 builder.Services.AddSingleton<ActionResultClass>();
+builder.Services.AddSingleton<TextFileClass>();
 
 
 
@@ -127,6 +128,10 @@ app.MapControllerRoute(
 app.MapControllerRoute(
     name: "KBN",
     pattern: "KBN/{controller=Home}/{action=Index}/{id?}");
+
+//app.MapControllerRoute(
+//    name: "action",
+//    pattern: "action/{controller=Home}/{action=Index}/{id?}");
 
 
 app.MapControllerRoute(

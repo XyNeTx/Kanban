@@ -1,12 +1,200 @@
 ﻿<div class="row">
+
+    <div class="col-xl col-md col-sm mb-2">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+
+
+                <div class="row">
+                    <div class="col"></div>
+
+                    <div class="col-8">
+
+
+                        <fieldset class="fieldset bg-danger text-white">
+                            <div class="row">
+                                <div class="col" style="text-align:center;">
+                                    <h3>SPECIAL ORDER</h3>
+                                </div>
+                            </div>
+                        </fieldset>
+
+
+                        <fieldset class="fieldset">
+                            <legend>Current Process Information :</legend>
+
+                            <div class="row">
+                                <div class="col">
+
+                                    <div class="row">
+                                        <div class="col">
+                                            <item type="text" id="txtProcessDate" label="Process Date :" value="@ViewData["_ProcessDate"]" readonly></item>
+                                        </div>
+                                        <div class="col">
+                                            <item type="text" id="txtPlant" label="Plant :" value="@ViewData["_Plant"]" readonly></item>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col">
+                                            <item type="text" id="txtProcessShift" label="Process Shift :" value="@ViewData["_ShiftTitle"]?.ToString()" readonly></item>
+                                        </div>
+                                        <div class="col">
+                                            <item type="text" id="txtOrderType" label="Order Type :" value="Urgent Order" readonly></item>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </fieldset>
+
+
+                        <fieldset class="fieldset">
+                            <legend>Master of Special Ordering :</legend>
+
+                            <div class="row">
+                                <div class="col">
+
+                                    <div class="row mb-2">
+                                        <div class="col">
+                                            <item type="button" id="btnKBNOR210" label="1. Color of Tag" style="width:100%"></item>
+                                        </div>
+                                        <div class="col">
+                                            <item type="button" id="btnKBNOR211" label="2. Contact Operator" style="width:100%"></item>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-2">
+                                        <div class="col">
+                                            <item type="button" id="btnKBNOR212" label="3. Approver Master" style="width:100%"></item>
+                                        </div>
+                                        <div class="col">
+                                            <item type="button" id="btnKBNOR213" label="4. Supplier Attention" style="width:100%"></item>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </fieldset>
+
+
+
+
+                        <fieldset class="fieldset mb-2">
+                            <legend>Process of Special Ordering :</legend>
+
+                            <div class="row">
+                                <div class="col">
+
+                                    <div class="row mb-2">
+                                        <div class="col">
+                                            <item type="button" id="btnKBNOR310" label="1. Interface Data from Import Order" style="width:100%"></item>
+                                        </div>
+                                        <div class="col">
+                                            <item type="button" id="btnKBNOR311" label="9. Get Survey Status from E-Procurement" style="width:100%"></item>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-2">
+                                        <div class="col">
+                                            <item type="button" id="btnKBNOR312" label="2. Merge Customer Order" style="width:100%"></item>
+                                        </div>
+                                        <div class="col">
+                                            <item type="button" id="btnKBNOR313" label="10. Check Status and Print Survey Doc" style="width:100%"></item>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-2">
+                                        <div class="col">
+                                            <item type="button" id="btnKBNOR314" label="3. Unmerge Customer Order" style="width:100%"></item>
+                                        </div>
+                                        <div class="col">
+                                            <item type="button" id="btnKBNOR315" label="11. Generate PDS Data" style="width:100%"></item>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-2">
+                                        <div class="col">
+                                            <item type="button" id="btnKBNOR316" label="4. Maintenance Delivery Date" style="width:100%"></item>
+                                        </div>
+                                        <div class="col">
+                                            <item type="button" id="btnKBNOR317" label="12. Registration PDS Data" style="width:100%"></item>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-2">
+                                        <div class="col">
+                                            <item type="button" id="btnKBNOR318" label="5. Generate Survey Document" style="width:100%"></item>
+                                        </div>
+                                        <div class="col">
+                                            <item type="button" id="btnKBNOR319" label="13. Send Approve PDS" style="width:100%"></item>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-2">
+                                        <div class="col">
+                                            <item type="button" id="btnKBNOR320" label="6. Maintenance Survey Document" style="width:100%"></item>
+                                        </div>
+                                        <div class="col">
+                                            <item type="button" id="btnKBNOR321" label="14. Approve PDS" style="width:100%"></item>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-2">
+                                        <div class="col">
+                                            <item type="button" id="btnKBNOR322" label="7. Adjust Survey Document" style="width:100%"></item>
+                                        </div>
+                                        <div class="col">
+                                            <item type="button" id="btnKBNOR323" label="15. Print PDS and Part Tag" style="width:100%"></item>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-2">
+                                        <div class="col">
+                                            <item type="button" id="btnKBNOR324" label="8. Upload Survey to E-Procurement" style="width:100%"></item>
+                                        </div>
+                                        <div class="col"></div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </fieldset>
+
+
+
+
+                        <fieldset class="fieldset mb-2">
+                            <legend>Report for Special Ordering : </legend>
+
+                            <div class="row mb-2">
+                                <div class="col">
+                                    <item type="button" id="btnKBNOR342" label="1. Summary Survey Special Confirmation Report" style="width:100%"></item>
+                                </div>
+                                <div class="col">
+                                    <item type="button" id="btnKBNOR343" label="2. Detail Survey Special Confirmation Report" style="width:100%"></item>
+                                </div>
+                            </div>
+
+
+                        </fieldset>
+
+                    </div>
+
+                    <div class="col"></div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+
 </div>
 
 
-<script type="text/javascript">
-    $(document).ready(function () {
 
-        xSplash.hide();
-
-    });
-
-</script>
+@section Scripts{
+    <script type="text/javascript" src="~/assets/js/History/UserMaintenance.js"></script>
+    @*<script type="text/javascript" src="~/assets/.script/Template/Master.js"></script>*@
+    <script type="text/javascript" src="~/assets/.script/OrderingProcess/KBNOR400.js?@ViewData["Version"]"></script>
+}

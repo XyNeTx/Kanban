@@ -16,7 +16,7 @@ var MsgBoxResult = {
     "Yes": "MsgBoxResult.Yes"
 }
 
-function MsgBox(Prompt = null, MsgBoxStyle = MsgBoxStyle.Information, Title = null, Cancel=null) {
+function MsgBox(Prompt = null, MsgBoxStyle = MsgBoxStyle.Information, Title = null, Cancel = null) {
 
     if (MsgBoxStyle == 'MsgBoxStyle.Critical') xSwal.error(Title, Prompt);
     if (MsgBoxStyle == 'MsgBoxStyle.Exclamation') xSwal.warning(Title, Prompt);

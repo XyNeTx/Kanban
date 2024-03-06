@@ -129,7 +129,7 @@
 
 
     redirect(pURL) {
-        console.log(pURL);
+        //console.log(pURL);
         window.document.location.replace(pURL);
     }
     Redirect(pURL) {
@@ -137,10 +137,134 @@
     }
 
 
+    Execute(pConfig = null) {
+        if (pConfig != null) {
+
+            let _url = (_NAMESPACE_ != '' ? '/' + _NAMESPACE_ : '') + '/EXEC/Execute';
+            let _postData = (pConfig.data != undefined ? ajaxPostData(pConfig.data) : null);
+
+            //console.log(ajexHeader);
+            return $.ajax({
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                headers: ajexHeader,
+                url: _url,
+                data: _postData,
+                success: function (result) {
+                    xSplash.hide();
+                },
+                error: function (result) {
+                    console.error('Ajax.Post: ' + result.responseText);
+                    xSplash.hide();
+                }
+            });
+
+        }
+    }
+    xExecute(pConfig = null) {
+        if (pConfig != null) {
+
+            let _url = (_NAMESPACE_ != '' ? '/' + _NAMESPACE_ : '') + '/EXEC/xExecute';
+            let _postData = (pConfig.data != undefined ? ajaxPostData(pConfig.data) : null);
+
+            return $.ajax({
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                headers: ajexHeader,
+                url: _url,
+                data: _postData,
+                success: function (result) {
+                    xSplash.hide();
+                },
+                error: function (result) {
+                    console.error('Ajax.Post: ' + result.responseText);
+                    xSplash.hide();
+                }
+            });
+
+        }
+    }
+
+    ExecuteJSON(pConfig = null) {
+        if (pConfig != null) {
+
+            let _url = (_NAMESPACE_ != '' ? '/' + _NAMESPACE_ : '') + '/EXEC/ExecuteJSON';
+            let _postData = (pConfig.data != undefined ? ajaxPostData(pConfig.data) : null);
+
+            return $.ajax({
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                headers: ajexHeader,
+                url: _url,
+                data: _postData,
+                success: function (result) {
+                    xSplash.hide();
+                },
+                error: function (result) {
+                    console.error('Ajax.Post: ' + result.responseText);
+                    xSplash.hide();
+                }
+            });
+
+        }
+    }
+    xExecuteJSON(pConfig = null) {
+        if (pConfig != null) {
+
+            let _url = (_NAMESPACE_ != '' ? '/' + _NAMESPACE_ : '') + '/EXEC/xExecuteJSON';
+            let _postData = (pConfig.data != undefined ? ajaxPostData(pConfig.data) : null);
+
+            return $.ajax({
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                headers: ajexHeader,
+                url: _url,
+                data: _postData,
+                success: function (result) {
+                    xSplash.hide();
+                },
+                error: function (result) {
+                    console.error('Ajax.Post: ' + result.responseText);
+                    xSplash.hide();
+                }
+            });
+
+        }
+    }
+
+
+    PostAsync(pConfig = null) {
+        if (pConfig != null) {
+
+            let _url = (_NAMESPACE_ != '' ? '/' + _NAMESPACE_ : '') + '/' + pConfig.url;
+            let _postData = (pConfig.data != undefined ? ajaxPostData(pConfig.data) : null);
+
+            return $.ajax({
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                headers: ajexHeader,
+                url: _url,
+                data: _postData,
+                success: function (result) {
+
+                },
+                error: function (result) {
+                    console.error('Ajax.Post: ' + result.responseText);
+                }
+            });
+
+        }
+    }
+
+
 
     Post(pConfig = null) {
         if (pConfig != null) {
-
             //console.log(pConfig.data);
 
             let _url = (_NAMESPACE_ != '' ? '/' + _NAMESPACE_ : '') + '/' + pConfig.url;
@@ -161,6 +285,7 @@
                     if (result.response == "OK") {
                         if (typeof (pConfig.then) === 'function') pConfig.then(result);
                         if (typeof (pConfig.callback) === 'function') pConfig.callback(result);
+                        xSplash.hide();
 
                     } else {
                         if (result.status == 401) window.document.location.replace('../Logout');

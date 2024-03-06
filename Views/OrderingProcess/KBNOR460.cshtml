@@ -43,13 +43,12 @@
                                     <div class="col-6">
                                         <div class="row">
                                             <div class="col">
-                                                <item type="button" id="btnSearch" label="Search" style="width:100%"></item>
                                             </div>
                                             <div class="col">
-                                                <item type="button" id="btnInterface" label="Interface to Order" style="width:100%"></item>
+                                                <item type="button" id="btnRegister" label="Register" style="width:100%"></item>
                                             </div>
                                             <div class="col">
-                                                <item type="button" id="btnReport" label="Report" style="width:100%"></item>
+                                                <item type="button" id="btnExportData" label="Export Data" style="width:100%"></item>
                                             </div>
                                             <div class="col">
                                                 <item type="button" id="btnExit" label="Exit" style="width:100%"></item>
@@ -73,7 +72,13 @@
 
                 <div class="row">
                     <div class="col mt-4">
-                        <item type="table" id="tblMaster" legend="List of Detail"></item>
+                        <item type="table" id="tblMaster" label="List of Detail"></item>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col mt-4">
+                        <item type="table" id="tblDetail" label="<b style='color:red;'>Error Part Not Price : Not Upload to E-Procurment</b>"></item>
                     </div>
                 </div>
 
@@ -88,5 +93,5 @@
 
 @section Scripts{
     <script type="text/javascript" src="~/assets/js/History/UserMaintenance.js?@ViewData["Version"]"></script>
-    <script type="text/javascript" src="~/assets/.script/OrderingProcess/KBNOR410.js?@ViewData["Version"]"></script>
+    <script type="text/javascript" src="~/assets/.script/OrderingProcess/KBNOR460.js?@ViewData["Version"]"></script>
 }

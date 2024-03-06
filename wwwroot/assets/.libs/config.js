@@ -9,7 +9,7 @@
 
 // JS global variables
 let _namespace = 'kanban';
-let _hostname_dev = 'https://localhost:7277';
+let _hostname_dev = 'http://localhost:7277';
 let _hostname_prod = 'http://hmmta-tpcap/kanban';
 
 
@@ -33,6 +33,7 @@ const _DEVELOPER_ = {
 };
 
 
+const _STORAGESERVER_ = _HOSTNAME_ + '/Storage/DownloadTemp';
 
 const _REPORTINGSERVER_ = 'http://hmmt-app03/Reports/Pages/ReportViewer.aspx?%2fISS%2f';
 

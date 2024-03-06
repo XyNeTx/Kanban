@@ -43,7 +43,7 @@
             columnDefs: this.columnDefs,
             order: this.order,
             orderNo: this.orderNo,
-            orderNo: this.orderNo,
+            //orderNo: this.orderNo,
             //dom: '<"clear">',
             addnew: _addnew,
             rowclick: (row) => {
