@@ -363,10 +363,14 @@ namespace KANBAN.Controllers.API.OrderReport
                     $" '{F_vat}','{F_user_create}','{F_user_update}','{F_date_Create}','{F_date_update}','{F_Status}','{F_pro_date}', " +
                     $" '{F_amount_vat}','{F_tax_ch}','{F_Status_P}','{F_Status_Other}','{UserName}') ");
 
+                string _jsonData = JsonConvert.SerializeObject(UserName);
+                string _jsonData2 = JsonConvert.SerializeObject(_KBCN.Plant);
                 string _result = @"{
                                     ""status"":""200"",
                                     ""response"":""OK"",
-                                    ""message"": ""Data Found""
+                                    ""message"": ""Data Found"",
+                                    ""data"": " + _jsonData + @",
+                                    ""data2"": " + _jsonData2 + @"
                                     }";
 
                 return Ok(_result);
