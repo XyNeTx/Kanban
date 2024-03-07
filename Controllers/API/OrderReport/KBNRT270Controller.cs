@@ -4,6 +4,7 @@ using KANBAN.Context;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using NPOI.HSSF.UserModel;
 using System.Data;
 
 namespace KANBAN.Controllers.API.OrderReport
@@ -93,6 +94,10 @@ namespace KANBAN.Controllers.API.OrderReport
                 prodMonth = prodMonth.Replace("-", string.Empty);
                 string revision = "0.0";
                 string UserName = HttpContext.Session.GetString("USER_NAME");
+                if (string.IsNullOrWhiteSpace(UserName))
+                {
+                    return Redirect($"{Request.Path.ToString()}{Request.QueryString.Value.ToString()}");
+                }
 
                 DataTable revisionDT = _FillDT.ExecuteSQL($"EXEC [dbo].[SP_KBNRT270_MaxRevision] '{prodMonth}','{supFrom}','{supTo}','{kbnFrom}','{kbnTo}','{partFrom}','{partTo}','{storeFrom}','{storeTo}'");
                 if (revisionDT.Rows.Count > 0)

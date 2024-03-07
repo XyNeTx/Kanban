@@ -97,5 +97,24 @@ namespace HINOSystem.Libs
                 }
             }
         }
+        public DataTable ExecuteSQLProc_Web(string sql)
+        {
+            setConString();
+            SqlConnection con = new SqlConnection(_configuration.GetConnectionString("ProcWebConnection"));
+            DataTable dt = new DataTable();
+
+            using (SqlCommand cmd = new SqlCommand(sql, con))
+            {
+                cmd.CommandType = CommandType.Text;
+                using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
+                {
+                    using (dt)
+                    {
+                        sda.Fill(dt);
+                        return dt;
+                    }
+                }
+            }
+        }
     }
 }

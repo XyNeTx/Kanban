@@ -135,6 +135,10 @@ namespace KANBAN.Controllers.API.OrderReport
                 prodMonth = prodMonth.Replace("-", string.Empty);
                 string checkedValue = _json["checkedValue"];
                 string UserName = HttpContext.Session.GetString("USER_NAME");
+                if (string.IsNullOrWhiteSpace(UserName))
+                {
+                    return Redirect($"{Request.Path.ToString()}{Request.QueryString.Value.ToString()}");
+                }
                 string sql = $"EXEC [dbo].[SP_KBNRT260_SELECT_VW_Forecast_Variant_RPT] '{prodMonth}','{checkedValue}'";
                 DataTable dt = _FillDT.ExecuteSQL(sql);
                 if (dt.Rows.Count == 0)

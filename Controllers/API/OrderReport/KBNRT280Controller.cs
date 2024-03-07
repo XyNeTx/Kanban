@@ -89,6 +89,10 @@ namespace KANBAN.Controllers.API.OrderReport
                 string dateTo = _json["dateTo"];
                 string UserName = HttpContext.Session.GetString("USER_NAME");
                 string HostName = HttpContext.Session.GetString("USER_DEVICENAME");
+                if (string.IsNullOrWhiteSpace(UserName) || string.IsNullOrWhiteSpace(HostName))
+                {
+                    return Redirect($"{Request.Path.ToString()}{Request.QueryString.Value.ToString()}");
+                }
                 string lastMonth = DateTime.ParseExact(dateFrom, "yyyyMMdd", CultureInfo.InvariantCulture).AddMonths(-1).ToString("yyyyMMdd");
                 string Plant = _KBCN.Plant.ToString();
                 string appendSql = "";
@@ -145,6 +149,10 @@ namespace KANBAN.Controllers.API.OrderReport
                 string dateTo = _json["dateTo"];
                 string UserName = HttpContext.Session.GetString("USER_NAME");
                 string HostName = HttpContext.Session.GetString("USER_DEVICENAME");
+                if (string.IsNullOrWhiteSpace(UserName) || string.IsNullOrWhiteSpace(HostName))
+                {
+                    return Redirect($"{Request.Path.ToString()}{Request.QueryString.Value.ToString()}");
+                }
                 string lastMonth = DateTime.ParseExact(dateFrom, "yyyyMMdd", CultureInfo.InvariantCulture).AddMonths(-1).ToString("yyyyMMdd");
                 string Plant = _KBCN.Plant.ToString();
                 string appendSql = "";

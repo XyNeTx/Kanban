@@ -39,6 +39,11 @@
                             </label>
                         </div>
                     </div>
+                    <div class="row mb-4">
+                        <div class="col">
+                            <item type="progress" id="prgProcess" label="Status : {{##.##}} %" max="100">
+                        </div>
+                    </div>
                 </form>
                 <div class="row mt-4">
                     <div class="col d-flex justify-content-end align-text-bottom align-items-end align-content-end">
@@ -53,6 +58,5 @@
 
 @section Scripts {
     <script type="text/javascript" src="~/assets/js/History/UserMaintenance.js"></script>
-    <script type="text/javascript" src="~/assets/.script/Template/Master.js"></script>
     <script type="text/javascript" src="~/assets/.script/OrderReport/KBNRT296.js?@ViewData["Version"]"></script>
 }
