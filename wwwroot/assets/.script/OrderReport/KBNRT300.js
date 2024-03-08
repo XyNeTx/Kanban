@@ -77,7 +77,7 @@
                 supTo: supTo
             },
             then: function (result) {
-                console.log(result);
+                //console.log(result);
                 $("#F_TripFrom").empty();
                 $("#F_TripTo").empty();
                 $("#F_TripFrom").append($("<option id='TripFromBlank'></option>"));
@@ -98,5 +98,51 @@
         if ($("#F_TripTo").val() === null || $("#F_TripTo").val() === "") {
             $("#F_TripTo").val($("#F_TripFrom").val()).change();
         }
+    });
+
+    xAjax.onClick("#ReportBtn", function () {
+        var supFrom = $("#F_SupFrom").val().trim();
+        var supTo = $("#F_SupTo").val().trim();
+        var kbnFrom = $("#F_KBNFrom").val().trim();
+        var kbnTo = $("#F_KBNTo").val().trim();
+        var dateFrom = $("#F_DeliDateFrom").val().trim().replaceAll("-", "");
+        var dateTo = $("#F_DeliDateTo").val().trim().replaceAll("-", "");
+        var shiftFrom = $("#F_ShiftFrom").val().trim();
+        var shiftTo = $("#F_ShiftTo").val().trim();
+        var tripFrom = $("#F_TripFrom").val().trim();
+        var tripTo = $("#F_TripTo").val().trim();
+        var kbnType = $("input[name='KBNRadio']:checked").val();
+        xAjax.Post({
+            url: "KBNRT300/ClickReport",
+            data: {
+                supFrom: supFrom,
+                supTo: supTo,
+                kbnFrom: kbnFrom,
+                kbnTo: kbnTo,
+                dateFrom: dateFrom,
+                dateTo: dateTo,
+                shiftFrom: shiftFrom,
+                shiftTo: shiftTo,
+                tripFrom: tripFrom,
+                tripTo: tripTo,
+                kbnType: kbnType
+            },
+            then: function (result) {
+                console.log(result);
+                if (result.status === "200") {
+                    var filename = location.pathname.substring(location.pathname.lastIndexOf('/') + 1);
+                    var reportUrl = "http://hmmt-app03/Reportserver/report/KB3/";
+                    window.location.href = reportUrl + filename + kbnType + '?SupFrom=' + supFrom + '&SupTo=' + supTo + '&UserName=' + result.data
+                        + '&KBNFrom=' + kbnFrom + '&KBNTo=' + kbnTo + '&DateFrom=' + dateFrom + '&DateTo=' + dateTo
+                        + '&ShiftFrom=' + shiftFrom + '&ShiftTo=' + shiftTo + '&TripFrom=' + tripFrom + '&TripTo=' + tripTo + '&KBNType=' + kbnType;
+                }
+                else {
+                    return xSwal.error(result.title, result.message);
+                }
+            },
+            error: function (result) {
+                console.error(result);
+            }
+        });
     });
 });

@@ -91,8 +91,20 @@ namespace HINOSystem.Libs
                 {
                     using (dt)
                     {
-                        sda.Fill(dt);
-                        return dt;
+                        try
+                        {
+                            sda.Fill(dt);
+                            return dt;
+                        }
+                        catch (SqlException SQLex) when (SQLex.Number == -2) // Handle timeout exception
+                        {
+                            Console.WriteLine("Timeout occurred. Returning partial results.");
+                            return dt; // Return the partially filled DataTable
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.Message); return dt;
+                        }
                     }
                 }
             }
