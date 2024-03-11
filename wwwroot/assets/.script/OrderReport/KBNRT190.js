@@ -44,7 +44,7 @@
 
 
     xAjax.onChange("#F_SupFrom, #F_SupTo", function () {
-        if ($("#F_SupTo").val() == null || $("#F_SupTo").val() == "") {
+        if ($("#F_SupTo").val() === null || $("#F_SupTo").val() === "") {
             $("#F_SupTo").val($("#F_SupFrom").val()).change();
         }
         var supFrom = $("#F_SupFrom").val();
@@ -90,7 +90,7 @@
     });
 
     xAjax.onChange("#F_KBNFrom, #F_KBNTo", function () {
-        if ($("#F_KBNTo").val() == null || $("#F_KBNTo").val() == "") {
+        if ($("#F_KBNTo").val() === null || $("#F_KBNTo").val() === "") {
             $("#F_KBNTo").val($("#F_KBNFrom").val()).change();
         }
         var supFrom = $("#F_SupFrom").val();
@@ -131,7 +131,7 @@
     });
 
     xAjax.onChange("#F_StoreFrom, #F_StoreTo", function () {
-        if ($("#F_StoreTo").val() == null || $("#F_StoreTo").val() == "") {
+        if ($("#F_StoreTo").val() === null || $("#F_StoreTo").val() === "") {
             $("#F_StoreTo").val($("#F_StoreFrom").val()).change();
         }
         var supFrom = $("#F_SupFrom").val();
@@ -169,7 +169,7 @@
     });
 
     xAjax.onChange("#F_PartFrom, #F_PartTo", function () {
-        if ($("#F_PartTo").val() == null || $("#F_PartTo").val() == "") {
+        if ($("#F_PartTo").val() === null || $("#F_PartTo").val() === "") {
             $("#F_PartTo").val($("#F_PartFrom").val()).change();
         }
     });
@@ -205,7 +205,7 @@
     });
 
     xAjax.onChange("#F_TripFrom, #F_TripTo", function () {
-        if ($("#F_TripTo").val() == null || $("#F_TripTo").val() == "") {
+        if ($("#F_TripTo").val() === null || $("#F_TripTo").val() === "") {
             $("#F_TripTo").val($("#F_TripFrom").val()).change();
         }
     });
@@ -245,7 +245,36 @@
         var storeTo = $("#F_StoreTo").val();
         var partFrom = $("#F_PartFrom").val();
         var partTo = $("#F_PartTo").val();
-        var checked = $("input[name='radDate']:checked").val();
+        var checked = $("input[name='radDate']:checked").val();   
+
+        if (supFrom === "" || supFrom === undefined || supTo === "" || supTo === undefined) {
+            return xSwal.error("Supplier Code is empty", "Please Select Supplier Code");
+        }
+        if (supFrom > supTo) {
+            return xSwal.error("Invalid Input Supplier Code", "Please Select Supplier Code From less than Supplier Code To");
+        }
+        if (kbnFrom === "" || kbnFrom === undefined || kbnTo === "" || kbnTo === undefined) {
+            return xSwal.error("Kanban No is empty", "Please Select Kanban No");
+        }
+        if (kbnFrom > kbnTo) {
+            return xSwal.error("Invalid Input Kanban No", "Please Select Kanban No From less than Kanban No To");
+        }
+        if (storeFrom === "" || storeFrom === undefined || storeTo === "" || storeTo === undefined) {
+            return xSwal.error("Store Code is empty", "Please Select Store Code");
+        }
+        if (storeFrom > storeTo) {
+            return xSwal.error("Invalid Input Store Code", "Please Select Store Code From less than Store Code To");
+        }
+        if (dateFrom > dateTo) {
+            return xSwal.error("Invalid Input Date", "Please Select Date From less than Date To");
+        }
+        if (partFrom === "" || partFrom === undefined || partTo === "" || partTo === undefined) {
+            return xSwal.error("Part No. is empty", "Please Select Part No.");
+        }
+        if (partFrom > partTo) {
+            return xSwal.error("Invalid Input Part No", "Please Select Part No From less than Part No To");
+        }
+
         if (checked === "Order") {
             var dateFrom = $("#F_OrderDateFrom").val().replaceAll('-', '');
             var dateTo = $("#F_OrderDateTo").val().replaceAll('-', '');
@@ -259,37 +288,9 @@
             var tripFrom = $("#F_TripFrom").val();
             var tripTo = $("#F_TripTo").val();
             var url = "KBNRT190/OnReportBtnDelivery";
-            if (tripFrom == null || tripFrom == undefined || tripTo == null || tripTo == undefined) {
+            if (tripFrom === "" || tripFrom == undefined || tripTo === "" || tripTo == undefined) {
                 return xSwal.error("Delivery Trip is empty", "Please Select Delivery Trip");
             }
-        }
-
-        if (supFrom == null || supFrom == undefined || supTo == null || supTo == undefined) {
-            return xSwal.error("Supplier Code is empty", "Please Select Supplier Code");
-        }
-        if (supFrom > supTo) {
-            return xSwal.error("Invalid Input Supplier Code", "Please Select Supplier Code From less than Supplier Code To");
-        }
-        if (kbnFrom == null || kbnFrom == undefined || kbnTo == null || kbnTo == undefined) {
-            return xSwal.error("Kanban No is empty", "Please Select Kanban No");
-        }
-        if (kbnFrom > kbnTo) {
-            return xSwal.error("Invalid Input Kanban No", "Please Select Kanban No From less than Kanban No To");
-        }
-        if (storeFrom == null || storeFrom == undefined || storeTo == null || storeTo == undefined) {
-            return xSwal.error("Store Code is empty", "Please Select Store Code");
-        }
-        if (storeFrom > storeTo) {
-            return xSwal.error("Invalid Input Store Code", "Please Select Store Code From less than Store Code To");
-        }
-        if (dateFrom > dateTo) {
-            return xSwal.error("Invalid Input Date", "Please Select Date From less than Date To");
-        }
-        if (partFrom == null || partFrom == undefined || partTo == null || partTo == undefined) {
-            return xSwal.error("Part No. is empty", "Please Select Part No.");
-        }
-        if (partFrom > partTo) {
-            return xSwal.error("Invalid Input Part No", "Please Select Part No From less than Part No To");
         }
         xAjax.Post({
             url: url,
@@ -309,10 +310,15 @@
             },
             then: function (result) {
                 console.log(result);
-                console.log(result);
-                var filename = location.pathname.substring(location.pathname.lastIndexOf('/') + 1);
-                var reportUrl = "http://hmmt-app03/Reportserver/report/KB3/";
-                window.location.href = reportUrl + filename + '?HostName=' + result.data2 + '&UserName=' + result.data;
+                if (result.status === "200") {
+                    var filename = location.pathname.substring(location.pathname.lastIndexOf('/') + 1);
+                    var reportUrl = "http://hmmt-app03/Reportserver/report/KB3/";
+                    window.location.href = reportUrl + filename + '?HostName=' + result.data2 + '&UserName=' + result.data;
+                }
+                else
+                {
+                    return xSwal.error(result.title,result.message);
+                }
             },
             error: function (result) {
                 return console.error(result);

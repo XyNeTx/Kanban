@@ -36,26 +36,28 @@
             cell.data(inputField[0].outerHTML).draw();
             isEditing = true;
             $('.F_Delivery_Qty_Class').focus();
-            $('.F_Delivery_Qty_Class').on('keypress', function (e) {
-                if (e.which == 13) {
-                    var devQty = $(this).val();
-                    //console.log(devQty);
-                    if (devQty === "0" || devQty === null || devQty === '' || devQty < 0) {
-                        cell.data(0).draw();
-                        isEditing = false;
-                    }
-                    else if (parseInt(devQty) + parseInt(alreadyQty) > (parseInt(orderQty))) {
-                        xSwal.error("Input Delivery Qty Error!", "Dont't input Delivery Qty. more than difference of Order Qty. and Already Dev.");
-                    }
-                    else {
-                        cell.data(devQty).draw();
-                        isEditing = false;
-                    }
+            $('.F_Delivery_Qty_Class').on('keypress blur', function (e) {
+                var devQty = $(this).val();
+                //console.log(devQty);
+                //console.log(e);
+                if (e.type === 'keypress' && e.which !== 13) {
+                    return;
                 }
-                else if (e.which == 99) {
+                if (devQty === "0") {
+                    cell.data(0).draw();
+                    isEditing = false;
+                }
+                else if (devQty === null || devQty === '' || devQty < 0) {
                     cell.data(originalValue).draw();
                     isEditing = false;
-                } //for on keypress
+                }
+                else if (parseInt(devQty) + parseInt(alreadyQty) > (parseInt(orderQty))) {
+                    xSwal.error("Input Delivery Qty Error!", "Dont't input Delivery Qty. more than difference of Order Qty. and Already Dev.");
+                }
+                else {
+                    cell.data(devQty).draw();
+                    isEditing = false;
+                }
             });
         }
     });

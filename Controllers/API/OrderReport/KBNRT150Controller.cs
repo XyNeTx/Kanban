@@ -6,6 +6,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using NPOI.SS.Formula.Functions;
+using System.Data;
 
 namespace KANBAN.Controllers.API.OrderReport
 {
@@ -173,12 +174,25 @@ namespace KANBAN.Controllers.API.OrderReport
                     " Group by F_Type,F_part_No+'-'+F_Ruibetsu,F_Store_Cd,F_part_name,F_kanban_No,F_PDS_NO,F_REMARK,F_PDS_Issued_Date,F_Part_Order+'-'+F_Ruibetsu_Order ",
                     new SqlParameter("@UserName", userName),
                     new SqlParameter("@HostName", hostName),
-                    new SqlParameter("@Plant", 1),//for test only
+                    new SqlParameter("@Plant", 3),//for test only
                     new SqlParameter("@OrderFrom", orderFrom),
                     new SqlParameter("@OrderTo", orderTo),
                     new SqlParameter("@TypeFrom", typeFrom),
                     new SqlParameter("@TypeTo", typeTo)
                     );
+
+                DataTable _dt = _KBCN.ExecuteSQL($"SELECT * FROM TB_Imp_Ord_rpt_tmp WHERE F_Update_By = '{userName}' AND F_Host_name = '{hostName}'", skipLog: true);
+                if (_dt.Rows.Count == 0)
+                {
+                    _result = @"{
+                                    ""status"":""404"",
+                                    ""response"":""OK"",
+                                    ""title"":""Report Data Not Found"",
+                                    ""message"": ""Please Try Other Option!""
+                                    }";
+
+                    return Ok(_result);
+                }
 
                 string _jsonData = JsonConvert.SerializeObject(userName);
                 string _jsonData2 = JsonConvert.SerializeObject(hostName);

@@ -1,0 +1,122 @@
+﻿<div class="row">
+
+    <div class="col-xl-12 col-md-12 col-sm-12">
+        <div class="card border-left-primary shadow h-100">
+            <div class="card-body">
+                <form id="frmCondition">
+                    <fieldset class="fieldset mt-4">
+                        <legend>TYPE OF REPORT : </legend>
+                        <div class="row" id="OrderRadioDiv">
+                            <div id="CutDiv" class="col ms-4">
+                                <input type="radio" class="form-check-input" name="KBNRadio" id="CUT" value="CUT" checked /><label class="form-check-label" style="margin-top: 0.2rem !important;" for="All">KANBAN CUT</label>
+                            </div>
+                            <div id="AddDiv" class="col ms-3">
+                                <input type="radio" class="form-check-input" name="KBNRadio" id="ADD" value="ADD" /><label class="form-check-label" style="margin-top: 0.2rem !important;" for="Special">KANBAN ADD</label>
+                            </div>
+                            <div id="StopDiv" class="col ms-3">
+                                <input type="radio" class="form-check-input" name="KBNRadio" id="STOP" value="STOP" /><label class="form-check-label" style="margin-top: 0.2rem !important;" for="NorUrg">KANBAN STOP</label>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <fieldset class="fieldset mt-4">
+                        <legend>CONDITION : </legend>
+                        <div class="row mb-4">
+                            <div class="col-5">
+                                <label class="input-group-text" for="F_SubFrom">
+                                    Supplier Code From : &nbsp;
+                                    <select id="F_SupFrom" class="form-select" label="Supplier From : ">
+                                        <option id="supFromBlank"></option>
+                                    </select>
+                                </label>
+                            </div>
+                            <div class="col-4">
+                                <label class="input-group-text" for="F_SubTo">
+                                    To : &nbsp;
+                                    <select id="F_SupTo" class="form-select" label="To : ">
+                                        <option id="supToBlank"></option>
+                                    </select>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="row mb-4">
+                            <div class="col-5">
+                                <label class="input-group-text" for="F_KBNFrom">
+                                    Kanban No. From : &nbsp;
+                                    <select id="F_KBNFrom" class="form-select" label="Supplier From : ">
+                                        <option id="KBNFromBlank"></option>
+                                    </select>
+                                </label>
+                            </div>
+                            <div class="col-4">
+                                <label class="input-group-text" for="F_KBNTo">
+                                    To : &nbsp;
+                                    <select id="F_KBNTo" class="form-select" label="Supplier To : ">
+                                        <option id="KBNToBlank"></option>
+                                    </select>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="row mb-4">
+                            <div class="col-5">
+                                <item type="date" id="F_DeliDateFrom" label="Delivery Date From : " format="yyyy-mm-dd" default="now"></item>
+                            </div>
+                            <div class="col">
+                                <item type="date" id="F_DeliDateTo" label="To : " format="yyyy-mm-dd" default="now"></item>
+                            </div>
+                        </div>
+                        <div class="row mb-4">
+                            <div class="col-5">
+                                <label class="input-group-text" for="F_ShiftFrom">
+                                    Delivery Shift From : &nbsp;
+                                    <select id="F_ShiftFrom" class="form-select">
+                                        <option id="ShiftFromBlank"></option>
+                                        <option id="ShiftDay" value="D">D : Day Shift</option>
+                                        <option id="ShiftNight" value="N">N : Night Shift</option>
+                                    </select>
+                                </label>
+                            </div>
+                            <div class="col-4">
+                                <label class="input-group-text" for="F_ShiftTo">
+                                    To : &nbsp;
+                                    <select id="F_ShiftTo" class="form-select">
+                                        <option id="ShiftToBlank"></option>
+                                        <option id="ShiftDay" value="D">D : Day Shift</option>
+                                        <option id="ShiftNight" value="N">N : Night Shift</option>
+                                    </select>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="row mb-4">
+                            <div class="col-5">
+                                <label class="input-group-text" for="F_TripFrom">
+                                    Delivery Trip From : &nbsp;
+                                    <select id="F_TripFrom" class="form-select">
+                                        <option id="TripFromBlank"></option>
+                                    </select>
+                                </label>
+                            </div>
+                            <div class="col-4">
+                                <label class="input-group-text" for="F_TripTo">
+                                    To : &nbsp;
+                                    <select id="F_TripTo" class="form-select">
+                                        <option id="TripToBlank"></option>
+                                    </select>
+                                </label>
+                            </div>
+                        </div>
+                    </fieldset>
+                </form>
+                <div class="row mt-4">
+                    <div class="col d-flex justify-content-end align-text-bottom align-items-end align-content-end">
+                        <item type="button" style="height:fit-content" id="ReportBtn" label="Report"></item>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script type="text/javascript" src="~/assets/js/History/UserMaintenance.js"></script>
+    <script type="text/javascript" src="~/assets/.script/OrderReport/KBNRT300.js?@ViewData["Version"]"></script>
+}

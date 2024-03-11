@@ -213,6 +213,18 @@
     <None Include="wwwroot\assets\.script\OrderReport\KBNRT170.js" />
     <None Include="wwwroot\assets\.script\OrderReport\KBNRT180.js" />
     <None Include="wwwroot\assets\.script\OrderReport\KBNRT190.js" />
+    <None Include="wwwroot\assets\.script\OrderReport\KBNRT200.js" />
+    <None Include="wwwroot\assets\.script\OrderReport\KBNRT210.js" />
+    <None Include="wwwroot\assets\.script\OrderReport\KBNRT220.js" />
+    <None Include="wwwroot\assets\.script\OrderReport\KBNRT230.js" />
+    <None Include="wwwroot\assets\.script\OrderReport\KBNRT240.js" />
+    <None Include="wwwroot\assets\.script\OrderReport\KBNRT250.js" />
+    <None Include="wwwroot\assets\.script\OrderReport\KBNRT260.js" />
+    <None Include="wwwroot\assets\.script\OrderReport\KBNRT270.js" />
+    <None Include="wwwroot\assets\.script\OrderReport\KBNRT280.js" />
+    <None Include="wwwroot\assets\.script\OrderReport\KBNRT296.js" />
+    <None Include="wwwroot\assets\.script\OrderReport\KBNRT300.js" />
+    <None Include="wwwroot\assets\.script\OrderReport\KBNRT310.js" />
     <None Include="wwwroot\assets\.script\ReceiveProcess\KBNCR130.js" />
     <None Include="wwwroot\assets\.script\ReceiveProcess\KBNCR140.js" />
     <None Include="wwwroot\assets\.script\ReceiveProcess\KBNCR150.js" />
@@ -2219,6 +2231,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="NPOI" Version="2.6.0" />
     <PackageReference Include="PdfSharp" Version="1.50.5147" />
+    <PackageReference Include="Serilog.AspNetCore" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -9661,7 +9674,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\PPM3\" />
     <Folder Include="wwwroot\assets\.script\Home\" />
     <Folder Include="wwwroot\assets\i18n\JP\KB3\LogisticCondition\" />
     <Folder Include="wwwroot\assets\i18n\TH\KB3\LogisticCondition\" />

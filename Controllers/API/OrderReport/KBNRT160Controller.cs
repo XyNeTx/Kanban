@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using NPOI.HSSF.UserModel;
+using System.Data;
 using System.Net.NetworkInformation;
 
 namespace KANBAN.Controllers.API.OrderReport
@@ -121,11 +123,41 @@ namespace KANBAN.Controllers.API.OrderReport
                                     ""data3"": " + _jsonData3 + @",
                                     ""data4"": " + _jsonData4 + @"
                                     }";
+
+                return Ok(_result);
+            }
+            catch (Exception ex)
+            {
+                return Content(ex.Message);
+            }
+        }
+
+        public async Task<IActionResult> DeleteTemp()
+        {
+            try
+            {
+                setConString();
+                string _result = "";
+                string UserName = HttpContext.Session.GetString("USER_NAME");
+                string HostName = HttpContext.Session.GetString("USER_DEVICENAME");
+
+                if (string.IsNullOrWhiteSpace(UserName) || string.IsNullOrWhiteSpace(HostName))
+                {
+                    return Redirect($"{Request.Path.ToString()}{Request.QueryString.Value.ToString()}");
+                }
+
                 await _KB3Context.Database.ExecuteSqlRawAsync
                         ("DELETE FROM RPT_KBNRT_160 WHERE F_Update_By = @UserLogon AND F_Host_name = @Host_name",
-                        new SqlParameter("@UserLogon", userName),
-                        new SqlParameter("@Host_name", hostName)
+                        new SqlParameter("@UserLogon", UserName),
+                        new SqlParameter("@Host_name", HostName)
                         );
+
+                _result = @"{
+                                    ""status"":""200"",
+                                    ""response"":""OK"",
+                                    ""message"": ""Data Found"",
+                                    ""data"": null
+                                    }";
 
                 return Ok(_result);
             }
@@ -386,6 +418,19 @@ namespace KANBAN.Controllers.API.OrderReport
                     new SqlParameter("@ShiftFrom", shiftFrom),
                     new SqlParameter("@ShiftTo", shiftTo)
                     );
+
+                DataTable _dt = _KBCN.ExecuteSQL($"SELECT * FROM RPT_KBNRT_160 WHERE F_Update_By = '{userName}' AND F_Host_name = '{hostName}'", skipLog: true);
+                if(_dt.Rows.Count == 0)
+                {
+                    _result = @"{
+                                    ""status"":""404"",
+                                    ""response"":""OK"",
+                                    ""title"":""Report Data Not Found"",
+                                    ""message"": ""Please Try Other Option!""
+                                    }";
+
+                    return Ok(_result);
+                }
 
                 string _jsonData = JsonConvert.SerializeObject(userName);
                 string _jsonData2 = JsonConvert.SerializeObject(hostName);

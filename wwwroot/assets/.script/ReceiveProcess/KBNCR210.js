@@ -38,23 +38,24 @@
             isEditing = true;
             $('.F_Delivery_Qty_Class').focus();
             $('.F_Delivery_Qty_Class').on('keypress blur', function (e) {
-                if (e.type === 'keypress' && e.which !== 13) {
-                    return; // Ignore keypress events that are not Enter key
-                }
-
                 var devQty = $(this).val();
-
-                if (devQty === "0" || devQty === null || devQty === '' || devQty < 0)
-                {
+                //console.log(devQty);
+                //console.log(e);
+                if (e.type === 'keypress' && e.which !== 13) {
+                    return;
+                }
+                if (devQty === "0") {
                     cell.data(0).draw();
                     isEditing = false;
                 }
-                else if (parseInt(devQty) + parseInt(alreadyQty) > parseInt(orderQty))
-                {
-                    xSwal.error("Input Delivery Qty Error!", "Don't input Delivery Qty more than the difference of Order Qty and Already Dev.");
+                else if (devQty === null || devQty === '' || devQty < 0) {
+                    cell.data(originalValue).draw();
+                    isEditing = false;
                 }
-                else
-                {
+                else if (parseInt(devQty) + parseInt(alreadyQty) > (parseInt(orderQty))) {
+                    xSwal.error("Input Delivery Qty Error!", "Dont't input Delivery Qty. more than difference of Order Qty. and Already Dev.");
+                }
+                else {
                     cell.data(devQty).draw();
                     isEditing = false;
                 }

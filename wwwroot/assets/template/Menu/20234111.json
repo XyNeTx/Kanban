@@ -1,0 +1,1726 @@
+[
+{
+    "id": 41,
+    "text": "Import Data",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": true,
+    "children": [
+{
+    "id": 53,
+    "text": "E-KANBAN and MSP Data",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": true,
+    "children": [
+{
+    "id": 54,
+    "text": "Import E-KANBAN and MSP",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/MSPData/KBNIM003",
+    "children": []
+},
+{
+    "id": 55,
+    "text": "Maintenance Data",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/MSPData/KBNIM003M",
+    "children": []
+},
+{
+    "id": 56,
+    "text": "Confirmation E-KANBAN and MSP",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/MSPData/KBNIM003C",
+    "children": []
+},
+{
+    "id": 57,
+    "text": "Copy Order",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/MSPData/KBNIM003CP",
+    "children": []
+},
+{
+    "id": 58,
+    "text": "Import Slide Order",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/MSPData/KBNIM003S",
+    "children": []
+}]
+},
+{
+    "id": 59,
+    "text": "VLT Data",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": true,
+    "children": [
+{
+    "id": 60,
+    "text": "Import VLT",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/VLTData/KBNIM004",
+    "children": []
+},
+{
+    "id": 61,
+    "text": "Maintenance Data",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/VLTData/KBNIM004M",
+    "children": []
+},
+{
+    "id": 62,
+    "text": "Delete Jig-In Seq",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/VLTData/KBNIM0043",
+    "children": []
+},
+{
+    "id": 63,
+    "text": "Confirmation Jig-In Seq",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/VLTData/KBNIM0042",
+    "children": []
+}]
+},
+{
+    "id": 42,
+    "text": "Service Data",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": true,
+    "children": [
+{
+    "id": 43,
+    "text": "Import Service Data",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/ServiceData/KBNIM001",
+    "children": []
+},
+{
+    "id": 44,
+    "text": "Maintenance Data Service",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/ServiceData/KBNIM001M",
+    "children": []
+},
+{
+    "id": 45,
+    "text": "Confirm Service by PDS",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/ServiceData/KBNIM001C",
+    "children": []
+},
+{
+    "id": 46,
+    "text": "Maintenance Old Part Import",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/ServiceData/KBNIM001O",
+    "children": []
+}]
+},
+{
+    "id": 47,
+    "text": "V-V Data",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": true,
+    "children": [
+{
+    "id": 48,
+    "text": "Import V2V Data",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/V2VData/KBNIM002",
+    "children": []
+},
+{
+    "id": 49,
+    "text": "Maintenance Data V2V",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/V2VData/KBNIM002M",
+    "children": []
+},
+{
+    "id": 50,
+    "text": "Confirm V2V by PDS",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/V2VData/KBNIM002C",
+    "children": []
+},
+{
+    "id": 51,
+    "text": "Transfer Data",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/V2VData/KBNIM002TR",
+    "children": []
+}]
+},
+{
+    "id": 64,
+    "text": "Emergency Data",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": true,
+    "children": [
+{
+    "id": 65,
+    "text": "Import Emergency Data",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/EmergencyData/KBNIM006",
+    "children": []
+},
+{
+    "id": 66,
+    "text": "Maintenance Emergency Data",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/EmergencyData/KBNIM006M",
+    "children": []
+},
+{
+    "id": 67,
+    "text": "Confirm Emergency Data",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/EmergencyData/KBNIM006C",
+    "children": []
+}]
+},
+{
+    "id": 68,
+    "text": "Monthly Forecast Data",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": true,
+    "children": [
+{
+    "id": 69,
+    "text": "Import Monthly Forecast Data",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/MonthlyForcast/KBNIM012",
+    "children": []
+},
+{
+    "id": 70,
+    "text": "Maintenance Monthly Forecast Data",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/MonthlyForcast/KBNIM012M",
+    "children": []
+}]
+},
+{
+    "id": 71,
+    "text": "Urgent Order",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": true,
+    "children": [
+{
+    "id": 72,
+    "text": "Urgent Data",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/UrgentOrder/KBNIM007N",
+    "children": []
+},
+{
+    "id": 73,
+    "text": "Direct 9Y",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/UrgentOrder/KBNIM014",
+    "children": []
+},
+{
+    "id": 74,
+    "text": "Confirm Urgent Data",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/UrgentOrder/KBNIM014C",
+    "children": []
+},
+{
+    "id": 75,
+    "text": "Declare Expense",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/UrgentOrder/KBNIM013EXP",
+    "children": []
+},
+{
+    "id": 76,
+    "text": "Declare Inventory",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/UrgentOrder/KBNIM013INV",
+    "children": []
+},
+{
+    "id": 77,
+    "text": "Declare Vanning",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/UrgentOrder/KBNIM013VAN",
+    "children": []
+}]
+},
+{
+    "id": 78,
+    "text": "Special Data",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": true,
+    "children": [
+{
+    "id": 79,
+    "text": "Special Order",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/SpecialData/KBNIM007",
+    "children": []
+},
+{
+    "id": 80,
+    "text": "Trial Order",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/SpecialData/KBNIM007T",
+    "children": []
+},
+{
+    "id": 81,
+    "text": "Confirm Special by PO",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/SpecialData/KBNIM007C",
+    "children": []
+},
+{
+    "id": 82,
+    "text": "Service Tacoma Order",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/SpecialData/KBNIM007TSR",
+    "children": []
+}]
+},
+{
+    "id": 83,
+    "text": "Tacoma Order",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": true,
+    "children": [
+{
+    "id": 84,
+    "text": "Generate Order",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/TacomaOrder/KBNIM015",
+    "children": []
+},
+{
+    "id": 85,
+    "text": "MRP",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/TacomaOrder/KBNIM015M",
+    "children": []
+},
+{
+    "id": 86,
+    "text": "Confirm MRP",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/TacomaOrder/KBNIM015C",
+    "children": []
+}]
+}]
+},
+{
+    "id": 10,
+    "text": "Master Data",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": true,
+    "children": [
+{
+    "id": 154,
+    "text": "Service parts",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": true,
+    "children": [
+{
+    "id": 11,
+    "text": "Order Type Master Service",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/Master/KBNMS001",
+    "children": []
+},
+{
+    "id": 12,
+    "text": "Old Part",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/Master/KBNMS002",
+    "children": []
+},
+{
+    "id": 13,
+    "text": "Part Set",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/Master/KBNMS003",
+    "children": []
+}]
+},
+{
+    "id": 155,
+    "text": "Special part",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": true,
+    "children": [
+{
+    "id": 14,
+    "text": "Type Special",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/Master/KBNMS004",
+    "children": []
+}]
+},
+{
+    "id": 156,
+    "text": "Main set",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": true,
+    "children": [
+{
+    "id": 15,
+    "text": "Daily Balance",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/Master/KBNMS005",
+    "children": []
+},
+{
+    "id": 16,
+    "text": "Set Stock Balance",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/Master/KBNMS005S",
+    "children": []
+},
+{
+    "id": 17,
+    "text": "Kanban Maintenance",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/Master/KBNMS006",
+    "children": []
+},
+{
+    "id": 18,
+    "text": "Kanban Add",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/Master/KBNMS007",
+    "children": []
+},
+{
+    "id": 19,
+    "text": "Pattern Ordering",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/Master/KBNMS008",
+    "children": []
+},
+{
+    "id": 20,
+    "text": "Print Replace Kanban",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/Master/KBNMS009",
+    "children": []
+},
+{
+    "id": 21,
+    "text": "Calendar",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/Master/KBNMS010",
+    "children": []
+},
+{
+    "id": 22,
+    "text": "Supplier Calendar",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/Master/KBNMS011",
+    "children": []
+},
+{
+    "id": 23,
+    "text": "Kanban Order Table",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/Master/KBNMS012",
+    "children": []
+},
+{
+    "id": 24,
+    "text": "Type Part",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/Master/KBNMS013",
+    "children": []
+},
+{
+    "id": 25,
+    "text": "Print Kanban",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/Master/KBNMS014",
+    "children": []
+},
+{
+    "id": 26,
+    "text": "Label Master",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/Master/KBNMS015",
+    "children": []
+},
+{
+    "id": 27,
+    "text": "Pair Order",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/Master/KBNMS016",
+    "children": []
+},
+{
+    "id": 28,
+    "text": "Ratio Address",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/Master/KBNMS017",
+    "children": []
+},
+{
+    "id": 29,
+    "text": "Heijunka",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/Master/KBNMS018",
+    "children": []
+},
+{
+    "id": 30,
+    "text": "Max Delivery",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/Master/KBNMS019",
+    "children": []
+},
+{
+    "id": 31,
+    "text": "Max Area Stock",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/Master/KBNMS020",
+    "children": []
+},
+{
+    "id": 32,
+    "text": "Part Code",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/Master/KBNMS021",
+    "children": []
+}]
+},
+{
+    "id": 157,
+    "text": "Logistics set",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": true,
+    "children": [
+{
+    "id": 33,
+    "text": "Delivery Time",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/Master/KBNMS022",
+    "children": []
+},
+{
+    "id": 34,
+    "text": "Package",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/Master/KBNMS023",
+    "children": []
+},
+{
+    "id": 35,
+    "text": "Part Package",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/Master/KBNMS024",
+    "children": []
+},
+{
+    "id": 36,
+    "text": "Logistic Supplier",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/Master/KBNMS025",
+    "children": []
+},
+{
+    "id": 37,
+    "text": "Route Master",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/Master/KBNMS026",
+    "children": []
+},
+{
+    "id": 38,
+    "text": "Matching Supplier Logistic",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/Master/KBNMS027",
+    "children": []
+},
+{
+    "id": 39,
+    "text": "Remark Doc Sheet",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/Master/KBNMS028",
+    "children": []
+},
+{
+    "id": 40,
+    "text": "Dock Code",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/Master/KBNMS029",
+    "children": []
+}]
+}]
+},
+{
+    "id": 87,
+    "text": "Ordering Process",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": true,
+    "children": [
+{
+    "id": 88,
+    "text": "Normal Ordering",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OrderingProcess/KBNOR100",
+    "children": []
+},
+{
+    "id": 89,
+    "text": "Special Ordering",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OrderingProcess/KBNOR200",
+    "children": []
+},
+{
+    "id": 90,
+    "text": "Urgent Ordering",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OrderingProcess/KBNOR400",
+    "children": [
+{
+    "id": 163,
+    "text": "Interface Data from Import Order",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OrderingProcess/KBNOR410",
+    "children": []
+},
+{
+    "id": 164,
+    "text": "Calculate Urgent Order",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OrderingProcess/KBNOR420",
+    "children": []
+},
+{
+    "id": 165,
+    "text": "Generate PDS Data for Urgent",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OrderingProcess/KBNOR440",
+    "children": []
+},
+{
+    "id": 166,
+    "text": "Print PDS/Kanban Card for Urgent",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OrderingProcess/KBNOR450",
+    "children": []
+},
+{
+    "id": 167,
+    "text": "Registration Data for Urgent Order",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OrderingProcess/KBNOR460",
+    "children": []
+},
+{
+    "id": 168,
+    "text": "Export Order Data",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OrderingProcess/KBNOR460EX",
+    "children": []
+},
+{
+    "id": 169,
+    "text": "Unlock : PDS Not Price (Interface to E-Pro)",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OrderingProcess/KBNOR470",
+    "children": []
+}]
+},
+{
+    "id": 91,
+    "text": "CKD-InHouse Ordering",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OrderingProcess/KBNOR300",
+    "children": [
+{
+    "id": 170,
+    "text": "Interface Daba from Import Order",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OrderingProcess/KBNOR310",
+    "children": []
+},
+{
+    "id": 171,
+    "text": "Calculate CKD In-House Order",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OrderingProcess/KBNOR320",
+    "children": []
+},
+{
+    "id": 172,
+    "text": "Maintenance CKD In-House Order",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OrderingProcess/KBNOR321",
+    "children": []
+},
+{
+    "id": 173,
+    "text": "Generate PDS for CKD In-House Order",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OrderingProcess/KBNOR330",
+    "children": []
+},
+{
+    "id": 174,
+    "text": "Registration CKD In-House Order",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OrderingProcess/KBNOR360",
+    "children": []
+},
+{
+    "id": 175,
+    "text": "Print Registed PDS and Kanban Card",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OrderingProcess/KBNOR370",
+    "children": []
+}]
+},
+{
+    "id": 92,
+    "text": "Delete PDS",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OrderingProcess/KBNOR600",
+    "children": []
+},
+{
+    "id": 93,
+    "text": "Re-Print PDS and Kanban",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OrderingProcess/KBNOR700",
+    "children": []
+},
+{
+    "id": 94,
+    "text": "Re-Print PDS and Kanban for CKD",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OrderingProcess/KBNOR710",
+    "children": []
+},
+{
+    "id": 158,
+    "text": "Interface Data from Import Order",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OrderingProcess/KBNOR110",
+    "children": []
+},
+{
+    "id": 159,
+    "text": "Calculate Normal Order",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OrderingProcess/KBNOR120",
+    "children": []
+},
+{
+    "id": 160,
+    "text": "Maintenance Daily Order",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OrderingProcess/KBNOR121",
+    "children": []
+}]
+},
+{
+    "id": 95,
+    "text": "Receive Process",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": true,
+    "children": [
+{
+    "id": 96,
+    "text": "Select Transaction",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": true,
+    "children": [
+{
+    "id": 97,
+    "text": "1.Receive Part all",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/ReceiveProcess/KBNCR110",
+    "children": []
+},
+{
+    "id": 98,
+    "text": "2.Receive Separate Part",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/ReceiveProcess/KBNCR120",
+    "children": []
+},
+{
+    "id": 99,
+    "text": "3.Receive Special Part",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/ReceiveProcess/KBNCR210",
+    "children": []
+}]
+},
+{
+    "id": 100,
+    "text": "Select Report",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": true,
+    "children": [
+{
+    "id": 101,
+    "text": "4.Daily Receive Report",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/ReceiveProcess/KBNCR130",
+    "children": []
+},
+{
+    "id": 102,
+    "text": "5.Daily Not Receive Report",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/ReceiveProcess/KBNCR140",
+    "children": []
+},
+{
+    "id": 103,
+    "text": "6.Summary Receive Report",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/ReceiveProcess/KBNCR150",
+    "children": []
+},
+{
+    "id": 104,
+    "text": "7.Summary Remain Report",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/ReceiveProcess/KBNCR160",
+    "children": []
+},
+{
+    "id": 105,
+    "text": "8.Status Receive Special Report",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/ReceiveProcess/KBNCR220",
+    "children": []
+}]
+},
+{
+    "id": 106,
+    "text": "Closing PDS",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": true,
+    "children": [
+{
+    "id": 107,
+    "text": "9.Closing PDS (CKD Part)",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/ReceiveProcess/KBNCR310",
+    "children": []
+},
+{
+    "id": 108,
+    "text": "10.Summary Closing PDS Report",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/ReceiveProcess/KBNCR320",
+    "children": []
+}]
+},
+{
+    "id": 109,
+    "text": "Support WareHouse",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": true,
+    "children": [
+{
+    "id": 110,
+    "text": "11.Generate Delivery Part List",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/ReceiveProcess/KBNCR410",
+    "children": []
+},
+{
+    "id": 111,
+    "text": "12.Print Delivery Part List",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/ReceiveProcess/KBNCR420",
+    "children": []
+},
+{
+    "id": 112,
+    "text": "13.Print Pending Delivery List Report",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/ReceiveProcess/KBNCR430",
+    "children": []
+},
+{
+    "id": 113,
+    "text": "14.Receive Delivery List Report",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/ReceiveProcess/KBNCR440",
+    "children": []
+},
+{
+    "id": 114,
+    "text": "15.Cancel WareHouse Delivery Sheet",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/ReceiveProcess/KBNCR450",
+    "children": []
+},
+{
+    "id": 115,
+    "text": "16.Cancel Receive WareHouse",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/ReceiveProcess/KBNCR460",
+    "children": []
+}]
+}]
+},
+{
+    "id": 116,
+    "text": "Others Condition",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": true,
+    "children": [
+{
+    "id": 117,
+    "text": "1.Checking Cycle Time",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OthersCondition/KBNOC110",
+    "children": []
+},
+{
+    "id": 118,
+    "text": "2.Slide Order by Supplier",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OthersCondition/KBNOC120",
+    "children": []
+},
+{
+    "id": 119,
+    "text": "3.Slide Order by Part No.",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OthersCondition/KBNOC121",
+    "children": []
+},
+{
+    "id": 120,
+    "text": "4.Generate New PDS by Old PDS",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OthersCondition/KBNOC140",
+    "children": []
+},
+{
+    "id": 121,
+    "text": "5.Least Order List",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OthersCondition/KBNOC150",
+    "children": []
+},
+{
+    "id": 122,
+    "text": "6.Kanban Urgent Order List",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OthersCondition/KBNOC160",
+    "children": []
+}]
+},
+{
+    "id": 123,
+    "text": "Logistic Condition",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": true,
+    "children": [
+{
+    "id": 128,
+    "text": "Import Delivery Time Table",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/LogisticCondition/KBNLC150",
+    "children": []
+},
+{
+    "id": 129,
+    "text": "Print Dock Sheet and Truck Card",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/LogisticCondition/KBNLC180",
+    "children": []
+},
+{
+    "id": 130,
+    "text": "Interface Cycle Time to Delivery Time",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/LogisticCondition/KBNLC190",
+    "children": []
+},
+{
+    "id": 131,
+    "text": "History Delivery Time Report",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/LogisticCondition/KBNLC200",
+    "children": []
+}]
+},
+{
+    "id": 132,
+    "text": "Order Report",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": true,
+    "children": [
+{
+    "id": 133,
+    "text": "1.Delivery Timing Round Report",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OrderReport/KBNRT110",
+    "children": []
+},
+{
+    "id": 134,
+    "text": "2.Kanban Master Report",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OrderReport/KBNRT120",
+    "children": []
+},
+{
+    "id": 135,
+    "text": "3.Supplier Calendar Report",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OrderReport/KBNRT130",
+    "children": []
+},
+{
+    "id": 136,
+    "text": "4.Calendar Report",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OrderReport/KBNRT140",
+    "children": []
+},
+{
+    "id": 137,
+    "text": "5.Import Order Report",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OrderReport/KBNRT150",
+    "children": []
+},
+{
+    "id": 138,
+    "text": "6.Kanban Order History",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OrderReport/KBNRT160",
+    "children": []
+},
+{
+    "id": 139,
+    "text": "7.Delivery Report",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OrderReport/KBNRT170",
+    "children": []
+},
+{
+    "id": 140,
+    "text": "8.Zero Order History",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OrderReport/KBNRT180",
+    "children": []
+},
+{
+    "id": 141,
+    "text": "9.PDS History List",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OrderReport/KBNRT190",
+    "children": []
+},
+{
+    "id": 142,
+    "text": "10.Late Delivery",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OrderReport/KBNRT200",
+    "children": []
+},
+{
+    "id": 143,
+    "text": "11.Inquiry Kanban Order",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OrderReport/KBNRT210",
+    "children": []
+},
+{
+    "id": 144,
+    "text": "12.Stock Of Planning Kanban",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OrderReport/KBNRT220",
+    "children": []
+},
+{
+    "id": 145,
+    "text": "13.Sequence Order Report",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OrderReport/KBNRT230",
+    "children": []
+},
+{
+    "id": 146,
+    "text": "14.Special Order Report",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OrderReport/KBNRT240",
+    "children": []
+},
+{
+    "id": 147,
+    "text": "15.VLT Data Interface Report",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OrderReport/KBNRT250",
+    "children": []
+},
+{
+    "id": 148,
+    "text": "16.AbNormal Forecast Monthly Report",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OrderReport/KBNRT026",
+    "children": []
+},
+{
+    "id": 149,
+    "text": "17.Forecast Monthly History Report",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OrderReport/KBNRT270",
+    "children": []
+},
+{
+    "id": 150,
+    "text": "18.Delivery Performance Report",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OrderReport/KBNRT280",
+    "children": []
+},
+{
+    "id": 151,
+    "text": "19.Supplier Invoice Performance Report",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OrderReport/KBNRT296",
+    "children": []
+},
+{
+    "id": 152,
+    "text": "20.KANBAN Cut/Add/Stop History",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OrderReport/KBNRT300",
+    "children": []
+},
+{
+    "id": 153,
+    "text": "21.Count Stock",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OrderReport/KBNRT310",
+    "children": []
+}]
+}]

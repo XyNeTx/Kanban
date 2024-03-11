@@ -20,6 +20,12 @@
     $("#F_DeliDateFrom").attr("disabled", true);
     $("#F_DeliDateTo").attr("disabled", true);
 
+    xAjax.onChange("#F_SupFrom, #F_SupTo", function () {
+        if ($("#F_SupTo").val() === null || $("#F_SupTo").val() === "") {
+            $("#F_SupTo").val($("#F_SupFrom").val()).change();
+        }
+    });
+
     $("#OrderDiv").click(function () {
         var checked = $("input[name='radDate']:checked").val();
         if (checked === "Order") {
@@ -54,7 +60,7 @@
             var url = "KBNRT180/OnReportBtnDelivery";
         }
 
-        if (supFrom == null || supFrom == undefined || supTo == null || supTo == undefined) {
+        if (supFrom === "" || supFrom === undefined || supTo === "" || supTo === undefined) {
             return xSwal.error("Supplier Code is empty", "Please Select Supplier Code");
         }
         if (supFrom > supTo) {
@@ -73,10 +79,15 @@
                 dateTo: dateTo,
             },
             then: function (result) {
-                var filename = location.pathname.substring(location.pathname.lastIndexOf('/') + 1);
-                var reportUrl = "http://hmmt-app03/Reportserver/report/KB3/";
-                window.location.href = reportUrl + filename + '?HostName=' + result.data2 + '&UserName=' + result.data
-                    + '&UserCode=' + result.data3;
+                if (result.status == 200) {
+                    var filename = location.pathname.substring(location.pathname.lastIndexOf('/') + 1);
+                    var reportUrl = "http://hmmt-app03/Reportserver/report/KB3/";
+                    window.location.href = reportUrl + filename + '?HostName=' + result.data2 + '&UserName=' + result.data
+                        + '&UserCode=' + result.data3;
+                }
+                else {
+                    return xSwal.error(result.title, result.message);
+                }
             },
             error: function (result) {
                 return console.error(result);

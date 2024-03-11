@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using HINOSystem.Models.KB3.Master;
 using KANBAN.Models.KB3.Receive_Process;
 using KANBAN.Models.KB3.ReportOrder;
+using KANBAN.Models;
 
 namespace HINOSystem.Context
 {
@@ -55,7 +56,7 @@ namespace HINOSystem.Context
         public DbSet<TB_MS_SupplierAttn> TB_MS_SupplierAttn { get; set; } = null!;
         public DbSet<TB_MS_TagColor> TB_MS_TagColor { get; set; } = null!;
         public DbSet<TB_MS_TruckType> TB_MS_TruckType { get; set; } = null!;
-        public DbSet<TB_MS_VLT_Customer> TB_MS_VLT_Customer { get; set; } = null!;
+        //public DbSet<TB_MS_VLT_Customer> TB_MS_VLT_Customer { get; set; } = null!;
         public DbSet<TB_MS_ZeroOrder> TB_MS_ZeroOrder { get; set; } = null!;
         public DbSet<TB_REC_HEADER> TB_REC_HEADER { get; set; }
         public DbSet<TB_REC_DETAIL> TB_REC_DETAIL { get; set; }
@@ -69,6 +70,16 @@ namespace HINOSystem.Context
         public DbSet<TB_Transaction> TB_Transaction { get; set; }
         public DbSet<V_KBNRT_180_rpt> V_KBNRT_180_Rpt { get; set; }
         public DbSet<V_KBNRT_190_rpt> V_KBNRT_190_Rpt { get; set; }
+        public DbSet<V_KBNRT_210_rpt_Dev> V_KBNRT_210_rpt_Dev { get; set; }
+        public DbSet<TB_Inquriy_KB_rpt_TMP> TB_Inquriy_KB_rpt_TMP { get; set; }
+        public DbSet<TB_Import_Forecast> TB_Import_Forecast { get; set; }
+        public DbSet<TB_Late_Deli_Rpt_TMP> TB_Late_Deli_Rpt_TMP { get; set; }
+        public DbSet<V_KBNRT_220_rpt> V_KBNRT_220_rpt { get; set; }
+        public DbSet<TB_BL> TB_BL { get; set; }
+
+        public DbSet<KANBAN.Models.KB3.ReportOrder.TB_MS_VLT_Customer> TB_MS_VLT_Customer { get; set; }
+        public DbSet<TB_VLT_INTERFACE> TB_VLT_INTERFACE { get; set; }
+
 
         //protected override void OnModelCreating(ModelBuilder modelBuilder)
         //{

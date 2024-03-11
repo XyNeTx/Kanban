@@ -28,7 +28,7 @@
         var monthFromVal = $("#F_ProdFrom").val();
         var monthToVal = $("#F_ProdTo").val();
 
-        if (monthFromVal == "" || monthFromVal == null || monthToVal == "" || monthToVal == null) {
+        if (monthFromVal === "" || monthFromVal === null || monthToVal === "" || monthToVal === null) {
             return xSwal.error("Data Error", "Please Select Month From And Month To");
         }
 
@@ -42,7 +42,7 @@
         var supFrom = $("#F_SupFrom").val();
         var supTo = $("#F_SupTo").val();
 
-        if (supFrom == "" || supFrom == null || supTo == "" || supTo == null) {
+        if (supFrom === "" || supFrom === null || supTo === "" || supTo === null) {
             return xSwal.error("Data Error", "Please Select Supplier Code From And Supplier Code To");
         }
 

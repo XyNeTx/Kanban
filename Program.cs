@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore;
 using HINOSystem.Context;
 using HINOSystem.Libs;
 using HINOSystem.Models.ERP;
-
 using Microsoft.AspNetCore.Server.IISIntegration;
 using Microsoft.AspNetCore.Authentication.Negotiate;
 using KANBAN.Context;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,7 +36,16 @@ builder.Services.AddDbContext<PPMInvenContext>(options =>
         throw new InvalidOperationException("Connection String PPM3Context not found.")
         )
 );
+builder.Services.AddDbContext<ProcDBContext>(options =>
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("ProcDBConnection") ??
+        throw new InvalidOperationException("Connection String ProcDBContext not found.")
+        )
+);
 
+//Add Support to logging with SERILOG
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration).CreateLogger();
 
 
 
@@ -86,6 +95,8 @@ builder.Services.AddSingleton<NPOIClass>();
 builder.Services.AddSingleton<PdfSharpClass>();
 builder.Services.AddSingleton<CookieClass>();
 builder.Services.AddSingleton<ActionResultClass>();
+builder.Services.AddScoped<FillDataTable>();
+builder.Services.AddScoped<SerilogLibs>();
 builder.Services.AddSingleton<TextFileClass>();
 
 

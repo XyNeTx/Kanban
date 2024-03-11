@@ -125,6 +125,10 @@ namespace HINOSystem.Controllers
             return _authenGuard.guard(ControllerContext);
         }
 
+        public IActionResult KBNRT300()
+        {
+            return _authenGuard.guard(ControllerContext);
+        }
         public IActionResult KBNRT310()
         {
             return _authenGuard.guard(ControllerContext);

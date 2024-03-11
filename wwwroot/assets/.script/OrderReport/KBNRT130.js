@@ -26,7 +26,7 @@
     xAjax.onChange("#F_MonthFrom , #F_MonthTo", function () {
         var monthFromVal = $("#F_MonthFrom").val();
         var monthToVal = $("#F_MonthTo").val();
-        if (monthToVal == "" || monthToVal == null) {
+        if (monthToVal === "" || monthToVal === null) {
             $("#F_MonthTo").val(monthFromVal);
             monthToVal = $("#F_MonthTo").val();
         }
@@ -62,7 +62,7 @@
         var monthFromVal = $("#F_MonthFrom").val();
         var monthToVal = $("#F_MonthTo").val();
 
-        if (monthFromVal == "" || monthFromVal == null || monthToVal == "" || monthToVal == null) {
+        if (monthFromVal === "" || monthFromVal === null || monthToVal === "" || monthToVal === null) {
             return xSwal.error("Data Error", "Please Select Month From And Month To");
         }
 
@@ -76,20 +76,16 @@
         var supFrom = $("#F_SupFrom").val();
         var supTo = $("#F_SupTo").val();
 
-        if (supFrom == "" || supFrom == null || supTo == "" || supTo == null) {
+        if (supFrom === "" || supFrom === null || supTo === "" || supTo === null) {
             return xSwal.error("Data Error", "Please Select Supplier Code From And Supplier Code To");
         }
 
         if (supFrom > supTo) {
             return xSwal.error("Data Error", "Please Select 'Supplier Code From' Less than 'Supplier Code To");
         }
-
         var userName = $("#profile-avatar").prop("title");
-
         var filename = location.pathname.substring(location.pathname.lastIndexOf('/') + 1);
-
         var reportUrl = "http://hmmt-app03/Reportserver/report/KB3/";
-
         window.location.href = reportUrl + filename + '?MonthFrom=' + monthFrom + '&MonthTo=' + monthTo +
             '&SupFrom=' + supFrom + '&SupTo=' + supTo + '&UserName=' + userName;
     });

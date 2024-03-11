@@ -4,6 +4,7 @@ using KANBAN.Context;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using NPOI.Util;
 
 namespace KANBAN.Controllers.API.OrderReport
 {
@@ -116,6 +117,7 @@ namespace KANBAN.Controllers.API.OrderReport
             }
             try
             {
+                setConString();
                 string _result = "";
                 dynamic _json = JsonConvert.DeserializeObject<dynamic>(data);
                 string supFrom = _json["supFrom"];
@@ -136,6 +138,18 @@ namespace KANBAN.Controllers.API.OrderReport
 
                 var reportList = await _KB3Context.V_KBNRT_180_Rpt.Where(x => x.F_Supplier.CompareTo(supFrom) >= 0 && x.F_Supplier.CompareTo(supTo) <= 0)
                     .Where(x => x.Chk_ord_date.CompareTo(dateFrom) >= 0 && x.Chk_ord_date.CompareTo(dateTo) <= 0).OrderBy(x => x.F_Supplier).ToListAsync();
+
+                if (reportList.Count == 0)
+                {
+                    _result = @"{
+                                    ""status"":""404"",
+                                    ""response"":""OK"",
+                                    ""title"":""Report Data Not Found"",
+                                    ""message"": ""Please Try Other Option!""
+                                    }";
+
+                    return Ok(_result);
+                }
 
                 foreach (var report in reportList)
                 {
@@ -194,6 +208,18 @@ namespace KANBAN.Controllers.API.OrderReport
 
                 var reportList = await _KB3Context.V_KBNRT_180_Rpt.Where(x => x.F_Supplier.CompareTo(supFrom) >= 0 && x.F_Supplier.CompareTo(supTo) <= 0)
                     .Where(x => x.Chk_deli_date.CompareTo(dateFrom) >= 0 && x.Chk_deli_date.CompareTo(dateTo) <= 0).OrderBy(x => x.F_Supplier).ToListAsync();
+
+                if (reportList.Count == 0)
+                {
+                    _result = @"{
+                                    ""status"":""404"",
+                                    ""response"":""OK"",
+                                    ""title"":""Report Data Not Found"",
+                                    ""message"": ""Please Try Other Option!""
+                                    }";
+
+                    return Ok(_result);
+                }
 
                 foreach (var report in reportList)
                 {

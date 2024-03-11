@@ -20,6 +20,7 @@ namespace KANBAN.Controllers.API.ReceiveProcess
         private readonly PPM3Context _PPM3Context;
         private readonly PPMInvenContext _PPMInvenContext;
         private readonly KB3Context _KB3Context;
+        private readonly SerilogLibs _SerilogLibs;
 
 
         private readonly string StoragePath = @"wwwroot\Storage\Uploads";
@@ -32,7 +33,8 @@ namespace KANBAN.Controllers.API.ReceiveProcess
             PPMConnect ppmConnect,
             PPMInvenContext pPMInvenContext,
             PPM3Context pPM3Context,
-            KB3Context kB3Context
+            KB3Context kB3Context,
+            SerilogLibs serilogLibs
             )
         {
             _configuration = configuration;
@@ -43,6 +45,7 @@ namespace KANBAN.Controllers.API.ReceiveProcess
             _PPMConnect = ppmConnect;
             _PPM3Context = pPM3Context;
             _PPMInvenContext = pPMInvenContext;
+            _SerilogLibs = serilogLibs;
         }
 
 
@@ -286,6 +289,8 @@ namespace KANBAN.Controllers.API.ReceiveProcess
             {
                 setConString();
                 string _result = "";
+                string UserName = HttpContext.Session.GetString("USER_NAME");
+                string HostName = HttpContext.Session.GetString("USER_DEVICENAME");
                 var systemControl = await _PPMInvenContext.T_System_Control.SingleOrDefaultAsync(x => x.F_Code == "CTL");
                 string isMonthEnd = systemControl.F_Value1;
                 if (Int32.Parse(DateTime.Now.ToString("yyyyMM")) < Int32.Parse(isMonthEnd))
@@ -399,6 +404,8 @@ namespace KANBAN.Controllers.API.ReceiveProcess
                                         F_Pack_Code = packCode
                                     };
                                     await _PPM3Context.AddAsync(local);
+                                    _SerilogLibs.WriteLog($"Receive Seperate Part Special : UPDATE TB_REC_DEtail : {PDSNo} Line 407", UserName, HostName);
+                                    _SerilogLibs.WriteLog($"Receive Seperate Part Special : {PDSNo} Line 408", UserName, HostName);
                                 }
                             }
                             else
@@ -486,6 +493,8 @@ namespace KANBAN.Controllers.API.ReceiveProcess
                                     new SqlParameter("@PDS", PDSNo),
                                     new SqlParameter("@User", user)
                                 );
+                                _SerilogLibs.WriteLog($"Receive Seperate Part Special : UPDATE TB_REC_DEtail : {PDSNo} Line 492", UserName, HostName);
+                                _SerilogLibs.WriteLog($"Receive Seperate Part Special : {PDSNo} Line 493", UserName, HostName);
                             }
                         }
 
