@@ -244,6 +244,16 @@ xAjax.onChange("#F_StoreFrom, #F_StoreTo", function () {
 xAjax.onClick("#ReportBtn", function () {
     var date = $("#F_Date").val().trim().replaceAll("-", "");
     var shift = $("#F_Shift").val().trim();
+    var supFrom = $("#F_SupFrom").val();
+    var supTo = $("#F_SupTo").val();
+    var partFrom = $("#F_PartFrom").val();
+    var partTo = $("#F_PartTo").val();
+    var storeFrom = $("#F_StoreFrom").val();
+    var storeTo = $("#F_StoreTo").val();
+    var kbnFrom = $("#F_KBNFrom").val();
+    var kbnTo = $("#F_KBNTo").val();
+    var date = $("#F_Date").val().trim().replaceAll("-", "");
+    var dock = $("#F_Dock").val().trim();
     xAjax.Post({
         url: "KBNRT310/OnReportClick",
         data: {
@@ -255,9 +265,18 @@ xAjax.onClick("#ReportBtn", function () {
             if (result.status === "200") {
                 var filename = location.pathname.substring(location.pathname.lastIndexOf('/') + 1);
                 var reportUrl = "http://hmmt-app03/Reportserver/report/KB3/";
-                window.location.href = reportUrl + filename + kbnType + '?SupFrom=' + supFrom + '&SupTo=' + supTo + '&UserName=' + result.data
-                    + '&KBNFrom=' + kbnFrom + '&KBNTo=' + kbnTo + '&DateFrom=' + dateFrom + '&DateTo=' + dateTo
-                    + '&ShiftFrom=' + shiftFrom + '&ShiftTo=' + shiftTo + '&TripFrom=' + tripFrom + '&TripTo=' + tripTo + '&KBNType=' + kbnType;
+                if (dock === "GW") {
+                    var fullUrl = reportUrl + filename + 'GW?SupFrom=' + supFrom + '&SupTo=' + supTo + '&UserName=' + result.data
+                        + '&KBNFrom=' + kbnFrom + '&KBNTo=' + kbnTo + '&Date=' + date + '&Shift=' + shift
+                        + '&StoreFrom=' + storeFrom + '&StoreTo=' + storeTo + '&PartFrom=' + partFrom + '&PartTo=' + partTo + '&Dock=' + dock;
+                    window.open(fullUrl);
+                }
+                else {
+                    var fullUrl = reportUrl + filename + '?SupFrom=' + supFrom + '&SupTo=' + supTo + '&UserName=' + result.data
+                        + '&KBNFrom=' + kbnFrom + '&KBNTo=' + kbnTo + '&Date=' + date + '&Shift=' + shift
+                        + '&StoreFrom=' + storeFrom + '&StoreTo=' + storeTo + '&PartFrom=' + partFrom + '&PartTo=' + partTo + '&Dock=' + dock;
+                    window.open(fullUrl);
+                }
             }
             else {
                 return xSwal.error(result.title, result.message);
@@ -272,6 +291,16 @@ xAjax.onClick("#ReportBtn", function () {
 xAjax.onClick("#ReportAllBtn", function () {
     var date = $("#F_Date").val().trim().replaceAll("-", "");
     var shift = $("#F_Shift").val().trim();
+    var supFrom = $("#F_SupFrom").val();
+    var supTo = $("#F_SupTo").val();
+    var partFrom = $("#F_PartFrom").val();
+    var partTo = $("#F_PartTo").val();
+    var storeFrom = $("#F_StoreFrom").val();
+    var storeTo = $("#F_StoreTo").val();
+    var kbnFrom = $("#F_KBNFrom").val();
+    var kbnTo = $("#F_KBNTo").val();
+    var date = $("#F_Date").val().trim().replaceAll("-", "");
+    var dock = $("#F_Dock").val().trim();
     xAjax.Post({
         url: "KBNRT310/OnReportAllClick",
         data: {
@@ -279,13 +308,18 @@ xAjax.onClick("#ReportAllBtn", function () {
             shift: shift
         },
         then: function (result) {
-            return console.log(result);
+            console.log(result);
             if (result.status === "200") {
                 var filename = location.pathname.substring(location.pathname.lastIndexOf('/') + 1);
                 var reportUrl = "http://hmmt-app03/Reportserver/report/KB3/";
-                window.location.href = reportUrl + filename + kbnType + '?SupFrom=' + supFrom + '&SupTo=' + supTo + '&UserName=' + result.data
-                    + '&KBNFrom=' + kbnFrom + '&KBNTo=' + kbnTo + '&DateFrom=' + dateFrom + '&DateTo=' + dateTo
-                    + '&ShiftFrom=' + shiftFrom + '&ShiftTo=' + shiftTo + '&TripFrom=' + tripFrom + '&TripTo=' + tripTo + '&KBNType=' + kbnType;
+                var fullUrl = reportUrl + filename + '?SupFrom=' + supFrom + '&SupTo=' + supTo + '&UserName=' + result.data
+                    + '&KBNFrom=' + kbnFrom + '&KBNTo=' + kbnTo + '&Date=' + date + '&Shift=' + shift
+                    + '&StoreFrom=' + storeFrom + '&StoreTo=' + storeTo + '&PartFrom=' + partFrom + '&PartTo=' + partTo + '&Dock=' + dock;
+                window.open(fullUrl);
+                var fullUrlGW = reportUrl + filename + 'GW?SupFrom=' + supFrom + '&SupTo=' + supTo + '&UserName=' + result.data
+                    + '&KBNFrom=' + kbnFrom + '&KBNTo=' + kbnTo + '&Date=' + date + '&Shift=' + shift
+                    + '&StoreFrom=' + storeFrom + '&StoreTo=' + storeTo + '&PartFrom=' + partFrom + '&PartTo=' + partTo + '&Dock=GW';
+                window.open(fullUrlGW);
             }
             else {
                 return xSwal.error(result.title, result.message);

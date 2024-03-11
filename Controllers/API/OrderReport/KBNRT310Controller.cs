@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Data;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace KANBAN.Controllers.API.OrderReport
 {
@@ -366,6 +365,12 @@ namespace KANBAN.Controllers.API.OrderReport
             string _result = "";
             string date = "";
             string shift = "";
+            string UserName = HttpContext.Session.GetString("USER_NAME");
+            string HostName = HttpContext.Session.GetString("USER_DEVICENAME");
+            if (string.IsNullOrWhiteSpace(UserName) || string.IsNullOrWhiteSpace(HostName))
+            {
+                return Redirect($"{Request.Path.ToString()}");
+            }
             if (!string.IsNullOrWhiteSpace(data))
             {
                 dynamic _json = JsonConvert.DeserializeObject(data);
@@ -375,16 +380,16 @@ namespace KANBAN.Controllers.API.OrderReport
 
             await _KB3Context.Database.ExecuteSqlRawAsync($"EXEC dbo.SP_Gen_Count_New '{date}','{shift}'");
 
-            DataTable DT = _FillDT.ExecuteSQL($" Select isnull(Count(*),0) From TB_Count_Stock Where F_Process_Date = '{date}' and F_Process_Shift = '{shift}' ");
-            
+            DataTable DT = _FillDT.ExecuteSQL($" Select * From TB_Count_Stock Where F_Process_Date = '{date}' and F_Process_Shift = '{shift}' ");
+
             if (DT.Rows.Count > 0)
             {
-                string _jsondata = JsonConvert.SerializeObject(DT);
+                string _jsondata = JsonConvert.SerializeObject(UserName);
                 _result = @"{
                                     ""status"":""200"",
                                     ""response"":""OK"",
                                     ""message"": ""Data Found"",
-                                    ""rows"": " + _jsondata + @"
+                                    ""data"": " + _jsondata + @"
                                     }";
 
                 return Ok(_result);
@@ -407,6 +412,12 @@ namespace KANBAN.Controllers.API.OrderReport
             string _result = "";
             string date = "";
             string shift = "";
+            string UserName = HttpContext.Session.GetString("USER_NAME");
+            string HostName = HttpContext.Session.GetString("USER_DEVICENAME");
+            if (string.IsNullOrWhiteSpace(UserName) || string.IsNullOrWhiteSpace(HostName))
+            {
+                return Redirect($"{Request.Path.ToString()}");
+            }
             if (!string.IsNullOrWhiteSpace(data))
             {
                 dynamic _json = JsonConvert.DeserializeObject(data);
@@ -416,16 +427,16 @@ namespace KANBAN.Controllers.API.OrderReport
 
             await _KB3Context.Database.ExecuteSqlRawAsync($"EXEC dbo.SP_Gen_Count_ALL '{date}','{shift}'");
 
-            DataTable DT = _FillDT.ExecuteSQL($" Select isnull(Count(*),0) From TB_Count_Stock Where F_Process_Date = '{date}' and F_Process_Shift = '{shift}' ");
-            
+            DataTable DT = _FillDT.ExecuteSQL($" Select * From TB_Count_Stock Where F_Process_Date = '{date}' and F_Process_Shift = '{shift}' ");
+
             if (DT.Rows.Count > 0)
             {
-                string _jsondata = JsonConvert.SerializeObject(DT);
+                string _jsondata = JsonConvert.SerializeObject(UserName);
                 _result = @"{
                                     ""status"":""200"",
                                     ""response"":""OK"",
                                     ""message"": ""Data Found"",
-                                    ""rows"": " + _jsondata + @"
+                                    ""data"": " + _jsondata + @"
                                     }";
 
                 return Ok(_result);
