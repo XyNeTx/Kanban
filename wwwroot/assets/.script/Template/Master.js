@@ -170,6 +170,9 @@
 
 
     edit = function (row = null) {
+
+        if ($('#' + this.ModalName).length == 0) return false;
+
         xSplash.show();
         xSplash.text('DATA LOADING');
 

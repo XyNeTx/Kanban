@@ -6,7 +6,7 @@
 
                 <form id="frmCondition">
 
-                    <div class="row">
+                    <div class="row mb-2">
                         <div class="col">
 
                             <fieldset class="fieldset">
@@ -45,23 +45,15 @@
                                             <div class="col">
                                             </div>
                                             <div class="col">
+                                                <item type="button" id="btnPrintPDS" label="Print PDS" style="width:100%"></item>
                                             </div>
                                             <div class="col">
-                                                <item type="button" id="btnExportData" label="Export Data" style="width:100%"></item>
+                                                <item type="button" id="btnPrintKanban" label="Print Kanban" style="width:100%"></item>
                                             </div>
                                             <div class="col">
                                                 <item type="button" id="btnExit" label="Exit" style="width:100%"></item>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
-
-                                <div class="row mt-2">
-                                    <div class="col">
-                                        <item type="text" id="itmFileName" label="File Name"></item>
-                                    </div>
-                                    <div class="col">
-                                        File extension must be .csv or .txt only
                                     </div>
                                 </div>
 
@@ -71,11 +63,11 @@
                     </div>
 
 
-                    <div class="row mt-2">
+                    <div class="row mb-2">
                         <div class="col">
 
-                            <fieldset class="fieldset" id="fldPDSNo" disabled>
-                                <legend><item type="checkbox" id="chkPDSNo" label="Select PDS No. : "></item></legend>
+                            <fieldset class="fieldset" id="fldPDSNo">
+                                <legend><item type="checkbox" id="chkPDSNo" label="Select PDS No. : " value="1" checked></item></legend>
 
                                 <div class="row">
                                     <div class="col-6">
@@ -98,7 +90,7 @@
                     </div>
 
 
-                    <div class="row mt-2">
+                    <div class="row mb-2">
                         <div class="col">
 
                             <fieldset class="fieldset" id="fldSupplierCode" disabled>
@@ -125,7 +117,7 @@
                     </div>
 
 
-                    <div class="row mt-2">
+                    <div class="row">
                         <div class="col">
 
                             <fieldset class="fieldset" id="fldDeliveryDate" disabled>
@@ -153,20 +145,6 @@
 
 
 
-                    <div class="row mt-2">
-                        <div class="col">
-                            <item type="progress" id="prgProcess" label="Status : {{##.##}} %" max="100"></item>
-                        </div>
-                    </div>
-
-
-
-                    <div class="row mt-2" style="visibility:hidden">
-                        <div class="col">
-                            <a id="aDownloadLink" href="" target="_blank">Download File</a>
-                        </div>
-                    </div>
-
                 </form>
 
             </div>
@@ -180,5 +158,5 @@
 
 @section Scripts{
     <script type="text/javascript" src="~/assets/js/History/UserMaintenance.js?@ViewData["Version"]"></script>
-    <script type="text/javascript" src="~/assets/.script/OrderingProcess/KBNOR460EX.js?@ViewData["Version"]"></script>
+    <script type="text/javascript" src="~/assets/.script/OrderingProcess/KBNOR450.js?@ViewData["Version"]"></script>
 }

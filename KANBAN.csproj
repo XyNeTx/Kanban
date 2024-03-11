@@ -78,6 +78,13 @@
     <Content Include="wwwroot\assets\.script\MSPData\KBNIM003S.js" />
     <Content Include="wwwroot\assets\.script\MSPData\KBNIM003M.js" />
     <Content Include="wwwroot\assets\.script\MSPData\KBNIM003.js" />
+    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR300.js" />
+    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR310.js" />
+    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR370.js" />
+    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR360.js" />
+    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR330.js" />
+    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR321.js" />
+    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR320.js" />
     <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR440.js" />
     <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR450.js" />
     <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR470.js" />

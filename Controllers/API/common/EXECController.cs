@@ -217,7 +217,7 @@ namespace HINOSystem.Controllers.API.Master
 
                     i++;
                 }
-                _spParameter = _spParameter.Substring(0, _spParameter.Length - 2);
+                if (_spParameter != "") _spParameter = _spParameter.Substring(0, _spParameter.Length - 2);
 
                 _SQL = @" EXEC " + _spName + @" " + _spParameter;
 

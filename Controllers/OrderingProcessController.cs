@@ -108,21 +108,46 @@ namespace HINOSystem.Controllers
 
 
 
-
-
-
-
-
-
-
-
-
-
-
+        //KBNOR300 : CKD In-House Ordering
         public IActionResult KBNOR300()
         {
             return _authenGuard.guard(ControllerContext);
         }
+        public IActionResult KBNOR310()
+        {
+            return _authenGuard.guard(ControllerContext);
+        }
+        public IActionResult KBNOR320()
+        {
+            return _authenGuard.guard(ControllerContext);
+        }
+        public IActionResult KBNOR321()
+        {
+            return _authenGuard.guard(ControllerContext);
+        }
+        public IActionResult KBNOR330()
+        {
+            return _authenGuard.guard(ControllerContext);
+        }
+        public IActionResult KBNOR360()
+        {
+            return _authenGuard.guard(ControllerContext);
+        }
+        public IActionResult KBNOR370()
+        {
+            return _authenGuard.guard(ControllerContext);
+        }
+
+
+
+
+
+
+
+
+
+
+
 
         public IActionResult KBNOR600()
         {

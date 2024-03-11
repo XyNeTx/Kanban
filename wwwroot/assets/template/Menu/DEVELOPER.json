@@ -992,7 +992,73 @@
     "hasChildren": false,
     "parent": false,
     "url": "~/kanban/OrderingProcess/KBNOR300",
+    "children": [
+{
+    "id": 170,
+    "text": "Interface Daba from Import Order",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OrderingProcess/KBNOR310",
     "children": []
+},
+{
+    "id": 171,
+    "text": "Calculate CKD In-House Order",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OrderingProcess/KBNOR320",
+    "children": []
+},
+{
+    "id": 172,
+    "text": "Maintenance CKD In-House Order",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OrderingProcess/KBNOR321",
+    "children": []
+},
+{
+    "id": 173,
+    "text": "Generate PDS for CKD In-House Order",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OrderingProcess/KBNOR330",
+    "children": []
+},
+{
+    "id": 174,
+    "text": "Registration CKD In-House Order",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OrderingProcess/KBNOR360",
+    "children": []
+},
+{
+    "id": 175,
+    "text": "Print Registed PDS and Kanban Card",
+    "population": null,
+    "flagUrl": null,
+    "checked": false,
+    "hasChildren": false,
+    "parent": false,
+    "url": "~/kanban/OrderingProcess/KBNOR370",
+    "children": []
+}]
 },
 {
     "id": 92,

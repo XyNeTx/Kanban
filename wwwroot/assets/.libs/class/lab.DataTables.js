@@ -551,10 +551,10 @@ class libDataTable {
 
         return _delData;
     }
-
     selects = function (pTable = null) {
         Selects(pTable);
     }
+
 
     Selected = function (pTable = null) {
         pTable = CheckObject(pTable);
@@ -586,6 +586,41 @@ class libDataTable {
         this.Draw(pTable, pCallback);
     }
 
+
+    LoadJSON = async function (pTable = null, data = null) {
+        pTable = CheckObject(pTable);
+
+        if (pTable != null) {
+
+            $('#table-wrapper').attr("style", "visibility:visible;");
+
+            $("#table-wrapper").parent().css({ position: 'relative' });
+            $("#table-wrapper").css({
+                top: $('#tblMaster').offset().top,
+                left: $('#tblMaster').offset().left,
+                right: 0,
+                position: 'absolute'
+            });
+            $('#table-wrapper').height($('#tblMaster').height());
+            $('#table-wrapper').width($('#tblMaster').width());
+
+            $(pTable).dataTable().fnClearTable();
+
+
+            var _dt = await xAjax.ExecuteJSON({
+                data,
+            });
+
+            if (_dt.rows != null) $(pTable).dataTable().fnAddData(_dt.rows);
+            //xSplash.hide();
+            
+
+        }
+    }
+
+    redraw = function () {
+
+    }
 
 
 }
