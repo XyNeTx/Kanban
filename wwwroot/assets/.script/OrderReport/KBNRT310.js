@@ -18,7 +18,7 @@ function initial() {
     xAjax.Post({
         url: 'KBNRT310/Initial',
         then: function (result) {
-            console.log(result);
+            //console.log(result);
             $.each(result.data, function (i, v) {
                 $("#F_SupFrom").append($("<option>", { value: v.Sup_CD, text: v.Sup_CD }, "</option>"));
                 $("#F_SupTo").append($("<option>", { value: v.Sup_CD, text: v.Sup_CD }, "</option>"));
@@ -58,7 +58,7 @@ xAjax.onChange("#F_Date, #F_Shift", function () {
             shift: shift
         },
         then: function (result) {
-            console.log(result);
+            //console.log(result);
             $("#F_Dock").empty();
             $("#F_SupFrom").empty();
             $("#F_SupTo").empty();
@@ -261,7 +261,7 @@ xAjax.onClick("#ReportBtn", function () {
             shift: shift
         },
         then: function (result) {
-            return console.log(result);
+            //console.log(result);
             if (result.status === "200") {
                 var filename = location.pathname.substring(location.pathname.lastIndexOf('/') + 1);
                 var reportUrl = "http://hmmt-app03/Reportserver/report/KB3/";
@@ -308,7 +308,7 @@ xAjax.onClick("#ReportAllBtn", function () {
             shift: shift
         },
         then: function (result) {
-            console.log(result);
+            //console.log(result);
             if (result.status === "200") {
                 var filename = location.pathname.substring(location.pathname.lastIndexOf('/') + 1);
                 var reportUrl = "http://hmmt-app03/Reportserver/report/KB3/";
