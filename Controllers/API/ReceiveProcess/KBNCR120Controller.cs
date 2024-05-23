@@ -121,14 +121,14 @@ namespace HINOSystem.Controllers.API.Master
             string _SQL = "";
             try
             {
-                BearerClass _JBearer = _BearerClass.Header(Request);
-                var user = _JBearer.UserCode.ToString();
-                if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
+                _BearerClass.Authentication(Request);
+                var user = _BearerClass.UserCode.ToString();
+                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
                 if (pData != null) _json = JsonConvert.DeserializeObject(pData);
 
                 _SQL = @" EXEC [exec].[spTB_MS_FACTORY] ";
-                string _jsTB_MS_Factory = _KBCN.ExecuteJSON(_SQL, pUser: _JBearer, pControllerName: ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+                string _jsTB_MS_Factory = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName: ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
                 string _result = @"{
                     ""status"":""200"",
                     ""response"":""OK"",
@@ -359,10 +359,10 @@ namespace HINOSystem.Controllers.API.Master
             {
                 setConString();
                 string _result = "";
-                BearerClass _JBearer = _BearerClass.Header(Request);
+                _BearerClass.Authentication(Request);
                 string UserName = HttpContext.Session.GetString("USER_NAME");
                 string HostName = HttpContext.Session.GetString("USER_DEVICENAME");
-                var user = _JBearer.UserCode.ToString();
+                var user = _BearerClass.UserCode.ToString();
                 if (_KBCN.Plant.ToString() == "3")
                 {
                     if (data != null)

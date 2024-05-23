@@ -28,7 +28,7 @@ namespace HINOSystem.Controllers.API.common
     {
         private readonly ILogger _logger;
         private readonly WarrantyClaimConnect _wrtConnect;
-        private readonly BearerClass _bearerClass;
+        private readonly BearerClass _BearerClass;
         
         public KBController(
             WarrantyClaimConnect wrtConnect,
@@ -36,7 +36,7 @@ namespace HINOSystem.Controllers.API.common
             )
         {
             _wrtConnect = wrtConnect;
-            _bearerClass = bearerClass;
+            _BearerClass = bearerClass;
         }
 
 
@@ -47,7 +47,7 @@ namespace HINOSystem.Controllers.API.common
             dynamic _json = JsonConvert.DeserializeObject(pData);
             try
             {
-                string _CN = _bearerClass.Decrypt(_json.CN.ToString());
+                string _CN = _BearerClass.Decrypt(_json.CN.ToString());
 
                 string[] _arr = _CN.Split("&");
 
@@ -59,7 +59,7 @@ namespace HINOSystem.Controllers.API.common
                             ""UN"":""" + _arr[1] + @""",
                             ""CN"":""" + _arr[0] + @""",
                             ""IP"":""" + _arr[2] + @""",
-                            ""KB"":""" + _bearerClass.Encrypt(_CN).ToString() + @"""
+                            ""KB"":""" + _BearerClass.Encrypt(_CN).ToString() + @"""
                             }
                 }";
                 return Content(_result, "application/json");

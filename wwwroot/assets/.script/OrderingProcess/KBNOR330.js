@@ -57,7 +57,7 @@
                 xItem.progress({ id: 'prgProcess', current: 5, label: 'Start Calculate Order of Urgent : {{##.##}} %' });
                 await xAjax.ExecuteJSON({
                     data: {
-                        "StoreName": "[exec].[spKBNOR420_CAL01]",
+                        "Module": "[exec].[spKBNOR420_CAL01]",
                         "@pOrderType": "U",
                         "@pPlant": ajexHeader.Plant,
                         "@pUserCode": ajexHeader.UserCode
@@ -69,7 +69,7 @@
 
                 var _dtChk = await xAjax.ExecuteJSON({
                     data: {
-                        "StoreName": "[exec].[spKBNOR420_CAL02]",
+                        "Module": "[exec].[spKBNOR420_CAL02]",
                         "@pOrderType": "U",
                         "@pPlant": ajexHeader.Plant,
                         "@pUserCode": ajexHeader.UserCode
@@ -82,7 +82,7 @@
 
                         var _dt = await xAjax.ExecuteJSON({
                             data: {
-                                "StoreName": "[exec].[spKBNOR420_CAL02_S]",
+                                "Module": "[exec].[spKBNOR420_CAL02_S]",
                                 "@pOrderType": "U",
                                 "@pPlant": ajexHeader.Plant,
                                 "@pUserCode": ajexHeader.UserCode,
@@ -104,7 +104,7 @@
                         //===Update Volume
                         await xAjax.ExecuteJSON({
                             data: {
-                                "StoreName": "[exec].[spKBNOR420_CAL02_U]",
+                                "Module": "[exec].[spKBNOR420_CAL02_U]",
                                 "@pOrderType": "U",
                                 "@pPlant": ajexHeader.Plant,
                                 "@pUserCode": ajexHeader.UserCode,
@@ -129,7 +129,7 @@
                 //'' Calculate in case KPO Data: Service part 
                 await xAjax.ExecuteJSON({
                     data: {
-                        "StoreName": "[exec].[spKBNOR420_CAL03]",
+                        "Module": "[exec].[spKBNOR420_CAL03]",
                         "@pOrderType": "U",
                         "@pPlant": ajexHeader.Plant,
                         "@pUserCode": ajexHeader.UserCode
@@ -144,7 +144,7 @@
 
                 await xAjax.ExecuteJSON({
                     data: {
-                        "StoreName": "[exec].[spKBNOR420_CAL04]",
+                        "Module": "[exec].[spKBNOR420_CAL04]",
                         "@pOrderType": "U",
                         "@pPlant": ajexHeader.Plant,
                         "@pUserCode": ajexHeader.UserCode
@@ -158,7 +158,7 @@
 
                 await xAjax.ExecuteJSON({
                     data: {
-                        "StoreName": "[exec].[spKBNOR420_CAL05]",
+                        "Module": "[exec].[spKBNOR420_CAL05]",
                         "@pOrderType": "U",
                         "@pPlant": ajexHeader.Plant,
                         "@pUserCode": ajexHeader.UserCode
@@ -173,7 +173,7 @@
 
                 await xAjax.ExecuteJSON({
                     data: {
-                        "StoreName": "[exec].[spKBNOR420_CAL06]",
+                        "Module": "[exec].[spKBNOR420_CAL06]",
                         "@pOrderType": "U",
                         "@pPlant": ajexHeader.Plant,
                         "@pUserCode": ajexHeader.UserCode
@@ -184,7 +184,7 @@
 
                 await xAjax.ExecuteJSON({
                     data: {
-                        "StoreName": "[exec].[spKBNOR420_CAL07]",
+                        "Module": "[exec].[spKBNOR420_CAL07]",
                         "@pOrderType": "U",
                         "@pPlant": ajexHeader.Plant,
                         "@pUserCode": ajexHeader.UserCode
@@ -197,7 +197,7 @@
 
                 await xAjax.ExecuteJSON({
                     data: {
-                        "StoreName": "[exec].[spKBNOR420_CAL08]",
+                        "Module": "[exec].[spKBNOR420_CAL08]",
                         "@pOrderType": "U",
                         "@pPlant": ajexHeader.Plant,
                         "@pUserCode": ajexHeader.UserCode
@@ -211,7 +211,7 @@
 
                 await xAjax.ExecuteJSON({
                     data: {
-                        "StoreName": "[exec].[spKBNOR420_CAL09]",
+                        "Module": "[exec].[spKBNOR420_CAL09]",
                         "@pOrderType": "U",
                         "@pPlant": ajexHeader.Plant,
                         "@pUserCode": ajexHeader.UserCode
@@ -224,7 +224,7 @@
 
                 var _dtChk = await xAjax.ExecuteJSON({
                     data: {
-                        "StoreName": "[exec].[spKBNOR420_CAL10]",
+                        "Module": "[exec].[spKBNOR420_CAL10]",
                         "@pOrderType": "U",
                         "@pPlant": ajexHeader.Plant,
                         "@pUserCode": ajexHeader.UserCode
@@ -236,7 +236,7 @@
                     for (var i = 0; i < _dtChk.rows.length; i++) {
                         var _dtPOM = await xAjax.Execute({
                             data: {
-                                "StoreName": "[exec].[spKBNOR420_CAL10_S]",
+                                "Module": "[exec].[spKBNOR420_CAL10_S]",
                                 "@OrderType": "U",
                                 "@Plant": ajexHeader.Plant,
                                 "@UserCode": ajexHeader.UserCode,
@@ -250,7 +250,7 @@
                         if (_dtPOM.rows != null) {
                             await xAjax.Execute({
                                 data: {
-                                    "StoreName": "[exec].[spKBNOR420_CAL10_U]",
+                                    "Module": "[exec].[spKBNOR420_CAL10_U]",
                                     "@OrderType": "U",
                                     "@Plant": ajexHeader.Plant,
                                     "@UserCode": ajexHeader.UserCode,
@@ -271,7 +271,7 @@
 
                 var _dtChk = await xAjax.ExecuteJSON({
                     data: {
-                        "StoreName": "[exec].[spKBNOR420_CAL11]",
+                        "Module": "[exec].[spKBNOR420_CAL11]",
                         "@pOrderType": "U",
                         "@pPlant": ajexHeader.Plant,
                         "@pUserCode": ajexHeader.UserCode
@@ -291,7 +291,7 @@
 
                             await xAjax.ExecuteJSON({
                                 data: {
-                                    "StoreName": "[exec].[spKBNOR420_CAL11_U]",
+                                    "Module": "[exec].[spKBNOR420_CAL11_U]",
                                     "@OrderType": "U",
                                     "@Plant": ajexHeader.Plant,
                                     "@UserCode": ajexHeader.UserCode,
@@ -314,7 +314,7 @@
                     _Detail = _Detail.substring(0, _Detail.length - 1);
                     await xAjax.ExecuteJSON({
                         data: {
-                            "StoreName": "[exec].[spKBNOR420_CAL11_U]",
+                            "Module": "[exec].[spKBNOR420_CAL11_U]",
                             "@OrderType": "U",
                             "@Plant": ajexHeader.Plant,
                             "@UserCode": ajexHeader.UserCode,
@@ -331,7 +331,7 @@
                 //''Clear Delivery IN case Qty = 0
                 await xAjax.ExecuteJSON({
                     data: {
-                        "StoreName": "[exec].[spKBNOR420_CAL12]",
+                        "Module": "[exec].[spKBNOR420_CAL12]",
                         "@OrderType": "U",
                         "@Plant": ajexHeader.Plant,
                         "@UserCode": ajexHeader.UserCode
@@ -345,7 +345,7 @@
 
                 var _dt = await xAjax.ExecuteJSON({
                     data: {
-                        "StoreName": "[exec].[spKBNOR420_CAL13]",
+                        "Module": "[exec].[spKBNOR420_CAL13]",
                         "@pOrderType": "SRV",
                         "@pPlant": ajexHeader.Plant,
                         "@pUserCode": ajexHeader.UserCode
@@ -364,7 +364,7 @@
                 //xAjax.Post({
                 //    url: 'EXEC/eExecute',
                 //    data: {
-                //        "StoreName": "[exec].[spKBNOR420_CAL01]",
+                //        "Module": "[exec].[spKBNOR420_CAL01]",
                 //        "OrderType": "U",
                 //        "Plant": ajexHeader.Plant,
                 //        "UserCode": ajexHeader.UserCode
@@ -384,7 +384,7 @@
             // Code to handle the error
             await xAjax.Execute({
                 data: {
-                    "StoreName": "[exec].[spKBNOR420_EXCEPTION]",
+                    "Module": "[exec].[spKBNOR420_EXCEPTION]",
                     "@OrderType": "U",
                     "@Plant": ajexHeader.Plant,
                     "@UserCode": ajexHeader.UserCode
@@ -402,7 +402,7 @@
     //    xAjax.Post({
     //        url: 'EXEC/eExecuteJSON',
     //        data: {
-    //            "StoreName": "[exec].[spKBNOR420_CAL02]",
+    //            "Module": "[exec].[spKBNOR420_CAL02]",
     //            "OrderType": "U",
     //            "Plant": ajexHeader.Plant,
     //            "UserCode": ajexHeader.UserCode
@@ -439,7 +439,7 @@
     //    xAjax.Post({
     //        url: 'EXEC/eExecute',
     //        data: {
-    //            "StoreName": "[exec].[spKBNOR420_CAL03]",
+    //            "Module": "[exec].[spKBNOR420_CAL03]",
     //            "OrderType": "U",
     //            "Plant": ajexHeader.Plant,
     //            "UserCode": ajexHeader.UserCode
@@ -459,7 +459,7 @@
     //    xAjax.Post({
     //        url: 'EXEC/eExecute',
     //        data: {
-    //            "StoreName": "[exec].[spKBNOR420_CAL04]",
+    //            "Module": "[exec].[spKBNOR420_CAL04]",
     //            "OrderType": "U",
     //            "Plant": ajexHeader.Plant,
     //            "UserCode": ajexHeader.UserCode
@@ -479,7 +479,7 @@
     //    xAjax.Post({
     //        url: 'EXEC/eExecute',
     //        data: {
-    //            "StoreName": "[exec].[spKBNOR420_CAL05]",
+    //            "Module": "[exec].[spKBNOR420_CAL05]",
     //            "OrderType": "U",
     //            "Plant": ajexHeader.Plant,
     //            "UserCode": ajexHeader.UserCode
@@ -499,7 +499,7 @@
     //    xAjax.Post({
     //        url: 'EXEC/eExecute',
     //        data: {
-    //            "StoreName": "[exec].[spKBNOR420_CAL06]",
+    //            "Module": "[exec].[spKBNOR420_CAL06]",
     //            "OrderType": "U",
     //            "Plant": ajexHeader.Plant,
     //            "UserCode": ajexHeader.UserCode
@@ -519,7 +519,7 @@
     //    xAjax.Post({
     //        url: 'EXEC/eExecute',
     //        data: {
-    //            "StoreName": "[exec].[spKBNOR420_CAL07]",
+    //            "Module": "[exec].[spKBNOR420_CAL07]",
     //            "OrderType": "U",
     //            "Plant": ajexHeader.Plant,
     //            "UserCode": ajexHeader.UserCode
@@ -539,7 +539,7 @@
     //    xAjax.Post({
     //        url: 'EXEC/eExecute',
     //        data: {
-    //            "StoreName": "[exec].[spKBNOR420_CAL08]",
+    //            "Module": "[exec].[spKBNOR420_CAL08]",
     //            "OrderType": "U",
     //            "Plant": ajexHeader.Plant,
     //            "UserCode": ajexHeader.UserCode
@@ -559,7 +559,7 @@
     //    xAjax.Post({
     //        url: 'EXEC/eExecute',
     //        data: {
-    //            "StoreName": "[exec].[spKBNOR420_CAL09]",
+    //            "Module": "[exec].[spKBNOR420_CAL09]",
     //            "OrderType": "U",
     //            "Plant": ajexHeader.Plant,
     //            "UserCode": ajexHeader.UserCode
@@ -598,7 +598,7 @@
     //    xAjax.Post({
     //        url: 'KBNOR420/summaryRemark',
     //        data: {
-    //            "StoreName": "[exec].[spKBNOR420_CAL09]",
+    //            "Module": "[exec].[spKBNOR420_CAL09]",
     //            "OrderType": "U",
     //            "Plant": ajexHeader.Plant,
     //            "UserCode": ajexHeader.UserCode
@@ -618,7 +618,7 @@
     //    xAjax.Post({
     //        url: 'EXEC/eExecute',
     //        data: {
-    //            "StoreName": "[exec].[spKBNOR420_CAL12]",
+    //            "Module": "[exec].[spKBNOR420_CAL12]",
     //            "OrderType": "U",
     //            "Plant": ajexHeader.Plant,
     //            "UserCode": ajexHeader.UserCode
@@ -638,7 +638,7 @@
     //    xAjax.Post({
     //        url: 'EXEC/eExecuteJSON',
     //        data: {
-    //            "StoreName": "[exec].[spKBNOR420_CAL12]",
+    //            "Module": "[exec].[spKBNOR420_CAL12]",
     //            "OrderType": "U",
     //            "Plant": ajexHeader.Plant,
     //            "UserCode": ajexHeader.UserCode

@@ -28,6 +28,7 @@ using System.DirectoryServices.ActiveDirectory;
 using System.IO;
 using Microsoft.AspNetCore.Http;
 using System.Xml.Linq;
+using Org.BouncyCastle.Utilities.Net;
 
 
 namespace HINOSystem.Libs
@@ -159,8 +160,10 @@ namespace HINOSystem.Libs
 
         public void executeLog(HttpContext httpContext, string pSQL, string pAction, string pResult, string pMessage, BearerClass pUser = null, string pControllerName = "", string pActionName = "", string pSystem = "")
         {
-            string _user = "SYSTEM";
-            string _token = "";
+            string _user = "SYSTEM"
+                , _token = ""
+                , _device = ""
+                , _ipaddress = "";
 
             if (httpContext != null)
             {
@@ -171,10 +174,14 @@ namespace HINOSystem.Libs
             {
                 _user = pUser.UserCode.ToString();
                 _token = pUser.Token.ToString();
+                _device = pUser.Device.ToString();
+                _ipaddress = pUser.IPAddress.ToString();
             }
 
             string _SQL_Log = @"INSERT INTO [log].[Action] ([UserCode]
                                   ,[Token]
+                                  ,[DeviceName]
+                                  ,[IPAddress]
                                   ,[ActionType]
                                   ,[ActionAt]
                                   ,[SystemName]
@@ -185,6 +192,8 @@ namespace HINOSystem.Libs
                                   ,[SQL]
                                 )VALUES('" + _user + @"'
                                   , '" + _token + @"'
+                                  , '" + _device + @"'
+                                  , '" + _ipaddress + @"'
                                   , '" + pAction + @"'
                                   , GETDATE()
                                   , '" + pSystem + @"'

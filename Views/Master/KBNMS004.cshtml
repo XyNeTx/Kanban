@@ -63,11 +63,11 @@
                         <section class="w-100 p-2">
                             <div class="row g-2">
                                 <div class="col-md-8">
-                                    <item type="lov" id="F_Supplier_Code" label="Supplier Code" 
-                                        data-controller="LOVKB3.PartList"
+                                    <item type="lov" id="F_Supplier_Code" label="Supplier Code"
+                                          data-controller="LOVKB3.SupplierList"
                                           data-value="F_Supplier_Code:Supplier_Code,F_Supplier_Name:Supplier_Name"
-                                          data-description="F_Supplier_Name" 
-                                        class-value="col-sm-2"></item>
+                                          data-description="F_Supplier_Name"
+                                          class-value="col-sm-2"></item>
                                 </div>
                                 <div class="col-md-4">
                                     <item type="text" id="F_Cycle" label="Cycle"></item>
@@ -75,17 +75,29 @@
                             </div>
                             <div class="row g-2">
                                 <div class="col-md-4">
-                                    <item type="list" id="F_Kanban_No" label="Supplier Code" data-controller="LOVKB3.PartList" data-value="F_Supplier_Code:Code" data-description="F_Supplier_Name" class-value="col-sm-2"></item>
+                                    <item type="list" id="F_Kanban_No" label="Kanban No." 
+                                          data-controller="LOVKB3.KanbanNoList"
+                                          data-value="F_Kanban_No:Kanban_No"
+                                          data-description="F_Kanban_No_Name" 
+                                    class-value="col-sm-2"></item>
                                 </div>
                             </div>
                             <div class="row g-2">
                                 <div class="col-md-4">
-                                    <item type="list" id="F_Store_Code" label="Store Code" data-controller="LOVKB3.PartList" data-value="F_Supplier_Code:Code" data-description="F_Supplier_Name" class-value="col-sm-2"></item>
+                                    <item type="list" id="F_Store_Code" label="Store Code"
+                                          data-controller="LOVKB3.StoreCodeList"
+                                          data-value="F_Store_Code:Store_Code"
+                                          data-description="F_Store_Code_Name"
+                                          class-value="col-sm-2"></item>
                                 </div>
                             </div>
                             <div class="row g-2">
                                 <div class="col-md-8">
-                                    <item type="lov" id="F_Part_No" label="Part No" data-controller="LOVKB3.PartList" data-value="F_Part_No:Code" data-description="F_Part_Name" class-value="col-sm-2"></item>
+                                    <item type="lov" id="F_Part_No" label="Part No"
+                                          data-controller="LOVKB3.PartList"
+                                          data-value="F_Part_No:Part_No,F_Part_Name:Part_Name"
+                                          data-description="F_Part_Name"
+                                          class-value="col-sm-2"></item>
                                 </div>
                             </div>
                             <div class="row g-2">
@@ -135,7 +147,7 @@
 
 
 @section Scripts{
-    <script type="text/javascript" src="~/assets/js/History/UserMaintenance.js"></script>
+    
     @*<script type="text/javascript" src="~/assets/.script/Template/Master.js"></script>*@
     <script type="text/javascript" src="~/assets/.script/Master/KBNMS004.js?@ViewData["Version"]"></script>
     @*<script type="text/javascript" src="~/assets/adminty/vue@3/vueApp/Master/KBNMS004.vue.js?@ViewData["Version"]"></script>*@

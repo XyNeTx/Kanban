@@ -85,7 +85,7 @@
                 xItem.progress({ id: 'prgProcess', current: 5, label: 'Loading data : {{##.##}} %' });
                 var _dt = await xAjax.ExecuteJSON({
                     data: {
-                        "StoreName": "[exec].[spKBNOR460EX]",
+                        "Module": "[exec].[spKBNOR460EX]",
                         "@OrderType": "N",
                         "@Plant": ajexHeader.Plant,
                         "@UserCode": ajexHeader.UserCode,

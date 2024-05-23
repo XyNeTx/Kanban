@@ -29,9 +29,10 @@
             _addnew = (config) => {
                 this.edit();
             };
+            if (typeof (pCallback) === 'function' && this.edit() == undefined) _addnew = false;
         }
 
-        //console.log(this.DOM);
+        //console.log('xxx'+this.edit());
 
         this.tblMaster = xDataTable.Initial({
             //this.tblMaster = xDataTable.InitialOld({
@@ -181,6 +182,8 @@
 
         //console.log('DATA LOADING');
         //console.log(row);
+        ajexHeader.Records = JSON.stringify(row);
+        //console.log(ajexHeader.Records);
 
         //#### Clear display item ####
         //for disable datetime picker component
@@ -296,7 +299,7 @@
             return false;
         }
 
-        //console.log($('#' + _FormName).serialize());
+        console.log($('#' + _FormName).serialize());
 
         xSwal.questionPack(
             i18nLayout.modal.button.swal_save,
@@ -344,7 +347,7 @@
                     xSplash.text('DELETING');
 
                     $.ajax({
-                        type: "DELETE",
+                        type: "POST",
                         dataType: "json",
                         headers: ajexHeader,
                         url: (_NAMESPACE_ != '' ? '/' + _NAMESPACE_ : '') + '/' + _Controller + '/delete',
@@ -367,57 +370,38 @@
 
 
 
+
+
     //$('#btnToolbarDelete').on('click', function() {
-    deleteall = function (pCallback = '') {
-
-        var _delData = [];
-        var allPages = $('#tblMaster').DataTable().cells().nodes();
-        $(allPages).find('input[type="checkbox"]').each(function () {
-            if ($(this).prop('checked')) {
-                var _val = $($(this)).val();
-                _delData.push(JSON.parse(`{` + ReplaceAll(_val, `'`, `"`) + `}`));
-            }
-        });
-        if (_delData.length <= 0) {
-            xSwal.Info(i18nLayout.modal.button.swal_delete_info.title, i18nLayout.modal.button.swal_delete_info.text);
-            return;
-        }
-
-        console.log(_delData);
-
+    deleteall = async function (pCallback = '') {
         xSwal.questionPack(
             i18nLayout.modal.button.swal_deleteall,
-            function (result) {
+            async function (result) {
                 if (result.isConfirmed) {
                     xSplash.show();
                     xSplash.text('DELETING');
 
-                    console.log(_delData);
+                    var _data = xDataTable.Selected('#tblMaster');
+                    for (var i = 0; i < _data.length; i++) {
+
+                        ajexHeader.Records = JSON.stringify(_data[i]);
+                        
+                        await xAjax.PostAsync({
+                            method:'POST',
+                            url: _PAGE_ + '/delete',
+                            data: null,
+                        });
+                        
+                    }
+                    if (typeof (pCallback) === 'function') pCallback();
 
                     xSplash.hide();
-
-                    //$.ajax({
-                    //    type: "DELETE",
-                    //    dataType: "json",
-                    //    headers: ajexHeader,
-                    //    url: (_NAMESPACE_ != '' ? '/' + _NAMESPACE_ : '') + '/' + _Controller + '/delete',
-                    //    data: $('#' + _FormName).serialize(),
-                    //    success: function (result) {
-
-                    //        $('#' + _ModalName).modal('hide');
-                    //        xSplash.hide();
-                    //        if (typeof (pCallback) === 'function') pCallback(result);
-                    //    },
-                    //    error: function (result) {
-                    //        console.error(_Controller + '.Delete: ' + result.responseText);
-                    //        xSplash.hide();
-                    //    }
-                    //});
                 }
 
             });
 
     };
+
 
     _reCallPostData = function () {
 

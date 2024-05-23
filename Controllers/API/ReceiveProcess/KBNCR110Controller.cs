@@ -126,14 +126,14 @@ namespace HINOSystem.Controllers.API.Master
             string _SQL = "";
             try
             {
-                BearerClass _JBearer = _BearerClass.Header(Request);
-                var user = _JBearer.UserCode.ToString();
-                if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
+                _BearerClass.Authentication(Request);
+                var user = _BearerClass.UserCode.ToString();
+                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
                 if (pData != null) _json = JsonConvert.DeserializeObject(pData);
 
                 _SQL = @" EXEC [exec].[spTB_MS_FACTORY] ";
-                string _jsTB_MS_Factory = _KBCN.ExecuteJSON(_SQL, pUser: _JBearer, pControllerName: ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+                string _jsTB_MS_Factory = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName: ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
                 string _result = @"{
                     ""status"":""200"",
                     ""response"":""OK"",
@@ -409,8 +409,8 @@ namespace HINOSystem.Controllers.API.Master
         public async Task<IActionResult> InsToRecLocal(string PDSNo)
         {
             setConString();
-            BearerClass _JBearer = _BearerClass.Header(Request);
-            var user = _JBearer.UserCode.ToString();
+            _BearerClass.Authentication(Request);
+            var user = _BearerClass.UserCode.ToString();
             try
             {
                 if (PDSNo != null)
@@ -462,7 +462,7 @@ namespace HINOSystem.Controllers.API.Master
                 setConString();
                 string UserName = HttpContext.Session.GetString("USER_NAME");
                 string HostName = HttpContext.Session.GetString("USER_DEVICENAME");
-                BearerClass _JBearer = _BearerClass.Header(Request);
+                _BearerClass.Authentication(Request);
                 string dateTime = DateTime.Now.ToString("yyyyMMdd");
                 string RecCd = "K" + dateTime.Substring(2, 2);
                 if (dateTime.Substring(4, 2) == "10")
@@ -479,7 +479,7 @@ namespace HINOSystem.Controllers.API.Master
                 }
                 else { RecCd = RecCd + dateTime.Substring(5, 1); }
                 RecCd += dateTime.Substring(6, 2);
-                //_PPMConnect.ExecuteSQL($"EXEC [dbo].[SP_UploadReceiveNormal_All] '{RecCd}','{user}'", pUser: _JBearer, pControllerName: ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+                //_PPMConnect.ExecuteSQL($"EXEC [dbo].[SP_UploadReceiveNormal_All] '{RecCd}','{user}'", pUser: _BearerClass, pControllerName: ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
                 await _PPM3Context.Database.ExecuteSqlRawAsync(
                     "exec [dbo].[SP_UploadReceiveNormal_All] @RecCd, @user",
                     new SqlParameter("@RecCd", RecCd),

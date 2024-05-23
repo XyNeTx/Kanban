@@ -84,6 +84,12 @@
                             <div class="table-responsive text-nowrap">
                                 <table id="tblReceiveDate" class="display" style="width:100%"></table>
                             </div>
+
+                            <small class="text-primary">[Proc_Web].[dbo].[T_Receive_Header]</small>
+                            <div class="table-responsive text-nowrap">
+                                <table id="tblReceiveDatePCW" class="display" style="width:100%"></table>
+                            </div>
+
                             <item type="button" id="btnReceiveDate" label="เปลี่ยนวันที่ช่อง Receive"></item>
                         </div>
                     </div>
@@ -130,7 +136,5 @@
 
 
 @section Scripts{
-    <script type="text/javascript" src="~/assets/js/History/UserMaintenance.js"></script>
-    @*<script type="text/javascript" src="~/assets/.script/Template/Master.js"></script>*@
-    <script type="text/javascript" src="~/assets/.script/Tools/KBNTL001.js?@ViewData["Version"]"></script>
+    <script type="text/javascript" src="~/assets/.script/Tools/KBNTL001.js?@ViewData["VersionJS"]"></script>
 }

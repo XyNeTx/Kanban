@@ -14,6 +14,7 @@
             columnTitle: {
                 "EN": ['Order Number', 'Delivery Date', 'Issue Date', 'To'],
                 "TH": ['Order Number', 'Delivery Date', 'Issue Date', 'To'],
+                "JP": ['Order Number', 'Delivery Date', 'Issue Date', 'To'],
             },
             column:
                 [
@@ -35,6 +36,7 @@
             columnTitle: {
                 "EN": ['Part/Item', 'Name', 'Box Qty.', 'Unit Price', 'Unit Amt.', 'Receive Amt.', 'Receive At'],
                 "TH": ['Part/Item', 'Name', 'Box Qty.', 'Unit Price', 'Unit Amt.', 'Receive Amt.', 'Receive At'],
+                "JP": ['Part/Item', 'Name', 'Box Qty.', 'Unit Price', 'Unit Amt.', 'Receive Amt.', 'Receive At'],
             },
             column:
                 [
@@ -52,6 +54,27 @@
             }
         });
 
+        tblReceiveDatePCW = xDataTable.Initial({
+            name: 'tblReceiveDatePCW',
+            running: 0,
+            toolbar: "",
+            columnTitle: {
+                "EN": ['Supplier Code', 'Supplier Plant', 'Receive Date'],
+                "TH": ['Supplier Code', 'Supplier Plant', 'Receive Date'],
+                "JP": ['Supplier Code', 'Supplier Plant', 'Receive Date'],
+            },
+            column:
+                [
+                    { "data": "F_sup_cd" },
+                    { "data": "F_sup_plant" },
+                    { "data": "F_rec_date" }
+                ],
+            addnew: false,
+            then: function (config) {
+                xSplash.hide();
+            }
+        });
+
         tblReceivePrice = xDataTable.Initial({
             name: 'tblReceivePrice',
             running: 0,
@@ -59,6 +82,7 @@
             columnTitle: {
                 "EN": ['Part/Item', 'Amt.(Proc Web)', 'Amt.(T_PDS692_Detail)', 'Prc.(Proc Web)', 'Prc.(T_PDS692_Detail)'],
                 "TH": ['Part/Item', 'Amt.(Proc Web)', 'Amt.(T_PDS692_Detail)', 'Prc.(Proc Web)', 'Prc.(T_PDS692_Detail)'],
+                "JP": ['Part/Item', 'Amt.(Proc Web)', 'Amt.(T_PDS692_Detail)', 'Prc.(Proc Web)', 'Prc.(T_PDS692_Detail)'],
             },
             column:
                 [
@@ -85,24 +109,20 @@
                 "pdsno": $('#txtPDSNo').val()
             },
             then: function (result) {
-                //console.log(result);
+                console.log(result);
                 if (result.response == 'OK') {
 
                     $('#tblReceiveSpecial9Y').dataTable().fnClearTable();
-                    if (result.data.ReceiveSpecial9Y.length > 0) {
-                        $('#tblReceiveSpecial9Y').dataTable().fnAddData(result.data.ReceiveSpecial9Y);
-                    }
+                    if (result.data.ReceiveSpecial9Y.length > 0) $('#tblReceiveSpecial9Y').dataTable().fnAddData(result.data.ReceiveSpecial9Y);
 
                     $('#tblReceiveDate').dataTable().fnClearTable();
-                    if (result.data.ReceiveDate.length > 0) {
-                        $('#tblReceiveDate').dataTable().fnAddData(result.data.ReceiveDate);
-                    }
+                    if (result.data.ReceiveDate.length > 0) $('#tblReceiveDate').dataTable().fnAddData(result.data.ReceiveDate);
+
+                    $('#tblReceiveDatePCW').dataTable().fnClearTable();
+                    if (result.data.ReceiveDatePCW.length > 0) $('#tblReceiveDatePCW').dataTable().fnAddData(result.data.ReceiveDatePCW);
 
                     $('#tblReceivePrice').dataTable().fnClearTable();
-                    if (result.data.ReceivePrice.length > 0) {
-                        //console.log(result.data.ReceivePrice.length);
-                        $('#tblReceivePrice').dataTable().fnAddData(result.data.ReceivePrice);
-                    }
+                    if (result.data.ReceivePrice.length > 0) $('#tblReceivePrice').dataTable().fnAddData(result.data.ReceivePrice);
                 }
             },
             error: function () {

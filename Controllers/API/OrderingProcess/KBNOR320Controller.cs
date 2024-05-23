@@ -60,7 +60,7 @@ namespace HINOSystem.Controllers.API.Master
         [HttpPost]
         public IActionResult initial([FromBody] string pPostData = null)
         {
-            dynamic _bearer, _data = null;
+            dynamic _data = null;
             string _SQL, _resData;
             string _result = @"{
                     ""status"":""200"",
@@ -69,22 +69,22 @@ namespace HINOSystem.Controllers.API.Master
                     ""data"": null
                 }";
 
-            _bearer = _BearerClass.Header(Request);
-            if (_bearer.Status == 401 || _bearer.Status == null) return Content(JsonConvert.SerializeObject(_bearer), "application/json");
+            _BearerClass.Authentication(Request);
+            if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
             try
             {
-                _KBCN.Plant = _bearer.Plant;
+                _KBCN.Plant = _BearerClass.Plant;
 
                 if (pPostData != null) _data = JsonConvert.DeserializeObject(pPostData);
 
                 //_SQL = @" EXEC [exec].[spKBNOR310] '"
-                //    + _bearer.Plant + @"','"
-                //    + _bearer.UserCode + @"','"
+                //    + _BearerClass.Plant + @"','"
+                //    + _BearerClass.UserCode + @"','"
                 //    + _data.ProcessDate.ToString().Replace("-", "") + @"','"
                 //    + _data.ProcessShift.ToString() + @"','' ";
 
-                //_resData = _KBCN.ExecuteJSON(_SQL, pUser: _bearer,
+                //_resData = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass,
                 //    pControllerName: ControllerContext.ActionDescriptor.ControllerName,
                 //    pActionName: ControllerContext.ActionDescriptor.ActionName
                 //    );
@@ -115,7 +115,7 @@ namespace HINOSystem.Controllers.API.Master
         //[HttpPost]
         //public IActionResult search([FromBody] string pPostData = null)
         //{
-        //    dynamic _bearer, _data = null;
+        //    dynamic _data = null;
         //    string _SQL, _resData;
         //    string _result = @"{
         //            ""status"":""200"",
@@ -124,22 +124,22 @@ namespace HINOSystem.Controllers.API.Master
         //            ""data"": null
         //        }";
 
-        //    _bearer = _BearerClass.Header(Request);
-        //    if (_bearer.Status == 401 || _bearer.Status == null) return Content(JsonConvert.SerializeObject(_bearer), "application/json");
+        //    _BearerClass.Authentication(Request);
+        //    if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
         //    try
         //    {
-        //        _KBCN.Plant = _bearer.Plant;
+        //        _KBCN.Plant = _BearerClass.Plant;
 
         //        if (pPostData != null) _data = JsonConvert.DeserializeObject(pPostData);
 
         //        _SQL = @" EXEC [exec].[spKBNOR310] '"
-        //            + _bearer.Plant + @"','"
-        //            + _bearer.UserCode + @"','"
+        //            + _BearerClass.Plant + @"','"
+        //            + _BearerClass.UserCode + @"','"
         //            + _data.ProcessDate.ToString().Replace("-", "") + @"','"
         //            + _data.ProcessShift.ToString() + @"','' ";
 
-        //        _resData = _KBCN.ExecuteJSON(_SQL, pUser: _bearer,
+        //        _resData = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass,
         //            pControllerName: ControllerContext.ActionDescriptor.ControllerName,
         //            pActionName: ControllerContext.ActionDescriptor.ActionName
         //            );

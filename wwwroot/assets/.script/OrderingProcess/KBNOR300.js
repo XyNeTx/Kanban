@@ -4,7 +4,7 @@
 
         var _dt = await xAjax.ExecuteJSON({
             data: {
-                "StoreName": "[exec].[spKBNOR300]",
+                "Module": "[exec].[spKBNOR300]",
                 "@OrderType": "U",
                 "@Plant": ajexHeader.Plant,
                 "@UserCode": ajexHeader.UserCode
@@ -45,7 +45,7 @@
     xAjax.onClick('btnKBNOR310', async function () {
         var _dt = await xAjax.ExecuteJSON({
             data: {
-                "StoreName": "[exec].[spKBNOR300_310]",
+                "Module": "[exec].[spKBNOR300_310]",
                 "@OrderType": "U",
                 "@Plant": ajexHeader.Plant,
                 "@UserCode": ajexHeader.UserCode

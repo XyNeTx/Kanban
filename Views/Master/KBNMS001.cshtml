@@ -68,10 +68,10 @@
                             </div>
                             <div class="row g-2">
                                 <div class="col-md-6">
-                                    <item type="date" id="F_Effect_Date" label="Effective Date" format="yyyy-mm-dd" default="now" noedit required></item>
+                                    <item type="date" id="F_Effect_Date" label="Effective Date" format="yyyy-mm-dd" default="now" required></item>
                                 </div>
                                 <div class="col-md-6">
-                                    <item type="date" id="F_End_Date" label="End Date" format="yyyy-mm-dd" default="now" noedit required></item>
+                                    <item type="date" id="F_End_Date" label="End Date" format="yyyy-mm-dd" default="now" required></item>
                                 </div>
                             </div>
                         </section>
@@ -94,9 +94,6 @@
 </div>
 
 
-
-@section Scripts{
-    <script type="text/javascript" src="~/assets/js/History/UserMaintenance.js"></script>
-    @*<script type="text/javascript" src="~/assets/.script/Template/Master.js"></script>*@
+@section Scripts{    
     <script type="text/javascript" src="~/assets/.script/Master/KBNMS001.js?@ViewData["Version"]"></script>      
 }

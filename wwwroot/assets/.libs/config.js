@@ -35,7 +35,7 @@ const _DEVELOPER_ = {
 
 const _STORAGESERVER_ = _HOSTNAME_ + '/Storage/DownloadTemp';
 
-const _REPORTINGSERVER_ = 'http://hmmt-app03/Reports/Pages/ReportViewer.aspx?%2fISS%2f';
+const _REPORTINGSERVER_ = 'http://hmmt-app03/Reports/Pages/ReportViewer.aspx?';
 
 const _LOV_ = {};
 

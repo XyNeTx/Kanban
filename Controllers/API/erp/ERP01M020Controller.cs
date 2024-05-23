@@ -46,15 +46,15 @@ namespace HINOSystem.Controllers.API.erp
             string _SQL = "";
             try
             {
-                BearerClass _JBearer = _BearerClass.Header(Request);
-                if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
 
                 _SQL = @" EXEC [exec].[spERP01M020_SEARCH] '3', '' ";
-                string _erpMenu = _KBCN.ExecuteJSON(_SQL, pUser: _JBearer, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+                string _erpMenu = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
 
                 _SQL = @" EXEC [exec].[spERP01M011_SEARCH] '3' ";
-                string _erpGroup = _KBCN.ExecuteJSON(_SQL, pUser: _JBearer, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+                string _erpGroup = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
 
                 string _result = @"{
                     ""status"":""200"",
@@ -83,14 +83,14 @@ namespace HINOSystem.Controllers.API.erp
             string _SQL = "";
             try
             {
-                BearerClass _JBearer = _BearerClass.Header(Request);
-                if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
                 //_json = JsonConvert.DeserializeObject(pData);
 
 
                 _SQL = @" EXEC [exec].[spERP01M020_SEARCH] '3', '' ";
-                string _erpGroup = _KBCN.ExecuteJSON(_SQL, pUser: _JBearer, pAction: "READ", pControllerName: ControllerContext.ActionDescriptor.ControllerName.ToString(), pActionName: MethodBase.GetCurrentMethod().Name.ToString());
+                string _erpGroup = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pAction: "READ", pControllerName: ControllerContext.ActionDescriptor.ControllerName.ToString(), pActionName: MethodBase.GetCurrentMethod().Name.ToString());
                 //var _erpGroup = _ERPContext.erpGroup.Where(t => t.isDelete != 1);
 
 
@@ -117,8 +117,8 @@ namespace HINOSystem.Controllers.API.erp
             string _SQL = "";
             try
             {
-                var _JBearer = _BearerClass.AuthorizationJSON(Request.Headers.Authorization);
-                if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer.Data), "application/json");
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Data), "application/json");
 
 
                 _SQL = @" SELECT MAX(_ID)+1 AS MaxID FROM [erp].[Menu] WHERE 1=1 ";
@@ -136,7 +136,7 @@ namespace HINOSystem.Controllers.API.erp
                     _erpMenu.TitleJP = Request.Form["TitleJP"].ToString();
                     _erpMenu.Icon = Request.Form["Icon"].ToString();
                     _erpMenu.CreateAt = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss"));
-                    _erpMenu.CreateBy = _JBearer.UserCode.ToString();
+                    _erpMenu.CreateBy = _BearerClass.UserCode.ToString();
                     _erpMenu.Status = "ACTIVE";
                     _erpMenu.isDelete = 0;
                     _ERPContext.erpMenu.Add(_erpMenu);
@@ -176,7 +176,7 @@ namespace HINOSystem.Controllers.API.erp
                     _erpGroupMenuAdd.ToolbarExportText = Request.Form["ToolbarExportText"].ToString();
                     _erpGroupMenuAdd.Remark = Request.Form["Remark"].ToString();
                     _erpGroupMenuAdd.CreateAt = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss"));
-                    _erpGroupMenuAdd.CreateBy = _JBearer.UserCode.ToString();
+                    _erpGroupMenuAdd.CreateBy = _BearerClass.UserCode.ToString();
                     _erpGroupMenuAdd.Status = "ACTIVE";
                     _erpGroupMenuAdd.isDelete = 0;
                     _ERPContext.erpGroupMenu.Add(_erpGroupMenuAdd);
@@ -206,8 +206,8 @@ namespace HINOSystem.Controllers.API.erp
             string _SQL = "";
             try
             {
-                var _JBearer = _BearerClass.AuthorizationJSON(Request.Headers.Authorization);
-                if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer.Data), "application/json");
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Data), "application/json");
 
                 var _erpMenu = _ERPContext.erpMenu
                                     .FirstOrDefault(x => x._ID == int.Parse(Request.Form["_ID"].ToString()));
@@ -223,7 +223,7 @@ namespace HINOSystem.Controllers.API.erp
                     _erpMenu.Icon = Request.Form["Icon"].ToString();
                     _erpMenu.Status = Request.Form["Status"].ToString();
                     _erpMenu.CreateAt = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss"));
-                    _erpMenu.CreateBy = _JBearer.UserCode.ToString();
+                    _erpMenu.CreateBy = _BearerClass.UserCode.ToString();
                     _ERPContext.erpMenu.Update(_erpMenu);
                     _ERPContext.SaveChanges();
                 }
@@ -241,7 +241,7 @@ namespace HINOSystem.Controllers.API.erp
                     _erpMenuParentAdd.Action = Request.Form["Action"].ToString();
                     _erpMenuParentAdd.Remark = Request.Form["Parent_ID"].ToString();
                     _erpMenuParentAdd.CreateAt = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss"));
-                    _erpMenuParentAdd.CreateBy = _JBearer.UserCode.ToString();
+                    _erpMenuParentAdd.CreateBy = _BearerClass.UserCode.ToString();
                     _erpMenuParentAdd.Status = "ACTIVE";
                     _erpMenuParentAdd.isDelete = 0;
                     _ERPContext.erpMenuParent.Add(_erpMenuParentAdd);
@@ -256,7 +256,7 @@ namespace HINOSystem.Controllers.API.erp
                     _erpMenuParent.Action = Request.Form["Action"].ToString();
                     _erpMenuParent.Remark = Request.Form["Remark"].ToString();
                     _erpMenuParent.UpdateAt = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss"));
-                    _erpMenuParent.UpdateBy = _JBearer.UserCode.ToString();
+                    _erpMenuParent.UpdateBy = _BearerClass.UserCode.ToString();
                     _erpMenuParent.Status = "ACTIVE";
                     _erpMenuParent.isDelete = 0;
                     _ERPContext.erpMenuParent.Update(_erpMenuParent);
@@ -296,7 +296,7 @@ namespace HINOSystem.Controllers.API.erp
                     _erpGroupMenuAdd.ToolbarExportText = Request.Form["ToolbarExportText"].ToString();
                     _erpGroupMenuAdd.Remark = Request.Form["Remark"].ToString();
                     _erpGroupMenuAdd.CreateAt = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss"));
-                    _erpGroupMenuAdd.CreateBy = _JBearer.UserCode.ToString();
+                    _erpGroupMenuAdd.CreateBy = _BearerClass.UserCode.ToString();
                     _erpGroupMenuAdd.Status = "ACTIVE";
                     _erpGroupMenuAdd.isDelete = 0;
                     _ERPContext.erpGroupMenu.Add(_erpGroupMenuAdd);
@@ -324,7 +324,7 @@ namespace HINOSystem.Controllers.API.erp
                     _erpGroupMenu.ToolbarExportText = Request.Form["ToolbarExportText"].ToString();
                     _erpGroupMenu.Remark = Request.Form["Remark"].ToString();
                     _erpGroupMenu.UpdateAt = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss"));
-                    _erpGroupMenu.UpdateBy = _JBearer.UserCode.ToString();
+                    _erpGroupMenu.UpdateBy = _BearerClass.UserCode.ToString();
                     _erpGroupMenu.Status = "ACTIVE";
                     _erpGroupMenu.isDelete = 0;
                     _ERPContext.erpGroupMenu.Update(_erpGroupMenu);
@@ -355,8 +355,8 @@ namespace HINOSystem.Controllers.API.erp
             string _SQL = "";
             try
             {
-                var _JBearer = _BearerClass.AuthorizationJSON(Request.Headers.Authorization);
-                if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer.Data), "application/json");
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Data), "application/json");
 
                 var _erpMenu = _ERPContext.erpMenu
                                     .FirstOrDefault(x => x._ID == int.Parse(Request.Form["_ID"].ToString()));
@@ -364,7 +364,7 @@ namespace HINOSystem.Controllers.API.erp
                 {
                     _erpMenu.isDelete = 1;
                     _erpMenu.UpdateAt = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss"));
-                    _erpMenu.UpdateBy = _JBearer.UserCode.ToString();
+                    _erpMenu.UpdateBy = _BearerClass.UserCode.ToString();
                     _ERPContext.erpMenu.Update(_erpMenu);
                     _ERPContext.SaveChanges();
                 }

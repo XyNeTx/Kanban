@@ -116,7 +116,7 @@ namespace KANBAN.Controllers.API.OrderReport
             {
                 if (data != null)
                 {
-                    BearerClass _JBearer = _BearerClass.Header(Request);
+                    _BearerClass.Authentication(Request);
                     dynamic _json = JsonConvert.DeserializeObject(data);
                     string monthFrom = _json["monthFrom"];
                     string monthTo = _json["monthTo"];

@@ -77,6 +77,7 @@ builder.Services.AddSingleton<ERPConnection>();
 builder.Services.AddSingleton<KanbanConnection>();
 builder.Services.AddSingleton<CloudConnection>();
 builder.Services.AddSingleton<ProcWebConnection>();
+builder.Services.AddSingleton<PPM3Connection>();
 
 builder.Services.AddSingleton<cnConnect>();
 builder.Services.AddSingleton<DbConnect>();

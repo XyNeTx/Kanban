@@ -6,7 +6,7 @@
 
                 <form id="frmCondition">
 
-                    <div class="row">
+                    <div class="row mb-2">
                         <div class="col">
 
                             <fieldset class="fieldset">
@@ -25,6 +25,15 @@
                                         </div>
 
                                     </div>
+                                    <div class="col-6">
+                                        <div class="row">
+                                            <div class="col">
+                                            </div>
+                                            <div class="col-3">
+                                                <item type="button" id="btnPrintPDS" label="Print PDS" style="width:100%"></item>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div class="row">
@@ -35,7 +44,7 @@
                                                 <item type="text" id="txtProcessShift" label="Process Shift :" value="@ViewData["_ShiftTitle"]?.ToString()" readonly></item>
                                             </div>
                                             <div class="col-6">
-                                                <item type="text" id="txtOrderType" label="Order Type :" value="Urgent Order" readonly></item>
+                                                <item type="text" id="txtOrderType" label="Order Type :" value="CKD In-House Order" readonly></item>
                                             </div>
                                         </div>
 
@@ -44,22 +53,13 @@
                                         <div class="row">
                                             <div class="col">
                                             </div>
-                                            <div class="col">
-                                                <item type="button" id="btnRegister" label="Register" style="width:100%"></item>
+                                            <div class="col-3">
+                                                <item type="checkbox" id="chkPrnitKanban" label="Full A4"></item>
                                             </div>
-                                            <div class="col">
-                                                <item type="button" id="btnExportData" label="Export Data" style="width:100%"></item>
-                                            </div>
-                                            <div class="col">
-                                                <item type="button" id="btnExit" label="Exit" style="width:100%"></item>
+                                            <div class="col-3">
+                                                <item type="button" id="btnPrintKanban" label="Print Kanban" style="width:100%"></item>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
-
-                                <div class="row mt-5">
-                                    <div class="col">
-                                        <item type="progress" id="prgProcess" label="Process : {{##.##}} %" max="100"></item>
                                     </div>
                                 </div>
 
@@ -68,19 +68,73 @@
                         </div>
                     </div>
 
+
+                    <div class="row mb-2">
+                        <div class="col">
+
+                            <fieldset class="fieldset" id="fldPDSNo">
+                                <legend>Select PDS No. : </legend>
+                                @*<legend><item type="checkbox" id="chkPDSNo" label="Select PDS No. : " value="1" checked></item></legend>*@
+
+                                <div class="row">
+                                    <div class="col-6">
+
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <item type="select" id="itmPDS" label="PDS No. From : "></item>
+                                            </div>
+                                            <div class="col-6">
+                                                <item type="select" id="itmPDSTo" label="To :"></item>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="col">
+                                        <div class="row">
+                                            <div class="col">
+                                            </div>
+                                            <div class="col-3">
+                                                <item type="button" id="btnExit" label="Exit" style="width:100%"></item>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </fieldset>
+
+                        </div>
+                    </div>
+
+
+                    <div class="row mb-2">
+                        <div class="col">
+
+                            <fieldset class="fieldset" id="fldSupplierCode">
+                                <legend>Supplier Code : </legend>
+                                @*<legend><item type="checkbox" id="chkSupplierCode" label="Supplier Code : "></item></legend>*@
+
+                                <div class="row">
+                                    <div class="col-8">
+
+                                        <div class="row">
+                                            <div class="col-5">
+                                                <item type="select" id="itmSupplier" label="Supplier From : "></item>
+                                            </div>
+                                            <div class="col-4">
+                                                <item type="select" id="itmSupplierTo" label="To :"></item>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                            </fieldset>
+
+                        </div>
+                    </div>
+
+
                 </form>
-
-                <div class="row">
-                    <div class="col mt-4">
-                        <item type="table" id="tblMaster" label="List of Detail"></item>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col mt-4">
-                        <item type="table" id="tblDetail" label="<b style='color:red;'>Error Part Not Price : Not Upload to E-Procurment</b>"></item>
-                    </div>
-                </div>
 
             </div>
         </div>
@@ -90,8 +144,6 @@
 
 
 
-
 @section Scripts{
-    <script type="text/javascript" src="~/assets/js/History/UserMaintenance.js?@ViewData["Version"]"></script>
-    <script type="text/javascript" src="~/assets/.script/OrderingProcess/KBNOR460.js?@ViewData["Version"]"></script>
+    <script type="text/javascript" src="~/assets/.script/OrderingProcess/KBNOR370.js?@ViewData["Version"]"></script>
 }

@@ -66,9 +66,10 @@
     }
   },
   "_Layout": {
-    "profile": "Profile",
+    "profile": "<i class='feather icon-user'></i>Profile",
+    "setting": "<i class='feather icon-settings'></i>Settings",
     "password": "Password",
-    "logout": "Logout",
+    "logout": "<i class='feather icon-log-out'></i>Logout",
     "modal": {
       "profile": {
         "name": "Your Profile",
@@ -112,6 +113,37 @@
         "save": "YES",
         "cancel": "NO"
       }
+    }
+  },
+  "styleSelector": {
+    "Title": "<b>UI </b>Customizer",
+    "Caption": "Live customizer with click the options as below",
+    "Layout": "Main layouts",
+    "HeaderBrand": "Header Brand Color",
+    "Header": "Header Color",
+    "LinkColor": "Menu color",
+    "MenuColor": "Menu Caption",
+    "IconColor": "Menu Type",
+    "ExpandIcon": "Expand Icon",
+    "ExpandIconOption": {
+      "style1": "Arrow",
+      "style2": "Double Arrow",
+      "style3": "Plus"
+    },
+    "MenuIcon": "Sub Menu Drop-down Icon",
+    "MenuIconOption": {
+      "style1": "Arrow",
+      "style2": "Check",
+      "style3": "Tree Arrow",
+      "style4": "Leaf",
+      "style5": "Cursor",
+      "style6": "Triple Dot"
+    },
+    "SideBar": "SideBar Effect",
+    "SideBarOption": {
+      "shrink": "Shrink",
+      "overlay": "Overlay",
+      "push": "Push"
     }
   }
 

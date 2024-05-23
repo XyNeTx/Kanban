@@ -17,7 +17,12 @@ namespace HINOSystem.Controllers
         private readonly WarrantyClaimConnect _wrtConnect;
 
 
-        public OrderingProcessController(ILogger<HomeController> logger, DbConnect dbConnect, AuthenGuard authenGuard, WarrantyClaimConnect wrtConnect)
+        public OrderingProcessController(
+            ILogger<HomeController> logger, 
+            DbConnect dbConnect, 
+            AuthenGuard authenGuard, 
+            WarrantyClaimConnect wrtConnect
+            )
         {
             _authenGuard = authenGuard;
 
@@ -153,6 +158,26 @@ namespace HINOSystem.Controllers
         {
             return _authenGuard.guard(ControllerContext);
         }
+        public IActionResult KBNOR610()
+        {
+            return _authenGuard.guard(ControllerContext);
+        }
+        public IActionResult KBNOR620()
+        {
+            return _authenGuard.guard(ControllerContext);
+        }
+        public IActionResult KBNOR630()
+        {
+            return _authenGuard.guard(ControllerContext);
+        }
+        public IActionResult KBNOR640()
+        {
+            return _authenGuard.guard(ControllerContext);
+        }
+
+
+
+
 
         public IActionResult KBNOR700()
         {

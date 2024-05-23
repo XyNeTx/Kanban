@@ -42,15 +42,22 @@ namespace HINOSystem.Libs
 
         private int FormatRow = 0;
 
-        public int Status = 200;
+        public int Status = 401;
         public string Token = "";
         public string UserCode = "";
+        public string Device = "";
         public string Plant = "";
+        public string IPAddress = "";
         public string ProcessDate = "";
         public string Shift = "";
         public string ControllerName = "";
         public string ActionName = "";
+        public string Response = "";
+        public string Message = "";
+        public dynamic Records = null;
         public JObject Data = null;
+
+        public JObject Result = null;
 
         public BearerClass(
             IConfiguration configuration,
@@ -64,40 +71,54 @@ namespace HINOSystem.Libs
 
         }
 
-        public dynamic Header(HttpRequest pRequest)
+        public dynamic Authentication(HttpRequest pRequest)
         {
             if (pRequest == null)
             {
+                this.Status = 403;
+                this.Response = "FORBIDDEN";
+                this.Message = "Unauthorized with the header request not found.";
+
                 return JObject.Parse(@"{
-                                    ""status"":""200"",
-                                    ""response"":""OK"",
-                                    ""message"": ""Header not found.""
+                                    ""status"":""403"",
+                                    ""response"":""FORBIDDEN"",
+                                    ""message"": ""Unauthorized with the header request not found.""
                                 }"
                 );
             }
-            _KBCN.Plant = pRequest.Headers["Plant"].ToString();
+            //_KBCN.Plant = (_KBCN.Plant.ToString() == "" ? pRequest.Headers["Plant"].ToString() : _KBCN.Plant);
+            _KBCN.Plant = 3;
             DataTable _dt = _KBCN.ExecuteSQL("SELECT * FROM [erp].[User] WHERE Token = '" + pRequest.Headers["Authorization"].ToString().Replace("Bearer ", "") + "' ", skipLog: true);
             if (_dt.Rows.Count <= 0)
             {
-                return JObject.Parse(@"{
+                this.Status = 401;
+                this.Response = "UNAUTHORIZED";
+                this.Message = "Unauthorized";
+
+                this.Result = JObject.Parse(@"{
                                         ""status"":""401"",
-                                        ""response"":""Unauthorized"",
-                                        ""message"": ""Unauthorized""
+                                        ""response"":""UNAUTHORIZED"",
+                                        ""message"": ""Unauthorized with the authorization token is not found.""
                                     }"
                 );
+
+                return this.Result;
             }
 
             DataRow _dr = _dt.Rows[0];
-            JObject _JBearer = JObject.Parse(JsonConvert.SerializeObject(_dr));
+            JObject _BearerClass = JObject.Parse(JsonConvert.SerializeObject(_dr));
 
             this.Status = 200;
             this.Token = pRequest.Headers.Authorization.ToString().Replace("Bearer ", "");
             this.UserCode = pRequest.Headers["UserCode"].ToString();
+            this.Device = pRequest.Headers["Device"].ToString();
+            this.IPAddress = pRequest.Headers["IPAddress"].ToString();
             this.Plant = pRequest.Headers["Plant"].ToString();
             this.ProcessDate = pRequest.Headers["ProcessDate"].ToString();
             this.Shift = pRequest.Headers["Shift"].ToString();
             this.ControllerName = pRequest.Headers["Controller"].ToString();
             this.ActionName = pRequest.Headers["Action"].ToString();
+            this.Records = JsonConvert.DeserializeObject((pRequest.Headers["Records"].ToString() == "" ? "{}" : pRequest.Headers["Records"].ToString()));
             this.Data = JObject.Parse(JsonConvert.SerializeObject(_dr));
 
             return this;
@@ -131,13 +152,13 @@ namespace HINOSystem.Libs
             }
 
             DataRow _dr = _dt.Rows[0];
-            JObject _JBearer = JObject.Parse(JsonConvert.SerializeObject(_dr));
+            JObject _BearerClass = JObject.Parse(JsonConvert.SerializeObject(_dr));
 
             return JObject.Parse(@"{
                                     ""status"":""200"",
                                     ""response"":""OK"",
                                     ""message"": """",
-                                    ""user"":" + _JBearer.GetValue("Table")[0] + @"
+                                    ""user"":" + _BearerClass.GetValue("Table")[0] + @"
                                 }"
             );
         }
@@ -168,14 +189,14 @@ namespace HINOSystem.Libs
             }
 
             DataRow _dr = _dt.Rows[0];
-            JObject _JBearer = JObject.Parse(JsonConvert.SerializeObject(_dr));
+            JObject _BearerClass = JObject.Parse(JsonConvert.SerializeObject(_dr));
 
             this.Status = 200;
-            //this.Bearer = _JBearer.GetValue("Table")[0]["Bearer"].ToString();
-            this.UserCode = _JBearer.GetValue("Table")[0]["Code"].ToString();
-            //this.Plant = _JBearer.GetValue("Table")[0]["Code"].ToString();
-            //this.ProcessDate = _JBearer.GetValue("Table")[0]["Code"].ToString();
-            //this.Shift = _JBearer.GetValue("Table")[0]["Code"].ToString();
+            //this.Bearer = _BearerClass.GetValue("Table")[0]["Bearer"].ToString();
+            this.UserCode = _BearerClass.GetValue("Table")[0]["Code"].ToString();
+            //this.Plant = _BearerClass.GetValue("Table")[0]["Code"].ToString();
+            //this.ProcessDate = _BearerClass.GetValue("Table")[0]["Code"].ToString();
+            //this.Shift = _BearerClass.GetValue("Table")[0]["Code"].ToString();
             this.Data = JObject.Parse(JsonConvert.SerializeObject(_dr));
 
             return this;
@@ -230,7 +251,21 @@ namespace HINOSystem.Libs
         }
 
 
+        public string versions()
+        {
+            string _version = @"KANBAN.dll";
+            if (System.IO.File.Exists(_version))
+            {
+                DateTime _lastModified = System.IO.File.GetLastWriteTime(_version);
+                _version = _lastModified.ToString("yy.MM.ddmmss");
+            }
+            else
+            {
+                _version = DateTime.Now.ToString("yy.MM.ddmmss");
+            }
 
+            return _version;
+        }
 
     }
 

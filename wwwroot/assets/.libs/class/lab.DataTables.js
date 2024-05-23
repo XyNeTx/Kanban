@@ -9,8 +9,8 @@ class libDataTable {
 
         for (var c = 0; c < _column.length; c++) {
             if (_i18n.Language == 'EN') _column[c].title = (pConfig.columnTitle.EN[c] != undefined ? pConfig.columnTitle.EN[c] : '');
-            if (_i18n.Language == 'TH') _column[c].title = (pConfig.columnTitle.TH != undefined ? pConfig.columnTitle.TH[c] : (pConfig.columnTitle.EN[c] != undefined ? pConfig.columnTitle.EN[c] : ''));
-            if (_i18n.Language == 'JP') _column[c].title = (pConfig.columnTitle.JP != undefined ? pConfig.columnTitle.JP[c] : (pConfig.columnTitle.EN[c] != undefined ? pConfig.columnTitle.EN[c] : ''));
+            if (_i18n.Language == 'TH') _column[c].title = (pConfig.columnTitle.TH[c] != undefined ? pConfig.columnTitle.TH[c] : (pConfig.columnTitle.EN[c] != undefined ? pConfig.columnTitle.EN[c] : ''));
+            if (_i18n.Language == 'JP') _column[c].title = (pConfig.columnTitle.JP[c] != undefined ? pConfig.columnTitle.JP[c] : (pConfig.columnTitle.EN[c] != undefined ? pConfig.columnTitle.EN[c] : ''));
         }
 
         //console.log(pConfig.dom);
@@ -93,17 +93,18 @@ class libDataTable {
         var _scrollCollapse = (pConfig.scrollbar != undefined ? true : false);
         var _scrollY = (pConfig.scrollbar != undefined ? pConfig.scrollbar : null);
 
-        //console.log(pConfig.name);
+        //console.log(_column);
         var _dataTable = $('#' + pConfig.name).DataTable({
             "scrollX": true,
             "destroy": true,
             "autoWidth": false,
             "deferRender": true,
             "processing": true,
-            "stateSave": true,
+            //"stateSave": true,
             "paging": _paging,              //scrollbars to show=false/hide=true
             "scrollCollapse": _scrollCollapse,
             "scrollY": _scrollY,
+            "scrollX": true,
             "select": true,
             "lengthMenu": _lengthMenu,
             "pageLength": _pageLength,
@@ -195,17 +196,17 @@ class libDataTable {
         });
 
         ////### Callback when click the table row
-        $('#' + pConfig.name + ' tbody').on('click', 'tr', function (event) {
+        $('#' + pConfig.name + ' tbody').on('click', 'tr td', function (event) {
 
-            if ($(event.target).is("select") || $(event.target).is("input")) {
-                return;
-            }
+            if ($(event.target).is("select") || $(event.target).is("input")) return;
 
-            var _Table = $('#' + pConfig.name).DataTable();
+            let _Table = $('#' + pConfig.name).DataTable();
             let data = _Table.row(this).data();
-            if (pConfig.rowclick != undefined && typeof (pConfig.rowclick) == 'function') {
-                pConfig.rowclick(data);
-            }
+            let _r = _Table.row(this).index();
+            let _c = _Table.column(this).index();
+
+            if (pConfig.rowclick != undefined && typeof (pConfig.rowclick) == 'function') pConfig.rowclick(data, _r, _c);
+
         });
 
         return _dataTable;
@@ -587,7 +588,7 @@ class libDataTable {
     }
 
 
-    LoadJSON = async function (pTable = null, data = null) {
+    LoadJSON = async function (pTable = null, pPostData = null) {
         pTable = CheckObject(pTable);
 
         if (pTable != null) {
@@ -596,19 +597,23 @@ class libDataTable {
 
             $("#table-wrapper").parent().css({ position: 'relative' });
             $("#table-wrapper").css({
-                top: $('#tblMaster').offset().top,
-                left: $('#tblMaster').offset().left,
+                //top: $('#tblMaster').offset().top,
+                //left: $('#tblMaster').offset().left,
+                top: $(pTable).offset().top,
+                left: $(pTable).offset().left,
                 right: 0,
                 position: 'absolute'
             });
-            $('#table-wrapper').height($('#tblMaster').height());
-            $('#table-wrapper').width($('#tblMaster').width());
+            //$('#table-wrapper').height($('#tblMaster').height());
+            //$('#table-wrapper').width($('#tblMaster').width());
+            $('#table-wrapper').height($(pTable).height());
+            $('#table-wrapper').width($(pTable).width());
 
             $(pTable).dataTable().fnClearTable();
 
 
             var _dt = await xAjax.ExecuteJSON({
-                data,
+                pPostData,
             });
 
             if (_dt.rows != null) $(pTable).dataTable().fnAddData(_dt.rows);
@@ -620,6 +625,36 @@ class libDataTable {
 
     redraw = function () {
 
+    }
+
+    loading = function (pTable = null, pData = null) {
+        pTable = CheckObject(pTable);
+        console.log(pData);
+        //console.log($(pTable).offset().top);
+        //console.log($(pTable).offset().left);
+        //console.log($(pTable).height());
+        //console.log($(pTable).width());
+
+        if (pTable != null) {
+            //xSplash.show();
+
+            $('#table-wrapper').attr("style", "visibility:visible;");
+
+            $("#table-wrapper").parent().css({ position: 'relative' });
+            $("#table-wrapper").css({
+                top: $(pTable).offset().top,
+                left: $(pTable).offset().left,
+                right: 0,
+                position: 'absolute'
+            });
+            $('#table-wrapper').height($(pTable).height());
+            $('#table-wrapper').width($(pTable).width());
+
+            $(pTable).dataTable().fnClearTable();
+            if (pData != null && pData.length > 0) $(pTable).dataTable().fnAddData(pData);
+            xSplash.hide();
+
+        }
     }
 
 

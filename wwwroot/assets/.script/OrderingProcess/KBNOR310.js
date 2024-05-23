@@ -46,7 +46,7 @@
             try {
 
                 await xDataTable.LoadJSON('#tblMaster', {
-                    "StoreName": "[exec].[spKBNOR310]",
+                    "Module": "[exec].[spKBNOR310]",
                     "@Plant": ajexHeader.Plant,
                     "@UserCode": ajexHeader.UserCode,
                     "@ProcessDate": ajexHeader.ProcessDate.trim().replaceAll('-', ''),
@@ -88,7 +88,7 @@
 
             var _dt = await xAjax.ExecuteJSON({
                 data: {
-                    "StoreName": "[exec].[spKBNOR310_S]",
+                    "Module": "[exec].[spKBNOR310_S]",
                     "@Plant": ajexHeader.Plant,
                     "@UserCode": ajexHeader.UserCode,
                     "@ProcessDate": ajexHeader.ProcessDate.trim().replaceAll('-', ''),
@@ -112,7 +112,7 @@
 
                             await xAjax.xExecute({
                                 data: {
-                                    "StoreName": "Exec CKD_Inhouse.SP_INF_CKDORDER '"
+                                    "Module": "Exec CKD_Inhouse.SP_INF_CKDORDER '"
                                         + ajexHeader.ProcessDate.trim().replaceAll('-', '') + "','"
                                         + ajexHeader.Shift + "'"
                                 },

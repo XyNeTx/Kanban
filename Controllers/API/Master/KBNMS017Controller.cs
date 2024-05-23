@@ -66,16 +66,16 @@ namespace HINOSystem.Controllers.API.Master
             string _SQL = "";
             try
             {
-                BearerClass _JBearer = _BearerClass.Header(Request);
-                if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
-                _KBCN.Plant = _JBearer.Plant;
+                _KBCN.Plant = _BearerClass.Plant;
 
                 _SQL = @" EXEC [exec].[spTB_MS_FACTORY] ";
-                string _jsTB_Factory = _KBCN.ExecuteJSON(_SQL, pUser: _JBearer, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+                string _jsTB_Factory = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
 
                 _SQL = @" EXEC [exec].[spTB_MS_PartOrder] ";
-                string _jsTB_Supplier = _KBCN.ExecuteJSON(_SQL, pUser: _JBearer, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+                string _jsTB_Supplier = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
 
                 _SQL = @"
                     SELECT DISTINCT RTRIM(F_Address_no) AS F_Address
@@ -113,15 +113,15 @@ namespace HINOSystem.Controllers.API.Master
             string _SQL = "";
             try
             {
-                BearerClass _JBearer = _BearerClass.Header(Request);
-                if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
-                _KBCN.Plant = _JBearer.Plant;
+                _KBCN.Plant = _BearerClass.Plant;
 
                 _json = JsonConvert.DeserializeObject(pData);
 
-                _SQL = @" EXEC [exec].[spKBNMS017_SEARCH] '" + _JBearer.Plant + "' ";
-                string _jsonData = _KBCN.ExecuteJSON(_SQL, pUser: _JBearer, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+                _SQL = @" EXEC [exec].[spKBNMS017_SEARCH] '" + _BearerClass.Plant + "' ";
+                string _jsonData = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
 
 
 
@@ -148,8 +148,8 @@ namespace HINOSystem.Controllers.API.Master
             string _SQL = "";
             try
             {
-                BearerClass _JBearer = _BearerClass.Header(Request);
-                if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
 
                 TB_MS_OldPart _TB_MS_OldPart = new TB_MS_OldPart();
@@ -160,7 +160,7 @@ namespace HINOSystem.Controllers.API.Master
                 _TB_MS_OldPart.F_Store_Cd = Request.Form["F_Store_Cd"].ToString();
                 _TB_MS_OldPart.F_Start_Date = Request.Form["F_Start_Date"].ToString();
                 _TB_MS_OldPart.F_End_Date = Request.Form["F_End_Date"].ToString();
-                _TB_MS_OldPart.F_Update_By = _JBearer.UserCode.ToString();
+                _TB_MS_OldPart.F_Update_By = _BearerClass.UserCode.ToString();
                 _TB_MS_OldPart.F_Update_Date = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss"));
                 _KB3Context.TB_MS_OldPart.Add(_TB_MS_OldPart);
                 _KB3Context.SaveChanges();
@@ -194,16 +194,16 @@ namespace HINOSystem.Controllers.API.Master
                     }";
             try
             {
-                BearerClass _JBearer = _BearerClass.Header(Request);
-                if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
-                _KBCN.Plant = _JBearer.Plant;
+                _KBCN.Plant = _BearerClass.Plant;
 
                 _SQL = @"
                     UPDATE [dbo].[TB_MS_OldPart]
                     SET F_Part_Name = '" + Request.Form["F_Part_Name"].ToString().Replace("-", "") + @"'
                         ,F_End_Date = '" + Request.Form["F_End_Date"].ToString().Replace("-", "") + @"'
-                        ,F_Update_By = '" + _JBearer.UserCode + @"'
+                        ,F_Update_By = '" + _BearerClass.UserCode + @"'
                         ,F_Update_Date = '" + DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss")) + @"'
                     WHERE 1=1
                     AND F_Plant = '" + Request.Form["F_Plant"].ToString() + @"'
@@ -243,10 +243,10 @@ namespace HINOSystem.Controllers.API.Master
                     }";
             try
             {
-                BearerClass _JBearer = _BearerClass.Header(Request);
-                if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
-                _KBCN.Plant = _JBearer.Plant;
+                _KBCN.Plant = _BearerClass.Plant;
 
                 _SQL = @"
                     DELETE [dbo].[TB_MS_OldPart]

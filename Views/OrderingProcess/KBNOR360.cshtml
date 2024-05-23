@@ -25,6 +25,18 @@
                                         </div>
 
                                     </div>
+                                    <div class="col-6">
+                                        <div class="row">
+                                            <div class="col">
+                                            </div>
+                                            <div class="col">
+                                                <item type="button" id="btnRegister" label="6.1 Register" style="width:100%"></item>
+                                            </div>
+                                            <div class="col">
+                                                <item type="button" id="btnClear" label="Clear Module Master" style="width:100%"></item>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div class="row">
@@ -41,14 +53,12 @@
 
                                     </div>
                                     <div class="col-6">
+
                                         <div class="row">
                                             <div class="col">
                                             </div>
                                             <div class="col">
-                                                <item type="button" id="btnPrintPDS" label="Print PDS" style="width:100%"></item>
-                                            </div>
-                                            <div class="col">
-                                                <item type="button" id="btnPrintKanban" label="Print Kanban" style="width:100%"></item>
+                                                <item type="button" id="btnGenerate" label="6.2 Generate PDS Picking" style="width:100%"></item>
                                             </div>
                                             <div class="col">
                                                 <item type="button" id="btnExit" label="Exit" style="width:100%"></item>
@@ -57,30 +67,15 @@
                                     </div>
                                 </div>
 
-                            </fieldset>
-
-                        </div>
-                    </div>
 
 
-                    <div class="row mb-2">
-                        <div class="col">
-
-                            <fieldset class="fieldset" id="fldPDSNo">
-                                <legend><item type="checkbox" id="chkPDSNo" label="Select PDS No. : " value="1" checked></item></legend>
-
-                                <div class="row">
-                                    <div class="col-6">
-
-                                        <div class="row">
-                                            <div class="col-6">
-                                                <item type="select" id="itmPDSFrom" label="PDS No. From : "></item>
-                                            </div>
-                                            <div class="col-6">
-                                                <item type="select" id="itmPDSTo" label="To :"></item>
-                                            </div>
-                                        </div>
-
+                                <div class="row mt-3">
+                                    <div class="col">
+                                    </div>
+                                    <div class="col-8">
+                                        <item type="progress" id="prgProcess" label="CKD Registration PDS for CKD In-House Ordering" max="100"></item>
+                                    </div>
+                                    <div class="col">
                                     </div>
                                 </div>
 
@@ -93,56 +88,10 @@
                     <div class="row mb-2">
                         <div class="col">
 
-                            <fieldset class="fieldset" id="fldSupplierCode" disabled>
-                                <legend><item type="checkbox" id="chkSupplierCode" label="Supplier Code : "></item></legend>
-
-                                <div class="row">
-                                    <div class="col-6">
-
-                                        <div class="row">
-                                            <div class="col-6">
-                                                <item type="select" id="itmSupplierFrom" label="Supplier From : "></item>
-                                            </div>
-                                            <div class="col-6">
-                                                <item type="select" id="itmSupplierTo" label="To :"></item>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                </div>
-
-                            </fieldset>
+                            <item type="table" id="tblMaster" legend="List of Detail"></item>
 
                         </div>
                     </div>
-
-
-                    <div class="row">
-                        <div class="col">
-
-                            <fieldset class="fieldset" id="fldDeliveryDate" disabled>
-                                <legend><item type="checkbox" id="chkDeliveryDate" label="Delivery Date : "></item></legend>
-
-                                <div class="row">
-                                    <div class="col-6">
-
-                                        <div class="row">
-                                            <div class="col-6">
-                                                <item type="date" id="itmDeliveryFrom" label="Delivery Date From :" format="yyyy-mm-dd" default="now"></item>
-                                            </div>
-                                            <div class="col-6">
-                                                <item type="date" id="itmDeliveryTo" label="To :" format="yyyy-mm-dd" default="now"></item>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                </div>
-
-                            </fieldset>
-
-                        </div>
-                    </div>
-
 
 
                 </form>
@@ -157,6 +106,5 @@
 
 
 @section Scripts{
-    <script type="text/javascript" src="~/assets/js/History/UserMaintenance.js?@ViewData["Version"]"></script>
-    <script type="text/javascript" src="~/assets/.script/OrderingProcess/KBNOR450.js?@ViewData["Version"]"></script>
+    <script type="text/javascript" src="~/assets/.script/OrderingProcess/KBNOR360.js?@ViewData["Version"]"></script>
 }

@@ -1,0 +1,95 @@
+﻿<!-- Modal History -->
+<div class="modal fade" id="ModalHistorySystem" tabindex="-1" aria-labelledby="ModalHistorySystemLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            <form id="frmHistorySystem">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ModalHistorySystemLabel">System History Log</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="padding:20px;">
+                    <fieldset class="fieldset">
+                        <legend>Information</legend>
+                        
+
+                        <ul class="nav nav-tabs md-tabs " role="tablist" id="pills-tab-system-history">
+                            <li class="nav-item">
+                                <a class="nav-link active" data-toggle="tab" href="#tab1-panel-system-history" role="tab" style="height:50px;" id="tab2-button-system-history">
+                                    <i class="icofont icofont-foot-print"></i>
+                                    History
+                                </a>
+                                <div class="slide"></div>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#tab2-panel-system-history" role="tab" style="height:50px;" id="tab1-button-system-history">
+                                    <i class="icofont icofont-exclamation-tringle"></i>
+                                    Failed
+                                </a>
+                                <div class="slide"></div>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#tab3-panel-system-history" role="tab" style="height:50px;" id="tab1-button-system-history">
+                                    <i class="icofont icofont-flash"></i>
+                                    SQL
+                                </a>
+                                <div class="slide"></div>
+                            </li>
+                        </ul>
+
+
+                        <div class="tab-content card-block">
+
+                            <div class="tab-pane active" id="tab1-panel-system-history" role="tabpanel">
+
+                                <div class="row">
+                                    <div class="col-3">
+                                        <item type="date" id="frmHistorySystemDate" label="Date" format="yyyy-mm-dd" default="now" value="dd=01"></item>
+                                    </div>
+                                    <div class="col-3">
+                                        <item type="date" id="frmHistorySystemDateTo" label="To" format="yyyy-mm-dd" default="now"></item>
+                                    </div>
+                                    <div class="col-3">
+                                        <item type="checkbox" id="frmHistorySystemExclude" label="With-out search" value="1"></item>
+                                    </div>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col">
+                                        <item type="table" id="tblHistoryAction"></item>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane" id="tab2-panel-system-history" role="tabpanel">
+                                <div class="row">
+                                    <div class="col-3">
+                                        <item type="date" id="frmHistoryFailedDate" label="Date" format="yyyy-mm-dd" default="now" value="dd=01"></item>
+                                    </div>
+                                    <div class="col-3">
+                                        <item type="date" id="frmHistoryFailedDateTo" label="To" format="yyyy-mm-dd" default="now"></item>
+                                    </div>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col">
+                                        <item type="table" id="tblHistoryFailed"></item>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane" id="tab3-panel-system-history" role="tabpanel">
+                                <div class="row">
+                                    <div class="col">
+                                        <item type="table" id="tblHistorySQLLog"></item>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </fieldset>
+                </div>
+                @*<div class="modal-footer" style="padding-left:25px; padding-right:25px;">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>*@
+            </form>
+        </div>
+    </div>
+</div>

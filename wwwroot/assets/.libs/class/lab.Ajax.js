@@ -242,9 +242,10 @@
 
             let _url = (_NAMESPACE_ != '' ? '/' + _NAMESPACE_ : '') + '/' + pConfig.url;
             let _postData = (pConfig.data != undefined ? ajaxPostData(pConfig.data) : null);
+            let _type = (pConfig.method != undefined ? pConfig.method : 'POST');
 
             return $.ajax({
-                type: "POST",
+                type: _type,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 headers: ajexHeader,

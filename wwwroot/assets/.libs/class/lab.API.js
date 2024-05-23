@@ -10,8 +10,8 @@
         const ml = _today.getMilliseconds();
 
         this.token = yy + mm + dd + '_' + hh + ms + ss + ml;
-        this.url = 'http://hmmt-app07';
-        //this.url = 'http://hmmta-tpcap';
+        //this.url = 'http://hmmt-app07';
+        this.url = 'http://hmmta-tpcap';
 
         this.systemname = document.URL;
         if (typeof _SYSTEMNAME_ !== 'undefined') this.systemname = _SYSTEMNAME_;
@@ -33,7 +33,7 @@
             style: 'height:200px;width:300px;display:none',
             title: 'Add iframe for get single sign-on user',
             value: '',
-            onload: function () { 
+            onload: function () {
                 //this.style.display = 'block';
                 //return this.token;
 
@@ -73,10 +73,11 @@
                         ((pConfig.then != undefined && typeof (pConfig.then) === 'function') ? pConfig.then(result) : null);
                     }
 
-                    
+
                 },
                 error: function (result) {
                     console.error('Ajax.GET: ' + result.responseText);
+                    // $('#txtUserName').val('20173621');
                     xSplash.hide();
                 }
             });

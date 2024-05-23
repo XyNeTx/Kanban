@@ -46,12 +46,12 @@ namespace HINOSystem.Controllers.API.erp
             string _SQL = "";
             try
             {
-                BearerClass _JBearer = _BearerClass.Header(Request);
-                if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
 
                 _SQL = @" EXEC [exec].[spERP01M011_SEARCH] '3' ";
-                string _erpGroup = _KBCN.ExecuteJSON(_SQL, pUser: _JBearer, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+                string _erpGroup = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
 
                 string _result = @"{
                     ""status"":""200"",
@@ -79,14 +79,14 @@ namespace HINOSystem.Controllers.API.erp
             string _SQL = "";
             try
             {
-                BearerClass _JBearer = _BearerClass.Header(Request);
-                if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
                 //_json = JsonConvert.DeserializeObject(pData);
 
 
                 _SQL = @" EXEC [exec].[spERP01M010_SEARCH] '3' ";
-                string _erpGroup = _KBCN.ExecuteJSON(_SQL, pUser: _JBearer, pAction: "READ", pControllerName: ControllerContext.ActionDescriptor.ControllerName.ToString(), pActionName: MethodBase.GetCurrentMethod().Name.ToString());
+                string _erpGroup = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pAction: "READ", pControllerName: ControllerContext.ActionDescriptor.ControllerName.ToString(), pActionName: MethodBase.GetCurrentMethod().Name.ToString());
                 //var _erpGroup = _ERPContext.erpGroup.Where(t => t.isDelete != 1);
 
 
@@ -113,8 +113,8 @@ namespace HINOSystem.Controllers.API.erp
             string _SQL = "";
             try
             {
-                var _JBearer = _BearerClass.AuthorizationJSON(Request.Headers.Authorization);
-                if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer.Data), "application/json");
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Data), "application/json");
 
 
                 erpUser _erpUser = new erpUser();
@@ -126,7 +126,7 @@ namespace HINOSystem.Controllers.API.erp
                 _erpUser.NameJP = Request.Form["NameJP"].ToString();
                 _erpUser.SurnameJP = Request.Form["SurnameJP"].ToString();
                 _erpUser.CreateAt = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss"));
-                _erpUser.CreateBy = _JBearer.UserCode.ToString();
+                _erpUser.CreateBy = _BearerClass.UserCode.ToString();
                 _erpUser.UILanguage = "EN";
                 _erpUser.UITheme = "DEFAULT";
                 _erpUser.Status = "ACTIVE";
@@ -157,8 +157,8 @@ namespace HINOSystem.Controllers.API.erp
             string _SQL = "";
             try
             {
-                var _JBearer = _BearerClass.AuthorizationJSON(Request.Headers.Authorization);
-                if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer.Data), "application/json");
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Data), "application/json");
 
                 var _erpUser = _ERPContext.erpUser
                                     .FirstOrDefault(x => x._ID == int.Parse(Request.Form["_ID"].ToString()));
@@ -173,7 +173,7 @@ namespace HINOSystem.Controllers.API.erp
                     _erpUser.SurnameJP = Request.Form["SurnameJP"].ToString();
                     _erpUser.Status = Request.Form["Status"].ToString();
                     _erpUser.CreateAt = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss"));
-                    _erpUser.CreateBy = _JBearer.UserCode.ToString();
+                    _erpUser.CreateBy = _BearerClass.UserCode.ToString();
                     _ERPContext.erpUser.Update(_erpUser);
                     _ERPContext.SaveChanges();
                 }
@@ -189,7 +189,7 @@ namespace HINOSystem.Controllers.API.erp
                     _erpGroupUserAdd.Group_ID = int.Parse(Request.Form["GroupID"].ToString());
                     _erpGroupUserAdd.Remark = "";
                     _erpGroupUserAdd.CreateAt = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss"));
-                    _erpGroupUserAdd.CreateBy = _JBearer.UserCode.ToString();
+                    _erpGroupUserAdd.CreateBy = _BearerClass.UserCode.ToString();
                     _erpGroupUserAdd.Status = "ACTIVE";
                     _erpGroupUserAdd.isDelete = 0;
                     _ERPContext.erpGroupUser.Add(_erpGroupUserAdd);
@@ -201,7 +201,7 @@ namespace HINOSystem.Controllers.API.erp
                     _erpGroupUser.Group_ID = int.Parse(Request.Form["GroupID"].ToString());
                     _erpGroupUser.Remark = "";
                     _erpGroupUser.CreateAt = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss"));
-                    _erpGroupUser.CreateBy = _JBearer.UserCode.ToString();
+                    _erpGroupUser.CreateBy = _BearerClass.UserCode.ToString();
                     _erpGroupUser.Status = "ACTIVE";
                     _erpGroupUser.isDelete = 0;
                     _ERPContext.erpGroupUser.Update(_erpGroupUser);
@@ -232,8 +232,8 @@ namespace HINOSystem.Controllers.API.erp
             string _SQL = "";
             try
             {
-                var _JBearer = _BearerClass.AuthorizationJSON(Request.Headers.Authorization);
-                if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer.Data), "application/json");
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Data), "application/json");
 
                 var _erpUser = _ERPContext.erpUser
                                     .FirstOrDefault(x => x._ID == int.Parse(Request.Form["_ID"].ToString()));
@@ -241,7 +241,7 @@ namespace HINOSystem.Controllers.API.erp
                 {
                     _erpUser.isDelete = 1;
                     _erpUser.UpdateAt = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss"));
-                    _erpUser.UpdateBy = _JBearer.UserCode.ToString();
+                    _erpUser.UpdateBy = _BearerClass.UserCode.ToString();
                     _ERPContext.erpUser.Update(_erpUser);
                     _ERPContext.SaveChanges();
                 }

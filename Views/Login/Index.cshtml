@@ -138,9 +138,7 @@
             <div class="login-container">
                 <div>
                     <div class="avatar">
-                        <a href="Login/Hino">
-                            <img src="@ViewData["LogoImage"]" alt="HINO Logo" />
-                        </a>
+                        <img src="@ViewData["LogoImage"]" alt="HINO Logo" id="imgHINOLogo" />
                     </div>
                 </div>
                 <p class="mt-4" style="color:red;">@ViewData["ErrorText"]</p>
@@ -190,10 +188,13 @@
                             <option value="2">2 : Night Shift</option>
                         </select>
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-1">
                         <button type="submit" class="btn d-grid w-100" style="background-color:#1abc9c; color:white;">Log On</button>
                     </div>
                 </form>
+                <div style="font-size:small;">
+                    Version : v.@ViewData["Version"]
+                </div>
             </div>
         </div>
 

@@ -63,13 +63,13 @@ namespace HINOSystem.Controllers.API.Master
             string _SQL = "";
             try
             {
-                BearerClass _JBearer = _BearerClass.Header(Request);
-                if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
-                _KBCN.Plant = _JBearer.Plant;
+                _KBCN.Plant = _BearerClass.Plant;
 
                 _SQL = @" EXEC [exec].[spTB_MS_FACTORY] ";
-                string _jsTB_MS_Factory = _KBCN.ExecuteJSON(_SQL, pUser: _JBearer, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+                string _jsTB_MS_Factory = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName: ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
 
                 string _result = @"{
                     ""status"":""200"",
@@ -97,15 +97,15 @@ namespace HINOSystem.Controllers.API.Master
             string _SQL = "";
             try
             {
-                BearerClass _JBearer = _BearerClass.Header(Request);
-                if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
-                _KBCN.Plant = _JBearer.Plant;
+                _KBCN.Plant = _BearerClass.Plant;
 
                 _json = JsonConvert.DeserializeObject(pData);
 
-                _SQL = @" EXEC [exec].[spKBNMS003_SEARCH] '" + _JBearer.Plant + "' ";
-                string _jsonData = _KBCN.ExecuteJSON(_SQL, pUser: _JBearer, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+                _SQL = @" EXEC [exec].[spKBNMS003_SEARCH] '" + _BearerClass.Plant + "' ";
+                string _jsonData = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName: ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
 
                 string _result = @"{
                     ""status"":""200"",
@@ -130,23 +130,26 @@ namespace HINOSystem.Controllers.API.Master
             string _SQL = "";
             try
             {
-                BearerClass _JBearer = _BearerClass.Header(Request);
-                if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
+                _KBCN.Plant = _BearerClass.Plant;
 
-                TB_MS_OldPart _TB_MS_OldPart = new TB_MS_OldPart();
-                _TB_MS_OldPart.F_Plant = Request.Form["F_Plant"].ToString();
-                _TB_MS_OldPart.F_Parent_Part = Request.Form["F_Parent_Part"].ToString();
-                _TB_MS_OldPart.F_Ruibetsu = Request.Form["F_Ruibetsu"].ToString();
-                _TB_MS_OldPart.F_Part_Name = Request.Form["F_Part_Name"].ToString();
-                _TB_MS_OldPart.F_Store_Cd = Request.Form["F_Store_Cd"].ToString();
-                _TB_MS_OldPart.F_Start_Date = Request.Form["F_Start_Date"].ToString();
-                _TB_MS_OldPart.F_End_Date = Request.Form["F_End_Date"].ToString();
-                _TB_MS_OldPart.F_Update_By = _JBearer.UserCode.ToString();
-                _TB_MS_OldPart.F_Update_Date = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss"));
-                _KB3Context.TB_MS_OldPart.Add(_TB_MS_OldPart);
+                string[] _F = Request.Form["F_Parent_Part_Name"].ToString().Split("-");
+                string _F_Parent_Part = (_F.Length > 0 ? _F[0] : "");
+                string _F_Ruibetsu = (_F.Length > 0 ? _F[1] : "");
+
+                TB_MS_PartSet _TB_MS_PartSet = new TB_MS_PartSet();
+                _TB_MS_PartSet.F_Plant = Request.Form["F_Plant"].ToString();
+                _TB_MS_PartSet.F_Parent_Part = _F_Parent_Part;
+                _TB_MS_PartSet.F_Ruibetsu = _F_Ruibetsu;
+                _TB_MS_PartSet.F_Store_Cd = Request.Form["F_Store_Cd"].ToString();
+                _TB_MS_PartSet.F_Start_Date = Request.Form["F_Start_Date"].ToString().Replace("-", "");
+                _TB_MS_PartSet.F_End_Date = Request.Form["F_End_Date"].ToString().Replace("-", "");
+                _TB_MS_PartSet.F_Update_By = _BearerClass.UserCode.ToString();
+                _TB_MS_PartSet.F_Update_Date = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss"));
+                _KB3Context.TB_MS_PartSet.Add(_TB_MS_PartSet);
                 _KB3Context.SaveChanges();
-
 
                 string _result = @"{
                     ""status"":""200"",
@@ -176,23 +179,31 @@ namespace HINOSystem.Controllers.API.Master
                     }";
             try
             {
-                BearerClass _JBearer = _BearerClass.Header(Request);
-                if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
-                _KBCN.Plant = _JBearer.Plant;
+                _KBCN.Plant = _BearerClass.Plant;
+
+                string[] _F = Request.Form["F_Parent_Part_Name"].ToString().Split("-");
+                string _F_Parent_Part = (_F.Length > 0 ? _F[0] : "");
+                string _F_Ruibetsu = (_F.Length > 0 ? _F[1] : "");
 
                 _SQL = @"
-                    UPDATE [dbo].[TB_MS_OldPart]
-                    SET F_Part_Name = '" + Request.Form["F_Part_Name"].ToString().Replace("-", "") + @"'
-                        ,F_End_Date = '" + Request.Form["F_End_Date"].ToString().Replace("-","") + @"'
-                        ,F_Update_By = '" + _JBearer.UserCode + @"'
-                        ,F_Update_Date = '" + DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss")) + @"'
+                    UPDATE [dbo].[TB_MS_PartSet]
+                    SET F_Plant= '" + _BearerClass.Records.F_Plant.ToString().Trim() + @"'
+                        , F_Parent_Part= '" + _F_Parent_Part + @"'
+                        , F_Ruibetsu= '" + _F_Ruibetsu + @"'
+                        , F_Store_Cd= '" + _BearerClass.Records.F_Store_Cd.ToString().Trim() + @"'
+                        , F_Start_Date= '" + Request.Form["F_Start_Date"].ToString().Replace("-", "") + @"'
+                        , F_End_Date= '" + Request.Form["F_End_Date"].ToString().Replace("-", "") + @"'
+                        , F_Update_By= '" + _BearerClass.UserCode + @"'
+                        , F_Update_Date= '" + DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss")) + @"'
                     WHERE 1=1
-                    AND F_Plant = '" + Request.Form["F_Plant"].ToString() + @"'
-                    AND F_Parent_Part = '" + Request.Form["F_Parent_Part"].ToString() + @"'
-                    AND F_Ruibetsu = '" + Request.Form["F_Ruibetsu"].ToString().Replace("-", "") + @"'
-                    AND F_Store_Cd = '" + Request.Form["F_Store_Cd"].ToString().Replace("-", "") + @"'
-                    AND F_Start_Date = '" + Request.Form["F_Start_Date"].ToString().Replace("-", "") + @"'
+                    AND F_Plant= '" + _BearerClass.Records.F_Plant.ToString().Trim() + @"'
+                    AND F_Parent_Part= '" + _BearerClass.Records.F_Parent_Part.ToString().Trim() + @"'
+                    AND F_Ruibetsu= '" + _BearerClass.Records.F_Ruibetsu.ToString().Trim() + @"'
+                    AND F_Store_Cd= '" + _BearerClass.Records.F_Store_Cd.ToString().Trim() + @"'
+                    AND F_Start_Date= '" + _BearerClass.Records.F_Start_Date.ToString().Trim().Replace("-", "") + @"'
                 ";
                 _KBCN.Execute(_SQL);
 
@@ -225,19 +236,19 @@ namespace HINOSystem.Controllers.API.Master
                     }";
             try
             {
-                BearerClass _JBearer = _BearerClass.Header(Request);
-                if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
-                _KBCN.Plant = _JBearer.Plant;
+                _KBCN.Plant = _BearerClass.Plant;
 
                 _SQL = @"
-                    DELETE [dbo].[TB_MS_OldPart]
+                    DELETE FROM [dbo].[TB_MS_PartSet]
                     WHERE 1=1
-                    AND F_Plant = '" + Request.Form["F_Plant"].ToString() + @"'
-                    AND F_Parent_Part = '" + Request.Form["F_Parent_Part"].ToString() + @"'
-                    AND F_Ruibetsu = '" + Request.Form["F_Ruibetsu"].ToString().Replace("-", "") + @"'
-                    AND F_Store_Cd = '" + Request.Form["F_Store_Cd"].ToString().Replace("-", "") + @"'
-                    AND F_Start_Date = '" + Request.Form["F_Start_Date"].ToString().Replace("-", "") + @"'
+                    AND F_Plant= '" + _BearerClass.Records.F_Plant.ToString().Trim() + @"'
+                    AND F_Parent_Part= '" + _BearerClass.Records.F_Parent_Part.ToString().Trim() + @"'
+                    AND F_Ruibetsu= '" + _BearerClass.Records.F_Ruibetsu.ToString().Trim() + @"'
+                    AND F_Store_Cd= '" + _BearerClass.Records.F_Store_Cd.ToString().Trim() + @"'
+                    AND F_Start_Date= '" + _BearerClass.Records.F_Start_Date.ToString().Trim().Replace("-", "") + @"'
                 ";
                 _KBCN.Execute(_SQL);
 

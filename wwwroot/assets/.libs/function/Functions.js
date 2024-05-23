@@ -36,7 +36,8 @@ function replaceall(pValue = '', pSearch = '', pReplace = '') {
 }
 
 function Trim(pValue = '') {
-    return pValue.trim();
+    pValue = '' + pValue;
+    return (pValue != '' ? pValue.trim() : '');
 }
 function trim(pValue = '') {
     return Trim(pValue);

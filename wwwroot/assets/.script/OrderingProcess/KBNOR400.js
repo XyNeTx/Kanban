@@ -4,7 +4,7 @@
 
         var _dt = await xAjax.ExecuteJSON({
             data: {
-                "StoreName": "[exec].[spKBNOR400]",
+                "Module": "[exec].[spKBNOR400]",
                 "@OrderType": "U",
                 "@Plant": ajexHeader.Plant,
                 "@UserCode": ajexHeader.UserCode

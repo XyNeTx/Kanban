@@ -4,6 +4,7 @@
     var _APPNAME_ = '@ViewData["AppName"].ToString()';
     var _PLANT_ = '@ViewData["_Plant"].ToString()';
 
+    var _MENUFOCUS_ = '@ViewData["_MENUFOCUS_"].ToString()';
     var _PERMISSION_ = {
         "toolbar": @ViewData["ComponentToolbar"].ToString(),
         "search": @ViewData["ComponentToolbarSearch"].ToString(),
@@ -52,10 +53,26 @@
     var ajexHeader = {
         "Authorization": "Bearer @ViewData["Bearer"]",
         "UserCode": "@ViewData["UserCode"]",
+        "Device": "@ViewData["_Device"]",
+        "IPAddress": "@ViewData["_IPAddress"]",
         "Plant": "@ViewData["_Plant"]",
         "ProcessDate": "@ViewData["_ProcessDate"]",
         "Shift": "@ViewData["_ProcessShift"]",
         "Controller": "@ViewData["Controller"]",
-        "Action": "@ViewData["Action"]"
+        "Action": "@ViewData["Action"]",
+        "Records": ""
+    }
+
+
+    var _LAYOUT_ = {
+        "Layout": "@ViewData["UserTheme"]",
+        "HeaderBrand": "@ViewData["UserThemeBrand"]",
+        "Header": "@ViewData["UserThemeHeader"]",
+        "LinkColor": "@ViewData["UserThemeLinkColor"]",
+        "MenuColor": "@ViewData["UserThemeMenuColor"]",
+        "IconColor": "@ViewData["UserThemeIconColor"]",
+        "ExpandIcon": "@ViewData["UserThemeExpandIcon"]",
+        "MenuIcon": "@ViewData["UserThemeMenuIcon"]",
+        "SideBar": "@ViewData["UserThemeSideBar"]"
     }
 </script>

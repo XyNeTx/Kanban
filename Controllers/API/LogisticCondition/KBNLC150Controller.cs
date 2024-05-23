@@ -63,12 +63,12 @@ namespace HINOSystem.Controllers.API.Master
             string _SQL = "";
             try
             {
-                BearerClass _JBearer = _BearerClass.Header(Request);
-                if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
 
                 _SQL = @" EXEC [exec].[spTB_MS_FACTORY] ";
-                string _jsTB_MS_Factory = _KBCN.ExecuteJSON(_SQL, pUser: _JBearer, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+                string _jsTB_MS_Factory = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
 
                 string _result = @"{
                     ""status"":""200"",
@@ -97,8 +97,8 @@ namespace HINOSystem.Controllers.API.Master
             string _SQL = "";
             try
             {
-                BearerClass _JBearer = _BearerClass.Header(Request);
-                if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
                 _json = JsonConvert.DeserializeObject(pData);                
 
@@ -115,8 +115,8 @@ namespace HINOSystem.Controllers.API.Master
 
 
                 _SQL = @"
-                    Delete From KBNLC_150 Where F_Import_By='" + _JBearer.UserCode.ToString() + @"';
-                    Delete From TB_Import_Error Where F_Update_BY='" + _JBearer.UserCode.ToString() + @"' AND F_Type='IDT';
+                    Delete From KBNLC_150 Where F_Import_By='" + _BearerClass.UserCode.ToString() + @"';
+                    Delete From TB_Import_Error Where F_Update_BY='" + _BearerClass.UserCode.ToString() + @"' AND F_Type='IDT';
                     ";
                 _KBCN.Execute(_SQL);
 

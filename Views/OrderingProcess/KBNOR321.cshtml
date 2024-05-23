@@ -1,64 +1,101 @@
 ﻿<div class="row">
 
-    <div class="col-xl-12 col-md-12 col-sm-12">
-        <div class="card border-left-primary shadow h-100">
+    <!-- Left Panel -->
+    <div class="col-xl-12 col-md-12 col-sm-12 mb-2">
+        <div class="card border-left-primary shadow h-100 py-2">
             <div class="card-body">
 
-                <form id="frmCondition">
+                <div class="row g-2">
 
-                    <div class="row">
-                        <div class="col">
+
+                    <div class="row mb-2">
+                        <div class="col-5">
 
                             <fieldset class="fieldset">
-                                <legend>Current Process Information :</legend>
-
                                 <div class="row">
-                                    <div class="col-6">
-
-                                        <div class="row">
-                                            <div class="col-6">
-                                                <item type="text" id="txtProcessDate" label="Process Date :" value="@ViewData["_ProcessDate"]" readonly></item>
-                                            </div>
-                                            <div class="col-6">
-                                                <item type="text" id="txtPlant" label="Plant :" value="@ViewData["_Plant"]" readonly></item>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-6">
-
-                                        <div class="row">
-                                            <div class="col-6">
-                                                <item type="text" id="txtProcessShift" label="Process Shift :" value="@ViewData["_ShiftTitle"]?.ToString()" readonly></item>
-                                            </div>
-                                            <div class="col-6">
-                                                <item type="text" id="txtOrderType" label="Order Type :" value="Urgent Order" readonly></item>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="row">
-                                            <div class="col"></div>
-                                            <div class="col">
-                                                <item type="button" id="btnCalculate" label="Calculate" style="width:100%"></item>
-                                            </div>
-                                            <div class="col">
-                                                <item type="button" id="btnReport" label="Report" style="width:100%"></item>
-                                            </div>
-                                            <div class="col">
-                                                <item type="button" id="btnExit" label="Exit" style="width:100%"></item>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="row mt-5">
                                     <div class="col">
-                                        <item type="progress" id="prgProcess" label="Process : {{##.##}} %" max="100"></item>
+                                        <item type="select" id="itmSupplier" label="Supplier"></item>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <item type="select" id="itmKanban" label="Kanban"></item>
+                                    </div>
+                                    <div class="col">
+                                        <item type="select" id="itmKanbanTo" label="To"></item>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <item type="select" id="itmStoreCode" label="Store Code"></item>
+                                    </div>
+                                    <div class="col">
+                                        <item type="select" id="itmStoreCodeTo" label="To"></item>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <item type="select" id="itmPartNo" label="Part No"></item>
+                                    </div>
+                                    <div class="col">
+                                        <item type="select" id="itmPartNoTo" label="To"></item>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                    </div>
+                                    <div class="col-3">
+                                        <item type="button" id="btnProcess" label="Process <i class='fas fa-cogs'></i>" style="width:100%"></item>
+                                    </div>
+                                    <div class="col-3">
+                                        <item type="button" id="btnPreview" label="Preview <i class='fas fa-binoculars'></i>" style="width:100%"></item>
+                                    </div>
+                                </div>
+                            </fieldset>
+
+                        </div>
+                        <div class="col-4">
+
+                            <fieldset class="fieldset bg-secondary text-white">
+                                <div class="row">
+                                    <div class="col" style="text-align:center;height:100%">
+                                        <h1>CKD IN-HOUSE </h1>ORDER
+                                    </div>
+                                </div>
+                            </fieldset>
+
+                        </div>
+                        <div class="col-3">
+
+                            <fieldset class="fieldset">
+                                <div class="row">
+                                    <div class="col">
+                                        <item type="text" id="itmProcessDate" label="Process Date For" value="@ViewData["_ProcessDate"]" readonly></item>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <item type="text" id="itmProcessShift" label="Process Shift For" value="@ViewData["_ShiftTitle"]" readonly></item>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <item type="text" id="itmProcessPlant" label="Plant" value="@ViewData["_Plant"]" readonly></item>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <item type="text" id="itmProcessOrderType" label="Order Type" value="CKD In-House Order" readonly></item>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                    </div>
+                                    <div class="col-5">
+                                        <item type="button" id="btnReport" label="Report <i class='fas fa-table-list'></i>" style="width:100%"></item>
+                                    </div>
+                                    <div class="col-5">
+                                        <item type="button" id="btnCancel" label="Cancel <i class='fas fa-ban'></i>" style="width:100%"></item>
                                     </div>
                                 </div>
 
@@ -67,24 +104,383 @@
                         </div>
                     </div>
 
-                </form>
 
-                <div class="row">
-                    <div class="col mt-4">
-                        <item type="table" id="tblMaster" label="List of Detail"></item>
+
+                    <div class="row">
+                        <div class="col">
+
+                            <fieldset class="fieldset">
+
+                                <div class="row mb-1">
+                                    <div class="col">
+                                        <div class="row mb-2">
+                                            <div class="col">
+                                                <item type="textfloating" id="txtSupplier" label="Supplier" value="" readonly></item>
+                                            </div>
+
+                                            <div class="col-2">
+                                                <item type="textfloating" id="txtSupplierName" label="Supplier Name" value="" readonly></item>
+                                            </div>
+
+                                            <div class="col">
+                                                <item type="textfloating" id="txtPartNo" label="Part No." value="" readonly></item>
+                                            </div>
+
+                                            <div class="col-2">
+                                                <item type="textfloating" id="txtPartName" label="Part Name" value="" readonly></item>
+                                            </div>
+
+                                            <div class="col">
+                                                <item type="textfloating" id="txtStoreCode" label="Store Code" value="" readonly></item>
+                                            </div>
+
+                                            <div class="col">
+                                                <item type="textfloating" id="txtKanbanNo" label="Kanban No." value="" readonly></item>
+                                            </div>
+
+                                            <div class="col">
+                                                <item type="textfloating" id="txtQtyPack" label="Qty/Pack" value="" readonly></item>
+                                            </div>
+
+                                            <div class="col">
+                                                <item type="textfloating" id="txtCycleTime" label="Cycle Time" value="" readonly></item>
+                                            </div>
+
+                                        </div>
+                                        <div class="row">
+                                            <div class="col">
+                                                <item type="textfloating" id="txtUseDay" label="Use/Day (Pcs.)" value="" readonly></item>
+                                            </div>
+
+                                            <div class="col">
+                                                <item type="textfloating" id="txtForecastMax" label="Forecast Max(Pcs.)" value="" readonly></item>
+                                            </div>
+
+                                            <div class="col">
+                                                <item type="textfloating" id="txtSafetyStock" label="Safety Stock" value="" readonly></item>
+                                            </div>
+
+                                            <div class="col">
+                                                <item type="textfloating" id="txtMaxArea" label="Max Area (KB)" value="" readonly></item>
+                                            </div>
+
+                                            <div class="col">
+                                                <item type="textfloating" id="txtTotalLimit" label="Total Limit/Trip" value="" readonly></item>
+                                            </div>
+
+                                            <div class="col">
+                                                <item type="textfloating" id="txtLine" label="Line" value="" readonly></item>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div class="col-1">
+                                        <div class="row">
+                                            <div class="col">
+                                                <item type="textfloating" id="txtStdB" label="Std+B(Pcs)" readonly></item>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col">
+                                                <item type="textfloating" id="txtStdStock" label="Std. Stock" readonly></item>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col">
+                                                <item type="textfloating" id="txtMinStock" label="Min (Pcs)" readonly></item>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                
+
+                                <div class="row mb-2">
+                                    <div class="col">
+                                        @*<item type="table" id="tblMaster" legend=""></item>*@
+                                        <table id="tblMaster" class="display compact cell-border" style="font-size:10px;">
+                                            <thead>
+                                                <tr>
+                                                    <th class="thTop thLeft" id="thTableMRP"><item type="text" id="txtTableMRP" label="" value="MRP : 15/03/2024" style="width:1500px" readonly></item></th>
+                                                    <th class="thTop" colspan="5" style="text-align:center">11-08-2023</th>
+                                                    <th class="thTop" colspan="5" style="text-align:center">12-08-2023</th>
+                                                    <th class="thTop" colspan="5" style="text-align:center">13-08-2023</th>
+                                                    <th class="thTop" colspan="5" style="text-align:center">14-08-2023</th>
+                                                    <th class="thTop" colspan="5" style="text-align:center">15-08-2023</th>
+                                                    <th class="thTop" colspan="5" style="text-align:center">16-08-2023</th>
+                                                    <th class="thTop" colspan="5" style="text-align:center">17-08-2023</th>
+                                                    <th class="thTop" colspan="5" style="text-align:center">18-08-2023</th>
+                                                    <th class="thTop" colspan="5" style="text-align:center">19-08-2023</th>
+                                                    <th class="thTop thRight" colspan="5">20-08-2023</th>
+                                                </tr>
+                                                <tr>
+                                                    <th class="thLeft">
+                                                        <item type="radio" id="rdoMRP" value="MRPLess20" label="MRP-20%"></item>
+                                                    </th>
+                                                    <th rowspan="2">Pcs</th>
+                                                    <th rowspan="2">KB</th>
+                                                    <th colspan="2" style="text-align:center">D</th>
+                                                    <th colspan="1" style="text-align:center">N</th>
+                                                    <th rowspan="2">Pcs</th>
+                                                    <th rowspan="2">KB</th>
+                                                    <th colspan="2" style="text-align:center">D</th>
+                                                    <th colspan="1" style="text-align:center">N</th>
+                                                    <th rowspan="2">Pcs</th>
+                                                    <th rowspan="2">KB</th>
+                                                    <th colspan="2" style="text-align:center">D</th>
+                                                    <th colspan="1" style="text-align:center">N</th>
+                                                    <th rowspan="2">Pcs</th>
+                                                    <th rowspan="2">KB</th>
+                                                    <th colspan="2" style="text-align:center">D</th>
+                                                    <th colspan="1" style="text-align:center">N</th>
+                                                    <th rowspan="2">Pcs</th>
+                                                    <th rowspan="2">KB</th>
+                                                    <th colspan="2" style="text-align:center">D</th>
+                                                    <th colspan="1" style="text-align:center">N</th>
+                                                    <th rowspan="2">Pcs</th>
+                                                    <th rowspan="2">KB</th>
+                                                    <th colspan="2" style="text-align:center">D</th>
+                                                    <th colspan="1" style="text-align:center">N</th>
+                                                    <th rowspan="2">Pcs</th>
+                                                    <th rowspan="2">KB</th>
+                                                    <th colspan="2" style="text-align:center">D</th>
+                                                    <th colspan="1" style="text-align:center">N</th>
+                                                    <th rowspan="2">Pcs</th>
+                                                    <th rowspan="2">KB</th>
+                                                    <th colspan="2" style="text-align:center">D</th>
+                                                    <th colspan="1" style="text-align:center">N</th>
+                                                    <th rowspan="2">Pcs</th>
+                                                    <th rowspan="2">KB</th>
+                                                    <th colspan="2" style="text-align:center">D</th>
+                                                    <th colspan="1" style="text-align:center">N</th>
+                                                    <th rowspan="2">Pcs</th>
+                                                    <th rowspan="2">KB</th>
+                                                    <th colspan="2" style="text-align:center">D</th>
+                                                    <th colspan="1" style="text-align:center">N</th>
+                                                </tr>
+                                                <tr>
+                                                    <th class="thLeft">MRP+20%</th>
+                                                    <th>T1</th>
+                                                    <th>T2</th>
+                                                    <th>T3</th>
+                                                    <th>T1</th>
+                                                    <th>T2</th>
+                                                    <th>T3</th>
+                                                    <th>T1</th>
+                                                    <th>T2</th>
+                                                    <th>T3</th>
+                                                    <th>T1</th>
+                                                    <th>T2</th>
+                                                    <th>T3</th>
+                                                    <th>T1</th>
+                                                    <th>T2</th>
+                                                    <th>T3</th>
+                                                    <th>T1</th>
+                                                    <th>T2</th>
+                                                    <th>T3</th>
+                                                    <th>T1</th>
+                                                    <th>T2</th>
+                                                    <th>T3</th>
+                                                    <th>T1</th>
+                                                    <th>T2</th>
+                                                    <th>T3</th>
+                                                    <th>T1</th>
+                                                    <th>T2</th>
+                                                    <th>T3</th>
+                                                    <th>T1</th>
+                                                    <th>T2</th>
+                                                    <th>T3</th>
+                                                </tr>
+                                            </thead>
+                                            <tfoot>
+                                                <tr><td></td></tr>
+                                            </tfoot>
+                                        </table>
+
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+
+                                    <div class="col-4">
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <div class="row">
+                                                    <div class="col-5 px-1">
+                                                        <item type="button" id="btnLock" label="Lock <i class='fas fa-lock'></i>" style="width:100%"></item>
+                                                    </div>
+                                                    <div class="col-6 px-1">
+                                                        <item type="button" id="btnUnlock" label="Unlock <i class='fas fa-lock-open'></i>" style="width:100%"></item>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col px-1">
+                                                <div class="row">
+                                                    <div class="col px-1">
+                                                        <b><label class="input-group-text" id="Label36">16/08/2023</label></b>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col px-1">
+                                                        <item type="checkbox" id="chkKanbanOrder" label="Order Table"></item>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col px-1">
+                                                        <item type="checkbox" id="chkChangeCycleTime" label="Change Cycle Time"></item>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col px-1">
+                                                <div class="row">
+                                                    <div class="col px-1">
+                                                        <b><label class="input-group-text" id="Label35">17/08/2023</label></b>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col px-1">
+                                                        <item type="checkbox" id="chkSliceOrder" label="Slice Order"></item>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col px-1">
+                                                        <item type="checkbox" id="chkReceiveSlice" label="Receive Slice"></item>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="col-2">
+                                        <div class="row">
+                                            <div class="col-5">
+                                                <div class="row">
+                                                    <div class="col px-1">
+                                                        <item type="radio" id="rdoStatus" value="STOP" label="STOP"></item>
+                                                        <item type="radio" id="rdoStatus" value="ADD" label="ADD"></item>
+                                                        <item type="radio" id="rdoStatus" value="CUT" label="CUT"></item>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col">
+                                                <div class="row">
+                                                    <div class="col px-1">
+                                                        <div class="input-group">
+                                                            <button type="button" class="btn btn-primary btn-sm" id="btnLeft">
+                                                                <i class="fas fa-caret-left"></i>
+                                                            </button>
+                                                            <input type="text" class="form-control" id="txtNumber" style="width:20px;padding:1px;text-align: center;font-size:11px;" value="99/99" />
+                                                            <button type="button" class="btn btn-primary btn-sm" id="btnRight">
+                                                                <i class="fas fa-caret-right"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col">
+                                        <div class="row">
+
+                                            <div class="col px-1">
+                                                <item type="button" id="btnReCalculateBL" label="Re-Calculate BL<i class='fas fa-redo fa-rotate-90'></i>" style="width:100%"></item>
+                                            </div>
+                                            <div class="col px-1">
+                                                <item type="button" id="btnReCalculate" label="Re-Calculate<i class='fas fa-sync-alt'></i>" style="width:100%"></item>
+                                            </div>
+                                            <div class="col px-1">
+                                                <item type="button" id="btnChangeCycleTime" label="Change Cycle Time<i class='fas fa-history'></i>" style="width:100%"></item>
+                                            </div>
+                                            <div class="col-2 px-1">
+                                                <item type="button" id="btnUpdate" label="Update<i class='fas fa-edit'></i>" style="width:100%"></item>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            </fieldset>
+                        </div>
                     </div>
+
+
+                
                 </div>
 
             </div>
         </div>
     </div>
 
+
+
 </div>
 
 
 
 
+<style>
+    .card-body {
+        font-size: 10px;
+    }
+
+    th {
+        border-bottom-color: #c1c1c1;
+        border-bottom-style: solid;
+        border-bottom-width: 0px;
+        border-left-color: #c1c1c1;
+        border-left-style: solid;
+        border-left-width: 0px;
+        border-right-color: #c1c1c1;
+        border-right-style: solid;
+        border-right-width: 1px;
+        border-top-color: #c1c1c1;
+        border-top-style: solid;
+        border-top-width: 0px;
+    }
+
+    .thTop {
+        border-top-color: #c1c1c1;
+        border-top-style: solid;
+        border-top-width: 1px;
+    }
+
+    .thRight {
+        border-right-color: #c1c1c1;
+        border-right-style: solid;
+        border-right-width: 1px;
+    }
+
+    .thLeft {
+        border-left-color: #c1c1c1;
+        border-left-style: solid;
+        border-left-width: 1px;
+        left: 0px;
+        z-index: 3;
+        background-color: white;
+        position: sticky;
+    }
+
+    #tblMaster_wrapper{
+        width:1024px;
+    }
+/*
+    #tblMaster thead {
+        width: 1024px;
+        height: 800px;
+    }*/
+
+    
+
+</style>
+
+
+
+
 @section Scripts{
-    <script type="text/javascript" src="~/assets/js/History/UserMaintenance.js?@ViewData["Version"]"></script>
-    <script type="text/javascript" src="~/assets/.script/OrderingProcess/KBNOR420.js?@ViewData["Version"]"></script>
+    @*<script type="text/javascript" src="~/assets/js/History/UserMaintenance.js?@ViewData["Version"]"></script>*@
+    <script type="text/javascript" src="~/assets/.script/OrderingProcess/KBNOR321.js?@ViewData["Version"]"></script>
 }
