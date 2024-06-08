@@ -140,7 +140,7 @@ namespace HINOSystem.Controllers.API.Master
                 string _F_Ruibetsu = (_F.Length > 0 ? _F[1] : "");
 
                 TB_MS_OldPart _TB_MS_OldPart = new TB_MS_OldPart();
-                _TB_MS_OldPart.F_Plant = Request.Form["F_Plant"].ToString();
+                _TB_MS_OldPart.F_Plant = _BearerClass.Plant;
                 _TB_MS_OldPart.F_Parent_Part = _F_Parent_Part;
                 _TB_MS_OldPart.F_Ruibetsu = _F_Ruibetsu;
                 _TB_MS_OldPart.F_Part_Name = Request.Form["F_Part_Name"].ToString();
@@ -192,7 +192,7 @@ namespace HINOSystem.Controllers.API.Master
 
                 _SQL = @"
                     UPDATE [dbo].[TB_MS_OldPart]
-                    SET F_Plant= '" + _BearerClass.Records.F_Plant.ToString().Trim() + @"'
+                    SET F_Plant= '" + _BearerClass.Plant.ToString().Trim() + @"'
                         ,F_Parent_Part= '" + _F_Parent_Part + @"'
                         ,F_Ruibetsu= '" + _F_Ruibetsu + @"'
                         ,F_Part_Name= '" + Request.Form["F_Part_Name"].ToString() + @"'
@@ -227,7 +227,7 @@ namespace HINOSystem.Controllers.API.Master
 
 
 
-        [HttpDelete]
+        [HttpPost]
         public IActionResult delete(int id = 0)
         {
             dynamic _json = null;

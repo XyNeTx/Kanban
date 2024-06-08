@@ -99,7 +99,7 @@ namespace HINOSystem.Controllers.API.wrt
 
 
 
-        [HttpDelete]  //Delete
+        [HttpPost]  //Delete
         public IActionResult Delete(int _id)
         {
             _BearerClass.Authentication(Request);

@@ -142,7 +142,7 @@ namespace HINOSystem.Controllers.API.Master
 
 
                 TB_MS_PartSpecial TB_MS_PartSpecial = new TB_MS_PartSpecial();
-                TB_MS_PartSpecial.F_Plant = Request.Form["F_Plant"].ToString();
+                TB_MS_PartSpecial.F_Plant = _BearerClass.Plant;
                 TB_MS_PartSpecial.F_Supplier_Cd = Request.Form["F_Supplier_Cd"].ToString();
                 TB_MS_PartSpecial.F_Supplier_Plant = Request.Form["F_Supplier_Plant"].ToString();
                 TB_MS_PartSpecial.F_Part_No = Request.Form["F_Part_No"].ToString();
@@ -227,7 +227,7 @@ namespace HINOSystem.Controllers.API.Master
 
 
 
-        [HttpDelete]
+        [HttpPost]
         public IActionResult delete(int id = 0)
         {
             dynamic _json = null;

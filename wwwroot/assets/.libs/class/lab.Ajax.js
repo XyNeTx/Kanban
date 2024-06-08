@@ -239,10 +239,15 @@
 
     PostAsync(pConfig = null) {
         if (pConfig != null) {
+            console.log(pConfig);
 
             let _url = (_NAMESPACE_ != '' ? '/' + _NAMESPACE_ : '') + '/' + pConfig.url;
             let _postData = (pConfig.data != undefined ? ajaxPostData(pConfig.data) : null);
             let _type = (pConfig.method != undefined ? pConfig.method : 'POST');
+
+            console.log(_type);
+            console.log(_url);
+            console.log(_postData);
 
             return $.ajax({
                 type: _type,
@@ -256,6 +261,7 @@
                 },
                 error: function (result) {
                     console.error('Ajax.Post: ' + result.responseText);
+                    xSplash.hide();
                 }
             });
 

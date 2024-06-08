@@ -135,7 +135,7 @@ namespace HINOSystem.Controllers.API.Master
 
 
                 TB_MS_Dock_Code TB_MS_Dock_Code = new TB_MS_Dock_Code();
-                TB_MS_Dock_Code.F_Plant = Request.Form["F_Plant"].ToString();
+                TB_MS_Dock_Code.F_Plant = _BearerClass.Plant;
                 TB_MS_Dock_Code.F_Dock_Code = Request.Form["F_Dock_Code"].ToString();
                 TB_MS_Dock_Code.F_Start_Date = Request.Form["F_Start_Date"].ToString();
                 TB_MS_Dock_Code.F_End_Date = Request.Form["F_End_Date"].ToString();
@@ -211,7 +211,7 @@ namespace HINOSystem.Controllers.API.Master
 
 
 
-        [HttpDelete]
+        [HttpPost]
         public IActionResult delete(int id = 0)
         {
             dynamic _json = null;

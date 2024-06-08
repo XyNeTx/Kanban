@@ -157,7 +157,7 @@ namespace HINOSystem.Controllers.API.Master
 
 
                 TB_MS_OrderType _TB_MS_OrderType = new TB_MS_OrderType();
-                _TB_MS_OrderType.F_Plant = Request.Form["F_Plant"].ToString();
+                _TB_MS_OrderType.F_Plant = _BearerClass.Plant;
                 _TB_MS_OrderType.F_OrderType = Request.Form["F_OrderType"].ToString();
                 _TB_MS_OrderType.F_Effect_Date = Request.Form["F_Effect_Date"].ToString().Replace("-", "");
                 _TB_MS_OrderType.F_End_Date = Request.Form["F_End_Date"].ToString().Replace("-", "");
@@ -227,7 +227,7 @@ namespace HINOSystem.Controllers.API.Master
 
 
 
-        [HttpDelete]
+        [HttpPost]
         public IActionResult delete(int id = 0)
         {
             dynamic _json = null;

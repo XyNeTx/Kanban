@@ -382,6 +382,9 @@
                     xSplash.text('DELETING');
 
                     var _data = xDataTable.Selected('#tblMaster');
+
+
+
                     for (var i = 0; i < _data.length; i++) {
 
                         ajexHeader.Records = JSON.stringify(_data[i]);
@@ -389,7 +392,7 @@
                         await xAjax.PostAsync({
                             method:'POST',
                             url: _PAGE_ + '/delete',
-                            data: null,
+                            data: ajexHeader.Records,
                         });
                         
                     }

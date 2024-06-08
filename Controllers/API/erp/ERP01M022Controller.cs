@@ -225,7 +225,7 @@ namespace HINOSystem.Controllers.API.erp
 
 
 
-        [HttpDelete]  //Delete
+        [HttpPost]  //Delete
         public IActionResult Delete(int _id)
         {
             dynamic _json = null;

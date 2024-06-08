@@ -33,7 +33,7 @@
         xAPI.getUser({
             //systemname: 'Hino Kanban F.3',
             then: function (result) {
-                //console.log(result);
+                console.log(result);
                 if (result.response == 'OK') {
 
                     if (getCookie('debug') == '') setCookie('debug', 0);
