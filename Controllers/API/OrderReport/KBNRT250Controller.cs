@@ -126,7 +126,7 @@ namespace KANBAN.Controllers.API.OrderReport
             {
                 setConString();
                 string _result = "";
-                string UserName = HttpContext.Session.GetString("USER_NAME");
+                string UserName = HttpContext.Session.GetString("USER_ID");
                 string HostName = HttpContext.Session.GetString("USER_DEVICENAME");
                 dynamic _json = JsonConvert.DeserializeObject(data);
                 string flagFrom = _json["flagFrom"];

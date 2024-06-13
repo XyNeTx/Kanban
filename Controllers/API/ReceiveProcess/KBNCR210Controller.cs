@@ -289,7 +289,7 @@ namespace KANBAN.Controllers.API.ReceiveProcess
             {
                 setConString();
                 string _result = "";
-                string UserName = HttpContext.Session.GetString("USER_NAME");
+                string UserName = HttpContext.Session.GetString("USER_ID");
                 string HostName = HttpContext.Session.GetString("USER_DEVICENAME");
                 var systemControl = await _PPMInvenContext.T_System_Control.SingleOrDefaultAsync(x => x.F_Code == "CTL");
                 string isMonthEnd = systemControl.F_Value1;

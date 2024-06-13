@@ -360,7 +360,7 @@ namespace HINOSystem.Controllers.API.Master
                 setConString();
                 string _result = "";
                 _BearerClass.Authentication(Request);
-                string UserName = HttpContext.Session.GetString("USER_NAME");
+                string UserName = HttpContext.Session.GetString("USER_ID");
                 string HostName = HttpContext.Session.GetString("USER_DEVICENAME");
                 var user = _BearerClass.UserCode.ToString();
                 if (_KBCN.Plant.ToString() == "3")

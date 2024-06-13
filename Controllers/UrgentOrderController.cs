@@ -44,6 +44,12 @@ namespace HINOSystem.Controllers
             return _authenGuard.guard(ControllerContext);
         }
 
+        public IActionResult KBNIM014SRV()
+        {
+            //_authenGuard.ComponentToolbar = false;
+            return _authenGuard.guard(ControllerContext);
+        }
+        
         public IActionResult KBNIM014C()
         {
             //_authenGuard.ComponentToolbar = false;

@@ -472,7 +472,7 @@ namespace HINOSystem.Controllers.API.Master
             try
             {
                 setConString();
-                string UserName = HttpContext.Session.GetString("USER_NAME");
+                string UserName = HttpContext.Session.GetString("USER_ID");
                 string HostName = HttpContext.Session.GetString("USER_DEVICENAME");
                 _BearerClass.Authentication(Request);
                 string dateTime = DateTime.Now.ToString("yyyyMMdd");
