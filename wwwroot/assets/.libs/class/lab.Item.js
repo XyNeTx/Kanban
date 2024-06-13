@@ -17,7 +17,7 @@
             let _datadescription = $(this).attr('data-description');
             let _classvalue = ($(this).attr('class-value') != undefined ? $(this).attr('class-value') : '');
             _classvalue = (_classvalue == '' ? ($(this).attr('class') != undefined ? $(this).attr('class') : '') : _classvalue);
-            let _style = ($(this).attr('style') != undefined ? 'style="' + $(this).attr('style') + '" ' : '');
+            let _style = ($(this).attr('style') != undefined ? $(this).attr('style') : '');
             let _title = ($(this).attr('title') != undefined ? $(this).attr('title') : '');
             let _form = $(this).parents('form:first').attr('id');
 
@@ -33,7 +33,7 @@
             //for File
             let _filter = ($(this).attr('filter') != undefined ? $(this).attr('filter') : '*.*');
 
-            //for text
+            //for textarea
             let _rows = ($(this).attr('rows') != undefined ? $(this).attr('rows') : '4');
 
             //for checkbox
@@ -47,6 +47,7 @@
 
             let _item = '';
             if (_type == 'text') {
+                window[_id] = new TextBox(_id);
 
                 if (_label == '') {
                     _item = `
@@ -77,15 +78,52 @@
                         `;
                 }
 
+            } if (_type == 'textfloating') {
+                window[_id] = new TextBox(_id);
+
+                if (_label == '') {
+                    _item = `
+                        <div class="form-floating">
+                            <input type="text" class="form-control`+ _classvalue + `" id="` + _id + `" name="` + _id + `" `
+                        + (_value != undefined ? ' value="' + _value + '"' : '')
+                        + (_style != undefined ? ' style="' + _style + '"' : '')
+                        + (_readonly != undefined ? ' readonly' : '')
+                        + (_noedit != undefined ? ' noedit' : '')
+                        + (_required != undefined ? ' required' : '')
+                        + `/>
+                        </div>
+                        `;
+                } else {
+                    _item = `
+                        <div class="form-floating">
+                            <input type="text" class="form-control`+ _classvalue + `" id="` + _id + `" name="` + _id + `" `
+                        + (_value != undefined ? ' value="' + _value + '"' : '')
+                        + (_style != undefined ? ' style="' + _style + '"' : '')
+                        + (_readonly != undefined ? ' readonly' : '')
+                        + (_noedit != undefined ? ' noedit' : '')
+                        + (_required != undefined ? ' required' : '')
+                        + `/>
+                            <label for="`+ _id + `">` + _label + `</label>
+                        </div>
+                        `;
+                }
+
             } else if (_type == 'textarea') {
+                window[_id] = new TextBox(_id);
+
                 _item = `
-                            <label class="custom-input-group-textarea" for="`+ _id + `">` + _label + `</label>
-                            <textarea class="custom-form-control `+ _classvalue + `" id="` + _id + `" name="` + _id + `"  rows="` + _rows + `" style="width:100%">`
-                    + (_value != undefined ? _value : '')
-                    + `</textarea>
+                            `+ (_label != '' ? `<label class="custom-input-group-textarea" for="` + _id + `">` + _label + `</label>` : ``) + `
+                            <textarea class="custom-form-control `+ _classvalue + `" id="` + _id + `" name="` + _id + `"  rows="` + _rows + `" `
+                        + (_style != undefined ? ' style="' + _style + '"' : 'style="width:100%"')
+                        + (_readonly != undefined ? ' readonly' : '')
+                        + `>`
+                        + (_value != undefined ? _value : '')
+                        + `</textarea>
                         `;
 
             } else if (_type == 'number') {
+                window[_id] = new TextBox(_id);
+
                 if (_label == '') {
                     _item = `
                         <div class="input-group">
@@ -115,6 +153,9 @@
                         `;
                 }
             } else if (_type == 'currency') {
+                window[_id] = new TextBox(_id);
+
+
                 _item = `
                         <div class="input-group">
                             <label class="input-group-text" for="`+ _id + `">` + _label + `</label>
@@ -129,6 +170,8 @@
                         </div>
                         `;
             } else if (_type == 'date') {
+                window[_id] = new TextBox(_id);
+
                 _item = `
                         <div class="input-group" style="height:28px;">
                             <label class="input-group-text" for="`+ _id + `" noedit>` + _label + `</label>
@@ -144,6 +187,8 @@
                         </div>
                         `;
             } else if (_type == 'time') {
+                window[_id] = new TextBox(_id);
+
                 _item = `
                         <div class="input-group">
                             <label class="input-group-text" for="`+ _id + `" noedit>` + _label + `</label>
@@ -159,6 +204,8 @@
                         </div>
                         `;
             } else if (_type == 'month') {
+                window[_id] = new TextBox(_id);
+
                 _item = `
                         <div class="input-group" style="height:28px;">
                             <label class="input-group-text" for="`+ _id + `" noedit>` + _label + `</label>
@@ -171,6 +218,8 @@
                         </div>
                         `;
             } else if (_type == 'color') {
+                window[_id] = new TextBox(_id);
+
                 _item = `
                 
                         <div class="input-group">
@@ -187,6 +236,8 @@
                         </div >
                         `;
             } else if (_type == 'select') {
+                window[_id] = new Select(_id);
+                
                 _item = `
                         <div class="input-group">
                             <label class="input-group-text" for="`+ _id + `">` + _label + `</label>
@@ -200,6 +251,8 @@
                         </div>
                         `;
             } else if (_type == 'list') {
+                window[_id] = new Select(_id);
+
                 _item = `
                         <div class="input-group mb-0">
                             <div class="input-group LOV">
@@ -217,6 +270,8 @@
                         </div>
                         `;
             } else if (_type == 'lov') {
+                window[_id] = new TextBox(_id);
+
                 _item = `
                         <div class="input-group mb-0">
                             <div class="input-group LOV">
@@ -235,22 +290,34 @@
                         </div>
                         `;
             } else if (_type == 'file') {
+                window[_id] = new TextBox(_id);
+
                 _item = `
                         <div class="input-group mb-3">`
                     + (_label != undefined && _label != '' ? `<label class="input-group-text" for="` + _id + `">` + _label + `</label>` : ``)
-                    + ` <input type="file" class="form-control ` + _classvalue + `" id="` + _id + `" name="` + _id + `" accept="` + _filter + `" readonly />
+                    + ` <input type="file" class="form-control ` + _classvalue + `" id="` + _id + `" name="` + _id + `" accept="` + _filter + `"  />
                             <button type="button" id="` + _id + `_button_" name="` + _id + `_button_" class="btn btn-outline-success border-left-0" style="width:42px;height:29px;border-color:#d1d3e2;color:#858796;cursor:pointer;" title="Upload">
                                 <i class="fas fa-upload"></i>
                             </button>
                         </div>
                         `;
+
+            //######### BUTTON #########
             } else if (_type == 'button') {
+                window[_id] = new Button(_id);
+
                 _item = `
-                        <button type="button" class="btn btn-success `+ _classvalue + `" id="` + _id + `" name="` + _id + `" title="` + _title + `" ` + _style + `>
-                            `+ _label + `
+                        <button type="button" class="btn `+ (_classvalue == '' ? 'btn-success' : _classvalue) + `" id="` + _id + `" name="` + _id + `" title="` + _title + `" ` 
+                    + (_style != undefined ? ' style="' + _style + '"' : '')
+                    + `>`+ _label + `
                         </button>
                         `;
+
             } else if (_type == 'progress') {
+                window[_id] = new TextBox(_id);
+
+                _label = ReplaceAll(_label, '{{##.##}}', '0.00');
+
                 _item = `
                         <div class="progress">
                             <div class="progress-bar progress-bar-striped progress-bar-animated `+ _classvalue + ` " id="` + _id + `" role="progressbar" style="width: ` + _current + `%" aria-valuenow="` + _current + `" aria-valuemin="` + _min + `" aria-valuemax="` + _max + `" label="` + _label + `"></div>
@@ -259,29 +326,41 @@
                         `;
             } else if (_type == 'submit') {
                 _item = `
-                        <button type="submit" class="btn btn-success `+ _classvalue + `" id="` + _id + `" name="` + _id + `" title="` + _title + `" ` + _style + `>
-                            `+ _label + `
+                        <button type="submit" class="btn btn-success `+ _classvalue + `" id="` + _id + `" name="` + _id + `" title="` + _title + `" `
+                    + (_style != undefined ? ' style="' + _style + '"' : '')
+                    + `>`+ _label + `
                         </button>
                         `;
-            } else if (_type == 'progress') {
-                _item = `
-                        <div class="progress">
-                            <div class="progress-bar progress-bar-striped progress-bar-animated `+ _classvalue + ` " id="` + _id + `" role="progressbar" style="width: ` + _current + `%" aria-valuenow="` + _current + `" aria-valuemin="` + _min + `" aria-valuemax="` + _max + `" label="` + _label + `"></div>
-                        </div>
-                        <div id="` + _id + `_label_" style="text-align:` + (_label_align == 'c' ? 'center' : (_label_align == 'l' ? 'left' : (_label_align == 'r' ? 'right' : _label_align))) + `;">` + _label + `</div>
-                        `;
+            //} else if (_type == 'progress') {
+            //    window[_id] = new TextBox(_id);
+
+            //    _item = `
+            //            <div class="progress">
+            //                <div class="progress-bar progress-bar-striped progress-bar-animated `+ _classvalue + ` " id="` + _id + `" role="progressbar" style="width: ` + _current + `%" aria-valuenow="` + _current + `" aria-valuemin="` + _min + `" aria-valuemax="` + _max + `" label="` + _label + `"></div>
+            //            </div>
+            //            <div id="` + _id + `_label_" style="text-align:` + (_label_align == 'c' ? 'center' : (_label_align == 'l' ? 'left' : (_label_align == 'r' ? 'right' : _label_align))) + `;">` + _label + `</div>
+            //            `;
             } else if (_type == 'radio') {
+                window[_id + _value] = new Radio(_id + _value);
+                //window[_id + _value].default = _id;
+                window[_id + _value].type = _type;
+                window[_id + _value].label = _label;
+                window[_id + _value].value = _value;
+                window[_id + _value].checked = (_checked == 'checked' ? true : false);
+
                 _item = `
                         <div class="input-group">
                             <div class="form-check">
                                 <label>
                                     <input class="form-check-input" type="radio" id="` + _id + _value + `" name="` + _id + `" value="` + _value + `" ` + _checked + ` />
-                                    <span>` + _label + `</span>
+                                    <span id="` + _id + _value + `_label">` + _label + `</span>
                                 </label>
                             </div>   
                         </div>   
                         `;
             } else if (_type == 'check' || _type == 'checkbox') {
+                window[_id] = new TextBox(_id);
+
                 //### <item type="check" id="ToolbarDelete" label="Delete" value="1" class="danger" effect="zoom"></item>
                 _effect = 'checkbox-' + (_effect == 'zoom' ? 'zoom zoom-' : 'fade fade-in-') + (_classvalue == '' ? 'primary' : _classvalue);
                 _item = `                
@@ -291,11 +370,14 @@
                                 <span class="cr">
                                     <i class="cr-icon icofont icofont-ui-check txt-default"></i>
                                 </span>
-                                <span>` + _label + `</span>
+                                <span id="` + _id + `_label">` + _label + `</span>
                             </label>
                         </div>
                         `;
             } else if (_type == 'table') {
+                window[_id] = new table(_id);
+
+
                 //console.log(_legend);
                 if (_legend == '') {
                     _item = `
@@ -317,22 +399,43 @@
 
 
 
+            //console.log('Type : ' + _type+ ' >> Label : ' + _label);
+
+
             if (_type == 'radio') {
 
                 if (_form != undefined) $(`#` + _form + ` #` + _id + `[value=` + _value + `]`).parent().append(_item);
                 if (_form == undefined) $('#' + _id).parent().append(_item);
+
+                if (_checked == 'checked') {
+                    window[_id] = new Radio(_id);
+                    window[_id].type = _type;
+                    window[_id].label = _label;
+                    window[_id].value = _value;
+                    window[_id].checked = true;
+                }
+
 
             } else {
 
                 if (_form != undefined) $('#' + _form + ' #' + _id).parent().append(_item);
                 if (_form == undefined) $('#' + _id).parent().append(_item);
 
+                window[_id].type = _type;
+                window[_id].label = _label;
+                window[_id].value = _value;
+                window[_id].readonly = (_readonly == 'readonly' ? true : false);
             }
+
 
             $(this).remove();
 
 
         });
+
+
+
+
 
 
     }

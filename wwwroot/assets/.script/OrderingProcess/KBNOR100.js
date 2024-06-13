@@ -1,148 +1,94 @@
 ﻿$(document).ready(function () {
 
-    initial = function () {
-
-        xItem.reset({
-            id: 'pgsStatus',
-        })
 
 
+    initial = async function () {
 
-        var tblERROR = xDataTable.Initial({
-            name: 'tblERROR',
-            dom: '<"clear">',
-            columnTitle: {
-                "EN": ['No', 'List File Error'],
-                "TH": ['No', 'List File Error'],
-                "JP": ['No', 'List File Error'],
-            },
-            column: [
-                { "data": "F_Plant" },
-                { "data": "F_Plant" }
-            ],
-            addnew: false,
-            rowclick: (row) => {
-            },
-            then: function (config) {
-                //xSplash.hide();
-            }
-        });
+        //var _dt = await xAjax.ExecuteJSON({
+        //    data: {
+        //        "Module": "[exec].[spKBNOR100]",
+        //        "@OrderType": "U",
+        //        "@Plant": ajexHeader.Plant,
+        //        "@UserCode": ajexHeader.UserCode
+        //    },
+        //});
+        //if (_dt.rows[0].KBNOR110 == 0) {
+        //    $('#btnKBNOR110').attr('readonly', true);
+        //    $('#btnKBNOR110').attr('class', 'btn btn-light');
+        //}
+        //if (_dt.rows[0].KBNOR120 == 0) {
+        //    $('#btnKBNOR120').attr('readonly', true);
+        //    $('#btnKBNOR120').attr('class', 'btn btn-light');
+        //}
+        //if (_dt.rows[0].KBNOR140 == 0) {
+        //    $('#btnKBNOR140').attr('readonly', true);
+        //    $('#btnKBNOR140').attr('class', 'btn btn-light');
+        //}
+        //if (_dt.rows[0].KBNOR150 == 0) {
+        //    $('#btnKBNOR150').attr('readonly', true);
+        //    $('#btnKBNOR150').attr('class', 'btn btn-light');
+        //}
+        //if (_dt.rows[0].KBNOR160 == 0) {
+        //    $('#btnKBNOR160').attr('readonly', true);
+        //    $('#btnKBNOR160').attr('class', 'btn btn-light');
+        //}
+        //if (_dt.rows[0].KBNOR160EX == 0) {
+        //    $('#btnKBNOR160EX').attr('readonly', true);
+        //    $('#btnKBNOR160EX').attr('class', 'btn btn-light');
+        //}
+        //if (_dt.rows[0].KBNOR170 == 0) {
+        //    $('#btnKBNOR170').attr('readonly', true);
+        //    $('#btnKBNOR170').attr('class', 'btn btn-light');
+        //}
 
 
-
-        var tblCOMPLETE = xDataTable.Initial({
-            name: 'tblCOMPLETE',
-            dom: '<"clear">',
-            columnTitle: {
-                "EN": ['No', 'List File Complete'],
-                "TH": ['No', 'List File Complete'],
-                "JP": ['No', 'List File Complete'],
-            },
-            column: [
-                { "data": "F_Plant" },
-                { "data": "F_Plant" }
-            ],
-            addnew: false,
-            rowclick: (row) => {
-            },
-            then: function (config) {
-                //xSplash.hide();
-            }
-        });
 
         xSplash.hide();
     }
     initial();
 
 
+    xAjax.onClick('btnKBNOR110', function () {
+        xAjax.redirect('KBNOR110');
+    });
 
-    var uploadData;
-    xAjax.onChange('#fileImport', function () {
-        let _file = $('#fileImport').val();
-        if (_file == '') {
-            xSwal.Info({ "message": 'Please check file before import!!' });
-            return;
-        }
 
-        xItem.reset({
-            id: 'pgsStatus',
-        })
+    xAjax.onClick('btnKBNOR120', function () {
+        xAjax.redirect('KBNOR120');
+    });
+    xAjax.onClick('btnKBNOR121', function () {
+        xAjax.redirect('KBNOR121');
+    });
+    xAjax.onClick('btnKBNOR122', function () {
+        xAjax.redirect('KBNOR122');
+    });
+    xAjax.onClick('btnKBNOR123', function () {
+        xAjax.redirect('KBNOR123');
+    });
 
-        var file = $('#fileImport')[0].files[0];
-        var formData = new FormData();
-        formData.append("file", file);
 
-        xAjax.PostFile({
-            url: 'KBNIM003/Upload',
-            data: formData,
-            then: function (result) {
-                uploadData = result.data;                
-            }
-        })
-    })
+    xAjax.onClick('btnKBNOR130', function () {
+        xAjax.redirect('KBNOR130');
+    });
 
 
 
-    xAjax.onClick('#fileImport_button_', function () {
-        let _file = $('#fileImport').val();
-        if (_file == '') {
-            xSwal.Info({ "message": 'Please check file before import!!' });
-            return;
-        }
-
-        console.log('ready');
-
-        xSwal.question({
-            "message": 'Do you want import KANBAN and MSP?',
-            "then": function () {
-
-                xTimer.Clock.Start(
-                    {
-                        "start": 100,
-                        "counting": function () {
-                            getProgress();
-
-                        }
-                    })
-
-                var formData = new FormData();
-                formData.append("fileName", uploadData.file);
-
-                xAjax.PostFile({
-                    url: 'KBNIM003/Import',
-                    data: formData,
-                    then: function (result) {
-
-                        console.log(result);
-
-                        xTimer.Clock.Stop({
-                            "finish": function () {
-                                getProgress();
-                            }
-                        })
-                    }
-                })
-            }
-        })
-
-    })
+    xAjax.onClick('btnKBNOR140', function () {
+        xAjax.redirect('KBNOR140');
+    });
 
 
+    xAjax.onClick('btnKBNOR150', function () {
+        xAjax.redirect('KBNOR150');
+    });
+    xAjax.onClick('btnKBNOR150EX', function () {
+        xAjax.redirect('KBNOR150EX');
+    });
 
-    getProgress = function () {
-        xAjax.Post({
-            url: 'KBNIM003/checkProgress',
-            data: null,
-            then: function (result) {
 
-                xItem.progress({
-                    id: 'pgsStatus',
-                    max: uploadData.count,
-                    current: result.data[0].cnt
-                })
+    xAjax.onClick('btnKBNOR160', function () {
+        xAjax.redirect('KBNOR160');
+    });
 
-            }
-        })
-    }
 
 });

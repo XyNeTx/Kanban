@@ -23,6 +23,7 @@ namespace HINOSystem.Libs
     {
         private readonly IConfiguration _config;
         private readonly ERPConnection _erpConnect;
+        private readonly BearerClass _BearerClass;
         //private readonly MyExtensions _myExtensions;
         private readonly CookieClass _cookie;
 
@@ -48,15 +49,18 @@ namespace HINOSystem.Libs
 
         public string _MENU_ = @"";
         public string _hostname_prod = @"";
+        public string _MENUFOCUS_ = @"";
 
         public AuthenGuard(
             IConfiguration configuration, 
-            ERPConnection erpConnect, 
+            ERPConnection erpConnect,
+            BearerClass bearerClass,
             CookieClass cookieClass
             )
         {
             _config = configuration;
             _erpConnect = erpConnect;
+            _BearerClass = bearerClass;
             _cookie = cookieClass; 
 
             this._DB = _config.GetValue<string>("Application:Database");
@@ -91,6 +95,10 @@ namespace HINOSystem.Libs
                 return Redirect("~/Login");
             }
 
+            _BearerClass.UserCode = _context.HttpContext.Session.GetString("USER_CODE");
+            _BearerClass.Token = _context.HttpContext.Session.GetString("TOKEN");
+            _BearerClass.Device = _context.HttpContext.Session.GetString("USER_DEVICENAME");
+            _BearerClass.IPAddress = _context.HttpContext.Session.GetString("USER_IPADDRESS");
 
             string _assets = (_context.HttpContext.Request.GetDisplayUrl().ToString().IndexOf("localhost:") > 0 ?
                 _config.GetValue<string>("Systems:"+ _systems + ":Assets") :
@@ -113,12 +121,13 @@ namespace HINOSystem.Libs
             string _parent_id = "";
 
             string _SQL = "EXEC [erp].[AuthenGuardLoadPage] '" + _system + @"', '" + _controller + @"',  '" + _acton + @"' ";
-            DataTable _dataTable = _erpConnect.ExecuteSQL(_SQL, _context.HttpContext, pAction: "LOAD", pControllerName: _controller, pActionName: _acton, pSystem: _system);
+            DataTable _dataTable = _erpConnect.ExecuteSQL(_SQL, _context.HttpContext, pAction: "LOAD", pUser: _BearerClass, pControllerName: _controller, pActionName: _acton, pSystem: _system);
 
             if (_dataTable.Rows.Count > 0)
             {
                 _appname = _dataTable.Rows[0]["Code"].ToString() + " : " + _dataTable.Rows[0]["Name" + _context.HttpContext.Session.GetString("USER_UILANGUAGE").ToString()].ToString();
                 _parent_id = _dataTable.Rows[0]["mpID"].ToString();
+                _MENUFOCUS_ = _dataTable.Rows[0]["pAction"].ToString();
                 //## get permission
                 _SQL = "EXEC [erp].[AuthenGuardLoadPagePermission] '" + _system + @"', '" + _context.HttpContext.Session.GetString("USER_GROUP_ID").ToString() + @"',  '" + _dataTable.Rows[0]["mID"].ToString() + @"' ";
                 DataTable _dtPermission = _erpConnect.ExecuteSQL(_SQL, _context.HttpContext, skipLog: true);
@@ -144,7 +153,20 @@ namespace HINOSystem.Libs
             }
 
 
-            ViewData["Version"] = DateTime.Now.ToString("yyyyMMddhhmmss");
+            //string _version = @"KANBAN.dll";
+            //if (System.IO.File.Exists(_version))
+            //{
+            //    DateTime _lastModified = System.IO.File.GetLastWriteTime(_version);
+            //    _version = _lastModified.ToString("yy.MM.ddmmss");
+            //}
+            //else
+            //{
+            //    _version = DateTime.Now.ToString("yy.MM.ddmmss");
+            //}
+            string _version = _BearerClass.versions();
+
+            ViewData["Version"] = _version;
+            ViewData["VersionJS"] = DateTime.Now.ToString("yyyyMMddhhmmss");
             ViewData["System"] = _system;
             ViewData["Controller"] = _controller;
             ViewData["Action"] = _acton;
@@ -166,8 +188,17 @@ namespace HINOSystem.Libs
             ViewData["UserSurnameTH"] = _context.HttpContext.Session.GetString("USER_SURNAMETH").ToString();
             ViewData["UserEmail"] = _context.HttpContext.Session.GetString("USER_EMAIL").ToString();
             ViewData["UserLanguage"] = (_context.HttpContext.Session.GetString("USER_UILANGUAGE").ToString() != "" ? _context.HttpContext.Session.GetString("USER_UILANGUAGE").ToString() : "EN");
+
+            ViewData["UserThemeExpandIcon"] = _context.HttpContext.Session.GetString("USER_UIEXPANDICON").ToString();
+            ViewData["UserThemeHeader"] = _context.HttpContext.Session.GetString("USER_UIHEADER").ToString();
+            ViewData["UserThemeBrand"] = _context.HttpContext.Session.GetString("USER_UIHEADERBRAND").ToString();
+            ViewData["UserThemeIconColor"] = _context.HttpContext.Session.GetString("USER_UIICONCOLOR").ToString();
             ViewData["UserTheme"] = _context.HttpContext.Session.GetString("USER_UITHEME").ToString();
-            
+            ViewData["UserThemeLinkColor"] = _context.HttpContext.Session.GetString("USER_UILINKCOLOR").ToString();
+            ViewData["UserThemeMenuColor"] = _context.HttpContext.Session.GetString("USER_UIMENUCOLOR").ToString();
+            ViewData["UserThemeMenuIcon"] = _context.HttpContext.Session.GetString("USER_UIMENUICON").ToString();
+            ViewData["UserThemeSideBar"] = _context.HttpContext.Session.GetString("USER_UISIDEBAR").ToString();
+
             string _sessionAvatar = (_context.HttpContext.Session.GetString("USER_AVATAR").ToString() != "" ? _context.HttpContext.Session.GetString("USER_AVATAR").ToString() : "hino/" + _context.HttpContext.Session.GetString("USER_CODE").ToString() + ".jpg");
             string _cookieAvatar = (_context.HttpContext.Request.Cookies["Avatar"] != null ? _context.HttpContext.Request.Cookies["Avatar"].ToString() : "");
             ViewData["UserAvatar"] = (_cookieAvatar == "" ? _sessionAvatar : (_cookieAvatar != _sessionAvatar ? _cookieAvatar : _sessionAvatar));
@@ -242,7 +273,7 @@ namespace HINOSystem.Libs
             //_cookie.SetCookie(_context, "_DISPLAY_", _context.HttpContext.Session.GetString("USER_DISPLAY").ToString());
             //_cookie.SetCookie(_context, "_ASSET_", _assets);
             //_cookie.SetCookie(_context, "_STORAGE_", _storage);
-            //_cookie.SetCookie(_context, "_BEARER_", _context.HttpContext.Session.GetString("TOKEN").ToString());
+            //_cookie.SetCookie(_context, "_BearerClass_", _context.HttpContext.Session.GetString("TOKEN").ToString());
 
 
 
@@ -256,13 +287,28 @@ namespace HINOSystem.Libs
             if (!string.IsNullOrEmpty(System.Security.Principal.WindowsIdentity.GetCurrent().Name)) ViewData["WindowsIdentity"] = System.Security.Principal.WindowsIdentity.GetCurrent().Name.ToString();
 
 
-            _SQL = "EXEC [erp].[AuthenGuardLoadMenu] '" + _system + "' ";
-            if (ViewData["UserGroupID"].ToString() != "1") _SQL = @"EXEC [erp].[AuthenGuardLoadMenuByID] '" + _system + "', '"+ ViewData["UserCode"].ToString() + "'";
+            //_SQL = "EXEC [erp].[AuthenGuardLoadMenu] '" + _system + "' ";
+            //if (ViewData["UserGroupID"].ToString() != "1") _SQL = @"EXEC [erp].[AuthenGuardLoadMenuByID] '" + _system + "', '"+ ViewData["UserCode"].ToString() + "'";
 
-            DataTable _dtMenuDisplay = _erpConnect.ExecuteSQL(_SQL, skipLog: true);
+            //DataTable _dtMenuDisplay = _erpConnect.ExecuteSQL(_SQL, skipLog: true);
 
             string _sql = @"
-    SELECT m.* 
+    SELECT m._ID
+        , m.Code
+        , m.Name
+        , m.NameTH
+        , m.NameJP
+        , m.Title
+        , m.TitleTH
+        , m.TitleJP
+        , m.Icon
+        , m.i18n
+        , m.Status
+        , m.UpdateAt
+        , m.UpdateBy
+        , m.CreateAt
+        , m.CreateBy
+        , m.isDelete 
 	    , mp._ID AS MPID
 	    , mp.Parent_ID
 	    , mp.Controller
@@ -277,6 +323,28 @@ namespace HINOSystem.Libs
     AND m.isDelete=0 " + (int.Parse(ViewData["UserGroupID"].ToString()) > 2 ? "AND m.Status='ACTIVE' " : "") + @"
     AND gm.isDelete=0 " + (int.Parse(ViewData["UserGroupID"].ToString()) > 2 ? "AND gm.Status='ACTIVE' " : "") + @"
     " + (int.Parse(ViewData["UserGroupID"].ToString()) > 2 ? "AND gm.Group_ID=" + ViewData["UserGroupID"].ToString() : "") + @"
+	GROUP BY m._ID
+        , m.Code
+        , m.Name
+        , m.NameTH
+        , m.NameJP
+        , m.Title
+        , m.TitleTH
+        , m.TitleJP
+        , m.Icon
+        , m.i18n
+        , m.Status
+        , m.UpdateAt
+        , m.UpdateBy
+        , m.CreateAt
+        , m.CreateBy
+        , m.isDelete
+	    , mp._ID 
+	    , mp.Parent_ID
+	    , mp.Controller
+	    , mp.Action
+	    , mp.ViewType
+		, mp.Seq
     ORDER BY Seq
 ";
             DataTable _dtMenu = _erpConnect.ExecuteSQL(_sql, skipLog: true);
@@ -301,19 +369,19 @@ namespace HINOSystem.Libs
                                     </li>";
 
 
-                //Generate menu with json (Not use)
-                string _child = _getChildrenJSON(_id);
-                _s += (_s == "" ? "" : ",") + @"
-{
-    ""id"": " + _dtMenu.Rows[i]["_ID"].ToString() + @",
-    ""text"": """ + _dtMenu.Rows[i]["Name"].ToString() + @""",
-    ""population"": null,
-    ""flagUrl"": null,
-    ""checked"": false,
-    ""hasChildren"": false,
-    ""parent"": true,
-    ""children"": [" + _child + @"]
-}";
+//                //Generate menu with json (Not use)
+//                string _child = _getChildrenJSON(_id);
+//                _s += (_s == "" ? "" : ",") + @"
+//{
+//    ""id"": " + _dtMenu.Rows[i]["_ID"].ToString() + @",
+//    ""text"": """ + _dtMenu.Rows[i]["Name"].ToString() + @""",
+//    ""population"": null,
+//    ""flagUrl"": null,
+//    ""checked"": false,
+//    ""hasChildren"": false,
+//    ""parent"": true,
+//    ""children"": [" + _child + @"]
+//}";
 
             }
 
@@ -324,14 +392,19 @@ namespace HINOSystem.Libs
             System.IO.File.WriteAllText(filePath, _s);              // Write the JSON data to the file
 
 
+            ViewData["_MENUFOCUS_"] = _MENUFOCUS_;
             ViewData["_MENU_"] = _menu;
 
+            if (_controller.ToUpper() == "REPORTS") return View("/Views/" + _system + "/" + _controller + "/" + _acton + ".cshtml");
+            if (pViewPath != "") return View(pViewPath + "/" + _acton);
+            if (pViewPage != "") return View("/Views/" + pViewPage);
 
-            if (_controller.ToUpper() == "REPORTS") return View("/Views/" + _system + "/" + _controller + "/" + _acton + ".cshtml", _dtMenuDisplay);
-            if (pViewPath != "") return View(pViewPath + "/" + _acton, _dtMenuDisplay);
-            if (pViewPage != "") return View("/Views/" + pViewPage, _dtMenuDisplay);
+            return View();
+            //if (_controller.ToUpper() == "REPORTS") return View("/Views/" + _system + "/" + _controller + "/" + _acton + ".cshtml", _dtMenuDisplay);
+            //if (pViewPath != "") return View(pViewPath + "/" + _acton, _dtMenuDisplay);
+            //if (pViewPage != "") return View("/Views/" + pViewPage, _dtMenuDisplay);
 
-            return View(_dtMenuDisplay);
+            //return View(_dtMenuDisplay);
         }
 
 
@@ -339,7 +412,22 @@ namespace HINOSystem.Libs
         {
             string _s = @"";
             string _SQL = @"
-    SELECT m.* 
+    SELECT m._ID
+        , m.Code
+        , m.Name
+        , m.NameTH
+        , m.NameJP
+        , m.Title
+        , m.TitleTH
+        , m.TitleJP
+        , m.Icon
+        , m.i18n
+        , m.Status
+        , m.UpdateAt
+        , m.UpdateBy
+        , m.CreateAt
+        , m.CreateBy
+        , m.isDelete 
 	    , mp._ID AS MPID
 	    , mp.Parent_ID
 	    , mp.Controller
@@ -354,6 +442,28 @@ namespace HINOSystem.Libs
     AND m.isDelete=0 " + (int.Parse(ViewData["UserGroupID"].ToString()) > 2 ? "AND m.Status='ACTIVE' " : "") + @"
     AND gm.isDelete=0 " + (int.Parse(ViewData["UserGroupID"].ToString()) > 2 ? "AND gm.Status='ACTIVE' " : "") + @"
     " + (int.Parse(ViewData["UserGroupID"].ToString()) > 2 ? "AND gm.Group_ID=" + ViewData["UserGroupID"].ToString() : "") + @"
+    GROUP BY m._ID
+        , m.Code
+        , m.Name
+        , m.NameTH
+        , m.NameJP
+        , m.Title
+        , m.TitleTH
+        , m.TitleJP
+        , m.Icon
+        , m.i18n
+        , m.Status
+        , m.UpdateAt
+        , m.UpdateBy
+        , m.CreateAt
+        , m.CreateBy
+        , m.isDelete
+	    , mp._ID 
+	    , mp.Parent_ID
+	    , mp.Controller
+	    , mp.Action
+	    , mp.ViewType
+		, mp.Seq
     ORDER BY Seq
 ";
             DataTable _dtMenu = _erpConnect.ExecuteSQL(_SQL, skipLog: true);
@@ -389,6 +499,10 @@ namespace HINOSystem.Libs
                     }
                     else
                     {
+                        //if (_ACTION_ != "")
+                        //{
+                        //    _ac = _ACTION_;
+                        //}
                         _s += @"
                                             <li " + (_controllor == _ctrl && _action == _ac ? @"data-focus=""active""" : "") + @" class" + (_controllor == _ctrl && _action == _ac ? @"=""active""" : "") + @" id=""" + _ctrl + _ac + @""" >
                                                 <a href="""+ _hostname_prod + "/" + _dtMenu.Rows[i]["Controller"].ToString() + "/" + _dtMenu.Rows[i]["Code"].ToString() + @""">
@@ -412,64 +526,64 @@ namespace HINOSystem.Libs
 
 
 
-        public string _getChildrenJSON(string _id)
-        {
-            string _s = @"";
-            string _SQL = @"
-SELECT m.* 
-	, mp._ID AS MPID
-	, mp.Parent_ID
-	, mp.Controller
-	, mp.Action
-	, mp.ViewType
-FROM erp.MenuParent mp 
-	LEFT JOIN erp.Menu m ON m._ID=Menu_ID
-WHERE mp.Parent_ID=" + _id + @"
-AND mp.isDelete = 0
-ORDER BY Seq
-";
-            DataTable _dtMenu = _erpConnect.ExecuteSQL(_SQL, skipLog: true);
-            if (_dtMenu.Rows.Count > 0)
-            {
-                for (int i = 0; i < _dtMenu.Rows.Count; i++)
-                {
-                    string _child = _getChildrenJSON(_dtMenu.Rows[i]["_ID"].ToString());
-                    if (_dtMenu.Rows[i]["Code"].ToString() == "")
-                    {
-                        _s += (_s == "" ? "" : ",") + @"
-{
-    ""id"": " + _dtMenu.Rows[i]["_ID"].ToString() + @",
-    ""text"": """ + _dtMenu.Rows[i]["Name"].ToString() + @""",
-    ""population"": null,
-    ""flagUrl"": null,
-    ""checked"": false,
-    ""hasChildren"": false,
-    ""parent"": true,
-    ""children"": [" + _child + @"]
-}";
-                    }
-                    else
-                    {
+//        public string _getChildrenJSON(string _id)
+//        {
+//            string _s = @"";
+//            string _SQL = @"
+//SELECT m.* 
+//	, mp._ID AS MPID
+//	, mp.Parent_ID
+//	, mp.Controller
+//	, mp.Action
+//	, mp.ViewType
+//FROM erp.MenuParent mp 
+//	LEFT JOIN erp.Menu m ON m._ID=Menu_ID
+//WHERE mp.Parent_ID=" + _id + @"
+//AND mp.isDelete = 0
+//ORDER BY Seq
+//";
+//            DataTable _dtMenu = _erpConnect.ExecuteSQL(_SQL, skipLog: true);
+//            if (_dtMenu.Rows.Count > 0)
+//            {
+//                for (int i = 0; i < _dtMenu.Rows.Count; i++)
+//                {
+//                    string _child = _getChildrenJSON(_dtMenu.Rows[i]["_ID"].ToString());
+//                    if (_dtMenu.Rows[i]["Code"].ToString() == "")
+//                    {
+//                        _s += (_s == "" ? "" : ",") + @"
+//{
+//    ""id"": " + _dtMenu.Rows[i]["_ID"].ToString() + @",
+//    ""text"": """ + _dtMenu.Rows[i]["Name"].ToString() + @""",
+//    ""population"": null,
+//    ""flagUrl"": null,
+//    ""checked"": false,
+//    ""hasChildren"": false,
+//    ""parent"": true,
+//    ""children"": [" + _child + @"]
+//}";
+//                    }
+//                    else
+//                    {
 
-                        _s += (_s == "" ? "" : ",") + @"
-{
-    ""id"": " + _dtMenu.Rows[i]["_ID"].ToString() + @",
-    ""text"": """ + _dtMenu.Rows[i]["Name"].ToString() + @""",
-    ""population"": null,
-    ""flagUrl"": null,
-    ""checked"": false,
-    ""hasChildren"": false,
-    ""parent"": false,
-    ""url"": ""~/kanban/" + _dtMenu.Rows[i]["Controller"].ToString() + "/" + _dtMenu.Rows[i]["Code"].ToString() + @""",
-    ""children"": [" + _child + @"]
-}";
-                    }
-                }
+//                        _s += (_s == "" ? "" : ",") + @"
+//{
+//    ""id"": " + _dtMenu.Rows[i]["_ID"].ToString() + @",
+//    ""text"": """ + _dtMenu.Rows[i]["Name"].ToString() + @""",
+//    ""population"": null,
+//    ""flagUrl"": null,
+//    ""checked"": false,
+//    ""hasChildren"": false,
+//    ""parent"": false,
+//    ""url"": ""~/kanban/" + _dtMenu.Rows[i]["Controller"].ToString() + "/" + _dtMenu.Rows[i]["Code"].ToString() + @""",
+//    ""children"": [" + _child + @"]
+//}";
+//                    }
+//                }
 
-                return _s;
-            }
-            return "";
-        }
+//                return _s;
+//            }
+//            return "";
+//        }
 
 
     }

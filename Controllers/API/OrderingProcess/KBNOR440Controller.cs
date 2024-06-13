@@ -73,7 +73,7 @@ namespace HINOSystem.Controllers.API.Master
         [HttpPost]
         public IActionResult initial([FromBody] string pData = null)
         {
-            dynamic _bearer, _data = null;
+            dynamic _data = null;
             string _SQL, _resData;
             string _result = @"{
                     ""status"":""200"",
@@ -82,15 +82,15 @@ namespace HINOSystem.Controllers.API.Master
                     ""data"": null
                 }";
 
-            _bearer = _BearerClass.Header(Request);
-            if (_bearer.Status == 401 || _bearer.Status == null) return Content(JsonConvert.SerializeObject(_bearer), "application/json");
+            _BearerClass.Authentication(Request);
+            if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
             try
             {
-                _KBCN.Plant = _bearer.Plant;
+                _KBCN.Plant = _BearerClass.Plant;
 
                 //_SQL = @" ";
-                //string _jsTB_MS_Factory = _KBCN.ExecuteJSON(_SQL, pUser: _JBearer, pControllerName: ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+                //string _jsTB_MS_Factory = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName: ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
 
                 _result = @"{
                     ""status"":""200"",
@@ -111,7 +111,7 @@ namespace HINOSystem.Controllers.API.Master
         [HttpPost]
         public IActionResult KBNOR440_01([FromBody] string pPostData = null)
         {
-            dynamic _bearer, _data = null;
+            dynamic _data = null;
             string _SQL, _resData;
             string _result = @"{
                     ""status"":""200"",
@@ -120,22 +120,22 @@ namespace HINOSystem.Controllers.API.Master
                     ""data"": null
                 }";
 
-            _bearer = _BearerClass.Header(Request);
-            if (_bearer.Status == 401 || _bearer.Status == null) return Content(JsonConvert.SerializeObject(_bearer), "application/json");
+            _BearerClass.Authentication(Request);
+            if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
             try
             {
-                _KBCN.Plant = _bearer.Plant;
+                _KBCN.Plant = _BearerClass.Plant;
 
                 if (pPostData != null) _data = JsonConvert.DeserializeObject(pPostData);
 
                 //Clear  TB_PDS_DETAIL
                 _SQL = @" EXEC [exec].[spKBNOR440_01] 
                     '" + _data.OrderType.ToString() + @"',
-                    '" + _bearer.Plant + @"',
-                    '" + _bearer.UserCode + @"',
+                    '" + _BearerClass.Plant + @"',
+                    '" + _BearerClass.UserCode + @"',
                     '' ";
-                DataTable _dtChk = _KBCN.ExecuteSQL(_SQL, pUser: _bearer,
+                DataTable _dtChk = _KBCN.ExecuteSQL(_SQL, pUser: _BearerClass,
                     pControllerName: ControllerContext.ActionDescriptor.ControllerName,
                     pActionName: ControllerContext.ActionDescriptor.ActionName
                     );
@@ -148,11 +148,11 @@ namespace HINOSystem.Controllers.API.Master
 
                         _SQL = @" EXEC [exec].[spKBNOR440_01_D] 
                             '" + _data.OrderType.ToString() + @"',
-                            '" + _bearer.Plant + @"',
-                            '" + _bearer.UserCode + @"',
+                            '" + _BearerClass.Plant + @"',
+                            '" + _BearerClass.UserCode + @"',
                             '" + _dtChk.Rows[i]["F_OrderNo"].ToString() + @"',
                             '' ";
-                        _KBCN.Execute(_SQL, pUser: _bearer,
+                        _KBCN.Execute(_SQL, pUser: _BearerClass,
                                     pControllerName: ControllerContext.ActionDescriptor.ControllerName,
                                     pActionName: ControllerContext.ActionDescriptor.ActionName
                                     );
@@ -171,9 +171,9 @@ namespace HINOSystem.Controllers.API.Master
             {
                 _SQL = @" EXEC [exec].[spKBNOR440_EXCEPTION]
                     '" + _data.OrderType.ToString() + @"',
-                    '" + _bearer.Plant + @"',
-                    '" + _bearer.UserCode + @"' ";
-                _KBCN.Execute(_SQL, pUser: _bearer,
+                    '" + _BearerClass.Plant + @"',
+                    '" + _BearerClass.UserCode + @"' ";
+                _KBCN.Execute(_SQL, pUser: _BearerClass,
                             pControllerName: ControllerContext.ActionDescriptor.ControllerName,
                             pActionName: ControllerContext.ActionDescriptor.ActionName
                             );
@@ -193,7 +193,7 @@ namespace HINOSystem.Controllers.API.Master
         [HttpPost]
         public IActionResult KBNOR440_03([FromBody] string pPostData = null)
         {
-            dynamic _bearer, _data = null;
+            dynamic _data = null;
             string _SQL, _resData;
             string _result = @"{
                     ""status"":""200"",
@@ -202,12 +202,12 @@ namespace HINOSystem.Controllers.API.Master
                     ""data"": null
                 }";
 
-            _bearer = _BearerClass.Header(Request);
-            if (_bearer.Status == 401 || _bearer.Status == null) return Content(JsonConvert.SerializeObject(_bearer), "application/json");
+            _BearerClass.Authentication(Request);
+            if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
             try
             {
-                _KBCN.Plant = _bearer.Plant;
+                _KBCN.Plant = _BearerClass.Plant;
 
                 if (pPostData != null) _data = JsonConvert.DeserializeObject(pPostData);
 
@@ -216,10 +216,10 @@ namespace HINOSystem.Controllers.API.Master
 
                 _SQL = @" EXEC [exec].[spKBNOR440_03] 
                     '" + _data.OrderType.ToString() + @"',
-                    '" + _bearer.Plant + @"',
-                    '" + _bearer.UserCode + @"',
+                    '" + _BearerClass.Plant + @"',
+                    '" + _BearerClass.UserCode + @"',
                     '' ";
-                DataTable _dtChk = _KBCN.ExecuteSQL(_SQL, pUser: _bearer,
+                DataTable _dtChk = _KBCN.ExecuteSQL(_SQL, pUser: _BearerClass,
                     pControllerName: ControllerContext.ActionDescriptor.ControllerName,
                     pActionName: ControllerContext.ActionDescriptor.ActionName
                     );
@@ -234,12 +234,12 @@ namespace HINOSystem.Controllers.API.Master
 
                             _SQL = @" EXEC [exec].[spKBNOR440_03_S] 
                             '" + _data.OrderType.ToString() + @"',
-                            '" + _bearer.Plant + @"',
-                            '" + _bearer.UserCode + @"',
+                            '" + _BearerClass.Plant + @"',
+                            '" + _BearerClass.UserCode + @"',
                             '" + _dtChk.Rows[i]["F_Delivery_Date"].ToString().Trim() + @"',
                             '" + _dtChk.Rows[i]["F_Delivery_Trip"].ToString().Trim() + @"',
                             '' ";
-                            DataTable _dtChkPOM = _KBCN.ExecuteSQL(_SQL, pUser: _bearer,
+                            DataTable _dtChkPOM = _KBCN.ExecuteSQL(_SQL, pUser: _BearerClass,
                                         pControllerName: ControllerContext.ActionDescriptor.ControllerName,
                                         pActionName: ControllerContext.ActionDescriptor.ActionName
                                         );
@@ -266,8 +266,8 @@ namespace HINOSystem.Controllers.API.Master
                         string _Barcode = CheckSum(_PDS_No);
                         _SQL = @" EXEC [exec].[spKBNOR440_03_U]
                             '" + _data.OrderType.ToString() + @"',
-                            '" + _bearer.Plant + @"',
-                            '" + _bearer.UserCode + @"',
+                            '" + _BearerClass.Plant + @"',
+                            '" + _BearerClass.UserCode + @"',
                             '" + _PDS_No + @"',
                             '" + _dtChk.Rows[i]["F_Delivery_Date"].ToString().Trim() + @"',
                             '" + _dtChk.Rows[i]["F_Delivery_Time"].ToString().Trim() + @"',
@@ -276,17 +276,17 @@ namespace HINOSystem.Controllers.API.Master
                             '" + _dtChk.Rows[i]["F_Store_CD"].ToString().Trim() + @"',
                             '" + _dtChk.Rows[i]["F_Collect_Date"].ToString().Trim() + @"',
                             '' ";
-                        _KBCN.Execute(_SQL, pUser: _bearer,
+                        _KBCN.Execute(_SQL, pUser: _BearerClass,
                                     pControllerName: ControllerContext.ActionDescriptor.ControllerName,
                                     pActionName: ControllerContext.ActionDescriptor.ActionName
                                     );
 
                         _SQL = @" EXEC [exec].[spKBNOR440_04]
                             '" + _data.OrderType.ToString() + @"',
-                            '" + _bearer.Plant + @"',
-                            '" + _bearer.UserCode + @"',
+                            '" + _BearerClass.Plant + @"',
+                            '" + _BearerClass.UserCode + @"',
                             '' ";
-                        DataTable _dtParameter = _KBCN.ExecuteSQL(_SQL, pUser: _bearer,
+                        DataTable _dtParameter = _KBCN.ExecuteSQL(_SQL, pUser: _BearerClass,
                                     pControllerName: ControllerContext.ActionDescriptor.ControllerName,
                                     pActionName: ControllerContext.ActionDescriptor.ActionName
                                     );
@@ -295,8 +295,8 @@ namespace HINOSystem.Controllers.API.Master
                         {
                             _SQL = @" EXEC [exec].[spKBNOR440_04_I]
                             '" + _data.OrderType.ToString() + @"',
-                            '" + _bearer.Plant + @"',
-                            '" + _bearer.UserCode + @"',
+                            '" + _BearerClass.Plant + @"',
+                            '" + _BearerClass.UserCode + @"',
                             '" + _PDS_No + @"',
                             '" + _dtChk.Rows[i]["F_Delivery_Date"].ToString().Trim() + @"',
                             '" + _dtChk.Rows[i]["F_Delivery_Time"].ToString().Trim() + @"',
@@ -311,7 +311,7 @@ namespace HINOSystem.Controllers.API.Master
                             '" + _IssuedDate + @"',
                             '" + _Barcode + @"',
                             '' ";
-                            _KBCN.Execute(_SQL, pUser: _bearer,
+                            _KBCN.Execute(_SQL, pUser: _BearerClass,
                                         pControllerName: ControllerContext.ActionDescriptor.ControllerName,
                                         pActionName: ControllerContext.ActionDescriptor.ActionName
                                         );
@@ -320,10 +320,10 @@ namespace HINOSystem.Controllers.API.Master
                         //1.  หาค่า Collect Time ก่อนเลย พอดีเค้าหา Dock Code อยู่แล้วเลยแอบใส่ตัีวนี้ด้วยเลย (ของพี่ทิฝากนิดหนึง กรณี 9Y ไม่ต้องคำนวณตัว Collect Date กะ Time ใส่เป็นว่าง ๆ เลย) 
                         _SQL = @" EXEC [exec].[spKBNOR440_04_U]
                             '" + _data.OrderType.ToString() + @"',
-                            '" + _bearer.Plant + @"',
-                            '" + _bearer.UserCode + @"',
+                            '" + _BearerClass.Plant + @"',
+                            '" + _BearerClass.UserCode + @"',
                             '' ";
-                        _KBCN.Execute(_SQL, pUser: _bearer,
+                        _KBCN.Execute(_SQL, pUser: _BearerClass,
                                     pControllerName: ControllerContext.ActionDescriptor.ControllerName,
                                     pActionName: ControllerContext.ActionDescriptor.ActionName
                                     );
@@ -332,10 +332,10 @@ namespace HINOSystem.Controllers.API.Master
                         //'2.  ตัวนี้คือกรณีที่ Collect Time = "00:00" แปลว่าเป็นรถที่ขนส่งโดย Milk Run ไม่จำเป็นต้องคำนวณเวลา เลยให้ Collect Date = Delivery Date ส่วน Collect Time ก้อ 00:00 เหมือนเดิม 
                         _SQL = @" EXEC [exec].[spKBNOR440_04_U]
                             '" + _data.OrderType.ToString() + @"',
-                            '" + _bearer.Plant + @"',
-                            '" + _bearer.UserCode + @"',
+                            '" + _BearerClass.Plant + @"',
+                            '" + _BearerClass.UserCode + @"',
                             '' ";
-                        _KBCN.Execute(_SQL, pUser: _bearer,
+                        _KBCN.Execute(_SQL, pUser: _BearerClass,
                                     pControllerName: ControllerContext.ActionDescriptor.ControllerName,
                                     pActionName: ControllerContext.ActionDescriptor.ActionName
                                     );
@@ -344,10 +344,10 @@ namespace HINOSystem.Controllers.API.Master
                         //'' ตัวเรียกนะ
                         _SQL = @" EXEC [exec].[spKBNOR440_05]
                             '" + _data.OrderType.ToString() + @"',
-                            '" + _bearer.Plant + @"',
-                            '" + _bearer.UserCode + @"',
+                            '" + _BearerClass.Plant + @"',
+                            '" + _BearerClass.UserCode + @"',
                             '' ";
-                        DataTable _dtChkGet = _KBCN.ExecuteSQL(_SQL, pUser: _bearer,
+                        DataTable _dtChkGet = _KBCN.ExecuteSQL(_SQL, pUser: _BearerClass,
                                     pControllerName: ControllerContext.ActionDescriptor.ControllerName,
                                     pActionName: ControllerContext.ActionDescriptor.ActionName
                                     );
@@ -358,12 +358,12 @@ namespace HINOSystem.Controllers.API.Master
                                 String pDelivery = GetDate(_dtChkGet.Rows[j][0].ToString().Trim());
                                 _SQL = @" EXEC [exec].[spKBNOR440_05_U]
                                     '" + _data.OrderType.ToString() + @"',
-                                    '" + _bearer.Plant + @"',
-                                    '" + _bearer.UserCode + @"',
-                                    '" + _bearer.sDelivery + @"',
+                                    '" + _BearerClass.Plant + @"',
+                                    '" + _BearerClass.UserCode + @"',
+                                    '" + _dtChkGet.Rows[j]["sDelivery"] + @"',
                                     '" + _dtChkGet.Rows[j][0].ToString() + @"',
                                     '' ";
-                                _KBCN.Execute(_SQL, pUser: _bearer,
+                                _KBCN.Execute(_SQL, pUser: _BearerClass,
                                             pControllerName: ControllerContext.ActionDescriptor.ControllerName,
                                             pActionName: ControllerContext.ActionDescriptor.ActionName
                                             );
@@ -374,8 +374,8 @@ namespace HINOSystem.Controllers.API.Master
                         //'Insert to Detail
                         _SQL = @" EXEC [exec].[spKBNOR440_05_I]
                             '" + _data.OrderType.ToString() + @"',
-                            '" + _bearer.Plant + @"',
-                            '" + _bearer.UserCode + @"',
+                            '" + _BearerClass.Plant + @"',
+                            '" + _BearerClass.UserCode + @"',
                             '" + _PDS_No + @"',
                             '" + _dtChk.Rows[i]["F_Delivery_Date"].ToString().Trim() + @"',
                             '" + _dtChk.Rows[i]["F_Delivery_Time"].ToString().Trim() + @"',
@@ -384,7 +384,7 @@ namespace HINOSystem.Controllers.API.Master
                             '" + _dtChk.Rows[i]["F_Store_CD"].ToString().Trim() + @"',
                             '" + _dtChk.Rows[i]["F_Collect_Date"].ToString().Trim() + @"',
                             '' ";
-                        _KBCN.Execute(_SQL, pUser: _bearer,
+                        _KBCN.Execute(_SQL, pUser: _BearerClass,
                                     pControllerName: ControllerContext.ActionDescriptor.ControllerName,
                                     pActionName: ControllerContext.ActionDescriptor.ActionName
                                     );
@@ -406,9 +406,9 @@ namespace HINOSystem.Controllers.API.Master
             {
                 _SQL = @" EXEC [exec].[spKBNOR440_EXCEPTION]
                     '" + _data.OrderType.ToString() + @"',
-                    '" + _bearer.Plant + @"',
-                    '" + _bearer.UserCode + @"' ";
-                _KBCN.Execute(_SQL, pUser: _bearer,
+                    '" + _BearerClass.Plant + @"',
+                    '" + _BearerClass.UserCode + @"' ";
+                _KBCN.Execute(_SQL, pUser: _BearerClass,
                             pControllerName: ControllerContext.ActionDescriptor.ControllerName,
                             pActionName: ControllerContext.ActionDescriptor.ActionName
                             );

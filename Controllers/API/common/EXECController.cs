@@ -31,6 +31,7 @@ using HINOSystem.Context;
 using HINOSystem.Models.KB3.Master;
 using NPOI.SS.Formula.Functions;
 using System.Dynamic;
+using System.Numerics;
 
 namespace HINOSystem.Controllers.API.Master
 {
@@ -61,7 +62,7 @@ namespace HINOSystem.Controllers.API.Master
         [HttpPost]
         public IActionResult xExecute([FromBody] string pPostData = null)
         {
-            dynamic _bearer, _data = null;
+            dynamic _data = null;
             string _SQL, _resData = null;
             string _result = @"{
                     ""status"":""200"",
@@ -70,12 +71,13 @@ namespace HINOSystem.Controllers.API.Master
                     ""rows"": null
                 }";
 
-            _bearer = _BearerClass.Header(Request);
-            if (_bearer.Status == 401 || _bearer.Status == null) return Content(JsonConvert.SerializeObject(_bearer), "application/json");
-
             try
             {
-                _KBCN.Plant = _bearer.Plant;
+                _KBCN.Plant = 3;
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
+
+                _KBCN.Plant = _BearerClass.Plant;
 
                 if (pPostData != null) _data = JsonConvert.DeserializeObject(pPostData);
 
@@ -93,12 +95,22 @@ namespace HINOSystem.Controllers.API.Master
 
                 _SQL = @" EXEC " + _spName + @" " + _spParameter;
 
-                _KBCN.Execute(_SQL
-                   , pUser: _bearer
+                bool complete = _KBCN.Execute(_SQL
+                   , pUser: _BearerClass
                    , pAction: "EXECUTE WITH JQUERY"
-                   , pControllerName: _bearer.ActionName
+                   , pControllerName: _BearerClass.ActionName
                    , pActionName: _spName
-                    );
+                );
+
+                if (!complete)
+                {
+                    return Ok(new
+                    {
+                        status = "400",
+                        response = "Ok",
+                        message = "Process not Complete",
+                    });
+                }
 
                 _result = @"{
                         ""status"":""200"",
@@ -123,7 +135,7 @@ namespace HINOSystem.Controllers.API.Master
         [HttpPost]
         public IActionResult Execute([FromBody] string pPostData = null)
         {
-            dynamic _bearer, _data = null;
+            dynamic _data = null;
             string _SQL, _resData = null;
             string _result = @"{
                     ""status"":""200"",
@@ -131,13 +143,13 @@ namespace HINOSystem.Controllers.API.Master
                     ""message"": ""Process not complete"",
                     ""rows"": null
                 }";
-
-            _bearer = _BearerClass.Header(Request);
-            if (_bearer.Status == 401 || _bearer.Status == null) return Content(JsonConvert.SerializeObject(_bearer), "application/json");
-
             try
             {
-                _KBCN.Plant = _bearer.Plant;
+                _KBCN.Plant = 3;
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
+
+                _KBCN.Plant = _BearerClass.Plant;
 
                 if (pPostData != null) _data = JsonConvert.DeserializeObject(pPostData);
 
@@ -154,12 +166,22 @@ namespace HINOSystem.Controllers.API.Master
 
                 _SQL = @" EXEC " + _spName + @" " + _spParameter + "''";
 
-                _KBCN.Execute(_SQL
-                   , pUser: _bearer
+                bool complete = _KBCN.Execute(_SQL
+                   , pUser: _BearerClass
                     , pAction: "EXECUTE WITH JQUERY"
-                   , pControllerName: _bearer.ActionName
+                   , pControllerName: _BearerClass.ActionName
                    , pActionName: _spName
                     );
+
+                if (!complete)
+                {
+                    return Ok(new
+                    {
+                        status = "400",
+                        response = "Ok",
+                        message = "Process not Complete",
+                    });
+                }
 
                 _result = @"{
                         ""status"":""200"",
@@ -189,7 +211,7 @@ namespace HINOSystem.Controllers.API.Master
         [HttpPost]
         public IActionResult xExecuteJSON([FromBody] string pPostData = null)
         {
-            dynamic _bearer, _data = null;
+            dynamic _data = null;
             string _SQL, _resData = null;
             string _result = @"{
                     ""status"":""200"",
@@ -197,13 +219,13 @@ namespace HINOSystem.Controllers.API.Master
                     ""message"": ""No data found"",
                     ""rows"": null
                 }";
-
-            _bearer = _BearerClass.Header(Request);
-            if (_bearer.Status == 401 || _bearer.Status == null) return Content(JsonConvert.SerializeObject(_bearer), "application/json");
-
             try
             {
-                _KBCN.Plant = _bearer.Plant;
+                _KBCN.Plant = 3;
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
+
+                _KBCN.Plant = _BearerClass.Plant;
 
                 if (pPostData != null) _data = JsonConvert.DeserializeObject(pPostData);
 
@@ -217,14 +239,14 @@ namespace HINOSystem.Controllers.API.Master
 
                     i++;
                 }
-                _spParameter = _spParameter.Substring(0, _spParameter.Length - 2);
+                if (_spParameter != "") _spParameter = _spParameter.Substring(0, _spParameter.Length - 2);
 
                 _SQL = @" EXEC " + _spName + @" " + _spParameter;
 
                 _resData = _KBCN.ExecuteJSON(_SQL
-                   , pUser: _bearer
+                   , pUser: _BearerClass
                     , pAction: "EXECUTE JSON WITH JQUERY"
-                   , pControllerName: _bearer.ActionName
+                   , pControllerName: _BearerClass.ActionName
                    , pActionName: _spName
                    );
 
@@ -252,7 +274,7 @@ namespace HINOSystem.Controllers.API.Master
         [HttpPost]
         public IActionResult ExecuteJSON([FromBody] string pPostData = null)
         {
-            dynamic _bearer, _data = null;
+            dynamic _data = null;
             string _SQL, _resData = null;
             string _result = @"{
                     ""status"":""200"",
@@ -260,13 +282,13 @@ namespace HINOSystem.Controllers.API.Master
                     ""message"": ""No data found"",
                     ""rows"": null
                 }";
-
-            _bearer = _BearerClass.Header(Request);
-            if (_bearer.Status == 401 || _bearer.Status == null) return Content(JsonConvert.SerializeObject(_bearer), "application/json");
-
             try
             {
-                _KBCN.Plant = _bearer.Plant;
+                _KBCN.Plant = 3;
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
+
+                _KBCN.Plant = _BearerClass.Plant;
 
                 if (pPostData != null) _data = JsonConvert.DeserializeObject(pPostData);
 
@@ -284,9 +306,9 @@ namespace HINOSystem.Controllers.API.Master
                 _SQL = @" EXEC " + _spName + @" " + _spParameter + "''";
 
                 _resData = _KBCN.ExecuteJSON(_SQL
-                    , pUser: _bearer
+                    , pUser: _BearerClass
                     , pAction: "EXECUTE JSON WITH JQUERY"
-                   , pControllerName: _bearer.ActionName
+                   , pControllerName: _BearerClass.ActionName
                    , pActionName: _spName
                     );
 
@@ -298,6 +320,17 @@ namespace HINOSystem.Controllers.API.Master
                         ""message"": ""Data found"",
                         ""rows"": " + _resData + @"
                     }";
+
+                if (_resData!.Contains("Error"))
+                {
+                    _result = @"{
+                        ""status"":""500"",
+                        ""response"":""OK"",
+                        ""message"": ""Error found"",
+                        ""error"": " + _resData + @"
+                    }";
+                }
+
                 return Content(_result, "application/json");
             }
             catch (Exception e)
@@ -312,7 +345,9 @@ namespace HINOSystem.Controllers.API.Master
             }
         }
 
+        #region APIS 
 
+        #endregion
 
     }
 }

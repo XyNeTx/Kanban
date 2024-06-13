@@ -57,14 +57,14 @@ namespace KANBAN.Controllers.API.ReceiveProcess
             string _SQL = "";
             try
             {
-                BearerClass _JBearer = _BearerClass.Header(Request);
-                var user = _JBearer.UserCode.ToString();
-                if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
+                _BearerClass.Authentication(Request);
+                var user = _BearerClass.UserCode.ToString();
+                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
                 if (pData != null) _json = JsonConvert.DeserializeObject(pData);
 
                 _SQL = @" EXEC [exec].[spTB_MS_FACTORY] ";
-                string _jsTB_MS_Factory = _KBCN.ExecuteJSON(_SQL, pUser: _JBearer, pControllerName: ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+                string _jsTB_MS_Factory = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName: ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
 
                 string _result = @"{
                     ""status"":""200"",
@@ -303,9 +303,9 @@ namespace KANBAN.Controllers.API.ReceiveProcess
                         }";
                     return Ok(_result);
                 }
-                BearerClass _JBearer = _BearerClass.Header(Request);
-                var user = _JBearer.UserCode.ToString();
-                char plant = _JBearer.Plant[0];
+                _BearerClass.Authentication(Request);
+                var user = _BearerClass.UserCode.ToString();
+                char plant = _BearerClass.Plant[0];
                 if (data != null)
                 {
                     dynamic _json = JsonConvert.DeserializeObject(data);
@@ -322,21 +322,6 @@ namespace KANBAN.Controllers.API.ReceiveProcess
                             if (recHead != null)
                             {
                                 PDSNo = PDSNo.Remove(13, 1);
-                                if (PDSNo.StartsWith("7Z"))
-                                {
-                                    if (recHead.F_DR == "1144001" || recHead.F_DR == "1144002" || recHead.F_DR == "1145007")
-                                    {
-                                        dr = '0';
-                                    }
-                                    else
-                                    {
-                                        dr = '9';
-                                    }
-                                }
-                                else
-                                {
-                                    dr = '0';
-                                }
                             }
                             else
                             {
@@ -348,6 +333,22 @@ namespace KANBAN.Controllers.API.ReceiveProcess
                                         }";
                                 return Ok(_result);
                             }
+                        }
+                        if (PDSNo.StartsWith("7Z"))
+                        {
+                            var recHead = await _KB3Context.TB_REC_HEADER.SingleOrDefaultAsync(x => x.F_OrderNo == PDSNo);
+                            if (recHead.F_DR == "1144001" || recHead.F_DR == "1144002" || recHead.F_DR == "1145007")
+                            {
+                                dr = '0';
+                            }
+                            else
+                            {
+                                dr = '9';
+                            }
+                        }
+                        else
+                        {
+                            dr = '0';
                         }
                         JsonData.RemoveAt(index);
                         bool _isReceiveAll = true;
@@ -378,7 +379,6 @@ namespace KANBAN.Controllers.API.ReceiveProcess
                                     header.F_MRN_Flag = "1";
                                     _KB3Context.TB_REC_HEADER.Update(header);
                                     pdsDetailSingle.F_Receive_amount = sumQty;
-                                    pdsDetailSingle.F_Receive_Date = now;
                                     _KB3Context.TB_REC_DETAIL.Update(pdsDetailSingle);
                                     _isReceiveAll = false;
                                     _isZeroRec = false;
@@ -418,7 +418,6 @@ namespace KANBAN.Controllers.API.ReceiveProcess
                                 if (_singleReceiveAll != null)
                                 {
                                     _singleReceiveAll.F_Receive_amount = sumQty;
-                                    _singleReceiveAll.F_Receive_Date = now;
                                     _KB3Context.TB_REC_DETAIL.Update(_singleReceiveAll);
                                     string packCode = _singleReceiveAll.F_Address;
                                     if (packCode.StartsWith("Pack:"))

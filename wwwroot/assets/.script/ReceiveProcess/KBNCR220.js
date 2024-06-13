@@ -187,8 +187,20 @@
 
         var reportUrl = "http://hmmt-app03/Reportserver/report/KB3/";
 
-        window.location.href = reportUrl + 'KBNCR220' + '?DateFrom=' + devDate + '&DateTo=' + toDate +
-            '&SupFrom=' + supFrom + '&SupTo=' + supTo + '&Type=' + type +
-            '&Start1=' + start1 + '&Start2=' + start2;
+        //window.location.href = reportUrl + 'KBNCR220' + '?DateFrom=' + devDate + '&DateTo=' + toDate +
+        //    '&SupFrom=' + supFrom + '&SupTo=' + supTo + '&Type=' + type +
+        //    '&Start1=' + start1 + '&Start2=' + start2;
+
+        window.open(
+            _REPORTINGSERVER_ + '%2fKB3%2f' + 'KBNCR220' + '&rs:Command=Render'
+            + '&DateFrom=' + devDate
+            + '&DateTo=' + toDate
+            + '&SupFrom=' + supFrom
+            + '&SupTo=' + supTo
+            + '&Type=' + type
+            + '&Start1=' + start1
+            + '&Start2=' + start2
+            , '_blank'
+        );
     });
 });

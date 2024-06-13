@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using System;
+using System.IO;
 using System.Web;
 using System.Security.Principal;
 using Microsoft.AspNetCore.Http;
@@ -33,10 +34,11 @@ namespace HINOSystem.Controllers
         private readonly IConfiguration _config;
         private readonly IHttpContextAccessor? _httpContextAccessor;
         private readonly ERPConnection _erpConnect;
-        private readonly BearerClass _bearerClass;
+        private readonly BearerClass _BearerClass;
 
         private string Systems = "KB3";
         private string SystemCode = "Systems:KB3";
+        private readonly string StoragePath = @"wwwroot\assets\img\avatars";
 
         private string _DB = "";
         private string _SQL = "";
@@ -53,7 +55,7 @@ namespace HINOSystem.Controllers
             _config = configuration;
             _httpContextAccessor = httpContextAccessor;
             _erpConnect = erpConnect;
-            _bearerClass = bearerClass;
+            _BearerClass = bearerClass;
 
             this._DB = _config.GetValue<string>(this.SystemCode + ":Database");
         }
@@ -77,7 +79,7 @@ namespace HINOSystem.Controllers
 
             if (HttpContext.Request.Query["CN"].ToString() != "")
             {
-                string _CN = _bearerClass.Decrypt(HttpContext.Request.Query["CN"].ToString());
+                string _CN = _BearerClass.Decrypt(HttpContext.Request.Query["CN"].ToString());
                 ViewData["CN"] = _CN;
                 string[] _arr = _CN.Split("&");
                 if (_arr.Length > 0) ViewData["txtUserName"] = _arr[1];
@@ -100,6 +102,10 @@ namespace HINOSystem.Controllers
                 ViewData["txtUserName"] = _dataTable.Rows[0]["Code"].ToString();
             }
 
+
+            string _version = _BearerClass.versions();
+            ViewData["Version"] = _version;
+
             return View();
         }
 
@@ -108,112 +114,134 @@ namespace HINOSystem.Controllers
         [HttpPost]
         public ActionResult Index(IFormCollection collection)
         {
-            string _txtUserName = Request.Form["txtUserName"].ToString().Trim();
-            string _txtPassword = Request.Form["txtPassword"].ToString().Trim();
-            string _txtDomain = Request.Form["txtDomain"].ToString().Trim();
-            string _txtDeviceName = Request.Form["txtDeviceName"].ToString().Trim();
-            string _txtFullDeviceName = Request.Form["txtFullDeviceName"].ToString().Trim();
-            string _txtIPAddress = Request.Form["txtIPAddress"].ToString().Trim();
-            //string _txtIsHINO = Request.Form["txtIsHINO"].ToString().Trim();
-            string _txtIsHINO = "1";
-            string _txtProcessDate = Request.Form["txtProcessDate"].ToString().Trim();
-            string _ddlFactory = Request.Form["ddlFactory"].ToString().Trim();
-            string _ddlShift = Request.Form["ddlShift"].ToString().Trim();
-
-
-            this.fncCheckEnvironment(_txtUserName);
-
-            _SQL = @" EXEC [erp].[AuthenGuardLogin] '" + _txtUserName + @"', '" + _txtPassword + @"', '" + _txtIsHINO + @"'; ";
-            DataTable _dataTable = _erpConnect.ExecuteSQL(_SQL, skipLog: true);
-
-            if (_dataTable == null)
+            try
             {
-                ViewData["ErrorText"] = "Connection failed: Named Pipes Provider (Please try again later).";
-                this.fncActionLog("LOGIN", "FAILED", _SQL, ViewData["ErrorText"].ToString(), User: _txtUserName, Token: "");
-                return View();
-            }
-            if (_dataTable.Rows.Count <= 0)
-            {
-                ViewData["ErrorText"] = "Invalid account or Password incorrect.";
-                this.fncActionLog("LOGIN", "FAILED", _SQL, ViewData["ErrorText"].ToString(), User: _txtUserName, Token: "", DeviceName: _txtDeviceName, IPAddress: _txtIPAddress);
-                return View();
-            }
+
+                string _txtUserName = Request.Form["txtUserName"].ToString().Trim();
+                string _txtPassword = Request.Form["txtPassword"].ToString().Trim();
+                string _txtDomain = Request.Form["txtDomain"].ToString().Trim();
+                string _txtDeviceName = Request.Form["txtDeviceName"].ToString().Trim();
+                string _txtFullDeviceName = Request.Form["txtFullDeviceName"].ToString().Trim();
+                string _txtIPAddress = Request.Form["txtIPAddress"].ToString().Trim();
+                //string _txtIsHINO = Request.Form["txtIsHINO"].ToString().Trim();
+                string _txtIsHINO = "1";
+                string _txtProcessDate = Request.Form["txtProcessDate"].ToString().Trim();
+                string _ddlFactory = Request.Form["ddlFactory"].ToString().Trim();
+                string _ddlShift = Request.Form["ddlShift"].ToString().Trim();
 
 
-            //### Login with HINO employee ###
-            string d_code = "";
-            string d_name = "";
-            string d_surname = "";
-            string d_displayname = "";
-            string d_email = "";
-            string[] _group = { "1", "2", "3", "5" };
-            string[] _reserve = { "1", "2", "3", "4", "5", "6", "12" };
-            string _hino = "NO";
-            if ((Array.IndexOf(_reserve, _dataTable.Rows[0]["_ID"].ToString()) == -1) && (Array.IndexOf(_group, _dataTable.Rows[0]["Group_ID"].ToString()) != -1))
-            {
-                PrincipalContext _pc = new PrincipalContext(ContextType.Domain, "THI_DM_1");
-                UserPrincipal user = UserPrincipal.FindByIdentity(_pc, _txtUserName);
+                this.fncCheckEnvironment(_txtUserName);
 
-                d_code = user.SamAccountName;
-                d_name = user.GivenName;
-                d_surname = user.Surname;
-                d_displayname = user.DisplayName;
-                d_email = user.EmailAddress;
-                _hino = "YES";
-            }
+                _SQL = @" EXEC [erp].[AuthenGuardLogin] '" + _txtUserName + @"', '" + _txtPassword + @"', '" + _txtIsHINO + @"'; ";
+                DataTable _dataTable = _erpConnect.ExecuteSQL(_SQL, skipLog: true);
+
+                if (_dataTable == null)
+                {
+                    ViewData["ErrorText"] = "Connection failed: Named Pipes Provider (Please try again later).";
+                    this.fncActionLog("LOGIN", "FAILED", _SQL, ViewData["ErrorText"].ToString(), User: _txtUserName, Token: "");
+                    return View();
+                }
+                if (_dataTable.Rows.Count <= 0)
+                {
+                    ViewData["ErrorText"] = "Invalid account or Password incorrect.";
+                    this.fncActionLog("LOGIN", "FAILED", _SQL, ViewData["ErrorText"].ToString(), User: _txtUserName, Token: "", DeviceName: _txtDeviceName, IPAddress: _txtIPAddress);
+                    return View();
+                }
 
 
+                //### Login with HINO employee ###
+                string d_code = "";
+                string d_name = "";
+                string d_surname = "";
+                string d_displayname = "";
+                string d_email = "";
+                string[] _group = { "1", "2", "3", "5" };
+                string[] _reserve = { "1", "2", "3", "4", "5", "6", "12" };
+                string _hino = "NO";
+                if ((Array.IndexOf(_reserve, _dataTable.Rows[0]["_ID"].ToString()) == -1) && (Array.IndexOf(_group, _dataTable.Rows[0]["Group_ID"].ToString()) != -1))
+                {
+                    PrincipalContext _pc = new PrincipalContext(ContextType.Domain, "THI_DM_1");
+                    UserPrincipal user = UserPrincipal.FindByIdentity(_pc, _txtUserName);
 
-            //### Login with another user ###
-            //if (_dataTable.Rows[0]["decypt"].ToString() != _txtPassword)
-            //{
-            //    ViewData["ErrorText"] = "Password incorrect.";
-            //    this.fncActionLog("LOGIN", "FAILED", _SQL, ViewData["ErrorText"].ToString(), User: _txtUserName, Token: _dataTable.Rows[0]["Token"].ToString());
-            //    return View();
-            //}
+                    d_code = user.SamAccountName;
+                    d_name = user.GivenName;
+                    d_surname = user.Surname;
+                    d_displayname = user.DisplayName;
+                    d_email = user.EmailAddress;
+                    _hino = "YES";
+                }
 
 
-            string _language = _dataTable.Rows[0]["UILanguage"].ToString() == "EN" ? "" : _dataTable.Rows[0]["UILanguage"].ToString();
+
+                //### Login with another user ###
+                //if (_dataTable.Rows[0]["decypt"].ToString() != _txtPassword)
+                //{
+                //    ViewData["ErrorText"] = "Password incorrect.";
+                //    this.fncActionLog("LOGIN", "FAILED", _SQL, ViewData["ErrorText"].ToString(), User: _txtUserName, Token: _dataTable.Rows[0]["Token"].ToString());
+                //    return View();
+                //}
 
 
-            HttpContext.Session.SetString("SYSTEM", this.Systems);
-            HttpContext.Session.SetString("HINO", _txtIsHINO);
-            HttpContext.Session.SetString("TOKEN", _dataTable.Rows[0]["Token"].ToString());
-            HttpContext.Session.SetString("USER_ID", _dataTable.Rows[0]["_ID"].ToString());
-            HttpContext.Session.SetString("USER_CODE", (d_code != "" ? d_code : _dataTable.Rows[0]["Code"].ToString()));
-            HttpContext.Session.SetString("USER_NAME", (d_name != "" ? d_name : _dataTable.Rows[0]["Name"].ToString()));
-            HttpContext.Session.SetString("USER_SURNAME", (d_surname != "" ? d_surname : _dataTable.Rows[0]["Surname"].ToString()));
-            HttpContext.Session.SetString("USER_NAMETH", _dataTable.Rows[0]["NameTH"].ToString());
-            HttpContext.Session.SetString("USER_SURNAMETH", _dataTable.Rows[0]["SurnameTH"].ToString());
-            HttpContext.Session.SetString("USER_DISPLAY", _dataTable.Rows[0]["Name" + _language].ToString() + " " + _dataTable.Rows[0]["Surname" + _language].ToString());
-            if ((_dataTable.Rows[0]["Name" + _language].ToString() == null) && (_dataTable.Rows[0]["Surname" + _language].ToString() == null))
-            {
-                HttpContext.Session.SetString("USER_DISPLAY", (d_displayname != "" ? d_displayname : _dataTable.Rows[0]["Name"].ToString() + " " + _dataTable.Rows[0]["Surname"].ToString()));
-            }
-            HttpContext.Session.SetString("USER_EMAIL", (d_email != "" ? d_email : _dataTable.Rows[0]["Email"].ToString()));
-            HttpContext.Session.SetString("USER_UILANGUAGE", _language);
-            HttpContext.Session.SetString("USER_DOMAIN", _txtDomain);
-            HttpContext.Session.SetString("USER_DEVICENAME", _txtDeviceName);
-            HttpContext.Session.SetString("USER_FULLDEVICENAME", _txtFullDeviceName);
-            HttpContext.Session.SetString("USER_IPADDRESS", _txtIPAddress);
-            HttpContext.Session.SetString("USER_PROCESSDATE", _txtProcessDate);
-            HttpContext.Session.SetString("USER_PLANT", _ddlFactory);
-            HttpContext.Session.SetString("USER_SHIFT", _ddlShift);
-            HttpContext.Session.SetString("USER_AVATAR", (_dataTable.Rows[0]["Avatar"].ToString() == "" ? "hino/" + _dataTable.Rows[0]["Code"].ToString() + ".jpg" : _dataTable.Rows[0]["Avatar"].ToString()));
-            HttpContext.Session.SetString("USER_UITHEME", _dataTable.Rows[0]["UITheme"].ToString());
-            HttpContext.Session.SetString("USER_GROUP_ID", _dataTable.Rows[0]["Group_ID"].ToString());
-            HttpContext.Session.SetString("USER_GROUP_NAME", _dataTable.Rows[0]["Group_Name"].ToString());
-            HttpContext.Session.SetString("USER_GROUP_NAMETH", _dataTable.Rows[0]["Group_NameTH"].ToString());
+                string _language = _dataTable.Rows[0]["UILanguage"].ToString() == "EN" ? "" : _dataTable.Rows[0]["UILanguage"].ToString();
+
+
+                HttpContext.Session.SetString("SYSTEM", this.Systems);
+                HttpContext.Session.SetString("HINO", _txtIsHINO);
+                HttpContext.Session.SetString("TOKEN", _dataTable.Rows[0]["Token"].ToString());
+                HttpContext.Session.SetString("USER_ID", _dataTable.Rows[0]["_ID"].ToString());
+                HttpContext.Session.SetString("USER_CODE", (d_code != "" ? d_code : _dataTable.Rows[0]["Code"].ToString()));
+                HttpContext.Session.SetString("USER_NAME", (d_name != "" ? d_name : _dataTable.Rows[0]["Name"].ToString()));
+                HttpContext.Session.SetString("USER_SURNAME", (d_surname != "" ? d_surname : _dataTable.Rows[0]["Surname"].ToString()));
+                HttpContext.Session.SetString("USER_NAMETH", _dataTable.Rows[0]["NameTH"].ToString());
+                HttpContext.Session.SetString("USER_SURNAMETH", _dataTable.Rows[0]["SurnameTH"].ToString());
+                HttpContext.Session.SetString("USER_DISPLAY", _dataTable.Rows[0]["Name" + _language].ToString() + " " + _dataTable.Rows[0]["Surname" + _language].ToString());
+                if ((_dataTable.Rows[0]["Name" + _language].ToString() == null) && (_dataTable.Rows[0]["Surname" + _language].ToString() == null))
+                {
+                    HttpContext.Session.SetString("USER_DISPLAY", (d_displayname != "" ? d_displayname : _dataTable.Rows[0]["Name"].ToString() + " " + _dataTable.Rows[0]["Surname"].ToString()));
+                }
+                HttpContext.Session.SetString("USER_EMAIL", (d_email != "" ? d_email : _dataTable.Rows[0]["Email"].ToString()));
+                HttpContext.Session.SetString("USER_UILANGUAGE", _language);
+                HttpContext.Session.SetString("USER_DOMAIN", _txtDomain);
+                HttpContext.Session.SetString("USER_DEVICENAME", _txtDeviceName);
+                HttpContext.Session.SetString("USER_FULLDEVICENAME", _txtFullDeviceName);
+                HttpContext.Session.SetString("USER_IPADDRESS", _txtIPAddress);
+                HttpContext.Session.SetString("USER_PROCESSDATE", _txtProcessDate);
+                HttpContext.Session.SetString("USER_PLANT", _ddlFactory);
+                HttpContext.Session.SetString("USER_SHIFT", _ddlShift);
+
+                string _avatar = (_dataTable.Rows[0]["Avatar"].ToString() == "" ? "hino/" + _dataTable.Rows[0]["Code"].ToString() + ".jpg" : "private/" + _dataTable.Rows[0]["Avatar"].ToString());
+                if (!System.IO.File.Exists(this.StoragePath + @"\" + _avatar)) _avatar = "avatar.jpg";
+                HttpContext.Session.SetString("USER_AVATAR", _avatar);
+                HttpContext.Session.SetString("USER_UITHEME", _dataTable.Rows[0]["UITheme"].ToString());
+                HttpContext.Session.SetString("USER_UIHEADERBRAND", _dataTable.Rows[0]["UIHeaderBrand"].ToString());
+                HttpContext.Session.SetString("USER_UIHEADER", _dataTable.Rows[0]["UIHeader"].ToString());
+                HttpContext.Session.SetString("USER_UILINKCOLOR", _dataTable.Rows[0]["UILinkColor"].ToString());
+                HttpContext.Session.SetString("USER_UIMENUCOLOR", _dataTable.Rows[0]["UIMenuColor"].ToString());
+                HttpContext.Session.SetString("USER_UIICONCOLOR", _dataTable.Rows[0]["UIIconColor"].ToString());
+                HttpContext.Session.SetString("USER_UIEXPANDICON", _dataTable.Rows[0]["UIExpandIcon"].ToString());
+                HttpContext.Session.SetString("USER_UIMENUICON", _dataTable.Rows[0]["UIMenuIcon"].ToString());
+                HttpContext.Session.SetString("USER_UISIDEBAR", _dataTable.Rows[0]["UISideBar"].ToString());
+
+                HttpContext.Session.SetString("USER_GROUP_ID", _dataTable.Rows[0]["Group_ID"].ToString());
+                HttpContext.Session.SetString("USER_GROUP_NAME", _dataTable.Rows[0]["Group_Name"].ToString());
+                HttpContext.Session.SetString("USER_GROUP_NAMETH", _dataTable.Rows[0]["Group_NameTH"].ToString());
             
-            this.fncActionLog("LOGIN", "OK", _SQL);
+                this.fncActionLog("LOGIN", "OK", _SQL);
 
-            string _url = "~/Home";
+                string _url = "~/Home";
 
-            //string _url = "~/" + (this.Systems != "" ? this.Systems + "/" : "") + "Home";
-            //if (_dataTable.Rows[0]["Group_ID"].ToString() == "3") _url = "~/UploadReceipt/UploadReceipt";
-            //if (_dataTable.Rows[0]["Group_ID"].ToString() == "4") _url = "~/Supplier/ClaimInformation";
+                //string _url = "~/" + (this.Systems != "" ? this.Systems + "/" : "") + "Home";
+                //if (_dataTable.Rows[0]["Group_ID"].ToString() == "3") _url = "~/UploadReceipt/UploadReceipt";
+                //if (_dataTable.Rows[0]["Group_ID"].ToString() == "4") _url = "~/Supplier/ClaimInformation";
 
-            return Redirect(_url);
+                return Redirect(_url);
+                }
+            catch (Exception ex)
+            {
+                this.fncActionLog("LOGIN", "FAILED");
+
+                return Redirect("~/");
+            }
         }
         #endregion
 
@@ -225,7 +253,7 @@ namespace HINOSystem.Controllers
         {
             try
             {
-                this.fncActionLog("LOGOUT", "OK");
+                this.fncActionLog("Logout", "OK");
 
                 string _url = "~/";
                 if (HttpContext.Session.GetString("HINO").ToString() == "YES") _url = "~/" + this.Systems + "/Hino";
@@ -238,6 +266,7 @@ namespace HINOSystem.Controllers
             }
             catch (Exception ex)
             {
+                this.fncActionLog("Logout", "FAILED");
                 return Redirect("~/");
             }
 
@@ -333,6 +362,8 @@ namespace HINOSystem.Controllers
                 }
                 _SQL_Log = @"INSERT INTO [log].[Action] ([UserCode]
                                   ,[Token]
+                                  ,[DeviceName]
+                                  ,[IPAddress]
                                   ,[ActionType]
                                   ,[ActionAt]
                                   ,[SystemName]
@@ -343,14 +374,17 @@ namespace HINOSystem.Controllers
                                   ,[SQL]
                                 )VALUES('" + _user + @"'
                                   , '" + _token + @"'
-                                  , '" + Action + @"'
-                                  , GETDATE()
-                                  , '" + this.Systems + @"'
                                   , '" + HttpContext.Session.GetString("USER_DEVICENAME").ToString() + @"'
                                   , '" + HttpContext.Session.GetString("USER_IPADDRESS").ToString() + @"'
+                                  , '" + Action.ToUpper() + @"'
+                                  , GETDATE()
+                                  , '" + this.Systems + @"'
+                                  , 'Login'
+                                  , '" + (Action == "LOGIN" ? "Index" : Action) + @"'
                                   , '" + Result + @"'
                                   , '" + Message + @"'
                                   , '" + (_SQL == null ? "" : _SQL.Replace("'", "''").Replace("\r", " ").Replace("\n", " ").Replace("\t", " ").ToString().Trim()) + @"'
+                                  
                                 )";
                 _erpConnect.Execute(_SQL_Log, skipLog: true);
 

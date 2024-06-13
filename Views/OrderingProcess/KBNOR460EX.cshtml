@@ -74,8 +74,8 @@
                     <div class="row mt-2">
                         <div class="col">
 
-                            <fieldset class="fieldset" id="fldPDSNo">
-                                <legend><item type="checkbox" id="chkPDSNo" label="Select PDS No. : " value="1" checked></item></legend>
+                            <fieldset class="fieldset" id="fldPDSNo" disabled>
+                                <legend><item type="checkbox" id="chkPDSNo" label="Select PDS No. : "></item></legend>
 
                                 <div class="row">
                                     <div class="col-6">
@@ -179,6 +179,6 @@
 
 
 @section Scripts{
-    <script type="text/javascript" src="~/assets/js/History/UserMaintenance.js?@ViewData["Version"]"></script>
+    @*<script type="text/javascript" src="~/assets/js/History/UserMaintenance.js?@ViewData["Version"]"></script>*@
     <script type="text/javascript" src="~/assets/.script/OrderingProcess/KBNOR460EX.js?@ViewData["Version"]"></script>
 }

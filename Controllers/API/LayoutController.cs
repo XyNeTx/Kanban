@@ -30,21 +30,27 @@ namespace HINOSystem.Controllers.API
     {
         private readonly WarrantyClaimConnect _wrtConnect;
         private readonly BearerClass _BearerClass;
+        private readonly KanbanConnection _KBCN;
 
-        private readonly string StoragePath = @"wwwroot\assets\img\avatars";
+        private readonly string StoragePath = @"wwwroot\assets\img\avatars\private";
 
-        public LayoutController(WarrantyClaimConnect wrtConnect, BearerClass bearerClass)
+        public LayoutController(
+            BearerClass bearerClass,
+            KanbanConnection kanbanConnection,
+            WarrantyClaimConnect wrtConnect
+            )
         {
-            _wrtConnect = wrtConnect;
             _BearerClass = bearerClass;
+            _KBCN = kanbanConnection;
+            _wrtConnect = wrtConnect;
         }
 
 
         [HttpPatch] //Update profile
         public IActionResult Profile(int id = 0)
         {
-            BearerClass _JBearer = _BearerClass.Header(Request);
-            if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
+            _BearerClass.Authentication(Request);
+            if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
             string _sql = @"UPDATE [erp].[User]
                 SET Code = '" + Request.Form["Code"].ToString() + @"'
@@ -58,7 +64,7 @@ namespace HINOSystem.Controllers.API
 
                 SELECT * FROM [erp].[User] WHERE _ID NOT IN (1,2) AND isDelete=0 AND _ID = " + Request.Form["_ID"].ToString() + @" ORDER BY Code;
             ";
-            string _jsonData = _wrtConnect.ExecuteJSON(_sql, pUser: _JBearer, pAction: "CHANGE PROFILE", pControllerName: ControllerContext.ActionDescriptor.ControllerName.ToString(), pActionName: MethodBase.GetCurrentMethod().Name.ToString());
+            string _jsonData = _KBCN.ExecuteJSON(_sql, pUser: _BearerClass, pAction: "CHANGE PROFILE", pControllerName: ControllerContext.ActionDescriptor.ControllerName.ToString(), pActionName: MethodBase.GetCurrentMethod().Name.ToString());
             string _result = @"{
                 ""status"":""200"",
                 ""response"":""OK"",
@@ -93,9 +99,12 @@ namespace HINOSystem.Controllers.API
             string _sql = @"UPDATE [erp].[User]
                 SET Avatar = '" + fileName + @"'
                 WHERE _ID = '" + userid + @"';
-            ";
-            string _jsonData = _wrtConnect.ExecuteJSON(_sql, pAction: "CHANGE PROFILE IMAGE");
 
+                SELECT * FROM [erp].[User] WHERE _ID NOT IN (1,2) AND isDelete=0 AND _ID = " + userid + @" ORDER BY Code;
+            ";
+            string _jsonData = _KBCN.ExecuteJSON(_sql, pAction: "CHANGE PROFILE IMAGE");
+
+            fileName = "private/" + fileName;
             string _result = @"{
                 ""status"":""200"",
                 ""response"":""OK"",
@@ -105,6 +114,16 @@ namespace HINOSystem.Controllers.API
 
             return Content(_result, "application/json");
         }
+
+
+        //[HttpPost]
+        //public string checkVersion()
+        //{
+        //    string strFilePath = @"KANBAN.dll";
+        //    DateTime lastModified = System.IO.File.GetLastWriteTime(strFilePath);
+
+        //    return "";
+        //}
 
 
     }

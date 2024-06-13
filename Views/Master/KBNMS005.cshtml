@@ -7,23 +7,137 @@
                 <form id="frmCondition">
                     <div class="row">
                         <div class="col-6">
-                            <item type="select" id="F_Plant" label="Plant" value="3" readonly></item>
+                            <div class="row">
+                                <div class="col-6">
+                                    <item type="select" id="itmSupplier" label="Supplier"></item>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <item type="select" id="itmKanban" label="Kanban"></item>
+                                </div>
+                                <div class="col-6">
+                                    <item type="select" id="itmKanbanTo" label="To"></item>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <item type="select" id="itmStoreCode" label="Store Code"></item>
+                                </div>
+                                <div class="col-6">
+                                    <item type="select" id="itmStoreCodeTo" label="To"></item>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <item type="select" id="itmPartNo" label="Part No"></item>
+                                </div>
+                                <div class="col-6">
+                                    <item type="select" id="itmPartNoTo" label="To"></item>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <item type="date" id="itmDeliveryDate" label="Delivery Date" format="yyyy-mm-dd" default="now"></item>
+                                </div>
+                                <div class="col-6">
+                                    <item type="date" id="itmDeliveryDateTo" label="To" format="yyyy-mm-dd" default="now"></item>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="row">
+                                <div class="col">
+                                </div>
+                                <div class="col-6">
+                                    <item type="textarea" id="itmRedLine" style="background-color:lightpink;" rows="2" readonly></item>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col">
+                                </div>
+                                <div class="col-6">
+                                    <item type="textarea" id="itmBlueLine" style="background-color:aqua;" rows="2" readonly></item>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-6">
-                            <item type="select" id="F_Supplier" label="Supplier"></item>
+                            <fieldset class="fieldset">
+                                <legend>Status</legend>
+
+                                <div class="row">
+                                    <div class="col-3">
+                                        <item type="checkbox" id="itmStatusOK" label="OK"></item>
+                                    </div>
+                                    <div class="col-3">
+                                        <item type="checkbox" id="itmStatusNO" label="NO"></item>
+                                    </div>
+                                    <div class="col">
+                                        <item type="checkbox" id="itmStatusST" label="Parts Shortage"></item>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+                        <div class="col">
+                            <item type="button" id="btnSearch" label="Search" style="width:100%"></item>
+                        </div>
+                        <div class="col">
+                            <item type="button" id="btnReport" label="Report" style="width:100%"></item>
+                        </div>
+                        <div class="col">
+                            <item type="button" id="btnCancel" label="Cancel" style="width:100%"></item>
                         </div>
                     </div>
-@*                    <div class="row">
-                        <div class="col-md-3">
-                            <item type="date" id="F_Start_Date" label="Start Date" format="yyyy-mm-dd" default="now" noedit required></item>
-                        </div>
-                        <div class="col-md-3">
-                            <item type="date" id="F_End_Date" label="To" format="yyyy-mm-dd" default="now" noedit required></item>
-                        </div>
-                    </div>*@
                 </form>
+
+                <div class="row mt-2">
+                    <div class="col-7">
+                        <div class="row">
+                            <div class="col-2" style="padding-left:1px;padding-right:0px;">
+                                <item type="textfloating" id="txtPartNo" label="Part NO."></item>
+                            </div>
+                            <div class="col" style="padding-left:1px;padding-right:0px;">
+                                <item type="textfloating" id="txtStoreCode" label="Store"></item>
+                            </div>
+                            <div class="col-4" style="padding-left:1px;padding-right:0px;">
+                                <item type="textfloating" id="txtPartName" label="Part Name"></item>
+                            </div>
+                            <div class="col" style="padding-left:1px;padding-right:0px;">
+                                <item type="textfloating" id="txtSupplierName" label="Supplier"></item>
+                            </div>
+                            <div class="col" style="padding-left:1px;padding-right:0px;">
+                                <item type="textfloating" id="txtKanbanNo" label="Kanban No"></item>
+                            </div>
+                            <div class="col" style="padding-left:1px;padding-right:0px;">
+                                <item type="textfloating" id="txtCycle" label="Cycle"></item>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="row">
+                            <div class="col" style="padding-left:1px;padding-right:0px;">
+                                <item type="textfloating" id="txtQTYPack" label="QTY/Pack"></item>
+                            </div>
+                            <div class="col" style="padding-left:1px;padding-right:0px;">
+                                <item type="textfloating" id="txtForecastMax" label="Forecast/Max"></item>
+                            </div>
+                            <div class="col" style="padding-left:1px;padding-right:0px;">
+                                <item type="textfloating" id="txtCurrentUse" label="CurrentUse"></item>
+                            </div>
+                            <div class="col" style="padding-left:1px;padding-right:0px;">
+                                <item type="textfloating" id="txtAverageTrip" label="Average/Trip"></item>
+                            </div>
+                            <div class="col" style="padding-left:1px;padding-right:0px;">
+                                <item type="textfloating" id="txtSTDStock" label="STD. Stock"></item>
+                            </div>
+                            <div class="col" style="padding-left:1px;padding-right:0px;">
+                                <item type="textfloating" id="txtSafetyStock" label="SafetyStock"></item>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 <div class="row">
                     <div class="col mt-4">
@@ -124,7 +238,7 @@
 
 
 @section Scripts{
-    <script type="text/javascript" src="~/assets/js/History/UserMaintenance.js"></script>
+
     @*<script type="text/javascript" src="~/assets/.script/Template/Master.js"></script>*@
     <script type="text/javascript" src="~/assets/.script/Master/KBNMS005.js?@ViewData["Version"]"></script>
     @*<script type="text/javascript" src="~/assets/adminty/vue@3/vueApp/Master/KBNMS005.vue.js?@ViewData["Version"]"></script>*@

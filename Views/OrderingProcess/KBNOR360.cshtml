@@ -1,0 +1,110 @@
+﻿<div class="row">
+
+    <div class="col-xl-12 col-md-12 col-sm-12">
+        <div class="card border-left-primary shadow h-100">
+            <div class="card-body">
+
+                <form id="frmCondition">
+
+                    <div class="row mb-2">
+                        <div class="col">
+
+                            <fieldset class="fieldset">
+                                <legend>Current Process Information :</legend>
+
+                                <div class="row">
+                                    <div class="col-6">
+
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <item type="text" id="txtProcessDate" label="Process Date :" value="@ViewData["_ProcessDate"]" readonly></item>
+                                            </div>
+                                            <div class="col-6">
+                                                <item type="text" id="txtPlant" label="Plant :" value="@ViewData["_Plant"]" readonly></item>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="row">
+                                            <div class="col">
+                                            </div>
+                                            <div class="col">
+                                                <item type="button" id="btnRegister" label="6.1 Register" style="width:100%"></item>
+                                            </div>
+                                            <div class="col">
+                                                <item type="button" id="btnClear" label="Clear Module Master" style="width:100%"></item>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-6">
+
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <item type="text" id="txtProcessShift" label="Process Shift :" value="@ViewData["_ShiftTitle"]?.ToString()" readonly></item>
+                                            </div>
+                                            <div class="col-6">
+                                                <item type="text" id="txtOrderType" label="Order Type :" value="Urgent Order" readonly></item>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="col-6">
+
+                                        <div class="row">
+                                            <div class="col">
+                                            </div>
+                                            <div class="col">
+                                                <item type="button" id="btnGenerate" label="6.2 Generate PDS Picking" style="width:100%"></item>
+                                            </div>
+                                            <div class="col">
+                                                <item type="button" id="btnExit" label="Exit" style="width:100%"></item>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+                                <div class="row mt-3">
+                                    <div class="col">
+                                    </div>
+                                    <div class="col-8">
+                                        <item type="progress" id="prgProcess" label="CKD Registration PDS for CKD In-House Ordering" max="100"></item>
+                                    </div>
+                                    <div class="col">
+                                    </div>
+                                </div>
+
+                            </fieldset>
+
+                        </div>
+                    </div>
+
+
+                    <div class="row mb-2">
+                        <div class="col">
+
+                            <item type="table" id="tblMaster" legend="List of Detail"></item>
+
+                        </div>
+                    </div>
+
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+
+@section Scripts{
+    <script type="text/javascript" src="~/assets/.script/OrderingProcess/KBNOR360.js?@ViewData["Version"]"></script>
+}

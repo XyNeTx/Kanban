@@ -193,6 +193,8 @@
             let _url = (_NAMESPACE_ != '' ? '/' + _NAMESPACE_ : '') + '/EXEC/ExecuteJSON';
             let _postData = (pConfig.data != undefined ? ajaxPostData(pConfig.data) : null);
 
+            console.log(_postData);
+
             return $.ajax({
                 type: "POST",
                 contentType: "application/json; charset=utf-8",
@@ -217,6 +219,8 @@
             let _url = (_NAMESPACE_ != '' ? '/' + _NAMESPACE_ : '') + '/EXEC/xExecuteJSON';
             let _postData = (pConfig.data != undefined ? ajaxPostData(pConfig.data) : null);
 
+            console.log(_postData);
+
             return $.ajax({
                 type: "POST",
                 contentType: "application/json; charset=utf-8",
@@ -239,12 +243,18 @@
 
     PostAsync(pConfig = null) {
         if (pConfig != null) {
+            console.log(pConfig);
 
             let _url = (_NAMESPACE_ != '' ? '/' + _NAMESPACE_ : '') + '/' + pConfig.url;
             let _postData = (pConfig.data != undefined ? ajaxPostData(pConfig.data) : null);
+            let _type = (pConfig.method != undefined ? pConfig.method : 'POST');
+
+            console.log(_type);
+            console.log(_url);
+            console.log(_postData);
 
             return $.ajax({
-                type: "POST",
+                type: _type,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 headers: ajexHeader,
@@ -255,6 +265,7 @@
                 },
                 error: function (result) {
                     console.error('Ajax.Post: ' + result.responseText);
+                    xSplash.hide();
                 }
             });
 

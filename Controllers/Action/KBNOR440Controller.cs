@@ -45,7 +45,7 @@ namespace KANBAN.Controllers
 
         public IActionResult calculateData()
         {
-            dynamic _bearer, _data = null;
+            dynamic _data = null;
             string _SQL, _resData;
             string _result = @"{
                     ""status"":""200"",
@@ -64,9 +64,9 @@ namespace KANBAN.Controllers
             {
                 //    //_SQL = @" EXEC [exec].[spKBNOR440_EXCEPTION]
                 //    //        '" + _data.OrderType.ToString() + @"',
-                //    //        '" + _bearer.Plant + @"',
-                //    //        '" + _bearer.UserCode + @"' ";
-                //    //_KBCN.Execute(_SQL, pUser: _bearer,
+                //    //        '" + _BearerClass.Plant + @"',
+                //    //        '" + _BearerClass.UserCode + @"' ";
+                //    //_KBCN.Execute(_SQL, pUser: _BearerClass,
                 //    //            pControllerName: ControllerContext.ActionDescriptor.ControllerName,
                 //    //            pActionName: ControllerContext.ActionDescriptor.ActionName
                 //    //            );

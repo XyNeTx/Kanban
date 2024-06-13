@@ -1,0 +1,91 @@
+﻿<div class="row">
+
+    <div class="col-xl-12 col-md-12 col-sm-12">
+        <div class="card border-left-primary shadow h-100">
+            <div class="card-body">
+
+                <form id="frmCondition">
+
+                    <div class="row">
+                        <div class="col">
+
+                            <fieldset class="fieldset">
+                                <legend>Current Process Information :</legend>
+
+                                <div class="row">
+                                    <div class="col-6">
+
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <item type="text" id="txtProcessDate" label="Process Date :" value="@ViewData["_ProcessDate"]" readonly></item>
+                                            </div>
+                                            <div class="col-6">
+                                                <item type="text" id="txtPlant" label="Plant :" value="@ViewData["_Plant"]" readonly></item>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-6">
+
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <item type="text" id="txtProcessShift" label="Process Shift :" value="@ViewData["_ShiftTitle"]?.ToString()" readonly></item>
+                                            </div>
+                                            <div class="col-6">
+                                                <item type="text" id="txtOrderType" label="Order Type :" value="CKD In-House Order" readonly></item>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="row">
+                                            <div class="col">
+                                            </div>
+                                            <div class="col">
+                                                <item type="button" id="btnInterface" label="Interface to Order" style="width:100%"></item>
+                                            </div>
+                                            <div class="col">
+                                                <item type="button" id="btnReport" label="Report" style="width:100%"></item>
+                                            </div>
+                                            <div class="col">
+                                                <item type="button" id="btnExit" label="Exit" style="width:100%"></item>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-5">
+                                    <div class="col">
+                                        <item type="progress" id="prgProcess" label="Process : {{##.##}} %" max="100"></item>
+                                    </div>
+                                </div>
+
+                            </fieldset>
+
+                        </div>
+                    </div>
+
+                </form>
+
+                <div class="row">
+                    <div class="col mt-4">
+                        <item type="table" id="tblMaster" legend="List of Detail"></item>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+
+@section Scripts{
+    @*<script type="text/javascript" src="~/assets/js/History/UserMaintenance.js?@ViewData["Version"]"></script>*@
+    <script type="text/javascript" src="~/assets/.script/OrderingProcess/KBNOR310.js?@ViewData["Version"]"></script>
+}

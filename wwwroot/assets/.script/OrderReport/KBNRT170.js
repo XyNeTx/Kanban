@@ -109,9 +109,9 @@
                 if (result.status === "200") {
                     var filename = location.pathname.substring(location.pathname.lastIndexOf('/') + 1);
                     var reportUrl = "http://hmmt-app03/Reportserver/report/KB3/";
-                    //window.location.href = reportUrl + filename + typeDate + '?Sup=' + supFrom + '&DateFrom=' + dateFrom +
-                    //    '&DateTo=' + dateTo + '&CycleFrom=' + cycleFrom + '&CycleTo=' + cycleTo + '&DateFromShow=' + dateFromShow +
-                    //    '&DateToShow=' + dateToShow;
+                    window.location.href = reportUrl + filename + typeDate + '?Sup=' + supFrom + '&DateFrom=' + dateFrom +
+                        '&DateTo=' + dateTo + '&CycleFrom=' + cycleFrom + '&CycleTo=' + cycleTo + '&DateFromShow=' + dateFromShow +
+                        '&DateToShow=' + dateToShow;
                 }
                 else {
                     return xSwal.Error(result.title, result.message);

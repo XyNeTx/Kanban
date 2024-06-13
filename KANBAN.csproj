@@ -18,6 +18,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="wwwroot\assets\.libs\class\lab.Object.js" />
+    <Content Include="wwwroot\assets\.libs\class\lab.Log.js" />
     <Content Include="wwwroot\assets\.libs\class\lab.API.js">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
@@ -58,6 +60,7 @@
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
     <Content Include="wwwroot\assets\.libs\splash\splash.css" />
+    <Content Include="wwwroot\assets\.script\DownloadData\KBNDL001.js" />
     <Content Include="wwwroot\assets\.script\EmergencyData\KBNIM006M.js" />
     <Content Include="wwwroot\assets\.script\EmergencyData\KBNIM006C.js" />
     <Content Include="wwwroot\assets\.script\EmergencyData\KBNIM006.js" />
@@ -78,6 +81,30 @@
     <Content Include="wwwroot\assets\.script\MSPData\KBNIM003S.js" />
     <Content Include="wwwroot\assets\.script\MSPData\KBNIM003M.js" />
     <Content Include="wwwroot\assets\.script\MSPData\KBNIM003.js" />
+    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR160.js" />
+    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR123.js" />
+    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR122.js" />
+    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR121.js" />
+    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR110.js" />
+    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR120.js" />
+    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR130.js" />
+    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR140.js" />
+    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR150.js" />
+    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR150EX.js" />
+    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR710.js" />
+    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR700.js" />
+    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR300.js" />
+    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR310.js" />
+    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR370.js" />
+    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR360.js" />
+    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR330.js" />
+    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR321.js" />
+    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR320.js" />
+    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR640.js" />
+    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR630.js" />
+    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR620.js" />
+    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR610.js" />
+    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR600.js" />
     <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR440.js" />
     <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR450.js" />
     <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR470.js" />
@@ -119,6 +146,7 @@
     <Content Include="wwwroot\assets\.script\VLTData\KBNIM0043.js" />
     <Content Include="wwwroot\assets\.script\VLTData\KBNIM004M.js" />
     <Content Include="wwwroot\assets\.script\VLTData\KBNIM004.js" />
+    <Content Include="wwwroot\assets\.script\_HistoryLog.js" />
     <Content Include="wwwroot\assets\.script\_Layout.js" />
     <Content Include="wwwroot\assets\.script\LogisticCondition\KBNLC120.js" />
     <Content Include="wwwroot\assets\.script\LogisticCondition\KBNLC130.js" />
@@ -2210,7 +2238,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="BarcodeLib" Version="3.0.3" />
     <PackageReference Include="EASendMail" Version="7.9.1.1" />
+    <PackageReference Include="FreeSpire.Barcode" Version="6.6.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Negotiate" Version="6.0.13" />
     <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.2.0" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.5" />

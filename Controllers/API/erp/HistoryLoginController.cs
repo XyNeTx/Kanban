@@ -35,11 +35,19 @@ namespace HINOSystem.Controllers.API.erp
             dynamic _json = JsonConvert.DeserializeObject(pData);
             try
             {
+                _KBCN.Plant = 3;
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
+                _KBCN.Plant = _BearerClass.Plant;
+
                 _sql = @" EXEC [erp].[HistorySQL] '" + _json.Action + @"' ";
                 string _HistorySQL = _KBCN.ExecuteJSON(_sql, skipLog: true);
 
-                _sql = @" EXEC [erp].[HistoryAction] '" + _json.Action + @"', '" + _json.Date + @"' ";
+                _sql = @" EXEC [erp].[HistoryAction] '" + _json.Action + @"', '" + _json.Date + @"', '" + _json.DateTo + @"', '" + (_json.Exclude == 1 ? "search" : "") + @"' ";
                 string _HistoryAction = _KBCN.ExecuteJSON(_sql, skipLog: true);
+
+                _sql = @" EXEC [erp].[HistoryFailed] '" + _json.Action + @"', '" + _json.FailedDate + @"', '" + _json.FailedDateTo + @"' ";
+                string _HistoryFailed = _KBCN.ExecuteJSON(_sql, skipLog: true);
 
                 _sql = @" EXEC [erp].[HistoryLogin] 'KB3', '" + _json.UserCode + @"', '" + _json.Date + @"' ";
                 string _HistoryLogin = _KBCN.ExecuteJSON(_sql, skipLog: true);
@@ -50,9 +58,10 @@ namespace HINOSystem.Controllers.API.erp
                     ""message"": ""Data Found"",
                     ""data"": 
                         {
-                            ""sql"" : "  + (_HistorySQL != "" ? _HistorySQL : "NULL") + @",
-                            ""action"" : " + (_HistoryAction!="" ? _HistoryAction : "NULL" ) + @",
-                            ""login"" : "  + (_HistoryLogin != "" ? _HistoryLogin : "NULL") + @"
+                            ""sql"" : "  + (_HistorySQL != "" && _HistorySQL != null ? _HistorySQL : @"""""") + @",
+                            ""action"" : " + (_HistoryAction != "" && _HistoryAction != null ? _HistoryAction : @"""""") + @",
+                            ""failed"" : " + (_HistoryFailed != "" && _HistoryFailed != null ? _HistoryFailed : @"""""" ) + @",
+                            ""login"" : " + (_HistoryLogin != "" && _HistoryLogin != null ? _HistoryLogin : @"""""") + @"
                         }
                     }";
                 return Content(_result, "application/json");

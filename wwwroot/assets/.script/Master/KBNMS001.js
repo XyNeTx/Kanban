@@ -1,6 +1,6 @@
 ﻿$(document).ready(function () {
 
-    const xKBNMS001 = new MasterTemplate({
+    const KBNMS001 = new MasterTemplate({
         Controller: _PAGE_,
         Table: 'tblMaster',
         ColumnTitle: {
@@ -22,28 +22,28 @@
     });
 
 
-    xKBNMS001.prepare();
+    KBNMS001.prepare();
 
-    xKBNMS001.initial(function (result) {
-
-        xKBNMS001.search();
+    KBNMS001.initial(function (result) {
+        $('#btnExecute').removeAttr('disabled');
+        KBNMS001.search();
     });
 
     onSave = function () {
-        xKBNMS001.save(function () {
-            xKBNMS001.search();
+        KBNMS001.save(function () {
+            KBNMS001.search();
         });
     }
 
     onDelete = function () {
-        xKBNMS001.delete(function () {
-            xKBNMS001.search();
+        KBNMS001.delete(function () {
+            KBNMS001.search();
         });
     }
 
     onDeleteAll = function () {
-        xKBNMS001.deleteall(function () {
-            xKBNMS001.search();
+        KBNMS001.deleteall(function () {
+            KBNMS001.search();
         });
     }
 
@@ -54,13 +54,20 @@
     }
 
     onExecute = function () {
-        console.log('onExecute');
+        F_OrderType.readonly = (F_OrderType.readonly == true ? false : true);
+        //F_OrderType.label = 'label';
+        //console.log(F_Effect_Date.value);
+        //F_Effect_Date.value = '2999-12-31';
+
+        console.log(F_Effect_Date);
+        console.log(F_Effect_Date.value);
+        console.log(F_End_Date.value);
     }
 
     //xAjax.onChange('#frmCondition #F_Plant', function () {
     //    $('#frmMaster #F_Plant').val($('#frmCondition #F_Plant').val());
 
-    //    xKBNMS001.search();
+    //    KBNMS001.search();
     //});
 
 

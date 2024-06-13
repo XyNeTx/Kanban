@@ -17,8 +17,12 @@ namespace HINOSystem.Libs
         private readonly ProcDBContext _ProcDB;
 
         public FillDataTable(
-            KB3Context kB3Context, KanbanConnection kBCN, IConfiguration configuration, PPM3Context pPM3Context
-            , ProcDBContext procDB)
+            KB3Context kB3Context, 
+            KanbanConnection kBCN, 
+            IConfiguration configuration, 
+            PPM3Context pPM3Context, 
+            ProcDBContext procDB
+            )
         {
             _KB3Context = kB3Context;
             _KBCN = kBCN;

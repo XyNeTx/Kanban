@@ -1,0 +1,56 @@
+﻿<!-- Modal History -->
+<div class="modal fade" id="ModalHistoryLogin" tabindex="-1" aria-labelledby="ModalHistoryLoginLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            <form id="frmHistoryLogin">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ModalHistoryLoginLabel">Login History</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <fieldset class="fieldset">
+                        <legend>Information</legend>
+
+                        <div class="row">
+                            <div class="col-3">
+                                <item type="date" id="frmHistoryLoginToDay" label="Date" format="yyyy-mm-dd" default="now"></item>
+                            </div>
+                            @*<div class="col">
+                                <item type="button" id="frmHistoryLoginSearch" label="ItemLabel"></item>
+                            </div>*@
+                        </div>
+
+                        <ul class="nav nav-tabs md-tabs " role="tablist" id="pills-tab-system-history">                            
+                            <li class="nav-item">
+                                <a class="nav-link active" data-toggle="tab" href="#tab3-panel-system-history" role="tab" style="height:50px;" id="tab3-button-system-history">
+                                    <i class="icofont icofont-foot-print"></i>
+                                    Login
+                                </a>
+                                <div class="slide"></div>
+                            </li>
+                        </ul>
+
+
+                        <div class="tab-content card-block">
+
+                            <div class="tab-pane active" id="tab3-panel-system-history" role="tabpanel">
+                                <div class="row">
+                                    <div class="col">
+                                        <item type="table" id="tblHistoryLogin"></item>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+
+                        </div>
+                    </fieldset>
+                </div>
+                @*<div class="modal-footer" style="padding-left:25px; padding-right:25px;">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>*@
+            </form>
+        </div>
+    </div>
+</div>

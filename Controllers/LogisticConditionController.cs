@@ -40,7 +40,7 @@ namespace HINOSystem.Controllers
 
 
         private readonly WarrantyClaimConnect _wrtConnect;
-        private readonly BearerClass _bearerClass;
+        private readonly BearerClass _BearerClass;
 
         public LogisticConditionController(
             ILogger<HomeController> logger,

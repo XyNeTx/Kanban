@@ -29,6 +29,9 @@ using System.Threading.Tasks;
 using HINOSystem.Libs;
 using HINOSystem.Context;
 using HINOSystem.Models.KB3.Master;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using PdfSharp.Charting;
+using HINOSystem.Controllers.API.common;
 
 namespace HINOSystem.Controllers.API.Master
 {
@@ -63,13 +66,17 @@ namespace HINOSystem.Controllers.API.Master
             string _SQL = "";
             try
             {
-                BearerClass _JBearer = _BearerClass.Header(Request);
-                if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
-                _KBCN.Plant = _JBearer.Plant;
+                _KBCN.Plant = _BearerClass.Plant;
 
                 _SQL = @" EXEC [exec].[spTB_MS_FACTORY] ";
-                string _jsTB_MS_Factory = _KBCN.ExecuteJSON(_SQL, pUser: _JBearer, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+                string _jsTB_MS_Factory = _KBCN.ExecuteJSON(_SQL
+                    , pUser: _BearerClass
+                    , pControllerName : ControllerContext.ActionDescriptor.ControllerName
+                    , pActionName: ControllerContext.ActionDescriptor.ActionName
+                    );
 
                 string _result = @"{
                     ""status"":""200"",
@@ -97,16 +104,20 @@ namespace HINOSystem.Controllers.API.Master
             string _SQL = "";
             try
             {
-                BearerClass _JBearer = _BearerClass.Header(Request);
-                if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
-                _KBCN.Plant = _JBearer.Plant;
+                _KBCN.Plant = _BearerClass.Plant;
 
                 _json = JsonConvert.DeserializeObject(pData);
 
 
-                _SQL = @" EXEC [exec].[spKBNMS001_SEARCH] '" + _JBearer.Plant + "' ";
-                string _jsonData = _KBCN.ExecuteJSON(_SQL, pUser: _JBearer, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+                _SQL = @" EXEC [exec].[spKBNMS001_SEARCH] '" + _BearerClass.Plant + "' ";
+                string _jsonData = _KBCN.ExecuteJSON(_SQL
+                    , pUser: _BearerClass
+                    , pControllerName: ControllerContext.ActionDescriptor.ControllerName
+                    , pActionName: ControllerContext.ActionDescriptor.ActionName
+                    );
 
 
 
@@ -133,16 +144,16 @@ namespace HINOSystem.Controllers.API.Master
             string _SQL = "";
             try
             {
-                BearerClass _JBearer = _BearerClass.Header(Request);
-                if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
 
                 TB_MS_OrderType _TB_MS_OrderType = new TB_MS_OrderType();
-                _TB_MS_OrderType.F_Plant = Request.Form["F_Plant"].ToString();
+                _TB_MS_OrderType.F_Plant = _BearerClass.Plant;
                 _TB_MS_OrderType.F_OrderType = Request.Form["F_OrderType"].ToString();
                 _TB_MS_OrderType.F_Effect_Date = Request.Form["F_Effect_Date"].ToString().Replace("-", "");
                 _TB_MS_OrderType.F_End_Date = Request.Form["F_End_Date"].ToString().Replace("-", "");
-                _TB_MS_OrderType.F_Update_By = _JBearer.UserCode.ToString();
+                _TB_MS_OrderType.F_Update_By = _BearerClass.UserCode.ToString();
                 _TB_MS_OrderType.F_Update_Date = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss"));
                 _KB3Context.TB_MS_OrderType.Add(_TB_MS_OrderType);
                 _KB3Context.SaveChanges();
@@ -176,22 +187,29 @@ namespace HINOSystem.Controllers.API.Master
                     }";
             try
             {
-                BearerClass _JBearer = _BearerClass.Header(Request);
-                if (_JBearer.Status == 401) return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
-                _KBCN.Plant = _JBearer.Plant;
+                _KBCN.Plant = _BearerClass.Plant;
 
                 _SQL = @"
                     UPDATE [dbo].[TB_MS_OrderType]
-                    SET F_End_Date = '" + Request.Form["F_End_Date"].ToString().Replace("-", "") + @"'
-                        ,F_Update_By = '" + _JBearer.UserCode + @"'
+                    SET F_Plant = '" + Request.Form["F_Plant"].ToString() + @"'
+                        ,F_OrderType = '" + Request.Form["F_OrderType"].ToString() + @"'
+                        ,F_Effect_Date = '" + Request.Form["F_Effect_Date"].ToString().Replace("-", "") + @"'
+                        ,F_End_Date = '" + Request.Form["F_End_Date"].ToString().Replace("-", "") + @"'
+                        ,F_Update_By = '" + _BearerClass.UserCode + @"'
                         ,F_Update_Date = '" + DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss")) + @"'
                     WHERE 1=1
-                    AND F_Plant = '" + Request.Form["F_Plant"].ToString() + @"'
-                    AND F_OrderType = '" + Request.Form["F_OrderType"].ToString() + @"'
-                    AND F_Effect_Date = '" + Request.Form["F_Effect_Date"].ToString().Replace("-", "") + @"'
+                    AND F_Plant = '" + _BearerClass.Records.F_Plant.ToString().Trim() + @"'
+                    AND F_OrderType = '" + _BearerClass.Records.F_OrderType.ToString().Trim() + @"'
+                    AND F_Effect_Date = '" + _BearerClass.Records.F_Effect_Date.ToString().Trim().Replace("-", "") + @"'
                 ";
-                _KBCN.Execute(_SQL);
+                _KBCN.Execute(_SQL
+                    , pUser: _BearerClass
+                    , pControllerName: ControllerContext.ActionDescriptor.ControllerName
+                    , pActionName: ControllerContext.ActionDescriptor.ActionName
+                    );
 
                 _result = @"{
                     ""status"":""200"",
@@ -209,7 +227,7 @@ namespace HINOSystem.Controllers.API.Master
 
 
 
-        [HttpDelete]
+        [HttpPost]
         public IActionResult delete(int id = 0)
         {
             dynamic _json = null;
@@ -221,20 +239,23 @@ namespace HINOSystem.Controllers.API.Master
                     }";
             try
             {
-                BearerClass _JBearer = _BearerClass.Header(Request);
-                if (_JBearer.Status == 401)
-                    return Content(JsonConvert.SerializeObject(_JBearer), "application/json");
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass), "application/json");
 
-                _KBCN.Plant = _JBearer.Plant;
+                _KBCN.Plant = _BearerClass.Plant;
 
                 _SQL = @"
-                    DELETE [dbo].[TB_MS_OrderType]
+                    DELETE FROM [dbo].[TB_MS_OrderType]
                     WHERE 1=1
-                    AND F_Plant = '" + Request.Form["F_Plant"].ToString() + @"'
-                    AND F_OrderType = '" + Request.Form["F_OrderType"].ToString() + @"'
-                    AND F_Effect_Date = '" + Request.Form["F_Effect_Date"].ToString().Replace("-", "") + @"'
+                    AND F_Plant = '" + _BearerClass.Records.F_Plant.ToString().Trim() + @"'
+                    AND F_OrderType = '" + _BearerClass.Records.F_OrderType.ToString().Trim() + @"'
+                    AND F_Effect_Date = '" + _BearerClass.Records.F_Effect_Date.ToString().Trim().Replace("-", "") + @"'
                 ";
-                _KBCN.Execute(_SQL);
+                _KBCN.Execute(_SQL
+                    , pUser: _BearerClass
+                    , pControllerName: ControllerContext.ActionDescriptor.ControllerName
+                    , pActionName: ControllerContext.ActionDescriptor.ActionName
+                    );
 
                 _result = @"{
                     ""status"":""200"",
@@ -248,5 +269,58 @@ namespace HINOSystem.Controllers.API.Master
                 return Content(e.Message.ToString(), "application/json");
             }
         }
+
+
+        //[HttpPatch]
+        //public IActionResult save(int id = 0)
+        //{
+        //    dynamic _json = null;
+        //    string _SQL = "";
+        //    string _result = @"{
+        //                ""status"":""200"",
+        //                ""response"":""OK"",
+        //                ""message"": ""Data not found""
+        //            }";
+        //    try
+        //    {
+        //        _BearerClass.Authentication(Request);
+        //        if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
+
+        //        _KBCN.Plant = _BearerClass.Plant;
+
+        //        string F_Plant = Convert.ToString(_BearerClass.Records.F_Plant).Trim();
+        //        string F_OrderType = Convert.ToString(_BearerClass.Records.F_OrderType).Trim();
+        //        string F_Effect_Date = Convert.ToString(_BearerClass.Records.F_Effect_Date).Trim().Replace("-", "");
+
+        //        TB_MS_OrderType _TB_MS_OrderType = _KB3Context.TB_MS_OrderType
+        //            .Where(h => h.F_Plant == F_Plant)
+        //            .Where(h => h.F_OrderType == F_OrderType)
+        //            .Where(h => h.F_Effect_Date == F_Effect_Date)
+        //            .FirstOrDefault();
+
+        //        if (_TB_MS_OrderType == null) return Content(_result, "application/json");
+
+        //        _TB_MS_OrderType.F_Plant = _BearerClass.Plant;
+        //        _TB_MS_OrderType.F_OrderType = Request.Form["F_OrderType"].ToString();
+        //        _TB_MS_OrderType.F_Effect_Date = Request.Form["F_Effect_Date"].ToString().Replace("-", "");
+        //        _TB_MS_OrderType.F_End_Date = Request.Form["F_End_Date"].ToString().Replace("-", "");
+        //        _TB_MS_OrderType.F_Update_By = _BearerClass.UserCode.ToString();
+        //        _TB_MS_OrderType.F_Update_Date = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss"));
+        //        _KB3Context.TB_MS_OrderType.Update(_TB_MS_OrderType);
+        //        _KB3Context.SaveChanges();
+
+        //        _result = @"{
+        //            ""status"":""200"",
+        //            ""response"":""OK"",
+        //            ""message"": ""Data has been save""
+        //        }";
+        //        return Content(_result, "application/json");
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return Content(e.Message.ToString(), "application/json");
+        //    }
+        //}
+
     }
 }

@@ -71,8 +71,6 @@
 
 
 
-
-
     $('#fileImage').on("change", function () {
 
         var file = $(this)[0].files[0];
@@ -148,333 +146,141 @@
     $('#load-wrapper').attr("style", "visibility:hidden;");
     $('#table-wrapper').attr("style", "visibility:hidden;");
 
-
-
-
-    //onChangePassword = function () {
-    //    $.ajax({
-    //        type: 'POST',
-    //        headers: ajexHeader,
-    //        url: '@Url.Action("ForgotPassword","Authen")',
-    //        data: $("#frmModalUserPassword").serialize(),
-    //        dataType: "json",
-    //        success: function (result) {
-    //            if (result.response == "OK") {
-    //                Swal.fire({
-    //                    title: i18nLayout._Layout.modal.password.swal.title,
-    //                    text: i18nLayout._Layout.modal.password.swal.text,
-    //                    icon: 'info',
-    //                    showCancelButton: false,
-    //                    confirmButtonColor: '#3085d6',
-    //                    confirmButtonText: i18nLayout._Layout.modal.password.swal.ok,
-    //                }).then((result) => {
-    //                    $('#ModalUserPassword').modal('hide');
-    //                });
-    //            } else {
-    //                console.log(result);
-    //            }
-    //        },
-    //        error: function () {
-    //            console.log('error handling here');
-    //        }
-    //    });
+    //initTheme = function () {
+    //    setCookie('UI_ExpandIcon', _LAYOUT_.ExpandIcon);
+    //    setCookie('UI_Header', _LAYOUT_.UI_Header);
+    //    setCookie('UI_HeaderBrand', _LAYOUT_.UI_HeaderBrand);
+    //    setCookie('UI_IconColor', _LAYOUT_.UI_IconColor);
+    //    setCookie('UI_Layout', _LAYOUT_.UI_Layout);
+    //    setCookie('UI_LinkColor', _LAYOUT_.UI_LinkColor);
+    //    setCookie('UI_MenuColor', _LAYOUT_.UI_MenuColor);
+    //    setCookie('UI_MenuIcon', _LAYOUT_.UI_MenuIcon);
+    //    setCookie('UI_SideBar', _LAYOUT_.UI_SideBar);
     //}
 
-
-    //onLogout = function () {
-    //    console.log('onLogout');
-    //    //setCookie('',)
-    //    //var _logout = getCookie('logout');
-    //    console.log(_logout);
-    //}
-
-    //onInitial = function () {
-    //    try {
-
-    //        var _uid = '@ViewData["UserCode"]';
-    //        var tree = $('#menutree').tree({
-    //            primaryKey: 'id',
-    //            dataSource: _HOSTNAME_ + '/assets/template/Menu/' + _uid + '.json',
-    //            icons: {
-    //                expand: '<i class="gj-icon chevron-right" style="color:white;"></i>',
-    //                collapse: '<i class="gj-icon chevron-down" style="color:white;"></i>'
-    //            },
-    //            //initialized: function (e) {
-    //            //    console.log('initialized is fired.');
-    //            //},
-    //            //dataBinding: function (e) {
-    //            //    console.log('dataBinding is fired.');
-    //            //    console.log(e);
-    //            //},
-    //            select: function (e, node, id) {
-    //                var _node = tree.getNodeById(id);
-    //                var data = tree.getDataById(id);
-    //                var _m = getCookie('_Menu');
-
-    //                if (data.url != undefined) {
-    //                    setCookie('_Menu', id, 9999);
-    //                    if (data.id != _m) document.location.replace(data.url.replace('~', _HOSTNAME_));
-    //                } else {
-
-    //                    tree.unselectAll();
-
-    //                    //setCookie('_Select', id, 9999);
+    ////##### Set style selector language #####
+    styleSelector = function (_i18n_) {
+        setCookie('UI_ExpandIcon', _LAYOUT_.ExpandIcon);
+        setCookie('UI_Header', _LAYOUT_.Header);
+        setCookie('UI_HeaderBrand', _LAYOUT_.HeaderBrand);
+        setCookie('UI_IconColor', _LAYOUT_.IconColor);
+        setCookie('UI_Layout', _LAYOUT_.Layout);
+        setCookie('UI_LinkColor', _LAYOUT_.LinkColor);
+        setCookie('UI_MenuColor', _LAYOUT_.MenuColor);
+        setCookie('UI_MenuIcon', _LAYOUT_.MenuIcon);
+        setCookie('UI_SideBar', _LAYOUT_.SideBar);
 
 
-    //                    var _status = $('[data-id=' + id + '] div span[data-role=expander]').attr('data-mode');
-    //                    if (_status == 'open' || _status == undefined) {
-    //                        $($('[data-id=' + id + '] div span[data-role=expander]')[0]).attr('data-mode', 'close');
-    //                        $($('[data-id=' + id + '] ul')[0]).attr('style', 'display:none;');
-    //                        tree.collapse(node);
-    //                    } else {
-    //                        $($('[data-id=' + id + '] div span[data-role=expander]')[0]).attr('data-mode', 'open');
-    //                        $($('[data-id=' + id + '] ul')[0]).attr('style', 'display:block;');
-    //                        tree.expand(node);
-    //                    }
+        if (_i18n_.styleSelector == null) return false;
 
-    //                    //var _n = tree.getNodeById(id);
+        $.each(_i18n_.styleSelector, function (e, v) {
+            $('#styleSelector_' + e).html(v);
+            $('#styleSelector_' + e).val(v);
+        })
 
-    //                    //tree.unselect(id);
-    //                    //tree.unselectAll();
+        $.each(_i18n_.styleSelector.ExpandIconOption, function (e, v) {
+            $('#vertical-dropdown-icon option[value=' + e + ']').text(v);
+            if (e == getCookie('UI_ExpandIcon')) $('#vertical-dropdown-icon option[value=' + e + ']').attr('selected', 'selected');
+        })
 
-    //                }
+        $.each(_i18n_.styleSelector.MenuIconOption, function (e, v) {
+            $('#vertical-subitem-icon option[value=' + e + ']').text(v);
+            if (e == getCookie('UI_MenuIcon')) $('#vertical-subitem-icon option[value=' + e + ']').attr('selected', 'selected');
+        })
 
+        $.each(_i18n_.styleSelector.SideBarOption, function (e, v) {
+            $('#vertical-menu-effect option[value=' + e + ']').text(v);
+            if (e == getCookie('UI_SideBar')) $('#vertical-menu-effect option[value=' + e + ']').attr('selected', 'selected');
+        })
 
-    //            },
-    //            unselect: function (e, node, id) {
-    //                //var _node = tree.getNodeById(id);
-    //                //var _s = getCookie('_Select');
-    //            }
-    //        });
-    //        tree.on('dataBound', function () {
-    //            var _p = getCookie('_Parent');
-    //            var _m = getCookie('_Menu');
-    //            const myArray = _p.split(",");
-    //            $.each(myArray, function (k, v) {
-
-    //                if (v != '') tree.expand(tree.getNodeById(v));
-    //            });
-    //            setCookie('_Parent', _p, 9999);
-
-
-    //            if (window.location.pathname.indexOf('Home') < 0) {
-    //                tree.select(tree.getNodeById(_m));
-
-    //                var s = $('li [data-id="' + _m + '"] div span')[2];
-    //                $(s).attr('style', 'color:red; font-style:oblique;');
-    //                //console.log($(s)[0].innerHTML);
-    //            } else {
-    //                setCookie('_Menu', '', 9999);
-    //            }
-    //        });
-    //        tree.on('expand', function (e, node, id) {
-    //            var _p = getCookie('_Parent');
-    //            if (_p.indexOf(',' + id) < 0) _p += ',' + id;
-    //            setCookie('_Parent', _p, 9999);
-    //        });
-
-    //        tree.on('collapse', function (e, node, id) {
-    //            var _p = getCookie('_Parent');
-    //            _p = _p.toString().replaceAll(',' + id, '');
-    //            setCookie('_Parent', _p, 9999);
-    //        });
-
-    //        tree.on('nodeDataBound', function (e, node, id, record) {
-    //            if (!record.parent) {
-    //                var _node = $('li [data-id="' + record.id + '"] div span')[2];
-    //                //node.css('background-color', 'red');
-    //                _node.innerText = "-" + _node.innerText;
-    //            }
-    //        });
-
-    //        //display = function (id) {
-    //        //    var s = $('li [data-id="' + id + '"] div span')[1];
-    //        //    //console.log(id);
-
-    //        //    if ($(s).attr('data-mode') == 'open') {
-    //        //        //console.log('collapse');
-    //        //        tree.collapse(tree.getNodeById(id));
-    //        //    } else {
-    //        //        //console.log('expand');
-    //        //        tree.expand(tree.getNodeById(id));
-    //        //    }
-
-    //        //    tree.unselectAll();
-    //        //    //console.log('>>>' + $(s).attr('data-mode'));
-    //        //}
-
-    //    } catch (error) {
-    //        console.log(error.message);
-
-    //    }
-
-    //}
-    ////onInitial();
-
-
-
-
-    onInitial = function () {
-
-        //var currentUrl = window.location.href;
-        //console.log("Current URL: " + currentUrl);
-
-        //var currentPath = window.location.pathname;
-        //console.log("Current Path: " + currentPath);
-
-        //var protocol = window.location.protocol;
-        //var host = window.location.host;
-        //console.log("Protocol: " + protocol);
-        //console.log("Host: " + host);
-
-
-        // Error as #demo is the `div` element
-        //$('#demo').dataTable()
-
-        // Selector too broad.
-        // Error as `.display` is applied to both the div and the table
-        //$('.display').dataTable();
-
-        //var _tblHistorySQLLog = $('#tblHistorySQLLog').prop('class');
-        //var _tblHistorySQLLog = $('#tblHistorySQLLog').prop('class');
-        //var _tblHistorySQLLog = $('#tblHistorySQLLog').prop('class');
-        //console.log(_tblHistorySQLLog);
-
-
-        if ($('#tblHistorySQLLog').prop('class') != '' && $('#tblHistoryAction').prop('class') != '' && $('#tblHistoryLogin').prop('class') != '') {
-
-            var tblHistorySQLLog = xDataTable.Initial({
-                name: 'tblHistorySQLLog',
-                //checking: 0,
-                dom: '<"clear">',
-                columnTitle: {
-                    "EN": ['Controller Name', 'Action Name', 'SQL'],
-                    "TH": ['Controller Name', 'Action Name', 'SQL'],
-                    "JP": ['Controller Name', 'Action Name', 'SQL'],
-                },
-                column: [
-                    { "data": "ControllerName" },
-                    { "data": "ActionName" },
-                    { "data": "SQL" }
-                ],
-                addnew: false,
-                rowclick: (row) => {
-                    xAjax.ToClipboard(row.SQL);
-                }
-            });
-
-
-            var tblHistoryAction = xDataTable.Initial({
-                name: 'tblHistoryAction',
-                //checking: 0,
-                //dom: '<"clear">',
-                columnTitle: {
-                    "EN": ['Action At', 'User Code', 'Controller Name', 'Action Name', 'Result', 'SQL'],
-                    "TH": ['Action At', 'User Code', 'Controller Name', 'Action Name', 'Result', 'SQL'],
-                    "JP": ['Action At', 'User Code', 'Controller Name', 'Action Name', 'Result', 'SQL'],
-                },
-                column: [
-                    { "data": "ActionAt" },
-                    { "data": "UserCode" },
-                    { "data": "ControllerName" },
-                    { "data": "ActionName" },
-                    { "data": "Result" },
-                    { "data": "SQL" }
-                ],
-                order: [[0, 'desc']],
-                addnew: false,
-                rowclick: (row) => {
-                    xAjax.ToClipboard(row.SQL);
-                }
-            });
-
-
-            var tblHistoryLogin = xDataTable.Initial({
-                name: 'tblHistoryLogin',
-                //checking: 0,
-                //dom: '<"clear">',
-                columnTitle: {
-                    "EN": ['Date', 'Start', 'Finish', 'Process Time', 'User Code', 'Token'],
-                    "TH": ['Date', 'Start', 'Finish', 'Process Time', 'User Code', 'Token'],
-                    "JP": ['Date', 'Start', 'Finish', 'Process Time', 'User Code', 'Token'],
-                },
-                column: [
-                    { "data": "LoginDate" },
-                    { "data": "StartAt" },
-                    { "data": "FinishAt" },
-                    { "data": "ProcessTime" },
-                    { "data": "Code" },
-                    { "data": "Token" }
-                ],
-                order: [[0, 'desc']],
-                addnew: false,
-                rowclick: (row) => {
-                }
-            });
-        }
-
+        $('[name="radio"][value="st6"]').attr('checked', 'true');
+        if (getCookie('UI_IconColor') == 'st5') $('[name="radio"][value="st5"]').attr('checked', 'true');
     }
-    onInitial();
+    styleSelector(_i18n_);
+
+    $("[class=pcoded-navbar][navbar-theme=theme1]").attr('navbar-theme', (getCookie('UI_Layout') == '' ? 'themelight1' : getCookie('UI_Layout')));
+    $('[class="navbar-logo"]').attr('logo-theme', (getCookie('UI_HeaderBrand') == '' ? 'theme4' : getCookie('UI_HeaderBrand')));
+    $('[class="navbar header-navbar pcoded-header iscollapsed"][header-theme=theme1]').attr('header-theme', (getCookie('UI_Header') == '' ? 'theme4' : getCookie('UI_Header')));
+    $('[class="pcoded-navbar"]').attr('active-item-theme', (getCookie('UI_LinkColor') == '' ? 'theme1' : getCookie('UI_LinkColor')));
+    $('[class="pcoded-navigatio-lavel"]').attr('menu-title-theme', (getCookie('UI_MenuColor') == '' ? 'theme3' : getCookie('UI_MenuColor')));
+    $('#pcoded').attr('nav-type', (getCookie('UI_IconColor') == '' ? 'st5' : getCookie('UI_IconColor')));
+    $('[class="pcoded-hasmenu"]').attr('dropdown-icon', (getCookie('UI_ExpandIcon') == '' ? 'style2' : getCookie('UI_ExpandIcon')));
+    $('[class="pcoded-hasmenu"]').attr('subitem-icon', (getCookie('UI_MenuIcon') == '' ? 'style4' : getCookie('UI_MenuIcon')));
+    $('#pcoded').attr('vertical-effect', (getCookie('UI_SideBar') == '' ? 'shrink' : getCookie('UI_SideBar')));
+
+    $('[class="navbar-theme"]').on('click', async function () {
+        //_LAYOUT_.Theme = $(this).attr('navbar-theme');;
+        changeLayOut('Layout', $(this).attr('navbar-theme'));
+    })
+    $('[class="logo-theme"]').on('click', async function () {
+        //_LAYOUT_.HeaderBrand = $(this).attr('logo-theme');
+        changeLayOut('HeaderBrand', $(this).attr('logo-theme'));
+    })
+    $('[class="header-theme"]').on('click', async function () {
+        //_LAYOUT_.Header = $(this).attr('header-theme');
+        changeLayOut('Header', $(this).attr('header-theme'));
+    })
+    $('[class="active-item-theme small"]').on('click', async function () {
+        //_LAYOUT_.LinkColor = $(this).attr('active-item-theme');
+        changeLayOut('LinkColor', $(this).attr('active-item-theme'));
+    })
+    $('[class="leftheader-theme small"]').on('click', async function () {
+        //_LAYOUT_.MenuColor = $(this).attr('lheader-theme');
+        changeLayOut('MenuColor', $(this).attr('lheader-theme'));
+    })
+    $('#vertical-dropdown-icon').on('click', async function () {
+        //_LAYOUT_.ExpandIcon = $(this).val();
+        changeLayOut('ExpandIcon', $(this).val());
+    })
+    $('#vertical-subitem-icon').on('click', async function () {
+        //_LAYOUT_.MenuIcon = $(this).val();
+        //setCookie('UI_SideBar', $(this).val());
+        changeLayOut('MenuIcon', $(this).val());
+    })
+    $('#vertical-menu-effect').on('click', async function () {
+        changeLayOut('SideBar', $(this).val());
+    })
+    $('[name="radio"][value="st6"]').on('click', async function () {
+        changeLayOut('IconColor', $(this).val());
+    })
+    $('[name="radio"][value="st5"]').on('click', async function () {
+        changeLayOut('IconColor', $(this).val());
+    })
 
 
-
-
-
-    var _ModalHistory = document.getElementById('ModalHistory');
-    _ModalHistory.addEventListener('show.bs.modal', function (event) {
-        var button = event.relatedTarget; // Button that triggered the modal
-        var url = '/History/' + button.getAttribute('data-bs-remote'); // URL from data-bs-remote attribute
-        var modalBodyEl = _ModalHistory.querySelector('.modal-body');
-
-        // Load the content from the URL into the modal body using AJAX or fetch
-        fetch(url)
-            .then(response => response.text())
-            .then(data => {
-                modalBodyEl.innerHTML = data;
-
-                xHistory.onLoad();
-
-                xSplash.hide();
-            });
-    });
-
-
-
-    var _ModalHistorySQL = document.getElementById('ModalSystemHistory');
-    _ModalHistorySQL.addEventListener('show.bs.modal', function (event) {
-
-        xAjax.Post({
-            url: 'HistoryLogin/getHistory',
+    changeLayOut = async function (pObject = '', pValue = 'theme1') {
+        setCookie('UI_' + pObject, pValue);
+        if (pObject == 'Header') setCookie('UI_HeaderBrand', pValue);
+        var _dt = await xAjax.ExecuteJSON({
             data: {
-                'System': 'KB3',
-                'UserCode': _UID_,
-                'Controller': _CONTROLLER_,
-                'Action': _PAGE_,
-                'Date': xDate.Date()
+                "Module": "[erp].[themeLayout]",
+                "@UID": _UID_,
+                "@Layout": (pObject == 'Layout' ? pValue : ''),
+                "@HeaderBrand": (pObject == 'Header' ? pValue : (pObject == 'HeaderBrand' ? pValue : '')),
+                "@Header": (pObject == 'Header' ? pValue : ''),
+                "@LinkColor": (pObject == 'LinkColor' ? pValue : ''),
+                "@MenuColor": (pObject == 'MenuColor' ? pValue : ''),
+                "@IconColor": (pObject == 'IconColor' ? pValue : ''),
+                "@ExpandIcon": (pObject == 'ExpandIcon' ? pValue : ''),
+                "@MenuIcon": (pObject == 'MenuIcon' ? pValue : ''),
+                "@SideBar": (pObject == 'SideBar' ? pValue : '')
             },
-            then: function (result) {
-                //console.log(result);
-                //console.log(result);
-                $('#tblHistorySQLLog').dataTable().fnClearTable();
-                $('#tblHistoryAction').dataTable().fnClearTable();
-                $('#tblHistoryLogin').dataTable().fnClearTable();
-                if (result.data.sql.length > 0) {
-                    $('#tblHistorySQLLog').dataTable().fnAddData(result.data.sql);
-                    $('#tblHistoryAction').dataTable().fnAddData(result.data.action);
-                    $('#tblHistoryLogin').dataTable().fnAddData(result.data.login);
-                }
-            }
         });
-
-        //console.log('SQL');
-
-    });
+        //console.log(_dt.rows[0]);
+    }
 
 
 
 
-
-
-
+    
+    ////##### Set layout language #####
+    displayLayout = function (_i18n_) {
+        if (_i18n_._Layout == null) return false;
+        $.each(_i18n_._Layout, function (e, v) {
+            $('#_Layout_' + e).html(v);
+            $('#_Layout_' + e).val(v);
+        })
+    }
+    displayLayout(_i18n_);
 });
 

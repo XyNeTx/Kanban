@@ -26,7 +26,7 @@ class labSplashScreen {
 
     }
 
-    hide = function () {
+    hide = function (pCallback = null) {
         $('input[data-inputmask="number"]').each(function () {
             $(this).val(MaskNumber($(this).val()));
         })
@@ -40,14 +40,19 @@ class labSplashScreen {
         //});
 
         this.text('COMPLETE');
-        //$('#splash-wrapper').attr("style", "visibility:hidden;");
-        $('#splash-wrapper').fadeOut('slow', function () {
+        //$('#splash-wrapper').fadeOut('slow', function () {
             $('#splash-wrapper').attr("style", "visibility:hidden;");
 
             $('#table-wrapper').attr("style", "visibility:hidden;");
 
             $('#load-wrapper').attr("style", "visibility:hidden;");
-        });
+        //});
+        $('#splash-wrapper').attr("style", "visibility:hidden;");
+
+        if (pCallback != undefined && typeof (pCallback) == 'function') {
+            pCallback();
+        }
+
     }
 
     text = function (text = "") {
@@ -62,10 +67,6 @@ class labSplashScreen {
 
 
     table(pTable) {
-        $(pTable).on('draw.dt', function () {
-            $('#table-wrapper').height($(pTable).height());
-            $('#table-wrapper').width($(pTable).width());
-        });
 
         $('#table-wrapper').attr("style", "visibility:visible;");
 
@@ -75,6 +76,12 @@ class labSplashScreen {
             left: $(pTable).offset().left,
             right: 0,
             position: 'absolute'
+        });
+
+
+        $(pTable).on('draw.dt', function () {
+            $('#table-wrapper').height($(pTable).height());
+            $('#table-wrapper').width($(pTable).width());
         });
 
     }

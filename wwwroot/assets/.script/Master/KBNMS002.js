@@ -10,7 +10,7 @@
         },
         ColumnValue: [
             { "data": "F_Plant" },
-            { "data": "F_Parent_Part" },
+            { "data": "F_Parent_Part_Name" },
             { "data": "F_Part_Name" },
             { "data": "F_Start_Date" },
             { "data": "F_End_Date" }

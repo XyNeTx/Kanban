@@ -63,7 +63,7 @@
 
         await xAjax.Execute({
             data: {
-                "StoreName": "[exec].[spKBNOR450_RPT_PDS]",
+                "Module": "[exec].[spKBNOR450_RPT_PDS]",
                 "@OrderType": "U",
                 "@Plant": ajexHeader.Plant,
                 "@UserCode": ajexHeader.UserCode,
@@ -95,7 +95,7 @@
 
         await xAjax.Execute({
             data: {
-                "StoreName": "[exec].[spKBNOR450_RPT_KANBAN]",
+                "Module": "[exec].[spKBNOR450_RPT_KANBAN]",
                 "@OrderType": "U",
                 "@Plant": ajexHeader.Plant,
                 "@UserCode": ajexHeader.UserCode,

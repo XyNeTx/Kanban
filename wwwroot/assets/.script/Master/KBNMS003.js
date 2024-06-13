@@ -4,15 +4,15 @@
         Controller: _PAGE_,
         Table: 'tblMaster',
         ColumnTitle: {
-            "EN": ['Plant', 'Parent Part', 'Ruibetsu', 'Effective Date', 'End Date'],
-            "TH": ['Plant', 'Parent Part', 'Ruibetsu', 'Effective Date', 'End Date'],
-            "JP": ['Plant', 'Parent Part', 'Ruibetsu', 'Effective Date', 'End Date'],
+            "EN": ['Plant', 'Parent Part', 'Part Name', 'Effective Date', 'End Date'],
+            "TH": ['Plant', 'Parent Part', 'Part Name', 'Effective Date', 'End Date'],
+            "JP": ['Plant', 'Parent Part', 'Part Name', 'Effective Date', 'End Date'],
         },
         ColumnValue: [
             { "data": "F_Plant" },
-            { "data": "F_Parent_Part" },
+            { "data": "F_Parent_Part_Name" },
             { "data": "F_Part_Name" },
-            { "data": "F_Effect_Date" },
+            { "data": "F_Start_Date" },
             { "data": "F_End_Date" }
         ],
         Modal: 'modalMaster',

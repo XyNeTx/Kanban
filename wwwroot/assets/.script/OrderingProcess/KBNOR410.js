@@ -50,18 +50,21 @@
 
     
     xAjax.onClick('btnSearch', async function () {
-        var _dt = await xAjax.ExecuteJSON({
+        var _dt = await xAjax.xExecuteJSON({
             data: {
-                "StoreName": "[dbo].[SP_DisplayUrgent]",
-                "OrderType": "SRV",
+                "Module": "[dbo].[SP_DisplayUrgent]",
+                "OrderType": "U",
                 "Plant": ajexHeader.Plant,
                 "UserCode": ajexHeader.UserCode
             },
         });
 
+        console.log(_dt);
+
         if (_dt.rows != null) xDataTable.bind('#tblMaster', _dt.rows);
         if (_dt.rows == null) MsgBox("ไม่พบข้อมูล Urgent Order", MsgBoxStyle.Information, "Interface Urgent Data");
 
+        xSplash.hide();
     });
 
 
@@ -75,7 +78,7 @@
                 //''Clear Old Data 
                 await xAjax.ExecuteJSON({
                     data: {
-                        "StoreName": "[exec].[spKBNOR410_INTERFACE_D1]",
+                        "Module": "[exec].[spKBNOR410_INTERFACE_D1]",
                         "@OrderType": "U",
                         "@Plant": ajexHeader.Plant,
                         "@UserCode": ajexHeader.UserCode
@@ -87,7 +90,7 @@
 
                 var _dtChk = await xAjax.ExecuteJSON({
                     data: {
-                        "StoreName": "[exec].[spKBNOR410_INTERFACE_M1]",
+                        "Module": "[exec].[spKBNOR410_INTERFACE_M1]",
                         "@OrderType": "U",
                         "@Plant": ajexHeader.Plant,
                         "@UserCode": ajexHeader.UserCode
@@ -98,7 +101,7 @@
                     for (var i = 0; i < _dtChk.rows.length; i++) {
                         var _dt = await xAjax.Execute({
                             data: {
-                                "StoreName": "[exec].[spKBNOR410_INTERFACE_M2]",
+                                "Module": "[exec].[spKBNOR410_INTERFACE_M2]",
                                 "@OrderType": "U",
                                 "@Plant": ajexHeader.Plant,
                                 "@UserCode": ajexHeader.UserCode,
@@ -121,7 +124,7 @@
                         //===Update Volume
                         await xAjax.Execute({
                             data: {
-                                "StoreName": "[exec].[spKBNOR410_INTERFACE_M3]",
+                                "Module": "[exec].[spKBNOR410_INTERFACE_M3]",
                                 "@OrderType": "U",
                                 "@Plant": ajexHeader.Plant,
                                 "@UserCode": ajexHeader.UserCode,
@@ -142,7 +145,7 @@
 
                 await xAjax.Execute({
                     data: {
-                        "StoreName": "[exec].[spKBNOR410_INTERFACE_M4]",
+                        "Module": "[exec].[spKBNOR410_INTERFACE_M4]",
                         "@OrderType": "U",
                         "@Plant": ajexHeader.Plant,
                         "@UserCode": ajexHeader.UserCode
@@ -154,7 +157,7 @@
                 //''Tacoma Only
                 await xAjax.Execute({
                     data: {
-                        "StoreName": "[exec].[spKBNOR410_INTERFACE_TACOMA]",
+                        "Module": "[exec].[spKBNOR410_INTERFACE_TACOMA]",
                         "@OrderType": "U",
                         "@Plant": ajexHeader.Plant,
                         "@UserCode": ajexHeader.UserCode
@@ -168,7 +171,7 @@
                 //''Update F_Reg_Flg=2
                 await xAjax.Execute({
                     data: {
-                        "StoreName": "[exec].[spKBNOR410_INTERFACE_M5]",
+                        "Module": "[exec].[spKBNOR410_INTERFACE_M5]",
                         "@OrderType": "U",
                         "@Plant": ajexHeader.Plant,
                         "@UserCode": ajexHeader.UserCode
@@ -198,7 +201,7 @@
             // Code to handle the error
             await xAjax.Execute({
                 data: {
-                    "StoreName": "[exec].[spKBNOR410_EXCEPTION]",
+                    "Module": "[exec].[spKBNOR410_EXCEPTION]",
                     "@OrderType": "U",
                     "@Plant": ajexHeader.Plant,
                     "@UserCode": ajexHeader.UserCode

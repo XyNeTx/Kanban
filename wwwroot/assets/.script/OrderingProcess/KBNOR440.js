@@ -65,7 +65,7 @@
 
             var _dtChk = await xAjax.ExecuteJSON({
                 data: {
-                    "StoreName": "[exec].[spKBNOR440_01]",
+                    "Module": "[exec].[spKBNOR440_01]",
                     "@OrderType": "U",
                     "@Plant": ajexHeader.Plant,
                     "@UserCode": ajexHeader.UserCode
@@ -76,7 +76,7 @@
                 for (var i = 0; i < _dtChk.rows.length; i++) {
                     await xAjax.Execute({
                         data: {
-                            "StoreName": "[exec].[spKBNOR440_01_D]",
+                            "Module": "[exec].[spKBNOR440_01_D]",
                             "@OrderType": "U",
                             "@Plant": ajexHeader.Plant,
                             "@UserCode": ajexHeader.UserCode,
@@ -89,7 +89,7 @@
             xItem.progress({ id: 'prgProcess', current: 20, label: 'Delete TB_PDS_HEADER : {{##.##}} %' });
             await xAjax.Execute({
                 data: {
-                    "StoreName": "[exec].[spKBNOR440_02]",
+                    "Module": "[exec].[spKBNOR440_02]",
                     "@OrderType": "U",
                     "@Plant": ajexHeader.Plant,
                     "@UserCode": ajexHeader.UserCode
@@ -100,7 +100,7 @@
             xItem.progress({ id: 'prgProcess', current: 30, label: 'Insert TB_PDS_HEADER and TB_PDS_DETAIL : {{##.##}} %' });
             await xAjax.Execute({
                 data: {
-                    "StoreName": "[exec].[spKBNOR440_03]",
+                    "Module": "[exec].[spKBNOR440_03]",
                     "@OrderType": "U",
                     "@Plant": ajexHeader.Plant,
                     "@UserCode": ajexHeader.UserCode
@@ -113,7 +113,7 @@
 
                         var _dtChkPOM = await xAjax.ExecuteJSON({
                             data: {
-                                "StoreName": "[exec].[spKBNOR440_03_S]",
+                                "Module": "[exec].[spKBNOR440_03_S]",
                                 "@OrderType": "U",
                                 "@Plant": ajexHeader.Plant,
                                 "@UserCode": ajexHeader.UserCode,
@@ -141,7 +141,7 @@
                     xItem.progress({ id: 'prgProcess', current: 35, label: 'Update TB_Delivery.F_HMMT_PDS : {{##.##}} %' });
                     await xAjax.Execute({
                         data: {
-                            "StoreName": "[exec].[spKBNOR440_03_U]",
+                            "Module": "[exec].[spKBNOR440_03_U]",
                             "@OrderType": "U",
                             "@Plant": ajexHeader.Plant,
                             "@UserCode": ajexHeader.UserCode,
@@ -159,7 +159,7 @@
                     xItem.progress({ id: 'prgProcess', current: 40, label: 'INSERT TB_PDS_HEADER : {{##.##}} %' });
                     _dtChkPOM = await xAjax.ExecuteJSON({
                         data: {
-                            "StoreName": "[exec].[spKBNOR440_04]",
+                            "Module": "[exec].[spKBNOR440_04]",
                             "@pOrderType": "U",
                             "@pPlant": ajexHeader.Plant,
                             "@pUserCode": ajexHeader.UserCode
@@ -168,7 +168,7 @@
                     if (_dtChkPOM.rows != null) {
                         await xAjax.Execute({
                             data: {
-                                "StoreName": "[exec].[spKBNOR440_04_I]",
+                                "Module": "[exec].[spKBNOR440_04_I]",
                                 "@pOrderType": "U",
                                 "@pPlant": ajexHeader.Plant,
                                 "@pUserCode": ajexHeader.UserCode,
@@ -203,7 +203,7 @@
                     xItem.progress({ id: 'prgProcess', current: 45, label: 'Update Dock Code : {{##.##}} %' });
                     await xAjax.Execute({
                         data: {
-                            "StoreName": "[exec].[spKBNOR440_04_U]",
+                            "Module": "[exec].[spKBNOR440_04_U]",
                             "@pOrderType": "U",
                             "@pPlant": ajexHeader.Plant,
                             "@pUserCode": ajexHeader.UserCode
@@ -217,7 +217,7 @@
                     xItem.progress({ id: 'prgProcess', current: 50, label: 'UPDATE TB_PDS_HEADER : {{##.##}} %' });
                     var _dtChkGet = await xAjax.ExecuteJSON({
                         data: {
-                            "StoreName": "[exec].[spKBNOR440_05]",
+                            "Module": "[exec].[spKBNOR440_05]",
                             "@pOrderType": "U",
                             "@pPlant": ajexHeader.Plant,
                             "@pUserCode": ajexHeader.UserCode
@@ -228,7 +228,7 @@
                             var _delivery = GetDate(Trim(_dtChkGet.rows[i][0].ToString()));
                             await xAjax.Execute({
                                 data: {
-                                    "StoreName": "[exec].[spKBNOR440_05_U]",
+                                    "Module": "[exec].[spKBNOR440_05_U]",
                                     "@pOrderType": "U",
                                     "@pPlant": ajexHeader.Plant,
                                     "@pUserCode": ajexHeader.UserCode,
@@ -244,7 +244,7 @@
                     xItem.progress({ id: 'prgProcess', current: 55, label: 'INSERT TB_PDS_DETAIL : {{##.##}} %' });
                     await xAjax.Execute({
                         data: {
-                            "StoreName": "[exec].[spKBNOR440_05_I]",
+                            "Module": "[exec].[spKBNOR440_05_I]",
                             "@pOrderType": "U",
                             "@pPlant": ajexHeader.Plant,
                             "@pUserCode": ajexHeader.UserCode,
@@ -276,7 +276,7 @@
 
             await xAjax.xExecute({
                 data: {
-                    "StoreName": "[dbo].[SP_Update_KPO_Order]",
+                    "Module": "[dbo].[SP_Update_KPO_Order]",
                     "@pOrderType": "U",
                     "@pPlant": ajexHeader.Plant
                 },
@@ -285,7 +285,7 @@
             xItem.progress({ id: 'prgProcess', current: 92, label: 'Update Dock Code AGAIN-2 : {{##.##}} %' });
             await xAjax.Execute({
                 data: {
-                    "StoreName": "[exec].[spKBNOR440_12]",
+                    "Module": "[exec].[spKBNOR440_12]",
                     "@pOrderType": "U",
                     "@pPlant": ajexHeader.Plant,
                     "@pUserCode": ajexHeader.UserCode,
@@ -295,7 +295,7 @@
             xItem.progress({ id: 'prgProcess', current: 94, label: 'Update in case Date of Arrival < Delivery Date : {{##.##}} %' });
             var _dtChk = await xAjax.ExecuteJSON({
                 data: {
-                    "StoreName": "[exec].[spKBNOR440_13]",
+                    "Module": "[exec].[spKBNOR440_13]",
                     "@pOrderType": "U",
                     "@pPlant": ajexHeader.Plant,
                     "@pUserCode": ajexHeader.UserCode
@@ -308,7 +308,7 @@
 
                     var _dtChk = await xAjax.ExecuteJSON({
                         data: {
-                            "StoreName": "[exec].[spKBNOR440_13_U]",
+                            "Module": "[exec].[spKBNOR440_13_U]",
                             "@pOrderType": "U",
                             "@pPlant": ajexHeader.Plant,
                             "@pUserCode": ajexHeader.UserCode,
@@ -324,7 +324,7 @@
             xItem.progress({ id: 'prgProcess', current: 96, label: 'Update TEXT DATA : RE-CHECK AGAIN : {{##.##}} %' });
             _dtChk = await xAjax.ExecuteJSON({
                 data: {
-                    "StoreName": "[exec].[spKBNOR440_14]",
+                    "Module": "[exec].[spKBNOR440_14]",
                     "@pOrderType": "U",
                     "@pPlant": ajexHeader.Plant,
                     "@pUserCode": ajexHeader.UserCode
@@ -334,7 +334,7 @@
             xItem.progress({ id: 'prgProcess', current: 98, label: 'Process #TEMP_UPDOC : {{##.##}} %' });
             _dtChk = await xAjax.ExecuteJSON({
                 data: {
-                    "StoreName": "[exec].[spKBNOR440_15]",
+                    "Module": "[exec].[spKBNOR440_15]",
                     "@pOrderType": "U",
                     "@pPlant": ajexHeader.Plant,
                     "@pUserCode": ajexHeader.UserCode
@@ -344,7 +344,7 @@
             xItem.progress({ id: 'prgProcess', current: 98, label: 'Process display data : {{##.##}} %' });
             _dtChk = await xAjax.ExecuteJSON({
                 data: {
-                    "StoreName": "[exec].[spKBNOR440_16]",
+                    "Module": "[exec].[spKBNOR440_16]",
                     "@pOrderType": "U",
                     "@pPlant": ajexHeader.Plant,
                     "@pUserCode": ajexHeader.UserCode
@@ -354,7 +354,7 @@
             xItem.progress({ id: 'prgProcess', current: 99, label: 'Addition for Generate to OLT ONLY : {{##.##}} %' });
             _dtChk = await xAjax.ExecuteJSON({
                 data: {
-                    "StoreName": "[exec].[spKBNOR440_17]",
+                    "Module": "[exec].[spKBNOR440_17]",
                     "@pOrderType": "U",
                     "@pPlant": ajexHeader.Plant,
                     "@pUserCode": ajexHeader.UserCode
@@ -369,7 +369,7 @@
     ProcessSpecialKPO = async function () {   //'incase S
         var _dtChk = await xAjax.ExecuteJSON({
             data: {
-                "StoreName": "[exec].[spKBNOR440_06]",
+                "Module": "[exec].[spKBNOR440_06]",
                 "@pOrderType": "U",
                 "@pPlant": ajexHeader.Plant,
                 "@pUserCode": ajexHeader.UserCode
@@ -382,7 +382,7 @@
 
                     var _dtChkPOM = await xAjax.ExecuteJSON({
                         data: {
-                            "StoreName": "[exec].[spKBNOR440_06_S]",
+                            "Module": "[exec].[spKBNOR440_06_S]",
                             "@OrderType": "U",
                             "@Plant": ajexHeader.Plant,
                             "@UserCode": ajexHeader.UserCode,
@@ -411,7 +411,7 @@
                 xItem.progress({ id: 'prgProcess', current: 65, label: 'Update TB_Delivery.F_HMMT_PDS : {{##.##}} %' });
                 await xAjax.Execute({
                     data: {
-                        "StoreName": "[exec].[spKBNOR440_06_U]",
+                        "Module": "[exec].[spKBNOR440_06_U]",
                         "@pOrderType": "U",
                         "@pPlant": ajexHeader.Plant,
                         "@pUserCode": ajexHeader.UserCode,
@@ -423,7 +423,7 @@
 
                 var _dtChkPOM = await xAjax.ExecuteJSON({
                     data: {
-                        "StoreName": "[exec].[spKBNOR440_04]",
+                        "Module": "[exec].[spKBNOR440_04]",
                         "@pOrderType": "U",
                         "@pPlant": ajexHeader.Plant,
                         "@pUserCode": ajexHeader.UserCode
@@ -433,7 +433,7 @@
                     xItem.progress({ id: 'prgProcess', current: 70, label: 'INSERT TB_PDS_HEADER : {{##.##}} %' });
                     await xAjax.Execute({
                         data: {
-                            "StoreName": "[exec].[spKBNOR440_07_I]",
+                            "Module": "[exec].[spKBNOR440_07_I]",
                             "@pOrderType": "U",
                             "@pPlant": ajexHeader.Plant,
                             "@pUserCode": ajexHeader.UserCode,
@@ -455,7 +455,7 @@
                 xItem.progress({ id: 'prgProcess', current: 75, label: 'INSERT TB_PDS_DETAIL : {{##.##}} %' });
                 await xAjax.Execute({
                     data: {
-                        "StoreName": "[exec].[spKBNOR440_07_I_DT]",
+                        "Module": "[exec].[spKBNOR440_07_I_DT]",
                         "@pOrderType": "U",
                         "@pPlant": ajexHeader.Plant,
                         "@pUserCode": ajexHeader.UserCode,
@@ -472,7 +472,7 @@
                 xItem.progress({ id: 'prgProcess', current: 80, label: 'Run F_No to Detail : {{##.##}} %' });
                 _dtChkPOM = await xAjax.ExecuteJSON({
                     data: {
-                        "StoreName": "[exec].[spKBNOR440_08]",
+                        "Module": "[exec].[spKBNOR440_08]",
                         "@pOrderType": "U",
                         "@pPlant": ajexHeader.Plant,
                         "@pUserCode": ajexHeader.UserCode,
@@ -483,7 +483,7 @@
                     for (var j = 0; j < _dtChkPOM.rows.length; j++) {
                         await xAjax.Execute({
                             data: {
-                                "StoreName": "[exec].[spKBNOR440_08_U]",
+                                "Module": "[exec].[spKBNOR440_08_U]",
                                 "@pOrderType": "U",
                                 "@pPlant": ajexHeader.Plant,
                                 "@pUserCode": ajexHeader.UserCode,
@@ -502,7 +502,7 @@
     ProcessSpecialEmer = async function () {   //'Incase Others
         var _dtChk = await xAjax.ExecuteJSON({
             data: {
-                "StoreName": "[exec].[spKBNOR440_09]",
+                "Module": "[exec].[spKBNOR440_09]",
                 "@pOrderType": "U",
                 "@pPlant": ajexHeader.Plant,
                 "@pUserCode": ajexHeader.UserCode
@@ -515,13 +515,16 @@
 
                     var _dtChkPOM = await xAjax.ExecuteJSON({
                         data: {
-                            "StoreName": "[exec].[spKBNOR440_09_S]",
+                            "Module": "[exec].[spKBNOR440_09_S]",
                             "@OrderType": "U",
                             "@Plant": ajexHeader.Plant,
                             "@UserCode": ajexHeader.UserCode,
                             "@PDS_No": pdsno
                         },
                     });
+
+                    console(_Dtchkpom)
+
                     if (_dtChkPOM.rows == null) {
                         pdsno = facflag + String(_dtChk.rows[i].F_Delivery_Date).substring(2, 6)
                             + String(_dtChk.rows[i].F_Delivery_Trip).padStart(2, '0')
@@ -542,7 +545,7 @@
                 xItem.progress({ id: 'prgProcess', current: 65, label: 'Update TB_Delivery.F_HMMT_PDS : {{##.##}} %' });
                 await xAjax.Execute({
                     data: {
-                        "StoreName": "[exec].[spKBNOR440_09_U]",
+                        "Module": "[exec].[spKBNOR440_09_U]",
                         "@pOrderType": "U",
                         "@pPlant": ajexHeader.Plant,
                         "@pUserCode": ajexHeader.UserCode,
@@ -557,7 +560,7 @@
 
                 var _dtChkPOM = await xAjax.ExecuteJSON({
                     data: {
-                        "StoreName": "[exec].[spKBNOR440_04]",
+                        "Module": "[exec].[spKBNOR440_04]",
                         "@pOrderType": "U",
                         "@pPlant": ajexHeader.Plant,
                         "@pUserCode": ajexHeader.UserCode
@@ -567,7 +570,7 @@
                     xItem.progress({ id: 'prgProcess', current: 70, label: 'INSERT TB_PDS_HEADER : {{##.##}} %' });
                     await xAjax.Execute({
                         data: {
-                            "StoreName": "[exec].[spKBNOR440_09_I]",
+                            "Module": "[exec].[spKBNOR440_09_I]",
                             "@pOrderType": "U",
                             "@pPlant": ajexHeader.Plant,
                             "@pUserCode": ajexHeader.UserCode,
@@ -590,7 +593,7 @@
                 xItem.progress({ id: 'prgProcess', current: 75, label: 'INSERT TB_PDS_DETAIL : {{##.##}} %' });
                 await xAjax.Execute({
                     data: {
-                        "StoreName": "[exec].[spKBNOR440_09_I_DT]",
+                        "Module": "[exec].[spKBNOR440_09_I_DT]",
                         "@pOrderType": "U",
                         "@pPlant": ajexHeader.Plant,
                         "@pUserCode": ajexHeader.UserCode,
@@ -608,7 +611,7 @@
                 xItem.progress({ id: 'prgProcess', current: 80, label: 'Run F_No to Detail : {{##.##}} %' });
                 _dtChkPOM = await xAjax.ExecuteJSON({
                     data: {
-                        "StoreName": "[exec].[spKBNOR440_08]",
+                        "Module": "[exec].[spKBNOR440_08]",
                         "@pOrderType": "U",
                         "@pPlant": ajexHeader.Plant,
                         "@pUserCode": ajexHeader.UserCode,
@@ -619,7 +622,7 @@
                     for (var j = 0; j < _dtChkPOM.rows.length; j++) {
                         await xAjax.Execute({
                             data: {
-                                "StoreName": "[exec].[spKBNOR440_08_U]",
+                                "Module": "[exec].[spKBNOR440_08_U]",
                                 "@pOrderType": "U",
                                 "@pPlant": ajexHeader.Plant,
                                 "@pUserCode": ajexHeader.UserCode,
@@ -642,7 +645,7 @@
         facflag = '1L';
         var _dtChk = await xAjax.ExecuteJSON({
             data: {
-                "StoreName": "[exec].[spKBNOR440_10]",
+                "Module": "[exec].[spKBNOR440_10]",
                 "@pOrderType": "U",
                 "@pPlant": ajexHeader.Plant,
                 "@pUserCode": ajexHeader.UserCode,
@@ -657,7 +660,7 @@
 
                     var _dtChkPOM = await xAjax.ExecuteJSON({
                         data: {
-                            "StoreName": "[exec].[spKBNOR440_10_S]",
+                            "Module": "[exec].[spKBNOR440_10_S]",
                             "@OrderType": "U",
                             "@Plant": ajexHeader.Plant,
                             "@UserCode": ajexHeader.UserCode,
@@ -686,7 +689,7 @@
                 xItem.progress({ id: 'prgProcess', current: 65, label: 'Update TB_Delivery.F_HMMT_PDS : {{##.##}} %' });
                 await xAjax.Execute({
                     data: {
-                        "StoreName": "[exec].[spKBNOR440_10_U]",
+                        "Module": "[exec].[spKBNOR440_10_U]",
                         "@pOrderType": "U",
                         "@pPlant": ajexHeader.Plant,
                         "@pUserCode": ajexHeader.UserCode,
@@ -703,7 +706,7 @@
 
                 var _dtChkPOM = await xAjax.ExecuteJSON({
                     data: {
-                        "StoreName": "[exec].[spKBNOR440_04]",
+                        "Module": "[exec].[spKBNOR440_04]",
                         "@pOrderType": "U",
                         "@pPlant": ajexHeader.Plant,
                         "@pUserCode": ajexHeader.UserCode
@@ -713,7 +716,7 @@
                     xItem.progress({ id: 'prgProcess', current: 70, label: 'INSERT TB_PDS_HEADER : {{##.##}} %' });
                     await xAjax.Execute({
                         data: {
-                            "StoreName": "[exec].[spKBNOR440_10_I]",
+                            "Module": "[exec].[spKBNOR440_10_I]",
                             "@pOrderType": "U",
                             "@pPlant": ajexHeader.Plant,
                             "@pUserCode": ajexHeader.UserCode,
@@ -737,7 +740,7 @@
                 xItem.progress({ id: 'prgProcess', current: 75, label: 'INSERT TB_PDS_DETAIL : {{##.##}} %' });
                 await xAjax.Execute({
                     data: {
-                        "StoreName": "[exec].[spKBNOR440_10_I_DT]",
+                        "Module": "[exec].[spKBNOR440_10_I_DT]",
                         "@pOrderType": "U",
                         "@pPlant": ajexHeader.Plant,
                         "@pUserCode": ajexHeader.UserCode,
@@ -756,7 +759,7 @@
                 xItem.progress({ id: 'prgProcess', current: 80, label: 'Run F_No to Detail : {{##.##}} %' });
                 _dtChkPOM = await xAjax.ExecuteJSON({
                     data: {
-                        "StoreName": "[exec].[spKBNOR440_08]",
+                        "Module": "[exec].[spKBNOR440_08]",
                         "@pOrderType": "U",
                         "@pPlant": ajexHeader.Plant,
                         "@pUserCode": ajexHeader.UserCode,
@@ -767,7 +770,7 @@
                     for (var j = 0; j < _dtChkPOM.rows.length; j++) {
                         await xAjax.Execute({
                             data: {
-                                "StoreName": "[exec].[spKBNOR440_08_U]",
+                                "Module": "[exec].[spKBNOR440_08_U]",
                                 "@pOrderType": "U",
                                 "@pPlant": ajexHeader.Plant,
                                 "@pUserCode": ajexHeader.UserCode,
@@ -789,7 +792,7 @@
         facflag = '1L';
         var _dtChk = await xAjax.ExecuteJSON({
             data: {
-                "StoreName": "[exec].[spKBNOR440_11]",
+                "Module": "[exec].[spKBNOR440_11]",
                 "@pOrderType": "U",
                 "@pPlant": ajexHeader.Plant,
                 "@pUserCode": ajexHeader.UserCode
@@ -802,7 +805,7 @@
 
                     var _dtChkPOM = await xAjax.ExecuteJSON({
                         data: {
-                            "StoreName": "[exec].[spKBNOR440_11_S]",
+                            "Module": "[exec].[spKBNOR440_11_S]",
                             "@OrderType": "U",
                             "@Plant": ajexHeader.Plant,
                             "@UserCode": ajexHeader.UserCode,
@@ -829,7 +832,7 @@
                 xItem.progress({ id: 'prgProcess', current: 65, label: 'Update TB_Delivery.F_HMMT_PDS : {{##.##}} %' });
                 await xAjax.Execute({
                     data: {
-                        "StoreName": "[exec].[spKBNOR440_11_U]",
+                        "Module": "[exec].[spKBNOR440_11_U]",
                         "@pOrderType": "U",
                         "@pPlant": ajexHeader.Plant,
                         "@pUserCode": ajexHeader.UserCode,
@@ -844,7 +847,7 @@
 
                 var _dtChkPOM = await xAjax.ExecuteJSON({
                     data: {
-                        "StoreName": "[exec].[spKBNOR440_04]",
+                        "Module": "[exec].[spKBNOR440_04]",
                         "@pOrderType": "U",
                         "@pPlant": ajexHeader.Plant,
                         "@pUserCode": ajexHeader.UserCode
@@ -854,7 +857,7 @@
                     xItem.progress({ id: 'prgProcess', current: 70, label: 'INSERT TB_PDS_HEADER : {{##.##}} %' });
                     await xAjax.Execute({
                         data: {
-                            "StoreName": "[exec].[spKBNOR440_11_I]",
+                            "Module": "[exec].[spKBNOR440_11_I]",
                             "@pOrderType": "U",
                             "@pPlant": ajexHeader.Plant,
                             "@pUserCode": ajexHeader.UserCode,
@@ -876,7 +879,7 @@
                 xItem.progress({ id: 'prgProcess', current: 75, label: 'INSERT TB_PDS_DETAIL : {{##.##}} %' });
                 await xAjax.Execute({
                     data: {
-                        "StoreName": "[exec].[spKBNOR440_11_I_DT]",
+                        "Module": "[exec].[spKBNOR440_11_I_DT]",
                         "@pOrderType": "U",
                         "@pPlant": ajexHeader.Plant,
                         "@pUserCode": ajexHeader.UserCode,
@@ -893,7 +896,7 @@
                 xItem.progress({ id: 'prgProcess', current: 80, label: 'Run F_No to Detail : {{##.##}} %' });
                 _dtChkPOM = await xAjax.ExecuteJSON({
                     data: {
-                        "StoreName": "[exec].[spKBNOR440_08]",
+                        "Module": "[exec].[spKBNOR440_08]",
                         "@pOrderType": "U",
                         "@pPlant": ajexHeader.Plant,
                         "@pUserCode": ajexHeader.UserCode,
@@ -904,7 +907,7 @@
                     for (var j = 0; j < _dtChkPOM.rows.length; j++) {
                         await xAjax.Execute({
                             data: {
-                                "StoreName": "[exec].[spKBNOR440_08_U]",
+                                "Module": "[exec].[spKBNOR440_08_U]",
                                 "@pOrderType": "U",
                                 "@pPlant": ajexHeader.Plant,
                                 "@pUserCode": ajexHeader.UserCode,
@@ -962,7 +965,7 @@
 
         var _dtChk = await xAjax.ExecuteJSON({
             data: {
-                "StoreName": "[exec].[spKBNOR440_GetDate]",
+                "Module": "[exec].[spKBNOR440_GetDate]",
                 "@F_Store_CD": _Store_CD,
                 "@F_YM": delivery_.substring(0, 6)
             },
@@ -987,7 +990,7 @@
 
         _dtChk = await xAjax.ExecuteJSON({
             data: {
-                "StoreName": "[exec].[spKBNOR440_GetDate]",
+                "Module": "[exec].[spKBNOR440_GetDate]",
                 "@F_Store_CD": _Store_CD,
                 "@F_YM": delivery_.substring(0, 6)
             },
@@ -1019,7 +1022,7 @@
     //    xAjax.Post({
     //        url: 'EXEC/eExecuteJSON',
     //        data: {
-    //            "StoreName": "[exec].[spKBNOR440_02]",
+    //            "Module": "[exec].[spKBNOR440_02]",
     //            "OrderType": "U",
     //            "Plant": ajexHeader.Plant,
     //            "UserCode": ajexHeader.UserCode
@@ -1083,7 +1086,7 @@
     //    //console.log('Start A');
     //    var _result = await xAjax.ExecuteJSON({
     //        data: {
-    //            "StoreName": "[exec].[spTest]",
+    //            "Module": "[exec].[spTest]",
     //            "Plant": 3,
     //            "len": 1000,
     //        },
@@ -1091,7 +1094,7 @@
     //    for (var i = 0; i < _result.data.length; i++) {
     //        _dtB = await xAjax.ExecuteJSON({
     //            data: {
-    //                "StoreName": "[exec].[spTest]",
+    //                "Module": "[exec].[spTest]",
     //                "Plant": 3,
     //                "len": 5,
     //            },
@@ -1107,7 +1110,7 @@
     //    //console.log('Start B');
     //    _result = await xAjax.ExecuteJSON({
     //        data: {
-    //            "StoreName": "[exec].[spTest]",
+    //            "Module": "[exec].[spTest]",
     //            "Plant": 3,
     //            "len": 1000,
     //        },
@@ -1192,7 +1195,7 @@
 
     //getData = function (p) {
     //    var data = {
-    //        "StoreName": "[exec].[spTest]",
+    //        "Module": "[exec].[spTest]",
     //        "Plant": 3,
     //        "len": p,
     //    };

@@ -109,12 +109,20 @@ namespace HINOSystem.Libs
 
         }
 
-        public async Task<bool> WriteLine(string filePath = @"\file.txt", string text = @"")
+        public async Task<bool> WriteLine(string filePath = @"\file.txt", string text = @"", string directory = @"")
         {
-
             try
             {
-                string fullPath = Path.Combine(this.StoragePath, filePath);
+                string fullPath = this.StoragePath+ @"\" + DateTime.Now.ToString("yyyyMM") + @"\";
+                //fullPath = Path.Combine(this.StoragePath, fullPath);
+                
+                if (!System.IO.Directory.Exists(fullPath))
+                {
+                    // Create the directory.
+                    Directory.CreateDirectory(Directory.GetParent(fullPath).FullName);
+                }
+
+                fullPath = fullPath + filePath;
 
                 if (!System.IO.File.Exists(fullPath))
                 {

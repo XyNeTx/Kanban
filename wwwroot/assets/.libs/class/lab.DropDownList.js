@@ -27,8 +27,10 @@
         this.bind(pObject, pData, pValue, pText);
     }
 
-}
 
+
+
+}
 
 
 const xDropDownList = new labDropDownList();

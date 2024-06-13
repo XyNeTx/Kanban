@@ -29,6 +29,8 @@ using System.Threading.Tasks;
 using HINOSystem.Libs;
 using HINOSystem.Context;
 using HINOSystem.Models.KB3;
+using HINOSystem.Models.ERP;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace HINOSystem.Controllers.API.Master
 {
@@ -73,6 +75,10 @@ namespace HINOSystem.Controllers.API.Master
 
             try
             {
+                _KBCN.Plant = 3;
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
+
                 dynamic _json = JsonConvert.DeserializeObject(pData);
 
 
@@ -86,21 +92,38 @@ namespace HINOSystem.Controllers.API.Master
                     AND F_OrderNo = '" + _json.pdsno + @"' 
                 ";
                 _KBCN.Plant = 1;
-                string _jsonReceiveSpecial9Y = _KBCN.ExecuteJSON(_SQL);
+                string _jsonReceiveSpecial9Y = _KBCN.ExecuteJSON(_SQL, skipLog: true);
+
+                _KBCN.writeLog(_SQL
+                    , pAction: "LOAD"
+                    , pResult: "OK"
+                    , pMessage: "ExecuteJSON"
+                    , pUser: _BearerClass
+                    , pControllerName: ControllerContext.ActionDescriptor.ControllerName
+                    , pActionName: ControllerContext.ActionDescriptor.ActionName
+                    , pSystem: "KB3");
+
 
 
                 _SQL = @"
                     SELECT '' AS RunningNo
                          , d.F_Part_No, d.F_Part_Name, d.F_Box_Qty, d.F_Unit_price, d.F_Unit_Amount, d.F_Receive_amount
-                         , Substring(CONVERT(VARCHAR, d.F_Receive_Date, 112),1,4)+'-'+Substring(CONVERT(VARCHAR, d.F_Receive_Date, 112),5,2)+'-'+Substring(CONVERT(VARCHAR, d.F_Receive_Date, 112),7,2) AS F_Receive_Date
+                         , FORMAT(F_Receive_Date,'yyyy-MM-dd') AS F_Receive_Date
                     FROM TB_REC_DETAIL d
                     WHERE 1=1
                     AND F_OrderNo = '" + _json.pdsno + @"'
                     ORDER BY d.F_No 
                 ";
                 _KBCN.Plant = 1;
-                string _jsonReceiveDate = _KBCN.ExecuteJSON(_SQL);
+                string _jsonReceiveDate = _KBCN.ExecuteJSON(_SQL, skipLog: true);
 
+                _SQL = @"
+                    SELECT *
+                    FROM [Proc_Web].[dbo].[T_Receive_Header]
+                    WHERE 1=1
+                    AND F_pds_cd = '" + _json.pdsno + @"';
+                ";
+                string _jsonReceivePCW = _PCWCN.ExecuteJSON(_SQL, skipLog: true);
 
                 _SQL = @"
                     SELECT '' AS RunningNo
@@ -130,6 +153,7 @@ namespace HINOSystem.Controllers.API.Master
                             {
                                 ""ReceiveSpecial9Y"" : " + _jsonReceiveSpecial9Y + @",
                                 ""ReceiveDate"" : " + _jsonReceiveDate + @",
+                                ""ReceiveDatePCW"" : " + _jsonReceivePCW + @",
                                 ""ReceivePrice"" : " + _jsonReceivePrice + @"
                             }
                 }";
@@ -157,12 +181,25 @@ namespace HINOSystem.Controllers.API.Master
 
             try
             {
+                _KBCN.Plant = 3;
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
+
                 dynamic _json = JsonConvert.DeserializeObject(pData);
 
 
                 _SQL = "EXEC [QQ].[Chg_IssuedDate] '" + _json.pdsno + "' ";
                 _KBCN.Plant = 1;
-                _KBCN.Execute(_SQL);
+                _KBCN.Execute(_SQL, skipLog: true);
+
+                _KBCN.writeLog(_SQL
+                    , pAction: "EXECUTE"
+                    , pResult:"OK"
+                    , pMessage:"ExecuteNonQuery"
+                    , pUser: _BearerClass
+                    , pControllerName: ControllerContext.ActionDescriptor.ControllerName
+                    , pActionName: ControllerContext.ActionDescriptor.ActionName
+                    , pSystem: "KB3");
 
                 _PCWCN.Execute(_SQL, skipLog:true);
                 
@@ -195,11 +232,24 @@ namespace HINOSystem.Controllers.API.Master
 
             try
             {
+                _KBCN.Plant = 3;
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
+
                 dynamic _json = JsonConvert.DeserializeObject(pData);
 
                 _SQL = "EXEC [QQ].[Chg_ReceiveDate] '" + _json.pdsno + "', '" + _json.receivedate + "' ";
                 _KBCN.Plant = 1;
-                _KBCN.Execute(_SQL);
+                _KBCN.Execute(_SQL, skipLog: true);
+
+                _KBCN.writeLog(_SQL
+                    , pAction: "EXECUTE"
+                    , pResult: "OK"
+                    , pMessage: "ExecuteNonQuery"
+                    , pUser: _BearerClass
+                    , pControllerName: ControllerContext.ActionDescriptor.ControllerName
+                    , pActionName: ControllerContext.ActionDescriptor.ActionName
+                    , pSystem: "KB3");
 
                 _PCWCN.Execute(_SQL, skipLog: true);
 
@@ -231,6 +281,9 @@ namespace HINOSystem.Controllers.API.Master
             string _SQL = "", _result = "";
             try
             {
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
+
                 dynamic _json = JsonConvert.DeserializeObject(pData);
 
                 _SQL = @"
@@ -271,6 +324,9 @@ namespace HINOSystem.Controllers.API.Master
             string _SQL = "", _result = "";
             try
             {
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
+
                 dynamic _json = JsonConvert.DeserializeObject(pData);
 
                 _SQL = @"

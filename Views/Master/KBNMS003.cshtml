@@ -63,10 +63,10 @@
                         <section class="w-100 p-2">
                             <div class="row g-2">
                                 <div class="col-md-6">
-                                    <item type="text" id="F_Parent_Part" label="Parent Part"></item>
+                                    <item type="text" id="F_Parent_Part_Name" label="Parent Part"></item>
                                 </div>
                                 <div class="col-md-6">
-                                    <item type="text" id="F_Part_Name" label="Part Name"></item>
+                                    <item type="text" id="F_Part_Name" label="Part Name" noedit></item>
                                 </div>
                             </div>
                             <div class="row g-2">
@@ -74,7 +74,7 @@
                                     <item type="date" id="F_Start_Date" label="Effective Date" format="yyyy-mm-dd" default="now" noedit required></item>
                                 </div>
                                 <div class="col-md-6">
-                                    <item type="date" id="F_End_Date" label="End Date" format="yyyy-mm-dd" default="now" noedit required></item>
+                                    <item type="date" id="F_End_Date" label="End Date" format="yyyy-mm-dd" default="now" required></item>
                                 </div>
                             </div>
                         </section>
@@ -99,7 +99,7 @@
 
 
 @section Scripts{
-    <script type="text/javascript" src="~/assets/js/History/UserMaintenance.js"></script>
+    
     @*<script type="text/javascript" src="~/assets/.script/Template/Master.js"></script>*@
     <script type="text/javascript" src="~/assets/.script/Master/KBNMS003.js?@ViewData["Version"]"></script>
     @*<script type="text/javascript" src="~/assets/adminty/vue@3/vueApp/Master/KBNMS003.vue.js?@ViewData["Version"]"></script>*@
