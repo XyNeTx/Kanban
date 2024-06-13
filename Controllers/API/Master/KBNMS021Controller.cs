@@ -135,7 +135,7 @@ namespace HINOSystem.Controllers.API.Master
                 _BearerClass.Authentication(Request);
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
-
+                //TB_MS_PartCode 
                 TB_MS_OldPart _TB_MS_OldPart = new TB_MS_OldPart();
                 _TB_MS_OldPart.F_Plant = _BearerClass.Plant;
                 _TB_MS_OldPart.F_Parent_Part = Request.Form["F_Parent_Part"].ToString();

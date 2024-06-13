@@ -522,6 +522,9 @@
                             "@PDS_No": pdsno
                         },
                     });
+
+                    console(_Dtchkpom)
+
                     if (_dtChkPOM.rows == null) {
                         pdsno = facflag + String(_dtChk.rows[i].F_Delivery_Date).substring(2, 6)
                             + String(_dtChk.rows[i].F_Delivery_Trip).padStart(2, '0')

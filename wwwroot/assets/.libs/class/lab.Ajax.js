@@ -193,6 +193,8 @@
             let _url = (_NAMESPACE_ != '' ? '/' + _NAMESPACE_ : '') + '/EXEC/ExecuteJSON';
             let _postData = (pConfig.data != undefined ? ajaxPostData(pConfig.data) : null);
 
+            console.log(_postData);
+
             return $.ajax({
                 type: "POST",
                 contentType: "application/json; charset=utf-8",
@@ -216,6 +218,8 @@
 
             let _url = (_NAMESPACE_ != '' ? '/' + _NAMESPACE_ : '') + '/EXEC/xExecuteJSON';
             let _postData = (pConfig.data != undefined ? ajaxPostData(pConfig.data) : null);
+
+            console.log(_postData);
 
             return $.ajax({
                 type: "POST",

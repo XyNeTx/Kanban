@@ -50,18 +50,21 @@
 
     
     xAjax.onClick('btnSearch', async function () {
-        var _dt = await xAjax.ExecuteJSON({
+        var _dt = await xAjax.xExecuteJSON({
             data: {
                 "Module": "[dbo].[SP_DisplayUrgent]",
-                "OrderType": "SRV",
+                "OrderType": "U",
                 "Plant": ajexHeader.Plant,
                 "UserCode": ajexHeader.UserCode
             },
         });
 
+        console.log(_dt);
+
         if (_dt.rows != null) xDataTable.bind('#tblMaster', _dt.rows);
         if (_dt.rows == null) MsgBox("ไม่พบข้อมูล Urgent Order", MsgBoxStyle.Information, "Interface Urgent Data");
 
+        xSplash.hide();
     });
 
 

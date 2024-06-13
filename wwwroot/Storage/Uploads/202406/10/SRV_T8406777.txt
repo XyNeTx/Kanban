@@ -1,0 +1,3 @@
+Depot_Code_:|Supplier_Code_:|Factory_Code_:|Supplier_Name_:|Invoice_No._:|Invoice_Date_:|Shipment_Date_:|Total_Amount_:|VAT_Amount_:|Grand_Total_:|Receiving_Case_No.|PO_NO._/_Shift_No.|PO_Item_No.|PO_P/No.|Part_Name|Supplier_P/No.|PO_Qty|PO_Date|Delivery_Date|Order_type|Delivery_Qty|Price_/_Unit|Amount_/_Item|Destination_Code|Destination_Name|Address_1|Address_2|Customer_Order_Number
+01|HMT1D|D|HINO MOTORS MANUFACTURING (THAILAND) LIMITED||||||||T8406777|0001|838520W740|GLASS, COMBINATION METER||3|10/06/2024|12/06/2024|3||213.360||||||
+<EOF>

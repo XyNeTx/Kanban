@@ -31,6 +31,7 @@ using HINOSystem.Context;
 using HINOSystem.Models.KB3.Master;
 using NPOI.SS.Formula.Functions;
 using System.Dynamic;
+using System.Numerics;
 
 namespace HINOSystem.Controllers.API.Master
 {
@@ -94,12 +95,22 @@ namespace HINOSystem.Controllers.API.Master
 
                 _SQL = @" EXEC " + _spName + @" " + _spParameter;
 
-                _KBCN.Execute(_SQL
+                bool complete = _KBCN.Execute(_SQL
                    , pUser: _BearerClass
                    , pAction: "EXECUTE WITH JQUERY"
                    , pControllerName: _BearerClass.ActionName
                    , pActionName: _spName
-                    );
+                );
+
+                if (!complete)
+                {
+                    return Ok(new
+                    {
+                        status = "400",
+                        response = "Ok",
+                        message = "Process not Complete",
+                    });
+                }
 
                 _result = @"{
                         ""status"":""200"",
@@ -155,12 +166,22 @@ namespace HINOSystem.Controllers.API.Master
 
                 _SQL = @" EXEC " + _spName + @" " + _spParameter + "''";
 
-                _KBCN.Execute(_SQL
+                bool complete = _KBCN.Execute(_SQL
                    , pUser: _BearerClass
                     , pAction: "EXECUTE WITH JQUERY"
                    , pControllerName: _BearerClass.ActionName
                    , pActionName: _spName
                     );
+
+                if (!complete)
+                {
+                    return Ok(new
+                    {
+                        status = "400",
+                        response = "Ok",
+                        message = "Process not Complete",
+                    });
+                }
 
                 _result = @"{
                         ""status"":""200"",
@@ -299,6 +320,17 @@ namespace HINOSystem.Controllers.API.Master
                         ""message"": ""Data found"",
                         ""rows"": " + _resData + @"
                     }";
+
+                if (_resData!.Contains("Error"))
+                {
+                    _result = @"{
+                        ""status"":""500"",
+                        ""response"":""OK"",
+                        ""message"": ""Error found"",
+                        ""error"": " + _resData + @"
+                    }";
+                }
+
                 return Content(_result, "application/json");
             }
             catch (Exception e)
@@ -313,7 +345,9 @@ namespace HINOSystem.Controllers.API.Master
             }
         }
 
+        #region APIS 
 
+        #endregion
 
     }
 }
