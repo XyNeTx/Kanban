@@ -359,8 +359,8 @@ namespace HINOSystem.Controllers.API.Master
             {
                 setConString();
                 string _result = "";
-                BearerClass _JBearer = _BearerClass.Header(Request);
-                string UserName = HttpContext.Session.GetString("USER_NAME");
+                _BearerClass.Authentication(Request);
+                string UserName = HttpContext.Session.GetString("USER_ID");
                 string HostName = HttpContext.Session.GetString("USER_DEVICENAME");
                 var user = _JBearer.UserCode.ToString();
                 if (_KBCN.Plant.ToString() == "3")

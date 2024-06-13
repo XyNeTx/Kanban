@@ -7,6 +7,7 @@ using HINOSystem.Models.KB3.Master;
 using KANBAN.Models.KB3.Receive_Process;
 using KANBAN.Models.KB3.ReportOrder;
 using KANBAN.Models;
+using KANBAN.Models.KB3.UrgentOrder;
 
 namespace HINOSystem.Context
 {
@@ -79,6 +80,8 @@ namespace HINOSystem.Context
 
         public DbSet<KANBAN.Models.KB3.ReportOrder.TB_MS_VLT_Customer> TB_MS_VLT_Customer { get; set; }
         public DbSet<TB_VLT_INTERFACE> TB_VLT_INTERFACE { get; set; }
+
+        public DbSet<TB_Import_Service> TB_Import_Service { get; set; }
 
 
         //protected override void OnModelCreating(ModelBuilder modelBuilder)
