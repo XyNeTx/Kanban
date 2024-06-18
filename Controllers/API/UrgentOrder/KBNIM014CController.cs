@@ -122,9 +122,12 @@ namespace HINOSystem.Controllers.API.Master
 
                 _json = JsonConvert.DeserializeObject(pData);
 
-
-                _SQL = @" EXEC [exec].[spKBNMS001_SEARCH] '" + _json.F_Plant + "' ";
+                string UserID = _BearerClass.UserCode;
+                 
+                //_SQL = @" EXEC [exec].[spKBNMS001_SEARCH] '" + _json.F_Plant + "' ";
+                _SQL = @" EXEC [exec].[spKBNIM014Confirm_SEARCH] '" + _json.F_Plant + "','" + UserID + "' ";
                 _KBCN.Plant = _json.F_Plant;
+
                 string _jsonData = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
 
 

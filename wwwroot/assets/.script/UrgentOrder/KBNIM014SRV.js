@@ -24,6 +24,7 @@ async function UploadFile(_files) {
                 m["PO_Item_No."] = m["PO_Item_No."].toString();
                 m["PO_Date"] = m["PO_Date"].toString();
                 m["Order_type"] = m["Order_type"].toString();
+                m['Depot_Code_:'] = m["Depot_Code_:"].toString();
                 return m;
             });
             //filterData["PO_Item_No"] = filterData["PO_Item_No"].toString();
