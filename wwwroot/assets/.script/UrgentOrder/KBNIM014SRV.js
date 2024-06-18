@@ -12,10 +12,11 @@ $("#inputFile").change(function (e) {
 async function UploadFile(_files) {
     try {
         const file = _files[0];
+        if (!file) return xSwal.error("Import File Error", "No file selected");
         //console.log('File being processed:', file);
 
         const arrayBuffer = await file.arrayBuffer();
-        const read = await XLSX.read(arrayBuffer, { type: "binary" });
+        const read = await XLSX.read(arrayBuffer);
         const data = XLSX.utils.sheet_to_json(read.Sheets[read.SheetNames[0]]);
 
         var filterData = data.filter(f => !Object.values(f).includes("<EOF>"));

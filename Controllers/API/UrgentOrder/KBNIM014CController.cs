@@ -43,14 +43,16 @@ using NPOI.POIFS.Properties;
 
 namespace HINOSystem.Controllers.API.Master
 {
-    public class KBNIM014CController : Controller
+    [Route("api/[controller]/[action]")]
+    [ApiController]
+    public class KBNIM014CController : ControllerBase
     {
         private readonly IConfiguration _configuration;
         private readonly BearerClass _BearerClass;
         private readonly ActionResultClass _ActionResult;        
         private readonly KanbanConnection _KBCN;
         private readonly PPMConnect _PPMConnect;
-
+        private readonly FillDataTable _FillDT;
         private readonly KB3Context _KB3Context;
 
 
@@ -62,6 +64,7 @@ namespace HINOSystem.Controllers.API.Master
             ActionResultClass actionResultClass,
             KanbanConnection kanbanConnection,
             PPMConnect ppmConnect,
+            FillDataTable fillDT,
             KB3Context kB3Context
             )
         {
@@ -71,7 +74,7 @@ namespace HINOSystem.Controllers.API.Master
             _KB3Context = kB3Context;
             _KBCN = kanbanConnection;
             _PPMConnect = ppmConnect;
-
+            _FillDT = fillDT;
         }
 
 
@@ -108,44 +111,42 @@ namespace HINOSystem.Controllers.API.Master
             }
         }
 
-
-
-        [HttpPost]
-        public IActionResult search([FromBody] string pData = null)
+        [HttpGet]
+        public async Task<IActionResult> search(string? F_PDS_NO = null)
         {
-            dynamic _json = null;
             string _SQL = "";
             try
             {
-                _BearerClass.Authentication(Request);
-                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
+                string UserID = HttpContext.Session.GetString("USER_CODE");
+                string Plant =  HttpContext.Session.GetString("USER_PLANT");
 
-                _json = JsonConvert.DeserializeObject(pData);
-
-                string UserID = _BearerClass.UserCode;
-                 
                 //_SQL = @" EXEC [exec].[spKBNMS001_SEARCH] '" + _json.F_Plant + "' ";
-                _SQL = @" EXEC [exec].[spKBNIM014Confirm_SEARCH] '" + _json.F_Plant + "','" + UserID + "' ";
-                _KBCN.Plant = _json.F_Plant;
+                if(string.IsNullOrWhiteSpace(F_PDS_NO)) _SQL = $" EXEC [exec].[spKBNIM014Confirm_SEARCH] '{Plant}' , '{UserID}' ";
 
-                string _jsonData = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+                else _SQL = $" EXEC [exec].[spKBNIM014Confirm_SEARCH] '{Plant}' , '{UserID}' , '{F_PDS_NO}' ";
 
+                DataTable dt = _FillDT.ExecuteSQL(_SQL);
 
+                var jsonData = JsonConvert.SerializeObject(dt);
 
-                string _result = @"{
-                    ""status"":""200"",
-                    ""response"":""OK"",
-                    ""message"": ""Data Found"",
-                    ""data"": " + _jsonData + @"
-                }";
-                return Content(_result, "application/json");
+                return Ok(new
+                {
+                    status = "200",
+                    response = "OK",
+                    message = "Data Found",
+                    data = jsonData
+                });
             }
             catch (Exception e)
             {
-                return Content(e.Message.ToString(), "application/json");
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    response = "Internal Server Error",
+                    message = "Unexpected Error",
+                    err = e.Message.ToString()
+                });
             }
         }
-
-
     }
 }
