@@ -1,26 +1,28 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace KANBAN.Models.KB3.UrgentOrder
 {
+    [PrimaryKey(nameof(F_PO_No),nameof(F_Part_No),nameof(F_Ruibetsu),nameof(F_Update_By))]
     public class TB_Import_Service
     {
-        [JsonProperty("Depot_Code_")]
-        [JsonPropertyName("Depot_Code_")]
+        [JsonProperty("Depot_Code_:")]
+        [JsonPropertyName("Depot_Code_:")]
         public string? F_Dept_Code { get; set; }
 
-        [JsonProperty("Supplier_Code_")]
-        [JsonPropertyName("Supplier_Code_")]
+        [JsonProperty("Supplier_Code_:")]
+        [JsonPropertyName("Supplier_Code_:")]
         public string? F_Supplier_Code { get; set; }
 
-        [JsonProperty("Factory_Code_")]
-        [JsonPropertyName("Factory_Code_")]
+        [JsonProperty("Factory_Code_:")]
+        [JsonPropertyName("Factory_Code_:")]
         public string? F_Factory_Code { get; set; }
 
-        [JsonProperty("Supplier_Name_")]
-        [JsonPropertyName("Supplier_Name_")]
+        [JsonProperty("Supplier_Name_:")]
+        [JsonPropertyName("Supplier_Name_:")]
         public string? F_Supplier_Name { get; set; }
 
         public string? F_Invoice_No { get; set; }

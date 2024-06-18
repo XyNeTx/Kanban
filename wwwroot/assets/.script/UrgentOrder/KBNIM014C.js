@@ -9,9 +9,9 @@
             "JP": ['Order No.', 'Order Issued Date', 'Delivery Date'],
         },
         ColumnValue: [
-            { "data": "F_OrderType" },
-            { "data": "F_Effect_Date" },
-            { "data": "F_End_Date" }
+            { "data": "F_PDS_No" },
+            { "data": "F_PDS_Issued_Date" },
+            { "data": "F_Delivery_Date" }
         ],
         Modal: 'modalMaster',
         Form: 'frmMaster',

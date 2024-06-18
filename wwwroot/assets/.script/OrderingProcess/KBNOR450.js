@@ -53,7 +53,7 @@
 
 
     xAjax.onClick('#btnPrintPDS', async function () {
-        if ($('#chkPDSNo').val() == 1 && ($('#itmPDSFrom').val() != '' || $('#itmPDSTo').val() != ''))
+        if ($('#chkPDSNo').val() == 1 && ($('#itmPDSFrom').val() == '' || $('#itmPDSTo').val() == ''))
             MsgBox("Please input PDS From, To before print PDS...", MsgBoxStyle.Exclamation, "Exclamation");
 
         if ($('#chkSupplierCode').val() == 1 && ($('#itmSupplierFrom').val() != '' || $('#itmSupplierTo').val() != ''))
@@ -85,7 +85,7 @@
 
 
     xAjax.onClick('#btnPrintKanban', async function () {
-        if ($('#chkPDSNo').val() == 1 && ($('#itmPDSFrom').val() != '' || $('#itmPDSTo').val() != ''))
+        if ($('#chkPDSNo').val() == 1 && ($('#itmPDSFrom').val() == '' || $('#itmPDSTo').val() == ''))
             MsgBox("Please input PDS From, To before print PDS...", MsgBoxStyle.Exclamation, "Exclamation");
 
         if ($('#chkSupplierCode').val() == 1 && ($('#itmSupplierFrom').val() != '' || $('#itmSupplierTo').val() != ''))

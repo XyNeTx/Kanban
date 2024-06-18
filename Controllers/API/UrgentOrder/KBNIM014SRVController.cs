@@ -88,7 +88,9 @@ namespace KANBAN.Controllers.API.UrgentOrder
         {
             try
             {
-                var USERID = HttpContext.Session.GetString("USER_ID");
+                setConString();
+                string USERID = HttpContext.Session.GetString("USER_CODE");
+                _KB3Context.Database.ExecuteSqlRawAsync($"DELETE FROM TB_IMPORT_SERVICE WHERE F_UPDATE_BY = '{USERID}'");
                 foreach (var each in listObj)
                 {
                     if(each.F_PO_No.Substring(0,3) == "T99" || each.F_PO_No.Substring(0,3) == "T89")
@@ -103,7 +105,6 @@ namespace KANBAN.Controllers.API.UrgentOrder
                             each.F_Part_No = each.F_Part_No.Substring(0, 10);
                         }
                         each.F_Update_By = USERID;
-                       
                     }
                     else
                     {
@@ -149,7 +150,8 @@ namespace KANBAN.Controllers.API.UrgentOrder
                     status = "500",
                     response = "Ok",
                     title = "Unexpected Error !",
-                    message = ex.Message
+                    message = "Insert data Error",
+                    err = ex.Message
                 });
             }
         }
