@@ -59,28 +59,61 @@ $("#btnImport").click(async function () {
         const data = await UploadFile(_files);
         console.log('Data: ', data);
         if (data.includes("Error")) return console.error("Error: ", data);
+        const _dataLength = data.length;
+        $("#divProgressBar").css("visibility", "visible");
+        for (const each in data)
+        {
+            console.log("Each: ", each);
+            const _progress = ((parseInt(each) + 1) / _dataLength) * 100;
+            console.log("Progress: ", _progress);
+            $("#widthProgressBar").css("width", _progress + "%");
+            $("#spanProgressBar").text(`Data Importing ${(parseInt(each) + 1)} / ${_dataLength} `);
 
-        //$.ajax({
-        //    type: "POST",
-        //    url: "/api/KBNIM014SRV/InsertDataFromImport",
-        //    data: JSON.stringify(data),
-        //    contentType: "application/json; charset=utf-8",
-        //    dataType: "json",
-        //    success: function (response) {
-        //        console.log("Success: ", response);
-        //        if (response.status === "200") {
-        //            return xSwal.success(response.title, response.message);
-        //        }
-        //        else {
-        //            return xSwal.error(response.title, response.message);
-        //        }
-        //    },
-        //    error: function (xhr, status, response) {
-        //        console.error("Error: ", xhr.responseJSON);
-        //        return xSwal.error(xhr.responseJSON.title, xhr.responseJSON.message);
-        //    }
-        //});
-    } catch (error) {
+            const _data = await data[each];
+            _data.F_Type = "URGENT";
+            let _jsondata = await JSON.stringify(_data);
+            //console.log('JSON Data: ', _jsondata);
+            await _xLib.AJAX_Post("/api/KBNIM014/ImportSave", _jsondata,
+                function (response) {
+                    console.log("Success: ", response);
+                },
+                function (err) {
+                    return xSwal.error("Error !!", err.responseJSON.message);
+                }
+            );
+        }
+
+
+
+        await _xLib.AJAX_Get("/api/KBNIM014/AfterImported", "",
+            function (response) {
+                if (response.status === "200") {
+                    if (response.hasOwnProperty("err")) {
+                        $("#widthProgressBar").css("width", "100%");
+                        $("#spanProgressBar").text("Data Importing Completed but Have Some Error");
+                        $("#widthProgressBar").addClass("bg-danger");
+                        return xSwal.success(response.message, response.err);
+                    }
+                    $("#widthProgressBar").css("width", "100%");
+                    $("#spanProgressBar").text("Data Importing Completed");
+                    $("#widthProgressBar").addClass("bg-success");
+                    return xSwal.success(response.title, response.message);
+                }
+            },
+            function (err) {
+                return xSwal.error("Error !!", err.responseJSON.message);
+            }
+        )
+
+    }
+    catch (error) {
         console.error("UploadFile Error: ", error);
+    }
+    finally {
+        $("#divProgressBar").css("visibility", "hidden");
+        $("#widthProgressBar").removeClass("bg-danger");
+        $("#widthProgressBar").removeClass("bg-success");
+        $("#widthProgressBar").css("width", "0%");
+        $("#spanProgressBar").text("");
     }
 });
