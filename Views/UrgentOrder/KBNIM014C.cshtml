@@ -1,4 +1,8 @@
-﻿<div class="row">
+﻿@{
+    string now = DateTime.Now.ToString("yyyy-MM-dd");
+}
+
+<div class="row">
 
     <div class="col-xl-12 col-md-12 col-sm-12">
         <div class="card border-left-primary shadow h-100">
@@ -21,14 +25,20 @@
 
                         <div class="row mt-3">
                             <div class="col">
-                                <fieldset class="fieldset" id="fldDeliveryDate" disabled>
+                                <fieldset class="fieldset" id="fldDeliveryDate">
                                     <legend><item type="checkbox" id="chkDeliveryDate" label="Search by Delivery Date :"></item></legend>
                                     <div class="row">
-                                        <div class="col-3">
-                                            <item type="date" id="F_DeliveryFrom" label="From" format="yyyy-mm-dd" default="now"></item>
+                                        <div class="col-3 d-flex">
+                                            <div class="align-content-center d-flex">
+                                                <label class="form-label me-2" for="F_DeliveryFrom">From</label>
+                                                <input type="date" class="form-control" id="F_DeliveryFrom" value="@now" disabled/>
+                                            </div>
                                         </div>
-                                        <div class="col-3">
-                                            <item type="date" id="F_DeliveryTo" label="To" format="yyyy-mm-dd" default="now"></item>
+                                        <div class="col-3 d-flex">
+                                            <div class="align-content-center d-flex">
+                                                <label class="form-label align-content-center me-2" for="F_DeliveryTo">To</label>
+                                                <input type="date" class="form-control" id="F_DeliveryTo" value="@now" disabled />
+                                            </div>
                                         </div>
                                     </div>
                                 </fieldset>

@@ -112,16 +112,20 @@ namespace HINOSystem.Controllers.API.Master
         }
 
         [HttpGet]
-        public async Task<IActionResult> search(string? F_PDS_NO = null)
+        public async Task<IActionResult> search(string? F_PDS_NO = null,bool chkDeliveryDate = false, string? F_DeliveryFrom = null , string? F_DeliveryTo = null)
         {
             string _SQL = "";
             try
             {
                 string UserID = HttpContext.Session.GetString("USER_CODE");
                 string Plant =  HttpContext.Session.GetString("USER_PLANT");
+                F_DeliveryFrom = F_DeliveryFrom == null ? "" : F_DeliveryFrom.Replace("-",string.Empty);
+                F_DeliveryTo = F_DeliveryTo == null ? "" : F_DeliveryTo.Replace("-", string.Empty);
 
                 //_SQL = @" EXEC [exec].[spKBNMS001_SEARCH] '" + _json.F_Plant + "' ";
-                if(string.IsNullOrWhiteSpace(F_PDS_NO)) _SQL = $" EXEC [exec].[spKBNIM014Confirm_SEARCH] '{Plant}' , '{UserID}' ";
+                if (chkDeliveryDate) _SQL = $" EXEC [exec].[spKBNIM014Confirm_SEARCH] '{Plant}' , '{UserID}' , NULL , '{F_DeliveryFrom}', '{F_DeliveryTo}' ";
+
+                else if(string.IsNullOrWhiteSpace(F_PDS_NO) && !chkDeliveryDate) _SQL = $" EXEC [exec].[spKBNIM014Confirm_SEARCH] '{Plant}' , '{UserID}' ";
 
                 else _SQL = $" EXEC [exec].[spKBNIM014Confirm_SEARCH] '{Plant}' , '{UserID}' , '{F_PDS_NO}' ";
 
@@ -145,6 +149,59 @@ namespace HINOSystem.Controllers.API.Master
                     response = "Internal Server Error",
                     message = "Unexpected Error",
                     err = e.Message.ToString()
+                });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Save([FromBody] object _obj)
+        {
+            using var _KB3Transaction = _KB3Context.Database.BeginTransaction();
+            try
+            {
+                
+                _KB3Transaction.CreateSavepoint("Start_KBNIM014Confirm");
+                dynamic dynamic = JsonConvert.DeserializeObject(_obj.ToString());
+
+                string F_Delivery_Date = dynamic["F_Delivery_Date"],
+                    F_PDS_No = dynamic["F_PDS_No"],
+                    F_PDS_Issued_Date = dynamic["F_PDS_Issued_Date"];
+
+                string UserID = HttpContext.Session.GetString("USER_CODE");
+
+                await _KB3Context.Database.ExecuteSqlRawAsync($"EXEC [exec].[spKBNIM014Confirm_SAVE] '{F_PDS_No}','{F_PDS_Issued_Date}','{F_Delivery_Date}','{UserID}' ");
+
+                int rowAff = await _KB3Context.TB_Transaction.Where(x=>x.F_PDS_No == F_PDS_No && x.F_PDS_Issued_Date == F_PDS_Issued_Date && x.F_Delivery_Date == F_Delivery_Date).CountAsync();
+
+                if (rowAff == 0)
+                {
+                    _KB3Transaction.Rollback();
+                    return StatusCode(500, new
+                    {
+                        status = "500",
+                        response = "Internal Server Error",
+                        message = "Urgent Order Didn't Confirm",
+                        err = "Data Not Found in TB_Transaction"
+                    });
+                }
+
+                await _KB3Transaction.CommitAsync();
+                return Ok(new
+                {
+                    status = "200",
+                    response = "OK",
+                    message = "Urgent Order Confirmed",
+                });
+            }
+            catch (Exception ex)
+            {
+                await _KB3Transaction.RollbackAsync();
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    response = "Internal Server Error",
+                    message = "Unexpected Error",
+                    err = ex.Message.ToString()
                 });
             }
         }
