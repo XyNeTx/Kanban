@@ -150,15 +150,15 @@ namespace HINOSystem.Controllers.API.Master
 
                 _KB3Transaction.Commit();
 
-                int _haveError = await _KB3Context.Database.ExecuteSqlRawAsync("SELECT * FROM TB_Import_Error Where F_Update_By = '20062084' and F_Type = 'KBNIM014'; ");
+                int _haveError = await _KB3Context.Database.ExecuteSqlRawAsync($"SELECT * FROM TB_Import_Error Where F_Update_By = '{UserID}' and F_Type = 'KBNIM014'; ");
 
                 if(_haveError > 0)
                 {
-                    return Ok(new
+                    return BadRequest(new
                     {
-                        status = "200",
-                        response = "OK",
-                        title = "OK",
+                        status = "400",
+                        response = "Bad Request",
+                        title = "Bad Request",
                         message = "Import Direct Supply Complete!!",
                         err = "Data Imported but Had Some Error"
                     });

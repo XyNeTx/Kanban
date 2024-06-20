@@ -10,8 +10,8 @@
         scrollY: '350px',
         columns: [
             {
-                title: '<input type="checkbox" name="ChkAll"/>', width: '10%', render: function (data, type, row, meta) {
-                    return '<input type="checkbox" name="inputChkBox" value=' + meta.row + '>';
+                title: '<input type="checkbox" class="chkBoxHeadDT" id="chkBoxHeadID" name="chkBoxHeadName"/>', width: '10%', render: function (data, type, row, meta) {
+                    return '<input type="checkbox" class="chkBoxDT" name="inputChkBox" value=' + meta.row + '>';
                 },
                 orderable: false
             },
@@ -21,13 +21,23 @@
             { title: 'Pack', data: 'F_Pack', width: '10%' },
             { title: 'Qty', data: 'F_Qty', width: '10%' },
             { title: 'Delivery Date', data: 'F_Delivery_Date', width: '15%' },
-            { title: 'Delivery Trip', data: 'F_Round', width: '15%' },
+            { title: 'Delivery Trip', data: 'F_Delivery_Trip', width: '15%' },
         ],
         order: [[1, 'asc']]
     });
 
     xSplash.hide();
 });
+
+$(document).on("click", "#chkBoxHeadID", async function () {
+    if ($(this).is(":checked")) {
+        $(".chkBoxDT").prop("checked", true);
+    }
+    else {
+        $(".chkBoxDT").prop("checked", false);
+    }
+});
+
 $("#buttonNew").click(function () {
     _xLib.AJAX_Get('/api/KBNIM007N/GenPDSNo', '',
         function(success) {
@@ -165,9 +175,8 @@ $("#inputDeliveryTrip").on("keypress", function (e) {
             F_Pack: $("#inputPack").val(),
             F_Qty: $("#inputQty").val(),
             F_Delivery_Date: $("#inputDeliveryDate").val().replaceAll("-",""),
-            F_Round: DeliveryTrip,
-            F_Supplier_CD: $("#selectSupplier").val().split("-")[0],
-            F_Supplier_Plant: $("#selectSupplier").val().split("-")[1],
+            F_Delivery_Trip: DeliveryTrip,
+            F_Supplier: $("#selectSupplier").val(),
             F_Store_CD: $("#txtStoreCode").val(),
             F_PDS_No: $("#txtOrderNo").val()
         }
@@ -182,4 +191,80 @@ $("#inputDeliveryTrip").on("keypress", function (e) {
         $("#inputDeliveryTrip").val('');
         $("#txtStoreCode").val('');
     }
+});
+
+$("#buttonOK").click(async function () {
+    var rows = $("input[name='inputChkBox']:checked").closest("tr");
+    if (rows.length === 0) return xSwal.error("Error !!", "No data selected.");
+    let _arrObj = $("#table").DataTable().rows(rows).data().toArray();
+
+    return await OkClicked(_arrObj);
+});
+
+
+async function OkClicked(_arrObj) {
+
+    for (const item in _arrObj) {
+        if (await _arrObj[item].hasOwnProperty("F_Delivery_Date")) {
+            _arrObj[item].Delivery_Date = _arrObj[item].F_Delivery_Date;
+            _arrObj[item].Delivery_Trip = _arrObj[item].F_Delivery_Trip;
+            _arrObj[item].Part_No = _arrObj[item].F_Part_No;
+            _arrObj[item].Supplier = _arrObj[item].F_Supplier;
+            _arrObj[item].Qty = _arrObj[item].F_Qty;
+            _arrObj[item].Kanban_No = _arrObj[item].F_Kanban_No;
+
+            delete _arrObj[item].F_Delivery_Date;
+            delete _arrObj[item].F_Delivery_Trip;
+            delete _arrObj[item].F_Part_No;
+            delete _arrObj[item].F_Supplier;
+            delete _arrObj[item].F_Qty;
+            delete _arrObj[item].F_Kanban_No;
+        }
+        _arrObj[item].Delivery_Date = _arrObj[item].Delivery_Date.toString();
+        var _json = JSON.stringify(_arrObj[item]);
+
+        await _xLib.AJAX_Post('/api/KBNIM007N/OKClicked', _json,
+            function (success) {
+                if (success.status === "200") {
+                    console.log("Success: ", success);
+                    $("#table").DataTable().row(rows[item]).remove().draw();
+                }
+            },
+            function (error) {
+                return xSwal.error("Error !!", error.responseJSON.message);
+            }
+        );
+    }
+
+    await _xLib.AJAX_Get('/api/KBNIM007N/AllDataWasSaved', { F_PDS_No: $("#txtOrderNo").val() },
+        function (success) {
+            if (success.status === "200") {
+                return xSwal.success(success.title, success.message);
+            }
+        },
+        function (error) {
+            return xSwal.error("Error !!", error.responseJSON.message);
+        }
+    )
+
+    $("#frmCondition").trigger("reset");
+    $("#table").DataTable().clear().draw();
+    return;
+}
+
+
+
+let _File = [];
+$("#inputFile").change(function (e) {
+    _File = e.target.files;
+});
+$("#buttonImport").click(async function () {
+    if (!_File.length) return xSwal.error("Error !!", "No file selected.");
+    const file = _File[0];
+    const arrayBuffer = await file.arrayBuffer();
+    const read = await XLSX.read(arrayBuffer);
+    const _arrObj = XLSX.utils.sheet_to_json(read.Sheets[read.SheetNames[0]]);
+    //console.log('Data: ', _arrObj);
+
+    return await OkClicked(_arrObj);
 });

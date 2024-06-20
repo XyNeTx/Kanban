@@ -85,6 +85,8 @@ namespace HINOSystem.Context
 
         public DbSet<TB_Import_EKanban_Pack> TB_Import_EKanban_Pack { get; set; }
 
+        public DbSet<TB_Import_Urgent> TB_Import_Urgent { get; set; }
+
 
         //protected override void OnModelCreating(ModelBuilder modelBuilder)
         //{

@@ -6,7 +6,7 @@ let _files = [];
 
 $("#inputFile").change(function (e) {
     _files = e.target.files;
-    console.log('Files:', _files);
+    //console.log('Files:', _files);
 });
 
 async function UploadFile(_files) {

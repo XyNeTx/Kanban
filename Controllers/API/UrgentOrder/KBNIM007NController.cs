@@ -40,6 +40,7 @@ using Microsoft.VisualBasic;
 using static System.Net.Mime.MediaTypeNames;
 using NPOI.POIFS.Properties;
 using KANBAN.Context;
+using KANBAN.Models.KB3.UrgentOrder;
 //using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HINOSystem.Controllers.API.Master
@@ -435,6 +436,103 @@ namespace HINOSystem.Controllers.API.Master
                     response = "Internal Server Error",
                     title = "Internal Server Error",
                     message = "Can't Get Supplier Detail",
+                    err = ex.Message
+                });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> OKClicked(VM_KBNIM007N_OK obj)
+        {
+            setConString();
+            using var _KB3Transaction = _KB3Context.Database.BeginTransaction();
+            try
+            {
+                _KB3Transaction.CreateSavepoint("Start_ImportSave");
+
+                string now = DateTime.Now.ToString("yyyyMMdd");
+                string UserID = HttpContext.Session.GetString("USER_CODE");
+                string Plant = HttpContext.Session.GetString("USER_PLANT");
+
+                TB_Import_Urgent _Import_Urgent = JsonConvert.DeserializeObject<TB_Import_Urgent>(JsonConvert.SerializeObject(obj));
+                _Import_Urgent.F_Part_No = _Import_Urgent.F_Part_No.Replace("-", string.Empty);
+                _Import_Urgent.F_Update_By = UserID;
+                _Import_Urgent.F_Update_Date = DateTime.Now;
+
+                _KB3Context.TB_Import_Urgent.Add(_Import_Urgent);
+                _KB3Context.SaveChanges();
+                _KB3Transaction.Commit();
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "OK",
+                    title = "OK",
+                    message = "Data saved",
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    response = "Internal Server Error",
+                    title = "Internal Server Error",
+                    message = "Unexpected Error While Saving the Data",
+                    err = ex.Message
+                });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> AllDataWasSaved(string? F_PDS_No = null)
+        {
+            setConString();
+            using var _KB3Transaction = _KB3Context.Database.BeginTransaction();
+            try
+            {
+                _KB3Transaction.CreateSavepoint("Start_ImportSave");
+
+                string now = DateTime.Now.ToString("yyyyMMdd");
+                string UserID = HttpContext.Session.GetString("USER_CODE");
+                string Plant = HttpContext.Session.GetString("USER_PLANT");
+
+                await _KB3Context.Database.ExecuteSqlRawAsync($"EXEC [exec].[spKBNIM007N] '{Plant}','{UserID}', '{F_PDS_No}' ");
+
+                _KB3Transaction.Commit();
+
+                string _SQL = "SELECT F_PDS_CD, F_Row, F_Field, F_Remark, F_Update_By, F_Update_Date, F_Type FROM " +
+                        $"TB_Import_Error Where F_Type ='KBMIM007N' and F_Update_By = '{UserID}' ";
+
+                DataTable dtErr = _FillDT.ExecuteSQL(_SQL);
+
+                if(dtErr.Rows.Count > 0)
+                {
+                    return BadRequest(new
+                    {
+                        status = "400",
+                        response = "Bad Request",
+                        title = "Bad Request",
+                        message = "Data Saved but Have Some Error Please Check",
+                    });
+                }
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "OK",
+                    title = "OK",
+                    message = "Data Saved",
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    response = "Internal Server Error",
+                    title = "Internal Server Error",
+                    message = "Unexpected Error While Saving the Data",
                     err = ex.Message
                 });
             }
