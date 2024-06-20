@@ -1,4 +1,4 @@
-﻿$(document).ready(function () {
+﻿$(document).ready(async function () {
 
     const KBNIM014C = new MasterTemplate({
         Controller: _PAGE_,
@@ -20,44 +20,107 @@
         ],
     });
 
+    await _xLib.AJAX_Get('/api/KBNIM014C/search', '',
+        async function (response) {
+            if (response.status === "200") {
+                var _jsondata = await JSON.parse(response.data);
+                await _xLib.TrimArrayJSON(_jsondata);
+                return await _jsondata.forEach(function (item) {
+                    $("#SelectPDSNo").append('<option value="' + item.F_PDS_No + '">' + item.F_PDS_No + '</option>');
+                });
+            }
+        },
+        function (err)
+        {
+            return xSwal.error("Error !!", err.responseJSON.message);
+        }
+    );
 
-    KBNIM014C.prepare();
+    await KBNIM014C.prepare();
+    await KBNIM014C.initial();
 
-    KBNIM014C.initial(function (result) {
+});
 
-        xAjax.onCheck('#chkDeliveryDate', function () {
-            if ($('#chkDeliveryDate').val() == 0) $('#fldDeliveryDate').prop('disabled', 'disabled');
-            if ($('#chkDeliveryDate').val() == 1) $('#fldDeliveryDate').prop('disabled', false);
-        });
+$("#chkDeliveryDate").change(function () {
+    if (this.checked) {
+        $("#F_DeliveryFrom").prop("disabled", false);
+        $("#F_DeliveryTo").prop("disabled", false);
+    }
+    else {
+        $("#F_DeliveryFrom").prop("disabled", true);
+        $("#F_DeliveryTo").prop("disabled", true);
+    }
+});
 
-        KBNIM014C.search();
+$("#buttonSearch").click(async function () {
+    console.log("Clicked !!! !! !!")
+    var DeliveryDateFrom = null;
+    var DeliveryDateTo = null;
+
+    if ($("#chkDeliveryDate").prop("checked")) {
+        DeliveryDateFrom = $("#F_DeliveryFrom").val();
+        DeliveryDateTo = $("#F_DeliveryTo").val();
+    }
+
+    $.ajax({
+        type: "GET",
+        url: "/api/KBNIM014C/search",
+        data: {
+            F_PDS_NO: $("#SelectPDSNo").val(),
+            chkDeliveryDate: $("#chkDeliveryDate").prop("checked"),
+            F_DeliveryFrom: DeliveryDateFrom,
+            F_DeliveryTo: DeliveryDateTo
+        },
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (response) {
+            //console.log("Success: ", response);
+            if (response.status === "200") {
+                var jsonResult = JSON.parse(response.data);
+                //console.log("jsonResult: ", jsonResult);
+                _xLib.TrimArrayJSON(jsonResult);
+                $("#tblMaster").DataTable().clear().rows.add(jsonResult).draw();
+            }
+            else {
+                return xSwal.error(response.title, response.message);
+            }
+        },
+        error: function (xhr, status, response) {
+            console.error("Error: ", xhr.responseJSON);
+            return xSwal.error(xhr.responseJSON.title, xhr.responseJSON.message);
+        }
     });
+});
 
-    onSave = function () {
-        KBNIM014C.save(function () {
-            KBNIM014C.search();
-        });
-    }
+$("#buttonSave").click(async function () {
 
-    onDelete = function () {
-        KBNIM014C.delete(function () {
-            KBNIM014C.search();
-        });
-    }
+    var checkedRow = $("#tblMaster input[type='checkbox']:checked");
+    if (checkedRow.length == 0) return xSwal.error("Error !!", "No data selected.");
 
-    onDeleteAll = function () {
-        KBNIM014C.deleteall(function () {
-            KBNIM014C.search();
-        });
-    }
+    //console.log("Checked Row: ", checkedRow);
 
-    onPrint = function () {
-        xDataTableExport.setConfigPDF({
-            title: 'OLD TYPE SERVICE CHECK LIST'
-        });
-    }
+    var _arrCheckedData = $("#tblMaster").DataTable().rows(checkedRow.closest("tr")).data().toArray();
+    if (_arrCheckedData.length == 0) return xSwal.error("Error !!", "No data selected.");
 
-    onExecute = function () {
-        console.log('onExecute');
+    //return console.log(_arrCheckedData);
+
+    for (const each in _arrCheckedData) {
+        console.log("Data: ", _arrCheckedData[each]);
+        var _jsonData = JSON.stringify(_arrCheckedData[each]);
+        console.log("JSON Data: ", _jsonData);
+
+        await _xLib.AJAX_Post('/api/KBNIM014C/Save', _jsonData,
+            async function (response) {
+                console.log("Success: ", response);
+            },
+            async function (err) {
+                let confirm = await xSwal.error("Error !!", err.responseJSON.message);
+                if (confirm.isConfirmed) {
+                    return;
+                }
+            }
+        );
     }
+    xSwal.success(response.title, response.message);
+    $("#buttonSearch").click();
 });

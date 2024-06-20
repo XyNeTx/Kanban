@@ -1,41 +1,66 @@
-﻿<div class="row">
+﻿@{
+    string now = DateTime.Now.ToString("yyyy-MM-dd");
+    string nowGenPDS = DateTime.Now.ToString("yyyyMMddHHmm");
+}
 
+<div class="row">
     <div class="col-xl-12 col-md-12 col-sm-12">
         <div class="card border-left-primary shadow h-100">
             <div class="card-body">
-
+                <input type="text" hidden class="form-control" id="nowToGenPDS" value="@nowGenPDS" readonly />
+                <button type="button" class="btn btn-primary mt-4 mb-4" id="buttonInq">Inquiry</button>
+                <button type="button" class="btn btn-primary mt-4 mb-4" id="buttonNew">New</button>
+                <button type="button" class="btn btn-primary mt-4 mb-4" id="buttonUpd">Update</button>
+                <button type="button" class="btn btn-primary mt-4 mb-4" id="buttonDel">Delete</button>
                 <form id="frmCondition">
-
                     <div class="row">
                         <div class="col">
-
                             <fieldset class="fieldset">
                                 <legend>Detail : </legend>
-
                                 <div class="row">
-                                    <div class="col-6">
-                                        <item type="select" id="txtOrderNo" label="Order No."></item>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-8">
-                                        <item type="lov" id="txtSupplierCode" label="Supplier Code" data-controller="LOVKB3.PartList" data-value="F_Part_No:Code" data-description="F_Part_Name" class="col-2"></item>
+                                    <div class="col-3">
+                                        <div class ="input-group">
+                                            <label class="input-group-text" for="txtOrderNo">ORDER NO :</label>
+                                            <input type="text" class="form-control" id="txtOrderNo" readonly />
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-3">
-                                        <item type="text" id="txtCycleTime" label="Cycle Time"></item>
+                                        <div class="input-group">
+                                            <label class="input-group-text" for="selectSupplier">SUPPLIER CODE :</label>
+                                            <select class="form-select" id="selectSupplier" disabled>
+                                                <option value="" hidden></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-1">
+                                        <input type="text" class="form-control" id="txtSupplierShortName" readonly />
+                                    </div>
+                                    <div class="col-5">
+                                        <input type="text" class="form-control" id="txtSupplierName" readonly />
                                     </div>
                                 </div>
-
+                                <div class="row">
+                                    <div class="col-2">
+                                        <div class="input-group">
+                                            <label class="input-group-text" for="txtCycleTime">Cycle Time :</label>
+                                            <input type="text" class="form-control" id="txtCycleTime" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="col-2">
+                                        <div class="input-group">
+                                            <label class="input-group-text" for="txtStoreCode">Store Code :</label>
+                                            <input type="text" class="form-control" id="txtStoreCode" readonly />
+                                        </div>
+                                    </div>
+                                </div>
                             </fieldset>
-
                         </div>
                     </div>
-
                     <div class="row mt-2">
                         <div class="col">
-                            <item type="table" id="tblMaster"></item>
+                            <table class="table" id="table"></table>
                         </div>
                     </div>
 
@@ -46,32 +71,39 @@
                                 <legend>Data : </legend>
 
                                 <div class="row">
-                                    <div class="col-3">
-                                        <item type="select" id="txtPartNo" label="PART NO."></item>
+                                    <div class="col">
+                                        <label class="form-label align-content-center" for="inputPartNo">PART NO.</label>
+                                        <select class="form-select" id="inputPartNo">
+                                            <option value="" hidden></option>
+                                        </select>
                                     </div>
-                                    <div class="col-3">
-                                        <item type="select" id="txtKanbanNo" label="KANBAN NO."></item>
+                                    <div class="col">
+                                        <label class="form-label" for="inputKanbanNo">KANBAN NO.</label>
+                                        <select class="form-select" id="inputKanbanNo">
+                                            <option value="" hidden></option>
+                                        </select>
                                     </div>
-                                    <div class="col-2">
-                                        <item type="currency" id="txtQtyPack" label="QTY/PACK"></item>
+                                    <div class="col">
+                                        <label class="form-label" for="inputQtyPack">QTY/PACK</label>
+                                        <input type="number" min="0" class="form-control" id="inputQtyPack" readonly />
                                     </div>
-                                    <div class="col-2">
-                                        <item type="currency" id="txtPack" label="PACK"></item>
+                                    <div class="col">
+                                        <label class="form-label" for="inputPack">PACK</label>
+                                        <input type="number" min="0" class="form-control" id="inputPack" />
                                     </div>
-                                    <div class="col-2">
-                                        <item type="currency" id="txtQty" label="QTY"></item>
+                                    <div class="col">
+                                        <label class="form-label" for="inputQty">QTY</label>
+                                        <input type="number" min="0" class="form-control" id="inputQty" />
+                                    </div>
+                                    <div class="col">
+                                        <label class="form-label" for="inputDeliveryDate">DELIVERY DATE</label>
+                                        <input type="date" class="form-control" value="@now" id="inputDeliveryDate" readonly />
+                                    </div>
+                                    <div class="col">
+                                        <label class="form-label" for="txtPartNo">DELIVERY TRIP</label>
+                                        <input type="number" min="0" class="form-control" id="inputDeliveryTrip" />
                                     </div>
                                 </div>
-
-                                <div class="row">
-                                    <div class="col-3">
-                                        <item type="date" id="txtDeliveryDate" label="DELIVERY DATE" format="yyyy-mm-dd" default="now"></item>
-                                    </div>
-                                    <div class="col-3">
-                                        <item type="text" id="txtDeliveryTrip" label="DELIVERY TRIP"></item>
-                                    </div>
-                                </div>
-
                             </fieldset>
 
                         </div>
@@ -82,10 +114,10 @@
 
                             <fieldset class="fieldset">
                                 <legend>Import Data : </legend>
-
                                 <div class="row">
                                     <div class="col">
-                                        <item type="file" id="ItemID" filter=".txt"></item>
+                                        <input type="file" class="form-control col-10" id="inputFile" />
+                                        <button type="button" class="btn btn-primary mt-2" id="buttonImport">Import</button>
                                     </div>
                                 </div>
 
@@ -96,7 +128,11 @@
 
 
                 </form>
-
+                <div class="row mt-3">
+                    <div class="col">
+                        <button type="button" id="buttonOK" class="btn btn-success float-end col-1">OK</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
