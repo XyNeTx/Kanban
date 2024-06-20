@@ -40,6 +40,7 @@ using Microsoft.VisualBasic;
 using static System.Net.Mime.MediaTypeNames;
 using NPOI.POIFS.Properties;
 using KANBAN.Models.KB3.UrgentOrder;
+using KANBAN.Context;
 //using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HINOSystem.Controllers.API.Master
@@ -50,11 +51,12 @@ namespace HINOSystem.Controllers.API.Master
     {
         private readonly IConfiguration _configuration;
         private readonly BearerClass _BearerClass;
-        private readonly ActionResultClass _ActionResult;        
+        private readonly ActionResultClass _ActionResult;
         private readonly KanbanConnection _KBCN;
         private readonly PPMConnect _PPMConnect;
-
+        private readonly PPM3Context _PPM3Context;
         private readonly KB3Context _KB3Context;
+        private readonly SerilogLibs _Log;
 
 
         private readonly string StoragePath = @"wwwroot\Storage\Uploads";
@@ -65,7 +67,9 @@ namespace HINOSystem.Controllers.API.Master
             ActionResultClass actionResultClass,
             KanbanConnection kanbanConnection,
             PPMConnect ppmConnect,
-            KB3Context kB3Context
+            KB3Context kB3Context,
+            PPM3Context pPM3Context,
+            SerilogLibs serilogLibs
             )
         {
             _configuration = configuration;
@@ -74,8 +78,10 @@ namespace HINOSystem.Controllers.API.Master
             _KB3Context = kB3Context;
             _KBCN = kanbanConnection;
             _PPMConnect = ppmConnect;
-
+            _PPM3Context = pPM3Context;
+            _Log = serilogLibs;
         }
+
         [HttpPost]
         public async Task<IActionResult> ImportSave(TB_Import_EKanban_Pack obj)
         {

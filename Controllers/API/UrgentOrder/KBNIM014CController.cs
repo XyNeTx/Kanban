@@ -39,6 +39,7 @@ using Microsoft.CodeAnalysis.Differencing;
 using Microsoft.VisualBasic;
 using static System.Net.Mime.MediaTypeNames;
 using NPOI.POIFS.Properties;
+using KANBAN.Context;
 //using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HINOSystem.Controllers.API.Master
@@ -53,7 +54,9 @@ namespace HINOSystem.Controllers.API.Master
         private readonly KanbanConnection _KBCN;
         private readonly PPMConnect _PPMConnect;
         private readonly FillDataTable _FillDT;
+        private readonly PPM3Context _PPM3Context;
         private readonly KB3Context _KB3Context;
+        private readonly SerilogLibs _Log;
 
 
         private readonly string StoragePath = @"wwwroot\Storage\Uploads";
@@ -65,7 +68,9 @@ namespace HINOSystem.Controllers.API.Master
             KanbanConnection kanbanConnection,
             PPMConnect ppmConnect,
             FillDataTable fillDT,
-            KB3Context kB3Context
+            KB3Context kB3Context,
+            PPM3Context pPM3Context,
+            SerilogLibs log
             )
         {
             _configuration = configuration;
@@ -75,6 +80,8 @@ namespace HINOSystem.Controllers.API.Master
             _KBCN = kanbanConnection;
             _PPMConnect = ppmConnect;
             _FillDT = fillDT;
+            _PPM3Context = pPM3Context;
+            _Log = log;
         }
 
 

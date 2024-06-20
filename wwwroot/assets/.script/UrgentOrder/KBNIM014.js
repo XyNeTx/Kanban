@@ -57,15 +57,17 @@ async function UploadFile(_files) {
 $("#btnImport").click(async function () {
     try {
         const data = await UploadFile(_files);
-        console.log('Data: ', data);
+        //console.log('Data: ', data);
         if (data.includes("Error")) return console.error("Error: ", data);
+
         const _dataLength = data.length;
         $("#divProgressBar").css("visibility", "visible");
+
         for (const each in data)
         {
-            console.log("Each: ", each);
+            //console.log("Each: ", each);
             const _progress = ((parseInt(each) + 1) / _dataLength) * 100;
-            console.log("Progress: ", _progress);
+            //console.log("Progress: ", _progress);
             $("#widthProgressBar").css("width", _progress + "%");
             $("#spanProgressBar").text(`Data Importing ${(parseInt(each) + 1)} / ${_dataLength} `);
 
@@ -75,7 +77,7 @@ $("#btnImport").click(async function () {
             //console.log('JSON Data: ', _jsondata);
             await _xLib.AJAX_Post("/api/KBNIM014/ImportSave", _jsondata,
                 function (response) {
-                    console.log("Success: ", response);
+                    //console.log("Success: ", response);
                 },
                 function (err) {
                     return xSwal.error("Error !!", err.responseJSON.message);
@@ -88,12 +90,14 @@ $("#btnImport").click(async function () {
         await _xLib.AJAX_Get("/api/KBNIM014/AfterImported", "",
             function (response) {
                 if (response.status === "200") {
+
                     if (response.hasOwnProperty("err")) {
                         $("#widthProgressBar").css("width", "100%");
                         $("#spanProgressBar").text("Data Importing Completed but Have Some Error");
                         $("#widthProgressBar").addClass("bg-danger");
                         return xSwal.success(response.message, response.err);
                     }
+
                     $("#widthProgressBar").css("width", "100%");
                     $("#spanProgressBar").text("Data Importing Completed");
                     $("#widthProgressBar").addClass("bg-success");

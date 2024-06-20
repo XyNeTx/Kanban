@@ -15,12 +15,12 @@ class xLib {
     }
 
     TrimJSON(jsonResult) {
-        for (let each in jsonResult) {
-            if (jsonResult[each] == null) {
-                jsonResult[each] = '';
+        for (let each in jsonResult.data) {
+            if (jsonResult.data[each] == null) {
+                jsonResult.data[each] = '';
             }
             else {
-                jsonResult[each] = jsonResult[each].trim();
+                jsonResult.data[each] = jsonResult.data[each].trim();
             }
         }
         return jsonResult;
