@@ -363,7 +363,7 @@
 
                 xItem.progress({ id: 'prgProcess', current: 100, label: 'Process Complete... : {{##.##}} %' });
 
-
+                MsgBox("Process Calculate Data for Urgent Order Completed.", MsgBoxStyle.Information, "Process Complete");
 
 
                 //xItem.progress({ id: 'prgProcess', current: 0, label: 'Start Process Special : {{##.##}} %' });

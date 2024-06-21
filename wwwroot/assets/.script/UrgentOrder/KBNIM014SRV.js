@@ -44,9 +44,14 @@ $("#btnImport").click(async function () {
         console.log('Data: ', data);
         if (data.includes("Error")) return;
 
+        let _url = "/api/KBNIM014SRV/InsertDataFromImport"
+        if (window.location.hostname.includes("tpcap")) {
+            _url = "/kanban" + _url;
+        }
+
         $.ajax({
             type: "POST",
-            url: "/api/KBNIM014SRV/InsertDataFromImport",
+            url: _url,
             data: JSON.stringify(data),
             contentType: "application/json; charset=utf-8",
             dataType: "json",

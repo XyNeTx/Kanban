@@ -27,6 +27,9 @@ class xLib {
     }
 
     AJAX_Get(url, data, success, error) {
+        if (window.location.hostname.includes("tpcap")) {
+            url = "/kanban" + url;
+        }
         return $.ajax({
             type: "GET",
             url: url,
@@ -39,6 +42,9 @@ class xLib {
     }
 
     AJAX_Post(url, data, success, error) {
+        if (window.location.hostname.includes("tpcap")) {
+            url = "/kanban" + url;
+        }
         return $.ajax({
             type: "POST",
             url: url,

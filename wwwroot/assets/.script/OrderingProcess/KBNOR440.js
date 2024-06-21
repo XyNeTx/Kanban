@@ -65,12 +65,13 @@
 
             var _dtChk = await xAjax.xExecuteJSON({
                 data: {
-                    "Module": "[exec].[spKBNOR440_01]",
+                    "Module": "[exec].[spKBNOR440_CALCULATE]",
                     "@Plant": ajexHeader.Plant,
                     "@UserCode": ajexHeader.UserCode
                 },
             });
             xItem.progress({ id: 'prgProcess', current: 10, label: 'Delete TB_PDS_DETAIL : {{##.##}} %' });
+            MsgBox("Process GEN PDS Data for Urgent Order Completed.", MsgBoxStyle.Information, "Process Complete");
             //if (_dtChk.rows != null) {
             //    for (var i = 0; i < _dtChk.rows.length; i++) {
             //        await xAjax.Execute({
