@@ -227,7 +227,9 @@ async function OkClicked(_arrObj) {
             function (success) {
                 if (success.status === "200") {
                     console.log("Success: ", success);
-                    $("#table").DataTable().row(rows[item]).remove().draw();
+                    if ($("input[name='inputChkBox']:checked").length > 0) {
+                        $("#table").DataTable().row(rows[item]).remove().draw();
+                    }
                 }
             },
             function (error) {
