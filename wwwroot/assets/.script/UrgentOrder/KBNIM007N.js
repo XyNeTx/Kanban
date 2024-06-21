@@ -8,6 +8,7 @@
         "serverSide": false,
         scrollX: false,
         scrollY: '350px',
+        select : true,
         columns: [
             {
                 title: '<input type="checkbox" class="chkBoxHeadDT" id="chkBoxHeadID" name="chkBoxHeadName"/>', width: '10%', render: function (data, type, row, meta) {
@@ -25,6 +26,21 @@
         ],
         order: [[1, 'asc']]
     });
+
+    _xLib.AJAX_Get('/api/KBNIM007N/GetSupplier', '',
+        function (success) {
+            if (success.status === "200") {
+                $("#selectSupplier").empty();
+                $("#selectSupplier").append('<option value="" hidden></option>');
+                success.data.forEach(function (item) {
+                    $("#selectSupplier").append('<option value="' + item.f_Supplier_Cd + '">' + item.f_Supplier_Cd + '</option>');
+                });
+            }
+        },
+        function (error) {
+            return xSwal.error("Error !!", error.responseJSON.message);
+        }
+    );
 
     xSplash.hide();
 });
@@ -64,14 +80,13 @@ $("#buttonInq").click(function () {
 $(document).on("change", "#txtOrderNo", function () { // when select Order No
     if (_command === 'Inquiry') {
         _xLib.AJAX_Get('/api/KBNIM007N/OrderNoSelected', { F_PDS_No: $("#txtOrderNo").val().trim() },
-            function (success) {
+            async function (success) {
                 if (success.status === "200") {
                     success.data = JSON.parse(success.data);
-                    _xLib.TrimJSON(success.data);
-                    $("#selectSupplier").val(success.data[0].F_Supplier);
-                    $("#txtSupplierShortName").val(success.data[0].F_short_name);
-                    $("#txtSupplierName").val(success.data[0].F_name);
-                    $("#txtCycleTime").val(success.data[0].F_Cycle);
+                    success.data = _xLib.TrimJSON(success.data);
+                    console.log(success.data);
+                    await $("#selectSupplier").val(success.data[0].F_Supplier_CD + "-" + success.data[0].F_Supplier_Plant);
+                    $("#selectSupplier").trigger("change");
                     $("#table").DataTable().clear().rows.add(success.data).draw();
                 }
             },
@@ -82,8 +97,32 @@ $(document).on("change", "#txtOrderNo", function () { // when select Order No
     }
 });
 
+$(document).on("click", "#table tbody tr", function () {
+    if (_command === 'Inquiry') {
+        var DatainRow = $("#table").DataTable().row(this).data();
+        $("#inputPartNo").val(DatainRow.F_Part_No);
+        $("#inputPartNo").prop("disabled", true);
+
+        $("#inputKanbanNo").val(DatainRow.F_Kanban_No);
+        $("#inputKanbanNo").prop("disabled", true);
+
+        $("#inputQtyPack").val(DatainRow.F_Qty_Pack);
+        $("#inputPack").val(DatainRow.F_Pack);
+        $("#inputQty").val(DatainRow.F_Qty);
+
+        $("#inputDeliveryDate").val(DatainRow.F_Delivery_Date.slice(0, 4) + "-" + DatainRow.F_Delivery_Date.slice(4, 6) + "-" + DatainRow.F_Delivery_Date.slice(6, 8));
+        $("#inputDeliveryDate").prop("disabled", true);
+
+        $("#inputDeliveryTrip").val(DatainRow.F_Delivery_Trip);
+        $("#inputDeliveryTrip").prop("disabled", true);
+
+        $("#txtStoreCode").val(DatainRow.F_Store_CD);
+    }
+});
+
 
 $("#buttonNew").click(function () {
+    _command = "New";
     $("#buttonInq").prop("disabled", true);
     $("#buttonUpd").prop("disabled", true);
     $("#buttonDel").prop("disabled", true);
@@ -193,9 +232,10 @@ $("#inputQty").change(function () {
     var roundup = Math.ceil($("#inputQty").val() / $("#inputQtyPack").val());
     $("#inputPack").val(roundup);
 });
-$("#inputDeliveryTrip").on("keypress", function (e) {
+$("#inputDeliveryTrip , #inputQty , #inputPack").on("keypress", function (e) {
     //console.log(e.which);
     if (e.which === 13) { // when press enter
+
         if(!($("#inputPartNo").val())) {
             return xSwal.error("Error !!", "Please select Part No.");
         }
@@ -211,9 +251,9 @@ $("#inputDeliveryTrip").on("keypress", function (e) {
         if (!($("#txtCycleTime").val())) {
             return xSwal.error("Error !!", "Please select Supplier.");
         }
-        let CycleB = $("#txtCycleTime").val().split("0")[1];
-        let DeliveryTrip = $(this).val();
-        if (DeliveryTrip > CycleB) {
+        let CycleB = $("#txtCycleTime").val().split("-")[1];
+        let DeliveryTrip = $("#inputDeliveryTrip").val();
+        if (parseInt(DeliveryTrip) > parseInt(CycleB)) {
             return xSwal.error("Error !!", "Delivery Trip is over than Cycle Time.");
         }
 
@@ -230,6 +270,11 @@ $("#inputDeliveryTrip").on("keypress", function (e) {
             F_PDS_No: $("#txtOrderNo").val()
         }
 
+        if (_command === 'Inquiry') {
+            var selectedRow = $("#table").find(".selected").closest("tr");
+            $("#table").DataTable().row(selectedRow).remove().draw();
+        }
+
         $("#table").DataTable().row.add(obj).draw();
 
         $("#inputPartNo").val('');
@@ -243,12 +288,14 @@ $("#inputDeliveryTrip").on("keypress", function (e) {
 });
 
 $("#buttonOK").click(async function () {
-    $("#buttonOK").prop("disabled", true);
-    var rows = $("input[name='inputChkBox']:checked").closest("tr");
-    if (rows.length === 0) return xSwal.error("Error !!", "No data selected.");
-    let _arrObj = $("#table").DataTable().rows(rows).data().toArray();
+    if (_command === 'New') {
+        $("#buttonOK").prop("disabled", true);
+        var rows = $("input[name='inputChkBox']:checked").closest("tr");
+        if (rows.length === 0) return xSwal.error("Error !!", "No data selected.");
+        let _arrObj = $("#table").DataTable().rows(rows).data().toArray();
 
-    return await OkClicked(_arrObj);
+        return await OkClicked(_arrObj);
+    }
 });
 
 

@@ -168,8 +168,18 @@ namespace HINOSystem.Controllers.API.Master
                 string UserID = HttpContext.Session.GetString("USER_CODE");
                 string Plant = HttpContext.Session.GetString("USER_PLANT");
 
-                DataTable dt = _FillDT.ExecuteSQL($"Select *,F_Round AS F_Delivery_Trip,FLOOR(F_Qty_Pack/F_Qty) AS F_Pack FROM TB_Transaction_TMP " +
-                    $" Where F_Update_By = '{UserID}' AND F_Plant = '{Plant}' AND F_PDS_No = '{F_PDS_No}' ");
+                string _SQL = "SELECT F_Type, F_Type_Spc, F_Plant, F_PDS_No, F_PDS_Issued_Date, F_Store_CD, " +
+                    " F_Ruibetsu, F_Kanban_No, F_Part_Name, F_Qty_Pack, F_Part_Code, F_Part_Order, F_Ruibetsu_Order, " +
+                    " F_Store_Order, F_Name_Order, F_Qty, F_Qty_Level1, F_Seq_No, F_Seq_Type, F_Cut_Flag, " +
+                    " F_Delivery_Date, F_Adv_Deli_Date, F_OrderType, F_Country, F_Reg_Flg, F_Inventory_Flg, " +
+                    " F_Supplier_CD, F_Supplier_Plant, F_Cycle_Time, F_Safty_Stock, F_Part_Refer, " +
+                    " F_Ruibetsu_Refer, F_Update_By, F_Update_Date, F_Remark, F_Parent_Level2, " +
+                    " F_Qty_Level2, F_Parent_Level3, F_Qty_Level3, F_Parent_Level4, F_Qty_Level4, " +
+                    " F_Round, F_Org_Store_CD, F_Ratio, F_Customer_orderType, " +
+                    " F_Survey_DOC, F_Part_No+'-'+F_Ruibetsu AS F_Part_No, F_Round AS F_Delivery_Trip, FLOOR(F_Qty_Pack/F_Qty) AS F_Pack " +
+                    $" FROM  TB_Transaction_TMP Where F_Update_By = '{UserID}' AND F_Plant = '{Plant}' AND F_PDS_No = '{F_PDS_No}' ";
+
+                DataTable dt = _FillDT.ExecuteSQL(_SQL);
 
                 if(dt.Rows.Count == 0)
                 {
