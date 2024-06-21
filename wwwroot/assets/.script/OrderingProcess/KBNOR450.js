@@ -76,7 +76,7 @@
             },
         });
 
-
+        _xSwal.success('Success','Redirecting to View Report');
         console.log('spKBNOR450_RPT_PDS');
 
 
@@ -108,7 +108,7 @@
             },
         });
 
-
+        xSwal.success('Success', 'Redirecting to View Report');
         console.log('spKBNOR450_RPT_KANBAN');
     });
 

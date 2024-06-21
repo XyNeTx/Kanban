@@ -1,44 +1,11 @@
-﻿using Microsoft.AspNetCore.Http.Extensions;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.Data;
-using System;
-using System.Web;
-using System.Security.Principal;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-
-using System.Reflection.PortableExecutable;
-using System.DirectoryServices;
-using System.DirectoryServices.AccountManagement;
-using Microsoft.Net.Http.Headers;
-using System.Collections.Specialized;
-using System.Net;
-using System.DirectoryServices.ActiveDirectory;
-using System.Net.Http;
-using Microsoft.AspNetCore.Authorization;
-
-using System.Security.Claims;
-using Org.BouncyCastle.Asn1.Ocsp;
 
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-
-using System.Threading.Tasks;
 
 using HINOSystem.Libs;
 using HINOSystem.Context;
-using HINOSystem.Models.KB3;
-using NPOI.HPSF;
-using Humanizer;
-using NPOI.SS.Formula.Functions;
-using NPOI.SS.Formula.Eval;
-using PdfSharp.Pdf.Filters;
-using MathNet.Numerics.LinearAlgebra.Factorization;
-using Microsoft.CodeAnalysis.Differencing;
-using Microsoft.VisualBasic;
-using static System.Net.Mime.MediaTypeNames;
-using NPOI.POIFS.Properties;
 using KANBAN.Context;
 using KANBAN.Models.KB3.UrgentOrder;
 //using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -141,6 +108,99 @@ namespace HINOSystem.Controllers.API.Master
             catch (Exception e)
             {
                 return Content(e.Message.ToString(), "application/json");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Inquiry()
+        {
+            setConString();
+            try
+            {
+                string now = DateTime.Now.ToString("yyyyMMdd");
+                string UserID = HttpContext.Session.GetString("USER_CODE");
+                string Plant = HttpContext.Session.GetString("USER_PLANT");
+
+                DataTable dt = _FillDT.ExecuteSQL($"Select F_PDS_No FROM TB_Transaction_TMP " +
+                    $"Where F_Update_By = '{UserID}' AND F_Plant = '{Plant}' ");
+
+                if(dt.Rows.Count == 0)
+                {
+                    return BadRequest(new
+                    {
+                        status = "400",
+                        response = "Bad Request",
+                        title = "Bad Request",
+                        message = "Data not Found"
+                    });
+                }
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "OK",
+                    title = "OK",
+                    message = "Data Found",
+                    data = JsonConvert.SerializeObject(dt)
+                });
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    response = "Internal Server Error",
+                    title = "Internal Server Error",
+                    message = "Unexpected Error While Saving the Data",
+                    err = ex.Message
+                });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> OrderNoSelected(string F_PDS_No)
+        {
+            setConString();
+            try
+            {
+                string now = DateTime.Now.ToString("yyyyMMdd");
+                string UserID = HttpContext.Session.GetString("USER_CODE");
+                string Plant = HttpContext.Session.GetString("USER_PLANT");
+
+                DataTable dt = _FillDT.ExecuteSQL($"Select *,F_Round AS F_Delivery_Trip,FLOOR(F_Qty_Pack/F_Qty) AS F_Pack FROM TB_Transaction_TMP " +
+                    $" Where F_Update_By = '{UserID}' AND F_Plant = '{Plant}' AND F_PDS_No = '{F_PDS_No}' ");
+
+                if(dt.Rows.Count == 0)
+                {
+                    return BadRequest(new
+                    {
+                        status = "400",
+                        response = "Bad Request",
+                        title = "Bad Request",
+                        message = "Data not Found"
+                    });
+                }
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "OK",
+                    title = "OK",
+                    message = "Data Found",
+                    data = JsonConvert.SerializeObject(dt)
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    response = "Internal Server Error",
+                    title = "Internal Server Error",
+                    message = "Unexpected Error",
+                    err = ex.Message
+                });
             }
         }
 

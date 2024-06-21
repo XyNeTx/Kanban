@@ -11,7 +11,7 @@
         columns: [
             {
                 title: '<input type="checkbox" class="chkBoxHeadDT" id="chkBoxHeadID" name="chkBoxHeadName"/>', width: '10%', render: function (data, type, row, meta) {
-                    return '<input type="checkbox" class="chkBoxDT" name="inputChkBox" value=' + meta.row + '>';
+                    return '<input type="checkbox" class="chkBoxDT" name="inputChkBox" value=' + meta.row + ' checked>';
                 },
                 orderable: false
             },
@@ -38,7 +38,56 @@ $(document).on("click", "#chkBoxHeadID", async function () {
     }
 });
 
+var _command = '';
+$("#buttonInq").click(function () {
+    _command = 'Inquiry';
+    $("#buttonNew").prop("disabled", true);
+    _xLib.AJAX_Get('/api/KBNIM007N/Inquiry', '',
+        function (success)
+        {
+            if (success.status === "200") {
+                $("#txtOrderNo").remove();
+                $("#labelOrderNo").append(`<select id="txtOrderNo" class="form-select ms-1"></select>`);
+                $("#txtOrderNo").append('<option value="" hidden></option>');
+                (JSON.parse(success.data)).forEach(function (item) {
+                    $("#txtOrderNo").append('<option value="' + item.F_PDS_No + '">' + item.F_PDS_No + '</option>');
+                });
+            }
+        },
+        function (err)
+        {
+            return xSwal.error("Error !!", err.responseJSON.message);
+        }
+    )
+});
+
+$(document).on("change", "#txtOrderNo", function () { // when select Order No
+    if (_command === 'Inquiry') {
+        _xLib.AJAX_Get('/api/KBNIM007N/OrderNoSelected', { F_PDS_No: $("#txtOrderNo").val().trim() },
+            function (success) {
+                if (success.status === "200") {
+                    success.data = JSON.parse(success.data);
+                    _xLib.TrimJSON(success.data);
+                    $("#selectSupplier").val(success.data[0].F_Supplier);
+                    $("#txtSupplierShortName").val(success.data[0].F_short_name);
+                    $("#txtSupplierName").val(success.data[0].F_name);
+                    $("#txtCycleTime").val(success.data[0].F_Cycle);
+                    $("#table").DataTable().clear().rows.add(success.data).draw();
+                }
+            },
+            function (error) {
+                return xSwal.error("Error !!", error.responseJSON.message);
+            }
+        );
+    }
+});
+
+
 $("#buttonNew").click(function () {
+    $("#buttonInq").prop("disabled", true);
+    $("#buttonUpd").prop("disabled", true);
+    $("#buttonDel").prop("disabled", true);
+
     _xLib.AJAX_Get('/api/KBNIM007N/GenPDSNo', '',
         function(success) {
             if (success.status === "200") {
@@ -194,6 +243,7 @@ $("#inputDeliveryTrip").on("keypress", function (e) {
 });
 
 $("#buttonOK").click(async function () {
+    $("#buttonOK").prop("disabled", true);
     var rows = $("input[name='inputChkBox']:checked").closest("tr");
     if (rows.length === 0) return xSwal.error("Error !!", "No data selected.");
     let _arrObj = $("#table").DataTable().rows(rows).data().toArray();
@@ -227,7 +277,9 @@ async function OkClicked(_arrObj) {
             function (success) {
                 if (success.status === "200") {
                     console.log("Success: ", success);
-                    $("#table").DataTable().row(rows[item]).remove().draw();
+                    if ($("input[name='inputChkBox']:checked").length > 0) {
+                        $("#table").DataTable().row(rows[item]).remove().draw();
+                    }
                 }
             },
             function (error) {
@@ -249,6 +301,8 @@ async function OkClicked(_arrObj) {
 
     $("#frmCondition").trigger("reset");
     $("#table").DataTable().clear().draw();
+    $("#buttonOK").prop("disabled", false);
+    $("#buttonImport").prop("disabled", false);
     return;
 }
 
@@ -259,6 +313,7 @@ $("#inputFile").change(function (e) {
     _File = e.target.files;
 });
 $("#buttonImport").click(async function () {
+    $("#buttonImport").prop("disabled", true);
     if (!_File.length) return xSwal.error("Error !!", "No file selected.");
     const file = _File[0];
     const arrayBuffer = await file.arrayBuffer();

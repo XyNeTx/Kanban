@@ -78,13 +78,14 @@ $("#buttonSearch").click(async function () {
         },
         contentType: "application/json; charset=utf-8",
         dataType: "json",
-        success: function (response) {
+        success: async function (response) {
             //console.log("Success: ", response);
             if (response.status === "200") {
                 var jsonResult = JSON.parse(response.data);
                 //console.log("jsonResult: ", jsonResult);
                 _xLib.TrimArrayJSON(jsonResult);
-                $("#tblMaster").DataTable().clear().rows.add(jsonResult).draw();
+                await $("#tblMaster").DataTable().clear().rows.add(jsonResult).draw();
+                await $("input[type='checkbox']").prop("checked", true);
             }
             else {
                 return xSwal.error(response.title, response.message);
@@ -108,15 +109,17 @@ $("#buttonSave").click(async function () {
     if (_arrCheckedData.length == 0) return xSwal.error("Error !!", "No data selected.");
 
     //return console.log(_arrCheckedData);
-
+    var title , message;
     for (const each in _arrCheckedData) {
-        console.log("Data: ", _arrCheckedData[each]);
+        //console.log("Data: ", _arrCheckedData[each]);
         var _jsonData = JSON.stringify(_arrCheckedData[each]);
-        console.log("JSON Data: ", _jsonData);
+        //console.log("JSON Data: ", _jsonData);
 
         await _xLib.AJAX_Post('/api/KBNIM014C/Save', _jsonData,
             async function (response) {
-                console.log("Success: ", response);
+                //console.log("Success: ", response);
+                title = response.title;
+                message = response.message;
             },
             async function (err) {
                 let confirm = await xSwal.error("Error !!", err.responseJSON.message);
@@ -126,6 +129,6 @@ $("#buttonSave").click(async function () {
             }
         );
     }
-    xSwal.success(response.title, response.message);
+    xSwal.success(title, message);
     $("#buttonSearch").click();
 });

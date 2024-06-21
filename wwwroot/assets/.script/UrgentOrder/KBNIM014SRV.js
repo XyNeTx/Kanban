@@ -39,6 +39,7 @@ async function UploadFile(_files) {
 }
 
 $("#btnImport").click(async function () {
+    $("#btnImport").prop("disabled", true);
     try {
         const data = await UploadFile(_files);
         console.log('Data: ', data);
@@ -58,6 +59,7 @@ $("#btnImport").click(async function () {
             success: function (response) {
                 console.log("Success: ", response);
                 if (response.status === "200") {
+                    $("#btnImport").prop("disabled", false);
                     return xSwal.success(response.title, response.message);
                 }
                 else {
@@ -71,6 +73,9 @@ $("#btnImport").click(async function () {
         });
     } catch (error) {
         console.error("UploadFile Error: ", error);
+    }
+    finally {
+        $("#btnImport").prop("disabled", false);
     }
 });
 
