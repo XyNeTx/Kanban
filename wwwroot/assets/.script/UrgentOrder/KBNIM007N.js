@@ -11,7 +11,7 @@
         columns: [
             {
                 title: '<input type="checkbox" class="chkBoxHeadDT" id="chkBoxHeadID" name="chkBoxHeadName"/>', width: '10%', render: function (data, type, row, meta) {
-                    return '<input type="checkbox" class="chkBoxDT" name="inputChkBox" value=' + meta.row + '>';
+                    return '<input type="checkbox" class="chkBoxDT" name="inputChkBox" value=' + meta.row + ' checked>';
                 },
                 orderable: false
             },
@@ -194,6 +194,7 @@ $("#inputDeliveryTrip").on("keypress", function (e) {
 });
 
 $("#buttonOK").click(async function () {
+    $("#buttonOK").prop("disabled", true);
     var rows = $("input[name='inputChkBox']:checked").closest("tr");
     if (rows.length === 0) return xSwal.error("Error !!", "No data selected.");
     let _arrObj = $("#table").DataTable().rows(rows).data().toArray();
@@ -251,6 +252,8 @@ async function OkClicked(_arrObj) {
 
     $("#frmCondition").trigger("reset");
     $("#table").DataTable().clear().draw();
+    $("#buttonOK").prop("disabled", false);
+    $("#buttonImport").prop("disabled", false);
     return;
 }
 
@@ -261,6 +264,7 @@ $("#inputFile").change(function (e) {
     _File = e.target.files;
 });
 $("#buttonImport").click(async function () {
+    $("#buttonImport").prop("disabled", true);
     if (!_File.length) return xSwal.error("Error !!", "No file selected.");
     const file = _File[0];
     const arrayBuffer = await file.arrayBuffer();

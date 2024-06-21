@@ -362,7 +362,7 @@
             //});
 
             xItem.progress({ id: 'prgProcess', current: 100, label: 'Generate PDS Completed : {{##.##}} %' });
-
+            xSwal.success('Success', 'Generate PDS Completed');
         })
     });
 
@@ -636,6 +636,7 @@
                     }
                 }
             }
+            xSwal.success("")
         }
 
 
