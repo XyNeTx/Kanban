@@ -147,6 +147,11 @@ namespace HINOSystem.Controllers.API.Master
         [HttpGet]
         public async Task<IActionResult> GenPDSNo()
         {
+            string now = DateTime.Now.ToString("yyyyMMdd");
+            string UserID = HttpContext.Session.GetString("USER_CODE");
+            string Plant = HttpContext.Session.GetString("USER_PLANT");
+
+            await _KB3Context.Database.ExecuteSqlRawAsync($"DELETE FROM TB_IMPORT_URGENT WHERE F_UPDATE_BY='{UserID}'");
             return Ok(new
             {
                 status = "200",
@@ -405,6 +410,8 @@ namespace HINOSystem.Controllers.API.Master
 
                 DataTable dt = _FillDT.ExecuteSQL(_SQL);
 
+
+
                 if(dt.Rows.Count == 0)
                 {
                     return BadRequest(new
@@ -498,6 +505,8 @@ namespace HINOSystem.Controllers.API.Master
                 string Plant = HttpContext.Session.GetString("USER_PLANT");
 
                 await _KB3Context.Database.ExecuteSqlRawAsync($"EXEC [exec].[spKBNIM007N] '{Plant}','{UserID}', '{F_PDS_No}' ");
+
+                
 
                 _KB3Transaction.Commit();
 

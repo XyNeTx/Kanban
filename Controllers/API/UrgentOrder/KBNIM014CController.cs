@@ -44,8 +44,8 @@ using KANBAN.Context;
 
 namespace HINOSystem.Controllers.API.Master
 {
-    [Route("api/[controller]/[action]")]
     [ApiController]
+    [Route("api/[controller]/[action]")]
     public class KBNIM014CController : ControllerBase
     {
         private readonly IConfiguration _configuration;

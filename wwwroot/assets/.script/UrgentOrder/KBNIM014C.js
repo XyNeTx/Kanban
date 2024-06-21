@@ -62,9 +62,14 @@ $("#buttonSearch").click(async function () {
         DeliveryDateTo = $("#F_DeliveryTo").val();
     }
 
+    let _url = "/api/KBNIM014C/search"
+    if (window.location.hostname.includes("tpcap")) {
+        _url = "/kanban" + _url;
+    }
+
     $.ajax({
         type: "GET",
-        url: "/api/KBNIM014C/search",
+        url: _url,
         data: {
             F_PDS_NO: $("#SelectPDSNo").val(),
             chkDeliveryDate: $("#chkDeliveryDate").prop("checked"),

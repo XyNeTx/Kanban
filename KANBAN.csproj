@@ -9704,6 +9704,7 @@
     <Folder Include="wwwroot\assets\i18n\TH\KB3\LogisticCondition\" />
     <Folder Include="wwwroot\Storage\DownloadFile\" />
     <Folder Include="wwwroot\Storage\DownloadTemp\" />
+    <Folder Include="wwwroot\Storage\Image\QRCode\202406\" />
     <Folder Include="wwwroot\Storage\Uploads\" />
   </ItemGroup>
 

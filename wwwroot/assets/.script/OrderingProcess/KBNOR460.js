@@ -123,7 +123,7 @@
                     var _arMaster = await xDataTable.selected('#tblMaster');
                     for (var i = 0; i < _arMaster.length; i++) {
 
-                        await xAjax.ExecuteJSON({
+                        await xAjax.xExecuteJSON({
                             data: {
                                 "Module": "[exec].[spKBNOR460_Regis]",
                                 "@Plant": ajexHeader.Plant,
