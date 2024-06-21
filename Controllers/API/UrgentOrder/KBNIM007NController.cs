@@ -112,6 +112,99 @@ namespace HINOSystem.Controllers.API.Master
         }
 
         [HttpGet]
+        public async Task<IActionResult> Inquiry()
+        {
+            setConString();
+            try
+            {
+                string now = DateTime.Now.ToString("yyyyMMdd");
+                string UserID = HttpContext.Session.GetString("USER_CODE");
+                string Plant = HttpContext.Session.GetString("USER_PLANT");
+
+                DataTable dt = _FillDT.ExecuteSQL($"Select F_PDS_No FROM TB_Transaction_TMP " +
+                    $"Where F_Update_By = '{UserID}' AND F_Plant = '{Plant}' ");
+
+                if(dt.Rows.Count == 0)
+                {
+                    return BadRequest(new
+                    {
+                        status = "400",
+                        response = "Bad Request",
+                        title = "Bad Request",
+                        message = "Data not Found"
+                    });
+                }
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "OK",
+                    title = "OK",
+                    message = "Data Found",
+                    data = JsonConvert.SerializeObject(dt)
+                });
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    response = "Internal Server Error",
+                    title = "Internal Server Error",
+                    message = "Unexpected Error While Saving the Data",
+                    err = ex.Message
+                });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> OrderNoSelected(string F_PDS_No)
+        {
+            setConString();
+            try
+            {
+                string now = DateTime.Now.ToString("yyyyMMdd");
+                string UserID = HttpContext.Session.GetString("USER_CODE");
+                string Plant = HttpContext.Session.GetString("USER_PLANT");
+
+                DataTable dt = _FillDT.ExecuteSQL($"Select *,F_Round AS F_Delivery_Trip,FLOOR(F_Qty_Pack/F_Qty) AS F_Pack FROM TB_Transaction_TMP " +
+                    $" Where F_Update_By = '{UserID}' AND F_Plant = '{Plant}' AND F_PDS_No = '{F_PDS_No}' ");
+
+                if(dt.Rows.Count == 0)
+                {
+                    return BadRequest(new
+                    {
+                        status = "400",
+                        response = "Bad Request",
+                        title = "Bad Request",
+                        message = "Data not Found"
+                    });
+                }
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "OK",
+                    title = "OK",
+                    message = "Data Found",
+                    data = JsonConvert.SerializeObject(dt)
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    response = "Internal Server Error",
+                    title = "Internal Server Error",
+                    message = "Unexpected Error",
+                    err = ex.Message
+                });
+            }
+        }
+
+        [HttpGet]
         public async Task<IActionResult> GenPDSNo()
         {
             string now = DateTime.Now.ToString("yyyyMMdd");

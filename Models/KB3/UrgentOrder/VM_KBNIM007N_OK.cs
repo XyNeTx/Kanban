@@ -15,7 +15,7 @@ namespace KANBAN.Models.KB3.UrgentOrder
 
         [JsonPropertyName("Kanban_No")]
         public string F_Kanban_No { get; set; }
-
+        [JsonPropertyName("Pack")]
         public int? F_Pack { get; set; }
         [JsonPropertyName("Qty")]
         public int F_Qty { get; set; }
