@@ -103,8 +103,8 @@
                 "@itmPDSTo": $('#itmPDSTo').val(),
                 "@itmSupplierFrom": $('#itmSupplierFrom').val(),
                 "@itmSupplierTo": $('#itmSupplierTo').val(),
-                "@itmDeliveryFrom": $('#itmDeliveryFrom').val(),
-                "@itmDeliveryTo": $('#itmDeliveryTo').val()
+                "@itmDeliveryFrom": $('#itmDeliveryFrom').val().replaceAll("-",""),
+                "@itmDeliveryTo": $('#itmDeliveryTo').val().replaceAll("-", "")
             },
         });
 

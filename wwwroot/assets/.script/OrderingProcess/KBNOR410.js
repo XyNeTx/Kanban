@@ -186,7 +186,7 @@
                 //});
                 xItem.progress({ id: 'prgProcess', current: 100, label: 'Process Data Complete : {{##.##}} %' });
 
-
+                MsgBox("Process Interface Data for Urgent Order Completed.", MsgBoxStyle.Information, "Process Complete");
 
 
             //xAjax.Post({
