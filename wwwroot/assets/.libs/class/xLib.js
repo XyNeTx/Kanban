@@ -55,5 +55,11 @@ class xLib {
             error: error
         });
     }
+
+    OpenReport(reportName,query) {
+        var _url = "http://hmmt-app03/Reports/Pages/ReportViewer.aspx?/KB3"
+        _url = _url + reportName + "&" + query;
+        window.open(_url, '_blank');
+    }
 }
 const _xLib = new xLib();

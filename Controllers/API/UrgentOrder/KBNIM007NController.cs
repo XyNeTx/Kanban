@@ -234,32 +234,6 @@ namespace HINOSystem.Controllers.API.Master
                 string UserID = HttpContext.Session.GetString("USER_CODE");
                 string Plant = HttpContext.Session.GetString("USER_PLANT");
 
-                //string Part_No = obj.F_Part_No.Split("-")[0];
-                //string Ruibetsu = obj.F_Part_No.Split("-")[1];
-                //string Supplier_Code = obj.F_Supplier.Split("-")[0];
-                //char Supplier_Plant = obj.F_Supplier.Split("-")[1][0];
-
-                //var changeObj = await _KB3Context.TB_Transaction_TMP
-                //   .Where(x => x.F_Part_No == Part_No
-                //   && x.F_Ruibetsu == Ruibetsu
-                //   && x.F_PDS_No == obj.F_PDS_No
-                //   && x.F_Supplier_CD == Supplier_Code
-                //   && x.F_Supplier_Plant == Supplier_Plant
-                //   && x.F_Update_By == UserID
-                //   && x.F_Plant == Plant[0]
-                //   ).ToListAsync();
-
-                //if(changeObj.Count == 0)
-                //{
-                //    return BadRequest(new
-                //    {
-                //        status = "400",
-                //        response = "Bad Request",
-                //        title = "Bad Request",
-                //        message = "Data not Found"
-                //    });
-                //}
-
                 var deleteObj = await _KB3Context.TB_Transaction_TMP
                     .Where(x => x.F_PDS_No == obj.F_PDS_No
                     && x.F_Update_By == UserID
@@ -705,9 +679,9 @@ namespace HINOSystem.Controllers.API.Master
                 string UserID = HttpContext.Session.GetString("USER_CODE");
                 string Plant = HttpContext.Session.GetString("USER_PLANT");
 
-                await _KB3Context.Database.ExecuteSqlRawAsync($"EXEC [exec].[spKBNIM007N] '{Plant}','{UserID}', '{F_PDS_No}' ");
+                await _KB3Context.Database.ExecuteSqlRawAsync($"DELETE FROM TB_Import_Error Where F_Type = 'KBNIM007N' AND F_Update_By '${UserID}' ");
 
-                
+                await _KB3Context.Database.ExecuteSqlRawAsync($"EXEC [exec].[spKBNIM007N] '{Plant}','{UserID}', '{F_PDS_No}' ");
 
                 _KB3Transaction.Commit();
 
@@ -724,6 +698,8 @@ namespace HINOSystem.Controllers.API.Master
                         response = "Bad Request",
                         title = "Bad Request",
                         message = "Data Saved but Have Some Error Please Check",
+                        userid = UserID,
+                        type = "KBMIM007N",
                     });
                 }
 
