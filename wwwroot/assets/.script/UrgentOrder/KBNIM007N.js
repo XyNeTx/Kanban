@@ -58,6 +58,8 @@ var _command = '';
 $("#buttonInq").click(function () {
     _command = 'Inquiry';
     $("#buttonNew").prop("disabled", true);
+    $("#buttonUpd").prop("disabled", false);
+    $("#buttonDel").prop("disabled", false);
     _xLib.AJAX_Get('/api/KBNIM007N/Inquiry', '',
         function (success)
         {
@@ -68,6 +70,10 @@ $("#buttonInq").click(function () {
                 (JSON.parse(success.data)).forEach(function (item) {
                     $("#txtOrderNo").append('<option value="' + item.F_PDS_No + '">' + item.F_PDS_No + '</option>');
                 });
+                $("#inputQty").prop("readonly", true);
+                $("#inputPack").prop("readonly", true);
+                $("#inputPartNo").prop("disabled", true);
+                $("#inputKanbanNo").prop("disabled", true);
             }
         },
         function (err)
@@ -75,6 +81,28 @@ $("#buttonInq").click(function () {
             return xSwal.error("Error !!", err.responseJSON.message);
         }
     )
+});
+
+$("#buttonUpd").click(function () {
+    _command = 'Update';
+    $("#buttonNew").prop("disabled", true);
+    $("#buttonInq").prop("disabled", true);
+    $("#buttonDel").prop("disabled", true);
+    $("#buttonOK").prop("disabled", false);
+    $("#buttonImport").prop("disabled", false);
+    $("#inputQty").prop("readonly", false);
+    $(".chkBoxDT").prop("checked", false);
+});
+
+$("#buttonDel").click(function () {
+    _command = 'Delete';
+    $("#buttonNew").prop("disabled", true);
+    $("#buttonInq").prop("disabled", true);
+    $("#buttonUpd").prop("disabled", true);
+    $("#buttonOK").prop("disabled", false);
+    $("#buttonImport").prop("disabled", false);
+    $("#inputQty").prop("readonly", false);
+
 });
 
 $(document).on("change", "#txtOrderNo", function () { // when select Order No
@@ -98,7 +126,7 @@ $(document).on("change", "#txtOrderNo", function () { // when select Order No
 });
 
 $(document).on("click", "#table tbody tr", function () {
-    if (_command === 'Inquiry') {
+    if (_command === 'Update' || _command === "Inquiry") {
         var DatainRow = $("#table").DataTable().row(this).data();
         $("#inputPartNo").val(DatainRow.F_Part_No);
         $("#inputPartNo").prop("disabled", true);
@@ -232,10 +260,19 @@ $("#inputQty").change(function () {
     var roundup = Math.ceil($("#inputQty").val() / $("#inputQtyPack").val());
     $("#inputPack").val(roundup);
 });
-$("#inputDeliveryTrip , #inputQty , #inputPack").on("keypress", function (e) {
-    //console.log(e.which);
-    if (e.which === 13) { // when press enter
 
+$("#inputQty").on("keypress", async function (e) {
+    if (e.which === 13) {
+        if ($("#inputPack").val() !== Math.ceil($("#inputQty").val() / $("#inputQtyPack").val())) {
+            await $("#inputPack").val(0);
+        }
+        $("#inputDeliveryTrip").trigger(e)
+    }
+});
+$("#inputDeliveryTrip").on("keypress", function (e) {
+    //console.log(e.which);
+
+    if (e.which === 13) { // when press enter
         if(!($("#inputPartNo").val())) {
             return xSwal.error("Error !!", "Please select Part No.");
         }
@@ -250,7 +287,7 @@ $("#inputDeliveryTrip , #inputQty , #inputPack").on("keypress", function (e) {
         }
         if (!($("#txtCycleTime").val())) {
             return xSwal.error("Error !!", "Please select Supplier.");
-        }
+        } 
         let CycleB = $("#txtCycleTime").val().split("-")[1];
         let DeliveryTrip = $("#inputDeliveryTrip").val();
         if (parseInt(DeliveryTrip) > parseInt(CycleB)) {
@@ -270,7 +307,7 @@ $("#inputDeliveryTrip , #inputQty , #inputPack").on("keypress", function (e) {
             F_PDS_No: $("#txtOrderNo").val()
         }
 
-        if (_command === 'Inquiry') {
+        if (_command === 'Update') {
             var selectedRow = $("#table").find(".selected").closest("tr");
             $("#table").DataTable().row(selectedRow).remove().draw();
         }
@@ -296,6 +333,76 @@ $("#buttonOK").click(async function () {
 
         return await OkClicked(_arrObj);
     }
+    else if (_command === 'Update') {
+        $("#buttonOK").prop("disabled", true);
+        var rows = $("input[name='inputChkBox']:checked").closest("tr");
+        if (rows.length === 0) return xSwal.error("Error !!", "No data selected.");
+        let _arrObj = $("#table").DataTable().rows(rows).data().toArray();
+        var _hasError = false;
+        _arrObj.forEach(function (item,i) {
+            item.Supplier = item.F_Supplier;
+            item.Part_No = item.F_Part_No;
+            item.Qty = item.F_Qty;
+            item.Pack = item.F_Pack;
+            item.Delivery_Date = item.F_Delivery_Date;
+            item.Delivery_Trip = item.F_Delivery_Trip;
+            item.Kanban_No = item.F_Kanban_No;
+
+            delete item.F_Supplier;
+            delete item.F_Part_No;
+            delete item.F_Qty;
+            delete item.F_Pack;
+            delete item.F_Delivery_Date;
+            delete item.F_Delivery_Trip;
+            delete item.F_Kanban_No;
+
+            _xLib.AJAX_Post('/api/KBNIM007N/Update', JSON.stringify(item),
+                function (success) {
+                    if (success.status === "200") {
+                        console.log("Success: ", success);
+                        if ($("input[name='inputChkBox']:checked").length > 0) {
+                            $("#table").DataTable().row(rows[i]).remove().draw();
+                            $("#buttonInq").trigger("click");
+                        }
+                    }
+                },
+                function (error) {
+                    _hasError = true;
+                    return xSwal.error("Error !!", error.responseJSON.message);
+                }
+            );
+        });
+        if (_hasError) return;
+        else {
+            $("#table").DataTable().clear().draw();
+            return xSwal.success("Success !!", "Data was updated.");
+        }
+    }
+    else if (_command === "Delete") {
+        $("#buttonOK").prop("disabled", true);
+        var rows = $("input[name='inputChkBox']:checked").closest("tr");
+        if (rows.length === 0) return xSwal.error("Error !!", "No data selected.");
+        let _Obj = $("#table").DataTable().row(rows[0]).data();
+        _xLib.AJAX_Post('/api/KBNIM007N/Delete', JSON.stringify(_Obj),
+            function (success) {
+                if (success.status === "200") {
+                    console.log("Success: ", success);
+                    if ($("input[name='inputChkBox']:checked").length > 0) {
+                        $("#table").DataTable().clear().draw();
+                        $("#buttonInq").trigger("click");
+                        return xSwal.success("Success !!", "Data was deleted.");
+                    }
+                }
+            },
+            function (error) {
+                return xSwal.error("Error !!", error.responseJSON.message);
+            }
+        );
+    }
+    else {
+        return xSwal.error("Error !!", "Please select command.");
+    }
+
 });
 
 
@@ -309,6 +416,7 @@ async function OkClicked(_arrObj) {
             _arrObj[item].Supplier = _arrObj[item].F_Supplier;
             _arrObj[item].Qty = _arrObj[item].F_Qty;
             _arrObj[item].Kanban_No = _arrObj[item].F_Kanban_No;
+            _arrObj[item].Pack = _arrObj[item].F_Pack;
 
             delete _arrObj[item].F_Delivery_Date;
             delete _arrObj[item].F_Delivery_Trip;
@@ -316,6 +424,7 @@ async function OkClicked(_arrObj) {
             delete _arrObj[item].F_Supplier;
             delete _arrObj[item].F_Qty;
             delete _arrObj[item].F_Kanban_No;
+            delete _arrObj[item].F_Pack;
         }
         _arrObj[item].Delivery_Date = _arrObj[item].Delivery_Date.toString();
         var _json = JSON.stringify(_arrObj[item]);
@@ -325,7 +434,7 @@ async function OkClicked(_arrObj) {
                 if (success.status === "200") {
                     console.log("Success: ", success);
                     if ($("input[name='inputChkBox']:checked").length > 0) {
-                        $("#table").DataTable().row(rows[item]).remove().draw();
+                        $("#table").DataTable().row().remove().draw();
                     }
                 }
             },

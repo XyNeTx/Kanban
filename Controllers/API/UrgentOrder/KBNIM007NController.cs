@@ -8,6 +8,7 @@ using HINOSystem.Libs;
 using HINOSystem.Context;
 using KANBAN.Context;
 using KANBAN.Models.KB3.UrgentOrder;
+using KANBAN.Models.KB3.ReportOrder;
 //using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HINOSystem.Controllers.API.Master
@@ -121,7 +122,7 @@ namespace HINOSystem.Controllers.API.Master
                 string UserID = HttpContext.Session.GetString("USER_CODE");
                 string Plant = HttpContext.Session.GetString("USER_PLANT");
 
-                DataTable dt = _FillDT.ExecuteSQL($"Select F_PDS_No FROM TB_Transaction_TMP " +
+                DataTable dt = _FillDT.ExecuteSQL($"Select DISTINCT F_PDS_No FROM TB_Transaction_TMP " +
                     $"Where F_Update_By = '{UserID}' AND F_Plant = '{Plant}' ");
 
                 if(dt.Rows.Count == 0)
@@ -153,6 +154,136 @@ namespace HINOSystem.Controllers.API.Master
                     response = "Internal Server Error",
                     title = "Internal Server Error",
                     message = "Unexpected Error While Saving the Data",
+                    err = ex.Message
+                });
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> Update(VM_KBNIM007N_OK obj)
+        {
+            setConString();
+            try
+            {
+                string now = DateTime.Now.ToString("yyyyMMdd");
+                string UserID = HttpContext.Session.GetString("USER_CODE");
+                string Plant = HttpContext.Session.GetString("USER_PLANT");
+
+                string Part_No = obj.F_Part_No.Split("-")[0];
+                string Ruibetsu = obj.F_Part_No.Split("-")[1];
+                string Supplier_Code = obj.F_Supplier.Split("-")[0];
+                char Supplier_Plant = obj.F_Supplier.Split("-")[1][0];
+
+                var changeObj = await _KB3Context.TB_Transaction_TMP
+                    .Where(x => x.F_Part_No == Part_No
+                    && x.F_Ruibetsu == Ruibetsu
+                    && x.F_PDS_No == obj.F_PDS_No
+                    && x.F_Supplier_CD == Supplier_Code
+                    && x.F_Supplier_Plant == Supplier_Plant
+                    && x.F_Update_By == UserID
+                    && x.F_Plant == Plant[0]
+                    ).SingleOrDefaultAsync();
+
+                if (changeObj == null)
+                {
+                    return BadRequest(new
+                    {
+                        status = "400",
+                        response = "Bad Request",
+                        title = "Bad Request",
+                        message = "Data not Found"
+                    });
+                }
+                
+                changeObj.F_Qty = obj.F_Qty;
+                changeObj.F_Qty_Level1 = obj.F_Qty;
+                changeObj.F_Update_By = UserID;
+                changeObj.F_Update_Date = DateTime.Now;
+
+                _KB3Context.TB_Transaction_TMP.Update(changeObj);
+                await _KB3Context.SaveChangesAsync();
+
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "OK",
+                    title = "OK",
+                    message = "Data Found",
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    response = "Internal Server Error",
+                    title = "Internal Server Error",
+                    message = "Unexpected Error While Saving the Data",
+                    err = ex.Message
+                });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(TB_Transaction_TMP obj)
+        {
+            setConString();
+            try
+            {
+                string now = DateTime.Now.ToString("yyyyMMdd");
+                string UserID = HttpContext.Session.GetString("USER_CODE");
+                string Plant = HttpContext.Session.GetString("USER_PLANT");
+
+                //string Part_No = obj.F_Part_No.Split("-")[0];
+                //string Ruibetsu = obj.F_Part_No.Split("-")[1];
+                //string Supplier_Code = obj.F_Supplier.Split("-")[0];
+                //char Supplier_Plant = obj.F_Supplier.Split("-")[1][0];
+
+                //var changeObj = await _KB3Context.TB_Transaction_TMP
+                //   .Where(x => x.F_Part_No == Part_No
+                //   && x.F_Ruibetsu == Ruibetsu
+                //   && x.F_PDS_No == obj.F_PDS_No
+                //   && x.F_Supplier_CD == Supplier_Code
+                //   && x.F_Supplier_Plant == Supplier_Plant
+                //   && x.F_Update_By == UserID
+                //   && x.F_Plant == Plant[0]
+                //   ).ToListAsync();
+
+                //if(changeObj.Count == 0)
+                //{
+                //    return BadRequest(new
+                //    {
+                //        status = "400",
+                //        response = "Bad Request",
+                //        title = "Bad Request",
+                //        message = "Data not Found"
+                //    });
+                //}
+
+                var deleteObj = await _KB3Context.TB_Transaction_TMP
+                    .Where(x => x.F_PDS_No == obj.F_PDS_No
+                    && x.F_Update_By == UserID
+                    && x.F_Plant == Plant[0]).ToListAsync();
+
+                _KB3Context.TB_Transaction_TMP.RemoveRange(deleteObj);
+                await _KB3Context.SaveChangesAsync();
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "OK",
+                    title = "OK",
+                    message = "Data Was Deleted",
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    response = "Internal Server Error",
+                    title = "Internal Server Error",
+                    message = "Unexpected Error While Deleting Data",
                     err = ex.Message
                 });
             }
