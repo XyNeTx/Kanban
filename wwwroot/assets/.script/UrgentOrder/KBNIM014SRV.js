@@ -68,6 +68,10 @@ $("#btnImport").click(async function () {
             },
             error: function (xhr, status, response) {
                 console.error("Error: ", xhr.responseJSON);
+                if (xhr.responseJSON.message.includes("Have Some Error")) {
+                    xSwal.error("Error !!", xhr.responseJSON.message);
+                    return _xLib.OpenReport("KBNIMERR", `&UserID=${xhr.responseJSON.userid}&Type=${xhr.responseJSON.type}`);
+                }
                 return xSwal.error(xhr.responseJSON.title, xhr.responseJSON.message); 
             }
         });

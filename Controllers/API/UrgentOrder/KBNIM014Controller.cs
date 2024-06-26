@@ -57,6 +57,10 @@ namespace HINOSystem.Controllers.API.Master
                 string UserID = HttpContext.Session.GetString("USER_CODE");
                 string Plant = HttpContext.Session.GetString("USER_PLANT");
 
+                var _delList = await _KB3Context.TB_Import_EKanban_Pack.Where(x => x.F_Plant_CD == Plant && x.F_Update_By == UserID).ToListAsync();
+
+                _KB3Context.RemoveRange(_delList);
+
                 obj.F_Plant_CD = Plant;
                 obj.F_Update_By = UserID;
                 obj.F_Update_Date = DateTime.Now;
@@ -95,7 +99,7 @@ namespace HINOSystem.Controllers.API.Master
                     status = "500",
                     response = "Internal Server Error",
                     title = "Internal Server Error",
-                    message = "Data Didn't Import!",
+                    message = "Can't Import Data!",
                     err = ex.Message.ToString()
                 });
             }
@@ -111,9 +115,12 @@ namespace HINOSystem.Controllers.API.Master
                 string UserID = HttpContext.Session.GetString("USER_CODE");
                 string Plant = HttpContext.Session.GetString("USER_PLANT");
 
+                await _KB3Context.Database.ExecuteSqlRawAsync($"DELETE From TB_Import_error Where F_Update_By = '{UserID}' AND F_Type = 'KBNIM014' ");
+
                 await _KB3Context.Database.ExecuteSqlRawAsync($"EXEC [exec].[spKBNIM014] '{Plant}','{UserID}'");
 
                 _KB3Transaction.Commit();
+
 
                 int _haveError = await _KB3Context.Database.ExecuteSqlRawAsync($"SELECT * FROM TB_Import_Error Where F_Update_By = '{UserID}' and F_Type = 'KBNIM014'; ");
 
@@ -124,8 +131,10 @@ namespace HINOSystem.Controllers.API.Master
                         status = "400",
                         response = "Bad Request",
                         title = "Bad Request",
-                        message = "Import Direct Supply Complete!!",
-                        err = "Data Imported but Had Some Error"
+                        message = "Data Imported but Have Some Error",
+                        userid = UserID,
+                        type = "KBNIM014"
+
                     });
                 }
 

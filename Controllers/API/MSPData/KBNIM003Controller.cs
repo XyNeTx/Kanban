@@ -184,7 +184,7 @@ namespace HINOSystem.Controllers.API.Master
             string _SQL = "", _result;
             try
             {
-                _BearerClass.Authentication(Request);
+                var controller = Request.Headers["Referer"].ToString();
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
                 //_json = JsonConvert.DeserializeObject(pData);
@@ -215,14 +215,30 @@ namespace HINOSystem.Controllers.API.Master
                         string _OneLine = _stream.ReadLine();
                         var _line = _OneLine.Split(@"|");
 
-                        _SQL = "INSERT INTO TB_Import_EKanban (F_Type,F_ITEM_NO, F_Supplier, F_Supplier_Plant, F_Supplier_Name, F_Plant, F_Plant_Name, F_Receive_Place, F_Order_Type, F_PDS_No, F_EKBPDS_No, ";
-                        _SQL = _SQL + "F_Collect_Date, F_Collect_Time, F_Arrival_Date, F_Arrival_Time, F_Main_route_Grp_Code, F_Main_route_Order_Seq, F_Sub_route_Grp_Code1, ";
-                        _SQL = _SQL + "F_Sub_route_Order_Seq1, F_Crs1_route, F_Crs1_dock, F_Crs1_arv_Date, F_Crs1_arv_Time, F_Crs1_dpt_Date, F_Crs1_dpt_Time, F_Crs2_route, ";
-                        _SQL = _SQL + "F_Crs2_dock, F_Crs2_arv_Date, F_Crs2_arv_Time, F_Crs2_dpt_Date, F_Crs2_dpt_Time, F_Crs3_route, F_Crs3_dock, F_Crs3_arv_Date, ";
-                        _SQL = _SQL + "F_Crs3_arv_Time, F_Crs3_dpt_Date, F_Crs3_dpt_Time, F_Supplier_Type, F_No, F_Part_No, F_Part_Name, F_Kanban_No, F_Line_Addr, F_Pack_Qty, ";
-                        _SQL = _SQL + "F_Qty, F_Pack, F_Zero_Order, F_Sort_Lane, F_Shipping_Date, F_Shipping_Time, F_Kb_print_Date_p, F_Kb_print_Time_p, F_Kb_print_Date_i, ";
-                        _SQL = _SQL + "F_Kb_print_Time_i, F_Remark, F_Order_Release_Date, F_Order_Release_Time, F_Main_route_Date, F_Bill_Out_Flag, F_Shipping_Dock, F_Plant_CD, ";
-                        _SQL = _SQL + "F_Update_By, F_Update_Date) VALUES ('EKanban',";
+                        if (controller.ToUpper().Contains("KBNIM003"))
+                        {
+
+                            _SQL = "INSERT INTO TB_Import_EKanban (F_Type,F_ITEM_NO, F_Supplier, F_Supplier_Plant, F_Supplier_Name, F_Plant, F_Plant_Name, F_Receive_Place, F_Order_Type, F_PDS_No, F_EKBPDS_No, ";
+                            _SQL = _SQL + "F_Collect_Date, F_Collect_Time, F_Arrival_Date, F_Arrival_Time, F_Main_route_Grp_Code, F_Main_route_Order_Seq, F_Sub_route_Grp_Code1, ";
+                            _SQL = _SQL + "F_Sub_route_Order_Seq1, F_Crs1_route, F_Crs1_dock, F_Crs1_arv_Date, F_Crs1_arv_Time, F_Crs1_dpt_Date, F_Crs1_dpt_Time, F_Crs2_route, ";
+                            _SQL = _SQL + "F_Crs2_dock, F_Crs2_arv_Date, F_Crs2_arv_Time, F_Crs2_dpt_Date, F_Crs2_dpt_Time, F_Crs3_route, F_Crs3_dock, F_Crs3_arv_Date, ";
+                            _SQL = _SQL + "F_Crs3_arv_Time, F_Crs3_dpt_Date, F_Crs3_dpt_Time, F_Supplier_Type, F_No, F_Part_No, F_Part_Name, F_Kanban_No, F_Line_Addr, F_Pack_Qty, ";
+                            _SQL = _SQL + "F_Qty, F_Pack, F_Zero_Order, F_Sort_Lane, F_Shipping_Date, F_Shipping_Time, F_Kb_print_Date_p, F_Kb_print_Time_p, F_Kb_print_Date_i, ";
+                            _SQL = _SQL + "F_Kb_print_Time_i, F_Remark, F_Order_Release_Date, F_Order_Release_Time, F_Main_route_Date, F_Bill_Out_Flag, F_Shipping_Dock, F_Plant_CD, ";
+                            _SQL = _SQL + "F_Update_By, F_Update_Date) VALUES ('EKanban',";
+                        }
+
+                        else if (controller.ToUpper().Contains("KBNIM006"))
+                        {
+                            _SQL = "INSERT INTO TB_Import_EMer (F_ITEM_NO, F_Supplier, F_Supplier_Plant, F_Supplier_Name, F_Plant, F_Plant_Name, F_Receive_Place, F_Order_Type, F_PDS_No, F_EKBPDS_No, ";
+                            _SQL = _SQL + "F_Collect_Date, F_Collect_Time, F_Arrival_Date, F_Arrival_Time, F_Main_route_Grp_Code, F_Main_route_Order_Seq, F_Sub_route_Grp_Code1, ";
+                            _SQL = _SQL + "F_Sub_route_Order_Seq1, F_Crs1_route, F_Crs1_dock, F_Crs1_arv_Date, F_Crs1_arv_Time, F_Crs1_dpt_Date, F_Crs1_dpt_Time, F_Crs2_route, ";
+                            _SQL = _SQL + "F_Crs2_dock, F_Crs2_arv_Date, F_Crs2_arv_Time, F_Crs2_dpt_Date, F_Crs2_dpt_Time, F_Crs3_route, F_Crs3_dock, F_Crs3_arv_Date, ";
+                            _SQL = _SQL + "F_Crs3_arv_Time, F_Crs3_dpt_Date, F_Crs3_dpt_Time, F_Supplier_Type, F_No, F_Part_No, F_Part_Name, F_Kanban_No, F_Line_Addr, F_Pack_Qty, ";
+                            _SQL = _SQL + "F_Qty, F_Pack, F_Zero_Order, F_Sort_Lane, F_Shipping_Date, F_Shipping_Time, F_Kb_print_Date_p, F_Kb_print_Time_p, F_Kb_print_Date_i, ";
+                            _SQL = _SQL + "F_Kb_print_Time_i, F_Remark, F_Order_Release_Date, F_Order_Release_Time, F_Main_route_Date, F_Bill_Out_Flag, F_Shipping_Dock, F_Plant_CD, ";
+                            _SQL = _SQL + "F_Update_By, F_Update_Date) VALUES (";
+                        }
 
                         for (var i = 0; i < _line.Length; i++)
                         {

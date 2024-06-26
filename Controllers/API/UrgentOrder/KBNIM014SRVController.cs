@@ -121,17 +121,21 @@ namespace KANBAN.Controllers.API.UrgentOrder
                 _KB3Context.TB_Import_Service.AddRange(listObj);
                 _KB3Context.SaveChanges();
 
-                _KB3Context.Database.ExecuteSqlRawAsync($"EXEC [exec].[spKBNIM014SRV_MRP] '{USERID}'");
+                _KB3Context.Database.ExecuteSqlRaw($"DELETE FROM TB_Import_Error Where F_Type = 'SRV' AND F_Update_By '{USERID}' ");
+                
+                _KB3Context.Database.ExecuteSqlRaw($"EXEC [exec].[spKBNIM014SRV_MRP] '{USERID}'");
                 DataTable _dt = _FillDataTable.ExecuteSQL($"SELECT * From TB_Import_Error Where F_Type ='SRV' and F_Update_By = '{USERID}'");
 
                 if(_dt.Rows.Count > 0)
-                {
+                {                                  
                     return BadRequest(new
                     {
                         status = "400",
                         response = "Bad Request",
                         title = "Import Data Error !",
-                        message = "Data has been imported. but some data was error"
+                        message = "Data has been imported. but Have Some Error",
+                        userid = USERID,
+                        type = "SRV",
                     });
                 }
                 return Ok(new
