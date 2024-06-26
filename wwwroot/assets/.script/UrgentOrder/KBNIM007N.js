@@ -8,6 +8,7 @@
         "serverSide": false,
         scrollX: false,
         scrollY: '350px',
+        select : true,
         columns: [
             {
                 title: '<input type="checkbox" class="chkBoxHeadDT" id="chkBoxHeadID" name="chkBoxHeadName"/>', width: '10%', render: function (data, type, row, meta) {
@@ -26,6 +27,21 @@
         order: [[1, 'asc']]
     });
 
+    _xLib.AJAX_Get('/api/KBNIM007N/GetSupplier', '',
+        function (success) {
+            if (success.status === "200") {
+                $("#selectSupplier").empty();
+                $("#selectSupplier").append('<option value="" hidden></option>');
+                success.data.forEach(function (item) {
+                    $("#selectSupplier").append('<option value="' + item.f_Supplier_Cd + '">' + item.f_Supplier_Cd + '</option>');
+                });
+            }
+        },
+        function (error) {
+            return xSwal.error("Error !!", error.responseJSON.message);
+        }
+    );
+
     xSplash.hide();
 });
 
@@ -42,6 +58,8 @@ var _command = '';
 $("#buttonInq").click(function () {
     _command = 'Inquiry';
     $("#buttonNew").prop("disabled", true);
+    $("#buttonUpd").prop("disabled", false);
+    $("#buttonDel").prop("disabled", false);
     _xLib.AJAX_Get('/api/KBNIM007N/Inquiry', '',
         function (success)
         {
@@ -52,6 +70,10 @@ $("#buttonInq").click(function () {
                 (JSON.parse(success.data)).forEach(function (item) {
                     $("#txtOrderNo").append('<option value="' + item.F_PDS_No + '">' + item.F_PDS_No + '</option>');
                 });
+                $("#inputQty").prop("readonly", true);
+                $("#inputPack").prop("readonly", true);
+                $("#inputPartNo").prop("disabled", true);
+                $("#inputKanbanNo").prop("disabled", true);
             }
         },
         function (err)
@@ -61,17 +83,38 @@ $("#buttonInq").click(function () {
     )
 });
 
+$("#buttonUpd").click(function () {
+    _command = 'Update';
+    $("#buttonNew").prop("disabled", true);
+    $("#buttonInq").prop("disabled", true);
+    $("#buttonDel").prop("disabled", true);
+    $("#buttonOK").prop("disabled", false);
+    $("#buttonImport").prop("disabled", false);
+    $("#inputQty").prop("readonly", false);
+    $(".chkBoxDT").prop("checked", false);
+});
+
+$("#buttonDel").click(function () {
+    _command = 'Delete';
+    $("#buttonNew").prop("disabled", true);
+    $("#buttonInq").prop("disabled", true);
+    $("#buttonUpd").prop("disabled", true);
+    $("#buttonOK").prop("disabled", false);
+    $("#buttonImport").prop("disabled", false);
+    $("#inputQty").prop("readonly", false);
+
+});
+
 $(document).on("change", "#txtOrderNo", function () { // when select Order No
     if (_command === 'Inquiry') {
         _xLib.AJAX_Get('/api/KBNIM007N/OrderNoSelected', { F_PDS_No: $("#txtOrderNo").val().trim() },
-            function (success) {
+            async function (success) {
                 if (success.status === "200") {
                     success.data = JSON.parse(success.data);
-                    _xLib.TrimJSON(success.data);
-                    $("#selectSupplier").val(success.data[0].F_Supplier);
-                    $("#txtSupplierShortName").val(success.data[0].F_short_name);
-                    $("#txtSupplierName").val(success.data[0].F_name);
-                    $("#txtCycleTime").val(success.data[0].F_Cycle);
+                    success.data = _xLib.TrimJSON(success.data);
+                    console.log(success.data);
+                    await $("#selectSupplier").val(success.data[0].F_Supplier_CD + "-" + success.data[0].F_Supplier_Plant);
+                    $("#selectSupplier").trigger("change");
                     $("#table").DataTable().clear().rows.add(success.data).draw();
                 }
             },
@@ -82,8 +125,32 @@ $(document).on("change", "#txtOrderNo", function () { // when select Order No
     }
 });
 
+$(document).on("click", "#table tbody tr", function () {
+    if (_command === 'Update' || _command === "Inquiry") {
+        var DatainRow = $("#table").DataTable().row(this).data();
+        $("#inputPartNo").val(DatainRow.F_Part_No);
+        $("#inputPartNo").prop("disabled", true);
+
+        $("#inputKanbanNo").val(DatainRow.F_Kanban_No);
+        $("#inputKanbanNo").prop("disabled", true);
+
+        $("#inputQtyPack").val(DatainRow.F_Qty_Pack);
+        $("#inputPack").val(DatainRow.F_Pack);
+        $("#inputQty").val(DatainRow.F_Qty);
+
+        $("#inputDeliveryDate").val(DatainRow.F_Delivery_Date.slice(0, 4) + "-" + DatainRow.F_Delivery_Date.slice(4, 6) + "-" + DatainRow.F_Delivery_Date.slice(6, 8));
+        $("#inputDeliveryDate").prop("disabled", true);
+
+        $("#inputDeliveryTrip").val(DatainRow.F_Delivery_Trip);
+        $("#inputDeliveryTrip").prop("disabled", true);
+
+        $("#txtStoreCode").val(DatainRow.F_Store_CD);
+    }
+});
+
 
 $("#buttonNew").click(function () {
+    _command = "New";
     $("#buttonInq").prop("disabled", true);
     $("#buttonUpd").prop("disabled", true);
     $("#buttonDel").prop("disabled", true);
@@ -193,8 +260,18 @@ $("#inputQty").change(function () {
     var roundup = Math.ceil($("#inputQty").val() / $("#inputQtyPack").val());
     $("#inputPack").val(roundup);
 });
+
+$("#inputQty").on("keypress", async function (e) {
+    if (e.which === 13) {
+        if ($("#inputPack").val() !== Math.ceil($("#inputQty").val() / $("#inputQtyPack").val())) {
+            await $("#inputPack").val(0);
+        }
+        $("#inputDeliveryTrip").trigger(e)
+    }
+});
 $("#inputDeliveryTrip").on("keypress", function (e) {
     //console.log(e.which);
+
     if (e.which === 13) { // when press enter
         if(!($("#inputPartNo").val())) {
             return xSwal.error("Error !!", "Please select Part No.");
@@ -210,10 +287,10 @@ $("#inputDeliveryTrip").on("keypress", function (e) {
         }
         if (!($("#txtCycleTime").val())) {
             return xSwal.error("Error !!", "Please select Supplier.");
-        }
-        let CycleB = $("#txtCycleTime").val().split("0")[1];
-        let DeliveryTrip = $(this).val();
-        if (DeliveryTrip > CycleB) {
+        } 
+        let CycleB = $("#txtCycleTime").val().split("-")[1];
+        let DeliveryTrip = $("#inputDeliveryTrip").val();
+        if (parseInt(DeliveryTrip) > parseInt(CycleB)) {
             return xSwal.error("Error !!", "Delivery Trip is over than Cycle Time.");
         }
 
@@ -230,6 +307,11 @@ $("#inputDeliveryTrip").on("keypress", function (e) {
             F_PDS_No: $("#txtOrderNo").val()
         }
 
+        if (_command === 'Update') {
+            var selectedRow = $("#table").find(".selected").closest("tr");
+            $("#table").DataTable().row(selectedRow).remove().draw();
+        }
+
         $("#table").DataTable().row.add(obj).draw();
 
         $("#inputPartNo").val('');
@@ -243,12 +325,84 @@ $("#inputDeliveryTrip").on("keypress", function (e) {
 });
 
 $("#buttonOK").click(async function () {
-    $("#buttonOK").prop("disabled", true);
-    var rows = $("input[name='inputChkBox']:checked").closest("tr");
-    if (rows.length === 0) return xSwal.error("Error !!", "No data selected.");
-    let _arrObj = $("#table").DataTable().rows(rows).data().toArray();
+    if (_command === 'New') {
+        $("#buttonOK").prop("disabled", true);
+        var rows = $("input[name='inputChkBox']:checked").closest("tr");
+        if (rows.length === 0) return xSwal.error("Error !!", "No data selected.");
+        let _arrObj = $("#table").DataTable().rows(rows).data().toArray();
 
-    return await OkClicked(_arrObj);
+        return await OkClicked(_arrObj);
+    }
+    else if (_command === 'Update') {
+        $("#buttonOK").prop("disabled", true);
+        var rows = $("input[name='inputChkBox']:checked").closest("tr");
+        if (rows.length === 0) return xSwal.error("Error !!", "No data selected.");
+        let _arrObj = $("#table").DataTable().rows(rows).data().toArray();
+        var _hasError = false;
+        _arrObj.forEach(function (item,i) {
+            item.Supplier = item.F_Supplier;
+            item.Part_No = item.F_Part_No;
+            item.Qty = item.F_Qty;
+            item.Pack = item.F_Pack;
+            item.Delivery_Date = item.F_Delivery_Date;
+            item.Delivery_Trip = item.F_Delivery_Trip;
+            item.Kanban_No = item.F_Kanban_No;
+
+            delete item.F_Supplier;
+            delete item.F_Part_No;
+            delete item.F_Qty;
+            delete item.F_Pack;
+            delete item.F_Delivery_Date;
+            delete item.F_Delivery_Trip;
+            delete item.F_Kanban_No;
+
+            _xLib.AJAX_Post('/api/KBNIM007N/Update', JSON.stringify(item),
+                function (success) {
+                    if (success.status === "200") {
+                        console.log("Success: ", success);
+                        if ($("input[name='inputChkBox']:checked").length > 0) {
+                            $("#table").DataTable().row(rows[i]).remove().draw();
+                            $("#buttonInq").trigger("click");
+                        }
+                    }
+                },
+                function (error) {
+                    _hasError = true;
+                    return xSwal.error("Error !!", error.responseJSON.message);
+                }
+            );
+        });
+        if (_hasError) return;
+        else {
+            $("#table").DataTable().clear().draw();
+            return xSwal.success("Success !!", "Data was updated.");
+        }
+    }
+    else if (_command === "Delete") {
+        $("#buttonOK").prop("disabled", true);
+        var rows = $("input[name='inputChkBox']:checked").closest("tr");
+        if (rows.length === 0) return xSwal.error("Error !!", "No data selected.");
+        let _Obj = $("#table").DataTable().row(rows[0]).data();
+        _xLib.AJAX_Post('/api/KBNIM007N/Delete', JSON.stringify(_Obj),
+            function (success) {
+                if (success.status === "200") {
+                    console.log("Success: ", success);
+                    if ($("input[name='inputChkBox']:checked").length > 0) {
+                        $("#table").DataTable().clear().draw();
+                        $("#buttonInq").trigger("click");
+                        return xSwal.success("Success !!", "Data was deleted.");
+                    }
+                }
+            },
+            function (error) {
+                return xSwal.error("Error !!", error.responseJSON.message);
+            }
+        );
+    }
+    else {
+        return xSwal.error("Error !!", "Please select command.");
+    }
+
 });
 
 
@@ -262,6 +416,7 @@ async function OkClicked(_arrObj) {
             _arrObj[item].Supplier = _arrObj[item].F_Supplier;
             _arrObj[item].Qty = _arrObj[item].F_Qty;
             _arrObj[item].Kanban_No = _arrObj[item].F_Kanban_No;
+            _arrObj[item].Pack = _arrObj[item].F_Pack;
 
             delete _arrObj[item].F_Delivery_Date;
             delete _arrObj[item].F_Delivery_Trip;
@@ -269,6 +424,7 @@ async function OkClicked(_arrObj) {
             delete _arrObj[item].F_Supplier;
             delete _arrObj[item].F_Qty;
             delete _arrObj[item].F_Kanban_No;
+            delete _arrObj[item].F_Pack;
         }
         _arrObj[item].Delivery_Date = _arrObj[item].Delivery_Date.toString();
         var _json = JSON.stringify(_arrObj[item]);
@@ -278,7 +434,7 @@ async function OkClicked(_arrObj) {
                 if (success.status === "200") {
                     console.log("Success: ", success);
                     if ($("input[name='inputChkBox']:checked").length > 0) {
-                        $("#table").DataTable().row(rows[item]).remove().draw();
+                        $("#table").DataTable().row().remove().draw();
                     }
                 }
             },
@@ -295,6 +451,10 @@ async function OkClicked(_arrObj) {
             }
         },
         function (error) {
+            if (error.responseJSON.message.includes("Have Some Error")) {
+                xSwal.error("Error !!", error.responseJSON.message);
+                return _xLib.OpenReport("KBNIMERR", `&UserID=${error.responseJSON.userid}&Type=${error.responseJSON.type}`);
+            }
             return xSwal.error("Error !!", error.responseJSON.message);
         }
     )

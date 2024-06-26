@@ -87,6 +87,7 @@ namespace HINOSystem.Context
 
         public DbSet<TB_Import_Urgent> TB_Import_Urgent { get; set; }
 
+        public DbSet<TB_Transaction_TMP> TB_Transaction_TMP { get; set; }
 
         //protected override void OnModelCreating(ModelBuilder modelBuilder)
         //{
