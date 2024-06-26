@@ -179,7 +179,7 @@ namespace HINOSystem.Controllers.API.Master
 
         [HttpPost]
         public IActionResult Import(string fileName = null)
-        {
+         {
             dynamic _json = null;
             string _SQL = "", _result;
             try
@@ -532,9 +532,9 @@ namespace HINOSystem.Controllers.API.Master
     Insert into TB_Transaction_TMP(F_Type, F_Plant, F_PDS_No, F_PDS_Issued_Date, F_Store_CD, F_Part_No, F_Ruibetsu, F_Kanban_No, F_Part_Name, F_Qty_Pack, F_Part_Order,
         F_Ruibetsu_Order, F_Store_Order, F_Name_Order, F_Qty, F_Qty_Level1, F_Seq_No, F_Seq_Type, F_Delivery_Date, F_Adv_Deli_Date, F_OrderType, F_Country, F_Reg_Flg,
         F_Inventory_Flg, F_Supplier_CD, F_Supplier_Plant, F_Cycle_Time, F_Safty_Stock, F_Part_Refer, F_Ruibetsu_Refer, F_Update_By, F_Update_Date, F_Remark, F_Ratio)
-    select 'EKanban' as F_Type,' " + @"' as F_Plant, S.F_PDS_No,substring(F_Collect_Date, 7, 4) + substring(F_Collect_Date, 4, 2) + substring(F_Collect_Date, 1, 2) as F_PDS_Issued_Date,
+    select 'EKanban' as F_Type,' " + _BearerClass.Plant + @" ' as F_Plant, S.F_PDS_No,substring(F_Collect_Date, 7, 4) + substring(F_Collect_Date, 4, 2) + substring(F_Collect_Date, 1, 2) as F_PDS_Issued_Date,
     P.F_CH_Store_Cd as F_Store_CD,P.F_Child_Part as F_Part_No,P.F_CH_Ruibetsu as F_ruibetsu,case when substring(P.F_CH_Store_Cd, 1, 1) = '0' then '' else '0' + rtrim(CON.F_Sebango) end F_Kanban_No,case when substring(P.F_CH_Store_Cd, 1, 1) = '0' then '' else Con.F_Part_Nm end F_Part_Name,
-    case when substring(P.F_CH_Store_Cd, 1, 1) = '0' then 0 else Con.F_Qty_Box end F_Qty_Pack, substring(S.F_PART_NO, 1, 5) + substring(S.F_PART_NO, 7, 5) as F_Part_Order,substring(S.F_PART_NO, 13, 2) as F_Ruibetsu_Order,P.F_Store_Cd as F_Store_Order, PP.F_Name as F_Name_order,
+    case when substring(P.F_CH_Store_Cd, 1, 1) = '0' then 0 else Con.F_Qty_Box end F_Qty_Pack, substring(S.F_PART_NO, 1, 5) + substring(S.F_PART_NO, 7, 5) as F_Part_Order,substring(S.F_PART_NO, 13, 2) as F_Ruibetsu_Order,P.F_Store_Cd as F_Store_Order, isnull(PP.F_Name,'') as F_Name_order,
     S.F_Qty* P.F_Use_Pieces as F_Qty,
     S.F_Qty as F_Qty_Level1,'' as F_Seq_No,
     '' as F_Seq_Type, substring(S.F_Collect_Date, 7, 4) + substring(S.F_Collect_Date, 4, 2) + substring(S.F_Collect_Date, 1, 2) as F_Delivery_Date, 
@@ -547,11 +547,11 @@ namespace HINOSystem.Controllers.API.Master
     '' as F_Part_Refer,'' as F_Ruibetsu_Refer,'" + _BearerClass.UserCode.ToString() + @"' as F_Update_By,getdate() as F_Update_Date,'' as F_Remark
     ,case when not(Con.F_Ratio_N) is null then cast(Con.F_Ratio_N as nchar(3)) else case when rtrim(P.F_Sel_Part) = '' then '' else cast(Con.F_Ratio as nchar(3)) end end F_ratio
     from(Select F_PDS_NO, F_part_no, F_Collect_Date, F_Collect_Time, Sum(F_Qty) as F_QTY, substring(F_PDS_NO, 1, 2) as F_PDS_SUB From TB_Import_EKanban Where F_Update_BY = '" + _BearerClass.UserCode.ToString() + @"' and F_TYpe = 'EKanban'
-    Sql = Sql & Group by F_PDS_NO, F_part_no, F_Collect_Date, F_Collect_Time, substring(F_PDS_NO, 1, 2)
-    Sql = Sql & )S INNER JOIN(Select * from dbo.TMP_PARENTS_CHILD Where F_Update_BY = '" + _BearerClass.UserCode.ToString() + @"')P ON
+    Group by F_PDS_NO, F_part_no, F_Collect_Date, F_Collect_Time, substring(F_PDS_NO, 1, 2)
+    )S INNER JOIN(Select * from dbo.TMP_PARENTS_CHILD Where F_Update_BY = '" + _BearerClass.UserCode.ToString() + @"')P ON
     substring(S.F_PART_NO, 1, 5) + substring(S.F_PART_NO, 7, 5) = rtrim(P.F_PARENT_PART) collate Thai_CI_AS
     AND substring(S.F_PART_NO,13,2) = P.F_ruibetsu collate Thai_CI_AS
-    and P.F_Store_Cd in ('05'),'01'
+    and P.F_Store_Cd in ('05')
     and substring(S.F_Collect_Date,7,4)+substring(S.F_Collect_Date, 4, 2) + substring(S.F_Collect_Date, 1, 2) >= P.F_TC_Str collate Thai_CI_AS
     and substring(S.F_Collect_Date,7,4)+substring(S.F_Collect_Date, 4, 2) + substring(S.F_Collect_Date, 1, 2) <= P.F_TC_End collate Thai_CI_AS
     LEFT OUTER JOIN(select C.F_Part_No, C.F_Ruibetsu, C.F_Store_CD, C.F_TC_Str, C.F_TC_End, C.F_Supplier_Cd, C.F_Plant, C.F_Sebango, C.F_QTY_BOX, C.F_Ratio, C.F_Part_NM, P.F_Ratio_N from
@@ -576,9 +576,9 @@ namespace HINOSystem.Controllers.API.Master
     Insert into TB_Transaction_TMP (F_Type, F_Plant, F_PDS_No, F_PDS_Issued_Date, F_Store_CD, F_Part_No, F_Ruibetsu, F_Kanban_No, F_Part_Name, F_Qty_Pack, F_Part_Order, 
         F_Ruibetsu_Order, F_Store_Order, F_Name_Order,F_Qty,F_Qty_Level1, F_Seq_No, F_Seq_Type, F_Delivery_Date, F_Adv_Deli_Date, F_OrderType, F_Country, F_Reg_Flg, 
         F_Inventory_Flg, F_Supplier_CD, F_Supplier_Plant, F_Cycle_Time, F_Safty_Stock, F_Part_Refer, F_Ruibetsu_Refer, F_Update_By, F_Update_Date,F_Remark,F_Ratio)
-    select 'EKanban' as F_Type,'" + @"' as F_Plant, S.F_PDS_No,substring(F_Collect_Date, 7, 4) + substring(F_Collect_Date, 4, 2) + substring(F_Collect_Date, 1, 2) as F_PDS_Issued_Date,
+    select 'EKanban' as F_Type,'" + _BearerClass.Plant + @"' as F_Plant, S.F_PDS_No,substring(F_Collect_Date, 7, 4) + substring(F_Collect_Date, 4, 2) + substring(F_Collect_Date, 1, 2) as F_PDS_Issued_Date,
     P.F_CH_Store_Cd as F_Store_CD,P.F_Child_Part as F_Part_No,P.F_CH_Ruibetsu as F_ruibetsu,case when P.F_CH_Store_Cd = '00' then '' else '0' + rtrim(CON.F_Sebango) end F_Kanban_No,case when substring(P.F_CH_Store_Cd, 1, 1) = '0' then '' else Con.F_Part_Nm end F_Part_Name,
-    case when substring(P.F_CH_Store_Cd, 1, 1) = '0' then 0 else Con.F_Qty_Box end F_Qty_Pack, substring(S.F_PART_NO, 1, 5) + substring(S.F_PART_NO, 7, 5) as F_Part_Order,substring(S.F_PART_NO, 13, 2) as F_Ruibetsu_Order,P.F_Store_Cd as F_Store_Order, PP.F_Name as F_Name_order,
+    case when substring(P.F_CH_Store_Cd, 1, 1) = '0' then 0 else Con.F_Qty_Box end F_Qty_Pack, substring(S.F_PART_NO, 1, 5) + substring(S.F_PART_NO, 7, 5) as F_Part_Order,substring(S.F_PART_NO, 13, 2) as F_Ruibetsu_Order,P.F_Store_Cd as F_Store_Order, isnull(PP.F_Name,'') as F_Name_order,
     S.F_Qty* P.F_Use_Pieces as F_Qty,
     S.F_Qty as F_Qty_Level1,'' as F_Seq_No,
     '' as F_Seq_Type, substring(S.F_Collect_Date, 7, 4) + substring(S.F_Collect_Date, 4, 2) + substring(S.F_Collect_Date, 1, 2) as F_Delivery_Date, 
@@ -595,7 +595,7 @@ namespace HINOSystem.Controllers.API.Master
     )S INNER JOIN(Select * from dbo.TMP_PARENTS_CHILD Where F_Update_BY = '" + _BearerClass.UserCode.ToString() + @"')P ON
     substring(S.F_PART_NO, 1, 5) + substring(S.F_PART_NO, 7, 5) = rtrim(P.F_PARENT_PART) collate Thai_CI_AS
     AND substring(S.F_PART_NO,13,2) = P.F_ruibetsu collate Thai_CI_AS
-    and P.F_Store_Cd in ('00'),'01'
+    and P.F_Store_Cd in ('00')
     and substring(S.F_Collect_Date,7,4)+substring(S.F_Collect_Date, 4, 2) + substring(S.F_Collect_Date, 1, 2) >= P.F_TC_Str collate Thai_CI_AS
     and substring(S.F_Collect_Date,7,4)+substring(S.F_Collect_Date, 4, 2) + substring(S.F_Collect_Date, 1, 2) <= P.F_TC_End collate Thai_CI_AS
     LEFT OUTER JOIN(select C.F_Part_No, C.F_Ruibetsu, C.F_Store_CD, C.F_TC_Str, C.F_TC_End, C.F_Supplier_Cd, C.F_Plant, C.F_Sebango, C.F_QTY_BOX, C.F_Ratio, C.F_Part_NM, P.F_Ratio_N from
@@ -623,16 +623,17 @@ namespace HINOSystem.Controllers.API.Master
     Insert into TB_Transaction_TMP(F_Type, F_Plant, F_PDS_No, F_PDS_Issued_Date, F_Store_CD, F_Part_No, F_Ruibetsu, F_Kanban_No, F_Part_Name, F_Qty_Pack, F_Part_Order,
         F_Ruibetsu_Order, F_Store_Order, F_Name_Order, F_Qty, F_Qty_Level1, F_Seq_No, F_Seq_Type, F_Delivery_Date, F_Adv_Deli_Date, F_OrderType, F_Country, F_Reg_Flg,
         F_Inventory_Flg, F_Supplier_CD, F_Supplier_Plant, F_Cycle_Time, F_Safty_Stock, F_Part_Refer, F_Ruibetsu_Refer, F_Update_By, F_Update_Date, F_Remark, F_Ratio)
-    select 'EKanban' as F_Type,' + ' as F_Plant, S.F_PDS_No,substring(F_Collect_Date, 7, 4) + substring(F_Collect_Date, 4, 2) + substring(F_Collect_Date, 1, 2) as F_PDS_Issued_Date,
+    select 'EKanban' as F_Type,'" + _BearerClass.Plant + @"' as F_Plant, S.F_PDS_No,substring(F_Collect_Date, 7, 4) + substring(F_Collect_Date, 4, 2) + substring(F_Collect_Date, 1, 2) as F_PDS_Issued_Date,
     P.F_CH_Store_Cd as F_Store_CD,P.F_Child_Part as F_Part_No,P.F_CH_Ruibetsu as F_ruibetsu,case when P.F_CH_Store_Cd = '00' then '' else '0' + rtrim(CON.F_Sebango) end F_Kanban_No,case when P.F_CH_Store_Cd = '00' then '' else Con.F_Part_Nm end F_Part_Name,
-    case when P.F_CH_Store_Cd = '00' then 0 else Con.F_Qty_Box end F_Qty_Pack, substring(S.F_PART_NO, 1, 5) + substring(S.F_PART_NO, 7, 5) as F_Part_Order,substring(S.F_PART_NO, 13, 2) as F_Ruibetsu_Order,P.F_Store_Cd as F_Store_Order, PP.F_Name as F_Name_order,
+    case when P.F_CH_Store_Cd = '00' then 0 else Con.F_Qty_Box end F_Qty_Pack, substring(S.F_PART_NO, 1, 5) + substring(S.F_PART_NO, 7, 5) as F_Part_Order,substring(S.F_PART_NO, 13, 2) as F_Ruibetsu_Order,P.F_Store_Cd as F_Store_Order, isnull(PP.F_Name,'') as F_Name_order,
     S.F_Qty* P.F_Use_Pieces as F_Qty,
     S.F_Qty,'' as F_Seq_No,
     '' as F_Seq_Type, substring(S.F_Collect_Date, 7, 4) + substring(S.F_Collect_Date, 4, 2) + substring(S.F_Collect_Date, 1, 2) as F_Delivery_Date, 
     Case when S.F_Collect_Time >= '00:01' and
     S.F_Collect_Time <= (SELECT F_Start_Time FROM TB_MS_CTL WHERE(F_Plant = '1') AND(F_Shift = 'A')) 
     then convert(Char(8),dateadd(day, -1, substring(S.F_Collect_Date, 4, 3) + substring(S.F_Collect_Date, 1, 3) + substring(S.F_Collect_Date, 7, 4)),112)
-    else substring(S.F_Collect_Date, 7, 4) + substring(S.F_Collect_Date, 4, 2) + substring(S.F_Collect_Date, 1, 2) end as F_Adv_Deli_Date,'N' as F_OrderType,S.F_Collect_Time as F_Country,'0' as F_Reg_Flg,
+    else substring(S.F_Collect_Date, 7, 4) + substring(S.F_Collect_Date
+, 4, 2) + substring(S.F_Collect_Date, 1, 2) end as F_Adv_Deli_Date,'N' as F_OrderType,S.F_Collect_Time as F_Country,'0' as F_Reg_Flg,
     '0' as F_Inventory_Flg, case when P.F_CH_Store_Cd = '00' then '' else Con.F_Supplier_Cd end F_Supplier_CD,case when P.F_CH_Store_Cd = '00' then '' else Con.F_Plant end F_Supplier_Plant, 
     '' as F_CycleTime,0 as F_Safety_Stk,
     '' as F_Part_Refer,'' as F_Ruibetsu_Refer,'" + _BearerClass.UserCode.ToString() + @"' as F_Update_By,getdate() as F_Update_Date,'' as F_Remark
