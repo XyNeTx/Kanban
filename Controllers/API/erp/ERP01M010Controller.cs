@@ -52,7 +52,11 @@ namespace HINOSystem.Controllers.API.erp
 
 
                 _SQL = @" EXEC [exec].[spERP01M011_SEARCH] '3' ";
-                string _erpGroup = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+                string _erpGroup = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName: ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+
+                _SQL = @" EXEC [erp].[TitleList]  '' ";
+                string _erpTitle = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName: ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+
 
                 string _result = @"{
                     ""status"":""200"",
@@ -60,7 +64,8 @@ namespace HINOSystem.Controllers.API.erp
                     ""message"": ""Data Found"",
                     ""data"":
                             {
-                                ""erpGroup"" : " + _erpGroup + @"
+                                ""erpGroup"" : " + _erpGroup + @",
+                                ""erpTitle"" : " + _erpTitle + @"
                             }
                 }";
                 return Content(_result, "application/json");
@@ -127,10 +132,13 @@ namespace HINOSystem.Controllers.API.erp
 
                     erpUser _erpUser = new erpUser();
                     _erpUser.Code = Request.Form["Code"].ToString();
+                    _erpUser.Title_ID = int.Parse(Request.Form["Title_ID"].ToString());
                     _erpUser.Name = Request.Form["Name"].ToString();
                     _erpUser.Surname = Request.Form["Surname"].ToString();
+                    _erpUser.TitleTH_ID = int.Parse(Request.Form["TitleTH_ID"].ToString());
                     _erpUser.NameTH = Request.Form["NameTH"].ToString();
                     _erpUser.SurnameTH = Request.Form["SurnameTH"].ToString();
+                    _erpUser.TitleJP_ID = int.Parse(Request.Form["TitleJP_ID"].ToString());
                     _erpUser.NameJP = Request.Form["NameJP"].ToString();
                     _erpUser.SurnameJP = Request.Form["SurnameJP"].ToString();
                     _erpUser.CreateAt = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss"));
@@ -191,10 +199,13 @@ namespace HINOSystem.Controllers.API.erp
                 if (_erpUser != null)
                 {
                     _erpUser.Code = Request.Form["Code"].ToString();
+                    _erpUser.Title_ID = int.Parse(Request.Form["Title_ID"].ToString());
                     _erpUser.Name = Request.Form["Name"].ToString();
                     _erpUser.Surname = Request.Form["Surname"].ToString();
+                    _erpUser.TitleTH_ID = int.Parse(Request.Form["TitleTH_ID"].ToString());
                     _erpUser.NameTH = Request.Form["NameTH"].ToString();
                     _erpUser.SurnameTH = Request.Form["SurnameTH"].ToString();
+                    _erpUser.TitleJP_ID = int.Parse(Request.Form["TitleJP_ID"].ToString());
                     _erpUser.NameJP = Request.Form["NameJP"].ToString();
                     _erpUser.SurnameJP = Request.Form["SurnameJP"].ToString();
                     _erpUser.Status = Request.Form["Status"].ToString();
@@ -221,7 +232,8 @@ namespace HINOSystem.Controllers.API.erp
                     _ERPContext.erpGroupUser.Add(_erpGroupUserAdd);
                     _ERPContext.SaveChanges();
                 }
-                else { 
+                else
+                {
                     _erpGroupUser.System_ID = 4;
                     _erpGroupUser.User_ID = int.Parse(Request.Form["_ID"].ToString());
                     _erpGroupUser.Group_ID = int.Parse(Request.Form["GroupID"].ToString());

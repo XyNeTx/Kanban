@@ -360,7 +360,9 @@ namespace HINOSystem.Controllers
                     _user = HttpContext.Session.GetString("USER_CODE").ToString();
                     _token = HttpContext.Session.GetString("TOKEN").ToString();
                 }
-                _SQL_Log = @"INSERT INTO [log].[Action] ([UserCode]
+                if (!string.IsNullOrEmpty(HttpContext.Session.GetString("USER_DEVICENAME")))
+                {
+                    _SQL_Log = @"INSERT INTO [log].[Action] ([UserCode]
                                   ,[Token]
                                   ,[DeviceName]
                                   ,[IPAddress]
@@ -386,7 +388,9 @@ namespace HINOSystem.Controllers
                                   , '" + (_SQL == null ? "" : _SQL.Replace("'", "''").Replace("\r", " ").Replace("\n", " ").Replace("\t", " ").ToString().Trim()) + @"'
                                   
                                 )";
-                _erpConnect.Execute(_SQL_Log, skipLog: true);
+                    _erpConnect.Execute(_SQL_Log, skipLog: true);
+
+                }
 
 
                 if (Action == "LOGIN")

@@ -295,7 +295,7 @@
                 _item = `
                         <div class="input-group mb-3">`
                     + (_label != undefined && _label != '' ? `<label class="input-group-text" for="` + _id + `">` + _label + `</label>` : ``)
-                    + ` <input type="file" class="form-control ` + _classvalue + `" id="` + _id + `" name="` + _id + `" accept="` + _filter + `" readonly />
+                    + ` <input type="file" class="form-control ` + _classvalue + `" id="` + _id + `" name="` + _id + `" accept="` + _filter + `" />
                             <button type="button" id="` + _id + `_button_" name="` + _id + `_button_" class="btn btn-outline-success border-left-0" style="width:42px;height:29px;border-color:#d1d3e2;color:#858796;cursor:pointer;" title="Upload">
                                 <i class="fas fa-upload"></i>
                             </button>
@@ -359,7 +359,13 @@
                         </div>   
                         `;
             } else if (_type == 'check' || _type == 'checkbox') {
-                window[_id] = new TextBox(_id);
+                window[_id] = new CheckBox(_id);
+                //window[_id + _value].type = _type;
+                //window[_id + _value].label = _label;
+                //window[_id + _value].value = _value;
+                //window[_id + _value].checked = (_checked == 'checked' ? true : false);
+
+                //console.log(_id);
 
                 //### <item type="check" id="ToolbarDelete" label="Delete" value="1" class="danger" effect="zoom"></item>
                 _effect = 'checkbox-' + (_effect == 'zoom' ? 'zoom zoom-' : 'fade fade-in-') + (_classvalue == '' ? 'primary' : _classvalue);
@@ -375,7 +381,7 @@
                         </div>
                         `;
             } else if (_type == 'table') {
-                window[_id] = new table(_id);
+                /*window[_id] = new table(_id);*/
 
 
                 //console.log(_legend);
@@ -415,6 +421,14 @@
                     window[_id].checked = true;
                 }
 
+            } else if (_type == 'check' || _type == 'checkbox') {
+
+                if (_form != undefined) $('#' + _form + ' #' + _id).parent().append(_item);
+                if (_form == undefined) $('#' + _id).parent().append(_item);
+
+                window[_id].type = _type;
+                window[_id].label = _label;
+                window[_id].value = _value;
 
             } else {
 

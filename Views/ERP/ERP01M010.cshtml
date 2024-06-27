@@ -29,86 +29,141 @@
                 <h5 class="modal-title" id="modalMasterLabel"> @ViewData["AppName"] <span></span></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form id="frmMaster" class="needs-validation" autocomplete="off" novalidate>
-                <div class="modal-body" style="padding-left:10px;padding-top:5px;padding-right:10px;">
+            <div class="modal-body" style="padding-left:10px;padding-top:5px;padding-right:10px;">
 
-                    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar">
-                        <div class="btn-group btn-group-sm me-2" role="group" aria-label="Toolbar">
 
-                            <button type="button" class="btn btn-success" id="btnSave" name="btnSave" onclick="onSave();" title="Save data" @(ViewData["ComponentToolbarSave"].ToString() == "true" ? "" : "disabled")>
-                                <i class="ti-save"></i>
-                            </button>
-                            <button type="button" class="btn btn-success" id="btnPrint" name="btnPrint" onclick="onPrint();" title="Print" @(ViewData["ComponentToolbarPrint"].ToString() == "true" ? "" : "disabled")>
-                                <i class="ti-printer"></i>
-                            </button>
-                            <button type="button" class="btn btn-success" id="btnExecute" name="btnExecute" onclick="onExecute()" title="Execute/Run" @(ViewData["ComponentToolbarExecute"].ToString() == "true" ? "" : "disabled")>
-                                <i class="fas fa-bolt"></i>
-                            </button>
-                            <button type="button" class="btn btn-success" id="btnDelete" name="btnDelete" onclick="onDelete();" title="Delete" @(ViewData["ComponentToolbarDelete"].ToString() == "true" ? "" : "disabled")>
-                                <i class="far fa-trash-alt"></i>
-                            </button>
 
+                <ul class="nav nav-tabs md-tabs " role="tablist" id="pills-tab">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-toggle="tab" href="#tab1-panel" role="tab" style="height:50px;" id="tab1-button">
+                            <i class="icofont icofont-ui-user"></i>
+                            User Detail
+                        </a>
+                        <div class="slide"></div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#tab2-panel" role="tab" style="height:50px;" id="tab2-button">
+                            <i class="fas fa-user-shield"></i>
+                            Authorize
+                        </a>
+                        <div class="slide"></div>
+                    </li>
+                </ul>
+
+
+                <div class="tab-content card-block">
+                    <div class="tab-pane active" id="tab1-panel" role="tabpanel">
+
+                        <div class="btn-toolbar" role="toolbar" aria-label="Toolbar">
+                            <div class="btn-group btn-group-sm me-2" role="group" aria-label="Toolbar">
+
+                                <button type="button" class="btn btn-success" id="btnSave" name="btnSave" onclick="onSave();" title="Save data" @(ViewData["ComponentToolbarSave"].ToString() == "true" ? "" : "disabled")>
+                                    <i class="ti-save"></i>
+                                </button>
+                                <button type="button" class="btn btn-success" id="btnPrint" name="btnPrint" onclick="onPrint();" title="Print" @(ViewData["ComponentToolbarPrint"].ToString() == "true" ? "" : "disabled")>
+                                    <i class="ti-printer"></i>
+                                </button>
+                                <button type="button" class="btn btn-success" id="btnExecute" name="btnExecute" onclick="onExecute()" title="Execute/Run" @(ViewData["ComponentToolbarExecute"].ToString() == "true" ? "" : "disabled")>
+                                    <i class="fas fa-bolt"></i>
+                                </button>
+                                <button type="button" class="btn btn-success" id="btnDelete" name="btnDelete" onclick="onDelete();" title="Delete" @(ViewData["ComponentToolbarDelete"].ToString() == "true" ? "" : "disabled")>
+                                    <i class="far fa-trash-alt"></i>
+                                </button>
+
+                            </div>
                         </div>
+
+                        <form id="frmMaster" class="needs-validation" autocomplete="off" novalidate>
+                            <input type="hidden" class="form-control" id="_Action" name="_Action" value="POST">
+                            <input type="hidden" class="form-control" id="_ID" name="_ID">
+                            <div class="bg-white border rounded-3">
+                                <section class="w-100 p-2">
+                                    <div class="row g-2">
+                                        <div class="col-md-6">
+                                            <item type="text" id="Code" label="Code" noedit></item>
+                                        </div>
+                                    </div>
+                                    <div class="row g-2">
+                                        <div class="col-md-3">
+                                            <item type="select" id="Title_ID" label="Title"></item>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <item type="text" id="Name" label="Name"></item>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <item type="text" id="Surname" label="Surname"></item>
+                                        </div>
+                                    </div>
+                                    <div class="row g-2">
+                                        <div class="col-md-3">
+                                            <item type="select" id="TitleTH_ID" label="Title (TH)"></item>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <item type="text" id="NameTH" label="Name (TH)"></item>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <item type="text" id="SurnameTH" label="Surname (TH)"></item>
+                                        </div>
+                                    </div>
+                                    <div class="row g-2">
+                                        <div class="col-md-3">
+                                            <item type="select" id="TitleJP_ID" label="Title (JP)"></item>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <item type="text" id="NameJP" label="Name (JP)"></item>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <item type="text" id="SurnameJP" label="Surname (JP)"></item>
+                                        </div>
+                                    </div>
+                                    <div class="row g-2">
+                                        <div class="col-md-5">
+                                            <item type="text" id="Email" label="E-mail"></item>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <item type="select" id="GroupID" label="Group" value="1"></item>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="input-group">
+                                                <label class="input-group-text" for="Status">Status</label>
+                                                <select class="form-select" id="Status" name="Status" value="ACTIVE">
+                                                    <option value="ACTIVE">ACTIVE</option>
+                                                    <option value="REGISTER">REGISTER</option>
+                                                    <option value="HOLD">HOLD</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+                            </div>
+                        </form>
                     </div>
 
-                    <input type="hidden" class="form-control" id="_Action" name="_Action" value="POST">
-                    <input type="hidden" class="form-control" id="_ID" name="_ID">
-                    <div class="bg-white border rounded-3">
-                        <section class="w-100 p-2">
+                    <div class="tab-pane" id="tab2-panel" role="tabpanel">
+                        <form id="frmMenu" class="needs-validation" autocomplete="off" novalidate>
+                            <input type="hidden" class="form-control" id="MenuParent_ID" name="MenuParent_ID">
                             <div class="row g-2">
-                                <div class="col-md-6">
-                                    <item type="text" id="Code" label="Code"></item>
+                                <div class="col">
+                                    <item type="table" id="tblMenu"></item>
                                 </div>
                             </div>
-                            <div class="row g-2">
-                                <div class="col-md-6">
-                                    <item type="text" id="Name" label="Name"></item>
-                                </div>
-                                <div class="col-md-6">
-                                    <item type="text" id="Surname" label="Surname"></item>
-                                </div>
-                            </div>
-                            <div class="row g-2">
-                                <div class="col-md-6">
-                                    <item type="text" id="NameTH" label="Name (Thai)"></item>
-                                </div>
-                                <div class="col-md-6">
-                                    <item type="text" id="SurnameTH" label="Surname (Thai)"></item>
-                                </div>
-                            </div>
-                            <div class="row g-2">
-                                <div class="col-md-6">
-                                    <item type="text" id="NameJP" label="Name (Japan)"></item>
-                                </div>
-                                <div class="col-md-6">
-                                    <item type="text" id="SurnameJP" label="Surname (Japan)"></item>
-                                </div>
-                            </div>
-                            <div class="row g-2">
-                                <div class="col-md-6">
-                                    <item type="text" id="Email" label="E-mail"></item>
-                                </div>
-                            </div>
-                            <div class="row g-2">
-                                <div class="col-md-6">
-                                    <item type="select" id="GroupID" label="Group" value="1"></item>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="input-group">
-                                        <label class="input-group-text" for="Status">Status</label>
-                                        <select class="form-select" id="Status" name="Status" value="ACTIVE">
-                                            <option value="ACTIVE">ACTIVE</option>
-                                            <option value="REGISTER">REGISTER</option>
-                                            <option value="HOLD">HOLD</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
+                        </form>
                     </div>
+
+
 
                 </div>
-            </form>
+
+
+                <div style="color:red;">
+                    <b>
+                        In case of create new user please save before set authorize.
+                    </b>
+                </div>
+
+
+
+            </div>
 
             <div class="modal-footer" style="padding-left:20px; padding-right:20px;">
                 <i class="modal-reference mr-auto">Reference Code : <i id="_REFERCODE_"></i></i>
@@ -126,7 +181,5 @@
 
 
 @section Scripts{
-    
-    @*<script type="text/javascript" src="~/assets/.script/Template/Master.js"></script>*@
-    <script type="text/javascript" src="~/assets/.script/ERP/ERP01M010.js?@ViewData["Version"]"></script>
+    <script type="text/javascript" src="~/assets/.script/ERP/ERP01M010.js?@ViewData["VersionJS"]"></script>
 }

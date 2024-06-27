@@ -6,6 +6,7 @@ using System.Data;
 using HINOSystem.Libs;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using Microsoft.IdentityModel.Tokens;
 
 namespace HINOSystem.Controllers.API.lov
 {
@@ -45,7 +46,6 @@ namespace HINOSystem.Controllers.API.lov
         [HttpPost]
         public IActionResult SupplierList(string _id = null)
         {
-            dynamic _json = null;
             string _SQL = "";
             try
             {
@@ -53,16 +53,24 @@ namespace HINOSystem.Controllers.API.lov
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
                 _SQL = @"
-                    SELECT F_Supplier_Code AS Supplier_Code, F_Short_Name AS Supplier_Name 
+                    SELECT F_Supplier_Code
+						, F_Supplier_Code+'-'+F_Supplier_Plant AS Supplier_Code
+						, F_Short_Name AS Supplier_Name 
                     FROM [dbo].[TB_MS_SupplierAttn] 
+                    WHERE 1=1
                 ";
-                string _jsPartList = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, skipLog: true);
+
+                if (Request.Form["text"].ToString() != "") _SQL = _SQL + " AND F_Supplier_Code+'-'+F_Supplier_Plant = '" + Request.Form["text"].ToString() + "' ";
+
+                if (_BearerClass.LOV != "") _SQL = _SQL + _BearerClass.LOV;
+
+                string _json = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, skipLog: true);
 
                 string _result = @"{
                     ""status"":""200"",
                     ""response"":""OK"",
-                    ""message"": """",
-                    ""data"":" + _jsPartList + @"
+                    ""message"": """ + (_json == "[]" ? "No data found in the list of values." : "") + @""",
+                    ""data"":" + _json + @"
                 }";
 
                 return Content(_result, "application/json");
@@ -89,14 +97,20 @@ namespace HINOSystem.Controllers.API.lov
                     FROM T_Construction  
                     WHERE F_Local_Str <= convert(char(8),getdate(),112) 
                     AND F_Local_End >= convert(char(8),getdate(),112) 
-                    ORDER BY Kanban_No
                 ";
+
+                if (Request.Form["text"].ToString() != "") _SQL = _SQL + " AND RIGHT('0000'+ CONVERT(VARCHAR,F_Sebango),4) = '" + Request.Form["text"].ToString() + "' ";
+
+                if (_BearerClass.LOV != "") _SQL = _SQL + _BearerClass.LOV;
+
+                _SQL = _SQL + "                    ORDER BY Kanban_No";
+
                 string _json = _PPM3CN.ExecuteJSON(_SQL, pUser: _BearerClass, skipLog: true);
 
                 string _result = @"{
                     ""status"":""200"",
                     ""response"":""OK"",
-                    ""message"": """",
+                    ""message"": """ + (_json == "[]" ? "No data found in the list of values." : "") + @""",
                     ""data"":" + _json + @"
                 }";
 
@@ -124,14 +138,20 @@ namespace HINOSystem.Controllers.API.lov
                     FROM T_Construction 
                     WHERE F_Local_Str <= convert(char(8),getdate(),112) 
                     AND F_Local_End >= convert(char(8),getdate(),112)
-                    ORDER BY Store_Code
                 ";
+
+                if (Request.Form["text"].ToString() != "") _SQL = _SQL + " AND RTRIM(F_Store_cd) = '" + Request.Form["text"].ToString() + "' ";
+
+                if (_BearerClass.LOV != "") _SQL = _SQL + _BearerClass.LOV;
+
+                _SQL = _SQL + "                    ORDER BY Store_Code";
+
                 string _json = _PPM3CN.ExecuteJSON(_SQL, pUser: _BearerClass, skipLog: true);
 
                 string _result = @"{
                     ""status"":""200"",
                     ""response"":""OK"",
-                    ""message"": """",
+                    ""message"": """ + (_json == "[]" ? "No data found in the list of values." : "") + @""",
                     ""data"":" + _json + @"
                 }";
 
@@ -148,7 +168,6 @@ namespace HINOSystem.Controllers.API.lov
         [HttpPost]
         public IActionResult PartList(string _id = null)
         {
-            dynamic _json = null;
             string _SQL = "";
             try
             {
@@ -161,15 +180,21 @@ namespace HINOSystem.Controllers.API.lov
                     FROM T_Construction
                     WHERE F_Local_Str <= convert(char(8),getdate(),112)
                     AND F_Local_End >= convert(char(8),getdate(),112)
-                    ORDER BY Part_No
                 ";
-                string _jsPartList = _PPM3CN.ExecuteJSON(_SQL, pUser: _BearerClass, skipLog: true);
+
+                if (Request.Form["text"].ToString() != "") _SQL = _SQL + " AND RTRIM(F_Part_no)+'-'+RTRIM(F_Ruibetsu) = '" + Request.Form["text"].ToString() + "' ";
+
+                if (_BearerClass.LOV != "") _SQL = _SQL + _BearerClass.LOV;
+
+                _SQL = _SQL + "                    ORDER BY Part_No";
+
+                string _json = _PPM3CN.ExecuteJSON(_SQL, pUser: _BearerClass, skipLog: true);
 
                 string _result = @"{
                     ""status"":""200"",
                     ""response"":""OK"",
-                    ""message"": """",
-                    ""data"":" + _jsPartList + @"
+                    ""message"": """ + (_json == "[]" ? "No data found in the list of values." : "") + @""",
+                    ""data"":" + _json + @"
                 }";
 
                 return Content(_result, "application/json");

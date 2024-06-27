@@ -142,6 +142,7 @@
 
             let _url = (_NAMESPACE_ != '' ? '/' + _NAMESPACE_ : '') + '/EXEC/Execute';
             let _postData = (pConfig.data != undefined ? ajaxPostData(pConfig.data) : null);
+            ajexHeader.Records = unescape(encodeURIComponent(ajexHeader.Records));
 
             //console.log(ajexHeader);
             return $.ajax({
@@ -167,6 +168,7 @@
 
             let _url = (_NAMESPACE_ != '' ? '/' + _NAMESPACE_ : '') + '/EXEC/xExecute';
             let _postData = (pConfig.data != undefined ? ajaxPostData(pConfig.data) : null);
+            ajexHeader.Records = unescape(encodeURIComponent(ajexHeader.Records));
 
             return $.ajax({
                 type: "POST",
@@ -192,6 +194,7 @@
 
             let _url = (_NAMESPACE_ != '' ? '/' + _NAMESPACE_ : '') + '/EXEC/ExecuteJSON';
             let _postData = (pConfig.data != undefined ? ajaxPostData(pConfig.data) : null);
+            ajexHeader.Records = unescape(encodeURIComponent(ajexHeader.Records));
 
             return $.ajax({
                 type: "POST",
@@ -216,6 +219,8 @@
 
             let _url = (_NAMESPACE_ != '' ? '/' + _NAMESPACE_ : '') + '/EXEC/xExecuteJSON';
             let _postData = (pConfig.data != undefined ? ajaxPostData(pConfig.data) : null);
+            ajexHeader.Records = unescape(encodeURIComponent(ajexHeader.Records));
+
 
             return $.ajax({
                 type: "POST",
@@ -228,7 +233,8 @@
                     xSplash.hide();
                 },
                 error: function (result) {
-                    console.error('Ajax.Post: ' + result.responseText);
+                    console.log(result);
+                    console.error('Ajax.Post: ' + (result.responseText != undefined ? result.responseText : result.statusText));
                     xSplash.hide();
                 }
             });

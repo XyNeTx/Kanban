@@ -140,7 +140,7 @@
                             <div class="tab-pane" id="tab2-panel" role="tabpanel">
                                 <div class="row g-2">
                                     <div class="col">
-                                        <item type="select" id="Parent_ID" label="Menu Group"></item>
+                                        <item type="select" id="Parent_ID" label="Parent Menu"></item>
                                     </div>
                                     <div class="col-md-3">
                                         <item type="text" id="Seq" label="Sequence"></item>
@@ -175,7 +175,7 @@
                                         <div class="col">
                                             <div class="row g-2">
                                                 <div class="col">
-                                                    <item type="checkbox" id="Toolbar" label="Show Toolbar"></item>
+                                                    <item type="check" id="Toolbar" label="Show Toolbar" value="0"></item>
                                                 </div>
                                             </div>
 
@@ -269,5 +269,5 @@
 @section Scripts{
     
     @*<script type="text/javascript" src="~/assets/.script/Template/Master.js"></script>*@
-    <script type="text/javascript" src="~/assets/.script/ERP/ERP01M020.js?@ViewData["Version"]"></script>
+    <script type="text/javascript" src="~/assets/.script/ERP/ERP01M020.js?@ViewData["VersionJS"]"></script>
 }

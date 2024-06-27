@@ -16,13 +16,19 @@
 
         public string? Password { get; set; }
 
+        public int? Title_ID { get; set; }
+
         public string? Name { get; set; }
 
         public string? Surname { get; set; }
 
+        public int? TitleTH_ID { get; set; }
+
         public string? NameTH { get; set; }
 
         public string? SurnameTH { get; set; }
+
+        public int? TitleJP_ID { get; set; }
 
         public string? NameJP { get; set; }
 

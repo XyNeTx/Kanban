@@ -1,6 +1,15 @@
+
+let _libDataTable_RowIndex = 0;
+let _libDataTable_ColumnIndex = 0;
+
 class libDataTable {
     constructor() {
         //console.log("load");
+        this._ID = '';
+        this._Rows = 0;
+        this._Columns = 0;
+        this._Row = 0;
+        this._Column = 0;
     }
 
     Initial = function (pConfig = null) {
@@ -92,6 +101,7 @@ class libDataTable {
         var _paging = (pConfig.scrollbar != undefined ? false : true);
         var _scrollCollapse = (pConfig.scrollbar != undefined ? true : false);
         var _scrollY = (pConfig.scrollbar != undefined ? pConfig.scrollbar : null);
+
 
         //console.log(_column);
         var _dataTable = $('#' + pConfig.name).DataTable({
@@ -195,19 +205,46 @@ class libDataTable {
             }
         });
 
+
+
+
+        window['_' + pConfig.name + '_property_'] = new property(pConfig.name);
+
+        var _property = window['_' + pConfig.name + '_property_'];
+        _property.data = pConfig.data;
+        _dataTable.property = _property;
+
+
         ////### Callback when click the table row
         $('#' + pConfig.name + ' tbody').on('click', 'tr td', function (event) {
-
-            if ($(event.target).is("select") || $(event.target).is("input")) return;
 
             let _Table = $('#' + pConfig.name).DataTable();
             let data = _Table.row(this).data();
             let _r = _Table.row(this).index();
             let _c = _Table.column(this).index();
+                       
+            if ($(event.target).is("select") || $(event.target).is("input")) {
+                //console.log('pConfig.eventclick');
+                //console.log(event.target);
+                if (pConfig.eventclick != undefined && typeof (pConfig.eventclick) == 'function') pConfig.eventclick(data, _r, _c, event.target);
+                return;
+            }
+
+
+            var _property = window['_' + pConfig.name + '_property_'];
+            _property.row = _r;
+            _property.column = _c;
+            _property.RowIndex = _r;
+            _property.ColumnIndex = _c;
+            _Table.property = _property;
 
             if (pConfig.rowclick != undefined && typeof (pConfig.rowclick) == 'function') pConfig.rowclick(data, _r, _c);
 
         });
+
+
+
+        //this.setIndex();
 
         return _dataTable;
 
@@ -526,6 +563,15 @@ class libDataTable {
                 _table.page.len(-1).draw();
                 _table.page.len(_page_info.length).draw();
                 _table.page(_page_info.page).draw('page');
+
+                var _property = window['_' + pTable.replace('#', '') + '_property_'];
+                _property.rows = _table.rows().count();
+                _property.columns = _table.columns().count();
+                _property.RowCount = _table.rows().count();
+                _property.ColumnCount = _table.columns().count();
+                _property.data = pData;
+                _table.property = _property;
+                //console.log(_table);
             }
 
         }
@@ -627,6 +673,29 @@ class libDataTable {
 
     }
 
+
+    Cell = function (pTable = null, pRow = 0, pColumn = 0, pValue = '') {
+        pTable = CheckObject(pTable);
+
+        var table = $(pTable).DataTable();
+        // Change the data in the first cell of the first row
+        table.cell({ row: pRow, column: pColumn }).data(pValue).draw();
+    }
+    cell = function (pTable = null, pRow = 0, pColumn = 0, pValue = '') {
+        Cell(pTable, pRow, pColumn, pValue);
+    }
+
+
+    //RowIndex = function (pTable = null, pRow = 0, pColumn = 0, pValue = '') {
+    //    pTable = CheckObject(pTable);
+
+    //    var table = $(pTable).DataTable();
+
+
+    //}
+
+
+
     loading = function (pTable = null, pData = null) {
         pTable = CheckObject(pTable);
         console.log(pData);
@@ -656,6 +725,69 @@ class libDataTable {
 
         }
     }
+
+
+    set ID(pValue) {
+
+        console.log(pValue);
+
+        this._ID = pValue;
+    }
+
+
+    setIndex = function () {
+        //console.log(_libDataTable_RowIndex);
+        this._Row = _libDataTable_RowIndex;
+        this._Column = _libDataTable_ColumnIndex;
+    }
+
+    set RowIndex(pValue) {
+        this._Row = pValue;
+    }
+
+    get RowIndex() {
+        return this._Row;
+    }
+
+    set ColumnIndex(pValue) {
+        this._Column = pValue;
+    }
+
+    get ColumnIndex() {
+        return this._Column;
+    }
+
+
+    set RowCount(pValue) {
+        console.log(pValue);
+
+        this._Rows = pValue;
+    }
+
+    get RowCount() {
+
+        console.log(this._ID);
+
+        return this.rows().count();
+    }
+
+    //set Rows(pValue) {
+    //    this._Rows = pValue;
+    //}
+
+    //get Rows() {
+    //    return this._Rows;
+    //}
+
+    //set Columns(pValue) {
+    //    this._Columns = pValue;
+    //}
+
+    //get Columns() {
+    //    return this._Columns;
+    //}
+
+
 
 
 }

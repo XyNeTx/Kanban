@@ -4,11 +4,12 @@
         Controller: _PAGE_,
         Table: 'tblMaster',
         ColumnTitle: {
-            "EN": ['Code', 'Name', 'Title', 'Icon', 'Seq', 'Status'],
-            "TH": ['Code', 'Name', 'Title', 'Icon', 'Seq', 'Status'],
-            "JP": ['Code', 'Name', 'Title', 'Icon', 'Seq', 'Status'],
+            "EN": ['Group Name', 'Code', 'Name', 'Title', 'Icon', 'Seq', 'Status'],
+            "TH": ['Group Name', 'Code', 'Name', 'Title', 'Icon', 'Seq', 'Status'],
+            "JP": ['Group Name', 'Code', 'Name', 'Title', 'Icon', 'Seq', 'Status'],
         },
         ColumnValue: [
+            { "data": "GroupName" },
             { "data": "Code" },
             { "data": "Name" },
             { "data": "Title" },
@@ -31,9 +32,7 @@
         xDropDownList.bind('#frmMaster #Parent_ID', result.data.erpMenu, '_ID', 'Name');
         xDropDownList.bind('#frmMaster #Group_ID', result.data.erpGroup, '_ID', 'Name');
 
-
         xAjax.onCheck('#Toolbar', function () {
-            console.log('Toolbar');
             if ($('#Toolbar').val() == 0) $('#fldToobar').prop('readonly', 'readonly');
             if ($('#Toolbar').val() == 1) $('#fldToobar').prop('readonly', false);
         });
@@ -43,6 +42,7 @@
 
     onEdit = function () {
         $('#IconDisplay').attr('class', $('#Icon').val());
+        console.log($('#Toolbar').val());
     }
 
     onSave = function () {
