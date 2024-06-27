@@ -1,44 +1,8 @@
-﻿using Microsoft.AspNetCore.Http.Extensions;
-using Microsoft.AspNetCore.Mvc;
-using System.Data;
-using System;
-using System.Web;
-using System.Security.Principal;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-
-using System.Reflection.PortableExecutable;
-using System.DirectoryServices;
-using System.DirectoryServices.AccountManagement;
-using Microsoft.Net.Http.Headers;
-using System.Collections.Specialized;
-using System.Net;
-using System.DirectoryServices.ActiveDirectory;
-using System.Net.Http;
-using Microsoft.AspNetCore.Authorization;
-
-using System.Security.Claims;
-using Org.BouncyCastle.Asn1.Ocsp;
-
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-
-using System.Threading.Tasks;
-
+﻿using HINOSystem.Context;
 using HINOSystem.Libs;
-using HINOSystem.Context;
-using HINOSystem.Models.KB3;
-using NPOI.HPSF;
-using Humanizer;
-using NPOI.SS.Formula.Functions;
-using NPOI.SS.Formula.Eval;
-using PdfSharp.Pdf.Filters;
-using MathNet.Numerics.LinearAlgebra.Factorization;
-using Microsoft.CodeAnalysis.Differencing;
-using Microsoft.VisualBasic;
-using static System.Net.Mime.MediaTypeNames;
-using NPOI.POIFS.Properties;
+using KANBAN.Models.KB3.VLT;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 //using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HINOSystem.Controllers.API.Master
@@ -73,77 +37,50 @@ namespace HINOSystem.Controllers.API.Master
             _PPMConnect = ppmConnect;
 
         }
-
-
-
         [HttpPost]
-        public IActionResult initial([FromBody] string pData = null)
+        public async Task<IActionResult> ImportData (List<TB_Import_VLT> listObj)
         {
-            dynamic _json = null;
-            string _SQL = "";
+            using var _KB3Transaction = _KB3Context.Database.BeginTransaction();
             try
             {
-                _BearerClass.Authentication(Request);
-                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
+                _KB3Transaction.CreateSavepoint("BeforeImport");
+                string Plant = HttpContext.Session.GetString("USER_PLANT");
+                string UserID = HttpContext.Session.GetString("USER_CODE");
 
-                if (pData != null) _json = JsonConvert.DeserializeObject(pData);
+                foreach(var obj in listObj)
+                {
+                    obj.F_PDS_No = obj.F_VHD_Order_No;
+                    obj.F_Update_By = UserID;
+                    obj.F_Update_Date = DateTime.Now;
 
-                _SQL = @" EXEC [exec].[spTB_MS_FACTORY] ";
-                string _jsTB_MS_Factory = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+                    obj.F_Bridge_F = _KB3Context.TB_MS_PartCode.FirstOrDefault(x => x.F_Code == obj.F_Frame_Code).F_Bridge ?? "N";
+                    obj.F_Bridge_S = _KB3Context.TB_MS_PartCode.FirstOrDefault(x => x.F_Code == obj.F_Side_Panel).F_Bridge ?? "N";
+                    obj.F_Bridge_T = _KB3Context.TB_MS_PartCode.FirstOrDefault(x => x.F_Code == obj.F_Tail_Gate).F_Bridge ?? "N";
+                    obj.F_Bridge_R = _KB3Context.TB_MS_PartCode.FirstOrDefault(x => x.F_Code == obj.F_RR_Axle).F_Bridge ?? "N";
+                }
 
-                string _result = @"{
-                    ""status"":""200"",
-                    ""response"":""OK"",
-                    ""message"": ""Data Found"",
-                    ""data"":
-                            {
-                                ""TB_MS_Factory"" : " + _jsTB_MS_Factory + @"
-                            }
-                }";
-                return Content(_result, "application/json");
+                await _KB3Context.TB_Import_VLT.AddRangeAsync(listObj);
+                await _KB3Context.SaveChangesAsync();
+                await _KB3Transaction.CommitAsync();
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "OK",
+                    message = "Import Data Success",
+                });
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                return Content(e.Message.ToString(), "application/json");
+                _KB3Transaction.RollbackToSavepoint("BeforeImport");
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    response = "Internal Server Error",
+                    message = "Unexpected Error",
+                    error = ex.Message
+                });
             }
         }
-
-
-
-        [HttpPost]
-        public IActionResult search([FromBody] string pData = null)
-        {
-            dynamic _json = null;
-            string _SQL = "";
-            try
-            {
-                _BearerClass.Authentication(Request);
-                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
-
-                _json = JsonConvert.DeserializeObject(pData);
-
-
-                _KBCN.Plant = _json.F_Plant;
-                _SQL = @" EXEC [exec].[spKBNMS001_SEARCH] '" + _json.F_Plant + "' ";
-                _KBCN.Plant = _json.F_Plant;
-                string _jsonData = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
-
-
-
-                string _result = @"{
-                    ""status"":""200"",
-                    ""response"":""OK"",
-                    ""message"": ""Data Found"",
-                    ""data"": " + _jsonData + @"
-                }";
-                return Content(_result, "application/json");
-            }
-            catch (Exception e)
-            {
-                return Content(e.Message.ToString(), "application/json");
-            }
-        }
-
-
     }
 }

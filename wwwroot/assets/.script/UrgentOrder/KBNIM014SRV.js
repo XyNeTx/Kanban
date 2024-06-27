@@ -17,7 +17,14 @@ async function UploadFile(_files) {
 
         const arrayBuffer = await file.arrayBuffer();
         const read = await XLSX.read(arrayBuffer);
-        const data = XLSX.utils.sheet_to_json(read.Sheets[read.SheetNames[0]]);
+
+        let newRead = read;
+
+        for (var key in newRead.Sheets[newRead.SheetNames[0]]) {
+            newRead.Sheets[newRead.SheetNames[0]][key].v = newRead.Sheets[newRead.SheetNames[0]][key].w;
+        }
+
+        const data = XLSX.utils.sheet_to_json(newRead.Sheets[newRead.SheetNames[0]]);
 
         var filterData = data.filter(f => !Object.values(f).includes("<EOF>"));
         if (filterData.some(f => Object.keys("PO_Item_No"))) {

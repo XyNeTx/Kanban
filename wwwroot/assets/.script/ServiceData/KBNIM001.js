@@ -57,7 +57,15 @@ $("#btnImport").on("click", async function () {
 
             const arrayBuffer = await file.arrayBuffer();
             const read = await XLSX.read(arrayBuffer);
-            const data = XLSX.utils.sheet_to_json(read.Sheets[read.SheetNames[0]]);
+            let newRead = read;
+
+            for (var key in newRead.Sheets[newRead.SheetNames[0]])
+            {
+                newRead.Sheets[newRead.SheetNames[0]][key].v = newRead.Sheets[newRead.SheetNames[0]][key].w;
+            }
+
+
+            const data = XLSX.utils.sheet_to_json(newRead.Sheets[read.SheetNames[0]]);
 
             var filterData = data.filter(f => !Object.values(f).includes("<EOF>"));
             if (filterData.some(f => Object.keys("PO_Item_No"))) {
@@ -74,11 +82,11 @@ $("#btnImport").on("click", async function () {
 
             _xLib.AJAX_Post("/api/KBNIM001C/ImportData", JSON.stringify(filterData),
                 function (success) {
-                    console.log(success);
+                    //console.log(success);
                     return $("#tblCOMPLETE").DataTable().row.add({ F_File_Name: file.name }).draw();
                 },
                 function (error) {
-                    console.log(error);
+                    //console.log(error);
                     return $("#tblERROR").DataTable().row.add({ F_File_Name: file.name }).draw();
                 }
             );
