@@ -1,104 +1,101 @@
 ﻿$(document).ready(function () {
+    setTimeout(() => xSplash.hide(),1000);
+});
+var files = [];
+$("#inputFile").on("change", function (e) {
+    files = e.target.files;
+});
 
-    initial = function () {
-
-        xItem.reset({
-            id: 'pgsStatus',
-        })
-
-        xSplash.hide();
+$("#btnImport").on("click", async function () {
+    if (files.length == 0) {
+        xSwal.error("Error", "Please select file to import.");
+        return;
     }
-    initial();
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        try {
+            const arrayBuffer = await file.arrayBuffer();
+            const read = await XLSX.read(arrayBuffer);
 
+            var maxRow = read.Sheets.Sheet1["!ref"].split(":")[1].replace(/[A-z]/g, "");
 
+            let newRead = read;
+            //console.log(maxRow);
+            newRead.Sheets.Sheet1["A1"].v = "F_Production_Plan";
+            newRead.Sheets.Sheet1.B1 = {
+                v: "F_Line_Code",
+            }
+            newRead.Sheets.Sheet1.C1 = {
+                v: "F_ID_No",
+            }
+            newRead.Sheets.Sheet1.D1 = {
+                v: "F_Jig_In_Seq",
+            }
+            newRead.Sheets.Sheet1.E1 = {
+                v: "F_Frame_Code",
+            }
+            newRead.Sheets.Sheet1.F1 = {
+                v: "F_EDP_Type",
+            }
+            newRead.Sheets.Sheet1.G1 = {
+                v: "F_Vehicle_Model",
+            }
+            newRead.Sheets.Sheet1.H1 = {
+                v: "F_Frame_Type",
+            }
+            newRead.Sheets.Sheet1.I1 = {
+                v: "F_Frame_VIN",
+            }
+            newRead.Sheets.Sheet1.J1 = {
+                v: "F_Frame_ChK_VIN",
+            }
+            newRead.Sheets.Sheet1.K1 = {
+                v: "F_Frame_Dummy",
+            }
+            newRead.Sheets.Sheet1.L1 = {
+                v: "F_Frame_Plant",
+            }
+            newRead.Sheets.Sheet1.M1 = {
+                v: "F_Frame_Serial",
+            }
+            newRead.Sheets.Sheet1.N1 = {
+                v: "F_Stamp_VIN",
+            }
+            newRead.Sheets.Sheet1.O1 = {
+                v: "F_Side_Panel",
+            }
+            newRead.Sheets.Sheet1.P1 = {
+                v: "F_Tail_Gate",
+            }
+            newRead.Sheets.Sheet1.Q1 = {
+                v: "F_RR_Axle",
+            }
+            newRead.Sheets.Sheet1.R1 = {
+                v: "F_VHD_Order_No",
+            }
 
-    var uploadData;
-    xAjax.onChange('#fileImport', function () {
-        let _file = $('#fileImport').val();
-        if (_file == '') {
-            xSwal.Info({ "message": 'Please check file before import!!' });
-            return;
+            let excelColumns = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R"];
+
+            for (let j = 0; j < excelColumns.length; j++) {
+                newRead.Sheets.Sheet1[excelColumns[j] + "1"].t = "s";
+                newRead.Sheets.Sheet1[excelColumns[j] + "1"].w = newRead.Sheets.Sheet1[excelColumns[j] + "1"].v;
+
+            }
+
+            for (var key in newRead.Sheets.Sheet1) {
+                if (key.includes("D") || key.includes("H")) {
+                    newRead.Sheets.Sheet1[key].t = "s";
+                    newRead.Sheets.Sheet1[key].v = newRead.Sheets.Sheet1[key].w;
+                }
+            }
+            //console.log(newRead);
+            const data = XLSX.utils.sheet_to_json(newRead.Sheets[newRead.SheetNames[0]]);
+            console.log(data);
+            if (data.length != (maxRow-1)) {
+                return xSwal.error("Error", "Please check the rows of data in the excel file.");
+            }
+        } catch (error) {
+            console.error(error);
         }
-
-        xItem.reset({
-            id: 'pgsStatus',
-        })
-
-        var file = $('#fileImport')[0].files[0];
-        var formData = new FormData();
-        formData.append("file", file);
-
-        xAjax.PostFile({
-            url: 'KBNIM003/Upload',
-            data: formData,
-            then: function (result) {
-                uploadData = result.data;                
-            }
-        })
-    })
-
-
-
-    xAjax.onClick('#fileImport_button_', function () {
-        let _file = $('#fileImport').val();
-        if (_file == '') {
-            xSwal.Info({ "message": 'Please check file before import!!' });
-            return;
-        }
-
-        console.log('ready');
-
-        xSwal.question({
-            "message": 'Do you want import KANBAN and MSP?',
-            "then": function () {
-
-                xTimer.Clock.Start(
-                    {
-                        "start": 100,
-                        "counting": function () {
-                            getProgress();
-
-                        }
-                    })
-
-                var formData = new FormData();
-                formData.append("fileName", uploadData.file);
-
-                xAjax.PostFile({
-                    url: 'KBNIM003/Import',
-                    data: formData,
-                    then: function (result) {
-
-                        console.log(result);
-
-                        xTimer.Clock.Stop({
-                            "finish": function () {
-                                getProgress();
-                            }
-                        })
-                    }
-                })
-            }
-        })
-
-    })
-
-
-
-    getProgress = function () {
-        xAjax.Post({
-            url: 'KBNIM003/checkProgress',
-            data: null,
-            then: function (result) {
-
-                xItem.progress({
-                    id: 'pgsStatus',
-                    max: uploadData.count,
-                    current: result.data[0].cnt
-                })
-
-            }
-        })
     }
-
 });

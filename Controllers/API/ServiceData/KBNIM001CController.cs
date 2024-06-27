@@ -90,8 +90,31 @@ namespace HINOSystem.Controllers.API.ServiceData
         [HttpPost]
         public async Task<IActionResult> ImportData (List<TB_Import_Service> listObj)
         {
+            using var _KB3Transaction = _KB3Context.Database.BeginTransaction();
             try
             {
+                _KB3Transaction.CreateSavepoint("BeforeImport");
+
+                string UserID = HttpContext.Session.GetString("USER_CODE");
+                foreach (var each in listObj)
+                {
+                    if (each.F_Part_No.Count() == 10)
+                    {
+                        each.F_Ruibetsu = "00";
+                    }
+                    else
+                    {
+                        each.F_Ruibetsu = each.F_Part_No.Substring(10, 2);
+                        each.F_Part_No = each.F_Part_No.Substring(0, 10);
+                    }
+                    each.F_Update_By = UserID;
+                }
+
+
+                await _KB3Context.TB_Import_Service.AddRangeAsync(listObj);
+                await _KB3Context.SaveChangesAsync();
+                _KB3Transaction.Commit();
+
                 return Ok(new
                 {
                     status = "200",
@@ -102,6 +125,7 @@ namespace HINOSystem.Controllers.API.ServiceData
             }
             catch (Exception ex)
             {
+                _KB3Transaction.RollbackToSavepoint("BeforeImport");
                 return StatusCode(500, new
                 {
                     status = "500",
