@@ -115,6 +115,8 @@ namespace HINOSystem.Controllers.API.Master
         [HttpGet]
         public async Task<IActionResult> Inquiry()
         {
+            _BearerClass.Authentication(Request);
+            if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
             setConString();
             try
             {
@@ -161,6 +163,8 @@ namespace HINOSystem.Controllers.API.Master
         [HttpPost]
         public async Task<IActionResult> Update(VM_KBNIM007N_OK obj)
         {
+            _BearerClass.Authentication(Request);
+            if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
             setConString();
             try
             {
@@ -227,6 +231,8 @@ namespace HINOSystem.Controllers.API.Master
         [HttpPost]
         public async Task<IActionResult> Delete(TB_Transaction_TMP obj)
         {
+            _BearerClass.Authentication(Request);
+            if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
             setConString();
             try
             {
@@ -266,6 +272,16 @@ namespace HINOSystem.Controllers.API.Master
         [HttpGet]
         public async Task<IActionResult> OrderNoSelected(string F_PDS_No)
         {
+            _BearerClass.Authentication(Request);
+
+            if (_BearerClass.Status == 401) return Unauthorized(new
+            {
+                status = "401",
+                response = "Unauthorized",
+                title = "Unauthorized",
+                message = "Please Login First"
+            });
+
             setConString();
             try
             {

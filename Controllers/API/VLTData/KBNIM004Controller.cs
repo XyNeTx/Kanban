@@ -7,7 +7,9 @@ using Newtonsoft.Json;
 
 namespace HINOSystem.Controllers.API.Master
 {
-    public class KBNIM004Controller : Controller
+    [ApiController]
+    [Route("api/[controller]/[action]")]
+    public class KBNIM004Controller : ControllerBase
     {
         private readonly IConfiguration _configuration;
         private readonly BearerClass _BearerClass;
@@ -37,12 +39,22 @@ namespace HINOSystem.Controllers.API.Master
             _PPMConnect = ppmConnect;
 
         }
+
         [HttpPost]
         public async Task<IActionResult> ImportData (List<TB_Import_VLT> listObj)
         {
             using var _KB3Transaction = _KB3Context.Database.BeginTransaction();
             try
             {
+                _BearerClass.Authentication(Request);
+
+                if (_BearerClass.Status == 401) return Unauthorized(new
+                {
+                    status = "401",
+                    response = "Unauthorized",
+                    title = "Unauthorized",
+                    message = "Please Login First"
+                });
                 _KB3Transaction.CreateSavepoint("BeforeImport");
                 string Plant = HttpContext.Session.GetString("USER_PLANT");
                 string UserID = HttpContext.Session.GetString("USER_CODE");
@@ -53,10 +65,10 @@ namespace HINOSystem.Controllers.API.Master
                     obj.F_Update_By = UserID;
                     obj.F_Update_Date = DateTime.Now;
 
-                    obj.F_Bridge_F = _KB3Context.TB_MS_PartCode.FirstOrDefault(x => x.F_Code == obj.F_Frame_Code).F_Bridge ?? "N";
-                    obj.F_Bridge_S = _KB3Context.TB_MS_PartCode.FirstOrDefault(x => x.F_Code == obj.F_Side_Panel).F_Bridge ?? "N";
-                    obj.F_Bridge_T = _KB3Context.TB_MS_PartCode.FirstOrDefault(x => x.F_Code == obj.F_Tail_Gate).F_Bridge ?? "N";
-                    obj.F_Bridge_R = _KB3Context.TB_MS_PartCode.FirstOrDefault(x => x.F_Code == obj.F_RR_Axle).F_Bridge ?? "N";
+                    obj.F_Bridge_F = _KB3Context.TB_MS_PartCode.FirstOrDefault(x => x.F_Code == obj.F_Frame_Code)?.F_Bridge ?? "N";
+                    obj.F_Bridge_S = _KB3Context.TB_MS_PartCode.FirstOrDefault(x => x.F_Code == obj.F_Side_Panel)?.F_Bridge ?? "N";
+                    obj.F_Bridge_T = _KB3Context.TB_MS_PartCode.FirstOrDefault(x => x.F_Code == obj.F_Tail_Gate)?.F_Bridge ?? "N";
+                    obj.F_Bridge_R = _KB3Context.TB_MS_PartCode.FirstOrDefault(x => x.F_Code == obj.F_RR_Axle)?.F_Bridge ?? "N";
                 }
 
                 await _KB3Context.TB_Import_VLT.AddRangeAsync(listObj);

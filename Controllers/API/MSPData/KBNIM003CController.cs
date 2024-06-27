@@ -84,6 +84,16 @@ namespace HINOSystem.Controllers.API.Master
         [HttpGet]
         public async Task<IActionResult> Search()
         {
+            _BearerClass.Authentication(Request);
+
+            if (_BearerClass.Status == 401) return Unauthorized(new
+            {
+                status = "401",
+                response = "Unauthorized",
+                title = "Unauthorized",
+                message = "Please Login First"
+            });
+
             try
             {
                 string now = DateTime.Now.ToString("yyyyMMdd");
@@ -128,6 +138,16 @@ namespace HINOSystem.Controllers.API.Master
         [HttpPost]
         public async Task<IActionResult> Confirm(List<object> listObj)
         {
+            _BearerClass.Authentication(Request);
+
+            if (_BearerClass.Status == 401) return Unauthorized(new
+            {
+                status = "401",
+                response = "Unauthorized",
+                title = "Unauthorized",
+                message = "Please Login First"
+            });
+
             using var _KB3Transaction = _KB3Context.Database.BeginTransaction();
             try
             {

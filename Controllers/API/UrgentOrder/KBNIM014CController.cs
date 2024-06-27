@@ -130,6 +130,15 @@ namespace HINOSystem.Controllers.API.Master
         [HttpPost]
         public async Task<IActionResult> Save([FromBody] object _obj)
         {
+            _BearerClass.Authentication(Request);
+
+            if (_BearerClass.Status == 401) return Unauthorized(new
+            {
+                status = "401",
+                response = "Unauthorized",
+                title = "Unauthorized",
+                message = "Please Login First"
+            });
             using var _KB3Transaction = _KB3Context.Database.BeginTransaction();
             try
             {
