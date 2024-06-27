@@ -19,16 +19,21 @@
 
                                 <div class="row">
                                     <div class="col-8">
-                                        <item type="file" id="fileImport" filter=".txt"></item>
+                                        <div class="d-flex">
+                                            <input type="file" class="form-control col-8" id="inputFile" multiple accept=".txt" />
+                                            <button type="button" class="btn btn-primary ms-2" id="btnImport">Import File</button>
+                                        </div>
                                     </div>
                                 </div>
-
                                 <div class="row">
-                                    <div class="col-8">
-                                        <item type="progress" id="pgsStatus" label="Processing: {{##.##}} %" max="142"></item>
+                                    <div class="mt-4" id="divProgressBar" style="visibility:hidden">
+                                        <div class="progress" role="progressbar">
+                                            <div class="progress-bar progress-bar-striped progress-bar-animated" id="widthProgressBar" style="width: 0%">
+                                                <span class="text-center" id="spanProgressBar"> Data Has been Imported </span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-
                             </fieldset>
                         </div>
                     </div>
