@@ -133,13 +133,20 @@ namespace HINOSystem.Controllers.API.Master
         [HttpPost]
         public IActionResult save()
         {
-            dynamic _json = null;
             string _SQL = "";
+            string[] _F;
             try
             {
                 _BearerClass.Authentication(Request);
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
+                _F = Request.Form["F_Supplier_Code"].ToString().Split("-");
+                string _F_Supplier_Cd = (_F.Length > 0 ? _F[0] : "");
+                string _F_Supplier_Plant = (_F.Length > 0 ? _F[1] : "");
+
+                _F = Request.Form["F_Part_No"].ToString().Split("-");
+                string _F_Part_No = (_F.Length > 0 ? _F[0] : "");
+                string _F_Ruibetsu = (_F.Length > 0 ? _F[1] : "");
 
                 TB_MS_PartSpecial TB_MS_PartSpecial = new TB_MS_PartSpecial();
                 TB_MS_PartSpecial.F_Plant = _BearerClass.Plant;
@@ -152,9 +159,9 @@ namespace HINOSystem.Controllers.API.Master
                 TB_MS_PartSpecial.F_Start_Date = Request.Form["F_Start_Date"].ToString().Substring(0,4) + Request.Form["F_Start_Date"].ToString().Substring(5, 2) + Request.Form["F_Start_Date"].ToString().Substring(8, 2);
                 TB_MS_PartSpecial.F_End_Date = Request.Form["F_End_Date"].ToString().Substring(0, 4) + Request.Form["F_End_Date"].ToString().Substring(5, 2) + Request.Form["F_End_Date"].ToString().Substring(8, 2);
                 TB_MS_PartSpecial.F_Type_Special = Request.Form["F_Type_Special"].ToString();
-                TB_MS_PartSpecial.F_Cycle = Request.Form["F_Cycle"].ToString();
-                TB_MS_PartSpecial.F_Update_By = _BearerClass.UserCode.ToString();
-                TB_MS_PartSpecial.F_Update_Date = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss"));
+                TB_MS_PartSpecial.F_Cycle = Request.Form["F_Cycle"].ToString().Replace("-", "");
+                TB_MS_PartSpecial.F_Create_By = _BearerClass.UserCode.ToString();
+                TB_MS_PartSpecial.F_Create_Date = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss"));
                 _KB3Context.TB_MS_PartSpecial.Add(TB_MS_PartSpecial);
                 _KB3Context.SaveChanges();
 
@@ -178,8 +185,8 @@ namespace HINOSystem.Controllers.API.Master
         [HttpPatch]
         public IActionResult save(int id = 0)
         {
-            dynamic _json = null;
             string _SQL = "";
+            string[] _F;
             string _result = @"{
                         ""status"":""200"",
                         ""response"":""OK"",
@@ -192,24 +199,37 @@ namespace HINOSystem.Controllers.API.Master
 
                 _KBCN.Plant = _BearerClass.Plant;
 
+
+                _F = _BearerClass.Records.F_Supplier_Code.ToString().Split("-");
+                string _F_Supplier_Cd = (_F.Length > 0 ? _F[0] : "");
+                string _F_Supplier_Plant = (_F.Length > 0 ? _F[1] : "");
+
+                _F = _BearerClass.Records.F_Part_No.ToString().Split("-");
+                string _F_Part_No = (_F.Length > 0 ? _F[0] : "");
+                string _F_Ruibetsu = (_F.Length > 0 ? _F[1] : "");
+
                 _SQL = @"
                     UPDATE [dbo].[TB_MS_PartSpecial]
                     SET F_End_Date = '" + Request.Form["F_End_Date"].ToString().Replace("-", "") + @"'
-                        ,F_Type_Special = '" + Request.Form["F_Type_Special"].ToString().Replace("-", "") + @"'
+                        ,F_Kanban_No = '" + Request.Form["F_Kanban_No"].ToString() + @"'
+                        ,F_Store_Code = '" + Request.Form["F_Store_Code"].ToString() + @"'
+                        ,F_Type_Special = '" + Request.Form["F_Type_Special"].ToString() + @"'
                         ,F_Cycle = '" + Request.Form["F_Cycle"].ToString().Replace("-","") + @"'
                         ,F_Update_By = '" + _BearerClass.UserCode + @"'
                         ,F_Update_Date = '" + DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss")) + @"'
                     WHERE 1=1
-                    AND F_Plant = '" + Request.Form["F_Plant"].ToString() + @"'
-                    AND F_Supplier_Plant = '" + Request.Form["F_Supplier_Plant"].ToString() + @"'
-                    AND F_Part_No = '" + Request.Form["F_Part_No"].ToString().Replace("-", "") + @"'
-                    AND F_Ruibetsu = '" + Request.Form["F_Ruibetsu"].ToString().Replace("-", "") + @"'
-                    AND F_Kanban_No = '" + Request.Form["F_Kanban_No"].ToString().Replace("-", "") + @"'
-                    AND F_Store_Code = '" + Request.Form["F_Store_Code"].ToString().Replace("-", "") + @"'
-                    AND F_Start_Date = '" + Request.Form["F_Start_Date"].ToString().Replace("-", "") + @"'
+                    AND F_Plant = '" + _BearerClass.Records.F_Plant.ToString() + @"'
+                    AND F_Supplier_Cd = '" + _F_Supplier_Cd + @"'
+                    AND F_Supplier_Plant = '" + _F_Supplier_Plant + @"'
+                    AND F_Part_No = '" + _F_Part_No + @"'
+                    AND F_Ruibetsu = '" + _F_Ruibetsu + @"'
+                    AND F_Kanban_No = '" + _BearerClass.Records.F_Kanban_No.ToString() + @"'
+                    AND F_Store_Code = '" + _BearerClass.Records.F_Store_Code.ToString() + @"'
+                    AND F_Start_Date = '" + _BearerClass.Records.F_Start_Date.ToString().Replace("-", "") + @"'
                 ";
                 _KBCN.Execute(_SQL);
 
+                //_BearerClass.Records.F_Start_Date.ToString().Trim().Replace("-", "")
 
                 _result = @"{
                     ""status"":""200"",
@@ -230,8 +250,8 @@ namespace HINOSystem.Controllers.API.Master
         [HttpPost]
         public IActionResult delete(int id = 0)
         {
-            dynamic _json = null;
             string _SQL = "";
+            string[] _F;
             string _result = @"{
                         ""status"":""200"",
                         ""response"":""OK"",
@@ -244,16 +264,26 @@ namespace HINOSystem.Controllers.API.Master
 
                 _KBCN.Plant = _BearerClass.Plant;
 
+
+                _F = _BearerClass.Records.F_Supplier_Code.ToString().Split("-");
+                string _F_Supplier_Cd = (_F.Length > 0 ? _F[0] : "");
+                string _F_Supplier_Plant = (_F.Length > 0 ? _F[1] : "");
+
+                _F = _BearerClass.Records.F_Part_No.ToString().Split("-");
+                string _F_Part_No = (_F.Length > 0 ? _F[0] : "");
+                string _F_Ruibetsu = (_F.Length > 0 ? _F[1] : "");
+
                 _SQL = @"
                     DELETE [dbo].[TB_MS_PartSpecial]
                     WHERE 1=1
-                    AND F_Plant = '" + Request.Form["F_Plant"].ToString() + @"'
-                    AND F_Supplier_Plant = '" + Request.Form["F_Supplier_Plant"].ToString() + @"'
-                    AND F_Part_No = '" + Request.Form["F_Part_No"].ToString().Replace("-", "") + @"'
-                    AND F_Ruibetsu = '" + Request.Form["F_Ruibetsu"].ToString().Replace("-", "") + @"'
-                    AND F_Kanban_No = '" + Request.Form["F_Kanban_No"].ToString().Replace("-", "") + @"'
-                    AND F_Store_Code = '" + Request.Form["F_Store_Code"].ToString().Replace("-", "") + @"'
-                    AND F_Start_Date = '" + Request.Form["F_Start_Date"].ToString().Replace("-", "") + @"'
+                    AND F_Plant = '" + _BearerClass.Records.F_Plant.ToString() + @"'
+                    AND F_Supplier_Cd = '" + _F_Supplier_Cd + @"'
+                    AND F_Supplier_Plant = '" + _F_Supplier_Plant + @"'
+                    AND F_Part_No = '" + _F_Part_No + @"'
+                    AND F_Ruibetsu = '" + _F_Ruibetsu + @"'
+                    AND F_Kanban_No = '" + _BearerClass.Records.F_Kanban_No.ToString() + @"'
+                    AND F_Store_Code = '" + _BearerClass.Records.F_Store_Code.ToString() + @"'
+                    AND F_Start_Date = '" + _BearerClass.Records.F_Start_Date.ToString().Replace("-", "") + @"'
                 ";
                 _KBCN.Execute(_SQL);
 

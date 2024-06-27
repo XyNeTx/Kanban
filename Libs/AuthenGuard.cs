@@ -15,6 +15,7 @@ using System.Security.Principal;
 using MathNet.Numerics.Statistics.Mcmc;
 using HINOSystem.Extensions;
 using NPOI.SS.Formula.Functions;
+using SkiaSharp;
 
 
 namespace HINOSystem.Libs
@@ -292,6 +293,119 @@ namespace HINOSystem.Libs
 
             //DataTable _dtMenuDisplay = _erpConnect.ExecuteSQL(_SQL, skipLog: true);
 
+            //            string _sql = @"
+            //    SELECT m._ID
+            //        , m.Code
+            //        , m.Name
+            //        , m.NameTH
+            //        , m.NameJP
+            //        , m.Title
+            //        , m.TitleTH
+            //        , m.TitleJP
+            //        , m.Icon
+            //        , m.i18n
+            //        , m.Status
+            //        , m.UpdateAt
+            //        , m.UpdateBy
+            //        , m.CreateAt
+            //        , m.CreateBy
+            //        , m.isDelete 
+            //	    , mp._ID AS MPID
+            //	    , mp.Parent_ID
+            //	    , mp.Controller
+            //	    , mp.Action
+            //	    , mp.ViewType
+            //    FROM erp.MenuParent mp 
+            //	    INNER JOIN erp.Menu m ON m._ID=Menu_ID
+            //	    INNER JOIN erp.GroupMenu gm ON gm.Menu_ID=m._ID
+            //    WHERE 1=1
+            //    AND (mp.Parent_ID IS NULL OR mp.Parent_ID=0)
+            //    AND mp.isDelete=0 " + (int.Parse(ViewData["UserGroupID"].ToString()) > 2 ? "AND mp.Status='ACTIVE' " : "") + @"
+            //    AND m.isDelete=0 " + (int.Parse(ViewData["UserGroupID"].ToString()) > 2 ? "AND m.Status='ACTIVE' " : "") + @"
+            //    AND gm.isDelete=0 " + (int.Parse(ViewData["UserGroupID"].ToString()) > 2 ? "AND gm.Status='ACTIVE' " : "") + @"
+            //    " + (int.Parse(ViewData["UserGroupID"].ToString()) > 2 ? "AND gm.Group_ID=" + ViewData["UserGroupID"].ToString() : "") + @"
+            //	GROUP BY m._ID
+            //        , m.Code
+            //        , m.Name
+            //        , m.NameTH
+            //        , m.NameJP
+            //        , m.Title
+            //        , m.TitleTH
+            //        , m.TitleJP
+            //        , m.Icon
+            //        , m.i18n
+            //        , m.Status
+            //        , m.UpdateAt
+            //        , m.UpdateBy
+            //        , m.CreateAt
+            //        , m.CreateBy
+            //        , m.isDelete
+            //	    , mp._ID 
+            //	    , mp.Parent_ID
+            //	    , mp.Controller
+            //	    , mp.Action
+            //	    , mp.ViewType
+            //		, mp.Seq
+            //    ORDER BY Seq
+            //";
+
+            //            string _sql = @"
+            //    SELECT m._ID
+            //        , m.Code
+            //        , m.Name
+            //        , m.NameTH
+            //        , m.NameJP
+            //        , m.Title
+            //        , m.TitleTH
+            //        , m.TitleJP
+            //        , m.Icon
+            //        , m.i18n
+            //        , m.Status
+            //        , m.UpdateAt
+            //        , m.UpdateBy
+            //        , m.CreateAt
+            //        , m.CreateBy
+            //        , m.isDelete 
+            //	    , mp._ID AS MPID
+            //	    , mp.Parent_ID
+            //	    , mp.Controller
+            //	    , mp.Action
+            //	    , mp.ViewType
+            //    FROM [erp].[UserAuthorize] ua
+            //	    INNER JOIN [erp].[User] u ON u._ID=ua.User_ID
+            //        INNER JOIN [erp].[Menu] m ON m._ID = ua.Menu_ID
+            //        INNER JOIN [erp].[MenuParent] mp ON mp.Menu_ID = m._ID
+
+            //    WHERE 1=1
+            //    AND (mp.Parent_ID IS NULL OR mp.Parent_ID=0)
+            //    AND mp.isDelete=0 " + (int.Parse(ViewData["UserGroupID"].ToString()) > 2 ? "AND mp.Status='ACTIVE' " : "") + @"
+            //    AND m.isDelete=0 " + (int.Parse(ViewData["UserGroupID"].ToString()) > 2 ? "AND m.Status='ACTIVE' " : "") + @"
+            //    " + (int.Parse(ViewData["UserGroupID"].ToString()) > 2 ? "AND u.Code='" + _context.HttpContext.Session.GetString("USER_CODE").ToString() + "' " : "") + @"
+            //	GROUP BY m._ID
+            //        , m.Code
+            //        , m.Name
+            //        , m.NameTH
+            //        , m.NameJP
+            //        , m.Title
+            //        , m.TitleTH
+            //        , m.TitleJP
+            //        , m.Icon
+            //        , m.i18n
+            //        , m.Status
+            //        , m.UpdateAt
+            //        , m.UpdateBy
+            //        , m.CreateAt
+            //        , m.CreateBy
+            //        , m.isDelete
+            //	    , mp._ID 
+            //	    , mp.Parent_ID
+            //	    , mp.Controller
+            //	    , mp.Action
+            //	    , mp.ViewType
+            //		, mp.Seq
+            //    ORDER BY mp.Seq
+            //";
+
             string _sql = @"
     SELECT m._ID
         , m.Code
@@ -314,15 +428,30 @@ namespace HINOSystem.Libs
 	    , mp.Controller
 	    , mp.Action
 	    , mp.ViewType
-    FROM erp.MenuParent mp 
-	    INNER JOIN erp.Menu m ON m._ID=Menu_ID
-	    INNER JOIN erp.GroupMenu gm ON gm.Menu_ID=m._ID
+    FROM [erp].[Menu] m
+        INNER JOIN [erp].[MenuParent] mp ON mp.Menu_ID = m._ID
+	    " + (int.Parse(ViewData["UserGroupID"].ToString()) > 2 ? " INNER " : " LEFT ") + @" JOIN (
+				    SELECT
+					    mp.*
+				    FROM
+					    [erp].[UserAuthorize] ua
+					    INNER JOIN [erp].[User] u ON u._ID = ua.User_ID
+					    INNER JOIN [erp].[Menu] m ON m._ID = ua.Menu_ID
+					    INNER JOIN [erp].[MenuParent] mp ON mp.Menu_ID = m._ID
+				    WHERE
+					    1 = 1
+					    AND (
+						    mp.Parent_ID IS NOT NULL
+						    OR mp.Parent_ID <> 0
+					    )
+					    " + (int.Parse(ViewData["UserGroupID"].ToString()) > 2 ? "AND u.Code='" + _context.HttpContext.Session.GetString("USER_CODE").ToString() + "' " : "") + @"
+
+				    ) ua ON Ua.Parent_ID=m._ID
+
     WHERE 1=1
     AND (mp.Parent_ID IS NULL OR mp.Parent_ID=0)
     AND mp.isDelete=0 " + (int.Parse(ViewData["UserGroupID"].ToString()) > 2 ? "AND mp.Status='ACTIVE' " : "") + @"
     AND m.isDelete=0 " + (int.Parse(ViewData["UserGroupID"].ToString()) > 2 ? "AND m.Status='ACTIVE' " : "") + @"
-    AND gm.isDelete=0 " + (int.Parse(ViewData["UserGroupID"].ToString()) > 2 ? "AND gm.Status='ACTIVE' " : "") + @"
-    " + (int.Parse(ViewData["UserGroupID"].ToString()) > 2 ? "AND gm.Group_ID=" + ViewData["UserGroupID"].ToString() : "") + @"
 	GROUP BY m._ID
         , m.Code
         , m.Name
@@ -345,8 +474,9 @@ namespace HINOSystem.Libs
 	    , mp.Action
 	    , mp.ViewType
 		, mp.Seq
-    ORDER BY Seq
+    ORDER BY mp.Seq
 ";
+
             DataTable _dtMenu = _erpConnect.ExecuteSQL(_sql, skipLog: true);
             string _s = @"", _menu="";
             for (int i = 0; i < _dtMenu.Rows.Count; i++)
@@ -355,7 +485,7 @@ namespace HINOSystem.Libs
 
 
                 string _ctrl = _dtMenu.Rows[i]["Controller"].ToString();
-                string _childM = _getChildren(_id, _controller, _acton, _parent_id);
+                string _childM = _getChildren(_id, _controller, _acton, _parent_id, _context.HttpContext.Session.GetString("USER_CODE").ToString());
                 string _icon = (_dtMenu.Rows[i]["Icon"].ToString() != "" ? @"<i class=""" +  _dtMenu.Rows[i]["Icon"].ToString() + @"""></i>" : @"<i class=""feather icon-command""></i>");
 
 
@@ -408,9 +538,65 @@ namespace HINOSystem.Libs
         }
 
 
-        public string _getChildren(string _id, string _controllor, string _action, string _mpID)
+        public string _getChildren(string _id, string _controllor, string _action, string _mpID, string _usercode)
         {
             string _s = @"";
+            //            string _SQL = @"
+            //    SELECT m._ID
+            //        , m.Code
+            //        , m.Name
+            //        , m.NameTH
+            //        , m.NameJP
+            //        , m.Title
+            //        , m.TitleTH
+            //        , m.TitleJP
+            //        , m.Icon
+            //        , m.i18n
+            //        , m.Status
+            //        , m.UpdateAt
+            //        , m.UpdateBy
+            //        , m.CreateAt
+            //        , m.CreateBy
+            //        , m.isDelete 
+            //	    , mp._ID AS MPID
+            //	    , mp.Parent_ID
+            //	    , mp.Controller
+            //	    , mp.Action
+            //	    , mp.ViewType
+            //    FROM erp.MenuParent mp 
+            //	    INNER JOIN erp.Menu m ON m._ID=Menu_ID
+            //	    INNER JOIN erp.GroupMenu gm ON gm.Menu_ID=m._ID
+            //    WHERE 1=1
+            //    AND mp.Parent_ID=" + _id + @"
+            //    AND mp.isDelete=0 " + (int.Parse(ViewData["UserGroupID"].ToString()) > 2 ? "AND mp.Status='ACTIVE' " : "") + @"
+            //    AND m.isDelete=0 " + (int.Parse(ViewData["UserGroupID"].ToString()) > 2 ? "AND m.Status='ACTIVE' " : "") + @"
+            //    AND gm.isDelete=0 " + (int.Parse(ViewData["UserGroupID"].ToString()) > 2 ? "AND gm.Status='ACTIVE' " : "") + @"
+            //    " + (int.Parse(ViewData["UserGroupID"].ToString()) > 2 ? "AND gm.Group_ID=" + ViewData["UserGroupID"].ToString() : "") + @"
+            //    GROUP BY m._ID
+            //        , m.Code
+            //        , m.Name
+            //        , m.NameTH
+            //        , m.NameJP
+            //        , m.Title
+            //        , m.TitleTH
+            //        , m.TitleJP
+            //        , m.Icon
+            //        , m.i18n
+            //        , m.Status
+            //        , m.UpdateAt
+            //        , m.UpdateBy
+            //        , m.CreateAt
+            //        , m.CreateBy
+            //        , m.isDelete
+            //	    , mp._ID 
+            //	    , mp.Parent_ID
+            //	    , mp.Controller
+            //	    , mp.Action
+            //	    , mp.ViewType
+            //		, mp.Seq
+            //    ORDER BY Seq
+            //";
+
             string _SQL = @"
     SELECT m._ID
         , m.Code
@@ -433,15 +619,15 @@ namespace HINOSystem.Libs
 	    , mp.Controller
 	    , mp.Action
 	    , mp.ViewType
-    FROM erp.MenuParent mp 
-	    INNER JOIN erp.Menu m ON m._ID=Menu_ID
-	    INNER JOIN erp.GroupMenu gm ON gm.Menu_ID=m._ID
+    FROM [erp].[UserAuthorize] ua
+	    INNER JOIN [erp].[User] u ON u._ID=ua.User_ID
+        INNER JOIN [erp].[Menu] m ON m._ID = ua.Menu_ID
+        INNER JOIN [erp].[MenuParent] mp ON mp.Menu_ID = m._ID
     WHERE 1=1
     AND mp.Parent_ID=" + _id + @"
     AND mp.isDelete=0 " + (int.Parse(ViewData["UserGroupID"].ToString()) > 2 ? "AND mp.Status='ACTIVE' " : "") + @"
     AND m.isDelete=0 " + (int.Parse(ViewData["UserGroupID"].ToString()) > 2 ? "AND m.Status='ACTIVE' " : "") + @"
-    AND gm.isDelete=0 " + (int.Parse(ViewData["UserGroupID"].ToString()) > 2 ? "AND gm.Status='ACTIVE' " : "") + @"
-    " + (int.Parse(ViewData["UserGroupID"].ToString()) > 2 ? "AND gm.Group_ID=" + ViewData["UserGroupID"].ToString() : "") + @"
+    " + (int.Parse(ViewData["UserGroupID"].ToString()) > 2 ? "AND u.Code='" + _usercode + "' " : "") + @"
     GROUP BY m._ID
         , m.Code
         , m.Name
@@ -464,7 +650,7 @@ namespace HINOSystem.Libs
 	    , mp.Action
 	    , mp.ViewType
 		, mp.Seq
-    ORDER BY Seq
+    ORDER BY mp.Seq
 ";
             DataTable _dtMenu = _erpConnect.ExecuteSQL(_SQL, skipLog: true);
             _s += @"
@@ -480,7 +666,7 @@ namespace HINOSystem.Libs
 
                     if (_dtMenu.Rows[i]["Code"].ToString() == "")
                     {
-                        string _childM = _getChildren(_dtMenu.Rows[i]["_ID"].ToString(), _controllor, _action, _parent_id);
+                        string _childM = _getChildren(_dtMenu.Rows[i]["_ID"].ToString(), _controllor, _action, _parent_id, _usercode);
                         _s += @"
                                             <li class=""pcoded-hasmenu"" dropdown-icon=""style2"" subitem-icon=""style2"">
                                                 <a href=""javascript:void(0)"">

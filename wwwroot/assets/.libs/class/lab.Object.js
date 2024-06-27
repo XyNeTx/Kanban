@@ -168,6 +168,74 @@ class Select {
 }
 
 
+class CheckBox {
+    constructor(pID) {
+        this.id = pID;
+        this.property = new property(pID);
+    }
+
+    set type(Value) {
+        this.property.type = Value;
+    }
+    get type() {
+        return this.property.type;
+    }
+
+    set default(Value) {
+        this.property.default = Value;
+    }
+
+    get default() {
+        return this.property.default;
+    }
+
+    set label(Value) {
+        this.property.label = Value;
+        $('[for=' + this.id + ']').html(this.property.label);
+    }
+    get label() {
+        return this.property.label;
+    }
+
+    set value(Value) {
+        this.property.value = Value;
+    }
+
+    get value() {
+        return this.property.value;
+    }
+
+    set checked(Value) {
+        this.property.checked = Value;
+    }
+    get checked() {
+        return this.property.checked;
+    }
+
+    set check(Value) {
+        let _a = this.property.id + this.property.value;
+        let _b = this.property.id + Value;
+        let _ap = '', _bp = '';
+        console.log(_a + ' >>> ' + _b);
+
+        eval('_ap = ' + _a + '.property');
+        eval('_bp = ' + _b + '.property');
+        this.property.label = _bp.label;
+        this.property.value = _bp.value;
+        _ap.checked = false;
+        _bp.checked = true;
+
+        $('#' + _a).prop('checked', false);
+        $('#' + _b).prop('checked', true);
+
+        $('#' + _a).removeAttr('checked');
+        $('#' + _b).attr('checked', 'checked');
+    }
+    get check() {
+        return this.property.checked;
+    }
+
+}
 
 class Radio {
     constructor(pID) {
@@ -245,23 +313,31 @@ class table {
         this.property = new property(pID);
     }
 
-    label = function (plabel = '') {
-        if (plabel != '') this.property.label = plabel;
-        if (plabel != '') $('[for=' + this.id + ']').html(this.property.label);
-        if (plabel == '') return this.property.label;
+    set Rows(Value) {
+        this.property.rows = Value;
     }
 
-    value = function (pValue = '') {
-        if (pValue != '') this.property.value = pValue;
-        if (pValue != '') $('#' + this.id).val(this.property.value);
-        if (pValue == '') return this.property.value;
+    get Rows() {
+        return this.property.rows;
     }
 
-    readonly = function (pValue = '') {
-        if (pValue != '') this.property.readonly = pValue;
-        if (pValue != '') $('#' + this.id).attr('readonly', this.property.readonly);
-        if (pValue == '') return this.property.readonly;
-    }
+    //label = function (plabel = '') {
+    //    if (plabel != '') this.property.label = plabel;
+    //    if (plabel != '') $('[for=' + this.id + ']').html(this.property.label);
+    //    if (plabel == '') return this.property.label;
+    //}
+
+    //value = function (pValue = '') {
+    //    if (pValue != '') this.property.value = pValue;
+    //    if (pValue != '') $('#' + this.id).val(this.property.value);
+    //    if (pValue == '') return this.property.value;
+    //}
+
+    //readonly = function (pValue = '') {
+    //    if (pValue != '') this.property.readonly = pValue;
+    //    if (pValue != '') $('#' + this.id).attr('readonly', this.property.readonly);
+    //    if (pValue == '') return this.property.readonly;
+    //}
 }
 
 
@@ -284,7 +360,10 @@ class property {
         this.max = null;
         this.min = null;
         this.checked = null;
-        this.rows = null;
+        this.rows = 0;
+        this.columns = 0;
+        this.row = 0;
+        this.column = 0;
 
         this.subfix = null;
         this.noedit = null;
@@ -297,6 +376,15 @@ class property {
         this.class = null;
         this.effect = null;
         this.legend = null;
+        this.data = null;
+
+        //### For VB
+        this.RowCount = 0;
+        this.ColumnCount = 0;
+        this.RowIndex = 0;
+        this.ColumnIndex = 0;
+
+
     }
 //    //label = function (value = '') {        
 //    //    console.log(value);

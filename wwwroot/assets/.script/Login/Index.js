@@ -76,7 +76,7 @@
     let iSpy = 0;
     $('#imgHINOLogo').on('click',function (e) {
         iSpy++;
-        if (iSpy == 7) {
+        if (iSpy == 3) {
             let _debug = getCookie('debug');
             if (_debug == 0) {
                 _debug = 1;
