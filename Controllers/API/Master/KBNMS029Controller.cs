@@ -137,8 +137,8 @@ namespace HINOSystem.Controllers.API.Master
                 TB_MS_Dock_Code TB_MS_Dock_Code = new TB_MS_Dock_Code();
                 TB_MS_Dock_Code.F_Plant = _BearerClass.Plant;
                 TB_MS_Dock_Code.F_Dock_Code = Request.Form["F_Dock_Code"].ToString();
-                TB_MS_Dock_Code.F_Start_Date = Request.Form["F_Start_Date"].ToString();
-                TB_MS_Dock_Code.F_End_Date = Request.Form["F_End_Date"].ToString();
+                TB_MS_Dock_Code.F_Start_Date = Request.Form["F_Start_Date"].ToString().Substring(0, 4) + Request.Form["F_Start_Date"].ToString().Substring(5, 2) + Request.Form["F_Start_Date"].ToString().Substring(8, 2);
+                TB_MS_Dock_Code.F_End_Date = Request.Form["F_End_Date"].ToString().Substring(0, 4) + Request.Form["F_End_Date"].ToString().Substring(5, 2) + Request.Form["F_End_Date"].ToString().Substring(8, 2);
                 TB_MS_Dock_Code.F_Create_By = _BearerClass.UserCode.ToString();
                 TB_MS_Dock_Code.F_Create_Date = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss"));
                 TB_MS_Dock_Code.F_Update_By = _BearerClass.UserCode.ToString();

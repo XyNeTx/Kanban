@@ -1,4 +1,4 @@
-﻿$(document).ready(function () {
+﻿$(document).ready(async function () {
 
     const KBNIM003C = new ActionTemplate({
         Controller: _PAGE_,
@@ -32,83 +32,36 @@
     });
 
 
-    KBNIM003C.initial(function () {
+    await _xLib.AJAX_Get('/api/KBNIM003C/Search', '',
+        async function (success) {
+            if (success.status === "200") {
+                var _arrJson = JSON.parse(success.data);
+                _xLib.TrimArrayJSON(_arrJson);
+                console.log(_arrJson);
+                await $("#tblMaster").DataTable().clear().rows.add(_arrJson).draw();
+                await $("#tblMaster tr td").find('input[type="checkbox"]').prop("checked", true);
+            }
+        },
+        async function (errror) {
+            xSwal.error("Error !!", errror.responseJSON.message);
+        },
+    );
 
-        xAjax.onClick('#chkDeliveryDate', function () {
-            if ($('#chkDeliveryDate').val() == 0) $('#fldDeliveryDate').prop('disabled', 'disabled');
-            if ($('#chkDeliveryDate').val() == 1) $('#fldDeliveryDate').prop('disabled', false);
-        });
-
-        xSplash.hide();
-    })
-
-
-    onSave = function () {
-
-        xSwal.questionPack(
-            _i18n.model.update,
-            function (result) {
-                if (result.isConfirmed) {
-                    xSplash.show();
-                    xSplash.text('PROCESSING');
-
-                    xAjax.Post({
-                        url: 'KBNIM003C/update',
-                        data: `{ 
-                            "F_Plant": "`+ _PLANT_ + `",
-                            "F_Type": "EKanban",
-                            "F_Start_Date": "`+ ReplaceAll(_PROCESSDATE_, '-', '') + `",
-                            "F_End_Date": "`+ ReplaceAll(_PROCESSDATE_, '-', '') + `"
-                        }`,
-                        then: function (result) {
-                            if (result.response == 'OK') {
-                                //console.log(result);
-                                xSwal.infoPack(_i18n.model.update.success);
-                                xSplash.hide();
-                            }
-                        }
-                    })
-
-
-                }
-            });
-    }
-
-
-    onExecute = function () {
-
-        xSwal.questionPack(
-            _i18n.model.confirm,
-            function (result) {
-                if (result.isConfirmed) {
-                    xSplash.show();
-                    xSplash.text('PROCESSING');
-
-
-
-                    xAjax.Post({
-                        url: 'KBNIM003C/confirm',
-                        data: `{ 
-                            "F_Plant": "`+ _PLANT_ + `",
-                            "F_Type": "EKanban",
-                            "F_PDS_NO": "`+ ReplaceAll(_PROCESSDATE_, '-', '') + `",
-                            "F_PDS_Issued_Date": "`+ ReplaceAll(_PROCESSDATE_, '-', '') + `",
-                            "F_Delivery_Date": "`+ ReplaceAll(_PROCESSDATE_, '-', '') + `"
-                        }`,
-                        then: function (result) {
-                            if (result.response == 'OK') {
-                                //console.log(result);
-                                xSwal.infoPack(_i18n.model.confirm.success);
-                                xSplash.hide();
-                            }
-                        }
-                    })
-
-
-                }
-            });
-    }
-
-
-
+    xSplash.hide();
+});
+$("#buttonConfirm").click(function () {
+    var _arrData = $("#tblMaster").DataTable().rows().data().toArray();
+    xSplash.show();
+    _xLib.AJAX_Post('/api/KBNIM003C/Confirm', JSON.stringify(_arrData),
+        async function (success) {
+            if (success.status === "200") {
+                xSwal.success("Success !!", success.message);
+                await $("#tblMaster").DataTable().clear().draw();
+            }
+        },
+        async function (error) {
+            xSwal.error("Error !!", error.responseJSON.message);
+        },
+    );
+    xSplash.hide();
 });

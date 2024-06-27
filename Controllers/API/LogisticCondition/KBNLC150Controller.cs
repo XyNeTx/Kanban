@@ -111,7 +111,7 @@ namespace HINOSystem.Controllers.API.Master
                 _KBCN.Plant = _json.Plant;
                 DataTable dt = _KBCN.ExecuteSQL(_SQL);
 
-                int _rev = (dt != null ? int.Parse(dt.Rows[0]["F_Rev"].ToString()) + 1 : 0);
+                int _rev = (dt == null ? int.Parse(dt.Rows[0]["F_Rev"].ToString()) + 1 : 0);
 
 
                 _SQL = @"

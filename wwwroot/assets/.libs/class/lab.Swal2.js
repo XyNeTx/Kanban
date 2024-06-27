@@ -204,13 +204,13 @@ class libSwal {
             icon: 'success',
             title: (pTitle.length > 0 ? pTitle : 'Success'),
             text: (pMessage.length > 0 ? pMessage : ''),
-            showCancelButton: true,
-            showConfirmButton: false,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
+            showCancelButton: false,
+            showConfirmButton: true,
+            confirmButtonColor: '#FD00A5',
+            cancelButtonColor: '#3085D6',
             cancelButtonText: i18nLayout.modal.button.close,
             confirmButtonText: i18nLayout.modal.button.save,
-            timer: 5000
+            timer: 10000
         }).then((result) => {
             if (pCallback != null) pCallback(result);
         });

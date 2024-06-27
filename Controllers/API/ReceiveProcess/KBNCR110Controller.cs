@@ -62,6 +62,7 @@ namespace HINOSystem.Controllers.API.Master
         private readonly PPM3Context _PPM3Context;
         private readonly KB3Context _KB3Context;
         private readonly SerilogLibs _Serilog;
+        private readonly ProcDBContext _ProcDBContext;
 
 
         private readonly string StoragePath = @"wwwroot\Storage\Uploads";
@@ -74,7 +75,8 @@ namespace HINOSystem.Controllers.API.Master
             PPMConnect ppmConnect,
             PPM3Context pPM3Context,
             KB3Context kB3Context,
-            SerilogLibs serilogLibs
+            SerilogLibs serilogLibs,
+            ProcDBContext procDB
             )
         {
             _configuration = configuration;
@@ -85,6 +87,7 @@ namespace HINOSystem.Controllers.API.Master
             _PPMConnect = ppmConnect;
             _PPM3Context = pPM3Context;
             _Serilog = serilogLibs;
+            _ProcDBContext = procDB;
         }
 
         public void setConString()
@@ -365,7 +368,16 @@ namespace HINOSystem.Controllers.API.Master
                                     singleRecDet.F_Receive_Date = DateTime.Now.Date;
                                     _KB3Context.TB_REC_DETAIL.Update(singleRecDet);
                                 }
-                                await InsToRecLocal(PDSNo);
+                                if (!await InsToRecLocal(PDSNo))
+                                {
+                                    _result = @"{
+                                    ""status"":""400"",
+                                    ""response"":""OK"",
+                                    ""title"": ""Insert to Local Error"",
+                                    ""message"" : ""Unexpected Error""
+                                    }";
+                                    return Ok(_result);
+                                }
                             }
                         }
                         else
@@ -385,7 +397,6 @@ namespace HINOSystem.Controllers.API.Master
                             ""title"": ""Receive All Part Success"",
                             ""message"" : ""Receive All Part is Complete.!""
                             }";
-                    await _KB3Context.SaveChangesAsync();
                     return Ok(_result);
                 }
                 else
@@ -406,7 +417,7 @@ namespace HINOSystem.Controllers.API.Master
             }
         }
 
-        public async Task<IActionResult> InsToRecLocal(string PDSNo)
+        public async Task<bool> InsToRecLocal(string PDSNo)
         {
             setConString();
             _BearerClass.Authentication(Request);
@@ -443,15 +454,16 @@ namespace HINOSystem.Controllers.API.Master
                         };
                         _trlList.Add(_trl);
                     }
-                    _PPM3Context.T_Receive_Local.UpdateRange(_trlList);
+                    _PPM3Context.T_Receive_Local.AddRange(_trlList);
                     UploadToEpro(user);
+                    await _KB3Context.SaveChangesAsync();
                     await _PPM3Context.SaveChangesAsync();
                 }
-                return Ok();
+                return true;
             }
-            catch (Exception ex)
+            catch
             {
-                return Content(ex.ToString());
+                return false;
             }
         }
 
@@ -460,7 +472,7 @@ namespace HINOSystem.Controllers.API.Master
             try
             {
                 setConString();
-                string UserName = HttpContext.Session.GetString("USER_NAME");
+                string UserName = HttpContext.Session.GetString("USER_ID");
                 string HostName = HttpContext.Session.GetString("USER_DEVICENAME");
                 _BearerClass.Authentication(Request);
                 string dateTime = DateTime.Now.ToString("yyyyMMdd");
@@ -486,10 +498,11 @@ namespace HINOSystem.Controllers.API.Master
                     new SqlParameter("@user", user)
                 );
 
-                await _KB3Context.Database.ExecuteSqlRawAsync("EXEC [dbo].[SP_UploadReceiveNormal_All]");
-                _Serilog.WriteLog("EXEC [dbo].[SP_UploadReceiveNormal_All]", UserName, HostName);
+                //await _PPM3Context.Database.ExecuteSqlRawAsync("EXEC [dbo].[SP_UploadReceiveNormal_All]");
+                //_Serilog.WriteLog("EXEC [dbo].[SP_UploadReceiveNormal_All]", UserName, HostName);
 
-                await _KB3Context.Database.ExecuteSqlRawAsync("EXEC [dbo].[SP_UploadReceivetoProcWeb_Normal]");
+                await _ProcDBContext.Database.ExecuteSqlRawAsync("EXEC [dbo].[SP_UploadReceivetoProcWeb_Normal]");
+
                 _Serilog.WriteLog("EXEC [dbo].[SP_UploadReceivetoProcWeb_Normal]", UserName, HostName);
 
                 string _result = @"{

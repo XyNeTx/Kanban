@@ -196,6 +196,8 @@
             let _postData = (pConfig.data != undefined ? ajaxPostData(pConfig.data) : null);
             ajexHeader.Records = unescape(encodeURIComponent(ajexHeader.Records));
 
+            console.log(_postData);
+
             return $.ajax({
                 type: "POST",
                 contentType: "application/json; charset=utf-8",
@@ -221,6 +223,8 @@
             let _postData = (pConfig.data != undefined ? ajaxPostData(pConfig.data) : null);
             ajexHeader.Records = unescape(encodeURIComponent(ajexHeader.Records));
 
+
+            console.log(_postData);
 
             return $.ajax({
                 type: "POST",

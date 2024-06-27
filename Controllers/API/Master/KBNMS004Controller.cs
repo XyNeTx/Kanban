@@ -150,14 +150,14 @@ namespace HINOSystem.Controllers.API.Master
 
                 TB_MS_PartSpecial TB_MS_PartSpecial = new TB_MS_PartSpecial();
                 TB_MS_PartSpecial.F_Plant = _BearerClass.Plant;
-                TB_MS_PartSpecial.F_Supplier_Cd = _F_Supplier_Cd;
-                TB_MS_PartSpecial.F_Supplier_Plant = _F_Supplier_Plant;
-                TB_MS_PartSpecial.F_Part_No = _F_Part_No;
-                TB_MS_PartSpecial.F_Ruibetsu = _F_Ruibetsu;
+                TB_MS_PartSpecial.F_Supplier_Cd = Request.Form["F_Supplier_Cd"].ToString();
+                TB_MS_PartSpecial.F_Supplier_Plant = Request.Form["F_Supplier_Plant"].ToString();
+                TB_MS_PartSpecial.F_Part_No = Request.Form["F_Part_No"].ToString().Substring(0,10);
+                TB_MS_PartSpecial.F_Ruibetsu = Request.Form["F_Part_No"].ToString().Substring(11,2);
                 TB_MS_PartSpecial.F_Kanban_No = Request.Form["F_Kanban_No"].ToString();
                 TB_MS_PartSpecial.F_Store_Code = Request.Form["F_Store_Code"].ToString();
-                TB_MS_PartSpecial.F_Start_Date = Request.Form["F_Start_Date"].ToString().Replace("-", "");
-                TB_MS_PartSpecial.F_End_Date = Request.Form["F_End_Date"].ToString().Replace("-", "");
+                TB_MS_PartSpecial.F_Start_Date = Request.Form["F_Start_Date"].ToString().Substring(0,4) + Request.Form["F_Start_Date"].ToString().Substring(5, 2) + Request.Form["F_Start_Date"].ToString().Substring(8, 2);
+                TB_MS_PartSpecial.F_End_Date = Request.Form["F_End_Date"].ToString().Substring(0, 4) + Request.Form["F_End_Date"].ToString().Substring(5, 2) + Request.Form["F_End_Date"].ToString().Substring(8, 2);
                 TB_MS_PartSpecial.F_Type_Special = Request.Form["F_Type_Special"].ToString();
                 TB_MS_PartSpecial.F_Cycle = Request.Form["F_Cycle"].ToString().Replace("-", "");
                 TB_MS_PartSpecial.F_Create_By = _BearerClass.UserCode.ToString();

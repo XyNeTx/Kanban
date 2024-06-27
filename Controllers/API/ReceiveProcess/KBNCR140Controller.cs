@@ -17,6 +17,7 @@ namespace KANBAN.Controllers.API.ReceiveProcess
         private readonly PPM3Context _PPM3Context;
         private readonly PPMInvenContext _PPMInvenContext;
         private readonly KB3Context _KB3Context;
+        private readonly SerilogLibs _Log;
 
 
         private readonly string StoragePath = @"wwwroot\Storage\Uploads";
@@ -29,7 +30,8 @@ namespace KANBAN.Controllers.API.ReceiveProcess
             PPMConnect ppmConnect,
             PPMInvenContext pPMInvenContext,
             PPM3Context pPM3Context,
-            KB3Context kB3Context
+            KB3Context kB3Context,
+            SerilogLibs log
             )
         {
             _configuration = configuration;
@@ -40,6 +42,7 @@ namespace KANBAN.Controllers.API.ReceiveProcess
             _PPMConnect = ppmConnect;
             _PPM3Context = pPM3Context;
             _PPMInvenContext = pPMInvenContext;
+            _Log = log;
         }
 
         public void setConString()

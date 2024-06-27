@@ -81,7 +81,7 @@
             then: function (result) {
                 if (result.response == "OK") {
                     if (result.data != null) {
-                        $('#F_PDS_No').val("");
+                        //$('#F_PDS_No').val("");
                         // console.log(pdsSet.size + "90");
                         if (pdsSet.size >= 1) {
                             xSwal.error("PDS No. Should have 1 only", "Please receive current PDS No. before");

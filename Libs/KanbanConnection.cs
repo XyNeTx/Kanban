@@ -144,7 +144,7 @@ namespace HINOSystem.Libs
             {
                 if (skipLog != true) this.executeLog(httpContext, SQL, pAction, "FAILED", ex.Message, pUser: pUser, pControllerName: pControllerName, pActionName: pActionName, pSystem: pSystem);
 
-                return null;
+                return "Error " + ex.Message;
             }
             finally
             {

@@ -55,308 +55,315 @@
             MsgBox("Do you want Calculate Order for Urgent?", MsgBoxStyle.OkCancel, async function () {
 
                 xItem.progress({ id: 'prgProcess', current: 5, label: 'Start Calculate Order of Urgent : {{##.##}} %' });
-                await xAjax.ExecuteJSON({
+                //await xAjax.ExecuteJSON({
+                //    data: {
+                //        "Module": "[exec].[spKBNOR420_CAL01]",
+                //        "@pOrderType": "U",
+                //        "@pPlant": ajexHeader.Plant,
+                //        "@pUserCode": ajexHeader.UserCode
+                //    },
+                //});
+                await xAjax.xExecuteJSON({
                     data: {
-                        "Module": "[exec].[spKBNOR420_CAL01]",
-                        "@pOrderType": "U",
+                        "Module": "[exec].[spKBNOR420_CALCULATE]",                     
                         "@pPlant": ajexHeader.Plant,
                         "@pUserCode": ajexHeader.UserCode
                     },
                 });
                 xItem.progress({ id: 'prgProcess', current: 10, label: 'Delete TB_Delivery Urgent Data : {{##.##}} %' });
 
-                let _remark = '';
-
-                var _dtChk = await xAjax.ExecuteJSON({
-                    data: {
-                        "Module": "[exec].[spKBNOR420_CAL02]",
-                        "@pOrderType": "U",
-                        "@pPlant": ajexHeader.Plant,
-                        "@pUserCode": ajexHeader.UserCode
-                    },
-                });
-                if (_dtChk.rows != null) {
-                    for (var i = 0; i < _dtChk.rows.length; i++) {
+                //let _remark = '';
+
+                //var _dtChk = await xAjax.ExecuteJSON({
+                //    data: {
+                //        "Module": "[exec].[spKBNOR420_CAL02]",
+                //        "@pOrderType": "U",
+                //        "@pPlant": ajexHeader.Plant,
+                //        "@pUserCode": ajexHeader.UserCode
+                //    },
+                //});
+                //if (_dtChk.rows != null) {
+                //    for (var i = 0; i < _dtChk.rows.length; i++) {
 
-                        var _delivery = GetDate(Trim(_dtChk.rows[i][0].ToString()));
+                //        var _delivery = GetDate(Trim(_dtChk.rows[i][0].ToString()));
 
-                        var _dt = await xAjax.ExecuteJSON({
-                            data: {
-                                "Module": "[exec].[spKBNOR420_CAL02_S]",
-                                "@pOrderType": "U",
-                                "@pPlant": ajexHeader.Plant,
-                                "@pUserCode": ajexHeader.UserCode,
-                                "@F_Delivery_Date": _dt.rows[i][0].ToString(),
-                                "@F_Delivery_Trip": _dt.rows[i][0].ToString(),
-                                "@F_Supplier_Cd": _dt.rows[i][0].ToString(),
-                                "@F_Supplier_Plant": _dt.rows[i][0].ToString(),
-                                "@F_Store_Cd": _dt.rows[i][0].ToString()
-                            },
-                        });
+                //        var _dt = await xAjax.ExecuteJSON({
+                //            data: {
+                //                "Module": "[exec].[spKBNOR420_CAL02_S]",
+                //                "@pOrderType": "U",
+                //                "@pPlant": ajexHeader.Plant,
+                //                "@pUserCode": ajexHeader.UserCode,
+                //                "@F_Delivery_Date": _dt.rows[i][0].ToString(),
+                //                "@F_Delivery_Trip": _dt.rows[i][0].ToString(),
+                //                "@F_Supplier_Cd": _dt.rows[i][0].ToString(),
+                //                "@F_Supplier_Plant": _dt.rows[i][0].ToString(),
+                //                "@F_Store_Cd": _dt.rows[i][0].ToString()
+                //            },
+                //        });
 
-                        if (_dt.rows != null) {
-                            for (var j = 0; j < _dt.rows.length; j++) {
-                                _remark = _remark + _dt.rows[j].F_Remark + ',';
-                            }
-                            _remark.substring(0, remark.length - 1);
-                        }
+                //        if (_dt.rows != null) {
+                //            for (var j = 0; j < _dt.rows.length; j++) {
+                //                _remark = _remark + _dt.rows[j].F_Remark + ',';
+                //            }
+                //            _remark.substring(0, remark.length - 1);
+                //        }
 
-                        //===Update Volume
-                        await xAjax.ExecuteJSON({
-                            data: {
-                                "Module": "[exec].[spKBNOR420_CAL02_U]",
-                                "@pOrderType": "U",
-                                "@pPlant": ajexHeader.Plant,
-                                "@pUserCode": ajexHeader.UserCode,
-                                "@F_Delivery_Date": _dt.rows[i][0].ToString(),
-                                "@F_Delivery_Trip": _dt.rows[i][0].ToString(),
-                                "@F_Supplier_Cd": _dt.rows[i][0].ToString(),
-                                "@F_Supplier_Plant": _dt.rows[i][0].ToString(),
-                                "@F_Store_Cd": _dt.rows[i][0].ToString(),
-                                "@pRemark": _remark
-                            },
-                        });
+                //        //===Update Volume
+                //        await xAjax.ExecuteJSON({
+                //            data: {
+                //                "Module": "[exec].[spKBNOR420_CAL02_U]",
+                //                "@pOrderType": "U",
+                //                "@pPlant": ajexHeader.Plant,
+                //                "@pUserCode": ajexHeader.UserCode,
+                //                "@F_Delivery_Date": _dt.rows[i][0].ToString(),
+                //                "@F_Delivery_Trip": _dt.rows[i][0].ToString(),
+                //                "@F_Supplier_Cd": _dt.rows[i][0].ToString(),
+                //                "@F_Supplier_Plant": _dt.rows[i][0].ToString(),
+                //                "@F_Store_Cd": _dt.rows[i][0].ToString(),
+                //                "@pRemark": _remark
+                //            },
+                //        });
 
 
 
-                    }
-                    xItem.progress({ id: 'prgProcess', current: 20, label: 'Update Remark for KPO ONLY : {{##.##}} %' });
+                //    }
+                //    xItem.progress({ id: 'prgProcess', current: 20, label: 'Update Remark for KPO ONLY : {{##.##}} %' });
 
-                }
+                //}
 
 
 
-                //'' Calculate in case KPO Data: Service part 
-                await xAjax.ExecuteJSON({
-                    data: {
-                        "Module": "[exec].[spKBNOR420_CAL03]",
-                        "@pOrderType": "U",
-                        "@pPlant": ajexHeader.Plant,
-                        "@pUserCode": ajexHeader.UserCode
-                    },
-                });
-                xItem.progress({ id: 'prgProcess', current: 25, label: 'Calculate in case KPO Data [Service part] : {{##.##}} %' });
+                ////'' Calculate in case KPO Data: Service part 
+                //await xAjax.ExecuteJSON({
+                //    data: {
+                //        "Module": "[exec].[spKBNOR420_CAL03]",
+                //        "@pOrderType": "U",
+                //        "@pPlant": ajexHeader.Plant,
+                //        "@pUserCode": ajexHeader.UserCode
+                //    },
+                //});
+                //xItem.progress({ id: 'prgProcess', current: 25, label: 'Calculate in case KPO Data [Service part] : {{##.##}} %' });
 
 
 
 
 
 
-                await xAjax.ExecuteJSON({
-                    data: {
-                        "Module": "[exec].[spKBNOR420_CAL04]",
-                        "@pOrderType": "U",
-                        "@pPlant": ajexHeader.Plant,
-                        "@pUserCode": ajexHeader.UserCode
-                    },
-                });
-                xItem.progress({ id: 'prgProcess', current: 30, label: 'Calculate in case KPO Data [Service part-Tacoma Only] : {{##.##}} %' });
-
-
-
-
-
-                await xAjax.ExecuteJSON({
-                    data: {
-                        "Module": "[exec].[spKBNOR420_CAL05]",
-                        "@pOrderType": "U",
-                        "@pPlant": ajexHeader.Plant,
-                        "@pUserCode": ajexHeader.UserCode
-                    },
-                });
-                xItem.progress({ id: 'prgProcess', current: 40, label: 'Generate in case Remain of KPO Data [Urgent] : {{##.##}} %' });
-
+                //await xAjax.ExecuteJSON({
+                //    data: {
+                //        "Module": "[exec].[spKBNOR420_CAL04]",
+                //        "@pOrderType": "U",
+                //        "@pPlant": ajexHeader.Plant,
+                //        "@pUserCode": ajexHeader.UserCode
+                //    },
+                //});
+                //xItem.progress({ id: 'prgProcess', current: 30, label: 'Calculate in case KPO Data [Service part-Tacoma Only] : {{##.##}} %' });
+
+
+
+
+
+                //await xAjax.ExecuteJSON({
+                //    data: {
+                //        "Module": "[exec].[spKBNOR420_CAL05]",
+                //        "@pOrderType": "U",
+                //        "@pPlant": ajexHeader.Plant,
+                //        "@pUserCode": ajexHeader.UserCode
+                //    },
+                //});
+                //xItem.progress({ id: 'prgProcess', current: 40, label: 'Generate in case Remain of KPO Data [Urgent] : {{##.##}} %' });
+
 
 
 
 
 
-                await xAjax.ExecuteJSON({
-                    data: {
-                        "Module": "[exec].[spKBNOR420_CAL06]",
-                        "@pOrderType": "U",
-                        "@pPlant": ajexHeader.Plant,
-                        "@pUserCode": ajexHeader.UserCode
-                    },
-                });
-                xItem.progress({ id: 'prgProcess', current: 50, label: 'Incase V2V and Urgent Order : {{##.##}} %' });
-
-
-                await xAjax.ExecuteJSON({
-                    data: {
-                        "Module": "[exec].[spKBNOR420_CAL07]",
-                        "@pOrderType": "U",
-                        "@pPlant": ajexHeader.Plant,
-                        "@pUserCode": ajexHeader.UserCode
-                    },
-                });
-                xItem.progress({ id: 'prgProcess', current: 55, label: 'In case Direct Supply : {{##.##}} %' });
-
-
-
-
-                await xAjax.ExecuteJSON({
-                    data: {
-                        "Module": "[exec].[spKBNOR420_CAL08]",
-                        "@pOrderType": "U",
-                        "@pPlant": ajexHeader.Plant,
-                        "@pUserCode": ajexHeader.UserCode
-                    },
-                });
-                xItem.progress({ id: 'prgProcess', current: 60, label: 'Update F_Delivery_Time from TB_MS_DeliveryTime : {{##.##}} %' });
-
-
-
-
-
-                await xAjax.ExecuteJSON({
-                    data: {
-                        "Module": "[exec].[spKBNOR420_CAL09]",
-                        "@pOrderType": "U",
-                        "@pPlant": ajexHeader.Plant,
-                        "@pUserCode": ajexHeader.UserCode
-                    },
-                });
-                xItem.progress({ id: 'prgProcess', current: 65, label: 'Update Cycle Time : {{##.##}} %' });
-
-
-
-
-                var _dtChk = await xAjax.ExecuteJSON({
-                    data: {
-                        "Module": "[exec].[spKBNOR420_CAL10]",
-                        "@pOrderType": "U",
-                        "@pPlant": ajexHeader.Plant,
-                        "@pUserCode": ajexHeader.UserCode
-                    },
-                });
-                xItem.progress({ id: 'prgProcess', current: 70, label: 'Update F_Dock_Code from TB_Import_Delivery : {{##.##}} %' });
-
-                if (_dtChk.rows != null) {
-                    for (var i = 0; i < _dtChk.rows.length; i++) {
-                        var _dtPOM = await xAjax.Execute({
-                            data: {
-                                "Module": "[exec].[spKBNOR420_CAL10_S]",
-                                "@OrderType": "U",
-                                "@Plant": ajexHeader.Plant,
-                                "@UserCode": ajexHeader.UserCode,
-                                "@F_Supplier_Cd": _dtChk.rows[i].F_Supplier_Cd,
-                                "@F_Supplier_Plant": _dtChk.rows[i].F_Supplier_Plant,
-                                "@F_Delivery_Date": _dtChk.rows[i].F_Delivery_Date,
-                                "@F_Delivery_Trip": _dtChk.rows[i].F_Delivery_Trip
-                            },
-                        });
-
-                        if (_dtPOM.rows != null) {
-                            await xAjax.Execute({
-                                data: {
-                                    "Module": "[exec].[spKBNOR420_CAL10_U]",
-                                    "@OrderType": "U",
-                                    "@Plant": ajexHeader.Plant,
-                                    "@UserCode": ajexHeader.UserCode,
-                                    "@F_Supplier_Cd": _dtChk.rows[i].F_Supplier_Cd,
-                                    "@F_Supplier_Plant": _dtChk.rows[i].F_Supplier_Plant,
-                                    "@F_Delivery_Date": _dtChk.rows[i].F_Delivery_Date,
-                                    "@F_Delivery_Trip": _dtChk.rows[i].F_Delivery_Trip,
-                                    "@F_Dock_Cd": _dtPOM.rows[0].F_Dock_Cd
-                                },
-                            });
-                        }
-                    }
-                }
-                xItem.progress({ id: 'prgProcess', current: 75, label: 'UPDATE TB_Delivery.F_Dock_Code Special : {{##.##}} %' });
-
-
-                let _Detail = "", _Key = "";
-
-                var _dtChk = await xAjax.ExecuteJSON({
-                    data: {
-                        "Module": "[exec].[spKBNOR420_CAL11]",
-                        "@pOrderType": "U",
-                        "@pPlant": ajexHeader.Plant,
-                        "@pUserCode": ajexHeader.UserCode
-                    },
-                });
-                if (_dtChk.rows != null) {
-                    for (var i = 0; i < _dtChk.rows.length; i++) {
-
-
-                        if (i > 0 && _Key != _dtChk.rows[i].F_SUpplier_CD
-                            + _dtChk.rows[i].F_SUpplier_Plant
-                            + _dtChk.rows[i].F_Store_Cd
-                            + _dtChk.rows[i].F_Delivery_Date
-                            + _dtChk.rows[i].F_Delivery_Trip
-                        ) {
-                            _Detail = _Detail.substring(0, _Detail.length - 1);
-
-                            await xAjax.ExecuteJSON({
-                                data: {
-                                    "Module": "[exec].[spKBNOR420_CAL11_U]",
-                                    "@OrderType": "U",
-                                    "@Plant": ajexHeader.Plant,
-                                    "@UserCode": ajexHeader.UserCode,
-                                    "@F_Remark": _Detail,
-                                    "@pKey": _Key
-                                },
-                            });
-                            _Detail = '';
-                        }
-
-                        _Detail += _dtChk.rows[i].F_Remark + ",";
-                        _Key = _dtChk.rows[i].F_SUpplier_CD
-                            + _dtChk.rows[i].F_SUpplier_Plant
-                            + _dtChk.rows[i].F_Store_Cd
-                            + _dtChk.rows[i].F_Delivery_Date
-                            + _dtChk.rows[i].F_Delivery_Trip;
-                    }
-
-
-                    _Detail = _Detail.substring(0, _Detail.length - 1);
-                    await xAjax.ExecuteJSON({
-                        data: {
-                            "Module": "[exec].[spKBNOR420_CAL11_U]",
-                            "@OrderType": "U",
-                            "@Plant": ajexHeader.Plant,
-                            "@UserCode": ajexHeader.UserCode,
-                            "@F_Remark": _Detail,
-                            "@pKey": _Key
-                        },
-                    });
-                }
-                xItem.progress({ id: 'prgProcess', current: 80, label: 'Summary Remark for Case : {{##.##}} %' });
-
-
-
-
-                //''Clear Delivery IN case Qty = 0
-                await xAjax.ExecuteJSON({
-                    data: {
-                        "Module": "[exec].[spKBNOR420_CAL12]",
-                        "@OrderType": "U",
-                        "@Plant": ajexHeader.Plant,
-                        "@UserCode": ajexHeader.UserCode
-                    },
-                });
-                xItem.progress({ id: 'prgProcess', current: 90, label: 'Clear Delivery : {{##.##}} %' });
-
-
-
-
-
-                var _dt = await xAjax.ExecuteJSON({
-                    data: {
-                        "Module": "[exec].[spKBNOR420_CAL13]",
-                        "@pOrderType": "SRV",
-                        "@pPlant": ajexHeader.Plant,
-                        "@pUserCode": ajexHeader.UserCode
-                    },
-                });
-                if (_dt.rows != null) xDataTable.bind('#tblMaster', _dt.rows);
-                //console.log(_dt);
+                //await xAjax.ExecuteJSON({
+                //    data: {
+                //        "Module": "[exec].[spKBNOR420_CAL06]",
+                //        "@pOrderType": "U",
+                //        "@pPlant": ajexHeader.Plant,
+                //        "@pUserCode": ajexHeader.UserCode
+                //    },
+                //});
+                //xItem.progress({ id: 'prgProcess', current: 50, label: 'Incase V2V and Urgent Order : {{##.##}} %' });
+
+
+                //await xAjax.ExecuteJSON({
+                //    data: {
+                //        "Module": "[exec].[spKBNOR420_CAL07]",
+                //        "@pOrderType": "U",
+                //        "@pPlant": ajexHeader.Plant,
+                //        "@pUserCode": ajexHeader.UserCode
+                //    },
+                //});
+                //xItem.progress({ id: 'prgProcess', current: 55, label: 'In case Direct Supply : {{##.##}} %' });
+
+
+
+
+                //await xAjax.ExecuteJSON({
+                //    data: {
+                //        "Module": "[exec].[spKBNOR420_CAL08]",
+                //        "@pOrderType": "U",
+                //        "@pPlant": ajexHeader.Plant,
+                //        "@pUserCode": ajexHeader.UserCode
+                //    },
+                //});
+                //xItem.progress({ id: 'prgProcess', current: 60, label: 'Update F_Delivery_Time from TB_MS_DeliveryTime : {{##.##}} %' });
+
+
+
+
+
+                //await xAjax.ExecuteJSON({
+                //    data: {
+                //        "Module": "[exec].[spKBNOR420_CAL09]",
+                //        "@pOrderType": "U",
+                //        "@pPlant": ajexHeader.Plant,
+                //        "@pUserCode": ajexHeader.UserCode
+                //    },
+                //});
+                //xItem.progress({ id: 'prgProcess', current: 65, label: 'Update Cycle Time : {{##.##}} %' });
+
+
+
+
+                //var _dtChk = await xAjax.ExecuteJSON({
+                //    data: {
+                //        "Module": "[exec].[spKBNOR420_CAL10]",
+                //        "@pOrderType": "U",
+                //        "@pPlant": ajexHeader.Plant,
+                //        "@pUserCode": ajexHeader.UserCode
+                //    },
+                //});
+                //xItem.progress({ id: 'prgProcess', current: 70, label: 'Update F_Dock_Code from TB_Import_Delivery : {{##.##}} %' });
+
+                //if (_dtChk.rows != null) {
+                //    for (var i = 0; i < _dtChk.rows.length; i++) {
+                //        var _dtPOM = await xAjax.Execute({
+                //            data: {
+                //                "Module": "[exec].[spKBNOR420_CAL10_S]",
+                //                "@OrderType": "U",
+                //                "@Plant": ajexHeader.Plant,
+                //                "@UserCode": ajexHeader.UserCode,
+                //                "@F_Supplier_Cd": _dtChk.rows[i].F_Supplier_Cd,
+                //                "@F_Supplier_Plant": _dtChk.rows[i].F_Supplier_Plant,
+                //                "@F_Delivery_Date": _dtChk.rows[i].F_Delivery_Date,
+                //                "@F_Delivery_Trip": _dtChk.rows[i].F_Delivery_Trip
+                //            },
+                //        });
+
+                //        if (_dtPOM.rows != null) {
+                //            await xAjax.Execute({
+                //                data: {
+                //                    "Module": "[exec].[spKBNOR420_CAL10_U]",
+                //                    "@OrderType": "U",
+                //                    "@Plant": ajexHeader.Plant,
+                //                    "@UserCode": ajexHeader.UserCode,
+                //                    "@F_Supplier_Cd": _dtChk.rows[i].F_Supplier_Cd,
+                //                    "@F_Supplier_Plant": _dtChk.rows[i].F_Supplier_Plant,
+                //                    "@F_Delivery_Date": _dtChk.rows[i].F_Delivery_Date,
+                //                    "@F_Delivery_Trip": _dtChk.rows[i].F_Delivery_Trip,
+                //                    "@F_Dock_Cd": _dtPOM.rows[0].F_Dock_Cd
+                //                },
+                //            });
+                //        }
+                //    }
+                //}
+                //xItem.progress({ id: 'prgProcess', current: 75, label: 'UPDATE TB_Delivery.F_Dock_Code Special : {{##.##}} %' });
+
+
+                //let _Detail = "", _Key = "";
+
+                //var _dtChk = await xAjax.ExecuteJSON({
+                //    data: {
+                //        "Module": "[exec].[spKBNOR420_CAL11]",
+                //        "@pOrderType": "U",
+                //        "@pPlant": ajexHeader.Plant,
+                //        "@pUserCode": ajexHeader.UserCode
+                //    },
+                //});
+                //if (_dtChk.rows != null) {
+                //    for (var i = 0; i < _dtChk.rows.length; i++) {
+
+
+                //        if (i > 0 && _Key != _dtChk.rows[i].F_SUpplier_CD
+                //            + _dtChk.rows[i].F_SUpplier_Plant
+                //            + _dtChk.rows[i].F_Store_Cd
+                //            + _dtChk.rows[i].F_Delivery_Date
+                //            + _dtChk.rows[i].F_Delivery_Trip
+                //        ) {
+                //            _Detail = _Detail.substring(0, _Detail.length - 1);
+
+                //            await xAjax.ExecuteJSON({
+                //                data: {
+                //                    "Module": "[exec].[spKBNOR420_CAL11_U]",
+                //                    "@OrderType": "U",
+                //                    "@Plant": ajexHeader.Plant,
+                //                    "@UserCode": ajexHeader.UserCode,
+                //                    "@F_Remark": _Detail,
+                //                    "@pKey": _Key
+                //                },
+                //            });
+                //            _Detail = '';
+                //        }
+
+                //        _Detail += _dtChk.rows[i].F_Remark + ",";
+                //        _Key = _dtChk.rows[i].F_SUpplier_CD
+                //            + _dtChk.rows[i].F_SUpplier_Plant
+                //            + _dtChk.rows[i].F_Store_Cd
+                //            + _dtChk.rows[i].F_Delivery_Date
+                //            + _dtChk.rows[i].F_Delivery_Trip;
+                //    }
+
+
+                //    _Detail = _Detail.substring(0, _Detail.length - 1);
+                //    await xAjax.ExecuteJSON({
+                //        data: {
+                //            "Module": "[exec].[spKBNOR420_CAL11_U]",
+                //            "@OrderType": "U",
+                //            "@Plant": ajexHeader.Plant,
+                //            "@UserCode": ajexHeader.UserCode,
+                //            "@F_Remark": _Detail,
+                //            "@pKey": _Key
+                //        },
+                //    });
+                //}
+                //xItem.progress({ id: 'prgProcess', current: 80, label: 'Summary Remark for Case : {{##.##}} %' });
+
+
+
+
+                ////''Clear Delivery IN case Qty = 0
+                //await xAjax.ExecuteJSON({
+                //    data: {
+                //        "Module": "[exec].[spKBNOR420_CAL12]",
+                //        "@OrderType": "U",
+                //        "@Plant": ajexHeader.Plant,
+                //        "@UserCode": ajexHeader.UserCode
+                //    },
+                //});
+                //xItem.progress({ id: 'prgProcess', current: 90, label: 'Clear Delivery : {{##.##}} %' });
+
+
+
+
+
+                //var _dt = await xAjax.ExecuteJSON({
+                //    data: {
+                //        "Module": "[exec].[spKBNOR420_CAL13]",
+                //        "@pOrderType": "SRV",
+                //        "@pPlant": ajexHeader.Plant,
+                //        "@pUserCode": ajexHeader.UserCode
+                //    },
+                //});
+                //if (_dt.rows != null) xDataTable.bind('#tblMaster', _dt.rows);
+                ////console.log(_dt);
 
                 xItem.progress({ id: 'prgProcess', current: 100, label: 'Process Complete... : {{##.##}} %' });
 
-
+                MsgBox("Process Calculate Data for Urgent Order Completed.", MsgBoxStyle.Information, "Process Complete");
 
 
                 //xItem.progress({ id: 'prgProcess', current: 0, label: 'Start Process Special : {{##.##}} %' });

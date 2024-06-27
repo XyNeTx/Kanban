@@ -169,7 +169,7 @@
                 }
 
                 xItem.progress({ id: 'prgProcess', current: 100, label: 'Export data completed : {{##.##}} %' });
-
+                xSwal.success("Export data complete", "Export data completed successfully !!");
 
             }, function () {
                 initial();

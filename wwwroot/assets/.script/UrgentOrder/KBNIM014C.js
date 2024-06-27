@@ -1,4 +1,4 @@
-﻿$(document).ready(function () {
+﻿$(document).ready(async function () {
 
     const KBNIM014C = new MasterTemplate({
         Controller: _PAGE_,
@@ -9,9 +9,9 @@
             "JP": ['Order No.', 'Order Issued Date', 'Delivery Date'],
         },
         ColumnValue: [
-            { "data": "F_OrderType" },
-            { "data": "F_Effect_Date" },
-            { "data": "F_End_Date" }
+            { "data": "F_PDS_No" },
+            { "data": "F_PDS_Issued_Date" },
+            { "data": "F_Delivery_Date" }
         ],
         Modal: 'modalMaster',
         Form: 'frmMaster',
@@ -20,44 +20,115 @@
         ],
     });
 
+    await _xLib.AJAX_Get('/api/KBNIM014C/search', '',
+        async function (response) {
+            if (response.status === "200") {
+                var _jsondata = await JSON.parse(response.data);
+                await _xLib.TrimArrayJSON(_jsondata);
+                return await _jsondata.forEach(function (item) {
+                    $("#SelectPDSNo").append('<option value="' + item.F_PDS_No + '">' + item.F_PDS_No + '</option>');
+                });
+            }
+        },
+        function (err)
+        {
+            return xSwal.error("Error !!", err.responseJSON.message);
+        }
+    );
 
-    KBNIM014C.prepare();
+    await KBNIM014C.prepare();
+    await KBNIM014C.initial();
 
-    KBNIM014C.initial(function (result) {
+});
 
-        xAjax.onCheck('#chkDeliveryDate', function () {
-            if ($('#chkDeliveryDate').val() == 0) $('#fldDeliveryDate').prop('disabled', 'disabled');
-            if ($('#chkDeliveryDate').val() == 1) $('#fldDeliveryDate').prop('disabled', false);
-        });
+$("#chkDeliveryDate").change(function () {
+    if (this.checked) {
+        $("#F_DeliveryFrom").prop("disabled", false);
+        $("#F_DeliveryTo").prop("disabled", false);
+    }
+    else {
+        $("#F_DeliveryFrom").prop("disabled", true);
+        $("#F_DeliveryTo").prop("disabled", true);
+    }
+});
 
-        KBNIM014C.search();
+$("#buttonSearch").click(async function () {
+    console.log("Clicked !!! !! !!")
+    var DeliveryDateFrom = null;
+    var DeliveryDateTo = null;
+
+    if ($("#chkDeliveryDate").prop("checked")) {
+        DeliveryDateFrom = $("#F_DeliveryFrom").val();
+        DeliveryDateTo = $("#F_DeliveryTo").val();
+    }
+
+    let _url = "/api/KBNIM014C/search"
+    if (window.location.hostname.includes("tpcap")) {
+        _url = "/kanban" + _url;
+    }
+
+    $.ajax({
+        type: "GET",
+        url: _url,
+        data: {
+            F_PDS_NO: $("#SelectPDSNo").val(),
+            chkDeliveryDate: $("#chkDeliveryDate").prop("checked"),
+            F_DeliveryFrom: DeliveryDateFrom,
+            F_DeliveryTo: DeliveryDateTo
+        },
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: async function (response) {
+            //console.log("Success: ", response);
+            if (response.status === "200") {
+                var jsonResult = JSON.parse(response.data);
+                //console.log("jsonResult: ", jsonResult);
+                _xLib.TrimArrayJSON(jsonResult);
+                await $("#tblMaster").DataTable().clear().rows.add(jsonResult).draw();
+                await $("input[type='checkbox']").prop("checked", true);
+            }
+            else {
+                return xSwal.error(response.title, response.message);
+            }
+        },
+        error: function (xhr, status, response) {
+            console.error("Error: ", xhr.responseJSON);
+            return xSwal.error(xhr.responseJSON.title, xhr.responseJSON.message);
+        }
     });
+});
 
-    onSave = function () {
-        KBNIM014C.save(function () {
-            KBNIM014C.search();
-        });
-    }
+$("#buttonSave").click(async function () {
 
-    onDelete = function () {
-        KBNIM014C.delete(function () {
-            KBNIM014C.search();
-        });
-    }
+    var checkedRow = $("#tblMaster input[type='checkbox']:checked");
+    if (checkedRow.length == 0) return xSwal.error("Error !!", "No data selected.");
 
-    onDeleteAll = function () {
-        KBNIM014C.deleteall(function () {
-            KBNIM014C.search();
-        });
-    }
+    //console.log("Checked Row: ", checkedRow);
 
-    onPrint = function () {
-        xDataTableExport.setConfigPDF({
-            title: 'OLD TYPE SERVICE CHECK LIST'
-        });
-    }
+    var _arrCheckedData = $("#tblMaster").DataTable().rows(checkedRow.closest("tr")).data().toArray();
+    if (_arrCheckedData.length == 0) return xSwal.error("Error !!", "No data selected.");
 
-    onExecute = function () {
-        console.log('onExecute');
+    //return console.log(_arrCheckedData);
+    var title , message;
+    for (const each in _arrCheckedData) {
+        //console.log("Data: ", _arrCheckedData[each]);
+        var _jsonData = JSON.stringify(_arrCheckedData[each]);
+        //console.log("JSON Data: ", _jsonData);
+
+        await _xLib.AJAX_Post('/api/KBNIM014C/Save', _jsonData,
+            async function (response) {
+                //console.log("Success: ", response);
+                title = response.title;
+                message = response.message;
+            },
+            async function (err) {
+                let confirm = await xSwal.error("Error !!", err.responseJSON.message);
+                if (confirm.isConfirmed) {
+                    return;
+                }
+            }
+        );
     }
+    xSwal.success(title, message);
+    $("#buttonSearch").click();
 });

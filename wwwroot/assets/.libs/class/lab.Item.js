@@ -295,7 +295,7 @@
                 _item = `
                         <div class="input-group mb-3">`
                     + (_label != undefined && _label != '' ? `<label class="input-group-text" for="` + _id + `">` + _label + `</label>` : ``)
-                    + ` <input type="file" class="form-control ` + _classvalue + `" id="` + _id + `" name="` + _id + `" accept="` + _filter + `" />
+                    + ` <input type="file" class="form-control ` + _classvalue + `" id="` + _id + `" name="` + _id + `" accept="` + _filter + `"  />
                             <button type="button" id="` + _id + `_button_" name="` + _id + `_button_" class="btn btn-outline-success border-left-0" style="width:42px;height:29px;border-color:#d1d3e2;color:#858796;cursor:pointer;" title="Upload">
                                 <i class="fas fa-upload"></i>
                             </button>

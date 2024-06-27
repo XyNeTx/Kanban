@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Server.IISIntegration;
 using Microsoft.AspNetCore.Authentication.Negotiate;
 using KANBAN.Context;
 using Serilog;
+using KANBAN.Libs;
 
 var builder = WebApplication.CreateBuilder(args);
-
+var Configuration = builder.Configuration;
+var HttpContext = builder.Services.BuildServiceProvider().GetService<IHttpContextAccessor>();
 
 builder.Services.AddDbContext<KB3Context>(options =>
     options.UseSqlServer(

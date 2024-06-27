@@ -54,7 +54,7 @@
 
             MsgBox("Do you want Calculate Order for Urgent?", MsgBoxStyle.OkCancel, async function () {
 
-                xItem.progress({ id: 'prgProcess', current: 5, label: 'Start Calculate Order of Urgent : {{##.##}} %' });
+                xItem.progress({ id: 'prgProcess', current: 5, label: 'Start Calculate Order of Normal : {{##.##}} %' });
                 await xAjax.ExecuteJSON({
                     data: {
                         "Module": "[exec].[spKBNOR120_CAL01]",

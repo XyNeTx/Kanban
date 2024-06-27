@@ -289,7 +289,7 @@ namespace KANBAN.Controllers.API.ReceiveProcess
             {
                 setConString();
                 string _result = "";
-                string UserName = HttpContext.Session.GetString("USER_NAME");
+                string UserName = HttpContext.Session.GetString("USER_ID");
                 string HostName = HttpContext.Session.GetString("USER_DEVICENAME");
                 var systemControl = await _PPMInvenContext.T_System_Control.SingleOrDefaultAsync(x => x.F_Code == "CTL");
                 string isMonthEnd = systemControl.F_Value1;
@@ -322,21 +322,6 @@ namespace KANBAN.Controllers.API.ReceiveProcess
                             if (recHead != null)
                             {
                                 PDSNo = PDSNo.Remove(13, 1);
-                                if (PDSNo.StartsWith("7Z"))
-                                {
-                                    if (recHead.F_DR == "1144001" || recHead.F_DR == "1144002" || recHead.F_DR == "1145007")
-                                    {
-                                        dr = '0';
-                                    }
-                                    else
-                                    {
-                                        dr = '9';
-                                    }
-                                }
-                                else
-                                {
-                                    dr = '0';
-                                }
                             }
                             else
                             {
@@ -348,6 +333,22 @@ namespace KANBAN.Controllers.API.ReceiveProcess
                                         }";
                                 return Ok(_result);
                             }
+                        }
+                        if (PDSNo.StartsWith("7Z"))
+                        {
+                            var recHead = await _KB3Context.TB_REC_HEADER.SingleOrDefaultAsync(x => x.F_OrderNo == PDSNo);
+                            if (recHead.F_DR == "1144001" || recHead.F_DR == "1144002" || recHead.F_DR == "1145007")
+                            {
+                                dr = '0';
+                            }
+                            else
+                            {
+                                dr = '9';
+                            }
+                        }
+                        else
+                        {
+                            dr = '0';
                         }
                         JsonData.RemoveAt(index);
                         bool _isReceiveAll = true;
@@ -378,7 +379,6 @@ namespace KANBAN.Controllers.API.ReceiveProcess
                                     header.F_MRN_Flag = "1";
                                     _KB3Context.TB_REC_HEADER.Update(header);
                                     pdsDetailSingle.F_Receive_amount = sumQty;
-                                    pdsDetailSingle.F_Receive_Date = now;
                                     _KB3Context.TB_REC_DETAIL.Update(pdsDetailSingle);
                                     _isReceiveAll = false;
                                     _isZeroRec = false;
@@ -418,7 +418,6 @@ namespace KANBAN.Controllers.API.ReceiveProcess
                                 if (_singleReceiveAll != null)
                                 {
                                     _singleReceiveAll.F_Receive_amount = sumQty;
-                                    _singleReceiveAll.F_Receive_Date = now;
                                     _KB3Context.TB_REC_DETAIL.Update(_singleReceiveAll);
                                     string packCode = _singleReceiveAll.F_Address;
                                     if (packCode.StartsWith("Pack:"))

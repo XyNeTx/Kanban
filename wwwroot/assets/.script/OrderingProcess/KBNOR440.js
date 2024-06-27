@@ -60,309 +60,309 @@
 
         MsgBox("Do you want Issued PDS Urgent Data?", MsgBoxStyle.OkCancel, async function () {
 
-            xItem.progress({ id: 'prgProcess', current: 5, label: 'Start Process Special : {{##.##}} %' });
+            xItem.progress({ id: 'prgProcess', current: 5, label: 'Start Process Urgent : {{##.##}} %' });
             //Start Process Special  '(9Y Delivery_Trip = 1 only)
 
-            var _dtChk = await xAjax.ExecuteJSON({
+            var _dtChk = await xAjax.xExecuteJSON({
                 data: {
-                    "Module": "[exec].[spKBNOR440_01]",
-                    "@OrderType": "U",
+                    "Module": "[exec].[spKBNOR440_CALCULATE]",
                     "@Plant": ajexHeader.Plant,
                     "@UserCode": ajexHeader.UserCode
                 },
             });
             xItem.progress({ id: 'prgProcess', current: 10, label: 'Delete TB_PDS_DETAIL : {{##.##}} %' });
-            if (_dtChk.rows != null) {
-                for (var i = 0; i < _dtChk.rows.length; i++) {
-                    await xAjax.Execute({
-                        data: {
-                            "Module": "[exec].[spKBNOR440_01_D]",
-                            "@OrderType": "U",
-                            "@Plant": ajexHeader.Plant,
-                            "@UserCode": ajexHeader.UserCode,
-                            "@F_OrderNo": _dtChk.rows[i].F_PDS_No
-                        },
-                    });
-                    //console.log('F_PDS_No : ' + _dtChk.rows[i].F_PDS_No);
-                }
-            }
-            xItem.progress({ id: 'prgProcess', current: 20, label: 'Delete TB_PDS_HEADER : {{##.##}} %' });
-            await xAjax.Execute({
-                data: {
-                    "Module": "[exec].[spKBNOR440_02]",
-                    "@OrderType": "U",
-                    "@Plant": ajexHeader.Plant,
-                    "@UserCode": ajexHeader.UserCode
-                },
-            });
+            MsgBox("Process GEN PDS Data for Urgent Order Completed.", MsgBoxStyle.Information, "Process Complete");
+            //if (_dtChk.rows != null) {
+            //    for (var i = 0; i < _dtChk.rows.length; i++) {
+            //        await xAjax.Execute({
+            //            data: {
+            //                "Module": "[exec].[spKBNOR440_01_D]",
+            //                "@OrderType": "U",
+            //                "@Plant": ajexHeader.Plant,
+            //                "@UserCode": ajexHeader.UserCode,
+            //                "@F_OrderNo": _dtChk.rows[i].F_PDS_No
+            //            },
+            //        });
+            //        //console.log('F_PDS_No : ' + _dtChk.rows[i].F_PDS_No);
+            //    }
+            //}
+            //xItem.progress({ id: 'prgProcess', current: 20, label: 'Delete TB_PDS_HEADER : {{##.##}} %' });
+            //await xAjax.Execute({
+            //    data: {
+            //        "Module": "[exec].[spKBNOR440_02]",
+            //        "@OrderType": "U",
+            //        "@Plant": ajexHeader.Plant,
+            //        "@UserCode": ajexHeader.UserCode
+            //    },
+            //});
 
 
-            xItem.progress({ id: 'prgProcess', current: 30, label: 'Insert TB_PDS_HEADER and TB_PDS_DETAIL : {{##.##}} %' });
-            await xAjax.Execute({
-                data: {
-                    "Module": "[exec].[spKBNOR440_03]",
-                    "@OrderType": "U",
-                    "@Plant": ajexHeader.Plant,
-                    "@UserCode": ajexHeader.UserCode
-                },
-            });
-            if (_dtChk.rows != null) {
-                for (var i = 0; i < _dtChk.rows.length; i++) {
-                    if (i == 0 || _dtChk.rows[i].F_Delivery_Date.substring(2, 6)
-                        + _dtChk.rows[i].F_Delivery_Trip.padStart(2, '0') != pdsno.substring(2, 8)) {
+            //xItem.progress({ id: 'prgProcess', current: 30, label: 'Insert TB_PDS_HEADER and TB_PDS_DETAIL : {{##.##}} %' });
+            //await xAjax.Execute({
+            //    data: {
+            //        "Module": "[exec].[spKBNOR440_03]",
+            //        "@OrderType": "U",
+            //        "@Plant": ajexHeader.Plant,
+            //        "@UserCode": ajexHeader.UserCode
+            //    },
+            //});
+            //if (_dtChk.rows != null) {
+            //    for (var i = 0; i < _dtChk.rows.length; i++) {
+            //        if (i == 0 || _dtChk.rows[i].F_Delivery_Date.substring(2, 6)
+            //            + _dtChk.rows[i].F_Delivery_Trip.padStart(2, '0') != pdsno.substring(2, 8)) {
 
-                        var _dtChkPOM = await xAjax.ExecuteJSON({
-                            data: {
-                                "Module": "[exec].[spKBNOR440_03_S]",
-                                "@OrderType": "U",
-                                "@Plant": ajexHeader.Plant,
-                                "@UserCode": ajexHeader.UserCode,
-                                "@F_Delivery_Date": _dtChk.rows[i].F_Delivery_Date,
-                                "@F_Delivery_Trip": _dtChk.rows[i].F_Delivery_Trip
-                            },
-                        });
-                        if (_dtChkPOM.rows == null) {
-                            pdsno = facflag + String(_dtChk.rows[i].F_Delivery_Date).substring(2, 6)
-                                + String(_dtChk.rows[i].F_Delivery_Trip).padStart(2, '0')
-                                + '001';
-                        }else{
-                            pdsno = facflag + _dtChk.rows[i].F_Delivery_Date.substring(2, 6)
-                                + String(_dtChk.rows[i].F_Delivery_Trip).padStart(2, '0')
-                                + String(_dtChkPOM.rows[i].F_OrderNo + 1).padStart(2, '0');
-                        }
+            //            var _dtChkPOM = await xAjax.ExecuteJSON({
+            //                data: {
+            //                    "Module": "[exec].[spKBNOR440_03_S]",
+            //                    "@OrderType": "U",
+            //                    "@Plant": ajexHeader.Plant,
+            //                    "@UserCode": ajexHeader.UserCode,
+            //                    "@F_Delivery_Date": _dtChk.rows[i].F_Delivery_Date,
+            //                    "@F_Delivery_Trip": _dtChk.rows[i].F_Delivery_Trip
+            //                },
+            //            });
+            //            if (_dtChkPOM.rows == null) {
+            //                pdsno = facflag + String(_dtChk.rows[i].F_Delivery_Date).substring(2, 6)
+            //                    + String(_dtChk.rows[i].F_Delivery_Trip).padStart(2, '0')
+            //                    + '001';
+            //            }else{
+            //                pdsno = facflag + _dtChk.rows[i].F_Delivery_Date.substring(2, 6)
+            //                    + String(_dtChk.rows[i].F_Delivery_Trip).padStart(2, '0')
+            //                    + String(_dtChkPOM.rows[i].F_OrderNo + 1).padStart(2, '0');
+            //            }
 
-                    } else {    //'of i <> 0 
-                        pdsno = facflag + _dtChk.rows[i].F_Delivery_Date.substring(2, 6)
-                            + String(_dtChk.rows[i].F_Delivery_Trip).padStart(2, '0')
-                            + String(Number(pdsno.substring(pdsno.length - 3)) + 1).padStart(3, '0');
-                    }
+            //        } else {    //'of i <> 0 
+            //            pdsno = facflag + _dtChk.rows[i].F_Delivery_Date.substring(2, 6)
+            //                + String(_dtChk.rows[i].F_Delivery_Trip).padStart(2, '0')
+            //                + String(Number(pdsno.substring(pdsno.length - 3)) + 1).padStart(3, '0');
+            //        }
                     
-                    barcode = CheckSum(pdsno) //'sPDS_No
-                    xItem.progress({ id: 'prgProcess', current: 35, label: 'Update TB_Delivery.F_HMMT_PDS : {{##.##}} %' });
-                    await xAjax.Execute({
-                        data: {
-                            "Module": "[exec].[spKBNOR440_03_U]",
-                            "@OrderType": "U",
-                            "@Plant": ajexHeader.Plant,
-                            "@UserCode": ajexHeader.UserCode,
-                            "@PDS_No": pdsno,
-                            "@F_Delivery_Date": _dtChk.rows[i].F_Delivery_Date,
-                            "@F_Delivery_Time": _dtChk.rows[i].F_Delivery_Time,
-                            "@F_Supplier_Cd": _dtChk.rows[i].F_Supplier_Cd,
-                            "@F_Supplier_Plant": _dtChk.rows[i].F_Supplier_Plant,
-                            "@F_Store_CD": _dtChk.rows[i].F_Store_CD,
-                            "@F_Collect_Date": _dtChk.rows[i].F_Collect_Date
-                        },
-                    });
+            //        barcode = CheckSum(pdsno) //'sPDS_No
+            //        xItem.progress({ id: 'prgProcess', current: 35, label: 'Update TB_Delivery.F_HMMT_PDS : {{##.##}} %' });
+            //        await xAjax.Execute({
+            //            data: {
+            //                "Module": "[exec].[spKBNOR440_03_U]",
+            //                "@OrderType": "U",
+            //                "@Plant": ajexHeader.Plant,
+            //                "@UserCode": ajexHeader.UserCode,
+            //                "@PDS_No": pdsno,
+            //                "@F_Delivery_Date": _dtChk.rows[i].F_Delivery_Date,
+            //                "@F_Delivery_Time": _dtChk.rows[i].F_Delivery_Time,
+            //                "@F_Supplier_Cd": _dtChk.rows[i].F_Supplier_Cd,
+            //                "@F_Supplier_Plant": _dtChk.rows[i].F_Supplier_Plant,
+            //                "@F_Store_CD": _dtChk.rows[i].F_Store_CD,
+            //                "@F_Collect_Date": _dtChk.rows[i].F_Collect_Date
+            //            },
+            //        });
 
-                    //'Insert to Header
-                    xItem.progress({ id: 'prgProcess', current: 40, label: 'INSERT TB_PDS_HEADER : {{##.##}} %' });
-                    _dtChkPOM = await xAjax.ExecuteJSON({
-                        data: {
-                            "Module": "[exec].[spKBNOR440_04]",
-                            "@pOrderType": "U",
-                            "@pPlant": ajexHeader.Plant,
-                            "@pUserCode": ajexHeader.UserCode
-                        },
-                    });
-                    if (_dtChkPOM.rows != null) {
-                        await xAjax.Execute({
-                            data: {
-                                "Module": "[exec].[spKBNOR440_04_I]",
-                                "@pOrderType": "U",
-                                "@pPlant": ajexHeader.Plant,
-                                "@pUserCode": ajexHeader.UserCode,
-                                "@PDS_No": pdsno,
-                                "@F_Delivery_Date": _dtChk.rows[i].F_Delivery_Date,
-                                "@F_Delivery_Time": _dtChk.rows[i].F_Delivery_Time,
-                                "@F_Supplier_Cd": _dtChk.rows[i].F_Supplier_Cd,
-                                "@F_Supplier_Plant": _dtChk.rows[i].F_Supplier_Plant,
-                                "@F_Store_CD": _dtChk.rows[i].F_Store_CD,
-                                "@F_Collect_Date": _dtChk.rows[i].F_Collect_Date,
-                                "@F_TYPE_PART": _dtChk.rows[i].F_TYPE_PART,
-                                "@F_Dept_Code": _dtChk.rows[i].F_Dept_Code,
-                                "@F_Cr": _dtChk.rows[i].F_Cr,
-                                "@F_DR": _dtChk.rows[i].F_DR,
-                                "@F_Value2": _dtChk.rows[i].F_Value2,
-                                "@F_Issued_Date": _dtChk.rows[i].F_Issued_Date,
-                                "@F_Barcode": _dtChk.rows[i].F_Barcode
-                            },
-                        });
-                    }
+            //        //'Insert to Header
+            //        xItem.progress({ id: 'prgProcess', current: 40, label: 'INSERT TB_PDS_HEADER : {{##.##}} %' });
+            //        _dtChkPOM = await xAjax.ExecuteJSON({
+            //            data: {
+            //                "Module": "[exec].[spKBNOR440_04]",
+            //                "@pOrderType": "U",
+            //                "@pPlant": ajexHeader.Plant,
+            //                "@pUserCode": ajexHeader.UserCode
+            //            },
+            //        });
+            //        if (_dtChkPOM.rows != null) {
+            //            await xAjax.Execute({
+            //                data: {
+            //                    "Module": "[exec].[spKBNOR440_04_I]",
+            //                    "@pOrderType": "U",
+            //                    "@pPlant": ajexHeader.Plant,
+            //                    "@pUserCode": ajexHeader.UserCode,
+            //                    "@PDS_No": pdsno,
+            //                    "@F_Delivery_Date": _dtChk.rows[i].F_Delivery_Date,
+            //                    "@F_Delivery_Time": _dtChk.rows[i].F_Delivery_Time,
+            //                    "@F_Supplier_Cd": _dtChk.rows[i].F_Supplier_Cd,
+            //                    "@F_Supplier_Plant": _dtChk.rows[i].F_Supplier_Plant,
+            //                    "@F_Store_CD": _dtChk.rows[i].F_Store_CD,
+            //                    "@F_Collect_Date": _dtChk.rows[i].F_Collect_Date,
+            //                    "@F_TYPE_PART": _dtChk.rows[i].F_TYPE_PART,
+            //                    "@F_Dept_Code": _dtChk.rows[i].F_Dept_Code,
+            //                    "@F_Cr": _dtChk.rows[i].F_Cr,
+            //                    "@F_DR": _dtChk.rows[i].F_DR,
+            //                    "@F_Value2": _dtChk.rows[i].F_Value2,
+            //                    "@F_Issued_Date": _dtChk.rows[i].F_Issued_Date,
+            //                    "@F_Barcode": _dtChk.rows[i].F_Barcode
+            //                },
+            //            });
+            //        }
 
-                    ////'Update F_Collect_Date, F_Collect_Time add by Mr.wiboon 20121130 'F_Dock_Code = T.F_Dock_CD,
-                    ////'1.  หาค่า Collect Time ก่อนเลย พอดีเค้าหา Dock Code อยู่แล้วเลยแอบใส่ตัีวนี้ด้วยเลย (ของพี่ทิฝากนิดหนึง กรณี 9Y ไม่ต้องคำนวณตัว Collect Date กะ Time ใส่เป็นว่าง ๆ เลย)
+            //        ////'Update F_Collect_Date, F_Collect_Time add by Mr.wiboon 20121130 'F_Dock_Code = T.F_Dock_CD,
+            //        ////'1.  หาค่า Collect Time ก่อนเลย พอดีเค้าหา Dock Code อยู่แล้วเลยแอบใส่ตัีวนี้ด้วยเลย (ของพี่ทิฝากนิดหนึง กรณี 9Y ไม่ต้องคำนวณตัว Collect Date กะ Time ใส่เป็นว่าง ๆ เลย)
 
-                    ////'2.  ตัวนี้คือกรณีที่ Collect Time = "00:00" แปลว่าเป็นรถที่ขนส่งโดย Milk Run ไม่จำเป็นต้องคำนวณเวลา เลยให้ Collect Date = Delivery Date ส่วน Collect Time ก้อ 00:00 เหมือนเดิม
-                    ////''Update in case Date of case Supplier Arrival = 00: 00(Milk Run)
+            //        ////'2.  ตัวนี้คือกรณีที่ Collect Time = "00:00" แปลว่าเป็นรถที่ขนส่งโดย Milk Run ไม่จำเป็นต้องคำนวณเวลา เลยให้ Collect Date = Delivery Date ส่วน Collect Time ก้อ 00:00 เหมือนเดิม
+            //        ////''Update in case Date of case Supplier Arrival = 00: 00(Milk Run)
 
-                    ////'3.  ตัวนี้คือกรณีที่ Collect Time >= "07:30" แปลว่าเป็น Part ที่มีการขนส่งปรกติ นั่นคือ ออกจาก Supplier ตอนกะเช้า บ่าย ๆ เข้าโรงงาน เลยให้ Collect Date = Delivery Date 
-                    ////''Update in case Date of Arrival = Delivery Date
+            //        ////'3.  ตัวนี้คือกรณีที่ Collect Time >= "07:30" แปลว่าเป็น Part ที่มีการขนส่งปรกติ นั่นคือ ออกจาก Supplier ตอนกะเช้า บ่าย ๆ เข้าโรงงาน เลยให้ Collect Date = Delivery Date 
+            //        ////''Update in case Date of Arrival = Delivery Date
 
-                    ////'4.  ตัวนี้คือกรณีเก็บตก กรณีที่เข้ากะกลางคืน แปลว่าออกจาก Supplier ตี 2 ถึงเรา ตี 3 เครสนี้ ยังถือว่าเป็นวันทำงานวันเดียวกัน เลยให้  Collect Date = Delivery Date 
-                    xItem.progress({ id: 'prgProcess', current: 45, label: 'Update Dock Code : {{##.##}} %' });
-                    await xAjax.Execute({
-                        data: {
-                            "Module": "[exec].[spKBNOR440_04_U]",
-                            "@pOrderType": "U",
-                            "@pPlant": ajexHeader.Plant,
-                            "@pUserCode": ajexHeader.UserCode
-                        },
-                    });
-
-
-
-                    //'5.  ตัวนี้คือกรณีที่ออกจาก Supplier กลางคืนถึงเราเช้าหลัง 07:30 สรุปว่าจะถอยวัน
-                    //'' ตัวเรียกนะ 
-                    xItem.progress({ id: 'prgProcess', current: 50, label: 'UPDATE TB_PDS_HEADER : {{##.##}} %' });
-                    var _dtChkGet = await xAjax.ExecuteJSON({
-                        data: {
-                            "Module": "[exec].[spKBNOR440_05]",
-                            "@pOrderType": "U",
-                            "@pPlant": ajexHeader.Plant,
-                            "@pUserCode": ajexHeader.UserCode
-                        },
-                    });
-                    if (_dtChkGet.rows != null) {
-                        for (var i = 0; i < _dtChkGet.rows.length; i++) {
-                            var _delivery = GetDate(Trim(_dtChkGet.rows[i][0].ToString()));
-                            await xAjax.Execute({
-                                data: {
-                                    "Module": "[exec].[spKBNOR440_05_U]",
-                                    "@pOrderType": "U",
-                                    "@pPlant": ajexHeader.Plant,
-                                    "@pUserCode": ajexHeader.UserCode,
-                                    "@PDS_No": pdsno,
-                                    "@F_Collect_Date": _dtChkGet.rows[i].F_Collect_Date,
-                                    "@F_Delivery_Date": _dtChkGet.rows[i].F_Delivery_Date
-                                },
-                            });
-                        }
-                    }
-
-
-                    xItem.progress({ id: 'prgProcess', current: 55, label: 'INSERT TB_PDS_DETAIL : {{##.##}} %' });
-                    await xAjax.Execute({
-                        data: {
-                            "Module": "[exec].[spKBNOR440_05_I]",
-                            "@pOrderType": "U",
-                            "@pPlant": ajexHeader.Plant,
-                            "@pUserCode": ajexHeader.UserCode,
-                            "@PDS_No": pdsno,
-                            "@F_Delivery_Date": _dtChk.rows[i].F_Delivery_Date,
-                            "@F_Delivery_Time": _dtChk.rows[i].F_Delivery_Time,
-                            "@F_Supplier_Cd": _dtChk.rows[i].F_Supplier_Cd,
-                            "@F_Supplier_Plant": _dtChk.rows[i].F_Supplier_Plant,
-                            "@F_Store_CD": _dtChk.rows[i].F_Store_CD,
-                            "@F_Collect_Date": _dtChk.rows[i].F_Collect_Date,
-                            "@F_TYPE_PART": _dtChk.rows[i].F_TYPE_PART
-                        },
-                    });
+            //        ////'4.  ตัวนี้คือกรณีเก็บตก กรณีที่เข้ากะกลางคืน แปลว่าออกจาก Supplier ตี 2 ถึงเรา ตี 3 เครสนี้ ยังถือว่าเป็นวันทำงานวันเดียวกัน เลยให้  Collect Date = Delivery Date 
+            //        xItem.progress({ id: 'prgProcess', current: 45, label: 'Update Dock Code : {{##.##}} %' });
+            //        await xAjax.Execute({
+            //            data: {
+            //                "Module": "[exec].[spKBNOR440_04_U]",
+            //                "@pOrderType": "U",
+            //                "@pPlant": ajexHeader.Plant,
+            //                "@pUserCode": ajexHeader.UserCode
+            //            },
+            //        });
 
 
 
-                }
-            }
+            //        //'5.  ตัวนี้คือกรณีที่ออกจาก Supplier กลางคืนถึงเราเช้าหลัง 07:30 สรุปว่าจะถอยวัน
+            //        //'' ตัวเรียกนะ 
+            //        xItem.progress({ id: 'prgProcess', current: 50, label: 'UPDATE TB_PDS_HEADER : {{##.##}} %' });
+            //        var _dtChkGet = await xAjax.ExecuteJSON({
+            //            data: {
+            //                "Module": "[exec].[spKBNOR440_05]",
+            //                "@pOrderType": "U",
+            //                "@pPlant": ajexHeader.Plant,
+            //                "@pUserCode": ajexHeader.UserCode
+            //            },
+            //        });
+            //        if (_dtChkGet.rows != null) {
+            //            for (var i = 0; i < _dtChkGet.rows.length; i++) {
+            //                var _delivery = GetDate(Trim(_dtChkGet.rows[i][0].ToString()));
+            //                await xAjax.Execute({
+            //                    data: {
+            //                        "Module": "[exec].[spKBNOR440_05_U]",
+            //                        "@pOrderType": "U",
+            //                        "@pPlant": ajexHeader.Plant,
+            //                        "@pUserCode": ajexHeader.UserCode,
+            //                        "@PDS_No": pdsno,
+            //                        "@F_Collect_Date": _dtChkGet.rows[i].F_Collect_Date,
+            //                        "@F_Delivery_Date": _dtChkGet.rows[i].F_Delivery_Date
+            //                    },
+            //                });
+            //            }
+            //        }
 
 
-            xItem.progress({ id: 'prgProcess', current: 60, label: 'Process Special KPO : {{##.##}} %' });
-            await ProcessSpecialKPO();
-            xItem.progress({ id: 'prgProcess', current: 90, label: 'Process Special Emer : {{##.##}} %' });
-            await ProcessSpecialEmer();
+            //        xItem.progress({ id: 'prgProcess', current: 55, label: 'INSERT TB_PDS_DETAIL : {{##.##}} %' });
+            //        await xAjax.Execute({
+            //            data: {
+            //                "Module": "[exec].[spKBNOR440_05_I]",
+            //                "@pOrderType": "U",
+            //                "@pPlant": ajexHeader.Plant,
+            //                "@pUserCode": ajexHeader.UserCode,
+            //                "@PDS_No": pdsno,
+            //                "@F_Delivery_Date": _dtChk.rows[i].F_Delivery_Date,
+            //                "@F_Delivery_Time": _dtChk.rows[i].F_Delivery_Time,
+            //                "@F_Supplier_Cd": _dtChk.rows[i].F_Supplier_Cd,
+            //                "@F_Supplier_Plant": _dtChk.rows[i].F_Supplier_Plant,
+            //                "@F_Store_CD": _dtChk.rows[i].F_Store_CD,
+            //                "@F_Collect_Date": _dtChk.rows[i].F_Collect_Date,
+            //                "@F_TYPE_PART": _dtChk.rows[i].F_TYPE_PART
+            //            },
+            //        });
 
-            await ProcessOrderTacoma("T", "T");  //''Assy
-            await ProcessOrderTacoma("T", "S");   //''Service
-            await ProcessOrderWareHouse();
 
-            await xAjax.xExecute({
-                data: {
-                    "Module": "[dbo].[SP_Update_KPO_Order]",
-                    "@pOrderType": "U",
-                    "@pPlant": ajexHeader.Plant
-                },
-            });
 
-            xItem.progress({ id: 'prgProcess', current: 92, label: 'Update Dock Code AGAIN-2 : {{##.##}} %' });
-            await xAjax.Execute({
-                data: {
-                    "Module": "[exec].[spKBNOR440_12]",
-                    "@pOrderType": "U",
-                    "@pPlant": ajexHeader.Plant,
-                    "@pUserCode": ajexHeader.UserCode,
-                },
-            });
+            //    }
+            //}
 
-            xItem.progress({ id: 'prgProcess', current: 94, label: 'Update in case Date of Arrival < Delivery Date : {{##.##}} %' });
-            var _dtChk = await xAjax.ExecuteJSON({
-                data: {
-                    "Module": "[exec].[spKBNOR440_13]",
-                    "@pOrderType": "U",
-                    "@pPlant": ajexHeader.Plant,
-                    "@pUserCode": ajexHeader.UserCode
-                },
-            });
-            if (_dtChk.rows != null) {
-                for (var i = 0; i < _dtChk.rows.length; i++) {
 
-                    var _delivery = GetDate(Trim(_dtChk.rows[i][0].ToString()));
+            //xItem.progress({ id: 'prgProcess', current: 60, label: 'Process Special KPO : {{##.##}} %' });
+            //await ProcessSpecialKPO();
+            //xItem.progress({ id: 'prgProcess', current: 90, label: 'Process Special Emer : {{##.##}} %' });
+            //await ProcessSpecialEmer();
 
-                    var _dtChk = await xAjax.ExecuteJSON({
-                        data: {
-                            "Module": "[exec].[spKBNOR440_13_U]",
-                            "@pOrderType": "U",
-                            "@pPlant": ajexHeader.Plant,
-                            "@pUserCode": ajexHeader.UserCode,
-                            "@F_Collect_Date": _delivery,
-                            "@F_Delivery_Date": _dtChk.rows[i][0].ToString()
-                        },
-                    });
+            //await ProcessOrderTacoma("T", "T");  //''Assy
+            //await ProcessOrderTacoma("T", "S");   //''Service
+            //await ProcessOrderWareHouse();
 
-                }
+            //await xAjax.xExecute({
+            //    data: {
+            //        "Module": "[dbo].[SP_Update_KPO_Order]",
+            //        "@pOrderType": "U",
+            //        "@pPlant": ajexHeader.Plant
+            //    },
+            //});
 
-            }
+            //xItem.progress({ id: 'prgProcess', current: 92, label: 'Update Dock Code AGAIN-2 : {{##.##}} %' });
+            //await xAjax.Execute({
+            //    data: {
+            //        "Module": "[exec].[spKBNOR440_12]",
+            //        "@pOrderType": "U",
+            //        "@pPlant": ajexHeader.Plant,
+            //        "@pUserCode": ajexHeader.UserCode,
+            //    },
+            //});
 
-            xItem.progress({ id: 'prgProcess', current: 96, label: 'Update TEXT DATA : RE-CHECK AGAIN : {{##.##}} %' });
-            _dtChk = await xAjax.ExecuteJSON({
-                data: {
-                    "Module": "[exec].[spKBNOR440_14]",
-                    "@pOrderType": "U",
-                    "@pPlant": ajexHeader.Plant,
-                    "@pUserCode": ajexHeader.UserCode
-                },
-            });
+            //xItem.progress({ id: 'prgProcess', current: 94, label: 'Update in case Date of Arrival < Delivery Date : {{##.##}} %' });
+            //var _dtChk = await xAjax.ExecuteJSON({
+            //    data: {
+            //        "Module": "[exec].[spKBNOR440_13]",
+            //        "@pOrderType": "U",
+            //        "@pPlant": ajexHeader.Plant,
+            //        "@pUserCode": ajexHeader.UserCode
+            //    },
+            //});
+            //if (_dtChk.rows != null) {
+            //    for (var i = 0; i < _dtChk.rows.length; i++) {
 
-            xItem.progress({ id: 'prgProcess', current: 98, label: 'Process #TEMP_UPDOC : {{##.##}} %' });
-            _dtChk = await xAjax.ExecuteJSON({
-                data: {
-                    "Module": "[exec].[spKBNOR440_15]",
-                    "@pOrderType": "U",
-                    "@pPlant": ajexHeader.Plant,
-                    "@pUserCode": ajexHeader.UserCode
-                },
-            });
+            //        var _delivery = GetDate(Trim(_dtChk.rows[i][0].ToString()));
 
-            xItem.progress({ id: 'prgProcess', current: 98, label: 'Process display data : {{##.##}} %' });
-            _dtChk = await xAjax.ExecuteJSON({
-                data: {
-                    "Module": "[exec].[spKBNOR440_16]",
-                    "@pOrderType": "U",
-                    "@pPlant": ajexHeader.Plant,
-                    "@pUserCode": ajexHeader.UserCode
-                },
-            });
+            //        var _dtChk = await xAjax.ExecuteJSON({
+            //            data: {
+            //                "Module": "[exec].[spKBNOR440_13_U]",
+            //                "@pOrderType": "U",
+            //                "@pPlant": ajexHeader.Plant,
+            //                "@pUserCode": ajexHeader.UserCode,
+            //                "@F_Collect_Date": _delivery,
+            //                "@F_Delivery_Date": _dtChk.rows[i][0].ToString()
+            //            },
+            //        });
 
-            xItem.progress({ id: 'prgProcess', current: 99, label: 'Addition for Generate to OLT ONLY : {{##.##}} %' });
-            _dtChk = await xAjax.ExecuteJSON({
-                data: {
-                    "Module": "[exec].[spKBNOR440_17]",
-                    "@pOrderType": "U",
-                    "@pPlant": ajexHeader.Plant,
-                    "@pUserCode": ajexHeader.UserCode
-                },
-            });
+            //    }
+
+            //}
+
+            //xItem.progress({ id: 'prgProcess', current: 96, label: 'Update TEXT DATA : RE-CHECK AGAIN : {{##.##}} %' });
+            //_dtChk = await xAjax.ExecuteJSON({
+            //    data: {
+            //        "Module": "[exec].[spKBNOR440_14]",
+            //        "@pOrderType": "U",
+            //        "@pPlant": ajexHeader.Plant,
+            //        "@pUserCode": ajexHeader.UserCode
+            //    },
+            //});
+
+            //xItem.progress({ id: 'prgProcess', current: 98, label: 'Process #TEMP_UPDOC : {{##.##}} %' });
+            //_dtChk = await xAjax.ExecuteJSON({
+            //    data: {
+            //        "Module": "[exec].[spKBNOR440_15]",
+            //        "@pOrderType": "U",
+            //        "@pPlant": ajexHeader.Plant,
+            //        "@pUserCode": ajexHeader.UserCode
+            //    },
+            //});
+
+            //xItem.progress({ id: 'prgProcess', current: 98, label: 'Process display data : {{##.##}} %' });
+            //_dtChk = await xAjax.ExecuteJSON({
+            //    data: {
+            //        "Module": "[exec].[spKBNOR440_16]",
+            //        "@pOrderType": "U",
+            //        "@pPlant": ajexHeader.Plant,
+            //        "@pUserCode": ajexHeader.UserCode
+            //    },
+            //});
+
+            //xItem.progress({ id: 'prgProcess', current: 99, label: 'Addition for Generate to OLT ONLY : {{##.##}} %' });
+            //_dtChk = await xAjax.ExecuteJSON({
+            //    data: {
+            //        "Module": "[exec].[spKBNOR440_17]",
+            //        "@pOrderType": "U",
+            //        "@pPlant": ajexHeader.Plant,
+            //        "@pUserCode": ajexHeader.UserCode
+            //    },
+            //});
 
             xItem.progress({ id: 'prgProcess', current: 100, label: 'Generate PDS Completed : {{##.##}} %' });
-
+            xSwal.success('Success', 'Generate PDS Completed');
         })
     });
 
@@ -522,6 +522,9 @@
                             "@PDS_No": pdsno
                         },
                     });
+
+                    console(_Dtchkpom)
+
                     if (_dtChkPOM.rows == null) {
                         pdsno = facflag + String(_dtChk.rows[i].F_Delivery_Date).substring(2, 6)
                             + String(_dtChk.rows[i].F_Delivery_Trip).padStart(2, '0')
@@ -633,6 +636,7 @@
                     }
                 }
             }
+            xSwal.success("")
         }
 
 

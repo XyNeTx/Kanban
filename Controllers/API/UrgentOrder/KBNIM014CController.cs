@@ -1,57 +1,29 @@
-﻿using Microsoft.AspNetCore.Http.Extensions;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.Data;
-using System;
-using System.Web;
-using System.Security.Principal;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-
-using System.Reflection.PortableExecutable;
-using System.DirectoryServices;
-using System.DirectoryServices.AccountManagement;
-using Microsoft.Net.Http.Headers;
-using System.Collections.Specialized;
-using System.Net;
-using System.DirectoryServices.ActiveDirectory;
-using System.Net.Http;
-using Microsoft.AspNetCore.Authorization;
-
-using System.Security.Claims;
-using Org.BouncyCastle.Asn1.Ocsp;
 
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-
-using System.Threading.Tasks;
 
 using HINOSystem.Libs;
 using HINOSystem.Context;
-using HINOSystem.Models.KB3;
-using NPOI.HPSF;
-using Humanizer;
-using NPOI.SS.Formula.Functions;
-using NPOI.SS.Formula.Eval;
-using PdfSharp.Pdf.Filters;
-using MathNet.Numerics.LinearAlgebra.Factorization;
-using Microsoft.CodeAnalysis.Differencing;
-using Microsoft.VisualBasic;
-using static System.Net.Mime.MediaTypeNames;
-using NPOI.POIFS.Properties;
+using KANBAN.Context;
 //using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HINOSystem.Controllers.API.Master
 {
-    public class KBNIM014CController : Controller
+    [ApiController]
+    [Route("api/[controller]/[action]")]
+    public class KBNIM014CController : ControllerBase
     {
         private readonly IConfiguration _configuration;
         private readonly BearerClass _BearerClass;
         private readonly ActionResultClass _ActionResult;        
         private readonly KanbanConnection _KBCN;
         private readonly PPMConnect _PPMConnect;
-
+        private readonly FillDataTable _FillDT;
+        private readonly PPM3Context _PPM3Context;
         private readonly KB3Context _KB3Context;
+        private readonly SerilogLibs _Log;
 
 
         private readonly string StoragePath = @"wwwroot\Storage\Uploads";
@@ -62,7 +34,10 @@ namespace HINOSystem.Controllers.API.Master
             ActionResultClass actionResultClass,
             KanbanConnection kanbanConnection,
             PPMConnect ppmConnect,
-            KB3Context kB3Context
+            FillDataTable fillDT,
+            KB3Context kB3Context,
+            PPM3Context pPM3Context,
+            SerilogLibs log
             )
         {
             _configuration = configuration;
@@ -71,7 +46,9 @@ namespace HINOSystem.Controllers.API.Master
             _KB3Context = kB3Context;
             _KBCN = kanbanConnection;
             _PPMConnect = ppmConnect;
-
+            _FillDT = fillDT;
+            _PPM3Context = pPM3Context;
+            _Log = log;
         }
 
 
@@ -108,41 +85,99 @@ namespace HINOSystem.Controllers.API.Master
             }
         }
 
-
-
-        [HttpPost]
-        public IActionResult search([FromBody] string pData = null)
+        [HttpGet]
+        public async Task<IActionResult> search(string? F_PDS_NO = null,bool chkDeliveryDate = false, string? F_DeliveryFrom = null , string? F_DeliveryTo = null)
         {
-            dynamic _json = null;
             string _SQL = "";
             try
             {
-                _BearerClass.Authentication(Request);
-                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
+                string UserID = HttpContext.Session.GetString("USER_CODE");
+                string Plant =  HttpContext.Session.GetString("USER_PLANT");
+                F_DeliveryFrom = F_DeliveryFrom == null ? "" : F_DeliveryFrom.Replace("-",string.Empty);
+                F_DeliveryTo = F_DeliveryTo == null ? "" : F_DeliveryTo.Replace("-", string.Empty);
 
-                _json = JsonConvert.DeserializeObject(pData);
+                //_SQL = @" EXEC [exec].[spKBNMS001_SEARCH] '" + _json.F_Plant + "' ";
+                if (chkDeliveryDate) _SQL = $" EXEC [exec].[spKBNIM014Confirm_SEARCH] '{Plant}' , '{UserID}' , NULL , '{F_DeliveryFrom}', '{F_DeliveryTo}' ";
 
+                else if(string.IsNullOrWhiteSpace(F_PDS_NO) && !chkDeliveryDate) _SQL = $" EXEC [exec].[spKBNIM014Confirm_SEARCH] '{Plant}' , '{UserID}' ";
 
-                _SQL = @" EXEC [exec].[spKBNMS001_SEARCH] '" + _json.F_Plant + "' ";
-                _KBCN.Plant = _json.F_Plant;
-                string _jsonData = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+                else _SQL = $" EXEC [exec].[spKBNIM014Confirm_SEARCH] '{Plant}' , '{UserID}' , '{F_PDS_NO}' ";
 
+                DataTable dt = _FillDT.ExecuteSQL(_SQL);
 
+                var jsonData = JsonConvert.SerializeObject(dt);
 
-                string _result = @"{
-                    ""status"":""200"",
-                    ""response"":""OK"",
-                    ""message"": ""Data Found"",
-                    ""data"": " + _jsonData + @"
-                }";
-                return Content(_result, "application/json");
+                return Ok(new
+                {
+                    status = "200",
+                    response = "OK",
+                    message = "Data Found",
+                    data = jsonData
+                });
             }
             catch (Exception e)
             {
-                return Content(e.Message.ToString(), "application/json");
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    response = "Internal Server Error",
+                    message = "Unexpected Error",
+                    err = e.Message.ToString()
+                });
             }
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Save([FromBody] object _obj)
+        {
+            using var _KB3Transaction = _KB3Context.Database.BeginTransaction();
+            try
+            {
+                
+                _KB3Transaction.CreateSavepoint("Start_KBNIM014Confirm");
+                dynamic dynamic = JsonConvert.DeserializeObject(_obj.ToString());
 
+                string F_Delivery_Date = dynamic["F_Delivery_Date"],
+                    F_PDS_No = dynamic["F_PDS_No"],
+                    F_PDS_Issued_Date = dynamic["F_PDS_Issued_Date"];
+
+                string UserID = HttpContext.Session.GetString("USER_CODE");
+
+                await _KB3Context.Database.ExecuteSqlRawAsync($"EXEC [exec].[spKBNIM014Confirm_SAVE] '{F_PDS_No}','{F_PDS_Issued_Date}','{F_Delivery_Date}','{UserID}' ");
+
+                int rowAff = await _KB3Context.TB_Transaction.Where(x=>x.F_PDS_No == F_PDS_No && x.F_PDS_Issued_Date == F_PDS_Issued_Date && x.F_Delivery_Date == F_Delivery_Date).CountAsync();
+
+                if (rowAff == 0)
+                {
+                    _KB3Transaction.Rollback();
+                    return StatusCode(500, new
+                    {
+                        status = "500",
+                        response = "Internal Server Error",
+                        message = "Urgent Order Didn't Confirm",
+                        err = "Data Not Found in TB_Transaction"
+                    });
+                }
+
+                await _KB3Transaction.CommitAsync();
+                return Ok(new
+                {
+                    status = "200",
+                    response = "OK",
+                    message = "Urgent Order Confirmed",
+                });
+            }
+            catch (Exception ex)
+            {
+                await _KB3Transaction.RollbackAsync();
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    response = "Internal Server Error",
+                    message = "Unexpected Error",
+                    err = ex.Message.ToString()
+                });
+            }
+        }
     }
 }

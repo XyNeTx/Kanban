@@ -53,7 +53,7 @@
 
 
     xAjax.onClick('#btnPrintPDS', async function () {
-        if ($('#chkPDSNo').val() == 1 && ($('#itmPDSFrom').val() != '' || $('#itmPDSTo').val() != ''))
+        if ($('#chkPDSNo').val() == 1 && ($('#itmPDSFrom').val() == '' || $('#itmPDSTo').val() == ''))
             MsgBox("Please input PDS From, To before print PDS...", MsgBoxStyle.Exclamation, "Exclamation");
 
         if ($('#chkSupplierCode').val() == 1 && ($('#itmSupplierFrom').val() != '' || $('#itmSupplierTo').val() != ''))
@@ -76,7 +76,7 @@
             },
         });
 
-
+        _xSwal.success('Success','Redirecting to View Report');
         console.log('spKBNOR450_RPT_PDS');
 
 
@@ -85,7 +85,7 @@
 
 
     xAjax.onClick('#btnPrintKanban', async function () {
-        if ($('#chkPDSNo').val() == 1 && ($('#itmPDSFrom').val() != '' || $('#itmPDSTo').val() != ''))
+        if ($('#chkPDSNo').val() == 1 && ($('#itmPDSFrom').val() == '' || $('#itmPDSTo').val() == ''))
             MsgBox("Please input PDS From, To before print PDS...", MsgBoxStyle.Exclamation, "Exclamation");
 
         if ($('#chkSupplierCode').val() == 1 && ($('#itmSupplierFrom').val() != '' || $('#itmSupplierTo').val() != ''))
@@ -103,12 +103,12 @@
                 "@itmPDSTo": $('#itmPDSTo').val(),
                 "@itmSupplierFrom": $('#itmSupplierFrom').val(),
                 "@itmSupplierTo": $('#itmSupplierTo').val(),
-                "@itmDeliveryFrom": $('#itmDeliveryFrom').val(),
-                "@itmDeliveryTo": $('#itmDeliveryTo').val()
+                "@itmDeliveryFrom": $('#itmDeliveryFrom').val().replaceAll("-",""),
+                "@itmDeliveryTo": $('#itmDeliveryTo').val().replaceAll("-", "")
             },
         });
 
-
+        xSwal.success('Success', 'Redirecting to View Report');
         console.log('spKBNOR450_RPT_KANBAN');
     });
 
