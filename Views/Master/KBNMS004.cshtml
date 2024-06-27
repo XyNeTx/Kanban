@@ -74,7 +74,7 @@
                                 </div>
                             </div>
                             <div class="row g-2">
-                                <div class="col-md-4">
+                                <div class="col-md-8">
                                     <item type="list" id="F_Kanban_No" label="Kanban No." 
                                           data-controller="LOVKB3.KanbanNoList"
                                           data-value="F_Kanban_No:Kanban_No"
@@ -83,7 +83,7 @@
                                 </div>
                             </div>
                             <div class="row g-2">
-                                <div class="col-md-4">
+                                <div class="col-md-8">
                                     <item type="list" id="F_Store_Code" label="Store Code"
                                           data-controller="LOVKB3.StoreCodeList"
                                           data-value="F_Store_Code:Store_Code"
@@ -105,7 +105,7 @@
                                     <item type="date" id="F_Start_Date" label="Start Date" format="yyyy-mm-dd" default="now" noedit required></item>
                                 </div>
                                 <div class="col-md-3">
-                                    <item type="date" id="F_End_Date" label="End Date" format="yyyy-mm-dd" default="now" noedit required></item>
+                                    <item type="date" id="F_End_Date" label="End Date" format="yyyy-mm-dd" default="2999-12-31" required></item>
                                 </div>
                             </div>
 
@@ -147,8 +147,6 @@
 
 
 @section Scripts{
-    
-    @*<script type="text/javascript" src="~/assets/.script/Template/Master.js"></script>*@
-    <script type="text/javascript" src="~/assets/.script/Master/KBNMS004.js?@ViewData["Version"]"></script>
-    @*<script type="text/javascript" src="~/assets/adminty/vue@3/vueApp/Master/KBNMS004.vue.js?@ViewData["Version"]"></script>*@
+
+    <script type="text/javascript" src="~/assets/.script/Master/KBNMS004.js?@ViewData["VersionJS"]"></script>
 }

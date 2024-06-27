@@ -29,7 +29,7 @@
 
 <!-- Modal Master -->
 <div class="modal fade" id="modalMaster" tabindex="-1" aria-labelledby="modalMasterLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="modalMasterLabel"> @ViewData["AppName"] <span></span></h5>
@@ -63,29 +63,44 @@
                         <section class="w-100 p-2">
                             <div class="row g-2">
                                 <div class="col-md-8">
-                                    <item type="lov" id="F_Supplier_Code" label="Supplier Code" data-controller="LOVKB3.PartList" data-value="F_Supplier_Code:Code" data-description="F_Supplier_Name" class-value="col-sm-2"></item>
+                                    <item type="lov" id="F_Supplier_Code" label="Supplier Code"
+                                          data-controller="LOVKB3.SupplierList"
+                                          data-value="F_Supplier_Code:Supplier_Code,F_Supplier_Name:Supplier_Name"
+                                          data-description="F_Supplier_Name"
+                                          class-value="col-sm-2"></item>
                                 </div>
                                 <div class="col-md-4">
                                     <item type="text" id="F_Cycle" label="Cycle Time"></item>
                                 </div>
                             </div>
                             <div class="row g-2">
-                                <div class="col-md-4">
-                                    <item type="list" id="F_Kanban_No" label="Kanban No" data-controller="LOVKB3.PartList" data-value="F_Kanban_No:Code" data-description="F_Kanban_Name"></item>
+                                <div class="col-md-8">
+                                    <item type="list" id="F_Kanban_No" label="Kanban No."
+                                          data-controller="LOVKB3.KanbanNoList"
+                                          data-value="F_Kanban_No:Kanban_No"
+                                          data-description="F_Kanban_No_Name"
+                                          class-value="col-sm-2"></item>
                                 </div>
-                                <div class="col-md-4"></div>
                                 <div class="col-md-4">
                                     <item type="text" id="F_Dock_Code" label="Dock Code"></item>
                                 </div>
                             </div>
                             <div class="row g-2">
-                                <div class="col-md-4">
-                                    <item type="list" id="F_Store_Code" label="Store Code" data-controller="LOVKB3.PartList" data-value="F_Store_Code:Code" data-description="F_Store_Code"></item>
+                                <div class="col-md-8">
+                                    <item type="list" id="F_Store_Code" label="Store Code"
+                                          data-controller="LOVKB3.StoreCodeList"
+                                          data-value="F_Store_Code:Store_Code"
+                                          data-description="F_Store_Code_Name"
+                                          class-value="col-sm-2"></item>
                                 </div>
                             </div>
                             <div class="row g-2">
                                 <div class="col-md-8">
-                                    <item type="lov" id="F_Part_No" label="Part No" data-controller="LOVKB3.PartList" data-value="F_Part_No:Code" data-description="F_Part_Name" class-value="col-sm-3"></item>
+                                    <item type="lov" id="F_Part_No" label="Part No"
+                                          data-controller="LOVKB3.PartList"
+                                          data-value="F_Part_No:Part_No,F_Part_Name:Part_Name"
+                                          data-description="F_Part_Name"
+                                          class-value="col-sm-2"></item>
                                 </div>
                             </div>
                             <div class="row g-2">
@@ -93,7 +108,7 @@
                                     <item type="date" id="F_Start_Date" label="Start Date" format="yyyy-mm-dd" default="now" noedit required></item>
                                 </div>
                                 <div class="col-md-4">
-                                    <item type="date" id="F_End_Date" label="End Date" format="yyyy-mm-dd" default="now" noedit required></item>
+                                    <item type="date" id="F_End_Date" label="End Date" format="yyyy-mm-dd" default="2999-12-31" required></item>
                                 </div>
                                 <div class="col-md-4">
                                     <item type="text" id="F_PDS_Group" label="PDS Group"></item>

@@ -1,6 +1,6 @@
 ﻿$(document).ready(function () {
 
-    const xKBNMS004 = new MasterTemplate({
+    const KBNMS004 = new MasterTemplate({
         Controller: _PAGE_,
         Table: 'tblMaster',
         ColumnTitle: {
@@ -25,32 +25,29 @@
         ],
     });
 
-    xKBNMS004.prepare();
+    KBNMS004.prepare();
 
-    xKBNMS004.initial(function (result) {
-        //xDropDownList.bind('#frmCondition #F_Plant', result.data.TB_Factory, 'F_Plant', 'F_Plant_Name');
+    KBNMS004.initial(function (result) {
         xDropDownList.bind('#frmCondition #F_Supplier', result.data.TB_Supplier, 'F_Supplier_Code', 'F_Supplier_Code');
 
-        //xDropDownList.bind('#frmMaster #F_Plant', result.data.TB_Factory, 'F_Plant', 'F_Plant_Name');
-
-        xKBNMS004.search();
+        KBNMS004.search();
     });
 
     onSave = function () {
-        xKBNMS004.save(function () {
-            xKBNMS004.search();
+        KBNMS004.save(function () {
+            KBNMS004.search();
         });
     }
 
     onDelete = function () {
-        xKBNMS004.delete(function () {
-            xKBNMS004.search();
+        KBNMS004.delete(function () {
+            KBNMS004.search();
         });
     }
 
     onDeleteAll = function () {
-        xKBNMS004.deleteall(function () {
-            xKBNMS004.search();
+        KBNMS004.deleteall(function () {
+            KBNMS004.search();
         });
     }
 
@@ -58,12 +55,20 @@
 
     onExecute = function () { }
 
-    //xAjax.onChange('#frmCondition #F_Supplier', function () {
-    //    $('#frmMaster #F_Plant').val($('#frmCondition #F_Plant').val());
 
-    //    xKBNMS004.search();
-    //});
+    lovClick = function (ElementID) {
+        var _SQL = '';
 
+        if (ElementID == 'F_Kanban_No' && $('#F_Supplier_Code').val() != '') _SQL = "AND F_supplier_cd+'-'+F_plant = '" + $('#F_Supplier_Code').val() + "' ";
+        //if (ElementID == 'F_Store_Code' && $('#F_Supplier_Code').val() != '') _SQL = "AND F_supplier_cd+'-'+F_plant = '" + $('#F_Supplier_Code').val() + "' ";
+        if (ElementID == 'F_Part_No') {
+            if ($('#F_Supplier_Code').val() != '') _SQL = "AND F_supplier_cd+'-'+F_plant = '" + $('#F_Supplier_Code').val() + "' ";
+            if ($('#F_Kanban_No').val() != '') _SQL = "AND F_Sebango = '" + $('#F_Kanban_No').val() + "' ";
+            if ($('#F_Store_Code').val() != '') _SQL = "AND F_Store_cd = '" + $('#F_Store_Code').val() + "' ";
+        }
+
+        ajexHeader.LOV = _SQL;
+    }
 
 
 
