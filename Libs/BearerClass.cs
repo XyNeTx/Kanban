@@ -55,6 +55,7 @@ namespace HINOSystem.Libs
         public string Response = "";
         public string Message = "";
         public dynamic Records = null;
+        public string LOV = "";
         public JObject Data = null;
 
         public JObject Result = null;
@@ -119,6 +120,7 @@ namespace HINOSystem.Libs
             this.ControllerName = pRequest.Headers["Controller"].ToString();
             this.ActionName = pRequest.Headers["Action"].ToString();
             this.Records = JsonConvert.DeserializeObject((pRequest.Headers["Records"].ToString() == "" ? "{}" : pRequest.Headers["Records"].ToString()));
+            this.LOV = pRequest.Headers["LOV"].ToString();
             this.Data = JObject.Parse(JsonConvert.SerializeObject(_dr));
 
             return this;
@@ -257,11 +259,11 @@ namespace HINOSystem.Libs
             if (System.IO.File.Exists(_version))
             {
                 DateTime _lastModified = System.IO.File.GetLastWriteTime(_version);
-                _version = _lastModified.ToString("yy.MM.ddmmss");
+                _version = _lastModified.ToString("yy.MM.ddhhmm");
             }
             else
             {
-                _version = DateTime.Now.ToString("yy.MM.ddmmss");
+                _version = DateTime.Now.ToString("yy.MM.ddhhmm");
             }
 
             return _version;

@@ -164,8 +164,8 @@
     }
 
 
-    editCallback = function () {
-        if ($.isFunction(window.onEdit)) onEdit();
+    editCallback = function (row) {
+        if ($.isFunction(window.onEdit)) onEdit(row);
     }
 
 
@@ -203,8 +203,9 @@
                     //console.log($('#' + this.id).val());
                 } else if ($('#' + this.id).attr('type') == 'checkbox') {
                     $('#' + this.id).prop('checked', false);
-                    if (row[this.id] == 1 || row[this.id] == true || row[this.id] == 'true') $("#" + this.id).prop('checked', true);
-
+                    if (row != null)
+                        if (row[this.id] == 1 || row[this.id] == true || row[this.id] == 'true') $("#" + this.id).prop('checked', true);
+                    //console.log(this.id);
                     //console.log(this.id+'>>>'+row[this.id]);
 
                 } else {
@@ -227,7 +228,6 @@
                 if ($('#' + _FormName + ' #' + this.id)[0].hasAttribute('noedit')) $('#' + _FormName + ' #' + this.id).removeAttr('readonly');
             }
         });
-
 
 
 
@@ -257,7 +257,7 @@
             $('#' + _FormName + ' #_Action').val('PATCH');
         }
 
-        $('#' + _FormName + ' label').attr('readonly', 'readonly');
+        //$('#' + _FormName + ' label').attr('readonly', 'readonly');
 
 
         $('#' + _FormName + ' label').each(function () {
@@ -277,7 +277,7 @@
 
 
 
-        this.editCallback();
+        this.editCallback(row);
 
         xSplash.hide();
     }
@@ -300,6 +300,7 @@
         }
 
         console.log($('#' + _FormName).serialize());
+        //console.log($('#' + _FormName + ' #_Action').val());
 
         xSwal.questionPack(
             i18nLayout.modal.button.swal_save,

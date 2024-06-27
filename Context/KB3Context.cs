@@ -8,14 +8,23 @@ using KANBAN.Models.KB3.Receive_Process;
 using KANBAN.Models.KB3.ReportOrder;
 using KANBAN.Models;
 using KANBAN.Models.KB3.UrgentOrder;
+using NPOI.SS.Formula.Functions;
+using System.Configuration;
+using KANBAN.Libs;
+using KANBAN.Models.KB3.VLT;
 
 namespace HINOSystem.Context
 {
     public class KB3Context : DbContext
     {
-        public KB3Context(DbContextOptions<KB3Context> options)
+
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public KB3Context(DbContextOptions<KB3Context> options, IHttpContextAccessor httpContextAccessor)
             : base(options)
-        { }
+        {
+            _httpContextAccessor = httpContextAccessor;
+        }
 
         public DbSet<TB_MS_CodeOrder> TB_MS_CodeOrder { get; set; }
         public DbSet<TB_MS_Company> TB_MS_Company { get; set; }
@@ -88,6 +97,7 @@ namespace HINOSystem.Context
         public DbSet<TB_Import_Urgent> TB_Import_Urgent { get; set; }
 
         public DbSet<TB_Transaction_TMP> TB_Transaction_TMP { get; set; }
+        public DbSet<TB_Import_VLT> TB_Import_VLT { get; set; }
 
         //protected override void OnModelCreating(ModelBuilder modelBuilder)
         //{

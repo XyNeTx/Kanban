@@ -3,6 +3,9 @@ $(document).ready(function () {
 
     $('.input-group.LOV .input-group-text').on('click', function (e) {
         if ($(this).attr('disabled') != 'disabled') {
+
+            if (typeof lovClick === "function") lovClick($(this).prev()[0].id);
+
             _onLOVLoad(this);
         }
     });
@@ -27,8 +30,6 @@ $(document).ready(function () {
     _onLOVLoad = function (pObject = null) {
         xSplash.show();
         xSplash.text('Loading data');
-
-
 
         //_object = $('.input-group.LOV .input-group-text .fas.fa-list').attr('controller').split('.');
         //_value = $('.input-group.LOV .input-group-text .fas.fa-list').attr('value').split(',');
@@ -62,8 +63,9 @@ $(document).ready(function () {
                 type: "POST",
                 headers: ajexHeader,
                 url: '../' + _controller + '/' + _method,
+                data: { text: "" },
                 success: function (result) {
-                    //console.log(result);
+                    console.log(result);
                     //xSplash.hide();
                     if (result.response == "OK") {
 
@@ -93,7 +95,10 @@ $(document).ready(function () {
 
                             $('#ModalLOV').modal('toggle');
 
-                        }
+                        } 
+                    } else {
+                        MsgBox(result.message, MsgBoxStyle.Exclamation, "Exclamation");
+                        console.log('xXx');
                     }
                     xSplash.hide();
 
@@ -125,9 +130,11 @@ $(document).ready(function () {
     }
 
     _onLOVBlur = function (pThis = null) {
-        var _LOV = $($($($(pThis).parent())[0].innerHTML)[4].innerHTML).first();
+        var _LOV = $($($($(pThis).parent())[0].innerHTML)[3].innerHTML).first();
         var _item = $($($(pThis).parent())[0].innerHTML);
 
+
+        if (_LOV == undefined) _LOV = $($($($(pThis).parent())[0].innerHTML)[4].innerHTML).first();
 
 
         var _object = _LOV.attr('controller').split('.');
@@ -144,6 +151,7 @@ $(document).ready(function () {
 
         var _controller = _object[0];
         var _method = _object[1];
+
 
         $.ajax(
             {

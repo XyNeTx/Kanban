@@ -1,6 +1,6 @@
 ﻿$(document).ready(function () {
 
-    const xKBNMS013 = new MasterTemplate({
+    const KBNMS013 = new MasterTemplate({
         Controller: _PAGE_,
         Table: 'tblMaster',
         ColumnTitle: {
@@ -27,32 +27,32 @@
         ],
     });
 
-    xKBNMS013.prepare();
+    KBNMS013.prepare();
 
-    xKBNMS013.initial(function (result) {
+    KBNMS013.initial(function (result) {
         //xDropDownList.bind('frmCondition #F_Plant', result.data.TB_Factory, 'F_Plant', 'F_Plant_Name');
         xDropDownList.bind('frmCondition #F_Supplier', result.data.TB_Supplier, 'F_Supplier_Code', 'F_Supplier_Code');
 
         //xDropDownList.bind('frmMaster #F_Plant', result.data.TB_Factory, 'F_Plant', 'F_Plant_Name');
 
-        xKBNMS013.search();
+        KBNMS013.search();
     });
 
     onSave = function () {
-        xKBNMS013.save(function () {
-            xKBNMS013.search();
+        KBNMS013.save(function () {
+            KBNMS013.search();
         });
     }
 
     onDelete = function () {
-        xKBNMS013.delete(function () {
-            xKBNMS013.search();
+        KBNMS013.delete(function () {
+            KBNMS013.search();
         });
     }
 
     onDeleteAll = function () {
-        xKBNMS013.deleteall(function () {
-            xKBNMS013.search();
+        KBNMS013.deleteall(function () {
+            KBNMS013.search();
         });
     }
 
@@ -60,10 +60,25 @@
 
     onExecute = function () { }
 
+
+    lovClick = function (ElementID) {
+        var _SQL = '';
+
+        if (ElementID == 'F_Kanban_No' && $('#F_Supplier_Code').val() != '') _SQL = "AND F_supplier_cd+'-'+F_plant = '" + $('#F_Supplier_Code').val() + "' ";
+        //if (ElementID == 'F_Store_Code' && $('#F_Supplier_Code').val() != '') _SQL = "AND F_supplier_cd+'-'+F_plant = '" + $('#F_Supplier_Code').val() + "' ";
+        if (ElementID == 'F_Part_No') {
+            if ($('#F_Supplier_Code').val() != '') _SQL = "AND F_supplier_cd+'-'+F_plant = '" + $('#F_Supplier_Code').val() + "' ";
+            if ($('#F_Kanban_No').val() != '') _SQL = "AND F_Sebango = '" + $('#F_Kanban_No').val() + "' ";
+            if ($('#F_Store_Code').val() != '') _SQL = "AND F_Store_cd = '" + $('#F_Store_Code').val() + "' ";
+        }
+
+        ajexHeader.LOV = _SQL;
+    }
+
     //xAjax.onChange('frmCondition #F_Supplier', function () {
     //    $('#frmMaster #F_Plant').val($('#frmCondition #F_Plant').val());
 
-    //    xKBNMS013.search();
+    //    KBNMS013.search();
     //});
 
 

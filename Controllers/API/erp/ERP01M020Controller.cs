@@ -239,6 +239,7 @@ namespace HINOSystem.Controllers.API.erp
                     _erpMenuParentAdd.Parent_ID = int.Parse(Request.Form["Parent_ID"].ToString());
                     _erpMenuParentAdd.Controller = Request.Form["Controller"].ToString();
                     _erpMenuParentAdd.Action = Request.Form["Action"].ToString();
+                    _erpMenuParentAdd.Seq = int.Parse(Request.Form["Seq"].ToString());
                     _erpMenuParentAdd.Remark = Request.Form["Parent_ID"].ToString();
                     _erpMenuParentAdd.CreateAt = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss"));
                     _erpMenuParentAdd.CreateBy = _BearerClass.UserCode.ToString();
@@ -254,6 +255,7 @@ namespace HINOSystem.Controllers.API.erp
                     _erpMenuParent.Parent_ID = (Request.Form["Parent_ID"].ToString()!="" ? int.Parse(Request.Form["Parent_ID"].ToString()) : 0);
                     _erpMenuParent.Controller = Request.Form["Controller"].ToString();
                     _erpMenuParent.Action = Request.Form["Action"].ToString();
+                    _erpMenuParent.Seq = int.Parse(Request.Form["Seq"].ToString());
                     _erpMenuParent.Remark = Request.Form["Remark"].ToString();
                     _erpMenuParent.UpdateAt = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss"));
                     _erpMenuParent.UpdateBy = _BearerClass.UserCode.ToString();
