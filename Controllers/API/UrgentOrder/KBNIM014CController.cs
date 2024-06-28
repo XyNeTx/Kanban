@@ -89,6 +89,15 @@ namespace HINOSystem.Controllers.API.Master
         public async Task<IActionResult> search(string? F_PDS_NO = null,bool chkDeliveryDate = false, string? F_DeliveryFrom = null , string? F_DeliveryTo = null)
         {
             string _SQL = "";
+            _BearerClass.Authentication(Request);
+
+            if (_BearerClass.Status == 401) return Unauthorized(new
+            {
+                status = "401",
+                response = "Unauthorized",
+                title = "Unauthorized",
+                message = "Please Login First"
+            });
             try
             {
                 string UserID = HttpContext.Session.GetString("USER_CODE");

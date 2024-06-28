@@ -12,6 +12,7 @@ using NPOI.SS.Formula.Functions;
 using System.Configuration;
 using KANBAN.Libs;
 using KANBAN.Models.KB3.VLT;
+using KANBAN.Models.KB3.OrderingProcess;
 
 namespace HINOSystem.Context
 {
@@ -98,7 +99,7 @@ namespace HINOSystem.Context
 
         public DbSet<TB_Transaction_TMP> TB_Transaction_TMP { get; set; }
         public DbSet<TB_Import_VLT> TB_Import_VLT { get; set; }
-
+        public DbSet<TB_Import_UpdMRP_FG> TB_Import_UpdMRP_FG { get; set; }
         //protected override void OnModelCreating(ModelBuilder modelBuilder)
         //{
         //    modelBuilder.Entity<PO>().ToTable("PO", schema: "iss");
