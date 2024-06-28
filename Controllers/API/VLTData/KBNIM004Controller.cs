@@ -2,7 +2,7 @@
 using HINOSystem.Libs;
 using KANBAN.Models.KB3.VLT;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
+using Microsoft.EntityFrameworkCore;
 //using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HINOSystem.Controllers.API.Master
@@ -56,10 +56,12 @@ namespace HINOSystem.Controllers.API.Master
                     message = "Please Login First"
                 });
                 _KB3Transaction.CreateSavepoint("BeforeImport");
-                string Plant = HttpContext.Session.GetString("USER_PLANT");
-                string UserID = HttpContext.Session.GetString("USER_CODE");
+                string Plant = HttpContext.Session.GetString("USER_PLANT")!;
+                string UserID = HttpContext.Session.GetString("USER_CODE")!;
 
-                foreach(var obj in listObj)
+                await _KB3Context.Database.ExecuteSqlRawAsync("DELETE FROM TB_Import_VLT WHERE F_Update_By = {0}",UserID!);
+
+                foreach (var obj in listObj)
                 {
                     obj.F_PDS_No = obj.F_VHD_Order_No;
                     obj.F_Update_By = UserID;
