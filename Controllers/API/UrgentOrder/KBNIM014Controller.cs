@@ -50,6 +50,15 @@ namespace HINOSystem.Controllers.API.Master
         [HttpPost]
         public async Task<IActionResult> ImportSave(TB_Import_EKanban_Pack obj)
         {
+            _BearerClass.Authentication(Request);
+
+            if (_BearerClass.Status == 401) return Unauthorized(new
+            {
+                status = "401",
+                response = "Unauthorized",
+                title = "Unauthorized",
+                message = "Please Login First"
+            });
             using var _KB3Transaction = _KB3Context.Database.BeginTransaction();
             try
             {
@@ -108,6 +117,15 @@ namespace HINOSystem.Controllers.API.Master
         [HttpGet]
         public async Task<IActionResult> AfterImported()
         {
+            _BearerClass.Authentication(Request);
+
+            if (_BearerClass.Status == 401) return Unauthorized(new
+            {
+                status = "401",
+                response = "Unauthorized",
+                title = "Unauthorized",
+                message = "Please Login First"
+            });
             using var _KB3Transaction = _KB3Context.Database.BeginTransaction();
             try
             {

@@ -4,6 +4,7 @@ using KANBAN.Context;
 using KANBAN.Models.KB3.UrgentOrder;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System.Data;
 
 namespace KANBAN.Controllers.API.UrgentOrder
@@ -87,6 +88,15 @@ namespace KANBAN.Controllers.API.UrgentOrder
         {
             try
             {
+                _BearerClass.Authentication(Request);
+
+                if (_BearerClass.Status == 401) return Unauthorized(new
+                {
+                    status = "401",
+                    response = "Unauthorized",
+                    title = "Unauthorized",
+                    message = "Please Login First"
+                });
                 setConString();
                 string USERID = HttpContext.Session.GetString("USER_CODE");
                 _KB3Context.Database.ExecuteSqlRawAsync($"DELETE FROM TB_IMPORT_SERVICE WHERE F_UPDATE_BY = '{USERID}'");

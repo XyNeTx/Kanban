@@ -76,7 +76,7 @@ namespace KANBAN.Models.KB3.VLT
         public string? F_VHD_Order_No { get; set; }
 
         [StringLength(25)]
-        public string F_Update_By { get; set; }
+        public string? F_Update_By { get; set; }
 
         public DateTime? F_Update_Date { get; set; }
     }

@@ -34,10 +34,22 @@ class xLib {
             type: "GET",
             url: url,
             data: data,
+            headers: ajexHeader,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: success,
-            error: error
+            error: async function (xhr, status, error) {
+                if (xhr.status == 401) {
+                    var confirm = await xSwal.error("Error", "Session expired. Please login again.");
+
+                    if (confirm.isConfirmed) {
+                        window.location.reload();
+                    }
+                }
+                else if (error) {
+                    error
+                }
+            }
         });
     }
 
@@ -49,10 +61,23 @@ class xLib {
             type: "POST",
             url: url,
             data: data,
+            headers: ajexHeader,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: success,
-            error: error
+            error: async function (xhr, status, err) {
+                if (xhr.status == 401) {
+                    await xSwal.error("Error", "Session expired. Please login again.", function () {
+                        if (window.location.hostname.includes("tpcap")) {
+                            return window.open("/kanban/Login", "_self");
+                        }
+                        return window.open("/Login", "_self");
+                    });
+                }
+                else {
+                    error(xhr, status, err)
+                }
+            }
         });
     }
 

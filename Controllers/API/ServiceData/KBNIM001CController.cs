@@ -1,47 +1,11 @@
-﻿using Microsoft.AspNetCore.Http.Extensions;
-using Microsoft.AspNetCore.Mvc;
-using System.Data;
-using System;
-using System.Web;
-using System.Security.Principal;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-
-using System.Reflection.PortableExecutable;
-using System.DirectoryServices;
-using System.DirectoryServices.AccountManagement;
-using Microsoft.Net.Http.Headers;
-using System.Collections.Specialized;
-using System.Net;
-using System.DirectoryServices.ActiveDirectory;
-using System.Net.Http;
-using Microsoft.AspNetCore.Authorization;
-
-using System.Security.Claims;
-using Org.BouncyCastle.Asn1.Ocsp;
-
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-
-using System.Threading.Tasks;
-
+﻿using HINOSystem.Context;
 using HINOSystem.Libs;
-using HINOSystem.Context;
-using HINOSystem.Models.KB3;
-using NPOI.HPSF;
-using Humanizer;
-using NPOI.SS.Formula.Functions;
-using NPOI.SS.Formula.Eval;
-using PdfSharp.Pdf.Filters;
-using MathNet.Numerics.LinearAlgebra.Factorization;
-using Microsoft.CodeAnalysis.Differencing;
-using Microsoft.VisualBasic;
-using static System.Net.Mime.MediaTypeNames;
-using NPOI.POIFS.Properties;
 using KANBAN.Context;
-using Serilog;
 using KANBAN.Models.KB3.UrgentOrder;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using System.Data;
 //using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HINOSystem.Controllers.API.ServiceData
@@ -90,12 +54,23 @@ namespace HINOSystem.Controllers.API.ServiceData
         [HttpPost]
         public async Task<IActionResult> ImportData (List<TB_Import_Service> listObj)
         {
+            _BearerClass.Authentication(Request);
+
+            if (_BearerClass.Status == 401) return Unauthorized(new
+            {
+                status = "401",
+                response = "Unauthorized",
+                title = "Unauthorized",
+                message = "Please Login First"
+            });
+
             using var _KB3Transaction = _KB3Context.Database.BeginTransaction();
+            string UserID = HttpContext.Session.GetString("USER_CODE");
             try
             {
                 _KB3Transaction.CreateSavepoint("BeforeImport");
+                await _KB3Context.Database.ExecuteSqlRawAsync($"DELETE FROM TB_Import_Service WHERE F_Update_By = '{UserID}'");
 
-                string UserID = HttpContext.Session.GetString("USER_CODE");
                 foreach (var each in listObj)
                 {
                     if (each.F_Part_No.Count() == 10)
@@ -126,6 +101,45 @@ namespace HINOSystem.Controllers.API.ServiceData
             catch (Exception ex)
             {
                 _KB3Transaction.RollbackToSavepoint("BeforeImport");
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    response = "Internal Server Error",
+                    message = "Unexpected Error",
+                    error = ex.Message
+                });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> AfterImported(string advDate)
+        {
+            _BearerClass.Authentication(Request);
+
+            if (_BearerClass.Status == 401) return Unauthorized(new
+            {
+                status = "401",
+                response = "Unauthorized",
+                title = "Unauthorized",
+                message = "Please Login First"
+            });
+
+            using var _KB3Transaction = _KB3Context.Database.BeginTransaction();
+            string UserID = HttpContext.Session.GetString("USER_CODE");
+            string Plant = HttpContext.Session.GetString("USER_PLANT");
+
+            try
+            {
+                await _KB3Context.Database.ExecuteSqlRawAsync($"Exec dbo.SP_IM001_IMPORT_SRV '{Plant}','{UserID}' ,'{advDate}' ");
+                return Ok(new
+                {
+                    status = "200",
+                    response = "OK",
+                    message = "Data has been imported successfully",
+                });
+            }
+            catch (Exception ex)
+            {
                 return StatusCode(500, new
                 {
                     status = "500",
