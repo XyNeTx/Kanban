@@ -188,7 +188,9 @@ $("#selectSupplier").change(function () {
     _xLib.AJAX_Get('/api/KBNIM007N/GetSupplierDetail', { F_Supplier_Cd: $("#selectSupplier").val() },
         function (success) {
             if (success.status === "200") {
-                _xLib.TrimJSON(success)
+                _xLib.TrimJSON(success.data)
+                _xLib.TrimJSON(success.data2)
+                _xLib.TrimArrayJSON(success.data3)
                 //console.log(success.data);
                 $("#txtSupplierShortName").val(success.data.f_short_name);
                 $("#txtSupplierName").val(success.data.f_name);
@@ -379,25 +381,27 @@ $("#buttonOK").click(async function () {
         }
     }
     else if (_command === "Delete") {
-        $("#buttonOK").prop("disabled", true);
-        var rows = $("input[name='inputChkBox']:checked").closest("tr");
-        if (rows.length === 0) return xSwal.error("Error !!", "No data selected.");
-        let _Obj = $("#table").DataTable().row(rows[0]).data();
-        _xLib.AJAX_Post('/api/KBNIM007N/Delete', JSON.stringify(_Obj),
-            function (success) {
-                if (success.status === "200") {
-                    console.log("Success: ", success);
-                    if ($("input[name='inputChkBox']:checked").length > 0) {
-                        $("#table").DataTable().clear().draw();
-                        $("#buttonInq").trigger("click");
-                        return xSwal.success("Success !!", "Data was deleted.");
+        xSwal.question("Confirm !!", "Are you sure to delete data?", function () {
+            $("#buttonOK").prop("disabled", true);
+            var rows = $("input[name='inputChkBox']:checked").closest("tr");
+            if (rows.length === 0) return xSwal.error("Error !!", "No data selected.");
+            let _Obj = $("#table").DataTable().row(rows[0]).data();
+            _xLib.AJAX_Post('/api/KBNIM007N/Delete', JSON.stringify(_Obj),
+                function (success) {
+                    if (success.status === "200") {
+                        console.log("Success: ", success);
+                        if ($("input[name='inputChkBox']:checked").length > 0) {
+                            $("#table").DataTable().clear().draw();
+                            $("#buttonInq").trigger("click");
+                            return xSwal.success("Success !!", "Data was deleted.");
+                        }
                     }
+                },
+                function (error) {
+                    return xSwal.error("Error !!", error.responseJSON.message);
                 }
-            },
-            function (error) {
-                return xSwal.error("Error !!", error.responseJSON.message);
-            }
-        );
+            );
+        });
     }
     else {
         return xSwal.error("Error !!", "Please select command.");
