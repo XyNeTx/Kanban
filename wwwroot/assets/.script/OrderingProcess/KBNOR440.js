@@ -5,23 +5,18 @@
         Controller: _PAGE_,
         Table: 'tblMaster',
         ColumnTitle: {
-            "EN": ['Customer PO', 'Part No', 'Supplier', 'Short Name', 'Store Code', 'Kanban No.', 'Delivery Date', 'Delivery Trip', 'Qty', 'Qty KB', 'Import Type'],
-            "TH": ['Customer PO', 'Part No', 'Supplier', 'Short Name', 'Store Code', 'Kanban No.', 'Delivery Date', 'Delivery Trip', 'Qty', 'Qty KB', 'Import Type'],
-            "JP": ['Customer PO', 'Part No', 'Supplier', 'Short Name', 'Store Code', 'Kanban No.', 'Delivery Date', 'Delivery Trip', 'Qty', 'Qty KB', 'Import Type'],
+            "EN": ['Type Import', 'Supplier Code', 'Short Name', 'Delivery Date', 'Delivery Trip', 'Order No'],
+            "TH": ['Type Import', 'Supplier Code', 'Short Name', 'Delivery Date', 'Delivery Trip', 'Order No'],
+            "JP": ['Type Import', 'Supplier Code', 'Short Name', 'Delivery Date', 'Delivery Trip', 'Order No'],
         },
 
         ColumnValue: [
-            { "data": "F_PDS_No" },
-            { "data": "F_Part_No" },
-            { "data": "F_Supplier_CD" },
+            { "data": "F_Type_Import" },
+            { "data": "F_Supplier" },
             { "data": "F_Short_name" },
-            { "data": "F_Store_CD" },
-            { "data": "F_Kanban_No" },
             { "data": "F_Delivery_Date" },
-            { "data": "F_Round" },
-            { "data": "F_Qty" },
-            { "data": "F_QTY_KB" },
-            { "data": "F_OrderType" }
+            { "data": "F_Delivery_Trip" },
+            { "data": "F_OrderNo" }
         ],
         Modal: 'modalMaster',
         Form: 'frmMaster',
@@ -70,7 +65,7 @@
                     "@UserCode": ajexHeader.UserCode
                 },
             });
-            xItem.progress({ id: 'prgProcess', current: 10, label: 'Delete TB_PDS_DETAIL : {{##.##}} %' });
+            xItem.progress({ id: 'prgProcess', current: 25, label: 'Delete TB_PDS_DETAIL : {{##.##}} %' });
             MsgBox("Process GEN PDS Data for Urgent Order Completed.", MsgBoxStyle.Information, "Process Complete");
             //if (_dtChk.rows != null) {
             //    for (var i = 0; i < _dtChk.rows.length; i++) {
@@ -131,12 +126,12 @@
             //                    + String(_dtChkPOM.rows[i].F_OrderNo + 1).padStart(2, '0');
             //            }
 
-            //        } else {    //'of i <> 0 
+            //        } else {    //'of i <> 0
             //            pdsno = facflag + _dtChk.rows[i].F_Delivery_Date.substring(2, 6)
             //                + String(_dtChk.rows[i].F_Delivery_Trip).padStart(2, '0')
             //                + String(Number(pdsno.substring(pdsno.length - 3)) + 1).padStart(3, '0');
             //        }
-                    
+
             //        barcode = CheckSum(pdsno) //'sPDS_No
             //        xItem.progress({ id: 'prgProcess', current: 35, label: 'Update TB_Delivery.F_HMMT_PDS : {{##.##}} %' });
             //        await xAjax.Execute({
@@ -196,10 +191,10 @@
             //        ////'2.  ตัวนี้คือกรณีที่ Collect Time = "00:00" แปลว่าเป็นรถที่ขนส่งโดย Milk Run ไม่จำเป็นต้องคำนวณเวลา เลยให้ Collect Date = Delivery Date ส่วน Collect Time ก้อ 00:00 เหมือนเดิม
             //        ////''Update in case Date of case Supplier Arrival = 00: 00(Milk Run)
 
-            //        ////'3.  ตัวนี้คือกรณีที่ Collect Time >= "07:30" แปลว่าเป็น Part ที่มีการขนส่งปรกติ นั่นคือ ออกจาก Supplier ตอนกะเช้า บ่าย ๆ เข้าโรงงาน เลยให้ Collect Date = Delivery Date 
+            //        ////'3.  ตัวนี้คือกรณีที่ Collect Time >= "07:30" แปลว่าเป็น Part ที่มีการขนส่งปรกติ นั่นคือ ออกจาก Supplier ตอนกะเช้า บ่าย ๆ เข้าโรงงาน เลยให้ Collect Date = Delivery Date
             //        ////''Update in case Date of Arrival = Delivery Date
 
-            //        ////'4.  ตัวนี้คือกรณีเก็บตก กรณีที่เข้ากะกลางคืน แปลว่าออกจาก Supplier ตี 2 ถึงเรา ตี 3 เครสนี้ ยังถือว่าเป็นวันทำงานวันเดียวกัน เลยให้  Collect Date = Delivery Date 
+            //        ////'4.  ตัวนี้คือกรณีเก็บตก กรณีที่เข้ากะกลางคืน แปลว่าออกจาก Supplier ตี 2 ถึงเรา ตี 3 เครสนี้ ยังถือว่าเป็นวันทำงานวันเดียวกัน เลยให้  Collect Date = Delivery Date
             //        xItem.progress({ id: 'prgProcess', current: 45, label: 'Update Dock Code : {{##.##}} %' });
             //        await xAjax.Execute({
             //            data: {
@@ -213,7 +208,7 @@
 
 
             //        //'5.  ตัวนี้คือกรณีที่ออกจาก Supplier กลางคืนถึงเราเช้าหลัง 07:30 สรุปว่าจะถอยวัน
-            //        //'' ตัวเรียกนะ 
+            //        //'' ตัวเรียกนะ
             //        xItem.progress({ id: 'prgProcess', current: 50, label: 'UPDATE TB_PDS_HEADER : {{##.##}} %' });
             //        var _dtChkGet = await xAjax.ExecuteJSON({
             //            data: {
@@ -360,6 +355,21 @@
             //        "@pUserCode": ajexHeader.UserCode
             //    },
             //});
+
+            //Addition for Show Detail after generate PDS already.
+            var _dt = await xAjax.xExecuteJSON({
+                data: {
+                    "Module": " [exec].[spKBNOR440_ShowResult]",
+                    "OrderType": "U",
+                    "Plant": ajexHeader.Plant,
+                    "UserCode": ajexHeader.UserCode
+                },
+            });
+
+            console.log(_dt);
+
+            if (_dt.rows != null) xDataTable.bind('#tblMaster', _dt.rows);
+            if (_dt.rows == null) MsgBox("ไม่พบข้อมูล PDS Urgent Order", MsgBoxStyle.Information, "PDS Urgent Data");
 
             xItem.progress({ id: 'prgProcess', current: 100, label: 'Generate PDS Completed : {{##.##}} %' });
             xSwal.success('Success', 'Generate PDS Completed');

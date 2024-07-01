@@ -76,9 +76,12 @@
             },
         });
 
-        _xSwal.success('Success','Redirecting to View Report');
-        console.log('spKBNOR450_RPT_PDS');
+        var  dateFrom = $('#itmDeliveryFrom').val().replaceAll("-", "");
+        var  dateTo = $('#itmDeliveryTo').val().replaceAll("-", "");
 
+        xSwal.success('Success','Redirecting to View Report');
+        console.log('spKBNOR450_RPT_PDS');
+        window.open(`http://hmmta-tpcap/E-Report/Report.aspx?Register=PDS&PDSNoFrom=${$('#itmPDSFrom').val()}&PDSNoTo=${$('#itmPDSTo').val()}&DateFrom=${dateFrom}&DateTo=${dateTo}`)
 
     });
 

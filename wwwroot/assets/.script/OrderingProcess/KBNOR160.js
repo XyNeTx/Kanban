@@ -64,7 +64,7 @@
                     },
                 });
                 xItem.progress({ id: 'prgProcess', current: 10, label: 'Delete TB_Delivery Normal Data : {{##.##}} %' });
-
+                 
                 let _remark = '';
 
                 var _dtChk = await xAjax.ExecuteJSON({
