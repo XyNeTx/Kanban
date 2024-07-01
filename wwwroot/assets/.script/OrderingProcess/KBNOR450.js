@@ -56,11 +56,6 @@
         if ($('#chkPDSNo').val() == 1 && ($('#itmPDSFrom').val() == '' || $('#itmPDSTo').val() == ''))
             MsgBox("Please input PDS From, To before print PDS...", MsgBoxStyle.Exclamation, "Exclamation");
 
-        if ($('#chkSupplierCode').val() == 1 && ($('#itmSupplierFrom').val() != '' || $('#itmSupplierTo').val() != ''))
-            MsgBox("Please input Supplier From, To before print PDS...", MsgBoxStyle.Exclamation, "Exclamation");
-
-
-
         await xAjax.Execute({
             data: {
                 "Module": "[exec].[spKBNOR450_RPT_PDS]",
@@ -69,15 +64,13 @@
                 "@UserCode": ajexHeader.UserCode,
                 "@itmPDSFrom": $('#itmPDSFrom').val(),
                 "@itmPDSTo": $('#itmPDSTo').val(),
-                "@itmSupplierFrom": $('#itmSupplierFrom').val(),
-                "@itmSupplierTo": $('#itmSupplierTo').val(),
                 "@itmDeliveryFrom": $('#itmDeliveryFrom').val(),
                 "@itmDeliveryTo": $('#itmDeliveryTo').val()
             },
         });
 
-        var  dateFrom = $('#itmDeliveryFrom').val().replaceAll("-", "");
-        var  dateTo = $('#itmDeliveryTo').val().replaceAll("-", "");
+        xSwal.success('Success','Redirecting to View Report');
+        console.log('spKBNOR450_RPT_PDS');
 
         xSwal.success('Success','Redirecting to View Report');
         console.log('spKBNOR450_RPT_PDS');
@@ -91,28 +84,34 @@
         if ($('#chkPDSNo').val() == 1 && ($('#itmPDSFrom').val() == '' || $('#itmPDSTo').val() == ''))
             MsgBox("Please input PDS From, To before print PDS...", MsgBoxStyle.Exclamation, "Exclamation");
 
-        if ($('#chkSupplierCode').val() == 1 && ($('#itmSupplierFrom').val() != '' || $('#itmSupplierTo').val() != ''))
-            MsgBox("Please input Supplier From, To before print PDS...", MsgBoxStyle.Exclamation, "Exclamation");
+        var PDSFrom = $('#itmPDSFrom').val() ?? '';
+        var PDSTo = $('#itmPDSTo').val() ?? '';
+        var DeliveryFrom = $('#itmDeliveryFrom').val().replaceAll("-", "") ?? '';
+        var DeliveryTo = $('#itmDeliveryTo').val().replaceAll("-", "") ?? '';
 
-
-
-        await xAjax.Execute({
+        var result = await xAjax.Execute({
             data: {
                 "Module": "[exec].[spKBNOR450_RPT_KANBAN]",
                 "@OrderType": "U",
                 "@Plant": ajexHeader.Plant,
                 "@UserCode": ajexHeader.UserCode,
-                "@itmPDSFrom": $('#itmPDSFrom').val(),
-                "@itmPDSTo": $('#itmPDSTo').val(),
-                "@itmSupplierFrom": $('#itmSupplierFrom').val(),
-                "@itmSupplierTo": $('#itmSupplierTo').val(),
-                "@itmDeliveryFrom": $('#itmDeliveryFrom').val().replaceAll("-",""),
-                "@itmDeliveryTo": $('#itmDeliveryTo').val().replaceAll("-", "")
+                "@itmPDSFrom": PDSFrom,
+                "@itmPDSTo": PDSTo,
+                "@itmDeliveryFrom": DeliveryFrom,
+                "@itmDeliveryTo": DeliveryTo
             },
         });
 
-        xSwal.success('Success', 'Redirecting to View Report');
-        console.log('spKBNOR450_RPT_KANBAN');
+        if (result.status == 200) {
+
+            xSwal.success('Success', 'Redirecting to View Report');
+
+            return _xLib.OpenReport("/KBNOR700KANBAN", `pUserCode=${ajexHeader.UserCode}` +
+            `&OrderNo=${PDSFrom}&OrderNoTo=${PDSTo}&DeliveryDate=${DeliveryFrom}&DeliveryDateTo=${DeliveryTo}`);
+
+            console.log('spKBNOR450_RPT_KANBAN');
+        }
+        return xSwal.error('Error', 'Error while generating report');
     });
 
 

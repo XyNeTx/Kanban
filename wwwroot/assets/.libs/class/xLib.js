@@ -7,7 +7,7 @@ class xLib {
                     jsonResult[each][eachObj] = '';
                 }
                 else {
-                    jsonResult[each][eachObj] = jsonResult[each][eachObj].trim();
+                    if(typeof jsonResult[each][eachObj] == 'string') jsonResult[each][eachObj] = jsonResult[each][eachObj].trim();
                 }
             }
         }
@@ -20,13 +20,13 @@ class xLib {
                 jsonResult.data[each] = '';
             }
             else {
-                jsonResult.data[each] = jsonResult.data[each].trim();
+                if (typeof jsonResult[each][eachObj] == 'string') jsonResult[each][eachObj] = jsonResult[each][eachObj].trim();
             }
         }
         return jsonResult;
     }
 
-    AJAX_Get(url, data, success, error) {
+    AJAX_Get(url, data, successFn, errorFn) {
         if (window.location.hostname.includes("tpcap")) {
             url = "/kanban" + url;
         }
@@ -34,14 +34,27 @@ class xLib {
             type: "GET",
             url: url,
             data: data,
+            headers: ajexHeader,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
-            success: success,
-            error: error
+            success: successFn,
+            error: async function (xhr, status, error) {
+                if (xhr.status == 401) {
+                    await xSwal.error("Error", "Session expired. Please login again.", function () {
+                        if (window.location.hostname.includes("tpcap")) {
+                            return window.open("/kanban/Login", "_self");
+                        }
+                        return window.open("/Login", "_self");
+                    });
+                }
+                else {
+                    errorFn(xhr, status, error)
+                }
+            }
         });
     }
 
-    AJAX_Post(url, data, success, error) {
+    AJAX_Post(url, data, successFn, errorFn) {
         if (window.location.hostname.includes("tpcap")) {
             url = "/kanban" + url;
         }
@@ -49,10 +62,23 @@ class xLib {
             type: "POST",
             url: url,
             data: data,
+            headers: ajexHeader,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
-            success: success,
-            error: error
+            success: successFn,
+            error: async function (xhr, status, error) {
+                if (xhr.status == 401) {
+                    await xSwal.error("Error", "Session expired. Please login again.", function () {
+                        if (window.location.hostname.includes("tpcap")) {
+                            return window.open("/kanban/Login", "_self");
+                        }
+                        return window.open("/Login", "_self");
+                    });
+                }
+                else {
+                    errorFn(xhr, status, error)
+                }
+            }
         });
     }
 

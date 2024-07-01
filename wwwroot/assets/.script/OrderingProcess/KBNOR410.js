@@ -224,7 +224,11 @@
 
 
 
-
+    $("#btnReport").click(function () {
+        var UserName = $(".pcoded-navigatio-lavel").text();
+        console.log(UserName);
+        _xLib.OpenReport('/KBNOR410', `UserCode=${ajexHeader.UserCode}&Plant=${ajexHeader.Plant}&UserName=${UserName}`);
+    });
 
 
 })

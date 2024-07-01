@@ -59,13 +59,13 @@ $("#btnImport").on("click", async function () {
             const read = await XLSX.read(arrayBuffer);
             let newRead = read;
 
-            for (var key in newRead.Sheets[newRead.SheetNames[0]])
+            for (var key in await newRead.Sheets[newRead.SheetNames[0]])
             {
                 newRead.Sheets[newRead.SheetNames[0]][key].v = newRead.Sheets[newRead.SheetNames[0]][key].w;
             }
 
 
-            const data = XLSX.utils.sheet_to_json(newRead.Sheets[read.SheetNames[0]]);
+            const data = await XLSX.utils.sheet_to_json(newRead.Sheets[read.SheetNames[0]]);
 
             var filterData = data.filter(f => !Object.values(f).includes("<EOF>"));
             if (filterData.some(f => Object.keys("PO_Item_No"))) {
@@ -80,19 +80,37 @@ $("#btnImport").on("click", async function () {
 
             console.log(filterData);
 
-            _xLib.AJAX_Post("/api/KBNIM001C/ImportData", JSON.stringify(filterData),
-                function (success) {
+            await _xLib.AJAX_Post("/api/KBNIM001C/ImportData", JSON.stringify(filterData),
+                async function (success) {
                     //console.log(success);
-                    return $("#tblCOMPLETE").DataTable().row.add({ F_File_Name: file.name }).draw();
+                    await $("#tblCOMPLETE").DataTable().row.add({ F_File_Name: file.name }).draw();
                 },
-                function (error) {
+                async function (error) {
                     //console.log(error);
-                    return $("#tblERROR").DataTable().row.add({ F_File_Name: file.name }).draw();
+                    await $("#tblERROR").DataTable().row.add({ F_File_Name: file.name }).draw();
                 }
             );
+
+            if (i == files.length - 1) {
+                return await AfterImported();
+            }
+            
         }
         catch (_error) {
-            return xSwal.error("Import File Error", _error);
+            xSwal.error("Import File Error", _error);
+            console.log("Error : ", _error);
         }
     }
 });
+
+async function AfterImported() {
+    var AdvanceDate = $("#AdvanceDate").val();
+    _xLib.AJAX_Get("/api/KBNIM001C/AfterImported", { advDate: AdvanceDate },
+        function (success) {
+            return xSwal.success("Success", success.message);
+        },
+        function (error) {
+            xSwal.error("Error", error.responseJSON.message);
+        }
+    );
+}

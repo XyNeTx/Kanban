@@ -83,18 +83,45 @@ $("#btnImport").on("click", async function () {
             }
 
             for (var key in newRead.Sheets.Sheet1) {
-                if (key.includes("D") || key.includes("H")) {
+                if (key.includes("D") || key.includes("H") || key.includes("A") || key.includes("K")) {
                     newRead.Sheets.Sheet1[key].t = "s";
                     newRead.Sheets.Sheet1[key].v = newRead.Sheets.Sheet1[key].w;
                 }
             }
             //console.log(newRead);
             const data = XLSX.utils.sheet_to_json(newRead.Sheets[newRead.SheetNames[0]]);
-            console.log(data);
-            if (data.length != (maxRow-1)) {
+            //console.log(data);
+
+            if (data.length != (maxRow - 1)) {
                 return xSwal.error("Error", "Please check the rows of data in the excel file.");
             }
-        } catch (error) {
+
+            $("#divProgressBar").css("visibility", "visible");
+            let count = 1;
+            setInterval(() => {
+                let step = ((100) / (parseInt(maxRow) - 1));
+                $("#widthProgressBar").css("width", ((step * count) + 10) + "%");
+                //console.log(step * count + "%");
+                count++;
+            }, 55);
+
+            _xLib.AJAX_Post("/api/KBNIM004/ImportData", JSON.stringify(data),
+                async function (success) {
+                    if (success.status === "200") {
+                        await $("#widthProgressBar").css("width", "100%");
+                        setTimeout(() => {
+                            $("#divProgressBar").css("visibility", "hidden");
+                            return xSwal.success("Success", success.message);
+                        }, 1000);
+                    }
+                },
+                async function (error) {
+                    return xSwal.error("Error", error.responseJSON.message);
+                }
+            );
+        }
+
+        catch (error) {
             console.error(error);
         }
     }
