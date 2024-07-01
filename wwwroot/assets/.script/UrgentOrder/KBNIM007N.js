@@ -459,8 +459,9 @@ async function OkClicked(_arrObj) {
                 xSwal.error("Error !!", error.responseJSON.message);
                 return _xLib.OpenReport("KBNIMERR", `&UserID=${error.responseJSON.userid}&Type=${error.responseJSON.type}`);
             }
-            return xSwal.error("Error !!", error.responseJSON.message);
+            xSwal.error("Error !!", error.responseJSON.message);
         }
+        
     )
 
     $("#frmCondition").trigger("reset");
