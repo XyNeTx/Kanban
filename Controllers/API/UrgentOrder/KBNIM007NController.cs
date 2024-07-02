@@ -776,7 +776,7 @@ namespace HINOSystem.Controllers.API.Master
                 string UserID = HttpContext.Session.GetString("USER_CODE");
                 string Plant = HttpContext.Session.GetString("USER_PLANT");
 
-                await _KB3Context.Database.ExecuteSqlRawAsync($"DELETE FROM TB_Import_Error Where F_Type = 'KBNIM007N' AND F_Update_By '${UserID}' ");
+                await _KB3Context.Database.ExecuteSqlRawAsync($"DELETE FROM TB_Import_Error Where F_Type = 'KBNIM007N' AND F_Update_By = '{UserID}' ");
 
                 await _KB3Context.Database.ExecuteSqlRawAsync($"EXEC [exec].[spKBNIM007N] '{Plant}','{UserID}', '{F_PDS_No}' ");
 
