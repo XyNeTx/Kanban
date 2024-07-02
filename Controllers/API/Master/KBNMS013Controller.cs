@@ -1,34 +1,9 @@
-﻿using Microsoft.AspNetCore.Http.Extensions;
-using Microsoft.AspNetCore.Mvc;
-using System.Data;
-using System;
-using System.Web;
-using System.Security.Principal;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-
-using System.Reflection.PortableExecutable;
-using System.DirectoryServices;
-using System.DirectoryServices.AccountManagement;
-using Microsoft.Net.Http.Headers;
-using System.Collections.Specialized;
-using System.Net;
-using System.DirectoryServices.ActiveDirectory;
-using System.Net.Http;
-using Microsoft.AspNetCore.Authorization;
-
-using System.Security.Claims;
-using Org.BouncyCastle.Asn1.Ocsp;
-
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-
-using System.Threading.Tasks;
-
+﻿using HINOSystem.Context;
 using HINOSystem.Libs;
-using HINOSystem.Context;
 using HINOSystem.Models.KB3.Master;
+using KANBAN.Models.KB3.Receive_Process;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace HINOSystem.Controllers.API.Master
 {
@@ -139,17 +114,31 @@ namespace HINOSystem.Controllers.API.Master
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
 
-                TB_MS_OldPart _TB_MS_OldPart = new TB_MS_OldPart();
-                _TB_MS_OldPart.F_Plant = _BearerClass.Plant;
-                _TB_MS_OldPart.F_Parent_Part = Request.Form["F_Parent_Part"].ToString();
-                _TB_MS_OldPart.F_Ruibetsu = Request.Form["F_Ruibetsu"].ToString();
-                _TB_MS_OldPart.F_Part_Name = Request.Form["F_Part_Name"].ToString();
-                _TB_MS_OldPart.F_Store_Cd = Request.Form["F_Store_Cd"].ToString();
-                _TB_MS_OldPart.F_Start_Date = Request.Form["F_Start_Date"].ToString();
-                _TB_MS_OldPart.F_End_Date = Request.Form["F_End_Date"].ToString();
-                _TB_MS_OldPart.F_Update_By = _BearerClass.UserCode.ToString();
-                _TB_MS_OldPart.F_Update_Date = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss"));
-                _KB3Context.TB_MS_OldPart.Add(_TB_MS_OldPart);
+                KANBAN.Models.KB3.Receive_Process.TB_MS_PartOrder _TB_MS_PartOrder = new KANBAN.Models.KB3.Receive_Process.TB_MS_PartOrder
+                {
+                    F_Plant = _BearerClass.Plant[0],
+                    F_Supplier_Cd = Request.Form["F_Supplier_Code"].ToString().Split("-")[0],
+                    F_Supplier_Plant = Request.Form["F_Supplier_Code"].ToString().Split("-")[1][0],
+                    F_Part_No = Request.Form["F_Part_No"].ToString().Split("-")[0],
+                    F_Ruibetsu = Request.Form["F_Part_No"].ToString().Split("-")[1],
+                    F_Kanban_No = Request.Form["F_Kanban_No"].ToString(),
+                    F_Store_Code = Request.Form["F_Store_Code"].ToString(),
+                    F_Start_Date = Request.Form["F_Start_Date"].ToString().Replace("-", string.Empty),
+                    F_End_Date = Request.Form["F_End_Date"].ToString().Replace("-", string.Empty),
+                    F_Type_Order = Request.Form["F_Type_Order"].ToString(),
+                    F_Cycle = Request.Form["F_Cycle"].ToString().Replace("-", string.Empty),
+                    F_Flg_ClearModule = 1,
+                    F_PDS_Group = Request.Form["F_PDS_Group"].ToString(),
+                    F_Create_Date = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss")),
+                    F_Create_By = _BearerClass.UserCode.ToString(),
+                    F_Update_Date = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss")),
+                    F_Update_by = _BearerClass.UserCode.ToString(),
+                    F_Check_Shift = 0,
+                    F_Last_Check = string.Empty,
+                    F_Next_Check = string.Empty,
+                };
+
+                _KB3Context.TB_MS_PartOrder.Add(_TB_MS_PartOrder);
                 _KB3Context.SaveChanges();
 
 

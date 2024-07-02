@@ -285,7 +285,7 @@
                                 <div class="input-group-text">
                                     <i class="fas fa-list" controller="`+ _datacontroller + `" value="` + _datavalue + `"></i>
                                 </div>
-                                <input type="text" class="form-control" id="`+ _datadescription + `" name="` + _datadescription + `" disabled />
+                                <input type="text" class="form-control" id="`+ _datadescription + `" name="` + _datadescription + `" readonly />
                             </div>
                         </div>
                         `;

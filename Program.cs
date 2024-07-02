@@ -107,7 +107,7 @@ builder.Services.AddSingleton<TextFileClass>();
 builder.Services.AddSession(options =>
 {
     options.Cookie.Name = "Operation";
-    options.IdleTimeout = TimeSpan.FromSeconds(600);
+    options.IdleTimeout = TimeSpan.FromSeconds(1800);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
