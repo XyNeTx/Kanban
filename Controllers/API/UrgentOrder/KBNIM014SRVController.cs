@@ -99,7 +99,7 @@ namespace KANBAN.Controllers.API.UrgentOrder
                 });
                 setConString();
                 string USERID = HttpContext.Session.GetString("USER_CODE");
-                _KB3Context.Database.ExecuteSqlRawAsync($"DELETE FROM TB_IMPORT_SERVICE WHERE F_UPDATE_BY = '{USERID}'");
+                _KB3Context.Database.ExecuteSqlRawAsync($"DELETE FROM TB_IMPORT_SERVICE WHERE F_UPDATE_BY = @p0",USERID);
                 foreach (var each in listObj)
                 {
                     if(each.F_PO_No.Substring(0,3) == "T99" || each.F_PO_No.Substring(0,3) == "T89")
@@ -131,9 +131,9 @@ namespace KANBAN.Controllers.API.UrgentOrder
                 _KB3Context.TB_Import_Service.AddRange(listObj);
                 _KB3Context.SaveChanges();
 
-                _KB3Context.Database.ExecuteSqlRaw($"DELETE FROM TB_Import_Error Where F_Type = 'SRV' AND F_Update_By = '{USERID}' ");
+                _KB3Context.Database.ExecuteSqlRaw($"DELETE FROM TB_Import_Error Where F_Type = 'SRV' AND F_Update_By = @p0 ",USERID);
                 
-                _KB3Context.Database.ExecuteSqlRaw($"EXEC [exec].[spKBNIM014SRV_MRP] '{USERID}'");
+                _KB3Context.Database.ExecuteSqlRaw($"EXEC [exec].[spKBNIM014SRV_MRP] @p0",USERID);
                 DataTable _dt = _FillDataTable.ExecuteSQL($"SELECT * From TB_Import_Error Where F_Type ='SRV' and F_Update_By = '{USERID}'");
 
                 if(_dt.Rows.Count > 0)

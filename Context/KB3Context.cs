@@ -103,6 +103,7 @@ namespace HINOSystem.Context
         public DbSet<TB_Import_UpdMRP_FG> TB_Import_UpdMRP_FG { get; set; }
 
         public DbSet<TB_Calendar> TB_Calendar { get; set; }
+        public DbSet<TB_BL_SET> TB_BL_SET { get; set; }
 
         //protected override void OnModelCreating(ModelBuilder modelBuilder)
         //{

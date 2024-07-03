@@ -1,0 +1,85 @@
+﻿@{
+    string now = DateTime.Now.ToString("yyyy-MM-dd");
+}
+
+<div class="row">
+    <div class="col-xl-12 col-md-12 col-sm-12">
+        <div class="card border-left-primary shadow h-100">
+            <div class="card-body">
+
+
+                <div class="row">
+                    <div class="col-1"></div>
+                    <div class="col-4" id="divButton">
+                        <button type="button" class="btn btn-outline-dark" id="buttonInq">Inquiry</button>
+                        <button type="button" class="btn btn-outline-dark" id="buttonNew">New</button>
+                        <button type="button" class="btn btn-outline-dark" id="buttonUpd" disabled>Update</button>
+                        <button type="button" class="btn btn-outline-dark" id="buttonDel" disabled>Delete</button>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-1"></div>
+                    <div class="col">
+                        <fieldset class="fieldset">
+                            <legend>Search Data : </legend>
+                            <form id="formSearchData">
+                                <div class="row">
+                                    <div class="col-3">
+                                        <div class="input-group">
+                                            <label class="input-group-text">Supplier Code</label>
+                                            <select class="form-select" id="SelectSupplierCode" disabled>
+                                                <option value="" hidden></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <input type="text" class="form-control" id="ReadSupplierName" readonly />
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-3">
+                                        <div class="input-group">
+                                            <label class="input-group-text">Store Code</label>
+                                            <select class="form-select" id="SelectStoreCode" disabled>
+                                                <option value="" hidden></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-3">
+                                        <div class="input-group">
+                                            <label class="input-group-text">Date</label>
+                                            <input type="date" class="form-control" id="inputDate" value="@now" disabled />
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="input-group">
+                                            <label class="input-group-text">Shift</label>
+                                            <select class="form-select" id="SelectShift" disabled>
+                                                <option value="N">Night Shift</option>
+                                                <option value="D">Day Shift</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </fieldset>
+                    </div>
+                    <div class="col-1"></div>
+                </div>
+
+                <div class="row mt-3">
+                    <table id="tableMaster" class="table">
+                        <thead></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script type="text/javascript" src="~/assets/.script/Master/KBNMS005S.js"></script>
+}

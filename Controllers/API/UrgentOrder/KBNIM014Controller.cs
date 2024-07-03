@@ -125,6 +125,7 @@ namespace HINOSystem.Controllers.API.Master
 
                 await _KB3Context.SaveChangesAsync();
                 _KB3Transaction.Commit();
+                _Log.WriteLog("KBNIM014 ImportSave ", UserID, _BearerClass.Device);
 
                 return Ok(new
                 {
@@ -168,16 +169,18 @@ namespace HINOSystem.Controllers.API.Master
                 string UserID = HttpContext.Session.GetString("USER_CODE");
                 string Plant = HttpContext.Session.GetString("USER_PLANT");
 
-                await _KB3Context.Database.ExecuteSqlRawAsync($"DELETE From TB_Import_error Where F_Update_By = '{UserID}' AND F_Type = 'KBNIM014' ");
+                await _KB3Context.Database.ExecuteSqlRawAsync($"DELETE From TB_Import_error Where F_Update_By = @p0 AND F_Type = 'KBNIM014' ",UserID);
 
-                await _KB3Context.Database.ExecuteSqlRawAsync($"EXEC [exec].[spKBNIM014] '{Plant}','{UserID}'");
+                await _KB3Context.Database.ExecuteSqlRawAsync($"EXEC [exec].[spKBNIM014] @p0,@p1",Plant,UserID);
 
                 _KB3Transaction.Commit();
 
 
-                int _haveError = await _KB3Context.Database.ExecuteSqlRawAsync($"SELECT * FROM TB_Import_Error Where F_Update_By = '{UserID}' and F_Type = 'KBNIM014'; ");
+                int _haveError = await _KB3Context.Database.ExecuteSqlRawAsync($"SELECT * FROM TB_Import_Error Where F_Update_By = @p0 and F_Type = 'KBNIM014'; ",UserID);
 
-                if(_haveError > 0)
+                _Log.WriteLog("KBNIM014 AfterImported ", UserID, _BearerClass.Device);
+
+                if (_haveError > 0)
                 {
                     return BadRequest(new
                     {

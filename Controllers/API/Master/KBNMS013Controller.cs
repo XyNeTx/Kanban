@@ -1,8 +1,10 @@
 ﻿using HINOSystem.Context;
 using HINOSystem.Libs;
 using HINOSystem.Models.KB3.Master;
+using KANBAN.Context;
 using KANBAN.Models.KB3.Receive_Process;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
 namespace HINOSystem.Controllers.API.Master
@@ -11,25 +13,68 @@ namespace HINOSystem.Controllers.API.Master
     {
         private readonly IConfiguration _configuration;
         private readonly BearerClass _BearerClass;
+        private readonly ActionResultClass _ActionResult;
         private readonly KanbanConnection _KBCN;
-
+        private readonly PPMConnect _PPMConnect;
+        private readonly PPM3Context _PPM3Context;
         private readonly KB3Context _KB3Context;
+        private readonly SerilogLibs _Log;
+
+
+        private readonly string StoragePath = @"wwwroot\Storage\Uploads";
 
         public KBNMS013Controller(
             IConfiguration configuration,
             BearerClass bearerClass,
+            ActionResultClass actionResultClass,
             KanbanConnection kanbanConnection,
-            KB3Context kB3Context
+            PPMConnect ppmConnect,
+            KB3Context kB3Context,
+            PPM3Context pPM3Context,
+            SerilogLibs serilogLibs
             )
         {
             _configuration = configuration;
             _BearerClass = bearerClass;
-            _KBCN = kanbanConnection;
+            _ActionResult = actionResultClass;
             _KB3Context = kB3Context;
-
+            _KBCN = kanbanConnection;
+            _PPMConnect = ppmConnect;
+            _PPM3Context = pPM3Context;
+            _Log = serilogLibs;
         }
 
-
+        public void setConString()
+        {
+            try
+            {
+                if (_KBCN.Plant.ToString() == "3")
+                {
+                    var KBConnectString = _configuration.GetConnectionString("KB3Connection");
+                    var PPMConnectString = _configuration.GetConnectionString("PPM3Connection");
+                    _KB3Context.Database.SetConnectionString(KBConnectString);
+                    _PPM3Context.Database.SetConnectionString(PPMConnectString);
+                }
+                else if (_KBCN.Plant.ToString() == "2")
+                {
+                    var KBConnectString = _configuration.GetConnectionString("KB2Connection");
+                    var PPMConnectString = _configuration.GetConnectionString("PPMConnection");
+                    _KB3Context.Database.SetConnectionString(KBConnectString);
+                    _PPM3Context.Database.SetConnectionString(PPMConnectString);
+                }
+                else if (_KBCN.Plant.ToString() == "1")
+                {
+                    var KBConnectString = _configuration.GetConnectionString("KB1Connection");
+                    var PPMConnectString = _configuration.GetConnectionString("PPMConnection");
+                    _KB3Context.Database.SetConnectionString(KBConnectString);
+                    _PPM3Context.Database.SetConnectionString(PPMConnectString);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+        }
 
         [HttpPost]
         public IActionResult initial([FromBody] string pData = null)
@@ -66,8 +111,6 @@ namespace HINOSystem.Controllers.API.Master
                 return Content(e.Message.ToString(), "application/json");
             }
         }
-
-
 
         [HttpPost]
         public IActionResult search([FromBody] string pData = null)
@@ -110,8 +153,16 @@ namespace HINOSystem.Controllers.API.Master
             string _SQL = "";
             try
             {
+                setConString();
                 _BearerClass.Authentication(Request);
-                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
+
+                if (_BearerClass.Status == 401) return Unauthorized(new
+                {
+                    status = "401",
+                    response = "Unauthorized",
+                    title = "Unauthorized",
+                    message = "Please Login First"
+                });
 
 
                 KANBAN.Models.KB3.Receive_Process.TB_MS_PartOrder _TB_MS_PartOrder = new KANBAN.Models.KB3.Receive_Process.TB_MS_PartOrder
@@ -140,7 +191,10 @@ namespace HINOSystem.Controllers.API.Master
 
                 _KB3Context.TB_MS_PartOrder.Add(_TB_MS_PartOrder);
                 _KB3Context.SaveChanges();
-
+                _Log.WriteLog($"Action : Save | Database : TB_MS_PartOrder | F_Part_No : {_TB_MS_PartOrder.F_Part_No} | " +
+                    $"F_Ruibetsu : {_TB_MS_PartOrder.F_Ruibetsu} | F_Supplier_Cd : {_TB_MS_PartOrder.F_Supplier_Cd} | " +
+                    $"F_Supplier_Plant : {_TB_MS_PartOrder.F_Supplier_Plant} | F_Kanban_No : {_TB_MS_PartOrder.F_Kanban_No} | " +
+                    $"F_Store_Code : {_TB_MS_PartOrder.F_Store_Code}", _BearerClass.UserCode, _BearerClass.Device);
 
                 string _result = @"{
                     ""status"":""200"",

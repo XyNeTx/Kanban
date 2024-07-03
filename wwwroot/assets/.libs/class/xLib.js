@@ -48,6 +48,7 @@ class xLib {
                     });
                 }
                 else {
+                    await console.error(xhr);
                     errorFn(xhr, status, error)
                 }
             }
@@ -76,6 +77,7 @@ class xLib {
                     });
                 }
                 else {
+                    await console.error(xhr);
                     errorFn(xhr, status, error)
                 }
             }
