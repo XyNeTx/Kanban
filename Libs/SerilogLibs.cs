@@ -4,6 +4,7 @@ namespace HINOSystem.Libs
 {
     public class SerilogLibs
     {
+        private readonly IHttpContextAccessor _httpContextAccessor;
         public void WriteLog(string Message, string UserName, string HostName)
         {
             try

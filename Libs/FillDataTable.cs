@@ -4,6 +4,7 @@ using KANBAN.Context;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using NPOI.HSSF.UserModel;
+using NPOI.Util.ArrayExtensions;
 using System.Data;
 
 namespace HINOSystem.Libs
@@ -82,11 +83,18 @@ namespace HINOSystem.Libs
                 }
             }
         }
-        public DataTable ExecuteSQL(string sql)
+        public DataTable ExecuteSQL(string sql,params object[] parameters)
         {
             setConString();
             SqlConnection con = new SqlConnection(_KB3Context.Database.GetConnectionString());
             DataTable dt = new DataTable();
+            if (parameters.Length > 0)
+            {
+                for (int i = 0; i < parameters.Length; i++)
+                {
+                    sql = sql.Replace("@p" + i, $"'{parameters[i]}'");
+                }
+            }
 
             using (SqlCommand cmd = new SqlCommand(sql, con))
             {

@@ -49,6 +49,14 @@ class xLib {
                 }
                 else {
                     await console.error(xhr);
+                    xSplash.hide();
+                    if (xhr.responseJSON.errors.message == undefined) {
+                        var _error = "";
+                        for (var key in xhr.responseJSON.errors) {
+                            _error += xhr.responseJSON.errors[key][0] + "<br>";
+                        }
+                        return xSwal.ErrorHTML("Error", _error)
+                    }
                     errorFn(xhr, status, error)
                 }
             }
@@ -78,6 +86,14 @@ class xLib {
                 }
                 else {
                     await console.error(xhr);
+                    xSplash.hide();
+                    if (xhr.responseJSON.errors.message == undefined) {
+                        var _error = "";
+                        for (var key in xhr.responseJSON.errors) {
+                            _error += xhr.responseJSON.errors[key][0] + "<br>";
+                        }
+                        return xSwal.ErrorHTML("Error", _error)
+                    }
                     errorFn(xhr, status, error)
                 }
             }

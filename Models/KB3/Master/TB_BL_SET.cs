@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace KANBAN.Models.KB3.Master
 {
@@ -20,10 +21,13 @@ namespace KANBAN.Models.KB3.Master
         public string F_Ruibetsu { get; set; }
         [Required]
         [StringLength(4)]
+        [JsonPropertyName("F_Kanban_No")]
         public string F_Sebango { get; set; }
         [Required]
         [StringLength(2)]
+        [JsonPropertyName("F_Store_Code")]
         public string F_Store_Cd { get; set; }
+        [JsonPropertyName("F_Total_Actual")]
         public int F_BL { get; set; }
         [Required]
         [StringLength(4)]
@@ -34,9 +38,8 @@ namespace KANBAN.Models.KB3.Master
         public int F_Qty { get; set; }
         public int F_BL_Kanban { get; set; }
         public int F_Bl_PCS { get; set; }
-        [Required]
         [StringLength(25)]
-        public string F_Update_By { get; set; }
+        public string? F_Update_By { get; set; }
         public DateTime F_Update_Date { get; set; }
     }
 }
