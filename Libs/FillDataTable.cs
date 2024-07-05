@@ -85,7 +85,7 @@ namespace HINOSystem.Libs
         }
         public DataTable ExecuteSQL(string sql,params object[] parameters)
         {
-            setConString();
+            //setConString();
             SqlConnection con = new SqlConnection(_KB3Context.Database.GetConnectionString());
             DataTable dt = new DataTable();
             if (parameters.Length > 0)

@@ -1,6 +1,8 @@
-﻿using HINOSystem.Context;
+﻿using Azure;
+using HINOSystem.Context;
 using HINOSystem.Libs;
 using KANBAN.Context;
+using KANBAN.Libs;
 using KANBAN.Models.KB3.Master;
 using KANBAN.Models.PPM3;
 using Microsoft.AspNetCore.Http;
@@ -26,9 +28,6 @@ namespace KANBAN.Controllers.API.Master
         private readonly SerilogLibs _Log;
         private readonly FillDataTable _FillDT;
 
-
-        private readonly string StoragePath = @"wwwroot\Storage\Uploads";
-
         public KBNMS005SController(
             IConfiguration configuration,
             BearerClass bearerClass,
@@ -52,44 +51,12 @@ namespace KANBAN.Controllers.API.Master
             _FillDT = fillDataTable;
         }
 
-        public void setConString()
-        {
-            try
-            {
-                if (_KBCN.Plant.ToString() == "3")
-                {
-                    var KBConnectString = _configuration.GetConnectionString("KB3Connection");
-                    var PPMConnectString = _configuration.GetConnectionString("PPM3Connection");
-                    _KB3Context.Database.SetConnectionString(KBConnectString);
-                    _PPM3Context.Database.SetConnectionString(PPMConnectString);
-                }
-                else if (_KBCN.Plant.ToString() == "2")
-                {
-                    var KBConnectString = _configuration.GetConnectionString("KB2Connection");
-                    var PPMConnectString = _configuration.GetConnectionString("PPMConnection");
-                    _KB3Context.Database.SetConnectionString(KBConnectString);
-                    _PPM3Context.Database.SetConnectionString(PPMConnectString);
-                }
-                else if (_KBCN.Plant.ToString() == "1")
-                {
-                    var KBConnectString = _configuration.GetConnectionString("KB1Connection");
-                    var PPMConnectString = _configuration.GetConnectionString("PPMConnection");
-                    _KB3Context.Database.SetConnectionString(KBConnectString);
-                    _PPM3Context.Database.SetConnectionString(PPMConnectString);
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
-        }
-
         [HttpGet]
         public async Task<IActionResult> GetSupplierCode(bool IsCmdNew)
         {
             try
             {
-                setConString();
+                
                 _BearerClass.Authentication(Request);
                 if (_BearerClass.Status == 401) return Unauthorized(new
                 {
@@ -160,11 +127,11 @@ namespace KANBAN.Controllers.API.Master
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetStoreCode(bool IsCmdNew,string? F_Supplier_Code)
+        public async Task<IActionResult> GetStoreCode(bool IsCmdNew, string? F_Supplier_Code)
         {
             try
             {
-                setConString();
+                
                 _BearerClass.Authentication(Request);
                 if (_BearerClass.Status == 401) return Unauthorized(new
                 {
@@ -175,6 +142,7 @@ namespace KANBAN.Controllers.API.Master
                 });
 
                 string now = DateTime.Now.ToString("yyyyMMdd");
+                string F_Supplier_Name = "";
 
                 if (IsCmdNew)
                 {
@@ -190,9 +158,24 @@ namespace KANBAN.Controllers.API.Master
                         .OrderBy(x => x.F_Store_Code)
                         .ToList();
 
+
                     if (!string.IsNullOrWhiteSpace(F_Supplier_Code))
                     {
                         data = data.Where(x => x.F_Supplier_Code == F_Supplier_Code).ToList();
+                        char Sup_Plant = F_Supplier_Code.Split("-")[1][0];
+                        string Supplier_Code = F_Supplier_Code.Split("-")[0];
+
+                        var Supplier_Name = _PPM3Context.T_Supplier_MS
+                            .Where(x => x.F_supplier_cd == Supplier_Code && x.F_Plant_cd == Sup_Plant
+                                && x.F_TC_Str.CompareTo(now) <= 0 && x.F_TC_End.CompareTo(now) >= 0
+                                && x.F_Store_cd.StartsWith(_BearerClass.Plant))
+                            .Select(x => new
+                            {
+                                F_name = "(" + x.F_short_name.Trim() + ") " + x.F_name.Trim()
+                            })
+                            .FirstOrDefault();
+
+                        F_Supplier_Name = Supplier_Name.F_name;
                     }
 
                     return Ok(new
@@ -201,7 +184,8 @@ namespace KANBAN.Controllers.API.Master
                         response = "OK",
                         title = "Success",
                         message = "Data Found",
-                        data = data
+                        data = data,
+                        supplier_name = F_Supplier_Name
                     });
                 }
                 else
@@ -221,6 +205,20 @@ namespace KANBAN.Controllers.API.Master
                     if (!string.IsNullOrWhiteSpace(F_Supplier_Code))
                     {
                         data = data.Where(x => x.F_Supplier_Code == F_Supplier_Code).ToList();
+                        char Sup_Plant = F_Supplier_Code.Split("-")[1][0];
+                        string Supplier_Code = F_Supplier_Code.Split("-")[0];
+
+                        var Supplier_Name = _PPM3Context.T_Supplier_MS
+                            .Where(x => x.F_supplier_cd == Supplier_Code && x.F_Plant_cd == Sup_Plant
+                                && x.F_TC_Str.CompareTo(now) <= 0 && x.F_TC_End.CompareTo(now) >= 0
+                                && x.F_Store_cd.StartsWith(_BearerClass.Plant))
+                            .Select(x => new
+                            {
+                                F_name = "(" + x.F_short_name.Trim() + ") " + x.F_name.Trim()
+                            })
+                            .FirstOrDefault();
+
+                        F_Supplier_Name = Supplier_Name.F_name;
                     }
 
                     return Ok(new
@@ -229,7 +227,8 @@ namespace KANBAN.Controllers.API.Master
                         response = "OK",
                         title = "Success",
                         message = "Data Found",
-                        data = data
+                        data = data,
+                        supplier_name = F_Supplier_Name
                     });
                 }
             }
@@ -251,7 +250,7 @@ namespace KANBAN.Controllers.API.Master
         {
             try
             {
-                setConString();
+                //
                 _BearerClass.Authentication(Request);
                 if (_BearerClass.Status == 401) return Unauthorized(new
                 {
@@ -300,11 +299,11 @@ namespace KANBAN.Controllers.API.Master
         }
 
         [HttpGet]
-        public async Task<IActionResult> SearchClick(bool IsCmdNew, string F_Date, string F_Shift, string F_Supplier_Code,string F_Store_Code)
+        public async Task<IActionResult> SearchClick(bool IsCmdNew, string F_Date, string F_Shift, string F_Supplier_Code, string F_Store_Code)
         {
             try
             {
-                setConString();
+                
                 _BearerClass.Authentication(Request);
                 if (_BearerClass.Status == 401) return Unauthorized(new
                 {
@@ -344,6 +343,14 @@ namespace KANBAN.Controllers.API.Master
 
                 dt = _FillDT.ExecuteSQL(_SQL, F_Date, F_Shift, F_Supplier_Code.Split("-")[0], F_Supplier_Code.Split("-")[1], F_Store_Code);
 
+                if (dt.Rows.Count == 0) return NotFound(new
+                {
+                    status = "404",
+                    response = "Not Found",
+                    title = "Not Found",
+                    message = "Data Not Found"
+                });
+
                 return Ok(new
                 {
                     status = "200",
@@ -373,7 +380,7 @@ namespace KANBAN.Controllers.API.Master
             using var _KB3Transaction = _KB3Context.Database.BeginTransaction();
             try
             {
-                setConString();
+                
                 _BearerClass.Authentication(Request);
                 if (_BearerClass.Status == 401) return Unauthorized(new
                 {
@@ -384,13 +391,13 @@ namespace KANBAN.Controllers.API.Master
                 });
                 _KB3Transaction.CreateSavepoint("BeginSave");
 
-                foreach(var each in ListObj)
+                foreach (var each in ListObj)
                 {
-                    var existed =_KB3Context.TB_BL_SET.Where(x => x.F_Date == each.F_Date && x.F_Sup_Cd == each.F_Sup_Cd && x.F_Sup_Plant == each.F_Sup_Plant
-                    && x.F_Store_Cd == each.F_Store_Cd && x.F_Sebango == each.F_Sebango && x.F_Shift == each.F_Shift && x.F_Part_No == each.F_Part_No && x.F_Ruibetsu == each.F_Ruibetsu)
+                    var existed = _KB3Context.TB_BL_SET.Where(x => x.F_Date == each.F_Date && x.F_Sup_Cd == each.F_Sup_Cd && x.F_Sup_Plant == each.F_Sup_Plant
+                    && x.F_Store_Cd == each.F_Store_Cd && x.F_Sebango == each.F_Sebango.Substring(1, 3) && x.F_Shift == each.F_Shift && x.F_Part_No == each.F_Part_No && x.F_Ruibetsu == each.F_Ruibetsu)
                         .FirstOrDefault();
 
-                    if(existed != null)
+                    if (existed != null)
                     {
                         existed = each;
                         existed.F_Sebango = each.F_Sebango.Substring(1, 3);
@@ -411,8 +418,11 @@ namespace KANBAN.Controllers.API.Master
                                 , _BearerClass.Plant, each.F_Sup_Cd, each.F_Sup_Plant, each.F_Part_No, each.F_Ruibetsu, each.F_Sebango, each.F_Store_Cd
                                 , each.F_Date, each.F_Shift, each.F_BL, _BearerClass.UserCode);
                         }
+
+                        string _logData = JsonConvert.SerializeObject(each);
+                        _Log.WriteLog(_logData, _BearerClass.UserCode, _BearerClass.Device);
                     }
-                    else 
+                    else
                     {
                         string KanbanNo = each.F_Sebango;
                         each.F_Sebango = each.F_Sebango.Substring(1, 3);
@@ -433,10 +443,13 @@ namespace KANBAN.Controllers.API.Master
                             , _BearerClass.Plant, each.F_Sup_Cd, each.F_Sup_Plant, each.F_Part_No, each.F_Ruibetsu, KanbanNo, each.F_Store_Cd
                             , each.F_Date, each.F_Shift, each.F_BL, _BearerClass.UserCode);
                         }
+
+                        string _logData = JsonConvert.SerializeObject(each);
+                        _Log.WriteLog(_logData, _BearerClass.UserCode, _BearerClass.Device);
                     }
                 }
 
-                
+
                 _KB3Transaction.Commit();
 
                 return Ok(new
@@ -450,6 +463,84 @@ namespace KANBAN.Controllers.API.Master
             catch (Exception ex)
             {
                 _KB3Transaction.RollbackToSavepoint("BeginSave");
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    response = "Internal Server Error",
+                    title = "Internal Server Error",
+                    message = "Unexpected Error Occured",
+                    error = ex.Message.ToString()
+                });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(TB_BL_SET Obj)
+        {
+            using var _KB3Transaction = _KB3Context.Database.BeginTransaction();
+            try
+            {
+                
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401) return Unauthorized(new
+                {
+                    status = "401",
+                    response = "Unauthorized",
+                    title = "Unauthorized",
+                    message = "Please Login First"
+                });
+
+                _KB3Transaction.CreateSavepoint("BeginDelete");
+
+                var existed = _KB3Context.TB_BL_SET.Where(x => x.F_Date == Obj.F_Date && x.F_Sup_Cd == Obj.F_Sup_Cd && x.F_Sup_Plant == Obj.F_Sup_Plant
+                    && x.F_Store_Cd == Obj.F_Store_Cd && x.F_Sebango == Obj.F_Sebango.Substring(1, 3) && x.F_Shift == Obj.F_Shift && x.F_Part_No == Obj.F_Part_No && x.F_Ruibetsu == Obj.F_Ruibetsu)
+                        .FirstOrDefault();
+
+                if (existed == null) throw new Exception("Data Not Found");
+
+                TB_BL_SET_HISTORY_DELETE _DelObj = JsonConvert.DeserializeObject<TB_BL_SET_HISTORY_DELETE>(JsonConvert.SerializeObject(existed));
+
+                if (_DelObj == null) throw new Exception("Can't Deserialize to Delete Object");
+
+                var delExisted = _KB3Context.TB_BL_SET_HISTORY_DELETE
+                        .Any(x => x.F_Date == _DelObj.F_Date && x.F_Sup_Cd == _DelObj.F_Sup_Cd && x.F_Sup_Plant == _DelObj.F_Sup_Plant
+                        && x.F_Store_Cd == _DelObj.F_Store_Cd && x.F_Sebango == _DelObj.F_Sebango && x.F_Shift == _DelObj.F_Shift && x.F_Part_No == _DelObj.F_Part_No && x.F_Ruibetsu == _DelObj.F_Ruibetsu);
+
+                if (delExisted) throw new Exception("Data Already Deleted");
+
+                _KB3Context.TB_BL_SET_HISTORY_DELETE.Add(_DelObj);
+                string _logData = JsonConvert.SerializeObject(_DelObj);
+                _Log.WriteLog("INSERT TB_BL_SET_HISTORY_DELETE | " + _logData, _BearerClass.UserCode, _BearerClass.Device);
+
+                _KB3Context.TB_BL_SET.Remove(existed);
+                _logData = JsonConvert.SerializeObject(existed);
+                _Log.WriteLog("DELETE TB_BL_SET | " + _logData, _BearerClass.UserCode, _BearerClass.Device);
+
+                _KB3Context.SaveChanges();
+
+                if (existed.F_Sup_Cd == "9999" || existed.F_Sup_Cd == "9995")
+                {
+                    await _KB3Context.Database.ExecuteSqlRawAsync("EXEC [CKD_Inhouse].sp_set_StockBalance_Delete @p0,@p1,@p2,@p3,@p4,@p5,@p6,@p7,@p8,@p9",
+                        _BearerClass.Plant, Obj.F_Sup_Cd, Obj.F_Sup_Plant, Obj.F_Part_No, Obj.F_Ruibetsu,Obj.F_Sebango,Obj.F_Store_Cd,Obj.F_Date,Obj.F_Shift,_BearerClass.UserCode);
+                }
+                else await _KB3Context.Database.ExecuteSqlRawAsync("EXEC [dbo].sp_set_StockBalance_Delete @p0,@p1,@p2,@p3,@p4,@p5,@p6,@p7,@p8,@p9",
+                        _BearerClass.Plant, Obj.F_Sup_Cd, Obj.F_Sup_Plant, Obj.F_Part_No, Obj.F_Ruibetsu,Obj.F_Sebango,Obj.F_Store_Cd,Obj.F_Date,Obj.F_Shift,_BearerClass.UserCode);
+
+                _Log.WriteLog("Update TB_Calculate_D : Flag_Chg_BL_Stock ", _BearerClass.UserCode, _BearerClass.Device);
+
+                _KB3Transaction.Commit();
+
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "OK",
+                    title = "Success",
+                    message = "Data Deleted",
+                });
+            }
+            catch (Exception ex)
+            {
                 return StatusCode(500, new
                 {
                     status = "500",

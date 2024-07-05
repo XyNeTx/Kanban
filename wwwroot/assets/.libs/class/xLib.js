@@ -50,13 +50,24 @@ class xLib {
                 else {
                     await console.error(xhr);
                     xSplash.hide();
-                    if (xhr.responseJSON.errors.message == undefined) {
-                        var _error = "";
-                        for (var key in xhr.responseJSON.errors) {
-                            _error += xhr.responseJSON.errors[key][0] + "<br>";
+                    
+                    if (xhr.responseJSON.errors != undefined) {
+
+                        if (xhr.responseJSON.errors.message == undefined || xhr.responseJSON.errors.message == null || !xhr.responseJSON.errors.message) {
+                            var _error = "";
+                            for (var key in xhr.responseJSON.errors) {
+                                _error += xhr.responseJSON.errors[key][0] + "<br>";
+                            }
+                            return xSwal.ErrorHTML("Error", _error)
                         }
-                        return xSwal.ErrorHTML("Error", _error)
+
+                        return xSwal.error("Error", xhr.responseJSON.message)
                     }
+
+                    else if (xhr.responseJSON.response) {
+                        return xSwal.error(xhr.responseJSON.response, xhr.responseJSON.message)
+                    }
+
                     errorFn(xhr, status, error)
                 }
             }
@@ -87,13 +98,23 @@ class xLib {
                 else {
                     await console.error(xhr);
                     xSplash.hide();
-                    if (xhr.responseJSON.errors.message == undefined) {
-                        var _error = "";
-                        for (var key in xhr.responseJSON.errors) {
-                            _error += xhr.responseJSON.errors[key][0] + "<br>";
+                    if (xhr.responseJSON.errors != undefined) {
+
+                        if (xhr.responseJSON.errors.message == undefined || xhr.responseJSON.errors.message == null || !xhr.responseJSON.errors.message) {
+                            var _error = "";
+                            for (var key in xhr.responseJSON.errors) {
+                                _error += xhr.responseJSON.errors[key][0] + "<br>";
+                            }
+                            return xSwal.ErrorHTML("Error", _error)
                         }
-                        return xSwal.ErrorHTML("Error", _error)
+
+                        return xSwal.error("Error", xhr.responseJSON.message)
                     }
+
+                    else if (xhr.responseJSON.title) {
+                        return xSwal.error(xhr.responseJSON.title, xhr.responseJSON.message)
+                    }
+
                     errorFn(xhr, status, error)
                 }
             }
