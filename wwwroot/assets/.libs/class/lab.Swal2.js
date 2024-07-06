@@ -154,8 +154,20 @@ class libSwal {
         }
 
     }
+
     Error(pTitle = "", pMessage = "", pCallback = null) {
         this.error(pTitle, pMessage, pCallback);
+    }
+
+    ErrorHTML(pTitle = "", pMessage = "", pCallback = null) {
+        Swal.fire({
+            icon: "error",
+            title: pTitle,
+            html: pMessage,
+            showConfirmButton: true,
+            confirmButtonColor: '#FD00A5',
+            confirmButtonText: "OK",
+        });
     }
 
 

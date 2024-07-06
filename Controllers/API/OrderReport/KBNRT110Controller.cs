@@ -84,7 +84,7 @@ namespace KANBAN.Controllers.API.OrderReport
         {
             try
             {
-                setConString();
+                
 
                 string _result = "";
                 var result = await _KB3Context.TB_Import_Delivery.OrderByDescending(x => x.F_YM).Select(x => new

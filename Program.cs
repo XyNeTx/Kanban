@@ -1,24 +1,14 @@
-using System;
-using Microsoft.EntityFrameworkCore;
 using HINOSystem.Context;
 using HINOSystem.Libs;
-using HINOSystem.Models.ERP;
-using Microsoft.AspNetCore.Server.IISIntegration;
-using Microsoft.AspNetCore.Authentication.Negotiate;
 using KANBAN.Context;
-using Serilog;
 using KANBAN.Libs;
+using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
-var Configuration = builder.Configuration;
-var HttpContext = builder.Services.BuildServiceProvider().GetService<IHttpContextAccessor>();
 
-builder.Services.AddDbContext<KB3Context>(options =>
-    options.UseSqlServer(
-        builder.Configuration.GetConnectionString("DefaultConnection") ??
-        throw new InvalidOperationException("Connection string 'KB3Context' not found.")
-        )
-);
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddDbContext<KB3Context>();
 
 builder.Services.AddDbContext<ERPContext>(options =>
     options.UseSqlServer(
@@ -26,12 +16,8 @@ builder.Services.AddDbContext<ERPContext>(options =>
         throw new InvalidOperationException("Connection string 'ERPContext' not found.")
         )
 );
-builder.Services.AddDbContext<PPM3Context>(options =>
-    options.UseSqlServer(
-        builder.Configuration.GetConnectionString("PPM3Connection") ??
-        throw new InvalidOperationException("Connection String PPM3Context not found.")
-        )
-);
+builder.Services.AddDbContext<PPM3Context>();
+
 builder.Services.AddDbContext<PPMInvenContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("PPMInvenConnection") ??
@@ -71,7 +57,7 @@ builder.Services.AddCors(options =>
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddHttpContextAccessor();
+//builder.Services.AddHttpContextAccessor();
 
 //Add DbConnect
 builder.Services.AddSingleton<DefaultConnection>();
@@ -107,7 +93,7 @@ builder.Services.AddSingleton<TextFileClass>();
 builder.Services.AddSession(options =>
 {
     options.Cookie.Name = "Operation";
-    options.IdleTimeout = TimeSpan.FromSeconds(600);
+    options.IdleTimeout = TimeSpan.FromSeconds(1800);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });

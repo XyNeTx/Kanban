@@ -1,68 +1,36 @@
-﻿using Microsoft.AspNetCore.Http.Extensions;
-using Microsoft.AspNetCore.Mvc;
-using System.Data;
-using System;
-using System.Web;
-using System.Security.Principal;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-
-using System.Reflection.PortableExecutable;
-using System.DirectoryServices;
-using System.DirectoryServices.AccountManagement;
-using Microsoft.Net.Http.Headers;
-using System.Collections.Specialized;
-using System.Net;
-using System.DirectoryServices.ActiveDirectory;
-using System.Net.Http;
-using Microsoft.AspNetCore.Authorization;
-
-using System.Security.Claims;
-using Org.BouncyCastle.Asn1.Ocsp;
-
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-
-using System.Threading.Tasks;
-
+﻿using HINOSystem.Context;
 using HINOSystem.Libs;
-using HINOSystem.Context;
-using HINOSystem.Models.KB3;
-using NPOI.HPSF;
-using Humanizer;
-using NPOI.SS.Formula.Functions;
-using NPOI.SS.Formula.Eval;
-using PdfSharp.Pdf.Filters;
-using MathNet.Numerics.LinearAlgebra.Factorization;
-using Microsoft.CodeAnalysis.Differencing;
-using Microsoft.VisualBasic;
-using static System.Net.Mime.MediaTypeNames;
-using NPOI.POIFS.Properties;
-//using static System.Runtime.InteropServices.JavaScript.JSType;
+using KANBAN.Context;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using System.Data;
 
 namespace HINOSystem.Controllers.API.Master
 {
-    public class KBNIM001Controller : Controller
+    [Route("api/[controller]/[action]")]
+    [ApiController]
+    public class KBNIM0042Controller : ControllerBase
     {
         private readonly IConfiguration _configuration;
         private readonly BearerClass _BearerClass;
-        private readonly ActionResultClass _ActionResult;        
+        private readonly ActionResultClass _ActionResult;
         private readonly KanbanConnection _KBCN;
         private readonly PPMConnect _PPMConnect;
-
+        private readonly PPM3Context _PPM3Context;
         private readonly KB3Context _KB3Context;
+        private readonly SerilogLibs _Log;
+        private readonly FillDataTable _FillDT;
 
-
-        private readonly string StoragePath = @"wwwroot\Storage\Uploads";
-
-        public KBNIM001Controller(
+        public KBNIM0042Controller(
             IConfiguration configuration,
             BearerClass bearerClass,
             ActionResultClass actionResultClass,
             KanbanConnection kanbanConnection,
             PPMConnect ppmConnect,
-            KB3Context kB3Context
+            KB3Context kB3Context,
+            PPM3Context pPM3Context,
+            SerilogLibs serilogLibs,
+            FillDataTable fillDataTable
             )
         {
             _configuration = configuration;
@@ -71,7 +39,9 @@ namespace HINOSystem.Controllers.API.Master
             _KB3Context = kB3Context;
             _KBCN = kanbanConnection;
             _PPMConnect = ppmConnect;
-
+            _PPM3Context = pPM3Context;
+            _Log = serilogLibs;
+            _FillDT = fillDataTable;
         }
 
 
@@ -89,7 +59,7 @@ namespace HINOSystem.Controllers.API.Master
                 if (pData != null) _json = JsonConvert.DeserializeObject(pData);
 
                 _SQL = @" EXEC [exec].[spTB_MS_FACTORY] ";
-                string _jsTB_MS_Factory = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+                string _jsTB_MS_Factory = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName: ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
 
                 string _result = @"{
                     ""status"":""200"",
@@ -108,41 +78,84 @@ namespace HINOSystem.Controllers.API.Master
             }
         }
 
-
-
-        [HttpPost]
-        public IActionResult search([FromBody] string pData = null)
+        [HttpGet]
+        public async Task<IActionResult> GetCustomerCode()
         {
-            dynamic _json = null;
-            string _SQL = "";
             try
             {
                 _BearerClass.Authentication(Request);
-                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
+                if (_BearerClass.Status == 401) return Unauthorized(new
+                {
+                    status = "401",
+                    response = "Unauthorized",
+                    title = "Unauthorized",
+                    message = "Please Login First"
+                });
 
-                _json = JsonConvert.DeserializeObject(pData);
-
-
-                _SQL = @" EXEC [exec].[spKBNMS001_SEARCH] '" + _json.F_Plant + "' ";
-                _KBCN.Plant = _json.F_Plant;
-                string _jsonData = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
-
-
-
-                string _result = @"{
-                    ""status"":""200"",
-                    ""response"":""OK"",
-                    ""message"": ""Data Found"",
-                    ""data"": " + _jsonData + @"
-                }";
-                return Content(_result, "application/json");
+                DataTable dt = _FillDT.ExecuteSQL("Select Distinct F_Customer_Cd From TB_MS_VLT_CUSTOMER Order by F_Customer_Cd");
+                if(dt.Rows.Count == 0)
+                {
+                    return NotFound(new
+                    {
+                        status = "404",
+                        response = "Not Found",
+                        title = "Not Found",
+                        message = "Data Not Found!"
+                    });
+                }
+                return Ok(new
+                {
+                    status = "200",
+                    response = "OK",
+                    title = "Success",
+                    message = "Data Found!",
+                    data = JsonConvert.SerializeObject(dt)
+                });
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                return Content(e.Message.ToString(), "application/json");
+
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    response = "Internal Server Error",
+                    title = "Internal Server Error",
+                    message = "Unexpected Error!",
+                    error = ex.Message
+                });
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetStartJigIN(string F_Customer_Cd)
+        {
+            try
+            {
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401) return Unauthorized(new
+                {
+                    status = "401",
+                    response = "Unauthorized",
+                    title = "Unauthorized",
+                    message = "Please Login First"
+                });
+
+                DataTable dt = _FillDT.ExecuteSQL("EXEC [exec].[spKBNIM0042_GetSeq] @p0'3',@p1'VLT',@p2'TMT--',@p3'RR Axle'");
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    response = "Internal Server Error",
+                    title = "Internal Server Error",
+                    message = "Unexpected Error!",
+                    error = ex.Message
+                });
+            }
+        }
 
     }
 }

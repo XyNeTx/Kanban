@@ -160,7 +160,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
 
             try
             {
-                setConString();
+                
                 _KB3Transaction.CreateSavepoint("BeforeImport");
 
                 await _KB3Context.Database.ExecuteSqlRawAsync("DELETE FROM TB_Import_UpdMRP_FG WHERE F_Update_By = {0}", UserID);

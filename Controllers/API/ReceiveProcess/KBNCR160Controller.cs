@@ -78,7 +78,7 @@ namespace KANBAN.Controllers.API.ReceiveProcess
         {
             try
             {
-                setConString();
+                
                 string _result = "";
                 var supList = await _KB3Context.TB_MS_PartOrder.Select(x => new
                 {

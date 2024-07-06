@@ -32,6 +32,11 @@
     });
 
 
+    await Search();
+    xSplash.hide();
+});
+
+async function Search() {
     await _xLib.AJAX_Get('/api/KBNIM003C/Search', '',
         async function (success) {
             if (success.status === "200") {
@@ -40,15 +45,16 @@
                 console.log(_arrJson);
                 await $("#tblMaster").DataTable().clear().rows.add(_arrJson).draw();
                 await $("#tblMaster tr td").find('input[type="checkbox"]').prop("checked", true);
+                xSplash.hide();
             }
         },
         async function (errror) {
+            await xSplash.hide();
             xSwal.error("Error !!", errror.responseJSON.message);
         },
     );
+}
 
-    xSplash.hide();
-});
 $("#buttonConfirm").click(function () {
     var _arrData = $("#tblMaster").DataTable().rows().data().toArray();
     xSplash.show();
@@ -56,7 +62,7 @@ $("#buttonConfirm").click(function () {
         async function (success) {
             if (success.status === "200") {
                 xSwal.success("Success !!", success.message);
-                await $("#tblMaster").DataTable().clear().draw();
+                await Search();
             }
         },
         async function (error) {

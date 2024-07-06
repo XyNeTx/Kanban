@@ -1,34 +1,11 @@
-﻿using Microsoft.AspNetCore.Http.Extensions;
-using Microsoft.AspNetCore.Mvc;
-using System.Data;
-using System;
-using System.Web;
-using System.Security.Principal;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-
-using System.Reflection.PortableExecutable;
-using System.DirectoryServices;
-using System.DirectoryServices.AccountManagement;
-using Microsoft.Net.Http.Headers;
-using System.Collections.Specialized;
-using System.Net;
-using System.DirectoryServices.ActiveDirectory;
-using System.Net.Http;
-using Microsoft.AspNetCore.Authorization;
-
-using System.Security.Claims;
-using Org.BouncyCastle.Asn1.Ocsp;
-
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-
-using System.Threading.Tasks;
-
+﻿using HINOSystem.Context;
 using HINOSystem.Libs;
-using HINOSystem.Context;
 using HINOSystem.Models.KB3.Master;
+using KANBAN.Context;
+using KANBAN.Models.KB3.Receive_Process;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace HINOSystem.Controllers.API.Master
 {
@@ -36,24 +13,36 @@ namespace HINOSystem.Controllers.API.Master
     {
         private readonly IConfiguration _configuration;
         private readonly BearerClass _BearerClass;
+        private readonly ActionResultClass _ActionResult;
         private readonly KanbanConnection _KBCN;
-
+        private readonly PPMConnect _PPMConnect;
+        private readonly PPM3Context _PPM3Context;
         private readonly KB3Context _KB3Context;
+        private readonly SerilogLibs _Log;
+
+
+        private readonly string StoragePath = @"wwwroot\Storage\Uploads";
 
         public KBNMS013Controller(
             IConfiguration configuration,
             BearerClass bearerClass,
+            ActionResultClass actionResultClass,
             KanbanConnection kanbanConnection,
-            KB3Context kB3Context
+            PPMConnect ppmConnect,
+            KB3Context kB3Context,
+            PPM3Context pPM3Context,
+            SerilogLibs serilogLibs
             )
         {
             _configuration = configuration;
             _BearerClass = bearerClass;
-            _KBCN = kanbanConnection;
+            _ActionResult = actionResultClass;
             _KB3Context = kB3Context;
-
+            _KBCN = kanbanConnection;
+            _PPMConnect = ppmConnect;
+            _PPM3Context = pPM3Context;
+            _Log = serilogLibs;
         }
-
 
 
         [HttpPost]
@@ -91,8 +80,6 @@ namespace HINOSystem.Controllers.API.Master
                 return Content(e.Message.ToString(), "application/json");
             }
         }
-
-
 
         [HttpPost]
         public IActionResult search([FromBody] string pData = null)
@@ -135,23 +122,48 @@ namespace HINOSystem.Controllers.API.Master
             string _SQL = "";
             try
             {
+                
                 _BearerClass.Authentication(Request);
-                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
+
+                if (_BearerClass.Status == 401) return Unauthorized(new
+                {
+                    status = "401",
+                    response = "Unauthorized",
+                    title = "Unauthorized",
+                    message = "Please Login First"
+                });
 
 
-                TB_MS_OldPart _TB_MS_OldPart = new TB_MS_OldPart();
-                _TB_MS_OldPart.F_Plant = _BearerClass.Plant;
-                _TB_MS_OldPart.F_Parent_Part = Request.Form["F_Parent_Part"].ToString();
-                _TB_MS_OldPart.F_Ruibetsu = Request.Form["F_Ruibetsu"].ToString();
-                _TB_MS_OldPart.F_Part_Name = Request.Form["F_Part_Name"].ToString();
-                _TB_MS_OldPart.F_Store_Cd = Request.Form["F_Store_Cd"].ToString();
-                _TB_MS_OldPart.F_Start_Date = Request.Form["F_Start_Date"].ToString();
-                _TB_MS_OldPart.F_End_Date = Request.Form["F_End_Date"].ToString();
-                _TB_MS_OldPart.F_Update_By = _BearerClass.UserCode.ToString();
-                _TB_MS_OldPart.F_Update_Date = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss"));
-                _KB3Context.TB_MS_OldPart.Add(_TB_MS_OldPart);
+                KANBAN.Models.KB3.Receive_Process.TB_MS_PartOrder _TB_MS_PartOrder = new KANBAN.Models.KB3.Receive_Process.TB_MS_PartOrder
+                {
+                    F_Plant = _BearerClass.Plant[0],
+                    F_Supplier_Cd = Request.Form["F_Supplier_Code"].ToString().Split("-")[0],
+                    F_Supplier_Plant = Request.Form["F_Supplier_Code"].ToString().Split("-")[1][0],
+                    F_Part_No = Request.Form["F_Part_No"].ToString().Split("-")[0],
+                    F_Ruibetsu = Request.Form["F_Part_No"].ToString().Split("-")[1],
+                    F_Kanban_No = Request.Form["F_Kanban_No"].ToString(),
+                    F_Store_Code = Request.Form["F_Store_Code"].ToString(),
+                    F_Start_Date = Request.Form["F_Start_Date"].ToString().Replace("-", string.Empty),
+                    F_End_Date = Request.Form["F_End_Date"].ToString().Replace("-", string.Empty),
+                    F_Type_Order = Request.Form["F_Type_Order"].ToString(),
+                    F_Cycle = Request.Form["F_Cycle"].ToString().Replace("-", string.Empty),
+                    F_Flg_ClearModule = 1,
+                    F_PDS_Group = Request.Form["F_PDS_Group"].ToString(),
+                    F_Create_Date = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss")),
+                    F_Create_By = _BearerClass.UserCode.ToString(),
+                    F_Update_Date = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss")),
+                    F_Update_by = _BearerClass.UserCode.ToString(),
+                    F_Check_Shift = 0,
+                    F_Last_Check = string.Empty,
+                    F_Next_Check = string.Empty,
+                };
+
+                _KB3Context.TB_MS_PartOrder.Add(_TB_MS_PartOrder);
                 _KB3Context.SaveChanges();
-
+                _Log.WriteLog($"Action : Save | Database : TB_MS_PartOrder | F_Part_No : {_TB_MS_PartOrder.F_Part_No} | " +
+                    $"F_Ruibetsu : {_TB_MS_PartOrder.F_Ruibetsu} | F_Supplier_Cd : {_TB_MS_PartOrder.F_Supplier_Cd} | " +
+                    $"F_Supplier_Plant : {_TB_MS_PartOrder.F_Supplier_Plant} | F_Kanban_No : {_TB_MS_PartOrder.F_Kanban_No} | " +
+                    $"F_Store_Code : {_TB_MS_PartOrder.F_Store_Code}", _BearerClass.UserCode, _BearerClass.Device);
 
                 string _result = @"{
                     ""status"":""200"",

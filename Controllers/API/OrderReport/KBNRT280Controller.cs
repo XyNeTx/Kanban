@@ -80,7 +80,7 @@ namespace KANBAN.Controllers.API.OrderReport
         {
             try
             {
-                setConString();
+                
                 string _result = "";
                 dynamic _json = JsonConvert.DeserializeObject(data);
                 string orderChecked = _json["orderChecked"];
@@ -140,7 +140,7 @@ namespace KANBAN.Controllers.API.OrderReport
         {
             try
             {
-                setConString();
+                
                 string _result = "";
                 dynamic _json = JsonConvert.DeserializeObject(data);
                 string orderChecked = _json["orderChecked"];

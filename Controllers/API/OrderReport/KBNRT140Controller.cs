@@ -78,7 +78,7 @@ namespace KANBAN.Controllers.API.OrderReport
         {
             try
             {
-                setConString();
+                
                 string _result = "";
 
                 var MonthYear = await _KB3Context.V_KBNRT_140_rpt.Select(x => new
@@ -113,7 +113,7 @@ namespace KANBAN.Controllers.API.OrderReport
             { return BadRequest(); }
             try
             {
-                setConString();
+                
                 string _result = "";
                 dynamic _json = JsonConvert.DeserializeObject(data);
                 string monthFrom = _json["monthFrom"];

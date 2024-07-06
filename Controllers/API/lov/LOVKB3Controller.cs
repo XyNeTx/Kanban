@@ -69,7 +69,7 @@ namespace HINOSystem.Controllers.API.lov
                 string _result = @"{
                     ""status"":""200"",
                     ""response"":""OK"",
-                    ""message"": """ + (_json == "[]" ? "No data found in the list of values." : "") + @""",
+                    ""message"": """ + (_json == "[]" ? "No data found in the list of values." : "Data Found") + @""",
                     ""data"":" + _json + @"
                 }";
 
@@ -94,7 +94,7 @@ namespace HINOSystem.Controllers.API.lov
 
                 _SQL = @"
                     SELECT DISTINCT RIGHT('0000'+ CONVERT(VARCHAR,F_Sebango),4) AS Kanban_No 
-                    FROM T_Construction  
+                    FROM [PPMDB].[dbo].T_Construction  
                     WHERE F_Local_Str <= convert(char(8),getdate(),112) 
                     AND F_Local_End >= convert(char(8),getdate(),112) 
                 ";
@@ -110,7 +110,7 @@ namespace HINOSystem.Controllers.API.lov
                 string _result = @"{
                     ""status"":""200"",
                     ""response"":""OK"",
-                    ""message"": """ + (_json == "[]" ? "No data found in the list of values." : "") + @""",
+                    ""message"": """ + (_json == "[]" ? "No data found in the list of values." : "Data Found") + @""",
                     ""data"":" + _json + @"
                 }";
 
@@ -151,7 +151,7 @@ namespace HINOSystem.Controllers.API.lov
                 string _result = @"{
                     ""status"":""200"",
                     ""response"":""OK"",
-                    ""message"": """ + (_json == "[]" ? "No data found in the list of values." : "") + @""",
+                    ""message"": """ + (_json == "[]" ? "No data found in the list of values." : "Data Found") + @""",
                     ""data"":" + _json + @"
                 }";
 
@@ -193,7 +193,7 @@ namespace HINOSystem.Controllers.API.lov
                 string _result = @"{
                     ""status"":""200"",
                     ""response"":""OK"",
-                    ""message"": """ + (_json == "[]" ? "No data found in the list of values." : "") + @""",
+                    ""message"": """ + (_json == "[]" ? "No data found in the list of values." : "Data Found") + @""",
                     ""data"":" + _json + @"
                 }";
 

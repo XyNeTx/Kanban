@@ -119,7 +119,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                setConString();
+                
                 if (data != null)
                 {
                     dynamic _json = JsonConvert.DeserializeObject(data);
@@ -203,7 +203,7 @@ namespace HINOSystem.Controllers.API.Master
 
         public async Task<IActionResult> SearchDataFromPDS(string PDSNo)
         {
-            setConString();
+            
             string _result = "";
             try
             {
@@ -296,7 +296,7 @@ namespace HINOSystem.Controllers.API.Master
             string _result = "";
             try
             {
-                setConString();
+                
                 if (data != null)
                 {
                     dynamic _json = JsonConvert.DeserializeObject(data);
@@ -378,7 +378,7 @@ namespace HINOSystem.Controllers.API.Master
 
         public async Task<bool> InsToRecLocal(string PDSNo)
         {
-            setConString();
+            
             _BearerClass.Authentication(Request);
             var user = _BearerClass.UserCode.ToString();
             try
@@ -430,7 +430,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                setConString();
+                
                 string UserName = HttpContext.Session.GetString("USER_ID");
                 string HostName = HttpContext.Session.GetString("USER_DEVICENAME");
                 _BearerClass.Authentication(Request);

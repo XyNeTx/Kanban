@@ -84,7 +84,7 @@ namespace KANBAN.Controllers.API.OrderReport
         {
             try
             {
-                setConString();
+                
                 string _result = "";
 
                 var supplierDB = await _KB3Context.TB_MS_PartOrder.Select(x => new
@@ -136,7 +136,7 @@ namespace KANBAN.Controllers.API.OrderReport
         {
             try
             {
-                setConString();
+                
                 string _result = "";
                 string UserName = HttpContext.Session.GetString("USER_NAME");
                 string HostName = HttpContext.Session.GetString("USER_DEVICENAME");
@@ -175,7 +175,7 @@ namespace KANBAN.Controllers.API.OrderReport
             }
             try
             {
-                setConString();
+                
                 string _result = "";
                 dynamic _json = JsonConvert.DeserializeObject(data);
                 string supFrom = _json["supFrom"];
@@ -257,7 +257,7 @@ namespace KANBAN.Controllers.API.OrderReport
             }
             try
             {
-                setConString();
+                
                 string _result = "";
                 dynamic _json = JsonConvert.DeserializeObject(data);
                 string supFrom = _json["supFrom"];
@@ -321,7 +321,7 @@ namespace KANBAN.Controllers.API.OrderReport
             }
             try
             {
-                setConString();
+                
                 string _result = "";
                 dynamic _json = JsonConvert.DeserializeObject(data);
                 string supFrom = _json["supFrom"];
@@ -372,7 +372,7 @@ namespace KANBAN.Controllers.API.OrderReport
             }
             try
             {
-                setConString();
+                
                 string _result = "";
                 string userName = HttpContext.Session.GetString("USER_NAME");
                 string hostName = HttpContext.Session.GetString("USER_DEVICENAME");

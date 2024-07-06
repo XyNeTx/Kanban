@@ -80,7 +80,7 @@ namespace KANBAN.Controllers.API.OrderReport
         {
             try
             {
-                setConString();
+                
                 string _result = "";
 
                 var supDB = await _KB3Context.TB_MS_PartOrder.Select(x => new
@@ -133,7 +133,7 @@ namespace KANBAN.Controllers.API.OrderReport
         {
             try
             {
-                setConString();
+                
                 string _result = "";
                 dynamic _json = JsonConvert.DeserializeObject(data);
                 string supFrom = _json["supFrom"];
@@ -184,7 +184,7 @@ namespace KANBAN.Controllers.API.OrderReport
         {
             try
             {
-                setConString();
+                
                 string _result = "";
                 dynamic _json = JsonConvert.DeserializeObject(data);
                 string supFrom = _json["supFrom"];
@@ -230,7 +230,7 @@ namespace KANBAN.Controllers.API.OrderReport
         {
             try
             {
-                setConString();
+                
                 string _result = "";
                 dynamic _json = JsonConvert.DeserializeObject(data);
                 string supFrom = _json["supFrom"];

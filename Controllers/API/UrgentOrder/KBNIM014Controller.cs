@@ -47,9 +47,43 @@ namespace HINOSystem.Controllers.API.Master
             _Log = serilogLibs;
         }
 
+        public void setConString()
+        {
+            try
+            {
+                if (_KBCN.Plant.ToString() == "3")
+                {
+                    var KBConnectString = _configuration.GetConnectionString("KB3Connection");
+                    var PPMConnectString = _configuration.GetConnectionString("PPM3Connection");
+                    _KB3Context.Database.SetConnectionString(KBConnectString);
+                    _PPM3Context.Database.SetConnectionString(PPMConnectString);
+                }
+                else if (_KBCN.Plant.ToString() == "2")
+                {
+                    var KBConnectString = _configuration.GetConnectionString("KB2Connection");
+                    var PPMConnectString = _configuration.GetConnectionString("PPMConnection");
+                    _KB3Context.Database.SetConnectionString(KBConnectString);
+                    _PPM3Context.Database.SetConnectionString(PPMConnectString);
+                }
+                else if (_KBCN.Plant.ToString() == "1")
+                {
+                    var KBConnectString = _configuration.GetConnectionString("KB1Connection");
+                    var PPMConnectString = _configuration.GetConnectionString("PPMConnection");
+                    _KB3Context.Database.SetConnectionString(KBConnectString);
+                    _PPM3Context.Database.SetConnectionString(PPMConnectString);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+        }
+
+
         [HttpPost]
         public async Task<IActionResult> ImportSave(TB_Import_EKanban_Pack obj)
         {
+            
             _BearerClass.Authentication(Request);
 
             if (_BearerClass.Status == 401) return Unauthorized(new
@@ -91,6 +125,7 @@ namespace HINOSystem.Controllers.API.Master
 
                 await _KB3Context.SaveChangesAsync();
                 _KB3Transaction.Commit();
+                _Log.WriteLog("KBNIM014 ImportSave ", UserID, _BearerClass.Device);
 
                 return Ok(new
                 {
@@ -117,6 +152,7 @@ namespace HINOSystem.Controllers.API.Master
         [HttpGet]
         public async Task<IActionResult> AfterImported()
         {
+            
             _BearerClass.Authentication(Request);
 
             if (_BearerClass.Status == 401) return Unauthorized(new
@@ -133,16 +169,18 @@ namespace HINOSystem.Controllers.API.Master
                 string UserID = HttpContext.Session.GetString("USER_CODE");
                 string Plant = HttpContext.Session.GetString("USER_PLANT");
 
-                await _KB3Context.Database.ExecuteSqlRawAsync($"DELETE From TB_Import_error Where F_Update_By = '{UserID}' AND F_Type = 'KBNIM014' ");
+                await _KB3Context.Database.ExecuteSqlRawAsync($"DELETE From TB_Import_error Where F_Update_By = @p0 AND F_Type = 'KBNIM014' ",UserID);
 
-                await _KB3Context.Database.ExecuteSqlRawAsync($"EXEC [exec].[spKBNIM014] '{Plant}','{UserID}'");
+                await _KB3Context.Database.ExecuteSqlRawAsync($"EXEC [exec].[spKBNIM014] @p0,@p1",Plant,UserID);
 
                 _KB3Transaction.Commit();
 
 
-                int _haveError = await _KB3Context.Database.ExecuteSqlRawAsync($"SELECT * FROM TB_Import_Error Where F_Update_By = '{UserID}' and F_Type = 'KBNIM014'; ");
+                int _haveError = await _KB3Context.Database.ExecuteSqlRawAsync($"SELECT * FROM TB_Import_Error Where F_Update_By = @p0 and F_Type = 'KBNIM014'; ",UserID);
 
-                if(_haveError > 0)
+                _Log.WriteLog("KBNIM014 AfterImported ", UserID, _BearerClass.Device);
+
+                if (_haveError > 0)
                 {
                     return BadRequest(new
                     {

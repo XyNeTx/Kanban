@@ -115,7 +115,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                setConString();
+                
                 if (data != null)
                 {
                     dynamic _json = JsonConvert.DeserializeObject(data);
@@ -215,7 +215,7 @@ namespace HINOSystem.Controllers.API.Master
             string _result = "";
             try
             {
-                setConString();
+                
                 var queryData = await _KB3Context.TB_REC_HEADER.Where(x => x.F_OrderNo == PDSNo)
                 .Select(x => new
                 {
@@ -321,7 +321,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                setConString();
+                
                 string _result = "";
                 _BearerClass.Authentication(Request);
                 string UserName = HttpContext.Session.GetString("USER_ID");
