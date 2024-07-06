@@ -169,14 +169,9 @@ namespace HINOSystem.Controllers.API.Master
                     string Plant = HttpContext.Session.GetString("USER_PLANT");
                     string UserID = HttpContext.Session.GetString("USER_CODE");
 
-                    await _KB3Context.Database.ExecuteSqlRawAsync($"EXEC [exec].[spKBNIM003C_CONFIRM] '@Plant', '@Type', '@PDSNo', '@PDSIssueDate', '@DeliveryDate', '@UserID' ",
-                        new SqlParameter("@Plant",Plant),
-                        new SqlParameter("@Type", "EKanban"),
-                        new SqlParameter("@PDSNo", F_PDS_No),
-                        new SqlParameter("@PDSIssueDate", F_PDS_Issued_Date),
-                        new SqlParameter("@DeliveryDate", F_Delivery_Date),
-                        new SqlParameter("@UserID", UserID)
-                        );
+                    string sql = $"EXEC [exec].[spKBNIM003C_CONFIRM] '{Plant}', 'EKanban', '{F_PDS_No}', '{F_PDS_Issued_Date}', '{F_Delivery_Date}', '{UserID}' ";
+
+                    await _KB3Context.Database.ExecuteSqlRawAsync(sql);
                 }
 
                 _KB3Transaction.Commit();

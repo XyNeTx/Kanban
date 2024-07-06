@@ -491,7 +491,7 @@ namespace HINOSystem.Controllers.API.Master
     and E.F_CHG_SHIPPING_DATE + E.F_CHG_SHIPPING_TIME in (
                                                         Select max(F_Chg_SHipping_Date+F_Chg_Shipping_TIME) 
                                                         From TB_EKANBAN_History
-                                                        Where F_Supplier = e.F_Supplier 
+                                                         Where F_Supplier = e.F_Supplier 
                                                         And F_Supplier_Plant = e.F_Supplier_Plant 
                                                         And F_Dock = e.F_Dock
                                                         and F_Date = E.F_Date 
@@ -655,8 +655,8 @@ namespace HINOSystem.Controllers.API.Master
     '' as F_Part_Refer,'' as F_Ruibetsu_Refer,'" + _BearerClass.UserCode.ToString() + @"' as F_Update_By,getdate() as F_Update_Date,'' as F_Remark
     ,case when not(Con.F_Ratio_N) is null then cast(Con.F_Ratio_N as nchar(3)) else case when rtrim(P.F_Sel_Part) = '' then '' else cast(Con.F_Ratio as nchar(3)) end end F_ratio
     from(Select F_PDS_NO, F_part_no, F_Collect_Date, F_Collect_Time, Sum(F_Qty) as F_QTY, substring(F_PDS_NO, 1, 2) as F_PDS_SUB From TB_Import_EKanban Where F_Update_BY = '" + _BearerClass.UserCode.ToString() + @"' and F_TYpe = 'EKanban'
-    Sql = Sql & Group by F_PDS_NO, F_part_no, F_Collect_Date, F_Collect_Time, substring(F_PDS_NO, 1, 2)
-    Sql = Sql & )S INNER JOIN(Select * from dbo.TMP_PARENTS_CHILD Where F_Update_BY = '" + _BearerClass.UserCode.ToString() + @"')P ON
+    Group by F_PDS_NO, F_part_no, F_Collect_Date, F_Collect_Time, substring(F_PDS_NO, 1, 2)
+    )S INNER JOIN(Select * from dbo.TMP_PARENTS_CHILD Where F_Update_BY = '" + _BearerClass.UserCode.ToString() + @"')P ON
     substring(S.F_PART_NO, 1, 5) + substring(S.F_PART_NO, 7, 5) = rtrim(P.F_PARENT_PART) collate Thai_CI_AS
     AND substring(S.F_PART_NO,13,2) = P.F_ruibetsu collate Thai_CI_AS
     and P.F_Store_Cd in ('01') and substring(P.F_Ch_Store_Cd,1,1) in ('0', '1')
