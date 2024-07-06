@@ -119,7 +119,7 @@ namespace KANBAN.Controllers.API.OrderReport
             try
             {
                 SetVariable();
-                setConString();
+                
                 dynamic _json = JsonConvert.DeserializeObject(data);
                 string OrderType = _json["OrderType"];
                 string yearMonth = _json["yearMonth"];
@@ -183,7 +183,7 @@ namespace KANBAN.Controllers.API.OrderReport
         {
             try
             {
-                setConString();
+                
                 string UserName = HttpContext.Session.GetString("USER_NAME");
                 string HostName = HttpContext.Session.GetString("USER_DEVICENAME");
                 if (string.IsNullOrWhiteSpace(UserName) || string.IsNullOrWhiteSpace(HostName))
@@ -241,7 +241,7 @@ namespace KANBAN.Controllers.API.OrderReport
         {
             try
             {
-                setConString();
+                
                 string UserName = HttpContext.Session.GetString("USER_NAME");
                 string HostName = HttpContext.Session.GetString("USER_DEVICENAME");
                 if (string.IsNullOrWhiteSpace(UserName) || string.IsNullOrWhiteSpace(HostName))
@@ -278,7 +278,7 @@ namespace KANBAN.Controllers.API.OrderReport
             try
             {
                 SetVariable();
-                setConString();
+                
                 string UserName = HttpContext.Session.GetString("USER_NAME");
                 string HostName = HttpContext.Session.GetString("USER_DEVICENAME");
                 if (string.IsNullOrWhiteSpace(UserName) || string.IsNullOrWhiteSpace(HostName))
@@ -333,7 +333,7 @@ namespace KANBAN.Controllers.API.OrderReport
             try
             {
                 SetVariable();
-                setConString();
+                
                 string UserName = HttpContext.Session.GetString("USER_NAME");
                 string HostName = HttpContext.Session.GetString("USER_DEVICENAME");
                 if (string.IsNullOrWhiteSpace(UserName) || string.IsNullOrWhiteSpace(HostName))

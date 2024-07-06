@@ -83,7 +83,7 @@ namespace HINOSystem.Controllers.API.Master
         [HttpPost]
         public async Task<IActionResult> ImportSave(TB_Import_EKanban_Pack obj)
         {
-            setConString();
+            
             _BearerClass.Authentication(Request);
 
             if (_BearerClass.Status == 401) return Unauthorized(new
@@ -152,7 +152,7 @@ namespace HINOSystem.Controllers.API.Master
         [HttpGet]
         public async Task<IActionResult> AfterImported()
         {
-            setConString();
+            
             _BearerClass.Authentication(Request);
 
             if (_BearerClass.Status == 401) return Unauthorized(new

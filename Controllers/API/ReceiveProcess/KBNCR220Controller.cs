@@ -82,7 +82,7 @@ namespace KANBAN.Controllers.API.ReceiveProcess
         {
             try
             {
-                setConString();
+                
                 //first load page
                 if (data == null)
                 {
@@ -130,7 +130,7 @@ namespace KANBAN.Controllers.API.ReceiveProcess
         {
             try
             {
-                setConString();
+                
                 string _result = "";
                 Int32 now = Int32.Parse(DateTime.Now.ToString("yyyyMMdd"));
 
@@ -194,7 +194,7 @@ namespace KANBAN.Controllers.API.ReceiveProcess
         {
             try
             {
-                setConString();
+                
                 dynamic _json = JsonConvert.DeserializeObject(data);
                 string strDateFrom = _json["devDate"];
                 string strDateTo = _json["toDate"];

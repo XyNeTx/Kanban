@@ -97,7 +97,7 @@ namespace KANBAN.Controllers.API.UrgentOrder
                     title = "Unauthorized",
                     message = "Please Login First"
                 });
-                setConString();
+                
                 string USERID = HttpContext.Session.GetString("USER_CODE");
                 _KB3Context.Database.ExecuteSqlRawAsync($"DELETE FROM TB_IMPORT_SERVICE WHERE F_UPDATE_BY = @p0",USERID);
                 foreach (var each in listObj)

@@ -79,7 +79,7 @@ namespace HINOSystem.Controllers.API.Master
         [HttpPost]
         public IActionResult initial([FromBody] string pData = null)
         {
-            setConString();
+            
             dynamic _json = null;
             string _SQL = "";
             try
@@ -121,7 +121,7 @@ namespace HINOSystem.Controllers.API.Master
                 title = "Unauthorized",
                 message = "Please Login First"
             });
-            setConString();
+            
             try
             {
                 string now = DateTime.Now.ToString("yyyyMMdd");
@@ -176,7 +176,7 @@ namespace HINOSystem.Controllers.API.Master
                 title = "Unauthorized",
                 message = "Please Login First"
             });
-            setConString();
+            
             try
             {
                 string now = DateTime.Now.ToString("yyyyMMdd");
@@ -251,7 +251,7 @@ namespace HINOSystem.Controllers.API.Master
                 title = "Unauthorized",
                 message = "Please Login First"
             });
-            setConString();
+            
             try
             {
                 string now = DateTime.Now.ToString("yyyyMMdd");
@@ -300,7 +300,7 @@ namespace HINOSystem.Controllers.API.Master
                 message = "Please Login First"
             });
 
-            setConString();
+            
             try
             {
                 string now = DateTime.Now.ToString("yyyyMMdd");
@@ -392,7 +392,7 @@ namespace HINOSystem.Controllers.API.Master
                 title = "Unauthorized",
                 message = "Please Login First"
             });
-            setConString();
+            
             try
             {
                 string now = DateTime.Now.ToString("yyyyMMdd");
@@ -443,7 +443,7 @@ namespace HINOSystem.Controllers.API.Master
                 title = "Unauthorized",
                 message = "Please Login First"
             });
-            setConString();
+            
             try
             {
                 string now = DateTime.Now.ToString("yyyyMMdd");
@@ -545,7 +545,7 @@ namespace HINOSystem.Controllers.API.Master
                 title = "Unauthorized",
                 message = "Please Login First"
             });
-            setConString();
+            
             try
             {
                 string now = DateTime.Now.ToString("yyyyMMdd");
@@ -611,7 +611,7 @@ namespace HINOSystem.Controllers.API.Master
                 title = "Unauthorized",
                 message = "Please Login First"
             });
-            setConString();
+            
             try
             {
                 string now = DateTime.Now.ToString("yyyyMMdd");
@@ -714,7 +714,7 @@ namespace HINOSystem.Controllers.API.Master
                 title = "Unauthorized",
                 message = "Please Login First"
             });
-            setConString();
+            
             using var _KB3Transaction = _KB3Context.Database.BeginTransaction();
             try
             {
@@ -766,7 +766,7 @@ namespace HINOSystem.Controllers.API.Master
                 title = "Unauthorized",
                 message = "Please Login First"
             });
-            setConString();
+            
             using var _KB3Transaction = _KB3Context.Database.BeginTransaction();
             try
             {

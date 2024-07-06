@@ -32,41 +32,8 @@ namespace HINOSystem.Libs
             _ProcDB = procDB;
         }
 
-        public void setConString()
-        {
-            try
-            {
-                if (_KBCN.Plant.ToString() == "3")
-                {
-                    var KBConnectString = _configuration.GetConnectionString("KB3Connection");
-                    var PPMConnectString = _configuration.GetConnectionString("PPM3Connection");
-                    _KB3Context.Database.SetConnectionString(KBConnectString);
-                    _PPM3Context.Database.SetConnectionString(PPMConnectString);
-                }
-                else if (_KBCN.Plant.ToString() == "2")
-                {
-                    var KBConnectString = _configuration.GetConnectionString("KB2Connection");
-                    var PPMConnectString = _configuration.GetConnectionString("PPMConnection");
-                    _KB3Context.Database.SetConnectionString(KBConnectString);
-                    _PPM3Context.Database.SetConnectionString(PPMConnectString);
-                }
-                else if (_KBCN.Plant.ToString() == "1")
-                {
-                    var KBConnectString = _configuration.GetConnectionString("KB1Connection");
-                    var PPMConnectString = _configuration.GetConnectionString("PPMConnection");
-                    _KB3Context.Database.SetConnectionString(KBConnectString);
-                    _PPM3Context.Database.SetConnectionString(PPMConnectString);
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
-        }
-
         public DataTable ExecuteSQLProcDB(string sql)
         {
-            setConString();
             SqlConnection con = new SqlConnection(_ProcDB.Database.GetConnectionString());
             DataTable dt = new DataTable();
 
@@ -85,7 +52,7 @@ namespace HINOSystem.Libs
         }
         public DataTable ExecuteSQL(string sql,params object[] parameters)
         {
-            //setConString();
+            //
             SqlConnection con = new SqlConnection(_KB3Context.Database.GetConnectionString());
             DataTable dt = new DataTable();
             if (parameters.Length > 0)
@@ -123,7 +90,6 @@ namespace HINOSystem.Libs
         }
         public DataTable ExecuteSQLProc_Web(string sql)
         {
-            setConString();
             SqlConnection con = new SqlConnection(_configuration.GetConnectionString("ProcWebConnection"));
             DataTable dt = new DataTable();
 

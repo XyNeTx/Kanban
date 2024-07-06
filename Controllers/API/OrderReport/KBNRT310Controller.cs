@@ -79,7 +79,7 @@ namespace KANBAN.Controllers.API.OrderReport
         {
             try
             {
-                setConString();
+                
                 string _result = "";
                 string date = "";
                 string shift = "";
@@ -160,7 +160,7 @@ namespace KANBAN.Controllers.API.OrderReport
             }
             try
             {
-                setConString();
+                
                 string _result = "";
                 dynamic _json = JsonConvert.DeserializeObject(data);
                 string supFrom = _json["supFrom"];
@@ -242,7 +242,7 @@ namespace KANBAN.Controllers.API.OrderReport
             }
             try
             {
-                setConString();
+                
                 string _result = "";
                 dynamic _json = JsonConvert.DeserializeObject(data);
                 string supFrom = _json["supFrom"];
@@ -312,7 +312,7 @@ namespace KANBAN.Controllers.API.OrderReport
             }
             try
             {
-                setConString();
+                
                 string _result = "";
                 dynamic _json = JsonConvert.DeserializeObject(data);
                 string supFrom = _json["supFrom"];
@@ -361,7 +361,7 @@ namespace KANBAN.Controllers.API.OrderReport
 
         public async Task<IActionResult> OnReportClick([FromBody] string data)
         {
-            setConString();
+            
             string _result = "";
             string date = "";
             string shift = "";
@@ -408,7 +408,7 @@ namespace KANBAN.Controllers.API.OrderReport
         }
         public async Task<IActionResult> OnReportAllClick([FromBody] string data)
         {
-            setConString();
+            
             string _result = "";
             string date = "";
             string shift = "";

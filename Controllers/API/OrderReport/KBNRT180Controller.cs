@@ -79,7 +79,7 @@ namespace KANBAN.Controllers.API.OrderReport
         {
             try
             {
-                setConString();
+                
                 string _result = "";
                 string Plant = _KBCN.Plant.ToString();
                 string now = DateTime.Now.ToString("yyyyMMdd");
@@ -117,7 +117,7 @@ namespace KANBAN.Controllers.API.OrderReport
             }
             try
             {
-                setConString();
+                
                 string _result = "";
                 dynamic _json = JsonConvert.DeserializeObject<dynamic>(data);
                 string supFrom = _json["supFrom"];

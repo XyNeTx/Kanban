@@ -114,7 +114,7 @@ namespace HINOSystem.Controllers.API.Master
         [HttpGet]
         public async Task<IActionResult> Get_StoreCode(string? F_YM = null, bool? IsInquiry = false)
         {
-            setConString();
+            
             _BearerClass.Authentication(Request);
 
             if (_BearerClass.Status == 401) return Unauthorized(new
@@ -180,7 +180,7 @@ namespace HINOSystem.Controllers.API.Master
         [HttpGet]
         public async Task<IActionResult> GetCalendarData(string F_YM, string F_Store_cd)
         {
-            setConString();
+            
             _BearerClass.Authentication(Request);
 
             if (_BearerClass.Status == 401) return Unauthorized(new
@@ -227,7 +227,7 @@ namespace HINOSystem.Controllers.API.Master
         [HttpPost]
         public async Task<IActionResult> Save(TB_Calendar obj)
         {
-            setConString();
+            
 
             _BearerClass.Authentication(Request);
 
@@ -287,7 +287,7 @@ namespace HINOSystem.Controllers.API.Master
         [HttpPost]
         public async Task<IActionResult> Update(TB_Calendar obj)
         {
-            setConString();
+            
             _BearerClass.Authentication(Request);
 
             if (_BearerClass.Status == 401) return Unauthorized(new
@@ -349,7 +349,7 @@ namespace HINOSystem.Controllers.API.Master
         [HttpPost]
         public async Task<IActionResult> Delete(TB_Calendar obj)
         {
-            setConString();
+            
             _BearerClass.Authentication(Request);
 
             if (_BearerClass.Status == 401) return Unauthorized(new
