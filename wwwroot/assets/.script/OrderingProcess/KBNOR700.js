@@ -127,11 +127,6 @@
             return false;
         }
         
-        if ($('#chkSupplierCode').val() == 1 && (itmSupplier.value === undefined || itmSupplierTo.value === undefined)) {
-            MsgBox("Please input Supplier From, To before print PDS...", MsgBoxStyle.Exclamation, "Exclamation");
-            return false;
-        }
-        
         if ($('#chkDeliveryDate').val() == 1 && (itmDelivery.value === undefined || itmDeliveryTo.value === undefined)) {
             MsgBox("Please select Delivery Date From, To before print PDS...", MsgBoxStyle.Exclamation, "Exclamation");
             return false;
@@ -148,8 +143,6 @@
                 "@F_orderType": (rdoOrderType.value == 'Special' ? 'S' : (rdoOrderType.value == 'Urgent' ? 'U' : 'N')),
                 "@F_OrderNo": ($('#chkPDSNo').val() == 1 ? itmPDS.value : ''),
                 "@F_OrderNoTo": ($('#chkPDSNo').val() == 1 ? itmPDSTo.value : ''),
-                "@F_Supplier_Code": ($('#chkSupplierCode').val() == 1 ? itmSupplier.title : ''),
-                "@F_Supplier_CodeTo": ($('#chkSupplierCode').val() == 1 ? itmSupplierTo.title : ''),
                 "@F_Delivery_Date": ($('#chkDeliveryDate').val() == 1 ? ReplaceAll(itmDelivery.value,'-','') : ''),
                 "@F_Delivery_DateTo": ($('#chkDeliveryDate').val() == 1 ? ReplaceAll(itmDeliveryTo.value, '-', '') : '')
             },
@@ -175,8 +168,6 @@
                         + '&pUserCode=' + ajexHeader.UserCode
                         + '&OrderNo=' + ($('#chkPDSNo').val() == 1 ? itmPDS.value : '')
                         + '&OrderNoTo=' + ($('#chkPDSNo').val() == 1 ? itmPDSTo.value : '')
-                        + '&SupplierCode=' + ($('#chkPDSNo').val() == 1 ? itmSupplier.value : '')
-                        + '&SupplierCodeTo=' + ($('#chkPDSNo').val() == 1 ? itmSupplierTo.value : '')
                         + '&DeliveryDate=' + ($('#chkDeliveryDate').val() == 1 ? ReplaceAll(itmDelivery.value, '-', '') : '')
                         + '&DeliveryDateTo=' + ($('#chkDeliveryDate').val() == 1 ? ReplaceAll(itmDeliveryTo.value, '-', '') : '')
                         ,'_blank'
@@ -201,11 +192,6 @@
 
         if ($('#chkPDSNo').val() == 1 && (itmPDS.value === undefined || itmPDS.value === undefined)) {
             MsgBox("Please input PDS From, To before print PDS...", MsgBoxStyle.Exclamation, "Exclamation");
-            return false;
-        }
-
-        if ($('#chkSupplierCode').val() == 1 && (itmSupplier.value === undefined || itmSupplierTo.value === undefined)) {
-            MsgBox("Please input Supplier From, To before print PDS...", MsgBoxStyle.Exclamation, "Exclamation");
             return false;
         }
 
@@ -242,8 +228,6 @@
                 "@F_orderType": (rdoOrderType.value == 'Special' ? 'S' : (rdoOrderType.value == 'Urgent' ? 'U' : 'N')),
                 "@F_OrderNo": ($('#chkPDSNo').val() == 1 ? itmPDS.value : ''),
                 "@F_OrderNoTo": ($('#chkPDSNo').val() == 1 ? itmPDSTo.value : ''),
-                "@F_Supplier_Code": ($('#chkSupplierCode').val() == 1 ? itmSupplier.title : ''),
-                "@F_Supplier_CodeTo": ($('#chkSupplierCode').val() == 1 ? itmSupplierTo.title : ''),
                 "@F_Delivery_Date": ($('#chkDeliveryDate').val() == 1 ? ReplaceAll(itmDelivery.value, '-', '') : ''),
                 "@F_Delivery_DateTo": ($('#chkDeliveryDate').val() == 1 ? ReplaceAll(itmDeliveryTo.value, '-', '') : '')
             },
@@ -328,8 +312,6 @@
                         + '&pUserCode=' + ajexHeader.UserCode
                         + '&OrderNo=' + itmPDS.value
                         + '&OrderNoTo=' + itmPDSTo.value
-                        + '&SupplierCode=' + (itmSupplier.value == undefined ? '' : itmSupplier.value)
-                        + '&SupplierCodeTo=' + (itmSupplierTo.value == undefined ? '' : itmSupplierTo.value)
                         + '&DeliveryDate=' + ($('#chkDeliveryDate').val() == 1 ? ReplaceAll(itmDelivery.value, '-', '') : '')
                         + '&DeliveryDateTo=' + ($('#chkDeliveryDate').val() == 1 ? ReplaceAll(itmDeliveryTo.value, '-', '') : '')
                         , '_blank'

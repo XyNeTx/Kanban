@@ -12,6 +12,8 @@ using NPOI.SS.Formula.Functions;
 using System.Configuration;
 using KANBAN.Libs;
 using KANBAN.Models.KB3.VLT;
+using KANBAN.Models.KB3.OrderingProcess;
+using KANBAN.Models.KB3.Master;
 
 namespace HINOSystem.Context
 {
@@ -19,11 +21,29 @@ namespace HINOSystem.Context
     {
 
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IConfiguration _config;
 
-        public KB3Context(DbContextOptions<KB3Context> options, IHttpContextAccessor httpContextAccessor)
+        public KB3Context(DbContextOptions<KB3Context> options, IHttpContextAccessor httpContextAccessor , IConfiguration configuration)
             : base(options)
         {
             _httpContextAccessor = httpContextAccessor;
+            _config = configuration;
+        }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured && _httpContextAccessor.HttpContext != null)
+            {
+                var plantHeader = _httpContextAccessor.HttpContext.Request.Headers["Plant"].ToString();
+                string connectionString = plantHeader switch
+                {
+                    "3" => _config.GetConnectionString("DefaultConnection"),
+                    "2" => _config.GetConnectionString("KB2Connection"),
+                    "1" => _config.GetConnectionString("KB1Connection"),
+                    _ => _config.GetConnectionString("DefaultConnection")
+                };
+
+                optionsBuilder.UseSqlServer(connectionString);
+            }
         }
 
         public DbSet<TB_MS_CodeOrder> TB_MS_CodeOrder { get; set; }
@@ -98,6 +118,11 @@ namespace HINOSystem.Context
 
         public DbSet<TB_Transaction_TMP> TB_Transaction_TMP { get; set; }
         public DbSet<TB_Import_VLT> TB_Import_VLT { get; set; }
+        public DbSet<TB_Import_UpdMRP_FG> TB_Import_UpdMRP_FG { get; set; }
+
+        public DbSet<TB_Calendar> TB_Calendar { get; set; }
+        public DbSet<TB_BL_SET> TB_BL_SET { get; set; }
+        public DbSet<TB_BL_SET_HISTORY_DELETE> TB_BL_SET_HISTORY_DELETE { get; set; }
 
         //protected override void OnModelCreating(ModelBuilder modelBuilder)
         //{

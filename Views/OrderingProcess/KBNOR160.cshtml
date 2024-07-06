@@ -17,8 +17,10 @@
 
                                         <div class="row">
                                             <div class="col-6">
-                                                <item type="text" id="txtProcessDate" label="Process Date :" value="@ViewData["_ProcessDate"]" readonly></item>
-                                            </div>
+                                                <div class="input-group">
+                                                    <label class="input-group-text" for="txtProcessDate"> Process Date :</label>
+                                                    <input type="date" class="form-control" id="txtProcessDate" value="@DateTime.Now.ToString("yyyy-MM-dd")" />                                            </div>
+                                                </div>
                                             <div class="col-6">
                                                 <item type="text" id="txtPlant" label="Plant :" value="@ViewData["_Plant"]" readonly></item>
                                             </div>
@@ -46,148 +48,122 @@
 
                         </div>
                     </div>
-
-
                     <div class="row">
-                        <div class="col">
-
-
-                            <div class="row">
-                                <div class="col-9">
-
-                                    <div class="row mb-2">
-                                        <div class="col">
-
-
-                                            <fieldset class="fieldset">
-                                                <legend>Process For :</legend>
-
-                                                <div class="row">
-                                                    <div class="col">
-
-                                                        <div class="row">
-                                                            <div class="col-4">
-                                                                <item type="date" id="txtProcessForDate" label="Date :" format="yyyy-mm-dd" default="now"></item>
-                                                            </div>
-                                                            <div class="col-4">
-                                                                <item type="text" id="txtProcessForShift" label="Shift :" value="@ViewData["_ShiftTitle"]?.ToString()"></item>
-                                                            </div>
-                                                        </div>
-
-                                                    </div>
-                                                </div>
-
-                                            </fieldset>
-
-                                        </div>
-                                    </div>
-
-
-                                    <div class="row mb-2">
-                                        <div class="col">
-
-
-                                            <fieldset class="fieldset">
-                                                <legend>CONDITON :</legend>
-
-                                                <div class="row mb-2">
-                                                    <div class="col">
-
-                                                        <div class="row">
-                                                            <div class="col-4">
-                                                                <item type="date" id="txtDate" label="Date :" format="yyyy-mm-dd" default="now"></item>
-                                                            </div>
-                                                        </div>
-
-                                                    </div>
-                                                </div>
-
-                                                <div class="row">
-                                                    <div class="col-1">
-                                                    </div>
-                                                    <div class="col">
-                                                        <item type="radio" id="rdoOrderType" value="Minus" label="MRP -20%" checked></item>
-                                                    </div>
-                                                    <div class="col">
-                                                        <item type="radio" id="rdoOrderType" value="Plus" label="MRP +20%"></item>
-                                                    </div>
-                                                    <div class="col">
-                                                        <item type="radio" id="rdoOrderType" value="All" label="All Data"></item>
-                                                    </div>
-                                                </div>
-
-                                            </fieldset>
-
-                                        </div>
-                                    </div>
-
-
-                                    <div class="row">
-                                        <div class="col">
-                                            <item type="table" id="tblMaster" label=""></item>
-                                        </div>
-                                    </div>
-
-
-                                </div>
-
-
-
-
+                        <div class="col-10">
+                            <div class="row mb-2">
                                 <div class="col">
-                                    <div class="row mt-2">
-                                        <div class="col"></div>
-                                        <div class="col-6">
-                                            <item type="button" id="btnExit" label="Exit" style="width:100%"></item>
+                                    <fieldset class="fieldset">
+                                        <legend>Process For :</legend>
+
+                                        <div class="row">
+                                            <div class="col">
+
+                                                <div class="row">
+                                                    <div class="col-3">
+                                                        <div class="input-group">
+                                                            <label class="input-group-text" for="txtProcessForDate"> Date :</label>
+                                                            <input type="date" class="form-control" id="txtProcessForDate" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-3">
+                                                        <item type="text" id="txtProcessForShift" label="Shift :" value="@ViewData["_ShiftTitle"]?.ToString()"></item>
+                                                    </div>
+                                                </div>
+
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="row mt-2">
-                                        <div class="col"></div>
-                                        <div class="col-6">
-                                            <item type="button" id="btnUpdateMRP" label="UPDATE MRP" style="width:100%"></item>
-                                        </div>
-                                    </div>
-                                    <div class="row mt-2">
-                                        <div class="col"></div>
-                                        <div class="col-6">
-                                            <item type="button" id="btnReportMRP" label="Report MRP" style="width:100%"></item>
-                                        </div>
-                                    </div>
-                                    <div class="row mt-2">
-                                        <div class="col"></div>
-                                        <div class="col-6">
-                                            <item type="button" id="btnReport" label="Report" style="width:100%"></item>
-                                        </div>
-                                    </div>
-                                    <div class="row mt-2">
-                                        <div class="col"></div>
-                                        <div class="col-6">
-                                            <item type="button" id="btnSearch" label="Search" style="width:100%"></item>
-                                        </div>
-                                    </div>@*
-                                    <div class="row mt-2">
-                                        <div class="col">
-                                            <item type="checkbox" id="chkPrnitKanban" label="Full A4"></item>
-                                        </div>
-                                        <div class="col-6">
-                                            <item type="button" id="btnPrintKanban" label="Print Kanban" style="width:100%"></item>
-                                        </div>
-                                    </div>*@
+
+                                    </fieldset>
+
                                 </div>
-
-
                             </div>
 
+                            <div class="row mb-2">
+                                <div class="col">
+                                    <fieldset class="fieldset">
+                                        <legend>CONDITON :</legend>
 
+                                        <div class="row mb-2">
+                                            <div class="col">
+                                                <div class="row">
+                                                    <div class="col-3">
+                                                        <div class="input-group">
+                                                            <label class="input-group-text" for="txtDate"> Condition Date :</label>
+                                                            <input type="date" class="form-control" id="txtDate" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
 
+                                        <div class="row">
+                                            <div class="col-1">
+                                            </div>
+                                            <div class="col">
+                                                <label>
+                                                    <input type="radio" class="form-check-input" id="MRP-20" name="rdoOrderTypeName" value="-20" checked />
+                                                    MRP -20%
+                                                </label>
+                                            </div>
+                                            <div class="col">
+                                                <label>
+                                                <input type="radio" class="form-check-input" id="MRP+20" name="rdoOrderTypeName" value="+20" />
+                                                    MRP +20%
+                                                </label>
+                                            </div>
+                                            <div class="col">
+                                                <label class="form-label" for="MRPAll">
+                                                    <input type="radio" class="form-check-input" id="MRPAll" name="rdoOrderTypeName" value="All" />
+                                                    AllData
+                                                </label>
+                                            </div>
+                                        </div>
 
-
-
+                                    </fieldset>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="row mt-2">
+                                <div class="col"></div>
+                                <div class="col-9">
+                                    <item type="button" id="btnExit" label="Exit" style="width:100%"></item>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col"></div>
+                                <div class="col-9">
+                                    <label class="btn btn-success" id="labelImport" style="width:100%">Update MRP
+                                        <input type="file" id="inputFile" style="display:none" accept=".xlsx,.xls"/>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="row mt-1">
+                                <div class="col"></div>
+                                <div class="col-9">
+                                    <item type="button" id="btnReportMRP" label="Report MRP" style="width:100%"></item>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col"></div>
+                                <div class="col-9">
+                                    <item type="button" id="btnReport" label="Report" style="width:100%"></item>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col"></div>
+                                <div class="col-9">
+                                    <item type="button" id="btnSearch" label="Search" style="width:100%"></item>
+                                </div>
+                            </div>
                         </div>
                     </div>
-
+                    <div class="row mt-2">
+                        <div class="col">
+                            <item type="table" id="tblMaster" label=""></item>
+                        </div>
+                    </div>
                 </form>
-
             </div>
         </div>
     </div>

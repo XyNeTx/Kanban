@@ -226,6 +226,7 @@
     <None Include="wwwroot\assets\.libs\splash\splash.js.map" />
     <None Include="wwwroot\assets\.libs\splash\splash.min.js" />
     <None Include="wwwroot\assets\.libs\splash\splash.min.js.map" />
+    <None Include="wwwroot\assets\.script\master\KBNMS005S.js" />
     <None Include="wwwroot\assets\.script\OrderReport\KBNRT160.js" />
     <None Include="wwwroot\assets\.script\OrderReport\KBNRT140.js" />
     <None Include="wwwroot\assets\.script\OrderReport\KBNRT110.js" />

@@ -1,14 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Data;
-using Microsoft.EntityFrameworkCore;
-
-using Newtonsoft.Json;
-
+﻿using HINOSystem.Context;
 using HINOSystem.Libs;
-using HINOSystem.Context;
 using KANBAN.Context;
 using KANBAN.Models.KB3.UrgentOrder;
-using KANBAN.Models.KB3.ReportOrder;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using System.Data;
 //using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HINOSystem.Controllers.API.Master
@@ -82,7 +79,7 @@ namespace HINOSystem.Controllers.API.Master
         [HttpPost]
         public IActionResult initial([FromBody] string pData = null)
         {
-            setConString();
+            
             dynamic _json = null;
             string _SQL = "";
             try
@@ -116,8 +113,15 @@ namespace HINOSystem.Controllers.API.Master
         public async Task<IActionResult> Inquiry()
         {
             _BearerClass.Authentication(Request);
-            if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
-            setConString();
+
+            if (_BearerClass.Status == 401) return Unauthorized(new
+            {
+                status = "401",
+                response = "Unauthorized",
+                title = "Unauthorized",
+                message = "Please Login First"
+            });
+            
             try
             {
                 string now = DateTime.Now.ToString("yyyyMMdd");
@@ -164,8 +168,15 @@ namespace HINOSystem.Controllers.API.Master
         public async Task<IActionResult> Update(VM_KBNIM007N_OK obj)
         {
             _BearerClass.Authentication(Request);
-            if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
-            setConString();
+
+            if (_BearerClass.Status == 401) return Unauthorized(new
+            {
+                status = "401",
+                response = "Unauthorized",
+                title = "Unauthorized",
+                message = "Please Login First"
+            });
+            
             try
             {
                 string now = DateTime.Now.ToString("yyyyMMdd");
@@ -232,8 +243,15 @@ namespace HINOSystem.Controllers.API.Master
         public async Task<IActionResult> Delete(TB_Transaction_TMP obj)
         {
             _BearerClass.Authentication(Request);
-            if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
-            setConString();
+
+            if (_BearerClass.Status == 401) return Unauthorized(new
+            {
+                status = "401",
+                response = "Unauthorized",
+                title = "Unauthorized",
+                message = "Please Login First"
+            });
+            
             try
             {
                 string now = DateTime.Now.ToString("yyyyMMdd");
@@ -282,7 +300,7 @@ namespace HINOSystem.Controllers.API.Master
                 message = "Please Login First"
             });
 
-            setConString();
+            
             try
             {
                 string now = DateTime.Now.ToString("yyyyMMdd");
@@ -338,6 +356,15 @@ namespace HINOSystem.Controllers.API.Master
         [HttpGet]
         public async Task<IActionResult> GenPDSNo()
         {
+            _BearerClass.Authentication(Request);
+
+            if (_BearerClass.Status == 401) return Unauthorized(new
+            {
+                status = "401",
+                response = "Unauthorized",
+                title = "Unauthorized",
+                message = "Please Login First"
+            });
             string now = DateTime.Now.ToString("yyyyMMdd");
             string UserID = HttpContext.Session.GetString("USER_CODE");
             string Plant = HttpContext.Session.GetString("USER_PLANT");
@@ -356,7 +383,16 @@ namespace HINOSystem.Controllers.API.Master
         [HttpGet]
         public async Task<IActionResult> GetSupplier()
         {
-            setConString();
+            _BearerClass.Authentication(Request);
+
+            if (_BearerClass.Status == 401) return Unauthorized(new
+            {
+                status = "401",
+                response = "Unauthorized",
+                title = "Unauthorized",
+                message = "Please Login First"
+            });
+            
             try
             {
                 string now = DateTime.Now.ToString("yyyyMMdd");
@@ -398,7 +434,16 @@ namespace HINOSystem.Controllers.API.Master
         [HttpGet]
         public async Task<IActionResult> GetSupplierDetail(string F_Supplier_Cd)
         {
-            setConString();
+            _BearerClass.Authentication(Request);
+
+            if (_BearerClass.Status == 401) return Unauthorized(new
+            {
+                status = "401",
+                response = "Unauthorized",
+                title = "Unauthorized",
+                message = "Please Login First"
+            });
+            
             try
             {
                 string now = DateTime.Now.ToString("yyyyMMdd");
@@ -491,7 +536,16 @@ namespace HINOSystem.Controllers.API.Master
         [HttpGet]
         public async Task<IActionResult> GetPartNo (string? F_Supplier_Cd = null)
         {
-            setConString();
+            _BearerClass.Authentication(Request);
+
+            if (_BearerClass.Status == 401) return Unauthorized(new
+            {
+                status = "401",
+                response = "Unauthorized",
+                title = "Unauthorized",
+                message = "Please Login First"
+            });
+            
             try
             {
                 string now = DateTime.Now.ToString("yyyyMMdd");
@@ -548,7 +602,16 @@ namespace HINOSystem.Controllers.API.Master
         [HttpGet]
         public async Task<IActionResult> PartNoChanged(string? F_Supplier_Cd = null,string? F_Part_No = null,string? F_Kanban_No = null)
         {
-            setConString();
+            _BearerClass.Authentication(Request);
+
+            if (_BearerClass.Status == 401) return Unauthorized(new
+            {
+                status = "401",
+                response = "Unauthorized",
+                title = "Unauthorized",
+                message = "Please Login First"
+            });
+            
             try
             {
                 string now = DateTime.Now.ToString("yyyyMMdd");
@@ -642,7 +705,16 @@ namespace HINOSystem.Controllers.API.Master
         [HttpPost]
         public async Task<IActionResult> OKClicked(VM_KBNIM007N_OK obj)
         {
-            setConString();
+            _BearerClass.Authentication(Request);
+
+            if (_BearerClass.Status == 401) return Unauthorized(new
+            {
+                status = "401",
+                response = "Unauthorized",
+                title = "Unauthorized",
+                message = "Please Login First"
+            });
+            
             using var _KB3Transaction = _KB3Context.Database.BeginTransaction();
             try
             {
@@ -685,7 +757,16 @@ namespace HINOSystem.Controllers.API.Master
         [HttpGet]
         public async Task<IActionResult> AllDataWasSaved(string? F_PDS_No = null)
         {
-            setConString();
+            _BearerClass.Authentication(Request);
+
+            if (_BearerClass.Status == 401) return Unauthorized(new
+            {
+                status = "401",
+                response = "Unauthorized",
+                title = "Unauthorized",
+                message = "Please Login First"
+            });
+            
             using var _KB3Transaction = _KB3Context.Database.BeginTransaction();
             try
             {
@@ -695,7 +776,7 @@ namespace HINOSystem.Controllers.API.Master
                 string UserID = HttpContext.Session.GetString("USER_CODE");
                 string Plant = HttpContext.Session.GetString("USER_PLANT");
 
-                await _KB3Context.Database.ExecuteSqlRawAsync($"DELETE FROM TB_Import_Error Where F_Type = 'KBNIM007N' AND F_Update_By '${UserID}' ");
+                await _KB3Context.Database.ExecuteSqlRawAsync($"DELETE FROM TB_Import_Error Where F_Type = 'KBNIM007N' AND F_Update_By = '{UserID}' ");
 
                 await _KB3Context.Database.ExecuteSqlRawAsync($"EXEC [exec].[spKBNIM007N] '{Plant}','{UserID}', '{F_PDS_No}' ");
 

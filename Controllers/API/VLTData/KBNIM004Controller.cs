@@ -59,7 +59,7 @@ namespace HINOSystem.Controllers.API.Master
                 string Plant = HttpContext.Session.GetString("USER_PLANT")!;
                 string UserID = HttpContext.Session.GetString("USER_CODE")!;
 
-                await _KB3Context.Database.ExecuteSqlRawAsync("DELETE FROM TB_Import_VLT WHERE F_Update_By = {0}",UserID!);
+                await _KB3Context.Database.ExecuteSqlRawAsync("DELETE FROM TB_Import_VLT WHERE F_Update_By = @p0",UserID!);
 
                 foreach (var obj in listObj)
                 {
@@ -75,6 +75,9 @@ namespace HINOSystem.Controllers.API.Master
 
                 await _KB3Context.TB_Import_VLT.AddRangeAsync(listObj);
                 await _KB3Context.SaveChangesAsync();
+
+                await _KB3Context.Database.ExecuteSqlRawAsync("EXEC [exec].[SPKBNIM004_Import_MRP] @p0,@p1", Plant, UserID);
+
                 await _KB3Transaction.CommitAsync();
 
                 return Ok(new

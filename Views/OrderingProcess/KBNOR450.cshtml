@@ -1,4 +1,7 @@
-﻿<div class="row">
+﻿@{
+    string _dateFrom = DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd");
+}
+<div class="row">
 
     <div class="col-xl-12 col-md-12 col-sm-12">
         <div class="card border-left-primary shadow h-100">
@@ -88,35 +91,6 @@
 
                         </div>
                     </div>
-
-
-                    <div class="row mb-2">
-                        <div class="col">
-
-                            <fieldset class="fieldset" id="fldSupplierCode" disabled>
-                                <legend><item type="checkbox" id="chkSupplierCode" label="Supplier Code : "></item></legend>
-
-                                <div class="row">
-                                    <div class="col-6">
-
-                                        <div class="row">
-                                            <div class="col-6">
-                                                <item type="select" id="itmSupplierFrom" label="Supplier From : "></item>
-                                            </div>
-                                            <div class="col-6">
-                                                <item type="select" id="itmSupplierTo" label="To :"></item>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                </div>
-
-                            </fieldset>
-
-                        </div>
-                    </div>
-
-
                     <div class="row">
                         <div class="col">
 
@@ -128,10 +102,10 @@
 
                                         <div class="row">
                                             <div class="col-6">
-                                                <item type="date" id="itmDeliveryFrom" label="Delivery Date From :" format="yyyy-mm-dd" default="now"></item>
+                                                <item type="date" id="itmDeliveryFrom" label="Delivery Date From :" format="yyyy-mm-dd" default="@_dateFrom"></item>
                                             </div>
                                             <div class="col-6">
-                                                <item type="date" id="itmDeliveryTo" label="To :" format="yyyy-mm-dd" default="now"></item>
+                                                <item type="date" id="itmDeliveryTo" label="To :" format="yyyy-mm-dd" default="2999-12-31"></item>
                                             </div>
                                         </div>
 

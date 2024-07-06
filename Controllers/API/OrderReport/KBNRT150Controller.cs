@@ -81,7 +81,7 @@ namespace KANBAN.Controllers.API.OrderReport
         {
             try
             {
-                setConString();
+                
                 string _result = "";
                 string now = DateTime.Now.ToString("yyyyMMdd");
                 var typeDB = await _KB3Context.TB_Transaction
@@ -115,7 +115,7 @@ namespace KANBAN.Controllers.API.OrderReport
             try
             {
                 string _result = "";
-                setConString();
+                
                 dynamic _json = JsonConvert.DeserializeObject(data);
                 string orderFrom = _json["orderFrom"];
                 string orderTo = _json["orderTo"];
@@ -150,7 +150,7 @@ namespace KANBAN.Controllers.API.OrderReport
             }
             try
             {
-                setConString();
+                
                 string _result = "";
                 string userName = HttpContext.Session.GetString("USER_NAME");
                 string hostName = HttpContext.Session.GetString("USER_DEVICENAME");

@@ -7,7 +7,7 @@ class xLib {
                     jsonResult[each][eachObj] = '';
                 }
                 else {
-                    jsonResult[each][eachObj] = jsonResult[each][eachObj].trim();
+                    if(typeof jsonResult[each][eachObj] == 'string') jsonResult[each][eachObj] = jsonResult[each][eachObj].trim();
                 }
             }
         }
@@ -20,13 +20,13 @@ class xLib {
                 jsonResult.data[each] = '';
             }
             else {
-                jsonResult.data[each] = jsonResult.data[each].trim();
+                if (typeof jsonResult[each][eachObj] == 'string') jsonResult[each][eachObj] = jsonResult[each][eachObj].trim();
             }
         }
         return jsonResult;
     }
 
-    AJAX_Get(url, data, success, error) {
+    AJAX_Get(url, data, successFn, errorFn) {
         if (window.location.hostname.includes("tpcap")) {
             url = "/kanban" + url;
         }
@@ -37,23 +37,44 @@ class xLib {
             headers: ajexHeader,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
-            success: success,
+            success: successFn,
             error: async function (xhr, status, error) {
                 if (xhr.status == 401) {
-                    var confirm = await xSwal.error("Error", "Session expired. Please login again.");
-
-                    if (confirm.isConfirmed) {
-                        window.location.reload();
-                    }
+                    await xSwal.error("Error", "Session expired. Please login again.", function () {
+                        if (window.location.hostname.includes("tpcap")) {
+                            return window.open("/kanban/Login", "_self");
+                        }
+                        return window.open("/Login", "_self");
+                    });
                 }
-                else if (error) {
-                    error
+                else {
+                    await console.error(xhr);
+                    xSplash.hide();
+                    
+                    if (xhr.responseJSON.errors != undefined) {
+
+                        if (xhr.responseJSON.errors.message == undefined || xhr.responseJSON.errors.message == null || !xhr.responseJSON.errors.message) {
+                            var _error = "";
+                            for (var key in xhr.responseJSON.errors) {
+                                _error += xhr.responseJSON.errors[key][0] + "<br>";
+                            }
+                            return xSwal.ErrorHTML("Error", _error)
+                        }
+
+                        return xSwal.error("Error", xhr.responseJSON.message)
+                    }
+
+                    else if (xhr.responseJSON.response) {
+                        return xSwal.error(xhr.responseJSON.response, xhr.responseJSON.message)
+                    }
+
+                    errorFn(xhr, status, error)
                 }
             }
         });
     }
 
-    AJAX_Post(url, data, success, error) {
+    AJAX_Post(url, data, successFn, errorFn) {
         if (window.location.hostname.includes("tpcap")) {
             url = "/kanban" + url;
         }
@@ -64,8 +85,8 @@ class xLib {
             headers: ajexHeader,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
-            success: success,
-            error: async function (xhr, status, err) {
+            success: successFn,
+            error: async function (xhr, status, error) {
                 if (xhr.status == 401) {
                     await xSwal.error("Error", "Session expired. Please login again.", function () {
                         if (window.location.hostname.includes("tpcap")) {
@@ -75,7 +96,26 @@ class xLib {
                     });
                 }
                 else {
-                    error(xhr, status, err)
+                    await console.error(xhr);
+                    xSplash.hide();
+                    if (xhr.responseJSON.errors != undefined) {
+
+                        if (xhr.responseJSON.errors.message == undefined || xhr.responseJSON.errors.message == null || !xhr.responseJSON.errors.message) {
+                            var _error = "";
+                            for (var key in xhr.responseJSON.errors) {
+                                _error += xhr.responseJSON.errors[key][0] + "<br>";
+                            }
+                            return xSwal.ErrorHTML("Error", _error)
+                        }
+
+                        return xSwal.error("Error", xhr.responseJSON.message)
+                    }
+
+                    else if (xhr.responseJSON.title) {
+                        return xSwal.error(xhr.responseJSON.title, xhr.responseJSON.message)
+                    }
+
+                    errorFn(xhr, status, error)
                 }
             }
         });

@@ -81,7 +81,7 @@ namespace KANBAN.Controllers.API.OrderReport
         {
             try
             {
-                setConString();
+                
                 string _result = "";
                 dynamic _json = JsonConvert.DeserializeObject<dynamic>(data);
                 string supFrom = _json["supFrom"];

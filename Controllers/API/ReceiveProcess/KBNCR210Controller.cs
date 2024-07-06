@@ -120,7 +120,7 @@ namespace KANBAN.Controllers.API.ReceiveProcess
         {
             try
             {
-                setConString();
+                
                 {
                     if (data != null)
                     {
@@ -219,7 +219,7 @@ namespace KANBAN.Controllers.API.ReceiveProcess
             string _result = "";
             try
             {
-                setConString();
+                
                 var recHeader = await _KB3Context.TB_REC_HEADER.SingleOrDefaultAsync(x => x.F_OrderNo == PDSNo);
                 if (recHeader != null)
                 {
@@ -287,7 +287,7 @@ namespace KANBAN.Controllers.API.ReceiveProcess
         {
             try
             {
-                setConString();
+                
                 string _result = "";
                 string UserName = HttpContext.Session.GetString("USER_ID");
                 string HostName = HttpContext.Session.GetString("USER_DEVICENAME");
