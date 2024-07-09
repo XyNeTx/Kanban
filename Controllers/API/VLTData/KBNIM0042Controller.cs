@@ -1,8 +1,11 @@
 ﻿using HINOSystem.Context;
 using HINOSystem.Libs;
 using KANBAN.Context;
+using KANBAN.Models.KB3.VLT;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using NPOI.SS.Formula.Functions;
 using System.Data;
 
 namespace HINOSystem.Controllers.API.Master
@@ -164,6 +167,8 @@ namespace HINOSystem.Controllers.API.Master
                 DataTable RRCKD = _FillDT.ExecuteSQL("EXEC [exec].[spKBNIM0042_GetSeq_CKD] @p0,@p1,@p2,@p3"
                     , _BearerClass.Plant,"VLT",F_Customer_Cd,"RR Axle");
 
+
+
                 if (Frame.Rows.Count == 0 && Dedion.Rows.Count == 0 && TG.Rows.Count == 0 && RR.Rows.Count == 0 && 
                     FrameCKD.Rows.Count == 0 && DedionCKD.Rows.Count == 0 && TGCKD.Rows.Count == 0 && RRCKD.Rows.Count == 0)
                 {
@@ -250,6 +255,51 @@ namespace HINOSystem.Controllers.API.Master
                     }
                 });
 
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    response = "Internal Server Error",
+                    title = "Internal Server Error",
+                    message = "Unexpected Error!",
+                    error = ex.Message
+                });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Confirm(ConfirmVLT obj)
+        {
+            using var _KB3Transaction = _KB3Context.Database.BeginTransaction();
+            try
+            {
+                _KB3Transaction.CreateSavepoint("BeforeConfirm");
+
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401) return Unauthorized(new
+                {
+                    status = "401",
+                    response = "Unauthorized",
+                    title = "Unauthorized",
+                    message = "Please Login First"
+                });
+
+                var _Sql = $@"EXEC [exec].[spKBNIM0042_CONFIRM] 
+                        '{_BearerClass.Plant}','{_BearerClass.UserCode}','VLT',
+                        '{obj.F_Customer_Cd}','{obj.F_Part_Type}','{obj.F_Delivery_Date}',
+                        '{obj.F_Start_Jig}','{obj.F_End_Jig}','{obj.F_Start_Jig_CKD}','{obj.F_End_Jig_CKD}'";
+
+                int rowAff = await _KB3Context.Database.ExecuteSqlRawAsync(_Sql);
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "OK",
+                    title = "Success",
+                    message = "Data Found!",
+                });
             }
             catch (Exception ex)
             {

@@ -86,41 +86,33 @@ $("#tableManage tbody tr td").on("change", "input", function () {
     );
 });
 
-$("#buttonConfirm").click(function () {
+$("#buttonConfirm").click(async function () {
     var table = $("#tableManage tbody tr td");
     var tableCKD = $("#tableCKD tbody tr td");
-    var _StartJigFrame = $(table[0]).text();
-    var _StartJigDedion = $(table[1]).text();
-    var _StartJigTG = $(table[2]).text();
-    var _StartJigRR = $(table[3]).text();
-    var _EndJigFrame = $(table[8]).text();
-    var _EndJigDedion = $(table[9]).text();
-    var _EndJigTG = $(table[10]).text();
-    var _EndJigRR = $(table[11]).text();
-
-    var _StartJigFrameCKD = $(tableCKD[0]).text();
-    var _StartJigDedionCKD = $(tableCKD[1]).text();
-    var _StartJigTGCKD = $(tableCKD[2]).text();
-    var _StartJigRRCKD = $(tableCKD[3]).text();
-    var _EndJigFrameCKD = $(tableCKD[4]).text();
-    var _EndJigDedionCKD = $(tableCKD[5]).text();
-    var _EndJigTGCKD = $(tableCKD[6]).text();
-    var _EndJigRRCKD = $(tableCKD[7]).text();
-
-    var _F_Customer = $("#F_Customer").val();
-
-    var data = {
-        F_Customer: _F_Customer,
-        F_StartJigFrame: _StartJigFrame,
-        F_StartJigDedion: _StartJigDedion,
-        F_StartJigTG: _StartJigTG,
-        F_StartJigRR: _StartJigRR,
-        F_EndJigFrame: _EndJigFrame,
-        F_EndJigDedion: _EndJigDedion,
-        F_EndJigTG: _EndJigTG,
-        F_EndJigRR: _EndJigRR,
-        F_StartJigFrameCKD: _StartJigFrameCKD,
-        F_StartJigDedionCKD: _StartJigDedionCKD,
-        F_StartJigTGCKD: _StartJigTGCKD,
+    let message = "";
+    for (let i = 0; i < 4; i++) {
+        //console.log($(table[i]).text());
+        var _value = $(table[i + 4]).find("input").val();
+        //console.log(_value);
+        if (!_value && $(table[i]).text() != "") {
+            alert("Please fill in all the fields");
+            return;
+        }
+        var obj = {
+            F_Customer_Cd: $("#F_Customer").val(),
+            F_Part_Type: $("#tableManage thead").find("th").eq(i+1).text(),
+            F_Start_Jig: $(table[i]).text(),
+            F_End_Jig: $(table[i + 8]).text(),
+            F_Start_Jig_CKD: $(tableCKD[i]).text(),
+            F_End_Jig_CKD: $(tableCKD[i + 4]).text(),
+            F_Delivery_Date: $("#F_Process_Date").val().replace(/-/g, ""),
+        }
+        console.log(obj);
+        await _xLib.AJAX_Post("/api/KBNIM0042/Confirm", JSON.stringify(obj),
+            function (success) {
+                message = success.message
+            },
+        );
     }
+    xSwal.success("Success", message);
 });
