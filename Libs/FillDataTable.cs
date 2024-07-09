@@ -32,10 +32,15 @@ namespace HINOSystem.Libs
             _ProcDB = procDB;
         }
 
-        public DataTable ExecuteSQLProcDB(string sql)
+        public DataTable ExecuteSQLProcDB(string sql, params object[] parameters)
         {
             SqlConnection con = new SqlConnection(_ProcDB.Database.GetConnectionString());
             DataTable dt = new DataTable();
+
+            for (int i = 0; i < parameters.Length; i++)
+            {
+                sql = sql.Replace("@p" + i, $"'{parameters[i].ToString()}'");
+            }
 
             using (SqlCommand cmd = new SqlCommand(sql, con))
             {
@@ -55,12 +60,10 @@ namespace HINOSystem.Libs
             //
             SqlConnection con = new SqlConnection(_KB3Context.Database.GetConnectionString());
             DataTable dt = new DataTable();
-            if (parameters.Length > 0)
+
+            for(int i = 0; i < parameters.Length; i++)
             {
-                for (int i = 0; i < parameters.Length; i++)
-                {
-                    sql = sql.Replace("@p" + i, $"'{parameters[i]}'");
-                }
+                sql = sql.Replace("@p"+i , $"'{parameters[i].ToString()}'");
             }
 
             using (SqlCommand cmd = new SqlCommand(sql, con))
@@ -88,10 +91,15 @@ namespace HINOSystem.Libs
                 }
             }
         }
-        public DataTable ExecuteSQLProc_Web(string sql)
+        public DataTable ExecuteSQLProc_Web(string sql, params object[] parameters)
         {
             SqlConnection con = new SqlConnection(_configuration.GetConnectionString("ProcWebConnection"));
             DataTable dt = new DataTable();
+
+            for (int i = 0; i < parameters.Length; i++)
+            {
+                sql = sql.Replace("@p" + i, $"'{parameters[i].ToString()}'");
+            }
 
             using (SqlCommand cmd = new SqlCommand(sql, con))
             {

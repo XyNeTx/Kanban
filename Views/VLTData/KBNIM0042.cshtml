@@ -53,10 +53,10 @@
                                 </tr>
                                 <tr>
                                     <th class="fs-5" scope="row">Remain Unit</th>
-                                    <td class="fs-5"><input type="number" class="w-100 border-0" /></td>
-                                    <td class="fs-5"><input type="number" class="w-100 border-0" /></td>
-                                    <td class="fs-5"><input type="number" class="w-100 border-0" /></td>
-                                    <td class="fs-5"><input type="number" class="w-100 border-0" /></td>
+                                    <td class="fs-5"><input type="number" class="w-100 border-0 text-center" /></td>
+                                    <td class="fs-5"><input type="number" class="w-100 border-0 text-center" /></td>
+                                    <td class="fs-5"><input type="number" class="w-100 border-0 text-center" /></td>
+                                    <td class="fs-5"><input type="number" class="w-100 border-0 text-center" /></td>
                                 </tr>
                                 <tr>
                                     <th class="fs-5" scope="row">End Jig-In Seq.</th>
@@ -68,51 +68,13 @@
                             </tbody>
                         </table>
 
-                        @* <div class="row" style="font-size:22px;text-align:center;">
-                            <div class="col"></div>
-                            <div class="col-2" style="border-style:solid;border-width:1px;">LINE</div>
-                            <div class="col-2" style="border-style:solid;border-width:1px;">FRAME</div>
-                            <div class="col-2" style="border-style:solid;border-width:1px;">DEDION</div>
-                            <div class="col-2" style="border-style:solid;border-width:1px;">Tail Gate</div>
-                            <div class="col-2" style="border-style:solid;border-width:1px;">RR Axle</div>
-                            <div class="col"></div>
-                        </div>
-                        <div class="row" style="font-size:22px;text-align:center;">
-                            <div class="col"></div>
-                            <div class="col-2" style="border-style:solid;border-width:1px;">Start Jig-In Seq.</div>
-                            <div class="col-2" style="border-style:solid;border-width:1px;" id="FrameJigIn">Tesy</div>
-                            <div class="col-2" style="border-style:solid;border-width:1px;" id="DedionJigIn"></div>
-                            <div class="col-2" style="border-style:solid;border-width:1px;" id="TailGateJigIn"></div>
-                            <div class="col-2" style="border-style:solid;border-width:1px;" id="RRAxleJigIn"></div>
-                            <div class="col"></div>
-                        </div>
-                        <div class="row" style="font-size:22px;text-align:center;">
-                            <div class="col"></div>
-                            <div class="col-2" style="border-style:solid;border-width:1px;">Remain Unit</div>
-                            <div class="col-2" style="border-style:solid;border-width:1px;"></div>
-                            <div class="col-2" style="border-style:solid;border-width:1px;"></div>
-                            <div class="col-2" style="border-style:solid;border-width:1px;"></div>
-                            <div class="col-2" style="border-style:solid;border-width:1px;"></div>
-                            <div class="col"></div>
-                        </div>
-                        <div class="row" style="font-size:22px;text-align:center;">
-                            <div class="col"></div>
-                            <div class="col-2" style="border-style:solid;border-width:1px;">End Jig-In Seq.</div>
-                            <div class="col-2" style="border-style:solid;border-width:1px;"></div>
-                            <div class="col-2" style="border-style:solid;border-width:1px;"></div>
-                            <div class="col-2" style="border-style:solid;border-width:1px;"></div>
-                            <div class="col-2" style="border-style:solid;border-width:1px;"></div>
-                            <div class="col"></div>
-                        </div> *@
-
                     </fieldset>
                     
-
 
                     <fieldset class="fieldset mt-3">
                         <legend>Confirmation for CKD - Inhouse Ordering : </legend>
 
-                        <table id="TableCKD" class="table table-bordered ">
+                        <table id="tableCKD" class="table table-bordered ">
                             <thead class="text-center">
                                 <tr>
                                     <th class="fs-4 col-2" scope="col" hidden>LINE</t>
@@ -140,29 +102,9 @@
                             </tbody>
                         </table>
 
-                        @* <div class="row" style="font-size:22px;text-align:center;">
-                            <div class="col"></div>
-                            <div class="col-2" style="border-style:solid;border-width:1px;">Start Jig-In Seq.</div>
-                            <div class="col-2" style="border-style:solid;border-width:1px;"></div>
-                            <div class="col-2" style="border-style:solid;border-width:1px;"></div>
-                            <div class="col-2" style="border-style:solid;border-width:1px;"></div>
-                            <div class="col-2" style="border-style:solid;border-width:1px;"></div>
-                            <div class="col"></div>
-                        </div>
-                        <div class="row" style="font-size:22px;text-align:center;">
-                            <div class="col"></div>
-                            <div class="col-2" style="border-style:solid;border-width:1px;">End Jig-In Seq.</div>
-                            <div class="col-2" style="border-style:solid;border-width:1px;"></div>
-                            <div class="col-2" style="border-style:solid;border-width:1px;"></div>
-                            <div class="col-2" style="border-style:solid;border-width:1px;"></div>
-                            <div class="col-2" style="border-style:solid;border-width:1px;"></div>
-                            <div class="col"></div>
-                        </div> *@
-
                     </fieldset>
                 </form>
-
-
+                <button type="button" class="btn btn-primary float-end mt-3" id="buttonConfirm">confirm</button>
 
             </div>
         </div>

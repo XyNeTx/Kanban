@@ -1,8 +1,11 @@
 ﻿using HINOSystem.Context;
 using HINOSystem.Libs;
 using KANBAN.Context;
+using KANBAN.Models.KB3.VLT;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using NPOI.SS.Formula.Functions;
 using System.Data;
 
 namespace HINOSystem.Controllers.API.Master
@@ -127,7 +130,7 @@ namespace HINOSystem.Controllers.API.Master
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetStartJigIN(string F_Customer_Cd)
+        public async Task<IActionResult> GetStartJigIn(string F_Customer_Cd)
         {
             try
             {
@@ -140,9 +143,62 @@ namespace HINOSystem.Controllers.API.Master
                     message = "Please Login First"
                 });
 
-                DataTable dt = _FillDT.ExecuteSQL("EXEC [exec].[spKBNIM0042_GetSeq] @p0'3',@p1'VLT',@p2'TMT--',@p3'RR Axle'");
+                DataTable Frame = _FillDT.ExecuteSQL("EXEC [exec].[spKBNIM0042_GetSeq] @p0,@p1,@p2,@p3"
+                    , _BearerClass.Plant, "VLT", F_Customer_Cd, "Frame");
+                
+                DataTable Dedion = _FillDT.ExecuteSQL("EXEC [exec].[spKBNIM0042_GetSeq] @p0,@p1,@p2,@p3"
+                    , _BearerClass.Plant, "VLT", F_Customer_Cd, "DEDION");
+                
+                DataTable TG = _FillDT.ExecuteSQL("EXEC [exec].[spKBNIM0042_GetSeq] @p0,@p1,@p2,@p3"
+                    , _BearerClass.Plant, "VLT", F_Customer_Cd, "Tail Gate");
 
-                return Ok();
+                DataTable RR = _FillDT.ExecuteSQL("EXEC [exec].[spKBNIM0042_GetSeq] @p0,@p1,@p2,@p3"
+                    ,_BearerClass.Plant,"VLT",F_Customer_Cd,"RR Axle");
+
+                DataTable FrameCKD = _FillDT.ExecuteSQL("EXEC [exec].[spKBNIM0042_GetSeq_CKD] @p0,@p1,@p2,@p3"
+                    , _BearerClass.Plant, "VLT", F_Customer_Cd, "Frame");
+                
+                DataTable DedionCKD = _FillDT.ExecuteSQL("EXEC [exec].[spKBNIM0042_GetSeq_CKD] @p0,@p1,@p2,@p3"
+                    , _BearerClass.Plant, "VLT", F_Customer_Cd, "DEDION");
+                
+                DataTable TGCKD = _FillDT.ExecuteSQL("EXEC [exec].[spKBNIM0042_GetSeq_CKD] @p0,@p1,@p2,@p3"
+                    , _BearerClass.Plant, "VLT", F_Customer_Cd, "Tail Gate");
+
+                DataTable RRCKD = _FillDT.ExecuteSQL("EXEC [exec].[spKBNIM0042_GetSeq_CKD] @p0,@p1,@p2,@p3"
+                    , _BearerClass.Plant,"VLT",F_Customer_Cd,"RR Axle");
+
+
+
+                if (Frame.Rows.Count == 0 && Dedion.Rows.Count == 0 && TG.Rows.Count == 0 && RR.Rows.Count == 0 && 
+                    FrameCKD.Rows.Count == 0 && DedionCKD.Rows.Count == 0 && TGCKD.Rows.Count == 0 && RRCKD.Rows.Count == 0)
+                {
+                    return NotFound(new
+                    {
+                        status = "404",
+                        response = "Not Found",
+                        title = "Not Found",
+                        message = "Data Not Found!"
+                    });
+                }
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "OK",
+                    title = "Success",
+                    message = "Data Found!",
+                    data = new
+                    {
+                        frame = JsonConvert.SerializeObject(Frame),
+                        dedion = JsonConvert.SerializeObject(Dedion),
+                        tg = JsonConvert.SerializeObject(TG),
+                        rr = JsonConvert.SerializeObject(RR),
+                        frameCKD = JsonConvert.SerializeObject(FrameCKD),
+                        dedionCKD = JsonConvert.SerializeObject(DedionCKD),
+                        tgCKD = JsonConvert.SerializeObject(TGCKD),
+                        rrCKD = JsonConvert.SerializeObject(RRCKD)
+                    }
+                });
             }
             catch (Exception ex)
             {
@@ -157,5 +213,105 @@ namespace HINOSystem.Controllers.API.Master
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetEndJigIn(string F_Customer_Cd,string F_Part_Type,int F_Remain_Unit)
+        {
+            try
+            {
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401) return Unauthorized(new
+                {
+                    status = "401",
+                    response = "Unauthorized",
+                    title = "Unauthorized",
+                    message = "Please Login First"
+                });
+
+                DataTable EndSeq = _FillDT.ExecuteSQL("EXEC [exec].[spKBNIM0042_GetEndSeq] @p0,@p1,@p2,@p3,@p4",
+                    _BearerClass.Plant,"VLT",F_Customer_Cd,F_Part_Type,F_Remain_Unit);
+
+                DataTable EndSeqCKD = _FillDT.ExecuteSQL("EXEC [exec].[spKBNIM0042_GetEndSeq_CKD] @p0,@p1,@p2,@p3,@p4",
+                                       _BearerClass.Plant, "VLT", F_Customer_Cd, F_Part_Type, F_Remain_Unit);
+
+                if (EndSeq.Rows.Count == 0 && EndSeqCKD.Rows.Count == 0)
+                    return NotFound(new
+                    {
+                        status = "404",
+                        response = "Not Found",
+                        title = "Not Found",
+                        message = "Data Not Found!"
+                    });
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "OK",
+                    title = "Success",
+                    message = "Data Found!",
+                    data = new
+                    {
+                        EndSeq = JsonConvert.SerializeObject(EndSeq),
+                        EndSeqCKD = JsonConvert.SerializeObject(EndSeqCKD)
+                    }
+                });
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    response = "Internal Server Error",
+                    title = "Internal Server Error",
+                    message = "Unexpected Error!",
+                    error = ex.Message
+                });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Confirm(ConfirmVLT obj)
+        {
+            using var _KB3Transaction = _KB3Context.Database.BeginTransaction();
+            try
+            {
+                _KB3Transaction.CreateSavepoint("BeforeConfirm");
+
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401) return Unauthorized(new
+                {
+                    status = "401",
+                    response = "Unauthorized",
+                    title = "Unauthorized",
+                    message = "Please Login First"
+                });
+
+                var _Sql = $@"EXEC [exec].[spKBNIM0042_CONFIRM] 
+                        '{_BearerClass.Plant}','{_BearerClass.UserCode}','VLT',
+                        '{obj.F_Customer_Cd}','{obj.F_Part_Type}','{obj.F_Delivery_Date}',
+                        '{obj.F_Start_Jig}','{obj.F_End_Jig}','{obj.F_Start_Jig_CKD}','{obj.F_End_Jig_CKD}'";
+
+                int rowAff = await _KB3Context.Database.ExecuteSqlRawAsync(_Sql);
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "OK",
+                    title = "Success",
+                    message = "Data Found!",
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    response = "Internal Server Error",
+                    title = "Internal Server Error",
+                    message = "Unexpected Error!",
+                    error = ex.Message
+                });
+            }
+        }
     }
 }
