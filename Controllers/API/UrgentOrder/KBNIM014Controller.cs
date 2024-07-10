@@ -100,10 +100,6 @@ namespace HINOSystem.Controllers.API.Master
                 string UserID = HttpContext.Session.GetString("USER_CODE");
                 string Plant = HttpContext.Session.GetString("USER_PLANT");
 
-                var _delList = await _KB3Context.TB_Import_EKanban_Pack.Where(x => x.F_Plant_CD == Plant && x.F_Update_By == UserID).ToListAsync();
-
-                _KB3Context.RemoveRange(_delList);
-
                 obj.F_Plant_CD = Plant;
                 obj.F_Update_By = UserID;
                 obj.F_Update_Date = DateTime.Now;
@@ -172,6 +168,11 @@ namespace HINOSystem.Controllers.API.Master
                 await _KB3Context.Database.ExecuteSqlRawAsync($"DELETE From TB_Import_error Where F_Update_By = @p0 AND F_Type = 'KBNIM014' ",UserID);
 
                 await _KB3Context.Database.ExecuteSqlRawAsync($"EXEC [exec].[spKBNIM014] @p0,@p1",Plant,UserID);
+
+
+                var _delList = await _KB3Context.TB_Import_EKanban_Pack.Where(x => x.F_Plant_CD == Plant && x.F_Update_By == UserID).ToListAsync();
+
+                _KB3Context.RemoveRange(_delList);
 
                 _KB3Transaction.Commit();
 

@@ -37,9 +37,19 @@ class xLib {
             headers: ajexHeader,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
-            success: successFn,
+            success: async function (xhr, status) {
+                //if (xhr.hasOwnProperty('data')) {
+                //    xhr.data = await JSON.parse(xhr.data);
+                //    console.log(xhr.data);
+                //    console.log(typeof xhr.data);
+                //    if (typeof xhr.data == 'object') xhr.data = _xLib.TrimArrayJSON(xhr.data);
+                //    else xhr.data = _xLib.TrimJSON(xhr.data);
+                //}
+                return successFn(xhr, status);
+            },
             error: async function (xhr, status, error) {
                 if (xhr.status == 401) {
+                    await xSplash.hide();
                     await xSwal.error("Error", "Session expired. Please login again.", function () {
                         if (window.location.hostname.includes("tpcap")) {
                             return window.open("/kanban/Login", "_self");
@@ -88,6 +98,7 @@ class xLib {
             success: successFn,
             error: async function (xhr, status, error) {
                 if (xhr.status == 401) {
+                    await xSplash.hide();
                     await xSwal.error("Error", "Session expired. Please login again.", function () {
                         if (window.location.hostname.includes("tpcap")) {
                             return window.open("/kanban/Login", "_self");

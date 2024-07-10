@@ -293,6 +293,8 @@ namespace HINOSystem.Controllers.API.Master
 
                 int rowAff = await _KB3Context.Database.ExecuteSqlRawAsync(_Sql);
 
+                _KB3Transaction.Commit();
+
                 return Ok(new
                 {
                     status = "200",

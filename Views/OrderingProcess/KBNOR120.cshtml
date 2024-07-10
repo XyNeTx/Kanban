@@ -78,7 +78,13 @@
 
                                 <div class="row mt-5">
                                     <div class="col">
-                                        <item type="progress" id="prgProcess" label="Process : {{##.##}} %" max="100"></item>
+                                        <div class="mt-4" id="divProgressBar" style="visibility:hidden">
+                                            <div class="progress" role="progressbar">
+                                                <div class="progress-bar progress-bar-striped progress-bar-animated" id="widthProgressBar" style="width: 0%">
+                                                    <span class="text-center" id="spanProgressBar"> Calculating Data </span>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
