@@ -52,7 +52,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
         public static string Txt_Shift = "Day";
         public static string UserCode = "";
         public static string Plant = "";
-        public static float ProcessCount = 0.00f;
+        public static decimal ProcessCount = 0.00m;
 
         [HttpGet]
         public IActionResult OnLoad(string Shift)
@@ -217,12 +217,12 @@ namespace KANBAN.Controllers.API.OrderingProcess
                         _DT.Rows[i]["F_Store_Code"].ToString(), _DT.Rows[i]["F_Kanban_No"].ToString(),
                         _DT.Rows[i]["F_Part_No"].ToString(), _DT.Rows[i]["F_Ruibetsu"].ToString());
                     
-                    ProcessCount = ((float)i / _DT.Rows.Count) * 90;
+                    ProcessCount = ((decimal)i / _DT.Rows.Count) * 90;
                 }
 
                 _Log.WriteLog("End Process Calculate Normal ON : " + sDate, UserCode, _BearerClass.Device);
 
-                await _KB3Context.Database.ExecuteSqlRawAsync("EXEC dbo.SP_CALCULATE_OTHER_CONDITION", sDate);
+                await _KB3Context.Database.ExecuteSqlRawAsync("EXEC dbo.SP_CALCULATE_OTHER_CONDITION @p0", sDate);
 
                 _Log.WriteLog("End Process Calculate Other Condition : " + sDate, UserCode, _BearerClass.Device);
 

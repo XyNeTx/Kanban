@@ -26,6 +26,33 @@ class xLib {
         return jsonResult;
     }
 
+    SetProcessCookie(cName) {
+        let cookie = document.cookie;
+
+        if (cookie.includes('process')) {
+            console.log(cookie.split(';').find(x => x.indexOf('process') >= 0).includes(`${cName}`));
+            if (!(cookie.split(';').find(x => x.indexOf('process') >= 0).includes(`${cName}`))) {
+                //console.log(cookie);
+                //console.log(cookie.split(';').find(x => x.indexOf('process') >= 0));
+                var _appendCookie = cookie.split(';').filter(x => x.indexOf('process') >= 0) + `,${cName}`
+                // console.log(_appendCookie);
+                return document.cookie = _appendCookie;
+            }
+            return;
+        }
+        return document.cookie = `process=${cName}`;
+    }
+
+    GetProcessCookie() {
+        var cookie = document.cookie;
+        var process = cookie.split(';').find(x => x.includes('process'));
+        if(process == undefined) return null;
+        //console.log(process);
+        var arrProcess = process.split('=').pop().split(',');
+        //console.log(arrProcess);
+        return arrProcess;
+    }
+
     AJAX_Get(url, data, successFn, errorFn) {
         if (window.location.hostname.includes("tpcap")) {
             url = "/kanban" + url;
@@ -138,4 +165,5 @@ class xLib {
         window.open(_url, '_blank');
     }
 }
+
 const _xLib = new xLib();
