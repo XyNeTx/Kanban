@@ -1,535 +1,353 @@
 ﻿<div class="row">
-
     <!-- Left Panel -->
     <div class="col-xl-12 col-md-12 col-sm-12 mb-2">
         <div class="card border-left-primary shadow h-100 py-2">
             <div class="card-body">
-
-                <div class="row g-2">
-
-                    <div class="accordion" id="acdCriteria">
-                        <div class="accordion-item">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#acdCriteriacl1" aria-expanded="true" aria-controls="acdCriteriacl1">
-                                    Criteria
+                @*------------------- div select to preview ----------------------*@
+                <div class="row" id="divPreview">
+                    <div class="col-4 p-4" style="border:solid;border-color:aqua;border-width:medium;">
+                        <div class="row">
+                            <div class="input-group col-7">
+                                <label class="input-group-text col-5" for="inputSupplier">Supplier :</label>
+                                <select class="form-select" id="inputSupplier">
+                                    <option value="" hidden></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-group col-7">
+                                <label class="input-group-text col-5" for="inputKanban">Kanban :</label>
+                                <select class="form-select" id="inputKanban">
+                                    <option value="" hidden></option>
+                                </select>
+                            </div>
+                            <div class="input-group col-5">
+                                <label class="input-group-text" for="inputKanbanTo">To :</label>
+                                <select class="form-select" id="inputKanbanTo">
+                                    <option value="" hidden></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-group col-7">
+                                <label class="input-group-text col-5" for="inputStore">Store Code :</label>
+                                <select class="form-select" id="inputKanban">
+                                    <option value="" hidden></option>
+                                </select>
+                            </div>
+                            <div class="input-group col-5">
+                                <label class="input-group-text" for="inputStoreTo">To :</label>
+                                <select class="form-select" id="inputKanbanTo">
+                                    <option value="" hidden></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-group col-7">
+                                <label class="input-group-text col-5" for="inputPart">Part No. :</label>
+                                <select class="form-select" id="inputPart">
+                                    <option value="" hidden></option>
+                                </select>
+                            </div>
+                            <div class="input-group col-5">
+                                <label class="input-group-text" for="inputPartTo">To :</label>
+                                <select class="form-select" id="inputPartTo">
+                                    <option value="" hidden></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="d-flex justify-content-end align-item-end">
+                                <button type="button" class="btn btn-primary col-3 me-1" id="btnProcess">
+                                    <i class="fa-solid fa-link"></i>
+                                    Process
                                 </button>
-                            </h2>
-                            <div id="acdCriteriacl1" class="accordion-collapse collapse show" data-bs-parent="#acdCriteria">
-                                <div class="accordion-body">
-
-                                    <div class="row">
-                                        <div class="col-sm-5">
-                                            <div class="card">
-                                                <div class="card-body">
-
-                                                    <div class="form-group row">
-                                                        <div class="col-md">
-                                                            <div class="input-group">
-                                                                <label class="input-group-text" for="F_OrderType">Supplier :</label>
-                                                                <select class="form-select" id="F_Plant" name="F_Plant" value="3"></select>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group row">
-                                                        <div class="col-md-6">
-                                                            <div class="input-group">
-                                                                <label class="input-group-text" for="F_OrderType">Kanban :</label>
-                                                                <select class="form-select" id="F_Plant" name="F_Plant" value="3"></select>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="input-group">
-                                                                <label class="input-group-text" for="F_OrderType">To :</label>
-                                                                <select class="form-select" id="F_Plant" name="F_Plant" value="3"></select>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group row">
-                                                        <div class="col-md-6">
-                                                            <div class="input-group">
-                                                                <label class="input-group-text" for="F_OrderType">Store Code :</label>
-                                                                <select class="form-select" id="F_Plant" name="F_Plant" value="3"></select>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="input-group">
-                                                                <label class="input-group-text" for="F_OrderType">To :</label>
-                                                                <select class="form-select" id="F_Plant" name="F_Plant" value="3"></select>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group row">
-                                                        <div class="col-md-6">
-                                                            <div class="input-group">
-                                                                <label class="input-group-text" for="F_OrderType">Part No :</label>
-                                                                <select class="form-select" id="F_Plant" name="F_Plant" value="3"></select>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="input-group">
-                                                                <label class="input-group-text" for="F_OrderType">To :</label>
-                                                                <select class="form-select" id="F_Plant" name="F_Plant" value="3"></select>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-primary btn-sm" id="btnProcess" onclick="onProcess();">
-                                                            <i class="fas fa-cogs"></i> Process
-                                                        </button>
-                                                        <button type="button" class="btn btn-primary btn-sm" id="btnPreview" onclick="onPreview();">
-                                                            <i class="fas fa-binoculars"></i> Preview
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col">
-                                            <div class="card">
-                                                <div class="card-body">
-                                                    <div class="row mb-2">
-                                                        <div class="col-md">
-                                                            <label for="F_OrderType">กระดานแจ้งข่าว :</label>
-
-                                                        </div>
-                                                        <div class="col-md-4">
-                                                            <button type="button" class="btn btn-primary btn-sm" id="btnPreview">
-                                                                แก้ไขข่าว
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <textarea rows="7"></textarea>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-3">
-                                            <div class="card">
-                                                <div class="card-body">
-                                                    <div class="form-group row">
-                                                        <div class="col-md">
-                                                            <div class="input-group">
-                                                                <label class="input-group-text" for="F_OrderType">Date :</label>
-                                                                <input type="text" class="form-control" id="F_OrderType" name="F_OrderType" value="16/08/2023" readonly>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group row">
-                                                        <div class="col-md">
-                                                            <div class="input-group">
-                                                                <label class="input-group-text" for="F_OrderType">Shift :</label>
-                                                                <input type="text" class="form-control" id="F_OrderType" name="F_OrderType" value="1:Day Shift" readonly>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group row">
-                                                        <div class="col-md">
-                                                            <div class="input-group">
-                                                                <label class="input-group-text" for="F_OrderType">Plant :</label>
-                                                                <input type="text" class="form-control" id="F_OrderType" name="F_OrderType" value="3:Fac-3" readonly>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group row">
-                                                        <div class="col-md">
-                                                            <div class="input-group">
-                                                                <label class="input-group-text" for="F_OrderType">Order type :</label>
-                                                                <input type="text" class="form-control" id="F_OrderType" name="F_OrderType" value="Daily Order" readonly>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                <button type="button" class="btn btn-primary col-3" id="btnPreview">
+                                    <i class="fa-solid fa-binoculars"></i>
+                                    Preview
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-5 p-4" style="border:solid;border-color:aqua;border-width:medium;border-left:0px">
+                        <div class="row">
+                            <div class="col">
+                                <span class="d-flex justify-content-center text-center" style="font-size:6rem;font-weight:bolder;margin-bottom:auto;">Daily</span>
+                                <span class="d-flex justify-content-center text-center fs-4 fw-bold">Normal Order</span>
+                            </div>
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col mt-1">
+                                        <span class="fs-6">กระดานแจ้งข่าว : </span>
                                     </div>
-
-
+                                    <div class="col">
+                                        <button type="button" class="btn btn-outline-dark float-end" id="btnEditNews">แก้ไขข่าว</button>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <textarea class="form-control mt-2 fs-6" id="txtNews" rows="6"></textarea>
                                 </div>
                             </div>
                         </div>
-
-                        <div class="accordion-item">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#acdCriteriacl2" aria-expanded="false" aria-controls="acdCriteriacl2">
-                                    DAILY (Normal Order)
-                                </button>
-                            </h2>
-                            <div id="acdCriteriacl2" class="accordion-collapse collapse show" data-bs-parent="#acdCriteria">
-                                <div class="accordion-body">
-                                    <div class="row">
-                                        <div class="row mb-1">
-                                            <div class="col-md-1">
-                                                <div class="form-floating">
-                                                    <input type="text" class="form-control" id="txtSupplier" value="0068-A" readonly>
-                                                    <label for="txtSupplier">Supplier</label>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-2">
-                                                <div class="form-floating">
-                                                    <input type="text" class="form-control" id="txtSupplierName" value="ADVIC" readonly>
-                                                    <label for="txtSupplierName">Supplier Name</label>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-2">
-                                                <div class="form-floating">
-                                                    <input type="text" class="form-control" id="txtSupplierName" value="465000K010-00" readonly>
-                                                    <label for="txtSupplierName">Part No.</label>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-2">
-                                                <div class="form-floating">
-                                                    <input type="text" class="form-control" id="txtSupplierName" value="BRAKE ASSY,PARKING W/CABLE RH" readonly>
-                                                    <label for="txtSupplierName">Part Name</label>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-1">
-                                                <div class="form-floating">
-                                                    <input type="text" class="form-control" id="txtSupplierName" value="1A" readonly>
-                                                    <label for="txtSupplierName">Store Code</label>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-1">
-                                                <div class="form-floating">
-                                                    <input type="text" class="form-control" id="txtSupplierName" value="0014" readonly>
-                                                    <label for="txtSupplierName">Kanban No.</label>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-1">
-                                                <div class="form-floating">
-                                                    <input type="text" class="form-control" id="txtSupplierName" value="20" readonly>
-                                                    <label for="txtSupplierName">Qty/Pack</label>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-1">
-                                                <div class="form-floating">
-                                                    <input type="text" class="form-control" id="txtSupplierName" value="01-03-03" readonly>
-                                                    <label for="txtSupplierName">Cycle Time</label>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-1">
-                                                <div class="form-floating">
-                                                    <input type="text" class="form-control" id="txtSupplierName" value="AXLE" readonly>
-                                                    <label for="txtSupplierName">Line</label>
-                                                </div>
-                                            </div>
-
-                                        </div>
-
-
-                                        <div class="row mb-1">
-                                            <div class="col-md-2">
-                                                <div class="form-floating">
-                                                    <input type="text" class="form-control" id="txtSupplier" value="206" readonly>
-                                                    <label for="txtSupplier">Use/Day (Pcs.)</label>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-2">
-                                                <div class="form-floating">
-                                                    <input type="text" class="form-control" id="txtSupplierName" value="216" readonly>
-                                                    <label for="txtSupplierName">Forecast Max(Pcs.)</label>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-2">
-                                                <div class="form-floating">
-                                                    <input type="text" class="form-control" id="txtSupplierName" value="0.70" readonly>
-                                                    <label for="txtSupplierName">Safety Stock</label>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-2">
-                                                <div class="form-floating">
-                                                    <input type="text" class="form-control" id="txtSupplierName" value="0" readonly>
-                                                    <label for="txtSupplierName">Max Area (KB)</label>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-2">
-                                                <div class="form-floating">
-                                                    <input type="text" class="form-control" id="txtSupplierName" value="60" readonly>
-                                                    <label for="txtSupplierName">Total Limit/Trip</label>
-                                                </div>
-                                            </div>
-
-                                        </div>
-
-
-                                        <div class="row">
-                                            <div class="col-12">
-                                                <table id="tblMaster" class="display compact cell-border" style="width:100%;font-size:10px;">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Sort</th>
-                                                            <th class="thTop thLeft">MRP : 15/08/2023</th>
-                                                            <th class="thTop" colspan="5" style="text-align:center">11-08-2023</th>
-                                                            <th class="thTop" colspan="5" style="text-align:center">12-08-2023</th>
-                                                            <th class="thTop" colspan="5" style="text-align:center">13-08-2023</th>
-                                                            <th class="thTop" colspan="5" style="text-align:center">14-08-2023</th>
-                                                            <th class="thTop" colspan="5" style="text-align:center">15-08-2023</th>
-                                                            <th class="thTop" colspan="5" style="text-align:center">16-08-2023</th>
-                                                            <th class="thTop" colspan="5" style="text-align:center">17-08-2023</th>
-                                                            <th class="thTop" colspan="5" style="text-align:center">18-08-2023</th>
-                                                            <th class="thTop" colspan="5" style="text-align:center">19-08-2023</th>
-                                                            <th class="thTop thRight" colspan="5">20-08-2023</th>
-                                                        </tr>
-                                                        <tr>
-                                                            <th>Sort</th>
-                                                            <th class="thLeft">MRP-20%</th>
-                                                            <th rowspan="2">Pcs</th>
-                                                            <th rowspan="2">KB</th>
-                                                            <th colspan="2" style="text-align:center">D</th>
-                                                            <th colspan="1" style="text-align:center">N</th>
-                                                            <th rowspan="2">Pcs</th>
-                                                            <th rowspan="2">KB</th>
-                                                            <th colspan="2" style="text-align:center">D</th>
-                                                            <th colspan="1" style="text-align:center">N</th>
-                                                            <th rowspan="2">Pcs</th>
-                                                            <th rowspan="2">KB</th>
-                                                            <th colspan="2" style="text-align:center">D</th>
-                                                            <th colspan="1" style="text-align:center">N</th>
-                                                            <th rowspan="2">Pcs</th>
-                                                            <th rowspan="2">KB</th>
-                                                            <th colspan="2" style="text-align:center">D</th>
-                                                            <th colspan="1" style="text-align:center">N</th>
-                                                            <th rowspan="2">Pcs</th>
-                                                            <th rowspan="2">KB</th>
-                                                            <th colspan="2" style="text-align:center">D</th>
-                                                            <th colspan="1" style="text-align:center">N</th>
-                                                            <th rowspan="2">Pcs</th>
-                                                            <th rowspan="2">KB</th>
-                                                            <th colspan="2" style="text-align:center">D</th>
-                                                            <th colspan="1" style="text-align:center">N</th>
-                                                            <th rowspan="2">Pcs</th>
-                                                            <th rowspan="2">KB</th>
-                                                            <th colspan="2" style="text-align:center">D</th>
-                                                            <th colspan="1" style="text-align:center">N</th>
-                                                            <th rowspan="2">Pcs</th>
-                                                            <th rowspan="2">KB</th>
-                                                            <th colspan="2" style="text-align:center">D</th>
-                                                            <th colspan="1" style="text-align:center">N</th>
-                                                            <th rowspan="2">Pcs</th>
-                                                            <th rowspan="2">KB</th>
-                                                            <th colspan="2" style="text-align:center">D</th>
-                                                            <th colspan="1" style="text-align:center">N</th>
-                                                            <th rowspan="2">Pcs</th>
-                                                            <th rowspan="2">KB</th>
-                                                            <th colspan="2" style="text-align:center">D</th>
-                                                            <th colspan="1" style="text-align:center">N</th>
-                                                        </tr>
-                                                        <tr>
-                                                            <th>Sort</th>
-                                                            <th class="thLeft">MRP+20%</th>
-                                                            <th>T1</th>
-                                                            <th>T2</th>
-                                                            <th>T3</th>
-                                                            <th>T1</th>
-                                                            <th>T2</th>
-                                                            <th>T3</th>
-                                                            <th>T1</th>
-                                                            <th>T2</th>
-                                                            <th>T3</th>
-                                                            <th>T1</th>
-                                                            <th>T2</th>
-                                                            <th>T3</th>
-                                                            <th>T1</th>
-                                                            <th>T2</th>
-                                                            <th>T3</th>
-                                                            <th>T1</th>
-                                                            <th>T2</th>
-                                                            <th>T3</th>
-                                                            <th>T1</th>
-                                                            <th>T2</th>
-                                                            <th>T3</th>
-                                                            <th>T1</th>
-                                                            <th>T2</th>
-                                                            <th>T3</th>
-                                                            <th>T1</th>
-                                                            <th>T2</th>
-                                                            <th>T3</th>
-                                                            <th>T1</th>
-                                                            <th>T2</th>
-                                                            <th>T3</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tfoot>
-                                                        <tr><td></td></tr>
-                                                    </tfoot>
-                                                </table>
-                                            </div>
-                                        </div>
-
-
-                                        <div class="row">
-                                            <div class="col-4">
-                                                <div class="row">
-                                                    <div class="col-6">
-                                                        <div class="row">
-                                                            <div class="col">
-                                                                <button type="button" class="btn btn-primary btn-sm" id="btnPreview">
-                                                                    <i class="fas fa-lock"></i> Lock
-                                                                </button>
-                                                                <button type="button" class="btn btn-primary btn-sm" id="btnPreview">
-                                                                    <i class="fas fa-lock-open"></i> Unlock
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col">
-                                                        <div class="row">
-                                                            <div class="col">
-                                                                <b>16/08/2023</b>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row">
-                                                            <div class="col">
-                                                                <input type="checkbox" /> Order Table
-                                                            </div>
-                                                        </div>
-                                                        <div class="row">
-                                                            <div class="col" style="font-size:10px;">
-                                                                <input type="checkbox" /> Change Cycle Time
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col">
-                                                        <div class="row">
-                                                            <div class="col">
-                                                                <b>17/08/2023</b>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row">
-                                                            <div class="col">
-                                                                <input type="checkbox" /> Slice Order
-                                                            </div>
-                                                        </div>
-                                                        <div class="row">
-                                                            <div class="col">
-                                                                <input type="checkbox" /> Receive Slice
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-8">
-                                                <div class="row">
-                                                    <div class="col-4">
-                                                        <div class="row">
-                                                            <div class="col-7">
-                                                                <input type="radio" />STOP &nbsp;
-                                                                <input type="radio" />ADD &nbsp;
-                                                                <input type="radio" />CUT
-                                                            </div>
-                                                            <div class="col-5">
-                                                                <div class="input-group mb-3">
-                                                                    <button type="button" class="btn btn-primary btn-sm" id="btnPreview">
-                                                                        <i class="fas fa-caret-left"></i>
-                                                                    </button>
-                                                                    <input type="text" class="form-control" style="width:20px;padding:1px;text-align: center;font-size:11px;" value="99/99" />
-                                                                    <button type="button" class="btn btn-primary btn-sm" id="btnPreview">
-                                                                        <i class="fas fa-caret-right"></i>
-                                                                    </button>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-8">
-                                                        <div class="row">
-
-                                                            <div class="col">
-                                                                <button type="button" class="btn btn-primary btn-sm" id="btnPreview">
-                                                                    <i class="fas fa-redo fa-rotate-90"></i> Re-Calculate BL
-                                                                </button>
-                                                                <button type="button" class="btn btn-primary btn-sm" id="btnPreview">
-                                                                    <i class="fas fa-sync-alt"></i> Re-Calculate
-                                                                </button>
-                                                                <button type="button" class="btn btn-primary btn-sm" id="btnPreview">
-                                                                    <i class="fas fa-history"></i> Change Cycle Time
-                                                                </button>
-                                                                <button type="button" class="btn btn-primary btn-sm" id="btnPreview">
-                                                                    <i class="far fa-edit"></i>Update
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                            </div>
-                                        </div>
-
-                                    </div>
-
-                                </div>
+                    </div>
+                    <div class="col-3 p-4" style="border:solid;border-color:aqua;border-width:medium;border-left:0px">
+                        <div class="row">
+                            <div class="input-group">
+                                <label class="input-group-text">Process Date For :</label>
+                                <input type="date" class="form-control" id="inputProcessDateFor" readonly>
+                            </div>
+                            <div class="input-group">
+                                <label class="input-group-text">Process Shift For :</label>
+                                <input type="text" class="form-control" id="inputProcessShiftFor" readonly>
+                            </div>
+                            <div class="input-group">
+                                <label class="input-group-text">Plant :</label>
+                                <input type="text" class="form-control" id="inputPlant" readonly>
+                            </div>
+                            <div class="input-group">
+                                <label class="input-group-text">Order Type :</label>
+                                <input type="text" class="form-control" id="inputOrderType" readonly>
                             </div>
                         </div>
-
+                        <div class="row mt-2">
+                            <div class="col">
+                                <button type="button" class="btn btn-primary col" id="buttonReport">
+                                    <i class="fas fa-file-text" aria-hidden="true"></i>
+                                    Report
+                                </button>
+                            </div>
+                            <div class="col">
+                                <button type="button" class="btn btn-warning col" id="buttonCancel">
+                                    <i class="fa-solid fa-xmark"></i>
+                                    Cancel
+                                </button>
+                            </div>
+                            <div class="col">
+                                <button type="button" class="btn btn-danger col" id="buttonExit">
+                                    <i class="fa-solid fa-door-open"></i>
+                                    Exit
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
+                <div id="divRead">
+                    <div class="row text-center mt-2">
+                        <div class="col-10">
+                            <div class="row">
+                                <div class="col">
+                                    <label class="form-label">Supplier</label>
+                                    <input type="text" class="form-control" id="readSupplier" value="0068-D" readonly />
+                                </div>
+                                <div style="flex: 0 0 11%">
+                                    <label class="form-label">Supplier Name</label>
+                                    <input type="text" class="form-control" id="readSupplierName" value="ADVICS" readonly />
+                                </div>
+                                <div style="flex: 0 0 13%">
+                                    <label class="form-label">Part No.</label>
+                                    <input type="text" class="form-control" id="readPartNo" readonly />
+                                </div>
+                                <div style="flex: 0 0 20%">
+                                    <label class="form-label">Part Name</label>
+                                    <input type="text" class="form-control" id="readPartName" readonly />
+                                </div>
+                                <div class="col">
+                                    <label class="form-label">Store Code</label>
+                                    <input type="text" class="form-control" id="readStoreCode" readonly />
+                                </div>
+                                <div class="col">
+                                    <label class="form-label">Kanban No.</label>
+                                    <input type="text" class="form-control" id="readKanbanNo" value="0000" readonly />
+                                </div>
+                                <div class="col">
+                                    <label class="form-label">Qty/Pack</label>
+                                    <input type="text" class="form-control" id="readQtyPack" readonly />
+                                </div>
+                                <div style="flex: 0 0 11%">
+                                    <label class="form-label">Cycle Time</label>
+                                    <input type="text" class="form-control" id="readCycleTime" value="01-01-01" readonly />
+                                </div>
+                                <div style="flex: 0 0 11%">
+                                    <label class="form-label">Line</label>
+                                    <input type="text" class="form-control" id="readLine" readonly />
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col input-group">
+                                    <label class="input-group-text">Use/Day(Pcs.)</label>
+                                    <input type="text" class="form-control" id="readUseDay" readonly />
+                                </div>
+                                <div class="col input-group">
+                                    <label class="input-group-text">Forecast Max(Pcs.)</label>
+                                    <input type="text" class="form-control" id="readForecastMax" readonly />
+                                </div>
+                                <div class="col input-group">
+                                    <label class="input-group-text">Safety Stock</label>
+                                    <input type="text" class="form-control" id="readForecastMin" readonly />
+                                </div>
+                                <div class="col input-group">
+                                    <label class="input-group-text">Max Area (KB)</label>
+                                    <input type="text" class="form-control" id="readMaxArea" readonly />
+                                </div>
+                                <div class="col input-group">
+                                    <label class="input-group-text">Total Limit/Trip</label>
+                                    <input type="text" class="form-control" id="readLimitTrip" readonly />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="row">
+                                <div class="input-group" >
+                                    <label class="input-group-text col-7">Std+B(Pcs.) </label>
+                                    <input type="text" class="form-control" id="readStdBPcs" readonly />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="input-group">
+                                    <label class="input-group-text col-7">Std.Stock(Pcs.) </label>
+                                    <input type="text" class="form-control" id="readStdStock" readonly />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="input-group">
+                                    <label class="input-group-text col-7">Min.Stock(Pcs.) </label>
+                                    <input type="text" class="form-control" id="readMinStock" readonly />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                @*------------------- div table to preview ----------------------*@
+            
+                <table class="table table-bordered">
+
+                    <thead class="text-center">
+                        <tr>
+                            <th style="border:0px"></th>
+                            <th style="border-bottom:0px" colspan="5">11-07-2024</th>
+                            <th style="border-bottom:0px" colspan="5">12-07-2024</th>
+                            <th style="border-bottom:0px" colspan="5">13-07-2024</th>
+                        </tr>
+                        <tr style="border:0px">
+                            <th style="border:0px" colspan="3"></th>
+                            <th style="border:0px" colspan="2" class="bg-danger">Day</th>
+                            <th style="border:0px" class="bg-primary">Night</th>
+
+                            <th style="border:0px" colspan="2"></th>
+                            <th style="border:0px" colspan="2" class="bg-danger">Day</th>
+                            <th style="border:0px" class="bg-primary">Night</th>
+
+                            <th style="border:0px" colspan="2"></th>
+                            <th style="border:0px" class="bg-danger">Day</th>
+                            <th style="border:0px" class="bg-primary" colspan="2">Night</th>
+
+                        </tr>
+                        <tr>
+                            <th style ="border:0px"></th>
+                            <th>Pcs</th>
+                            <th>KB</th>
+                            <th>T1</th>
+                            <th>T2</th>
+                            <th>T3</th>
+
+                            <th>Pcs</th>
+                            <th>KB</th>
+                            <th>T1</th>
+                            <th>T2</th>
+                            <th>T3</th>
+
+                            <th>Pcs</th>
+                            <th>KB</th>
+                            <th>T1</th>
+                            <th>T2</th>
+                            <th>T3</th>
+                        </tr>
+                    </thead>
+
+                    <tbody class="text-center">
+
+                        <tr>
+                            <th class="text-start" style="width:10dvw;height:2dvh">TMT Forecast</th>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                        </tr>
+                        <tr>
+                            <th class="text-start">HMMT Prod.Forecast</th>
+                        </tr>
+                        <tr>
+                            <th class="text-start">HMMT Order Plan</th>
+                        </tr>
+                        <tr>
+                            <th class="text-start">Production Volume</th>
+                        </tr>
+                        <tr>
+                            <th class="text-start">MRP (Actual Production)</th>
+                        </tr>
+                        <tr>
+                            <th class="text-start">Diff Last MRP vs FC</th>
+                        </tr>
+                        <tr>
+                            <th class="text-start">Abnormal Part</th>
+                        </tr>
+                        <tr>
+                            <th class="text-start">Total</th>
+                        </tr>
+                        <tr>
+                            <th class="text-start">Remain From Last Trip</th>
+                        </tr>
+                        <tr>
+                            <th class="text-start">Order Base</th>
+                        </tr>
+                        <tr>
+                            <th class="text-start">ToTal Order</th>
+                        </tr>
+                        <tr>
+                            <th class="text-start">KB Cut (-) / Add (+)</th>
+                        </tr> 
+                        <tr>
+                            <th class="text-start">Actual Order</th>
+                        </tr> 
+                        <tr>
+                            <th class="text-start">Urgent (Pcs.)</th>
+                        </tr> 
+                        <tr>
+                            <th class="text-start">Adjust Order/Trip</th>
+                        </tr>
+                        <tr>
+                            <th class="text-start">Receive Plan</th>
+                        </tr>
+                        <tr>
+                            <th>BL (Plan)</th>
+                        </tr>
+                        <tr>
+                            <th class="text-start">Receive Actual</th>
+                        </tr>
+                        <tr>
+                            <th>BL (Actual)</th>
+                        </tr>
+
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
-
-
-
 </div>
-
-
-
-
-<style>
-    .card-body {
-        font-size: 10px;
-    }
-
-    th {
-        border-bottom-color: #c1c1c1;
-        border-bottom-style: solid;
-        border-bottom-width: 0px;
-        border-left-color: #c1c1c1;
-        border-left-style: solid;
-        border-left-width: 0px;
-        border-right-color: #c1c1c1;
-        border-right-style: solid;
-        border-right-width: 1px;
-        border-top-color: #c1c1c1;
-        border-top-style: solid;
-        border-top-width: 0px;
-    }
-
-    .thTop {
-        border-top-color: #c1c1c1;
-        border-top-style: solid;
-        border-top-width: 1px;
-    }
-
-    .thRight {
-        border-right-color: #c1c1c1;
-        border-right-style: solid;
-        border-right-width: 1px;
-    }
-
-    .thLeft {
-        border-left-color: #c1c1c1;
-        border-left-style: solid;
-        border-left-width: 1px;
-        left: 0px;
-        z-index: 3;
-        background-color: white;
-        position: sticky;
-    }
-
-</style>
-
 
 @section Scripts{
     <script type="text/javascript" src="~/assets/.script/OrderingProcess/KBNOR121.js?@ViewData["Version"]"></script>

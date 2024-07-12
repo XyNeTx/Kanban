@@ -87,7 +87,8 @@ class xLib {
                 else {
                     await console.error(xhr);
                     xSplash.hide();
-                    
+
+                    // error was return by apicontroller
                     if (xhr.responseJSON.errors != undefined) {
 
                         if (xhr.responseJSON.errors.message == undefined || xhr.responseJSON.errors.message == null || !xhr.responseJSON.errors.message) {
@@ -101,11 +102,12 @@ class xLib {
                         return xSwal.error("Error", xhr.responseJSON.message)
                     }
 
+                    // error was return by developer catch it
                     else if (xhr.responseJSON.response) {
-                        return xSwal.error(xhr.responseJSON.response, xhr.responseJSON.message)
+                        xSwal.error(xhr.responseJSON.response, xhr.responseJSON.message)
+                        return errorFn(xhr, status, error)
                     }
 
-                    errorFn(xhr, status, error)
                 }
             }
         });
@@ -136,6 +138,8 @@ class xLib {
                 else {
                     await console.error(xhr);
                     xSplash.hide();
+
+                    // error was return by apicontroller
                     if (xhr.responseJSON.errors != undefined) {
 
                         if (xhr.responseJSON.errors.message == undefined || xhr.responseJSON.errors.message == null || !xhr.responseJSON.errors.message) {
@@ -149,11 +153,12 @@ class xLib {
                         return xSwal.error("Error", xhr.responseJSON.message)
                     }
 
-                    else if (xhr.responseJSON.title) {
-                        return xSwal.error(xhr.responseJSON.title, xhr.responseJSON.message)
+                    // error was return by developer catch it
+                    else if (xhr.responseJSON.response) {
+                        xSwal.error(xhr.responseJSON.response, xhr.responseJSON.message)
+                        return errorFn(xhr, status, error)
                     }
 
-                    errorFn(xhr, status, error)
                 }
             }
         });

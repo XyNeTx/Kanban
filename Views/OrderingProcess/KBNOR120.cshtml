@@ -55,7 +55,7 @@
                                                 <item type="date" id="txtProcessForDate" label="Date :" format="yyyy-mm-dd" default="now"></item>
                                             </div>
                                             <div class="col-6">
-                                                <item type="text" id="txtProcessForShift" label="Shift :" value="@ViewData["_ShiftTitle"]?.ToString()"></item>
+                                                <item type="text" id="txtProcessForShift" label="Shift :" value="@ViewData["_ShiftTitle"]?.ToString()" readonly></item>
                                             </div>
                                         </div>
 
@@ -76,9 +76,9 @@
                                     </div>
                                 </div>
 
-                                <div class="row mt-5">
+                                <div class="row mt-3">
                                     <div class="col">
-                                        <div class="mt-4" id="divProgressBar" style="visibility:hidden">
+                                        <div id="divProgressBar" style="visibility:hidden">
                                             <div class="progress" role="progressbar">
                                                 <div class="progress-bar progress-bar-striped progress-bar-animated" id="widthProgressBar" style="width: 0%">
                                                     <span class="text-center" id="spanProgressBar"> Calculating Data </span>
