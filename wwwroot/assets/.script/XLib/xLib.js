@@ -26,6 +26,15 @@ class xLib {
         return jsonResult;
     }
 
+    JSONparseAndTrim(jsonResult) {
+        if (jsonResult.hasOwnProperty('data')) {
+            jsonResult.data = JSON.parse(jsonResult.data);
+            if (typeof jsonResult.data == 'object') jsonResult.data = this.TrimArrayJSON(jsonResult.data);
+            else jsonResult.data = this.TrimJSON(jsonResult.data);
+        }
+        return jsonResult;
+    }
+
     SetProcessCookie(cName) {
         let cookie = document.cookie;
 
@@ -72,6 +81,7 @@ class xLib {
                 //    if (typeof xhr.data == 'object') xhr.data = _xLib.TrimArrayJSON(xhr.data);
                 //    else xhr.data = _xLib.TrimJSON(xhr.data);
                 //}
+                if (typeof successFn != 'function') return;
                 return successFn(xhr, status);
             },
             error: async function (xhr, status, error) {

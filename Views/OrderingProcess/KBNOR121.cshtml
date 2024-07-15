@@ -5,7 +5,7 @@
             <div class="card-body">
                 @*------------------- div select to preview ----------------------*@
                 <div class="row" id="divPreview">
-                    <div class="col-4 p-4" style="border:solid;border-color:aqua;border-width:medium;">
+                    <div class="col-4 p-1 pt-4" style="border:solid;border-color:aqua;border-width:medium;">
                         <div class="row">
                             <div class="input-group col-7">
                                 <label class="input-group-text col-5" for="inputSupplier">Supplier :</label>
@@ -31,13 +31,13 @@
                         <div class="row">
                             <div class="input-group col-7">
                                 <label class="input-group-text col-5" for="inputStore">Store Code :</label>
-                                <select class="form-select" id="inputKanban">
+                                <select class="form-select" id="inputStore">
                                     <option value="" hidden></option>
                                 </select>
                             </div>
                             <div class="input-group col-5">
                                 <label class="input-group-text" for="inputStoreTo">To :</label>
-                                <select class="form-select" id="inputKanbanTo">
+                                <select class="form-select" id="inputStoreTo">
                                     <option value="" hidden></option>
                                 </select>
                             </div>
@@ -90,7 +90,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-3 p-4" style="border:solid;border-color:aqua;border-width:medium;border-left:0px">
+                    <div class="col-3 p-1 pt-4" style="border:solid;border-color:aqua;border-width:medium;border-left:0px">
                         <div class="row">
                             <div class="input-group">
                                 <label class="input-group-text">Process Date For :</label>
@@ -106,7 +106,7 @@
                             </div>
                             <div class="input-group">
                                 <label class="input-group-text">Order Type :</label>
-                                <input type="text" class="form-control" id="inputOrderType" readonly>
+                                <input type="text" class="form-control" id="inputOrderType" value="Normal Order" readonly>
                             </div>
                         </div>
                         <div class="row mt-2">
@@ -222,17 +222,23 @@
 
                 @*------------------- div table to preview ----------------------*@
             
-                <table class="table table-bordered">
+                <table id="tableMaster" class="table table-bordered">
 
                     <thead class="text-center">
-                        <tr>
-                            <th style="border:0px"></th>
+                        <tr class ="text-center">
+                            <th style="border:0px"><input class="form-control" value="MRP : 15/07/2024" id="inputMRP" readonly /></th>
+                            
                             <th style="border-bottom:0px" colspan="5">11-07-2024</th>
                             <th style="border-bottom:0px" colspan="5">12-07-2024</th>
                             <th style="border-bottom:0px" colspan="5">13-07-2024</th>
+
                         </tr>
-                        <tr style="border:0px">
-                            <th style="border:0px" colspan="3"></th>
+                        <tr class="text-center" style="border:0px">
+
+                            <th style="border:0px"><input type="radio" name="radMRP" id="MRP-20" /> MRP-20% </th>
+                            
+                            
+                            <th style="border:0px" colspan="2"></th>
                             <th style="border:0px" colspan="2" class="bg-danger">Day</th>
                             <th style="border:0px" class="bg-primary">Night</th>
 
@@ -245,8 +251,8 @@
                             <th style="border:0px" class="bg-primary" colspan="2">Night</th>
 
                         </tr>
-                        <tr>
-                            <th style ="border:0px"></th>
+                        <tr class="text-center">
+                            <th style="border:0px"><input type="radio" name="radMRP" id="MRP20" /> MRP+20%</th>
                             <th>Pcs</th>
                             <th>KB</th>
                             <th>T1</th>
@@ -289,61 +295,350 @@
                         </tr>
                         <tr>
                             <th class="text-start">HMMT Prod.Forecast</th>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
                         </tr>
                         <tr>
                             <th class="text-start">HMMT Order Plan</th>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
                         </tr>
                         <tr>
                             <th class="text-start">Production Volume</th>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
                         </tr>
                         <tr>
                             <th class="text-start">MRP (Actual Production)</th>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
                         </tr>
                         <tr>
                             <th class="text-start">Diff Last MRP vs FC</th>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
                         </tr>
                         <tr>
                             <th class="text-start">Abnormal Part</th>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
                         </tr>
                         <tr>
                             <th class="text-start">Total</th>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
                         </tr>
                         <tr>
                             <th class="text-start">Remain From Last Trip</th>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
                         </tr>
                         <tr>
                             <th class="text-start">Order Base</th>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
                         </tr>
                         <tr>
                             <th class="text-start">ToTal Order</th>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
                         </tr>
                         <tr>
                             <th class="text-start">KB Cut (-) / Add (+)</th>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
                         </tr> 
                         <tr>
                             <th class="text-start">Actual Order</th>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
                         </tr> 
                         <tr>
                             <th class="text-start">Urgent (Pcs.)</th>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
                         </tr> 
                         <tr>
                             <th class="text-start">Adjust Order/Trip</th>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
                         </tr>
                         <tr>
                             <th class="text-start">Receive Plan</th>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
                         </tr>
                         <tr>
                             <th>BL (Plan)</th>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
                         </tr>
                         <tr>
                             <th class="text-start">Receive Actual</th>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
                         </tr>
                         <tr>
                             <th>BL (Actual)</th>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
                         </tr>
 
                     </tbody>
                 </table>
+
+
+                <div class="row mt-1">
+                    <div class="col">
+
+                    </div>
+                    <div class="col">
+                        <div class="d-flex justify-content-center">
+                            <button type="button" class="btn btn-outline-dark btn-rounded col-2" id="btnPrevPage"><i class="fa-solid fa-backward-step"></i></button>
+                            <input type="text" class="form-control text-center col-2" id="txtPage" value="1/6" readonly>
+                            <button type="button" class="btn btn-outline-dark btn-rounded col-2" id="btnNextPage"><i class="fa-solid fa-forward-step"></i></button>
+                        </div>
+                    </div>
+                    <div class="col">
+
+                    </div>
+                </div>
+
+
             </div>
         </div>
     </div>

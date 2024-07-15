@@ -34,85 +34,160 @@ namespace HINOSystem.Libs
 
         public DataTable ExecuteSQLProcDB(string sql, params object[] parameters)
         {
-            SqlConnection con = new SqlConnection(_ProcDB.Database.GetConnectionString());
+
             DataTable dt = new DataTable();
 
-            for (int i = 0; i < parameters.Length; i++)
+            try
             {
-                sql = sql.Replace("@p" + i, $"'{parameters[i].ToString()}'");
-            }
-
-            using (SqlCommand cmd = new SqlCommand(sql, con))
-            {
-                cmd.CommandType = CommandType.Text;
-                using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
+                using (SqlConnection con = new SqlConnection(_ProcDB.Database.GetConnectionString()))
                 {
-                    using (dt)
+                    using (SqlCommand cmd = new SqlCommand(sql, con))
                     {
-                        sda.Fill(dt);
-                        return dt;
-                    }
-                }
-            }
-        }
-        public DataTable ExecuteSQL(string sql,params object[] parameters)
-        {
-            //
-            SqlConnection con = new SqlConnection(_KB3Context.Database.GetConnectionString());
-            DataTable dt = new DataTable();
+                        cmd.CommandType = CommandType.Text;
 
-            for(int i = 0; i < parameters.Length; i++)
-            {
-                sql = sql.Replace("@p"+i , $"'{parameters[i].ToString()}'");
-            }
+                        // Add parameters to the SqlCommand
+                        for (int i = 0; i < parameters.Length; i++)
+                        {
+                            cmd.Parameters.AddWithValue("@p" + i, parameters[i] ?? DBNull.Value);
+                        }
 
-            using (SqlCommand cmd = new SqlCommand(sql, con))
-            {
-                cmd.CommandType = CommandType.Text;
-                using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
-                {
-                    using (dt)
-                    {
-                        try
+                        using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
                         {
                             sda.Fill(dt);
-                            return dt;
-                        }
-                        catch (SqlException SQLex) when (SQLex.Number == -2) // Handle timeout exception
-                        {
-                            Console.WriteLine("Timeout occurred. Returning partial results.");
-                            return dt; // Return the partially filled DataTable
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine(ex.Message); return dt;
                         }
                     }
                 }
             }
+            catch (SqlException SQLex) when (SQLex.Number == -2) // Handle timeout exception
+            {
+                Console.WriteLine("Timeout occurred. Returning partial results.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            return dt;
         }
-        public DataTable ExecuteSQLProc_Web(string sql, params object[] parameters)
+
+        public DataTable ExecuteSQL(string sql, params object[] parameters)
         {
-            SqlConnection con = new SqlConnection(_configuration.GetConnectionString("ProcWebConnection"));
             DataTable dt = new DataTable();
 
-            for (int i = 0; i < parameters.Length; i++)
+            try
             {
-                sql = sql.Replace("@p" + i, $"'{parameters[i].ToString()}'");
-            }
-
-            using (SqlCommand cmd = new SqlCommand(sql, con))
-            {
-                cmd.CommandType = CommandType.Text;
-                using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
+                using (SqlConnection con = new SqlConnection(_KB3Context.Database.GetConnectionString()))
                 {
-                    using (dt)
+                    using (SqlCommand cmd = new SqlCommand(sql, con))
                     {
-                        sda.Fill(dt);
-                        return dt;
+                        cmd.CommandType = CommandType.Text;
+                        // Add parameters to the SqlCommand
+                        for (int i = 0; i < parameters.Length; i++)
+                        {
+                            cmd.Parameters.AddWithValue("@p" + i, parameters[i] != null ? parameters[i] : DBNull.Value);
+                        }
+
+                        using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
+                        {
+                            sda.Fill(dt);
+                        }
                     }
                 }
             }
+            catch (SqlException SQLex) when (SQLex.Number == -2) // Handle timeout exception
+            {
+                Console.WriteLine("Timeout occurred. Returning partial results.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            return dt;
+        }
+
+        public DataTable ExecuteSQL_Param(string sql, params SqlParameter[] parameters)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                using (SqlConnection con = new SqlConnection(_KB3Context.Database.GetConnectionString()))
+                {
+                    using (SqlCommand cmd = new SqlCommand(sql, con))
+                    {
+                        cmd.CommandType = CommandType.Text;
+                        if (sql.Contains("@p0"))
+                        {
+                            // Add parameters to the SqlCommand
+                            for (int i = 0; i < parameters.Length; i++)
+                            {
+                                cmd.Parameters.AddWithValue("@p" + i, parameters[i] != null ? parameters[i] : DBNull.Value);
+                            }
+                        }
+                        else
+                        {
+                            for(int i = 0;i < parameters.Length; i++)
+                            {
+                                sql = sql.Replace(parameters[i].ParameterName, $"{parameters[i].ParameterName}='{parameters[i].Value}'");
+                            }
+                            cmd.Parameters.AddRange(parameters);
+                        }
+
+                        using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
+                        {
+                            sda.Fill(dt);
+                        }
+                    }
+                }
+            }
+            catch (SqlException SQLex) when (SQLex.Number == -2) // Handle timeout exception
+            {
+                Console.WriteLine("Timeout occurred. Returning partial results.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            return dt;
+        }
+
+        public DataTable ExecuteSQLProc_Web(string sql, params object[] parameters)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                using (SqlConnection con = new SqlConnection(_configuration.GetConnectionString("ProcWebConnection")))
+                {
+                    using (SqlCommand cmd = new SqlCommand(sql, con))
+                    {
+                        cmd.CommandType = CommandType.Text;
+
+                        // Add parameters to the SqlCommand
+                        for (int i = 0; i < parameters.Length; i++)
+                        {
+                            cmd.Parameters.AddWithValue("@p" + i, parameters[i] ?? DBNull.Value);
+                        }
+
+                        using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
+                        {
+                            sda.Fill(dt);
+                        }
+                    }
+                }
+            }
+            catch (SqlException SQLex) when (SQLex.Number == -2) // Handle timeout exception
+            {
+                Console.WriteLine("Timeout occurred. Returning partial results.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            return dt;
         }
     }
 }
