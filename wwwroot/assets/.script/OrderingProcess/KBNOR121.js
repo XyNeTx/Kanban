@@ -5,21 +5,21 @@
     var shift = text.split("Shift : ")[1].split(" ")[0];
     shift == 1 ? shift = "1 - Day Shift" : shift = "2 - Night Shift";
     //console.log(date.slice(8, 10));
+    $("#inputMRP").val("MRP : " + date.slice(8, 10) + "/" + date.slice(5, 7) + "/" + date.slice(0, 4))
     var addDate = parseInt((date.slice(8, 10))) + 1;
     addDate = addDate.toString().length == 1 ? "0" + addDate : addDate;
     date = date.slice(0, 8) + addDate;
     $("#inputPlant").val(plant);
     $("#inputProcessDateFor").val(date);
     $("#inputProcessShiftFor").val(shift);
-
-    $("#tableMaster").DataTable({
-        "paging": false,
-        "info": false,
-        "searching": false,
-        "ordering": false,
-        "autoWidth": false,
-        "scrollX": true
-    });
+    //$("#tableMaster").DataTable({
+    //    "paging": false,
+    //    "info": false,
+    //    "searching": false,
+    //    "ordering": false,
+    //    "autoWidth": false,
+    //    "scrollX": true
+    //});
 
     await _xLib.AJAX_Get('/api/KBNOR121/OnLoad', { Shift: shift, Process_Date: $("#inputProcessDateFor").val() });
 
@@ -120,6 +120,8 @@ $("#btnPreview").click(async function () {
         var dT_Period = result.data.dT_Period;
         var dT_Volume = result.data.dT_Volume;
 
+        //console.log(dT_PartControl.length);
+
         $("#txtPage").val("1/" + dT_PartControl.length);
         $("#readSupplier").val(dT_PartControl[0].F_Supplier_Code + "-" + dT_PartControl[0].F_Supplier_Plant);
         $("#readPartNo").val(dT_PartControl[0].F_Part_No + "-" + dT_PartControl[0].F_Ruibetsu);
@@ -128,10 +130,10 @@ $("#btnPreview").click(async function () {
         $("#readCycleTime").val(dT_Date[0].F_Cycle.slice(0, 2) + "-" + dT_Date[0].F_Cycle.slice(2, 4) + "-" + dT_Date[0].F_Cycle.slice(4,6));
 
 
-        $("#tableMaster").DataTable().destroy();
+        //$("#tableMaster").DataTable().destroy();
 
         $("#tableMaster thead tr").empty();
-        $("#tableMaster tbody tr").empty();
+        $("#tableMaster tbody tr td").remove();
 
         var THeadR1 = $("#THeadR1");
         var THeadR2 = $("#THeadR2");
@@ -143,22 +145,14 @@ $("#btnPreview").click(async function () {
         THeadR3.append(`<th style="border:0px"><input type="radio" name="radMRP" id="MRP20" /> MRP+20%</th>`);
 
         var count = 1;
-        var _THeadR1ColSpan = 0;
-        var _dayColSpan = 0;
+        var _dayColSpan = 0; // Collect Day Colspan in first loop each Date
         dT_Period.forEach(function (item) {
-            console.log(item);
 
             var itemDate = item.Date_Now.slice(6, 8) + "-" + item.Date_Now.slice(4, 6) + "-" + item.Date_Now.slice(0, 4);
 
-            console.log(itemDate);
-            console.log(dateSet);
-
-
-            console.log(dateSet.some(f => f.includes(itemDate)));
             if (dateSet.some(f => f.includes(itemDate))) {
-                count = 1;
-                THeadR1.append(`<th style="border-bottom:0px" colspan="${2 + _THeadR1ColSpan + item.F_Period}">${itemDate}</th>`)
-
+                // Sum Colspan pcs,kb,day and night shift in same date
+                THeadR1.append(`<th style="border-bottom:0px" colspan="${2 + _dayColSpan + item.F_Period}">${itemDate}</th>`)
                 THeadR2.append(`<th style="border:0px" colspan="2"></th>`);
 
                 THeadR3.append(`<th>Pcs</th>`);
@@ -169,21 +163,22 @@ $("#btnPreview").click(async function () {
 
                 if (item.F_Period != 0) THeadR2.append(`<th style="border:0px" colspan="${item.F_Period}" class="bg-primary">Night</th>`);
 
-                for (let i = 1; i <= _THeadR1ColSpan + item.F_Period; i++) {
+
+                count = 1; // Reset count Use Count for assign T + Count
+                for (let i = 1; i <= _dayColSpan + item.F_Period; i++) {
                     THeadR3.append(`<th>T${count}</th>`);
                     count++;
                 }
-
+                // reset dayColSpan
                 _dayColSpan = 0;
-                _THeadR1ColSpan = 0;
                 return;
             }
 
             _dayColSpan = item.F_Period;
-            _THeadR1ColSpan += item.F_Period;
 
             dateSet.push(itemDate);
 
         });
+
     });
 });

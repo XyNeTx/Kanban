@@ -4,7 +4,17 @@
     string Process_Shift = (now.Hour >= 7) && (now.Hour <= 17) ? "1 : Day Shift" : "2 : Night Shift";
     string _ProcessDate = Process_Date.ToString("yyyy-MM-dd");
 }
-
+<style>
+    .table th, .table td {
+        padding: 0.25rem 1rem;
+        vertical-align: top;
+        border-top: 1px solid #e3e6f0;
+    }
+    .table tbody tr th{
+        font-weight :bolder;
+        font-size : 0.8rem;
+    }
+</style>
 <div class="row">
     <!-- Left Panel -->
     <div class="col-xl-12 col-md-12 col-sm-12 mb-2">
@@ -113,7 +123,7 @@
                             </div>
                             <div class="input-group">
                                 <label class="input-group-text">Order Type :</label>
-                                <input type="text" class="form-control" id="inputOrderType" value="Normal Order" readonly>
+                                <input type="text" class="form-control" id="inputOrderType" value="Daily Order" readonly>
                             </div>
                         </div>
                         <div class="row mt-2">
@@ -229,7 +239,7 @@
 
                 @*------------------- div table to preview ----------------------*@
             
-                <table id="tableMaster" class="table table-bordered">
+                <table id="tableMaster" class="table table-bordered mt-2" style="overflow-x:auto;display:block">
 
                     <thead class="text-center">
                         <tr class ="text-center" id="THeadR1">
