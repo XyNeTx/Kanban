@@ -1,8 +1,12 @@
-﻿namespace KANBAN.Models.KB3.OrderingProcess
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace KANBAN.Models.KB3.OrderingProcess
 {
     public class VMKBNOR121_Preview
     {
+        [Required(ErrorMessage = "Please Select Action")]
         public string Action { get; set; }
+        [Required(ErrorMessage = "Please Select Supplier")]
         public string Supplier { get; set; }
         public string? Kanban { get; set; }
         public string? KanbanTo { get; set; }

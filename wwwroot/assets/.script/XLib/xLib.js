@@ -35,6 +35,17 @@ class xLib {
         return jsonResult;
     }
 
+    JSONparseAndTrimArray(jsonResult) {
+        if (jsonResult.hasOwnProperty('data')) {
+            for(var key in jsonResult.data) {
+                jsonResult.data[key] = JSON.parse(jsonResult.data[key]);
+                if(typeof jsonResult.data[key] == 'object') jsonResult.data[key] = this.TrimArrayJSON(jsonResult.data[key]);
+                else jsonResult.data[key] = this.TrimJSON(jsonResult.data[key]);
+            }
+        }
+        return jsonResult;
+    }
+
     SetProcessCookie(cName) {
         let cookie = document.cookie;
 

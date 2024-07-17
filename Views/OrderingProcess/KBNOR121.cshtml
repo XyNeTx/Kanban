@@ -1,4 +1,11 @@
-﻿<div class="row">
+﻿@{
+    DateTime now = DateTime.Now;
+    DateTime Process_Date = now.Date.AddDays(1);
+    string Process_Shift = (now.Hour >= 7) && (now.Hour <= 17) ? "1 : Day Shift" : "2 : Night Shift";
+    string _ProcessDate = Process_Date.ToString("yyyy-MM-dd");
+}
+
+<div class="row">
     <!-- Left Panel -->
     <div class="col-xl-12 col-md-12 col-sm-12 mb-2">
         <div class="card border-left-primary shadow h-100 py-2">
@@ -94,11 +101,11 @@
                         <div class="row">
                             <div class="input-group">
                                 <label class="input-group-text">Process Date For :</label>
-                                <input type="date" class="form-control" id="inputProcessDateFor" readonly>
+                                <input type="date" class="form-control" id="inputProcessDateFor" value="@_ProcessDate" readonly>
                             </div>
                             <div class="input-group">
                                 <label class="input-group-text">Process Shift For :</label>
-                                <input type="text" class="form-control" id="inputProcessShiftFor" readonly>
+                                <input type="text" class="form-control" id="inputProcessShiftFor" value="@Process_Shift" readonly>
                             </div>
                             <div class="input-group">
                                 <label class="input-group-text">Plant :</label>
@@ -225,7 +232,7 @@
                 <table id="tableMaster" class="table table-bordered">
 
                     <thead class="text-center">
-                        <tr class ="text-center">
+                        <tr class ="text-center" id="THeadR1">
                             <th style="border:0px"><input class="form-control" value="MRP : 15/07/2024" id="inputMRP" readonly /></th>
                             
                             <th style="border-bottom:0px" colspan="5">11-07-2024</th>
@@ -233,7 +240,7 @@
                             <th style="border-bottom:0px" colspan="5">13-07-2024</th>
 
                         </tr>
-                        <tr class="text-center" style="border:0px">
+                        <tr class="text-center" style="border:0px" id="THeadR2">
 
                             <th style="border:0px"><input type="radio" name="radMRP" id="MRP-20" /> MRP-20% </th>
                             
@@ -251,7 +258,7 @@
                             <th style="border:0px" class="bg-primary" colspan="2">Night</th>
 
                         </tr>
-                        <tr class="text-center">
+                        <tr class="text-center" id="THeadR3">
                             <th style="border:0px"><input type="radio" name="radMRP" id="MRP20" /> MRP+20%</th>
                             <th>Pcs</th>
                             <th>KB</th>
@@ -276,7 +283,7 @@
                     <tbody class="text-center">
 
                         <tr>
-                            <th class="text-start" style="width:10dvw;height:2dvh">TMT Forecast</th>
+                            <th class="text-start" style="width:10dvw;height:2dvh" id="F_TMT_FO">TMT Forecast</th>
                             <td>0</td>
                             <td>0</td>
                             <td>0</td>
@@ -294,7 +301,7 @@
                             <td>0</td>
                         </tr>
                         <tr>
-                            <th class="text-start">HMMT Prod.Forecast</th>
+                            <th class="text-start" id="F_HMMT_Prod">HMMT Prod.Forecast</th>
                             <td>0</td>
                             <td>0</td>
                             <td>0</td>
@@ -312,7 +319,7 @@
                             <td>0</td>
                         </tr>
                         <tr>
-                            <th class="text-start">HMMT Order Plan</th>
+                            <th class="text-start" id="F_HMMT_Order">HMMT Order Plan</th>
                             <td>0</td>
                             <td>0</td>
                             <td>0</td>
@@ -330,7 +337,7 @@
                             <td>0</td>
                         </tr>
                         <tr>
-                            <th class="text-start">Production Volume</th>
+                            <th class="text-start" id="">Production Volume</th>
                             <td>0</td>
                             <td>0</td>
                             <td>0</td>
@@ -348,7 +355,7 @@
                             <td>0</td>
                         </tr>
                         <tr>
-                            <th class="text-start">MRP (Actual Production)</th>
+                            <th class="text-start" id="F_Lot_SizeOrder">MRP (Actual Production)</th>
                             <td>0</td>
                             <td>0</td>
                             <td>0</td>

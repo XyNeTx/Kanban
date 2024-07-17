@@ -1,19 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using HINOSystem.Models.KB3.Master;
+﻿using HINOSystem.Models.KB3.Master;
+using KANBAN.Models.KB3.Master;
+using KANBAN.Models.KB3.OrderingProcess;
 using KANBAN.Models.KB3.Receive_Process;
 using KANBAN.Models.KB3.ReportOrder;
-using KANBAN.Models;
 using KANBAN.Models.KB3.UrgentOrder;
-using NPOI.SS.Formula.Functions;
-using System.Configuration;
-using KANBAN.Libs;
 using KANBAN.Models.KB3.VLT;
-using KANBAN.Models.KB3.OrderingProcess;
-using KANBAN.Models.KB3.Master;
+using Microsoft.EntityFrameworkCore;
 
 namespace HINOSystem.Context
 {
