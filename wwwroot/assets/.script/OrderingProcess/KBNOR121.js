@@ -1,4 +1,15 @@
-﻿$(document).ready(async function () {
+﻿
+var dT_Actual_Receive = "";
+var dT_AdjustOrder_Trip = "";
+var dT_Date = "";
+var dT_DeliveryDate = "";
+var dT_Detail = "";
+var dT_Header = "";
+var dT_PartControl = "";
+var dT_Period = "";
+var dT_Volume = "";
+
+$(document).ready(async function () {
     var text = $(".nav-right li span").text();
     var date = text.split("Date : ")[1].trim().split(" ")[0];
     var plant = text.split("Plant : ")[1].split(" ")[0];
@@ -110,15 +121,15 @@ $("#btnPreview").click(async function () {
         result = _xLib.JSONparseAndTrimArray(result);
         console.log(result.data);
 
-        var dT_Actual_Receive = result.data.dT_Actual_Receive;
-        var dT_AdjustOrder_Trip = result.data.dT_AdjustOrder_Trip;
-        var dT_Date = result.data.dT_Date;
-        var dT_DeliveryDate = result.data.dT_DeliveryDate;
-        var dT_Detail = result.data.dT_Detail;
-        var dT_Header = result.data.dT_Header;
-        var dT_PartControl = result.data.dT_PartControl;
-        var dT_Period = result.data.dT_Period;
-        var dT_Volume = result.data.dT_Volume;
+        dT_Actual_Receive = result.data.dT_Actual_Receive;
+        dT_AdjustOrder_Trip = result.data.dT_AdjustOrder_Trip;
+        dT_Date = result.data.dT_Date;
+        dT_DeliveryDate = result.data.dT_DeliveryDate;
+        dT_Detail = result.data.dT_Detail;
+        dT_Header = result.data.dT_Header;
+        dT_PartControl = result.data.dT_PartControl;
+        dT_Period = result.data.dT_Period;
+        dT_Volume = result.data.dT_Volume;
 
         //console.log(dT_PartControl.length);
 
@@ -150,6 +161,7 @@ $("#btnPreview").click(async function () {
 
             var itemDate = item.Date_Now.slice(6, 8) + "-" + item.Date_Now.slice(4, 6) + "-" + item.Date_Now.slice(0, 4);
 
+            //if it first of date then pass to save _dayColSpan then save date to dateSet
             if (dateSet.some(f => f.includes(itemDate))) {
                 // Sum Colspan pcs,kb,day and night shift in same date
                 THeadR1.append(`<th style="border-bottom:0px" colspan="${2 + _dayColSpan + item.F_Period}">${itemDate}</th>`)
@@ -160,25 +172,98 @@ $("#btnPreview").click(async function () {
 
                 if (_dayColSpan != 0) THeadR2.append(`<th style="border:0px" colspan="${_dayColSpan}" class="bg-danger">Day</th>`);
 
-
                 if (item.F_Period != 0) THeadR2.append(`<th style="border:0px" colspan="${item.F_Period}" class="bg-primary">Night</th>`);
 
-
                 count = 1; // Reset count Use Count for assign T + Count
-                for (let i = 1; i <= _dayColSpan + item.F_Period; i++) {
+                for (let i = 0; i < _dayColSpan + item.F_Period; i++) {
                     THeadR3.append(`<th>T${count}</th>`);
                     count++;
                 }
+
                 // reset dayColSpan
                 _dayColSpan = 0;
                 return;
             }
-
+            // save dayColSpan when it first date(Save DeliveryTrip Day Shift)
             _dayColSpan = item.F_Period;
-
+            // add to dateSet for check duplicate date and know F_Period is for DeliveryTrip is Night Shift
             dateSet.push(itemDate);
 
         });
-
+        addDetailToTable(dateSet);
+        //console.log("Preview");
     });
 });
+
+const addDetailToTable = async (dateSet) => {
+
+    //console.log("addDetailToTable : ", data);
+    var _headLength = dT_Header.length; // Length of Header to for loop
+    var _increase = dT_PartControl.length; // Increase for Skip each PartControl
+    var _headColSpan = 0; // Colspan of Date in Header
+    let _countDateSet = 0; // Count DateSet for loop to change Date in each loop
+    let _setAccessHeader = ["F_TMT_FO", "F_HMMT_Prod", "F_HMMT_Order", "F_Cycle_Order", "F_MRP", "F_Diff_MRP_FC", "F_AbNormal_Part", "F_Total", "F_Remain_LastTrip", "F_Order_Base", "F_Lot_SizeOrder", "F_KB_CutAdd", "F_Actual_Order", "F_Urgent_Order"];
+
+    let _setAccessDetail = ["F_TMT_FO", "F_HMMT_Prod", "F_HMMT_Order",
+        "F_Cycle_Order", "F_MRP", "F_Diff_MRP_FC", "F_AbNormal_Part",
+        "F_Total", "F_Remain_LastTrip", "F_Order_Base", "F_Lot_SizeOrder",
+        "F_KB_CutAdd", "F_Actual_Order", "F_Urgent_Order", "", "", "F_BL_Plan", "","F_BL_Actual"];
+    //console.log("Length : ", _headLength);
+    //console.log("Increase : ", _increase);
+
+    for (let i = 0; i <= _headLength; i += _increase) {
+        let _header = dT_Header[i]; // Make the Object easier to access
+
+        if (_header == undefined) break; //if out of index then break loop
+
+        let _headerDate = dT_Header[i].F_Process_Date.slice(6, 8) + "-" + dT_Header[i].F_Process_Date.slice(4, 6) + "-" + dT_Header[i].F_Process_Date.slice(0, 4);
+
+        //console.log($("#THeadR1").find(`th:contains('${_headerDate}')`).attr("colspan"));
+        _headColSpan = $("#THeadR1").find(`th:contains('${_headerDate}')`).attr("colspan");
+         
+        //console.log(_header);
+        //console.log(dateSet[_countDateSet])
+        //insert DTHeader to Table Body Row was fixed at 14
+        for (let k = 1; k <= 19; k++) {
+            if (k >= 15) $(`#TBodyR${k}`).append(`<td id=tdR${k}Pcs${dateSet[_countDateSet]}></td>`)
+            else $(`#TBodyR${k}`).append(`<td id=tdR${k}Pcs${dateSet[_countDateSet]}>${_header[_setAccessHeader[k - 1]]}</td>`)
+        }
+
+        for (let j = 0; j < _headColSpan - 1; j++) {
+            var _id = j == 0 ? "KB" : `T` + (j); // j == 0 is KB and j > 0 is T + j
+
+            for (let k = 1; k <= 19; k++) {
+                //$(`#TBodyR${k}`).append(`<td id=tdR${k}${_id}>${_header[_setAccessHeader[k-1]]}</td>`)
+                $(`#TBodyR${k}`).append(`<td id='tdR${k}${_id}${dateSet[_countDateSet]}'></td>`) // add id for easy to value
+            }
+        }
+
+        _countDateSet += 1;
+        if (_countDateSet >= dateSet.length) _countDateSet = 0;
+    }
+
+    let _countT = 1;
+    _countDateSet = 0; //reset countDateSet
+
+    for (let i = 0; i <= dT_Detail.length; i += _increase) {
+
+        _headColSpan = $("#THeadR1").find(`th:contains('${dateSet[_countDateSet]}')`).attr("colspan");
+
+        if (dT_Detail[i] == undefined) break; //if out of index then break loop
+
+        //check countT to change DateSet to another Date
+        _countDateSet = _countT == _headColSpan - 1 ? _countDateSet+1 : _countDateSet;
+        // count == -1 if it's last column T
+        _countT = _countT == _headColSpan - 1 ? 1 : _countT; 
+
+        for (let k = 1; k <= 19; k++) {
+
+            let _insIdDetail = `tdR${k}T` + _countT + dateSet[_countDateSet];
+            //console.log(i);
+            //console.log(_insIdDetail);
+            $(`#${_insIdDetail}`).text(dT_Detail[i][_setAccessDetail[k - 1]]);
+
+            if (k == 19) { _countT += 1; } //new column T
+        }
+    }
+};

@@ -50,7 +50,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
         private readonly string Txt_OrderType = "Daily Order";
         private readonly string Type_Import = "N";
         private static readonly DateTime Now = DateTime.Now;
-        private static readonly DateTime dateLogin = DateTime.Now.Date;
+        private static DateTime dateLogin = DateTime.Now.Date;
         private static string Txt_Shift = "Day";
         private static string Txt_MRPStatus = "MRP : " + Now.Date.ToString();
         private static string UserCode = "";
@@ -94,6 +94,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
                 UserCode = _BearerClass.UserCode;
                 Plant = _BearerClass.Plant;
                 ProcessDate = DateTime.ParseExact(Process_Date, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+                dateLogin = ProcessDate.AddDays(-1).Date;
 
                 return Ok(new
                 {
@@ -370,7 +371,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
 
                     var NoDayPreview = _FillDT.ExecuteSQL("exec [dbo].[sp_NumberOfDayToPreview] @p0,@p1,@p2,@p3,@p4",
                         Plant, obj.Supplier.Substring(0, 4), obj.Supplier.Substring(5, 1),
-                        storeCalendar, ProcessDate.ToString("yyyyMMdd"));
+                        storeCalendar, dateLogin.ToString("yyyyMMdd"));
 
                     if (NoDayPreview.Rows.Count == 0)
                     {
