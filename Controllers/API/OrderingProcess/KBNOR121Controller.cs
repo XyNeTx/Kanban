@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Newtonsoft.Json;
 using System.Data;
+using System.Net;
 
 namespace KANBAN.Controllers.API.OrderingProcess
 {
@@ -96,12 +97,23 @@ namespace KANBAN.Controllers.API.OrderingProcess
                 ProcessDate = DateTime.ParseExact(Process_Date, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
                 dateLogin = ProcessDate.AddDays(-1).Date;
 
+                string appUserName = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
+                string UserIPAddress = Request.HttpContext.Connection.RemoteIpAddress.ToString();
+                string UserIPAddress2 = Request.HttpContext.Connection.LocalIpAddress.ToString();
+
+
                 return Ok(new
                 {
                     status = "200",
                     response = "OK",
                     title = "Success",
                     message = "Onloading is success.",
+                    data = new
+                    {
+                        UserIPAddress = UserIPAddress,
+                        UserIPAddress2 = UserIPAddress2,
+                        appUserName = appUserName
+                    }
                 });
             }
             catch (Exception ex)

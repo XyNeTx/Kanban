@@ -236,7 +236,8 @@ const addDetailToTable = async (dateSet) => {
             for (let k = 1; k <= 19; k++) {
                 //$(`#TBodyR${k}`).append(`<td id=tdR${k}${_id}>${_header[_setAccessHeader[k-1]]}</td>`)
                 if (k == 12 && _id == "KB") {
-                    $(`#TBodyR${k}`).append(`<td id='tdR${k}${_id}${dateSet[_countDateSet]}'>${_header[_setAccessHeader[k - 1]]}</td>`)
+                    _header["F_KB_CutAdd"] = parseInt(_header["F_KB_CutAdd"]) / parseInt($("#readQtyPack").val());
+                    $(`#TBodyR${k}`).append(`<td id='tdR${k}${_id}${dateSet[_countDateSet]}'>${_header["F_KB_CutAdd"]}</td>`)
                 }
                 else {
                     $(`#TBodyR${k}`).append(`<td id='tdR${k}${_id}${dateSet[_countDateSet]}'></td>`) // add id for easy to value
@@ -281,15 +282,18 @@ const addDetailToTable = async (dateSet) => {
             let _insIdDetail = `tdR${k}T` + _countT + dateSet[_countDateSet];
             //console.log(i);
             //console.log(_insIdDetail);
-            $(`#${_insIdDetail}`).text(dT_Detail[i][_setAccessDetail[k - 1]]);
+            if (k == 11) { //convert qty to KB fixed by row
+                let _KB = parseInt(dT_Detail[i][_setAccessDetail[k - 1]]) / parseInt($("#readQtyPack").val());
+                $(`#${_insIdDetail}`).text(_KB);
+            }
+
+            else $(`#${_insIdDetail}`).text(dT_Detail[i][_setAccessDetail[k - 1]]);
 
             if (k == 19) { _countT += 1; } //new column T
         }
     }
 
-    _countT = 1;
-
-    for (let i = 0; i <= dT_Actual_Receive.length; i += 1) {
+    for (let i = 0; i < dT_Actual_Receive.length; i += 1) {
         if (dT_Actual_Receive[i] == undefined) break; //if out of index then break loop
 
         //console.log($("#readPartNo").val().includes(dT_Actual_Receive[i].F_PART_No));
@@ -308,4 +312,29 @@ const addDetailToTable = async (dateSet) => {
 
         $(`#${_insActualReceive}`).text(_ActualReceiveKB);
     }
+
+    dT_Volume.filter(x => x.F_Part_No + "-" + x.F_Ruibetsu == $("#readPartNo").val()).forEach(function (item, i) {
+        let F_Delivery_Date = item.F_Delivery_Date.slice(6, 8) + "-" + item.F_Delivery_Date.slice(4, 6) + "-" + item.F_Delivery_Date.slice(0, 4);
+        let F_Delivery_Trip = item.F_Delivery_Trip;
+
+        let _insVolume = `tdR16T${F_Delivery_Trip}${F_Delivery_Date}`;
+
+        let _VolumeKB = parseInt(item.F_Qty) / parseInt($("#readQtyPack").val());
+        _VolumeKB = _VolumeKB == undefined ? 0 : _VolumeKB;
+        $(`#${_insVolume}`).text(_VolumeKB);
+    });
+
+
+    //dT_Volume.forEach(function (item, i) {
+    //    if (dT_Volume[i] == undefined) break;
+    //    let F_Delivery_Date = dT_Volume[i].F_Delivery_Date.slice(6, 8) + "-" + dT_Volume[i].F_Delivery_Date.slice(4, 6) + "-" + dT_Volume[i].F_Delivery_Date.slice(0, 4);
+    //    let F_Delivery_Trip = dT_Volume[i].F_Delivery_Trip;
+
+    //    let _findPartNo = dT_Volume[i].F_Part_No + "-" + dT_Volume[i].F_Ruibetsu;
+    //    if ($("#readPartNo").val().includes(_findPartNo)) {
+    //        i = i + _increase;
+
+    //        let _insVolume = `tdR16T${F_Delivery_Trip}${F_Delivery_Date}`;
+    //    }
+    //});
 };
