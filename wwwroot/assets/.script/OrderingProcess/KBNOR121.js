@@ -138,7 +138,8 @@ $("#btnPreview").click(async function () {
         $("#readPartNo").val(dT_PartControl[0].F_Part_No + "-" + dT_PartControl[0].F_Ruibetsu);
         $("#readStoreCode").val(dT_PartControl[0].F_Store_Code);
         $("#readKanbanNo").val(dT_PartControl[0].F_Kanban_No);
-        $("#readCycleTime").val(dT_Date[0].F_Cycle.slice(0, 2) + "-" + dT_Date[0].F_Cycle.slice(2, 4) + "-" + dT_Date[0].F_Cycle.slice(4,6));
+        $("#readCycleTime").val(dT_Date[dT_Date.length - 1].F_Cycle.slice(0, 2) + "-" + dT_Date[dT_Date.length - 1].F_Cycle.slice(2, 4) + "-" + dT_Date[dT_Date.length - 1].F_Cycle.slice(4, 6));
+        $("#readQtyPack").val(dT_Header[0].F_Qty_Box);
 
 
         //$("#tableMaster").DataTable().destroy();
@@ -225,16 +226,22 @@ const addDetailToTable = async (dateSet) => {
         //console.log(dateSet[_countDateSet])
         //insert DTHeader to Table Body Row was fixed at 14
         for (let k = 1; k <= 19; k++) {
-            if (k >= 15) $(`#TBodyR${k}`).append(`<td id=tdR${k}Pcs${dateSet[_countDateSet]}></td>`)
+            if (k >= 15 || k == 12) $(`#TBodyR${k}`).append(`<td id=tdR${k}Pcs${dateSet[_countDateSet]}></td>`)
             else $(`#TBodyR${k}`).append(`<td id=tdR${k}Pcs${dateSet[_countDateSet]}>${_header[_setAccessHeader[k - 1]]}</td>`)
         }
 
-        for (let j = 0; j < _headColSpan - 1; j++) {
+        for (let j = 0; j <= _headColSpan - 2; j++) {
             var _id = j == 0 ? "KB" : `T` + (j); // j == 0 is KB and j > 0 is T + j
 
             for (let k = 1; k <= 19; k++) {
                 //$(`#TBodyR${k}`).append(`<td id=tdR${k}${_id}>${_header[_setAccessHeader[k-1]]}</td>`)
-                $(`#TBodyR${k}`).append(`<td id='tdR${k}${_id}${dateSet[_countDateSet]}'></td>`) // add id for easy to value
+                if (k == 12 && _id == "KB") {
+                    $(`#TBodyR${k}`).append(`<td id='tdR${k}${_id}${dateSet[_countDateSet]}'>${_header[_setAccessHeader[k - 1]]}</td>`)
+                }
+                else {
+                    $(`#TBodyR${k}`).append(`<td id='tdR${k}${_id}${dateSet[_countDateSet]}'></td>`) // add id for easy to value
+
+                }
             }
         }
 
@@ -244,17 +251,30 @@ const addDetailToTable = async (dateSet) => {
 
     let _countT = 1;
     _countDateSet = 0; //reset countDateSet
+    _headColSpan = $("#THeadR1").find(`th:contains('${dateSet[0]}')`).attr("colspan");
 
     for (let i = 0; i <= dT_Detail.length; i += _increase) {
 
-        _headColSpan = $("#THeadR1").find(`th:contains('${dateSet[_countDateSet]}')`).attr("colspan");
-
         if (dT_Detail[i] == undefined) break; //if out of index then break loop
 
-        //check countT to change DateSet to another Date
-        _countDateSet = _countT == _headColSpan - 1 ? _countDateSet+1 : _countDateSet;
-        // count == -1 if it's last column T
-        _countT = _countT == _headColSpan - 1 ? 1 : _countT; 
+        let date = dateSet[_countDateSet];
+        //if (date == undefined) date = dateSet[0];
+        //_headColSpan = $("#THeadR1").find(`th:contains('${date}')`).attr("colspan");
+
+        // if date was change and Cycle was change then reset countT
+        if (_headColSpan != $("#THeadR1").find(`th:contains('${date}')`).attr("colspan")) {
+            _countT = 1;
+            _headColSpan = $("#THeadR1").find(`th:contains('${date}')`).attr("colspan");
+        }
+        else { //Didnt have Adjust CycleTime
+
+            //check countT to change DateSet to another Date
+            _countDateSet = _countT > _headColSpan - 2 ? _countDateSet + 1 : _countDateSet;
+            // count == -1 if it's last column T
+            _countT = _countT > _headColSpan - 2 ? 1 : _countT;
+        }
+
+        if (dT_Detail[i] == undefined) break; //if out of index then break loop
 
         for (let k = 1; k <= 19; k++) {
 
@@ -265,5 +285,27 @@ const addDetailToTable = async (dateSet) => {
 
             if (k == 19) { _countT += 1; } //new column T
         }
+    }
+
+    _countT = 1;
+
+    for (let i = 0; i <= dT_Actual_Receive.length; i += 1) {
+        if (dT_Actual_Receive[i] == undefined) break; //if out of index then break loop
+
+        //console.log($("#readPartNo").val().includes(dT_Actual_Receive[i].F_PART_No));
+
+        if (!($("#readPartNo").val().includes(dT_Actual_Receive[i].F_PART_No))) {
+            break;
+        }
+
+        //console.log(dT_Volume[i]);
+        let F_Receive_Date = dT_Actual_Receive[i].F_Receive_Date.slice(6, 8) + "-" + dT_Actual_Receive[i].F_Receive_Date.slice(4, 6) + "-" + dT_Actual_Receive[i].F_Receive_Date.slice(0, 4);
+        //console.log(F_Delivery_Date);
+        let F_Delivery_Trip = dT_Actual_Receive[i].F_Delivery_Trip;
+        let _ActualReceiveKB = dT_Actual_Receive[i].F_Receive_QTY / parseInt($("#readQtyPack").val());
+
+        let _insActualReceive = `tdR18T${F_Delivery_Trip}${F_Receive_Date}`;
+
+        $(`#${_insActualReceive}`).text(_ActualReceiveKB);
     }
 };
