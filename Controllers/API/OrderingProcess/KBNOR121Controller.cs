@@ -5,8 +5,10 @@ using KANBAN.Context;
 using KANBAN.Models.KB3.OrderingProcess;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Data;
+using System.Globalization;
 using System.Net;
 
 namespace KANBAN.Controllers.API.OrderingProcess
@@ -60,7 +62,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
         private static string Start_Date = "";
         private static string End_Date = "";
         private static int intAmountShow = 0;
-        private static string dateDelivery = "";
+        private static DateTime dateDelivery = new DateTime();
         private static string DeliveryTrip = "";
         private static DateTime ProcessDate = new DateTime();
 
@@ -417,7 +419,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
                     });
                 }
 
-                dateDelivery = DT_DeliveryDate.Rows[0]["F_Delivery_Date"].ToString().Trim();
+                dateDelivery = DateTime.TryParseExact(DT_DeliveryDate.Rows[0]["F_Delivery_Date"].ToString(), "yyyyMMdd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime result) ? result : DateTime.Now;
                 DeliveryTrip = DT_DeliveryDate.Rows[0]["F_Delivery_Trip"].ToString().Trim();
 
                 DT_Date = _FillDT.ExecuteSQL("exec [dbo].[sp_getCycleTime] @p0,@p1,@p2,@p3",
@@ -655,28 +657,346 @@ namespace KANBAN.Controllers.API.OrderingProcess
             }
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> Detail_Data(int Page)
-        //{
-        //    try
-        //    {
-        //        if (dateDelivery == "")
-        //        {
-        //            dateDelivery = ProcessDate 
-        //        }
-        //        return Ok();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(500, new
-        //        {
-        //            status = "500",
-        //            response = "Internal Server Error",
-        //            title = "Error",
-        //            message = "Unexpected Error !!",
-        //            error = ex.Message
-        //        });
-        //    }
-        //}
+        [HttpGet]
+        public async Task<IActionResult> Detail_Data(int intRow,string F_Supplier_Cd)
+        {
+            try
+            {
+                int ForecastMaxInt = 0;
+                var ForecastMax = _FillDT.ExecuteSQL("EXEC [dbo].[sp_getForecastMax_New] " +
+                    "@p0,@p1,@p2,@p3,@p4,@p5,@p6,@p7",Plant,F_Supplier_Cd.Substring(0,4),F_Supplier_Cd.Substring(5,1),
+                    DT_PartControl.Rows[intRow]["F_Part_No"].ToString().Trim(), DT_PartControl.Rows[intRow]["F_Ruibetsu"].ToString(),
+                    DT_PartControl.Rows[intRow]["F_Kanban_No"].ToString().Substring(1,3), DT_PartControl.Rows[intRow]["F_Store_Code"].ToString(),
+                    Now.ToString("yyyyMMdd"));
+
+                if (ForecastMax.Rows.Count == 0 || ForecastMax == null)
+                { 
+                    return NotFound(new
+                    {
+                        status = "404",
+                        response = "Not Found",
+                        title = "Error",
+                        message = "No Forecast Max Found"
+                    });
+                }
+                else
+                {
+                    ForecastMaxInt = int.TryParse(ForecastMax.Rows[0]["ForecastMax"].ToString(), out int ResultForecast) ? ResultForecast : 0;
+                }
+
+                DataRow dr = DT_Date.Select("F_Date = '" + dateDelivery.ToString("yyyyMMdd") + "'")[0];
+                string strCycle = DT_Date.Select("F_Date = '" + dateDelivery.ToString("yyyyMMdd") + "'")[0]["F_Cycle"].ToString().Trim();
+                int CycleB = int.Parse(strCycle.Substring(2, 2));
+
+                dr = DT_Header.Select($@"F_Process_Date = '{dateDelivery.ToString("yyyyMMdd")}' 
+                        AND F_Store_Code = '{DT_PartControl.Rows[intRow]["F_Store_Code"].ToString().Trim()}' 
+                        AND F_Kanban_No = '{DT_PartControl.Rows[intRow]["F_Kanban_No"].ToString().Trim()}' 
+                        AND F_Part_No = '{DT_PartControl.Rows[intRow]["F_Part_No"].ToString().Trim()}' 
+                        AND F_Ruibetsu = '{DT_PartControl.Rows[intRow]["F_Ruibetsu"].ToString().Trim()}' 
+                        ")[0];
+
+                int QtyPack = int.Parse(dr["F_Qty_Box"].ToString().Trim()) == 0 ? 1 : int.Parse(dr["F_Qty_Box"].ToString().Trim());
+                
+                if(dr == null)
+                {
+                    QtyPack = 0;
+                }
+
+                string sourceKB = Plant switch
+                {
+                    "1" => "[hmmt-E_Kanban].[New_Kanban]",
+                    "2" => "[hmmt-E_Kanban].[New_Kanban_F2]",
+                    "3" => "[New_Kanban_F3]",
+                    _ => "[New_Kanban_F3]"
+                };
+
+                string _SQL = $@"SELECT DISTINCT RTRIM(C.F_Part_nm) AS F_Part_nm, RTRIM(S.F_short_name) AS F_short_name, P.F_Address 
+                        FROM T_Construction C INNER JOIN T_Supplier_ms S ON C.F_supplier_cd = S.F_supplier_cd 
+                        AND C.F_plant =  S.F_Plant_cd AND C.F_Store_cd = S.F_Store_cd 
+                        LEFT JOIN {sourceKB}.[dbo].TB_MS_Kanban P ON C.F_supplier_cd = P.F_Supplier_Code collate THAI_CS_AS 
+                        AND C.F_plant = P.F_Supplier_Plant collate THAI_CS_AS AND C.F_Store_cd = P.F_Store_Code collate THAI_CS_AS 
+                        AND RIGHT('0000'+C.F_Sebango,4) = P.F_Kanban_No collate THAI_CS_AS 
+                        AND C.F_Part_no = P.F_Part_No collate THAI_CS_AS AND C.F_Ruibetsu = P.F_Ruibetsu collate THAI_CS_AS 
+                        WHERE C.F_Part_no = '" + DT_PartControl.Rows[intRow]["F_Part_No"].ToString().Trim() + "'" +
+                        "AND C.F_Ruibetsu = '" + DT_PartControl.Rows[intRow]["F_Ruibetsu"].ToString().Trim() + "'" +
+                        "AND C.F_Store_cd = '" + DT_PartControl.Rows[intRow]["F_Store_Code"].ToString().Trim() + "'" +
+                        "AND C.F_supplier_cd = '" + DT_PartControl.Rows[intRow]["F_Supplier_Code"].ToString().Trim() + "'" +
+                        "AND C.F_plant = '" + DT_PartControl.Rows[intRow]["F_Supplier_Plant"].ToString().Trim() + "'" +
+                        "AND C.F_Sebango = '" + DT_PartControl.Rows[intRow]["F_Kanban_No"].ToString().Trim().Substring(1, 3) + "'" +
+                        "AND C.F_Local_Str <= convert(char(8),getdate(),112) " +
+                        "AND C.F_Local_End >= convert(char(8),getdate(),112) " +
+                        "AND S.F_TC_Str <= convert(char(8),getdate(),112) " +
+                        "AND S.F_TC_End >= convert(char(8),getdate(),112) ";
+
+                var dtNameAndLine = _FillDT.ExecuteSQLPPMDB(_SQL);
+                string F_Part_nm = "";
+                string F_short_name = "";
+                string F_Address = "";
+                if (dtNameAndLine.Rows.Count != 0)
+                {
+                    F_Part_nm = dtNameAndLine.Rows[0]["F_Part_nm"].ToString().Trim();
+                    F_short_name = dtNameAndLine.Rows[0]["F_short_name"].ToString().Trim();
+                    F_Address = dtNameAndLine.Rows[0]["F_Address"].ToString().Trim();
+                }
+
+                _SQL = $@"SELECT F_Max_Area FROM TB_MS_MaxArea_Stock WHERE F_Plant = '"+ Plant + "' " +
+                        "AND F_Part_no = '" + DT_PartControl.Rows[intRow]["F_Part_No"].ToString().Trim() + "' " +
+                        "AND F_Ruibetsu = '" + DT_PartControl.Rows[intRow]["F_Ruibetsu"].ToString().Trim() + "' " +
+                        "AND F_Store_cd = '" + DT_PartControl.Rows[intRow]["F_Store_Code"].ToString().Trim() + "' " +
+                        "AND F_Supplier_Cd = '" + DT_PartControl.Rows[intRow]["F_Supplier_Code"].ToString().Trim() + "' " +
+                        "AND F_Supplier_Plant = '" + DT_PartControl.Rows[intRow]["F_Supplier_Plant"].ToString().Trim() + "' " +
+                        "AND F_Kanban_No = '" + DT_PartControl.Rows[intRow]["F_Kanban_No"].ToString().Trim() + "' ";
+
+                var dtMaxArea = _FillDT.ExecuteSQL(_SQL);
+                string Max_Area = "";
+                if (dtMaxArea.Rows.Count == 0)
+                {
+                    Max_Area = "0";
+                }
+                else Max_Area = dtMaxArea.Rows[0]["F_Max_Area"].ToString();
+
+                _SQL = $@"Exec [dbo].[sp_getSTD_B] @p0,@p1,@p2,@p3,@p4,@p5,@p6,@p7";
+                var dtSTD_B = _FillDT.ExecuteSQL(_SQL, Plant, F_Supplier_Cd.Substring(0, 4), F_Supplier_Cd.Substring(5, 1),
+                            DT_PartControl.Rows[intRow]["F_Part_No"].ToString().Trim(), DT_PartControl.Rows[intRow]["F_Ruibetsu"].ToString(),
+                            DT_PartControl.Rows[intRow]["F_Kanban_No"].ToString().Substring(1, 3), DT_PartControl.Rows[intRow]["F_Store_Code"].ToString(),
+                            dateDelivery.ToString("yyyyMMdd"));
+
+                if (dtSTD_B.Rows.Count == 0)
+                {
+                    return NotFound(new
+                    {
+                        status = "404",
+                        response = "Not Found",
+                        title = "Error",
+                        message = "No STD_B Found"
+                    });
+                }
+
+                string STD_B = string.IsNullOrWhiteSpace(dtSTD_B.Rows[0]["STD_B"].ToString()) ? "0" : (Math.Round(float.Parse(dtSTD_B.Rows[0]["STD_B"].ToString()))).ToString();
+                string Safety_Stock = string.IsNullOrWhiteSpace(dtSTD_B.Rows[0]["Safety_Stock"].ToString()) ? "0" : dtSTD_B.Rows[0]["Safety_Stock"].ToString();
+
+                _SQL = $@"Exec [dbo].[sp_getSTDStock] @p0,@p1,@p2,@p3,@p4,@p5,@p6,@p7";
+                var dtSTDStock = _FillDT.ExecuteSQL(_SQL, Plant, F_Supplier_Cd.Substring(0, 4), F_Supplier_Cd.Substring(5, 1),
+                            DT_PartControl.Rows[intRow]["F_Part_No"].ToString().Trim(), DT_PartControl.Rows[intRow]["F_Ruibetsu"].ToString(),
+                            DT_PartControl.Rows[intRow]["F_Kanban_No"].ToString().Substring(1, 3), DT_PartControl.Rows[intRow]["F_Store_Code"].ToString(),
+                            dateDelivery.ToString("yyyyMMdd"));
+
+                if (dtSTDStock.Rows.Count == 0)
+                {
+                    return NotFound(new
+                    {
+                        status = "404",
+                        response = "Not Found",
+                        title = "Error",
+                        message = "No STDStock Found"
+                    });
+                }
+
+                string STDStock = string.IsNullOrWhiteSpace(dtSTDStock.Rows[0]["STDStock"].ToString()) ? "0" :  (Math.Round(float.Parse(dtSTDStock.Rows[0]["STDStock"].ToString()))).ToString();
+
+                _SQL = $@"Exec [dbo].[sp_getMinStock] @p0,@p1,@p2,@p3,@p4,@p5,@p6,@p7";
+                var dtMinStock = _FillDT.ExecuteSQL(_SQL, Plant, F_Supplier_Cd.Substring(0, 4), F_Supplier_Cd.Substring(5, 1),
+                            DT_PartControl.Rows[intRow]["F_Part_No"].ToString().Trim(), DT_PartControl.Rows[intRow]["F_Ruibetsu"].ToString(),
+                            DT_PartControl.Rows[intRow]["F_Kanban_No"].ToString().Substring(1, 3), DT_PartControl.Rows[intRow]["F_Store_Code"].ToString(),
+                            dateDelivery.ToString("yyyyMMdd"));
+
+                if (dtMinStock.Rows.Count == 0)
+                { 
+                    return NotFound(new
+                    {
+                        status = "404",
+                        response = "Not Found",
+                        title = "Error",
+                        message = "No MinStock Found"
+                    });
+                }
+
+                string MinStock = string.IsNullOrWhiteSpace(dtMinStock.Rows[0]["Min_Stock"].ToString()) ? "0" : (Math.Round(float.Parse(dtMinStock.Rows[0]["Min_Stock"].ToString()))).ToString();
+
+                _SQL = $@"SELECT F_MRP, F_HMMT_Prod FROM TB_CALCULATE_H WHERE F_Supplier_Code = '" + F_Supplier_Cd.Substring(0, 4) + "'" +
+                    "AND F_Supplier_Plant = '" + F_Supplier_Cd.Substring(5, 1) + "'" +
+                    "AND F_Part_No = '" + DT_PartControl.Rows[intRow]["F_Part_No"].ToString().Trim() + "'" +
+                    "AND F_Ruibetsu = '" + DT_PartControl.Rows[intRow]["F_Ruibetsu"].ToString().Trim() + "'" +
+                    "AND F_Store_Code = '" + DT_PartControl.Rows[intRow]["F_Store_Code"].ToString().Trim() + "'" +
+                    "AND F_Kanban_No = '" + DT_PartControl.Rows[intRow]["F_Kanban_No"].ToString().Trim() + "'" +
+                    "AND F_Process_Date = '" + dateLogin.ToString("yyyyMMdd") + "'";
+
+                var dtMRP = _FillDT.ExecuteSQL(_SQL);
+
+                float MRP = float.Parse(dtMRP.Rows[0]["F_MRP"].ToString());
+                float HMMT_Prod = float.Parse(dtMRP.Rows[0]["F_HMMT_Prod"].ToString());
+                string MRPCheck = "NoCheck";
+                if(HMMT_Prod * 0.8 > MRP)
+                {
+                    MRPCheck = "Less20Check";
+                }
+                else if (HMMT_Prod * 1.2 < MRP)
+                {
+                    MRPCheck = "More20Check";
+                }
+                if (dtMRP.Rows.Count == 0)
+                {
+                    MRPCheck = "NoCheck";
+                }
+
+                _SQL = $@"SELECT F_KB_CUT, F_KB_ADD, F_KB_STOP FROM TB_Calculate_H 
+                       WHERE F_Supplier_Code = '{F_Supplier_Cd.Substring(0, 4)}'
+                       AND F_Supplier_Plant = '{F_Supplier_Cd.Substring(5, 1)}'
+                       AND F_Store_Code = '{DT_PartControl.Rows[intRow]["F_Store_Code"].ToString().Trim()}'
+                       AND F_Part_No = '{DT_PartControl.Rows[intRow]["F_Part_No"].ToString().Trim()}'
+                       AND F_Ruibetsu = '{DT_PartControl.Rows[intRow]["F_Ruibetsu"].ToString().Trim()}'
+                       AND F_Kanban_No = '{DT_PartControl.Rows[intRow]["F_Kanban_No"].ToString().Trim()}'
+                       AND F_Process_Date = '{ProcessDate.ToString("yyyyMMdd")}'";
+
+                var dtKB = _FillDT.ExecuteSQL(_SQL);
+                if (dtKB.Rows.Count == 0)
+                {
+                    return NotFound(new
+                    {
+                        status = "404",
+                        response = "Not Found",
+                        title = "Error",
+                        message = "No KB Found"
+                    });
+                }
+
+                int KB_Cut = int.Parse(dtKB.Rows[0]["F_KB_CUT"].ToString());
+                int KB_Add = int.Parse(dtKB.Rows[0]["F_KB_ADD"].ToString());
+                int KB_Stop = int.Parse(dtKB.Rows[0]["F_KB_STOP"].ToString());
+
+                _SQL = $@"SELECT * FROM TB_Kanban_SetOrder WHERE F_Plant = '{Plant}' 
+                        AND F_Supplier_Code = '{F_Supplier_Cd.Substring(0, 4)}' 
+                        AND F_Supplier_Plant = '{F_Supplier_Cd.Substring(5, 1)}' 
+                        AND F_Part_No = '{DT_PartControl.Rows[intRow]["F_Part_No"].ToString().Trim()}' 
+                        AND F_Ruibetsu = '{DT_PartControl.Rows[intRow]["F_Ruibetsu"].ToString().Trim()}' 
+                        AND F_Kanban_No = '{DT_PartControl.Rows[intRow]["F_Kanban_No"].ToString().Trim()}' 
+                        AND F_Store_Cd = '{DT_PartControl.Rows[intRow]["F_Store_Code"].ToString().Trim()}' 
+                        AND CONVERT(INT,F_Trip1)+CONVERT(INT,F_Trip2)+CONVERT(INT,F_Trip3)+CONVERT(INT,F_Trip4) 
+                        +CONVERT(INT,F_Trip5)+CONVERT(INT,F_Trip6)+CONVERT(INT,F_Trip7)+CONVERT(INT,F_Trip8) 
+                        +CONVERT(INT,F_Trip9)+CONVERT(INT,F_Trip10)+CONVERT(INT,F_Trip11)+CONVERT(INT,F_Trip12) 
+                        +CONVERT(INT,F_Trip13)+CONVERT(INT,F_Trip14)+CONVERT(INT,F_Trip15)+CONVERT(INT,F_Trip16) 
+                        +CONVERT(INT,F_Trip17)+CONVERT(INT,F_Trip18)+CONVERT(INT,F_Trip19)+CONVERT(INT,F_Trip20) 
+                        +CONVERT(INT,F_Trip21)+CONVERT(INT,F_Trip22)+CONVERT(INT,F_Trip23)+CONVERT(INT,F_Trip24) > 0 ";
+
+                var dtSetOrder = _FillDT.ExecuteSQL(_SQL);
+                string SetOrderCheck = "KanbanOrderChecked";
+
+                if (dtSetOrder.Rows.Count == 0)
+                {
+                    SetOrderCheck = "NoCheck";
+                }
+
+                _SQL = $@"SELECT * FROM( Select Distinct F_Supplier_Code, F_Supplier_Plant, F_Start_Order_Date AS F_Start_Date, F_Start_Date AS F_End_Date 
+                        From TB_MS_DeliveryTime 
+                        Where F_Start_Date <> F_Start_Order_Date 
+                        And F_Supplier_Code = '{F_Supplier_Cd.Substring(0, 4)}' 
+                        And F_Supplier_Plant = '{F_Supplier_Cd.Substring(5, 1)}' 
+                        And F_Start_Order_Date <> '') A 
+                        WHERE A.F_Start_Date <= '{ProcessDate.ToString("yyyyMMdd")}' 
+                        AND A.F_End_Date >= '{ProcessDate.ToString("yyyyMMdd")}' ";
+
+                var dtDeliveryTime = _FillDT.ExecuteSQL(_SQL);
+                string DeliveryTimeCheck = "NoCheck";
+
+                if (dtDeliveryTime != null)
+                {
+                    DeliveryTimeCheck = "DeliveryTimeChecked";
+                }
+
+                _SQL = $@"SELECT A.Slide_Order + B.Slide_Order_Part AS SliceOrder 
+                        FROM  (   SELECT COUNT(*) AS Slide_Order FROM TB_Slide_Order 
+                        WHERE F_Plant = '{Plant}' AND F_Supplier_CD = '{F_Supplier_Cd.Substring(0, 4)}'
+                        AND F_Supplier_Plant = '{F_Supplier_Cd.Substring(5, 1)}' 
+                        AND F_Store_CD = '{DT_PartControl.Rows[intRow]["F_Store_Code"].ToString().Trim()}' 
+                        AND F_Delivery_Date = '{dateDelivery.ToString("yyyyMMdd")}' 
+                        AND F_Delivery_Trip = '{DeliveryTrip}' ) A CROSS JOIN 
+                        (   SELECT COUNT(*) AS Slide_Order_Part 
+                        FROM TB_Slide_Order_Part WHERE F_Plant = '{Plant}' 
+                        AND F_Supplier_CD = '{F_Supplier_Cd.Substring(0, 4)}' 
+                        AND F_Supplier_Plant = '{F_Supplier_Cd.Substring(5, 1)}' 
+                        AND F_Part_No = '{DT_PartControl.Rows[intRow]["F_Part_No"].ToString().Trim()}' 
+                        AND F_Ruibetsu = '{DT_PartControl.Rows[intRow]["F_Ruibetsu"].ToString().Trim()}' 
+                        AND F_Store_CD = '{DT_PartControl.Rows[intRow]["F_Store_Code"].ToString().Trim()}' 
+                        AND F_Delivery_Date = '{dateDelivery.ToString("yyyyMMdd")}' 
+                        AND F_Delivery_Trip = '{DeliveryTrip}  ) B '
+                        WHERE A.Slide_Order + B.Slide_Order_Part > 0 ";
+
+                var dtSlideOrder = _FillDT.ExecuteSQL(_SQL);
+                string SlideOrderCheck = "NoCheck";
+                if (dtSlideOrder.Rows.Count > 0)
+                {
+                    SlideOrderCheck = "SlideOrderChecked";
+                }
+
+                _SQL = $@"SELECT A.Rec_Slide_Order + B.Rec_Slide_Order_Part AS SliceOrder 
+                        FROM ( SELECT COUNT(*) AS Rec_Slide_Order FROM TB_Slide_Order 
+                        WHERE F_Plant = '{Plant}' AND F_Supplier_CD = '{F_Supplier_Cd.Substring(0, 4)}'
+                        AND F_Supplier_Plant = '{F_Supplier_Cd.Substring(5, 1)}' 
+                        AND F_Store_CD = '{DT_PartControl.Rows[intRow]["F_Store_Code"].ToString().Trim()}' 
+                        AND F_Slide_Date = '{dateDelivery.ToString("yyyyMMdd")}' 
+                        AND F_Slide_Trip = '{DeliveryTrip}' ) A CROSS JOIN 
+                        (   SELECT COUNT(*) AS Rec_Slide_Order_Part FROM TB_Slide_Order_Part 
+                        WHERE F_Plant = '{Plant}' 
+                        AND F_Supplier_CD = '{F_Supplier_Cd.Substring(0, 4)}' 
+                        AND F_Supplier_Plant = '{F_Supplier_Cd.Substring(5, 1)}' 
+                        AND F_Part_No = '{DT_PartControl.Rows[intRow]["F_Part_No"].ToString().Trim()}' 
+                        AND F_Ruibetsu = '{DT_PartControl.Rows[intRow]["F_Ruibetsu"].ToString().Trim()}'                         AND F_Store_CD = '{DT_PartControl.Rows[intRow]["F_Store_Code"].ToString().Trim()}' 
+                        AND F_Slide_Date = '{dateDelivery.ToString("yyyyMMdd")}' 
+                        AND F_Slide_Trip = '{DeliveryTrip}'  ) B
+                        WHERE A.Slide_Order + B.Slide_Order_Part > 0 ";
+
+                var dtRecSlideOrder = _FillDT.ExecuteSQL(_SQL);
+                string RecSlideOrderCheck = "NoCheck";
+                if (dtRecSlideOrder.Rows.Count > 0)
+                {
+                    RecSlideOrderCheck = "RecSlideOrderChecked";
+                }
+
+                string AvgTrip = (Math.Floor(((decimal)ForecastMaxInt / CycleB) / QtyPack) * QtyPack).ToString();
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "OK",
+                    title = "Success",
+                    message = "Data Found",
+                    data = new
+                    {
+                        forecastMaxInt = ForecastMaxInt,
+                        cycleB = CycleB,
+                        f_Part_nm = F_Part_nm,
+                        f_short_name = F_short_name,
+                        f_Address = F_Address,
+                        max_Area = Max_Area,
+                        std_B = STD_B,
+                        safety_Stock = Safety_Stock,
+                        stdStock = STDStock,
+                        minStock = MinStock,
+                        mrp = MRP,
+                        hmmt_Prod = HMMT_Prod,
+                        mrpCheck = MRPCheck,
+                        kb_Cut = KB_Cut,
+                        kb_Add = KB_Add,
+                        kb_Stop = KB_Stop,
+                        setOrderCheck = SetOrderCheck,
+                        deliveryTimeCheck = DeliveryTimeCheck,
+                        slideOrderCheck = SlideOrderCheck,
+                        recSlideOrderCheck = RecSlideOrderCheck,
+                        avgTrip = AvgTrip
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    response = "Internal Server Error",
+                    title = "Error",
+                    message = "Unexpected Error !!",
+                    error = ex.Message
+                });
+            }
+        }
     }
 }

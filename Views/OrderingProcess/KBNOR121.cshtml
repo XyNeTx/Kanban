@@ -8,7 +8,7 @@
     .table th, .table td {
         padding: 0.25rem 1rem;
         vertical-align: top;
-        border-top: 1px solid #e3e6f0;
+        /* border-top: 1px solid #e3e6f0; */
     }
     .table tbody tr th{
         font-weight :bolder;
@@ -245,9 +245,9 @@
                         <tr class ="text-center" id="THeadR1">
                             <th style="border:0px"><input class="form-control" value="MRP : 15/07/2024" id="inputMRP" readonly /></th>
                             
-                            <th style="border-bottom:0px" colspan="5">11-07-2024</th>
+                            @* <th style="border-bottom:0px" colspan="5">11-07-2024</th>
                             <th style="border-bottom:0px" colspan="5">12-07-2024</th>
-                            <th style="border-bottom:0px" colspan="5">13-07-2024</th>
+                            <th style="border-bottom:0px" colspan="5">13-07-2024</th> *@
 
                         </tr>
                         <tr class="text-center" style="border:0px" id="THeadR2">
@@ -255,7 +255,7 @@
                             <th style="border:0px"><input type="radio" name="radMRP" id="MRP-20" /> MRP-20% </th>
                             
                             
-                            <th style="border:0px" colspan="2"></th>
+                            @* <th style="border:0px" colspan="2"></th>
                             <th style="border:0px" colspan="2" class="bg-danger">Day</th>
                             <th style="border:0px" class="bg-primary">Night</th>
 
@@ -265,12 +265,12 @@
 
                             <th style="border:0px" colspan="2"></th>
                             <th style="border:0px" class="bg-danger">Day</th>
-                            <th style="border:0px" class="bg-primary" colspan="2">Night</th>
+                            <th style="border:0px" class="bg-primary" colspan="2">Night</th> *@
 
                         </tr>
                         <tr class="text-center" id="THeadR3">
                             <th style="border:0px"><input type="radio" name="radMRP" id="MRP20" /> MRP+20%</th>
-                            <th>Pcs</th>
+                            @* <th>Pcs</th>
                             <th>KB</th>
                             <th>T1</th>
                             <th>T2</th>
@@ -286,7 +286,7 @@
                             <th>KB</th>
                             <th>T1</th>
                             <th>T2</th>
-                            <th>T3</th>
+                            <th>T3</th> *@
                         </tr>
                     </thead>
 
@@ -294,6 +294,7 @@
 
                         <tr id="TBodyR1">
                             <th class="text-start" style="width:10dvw;height:2dvh" id="F_TMT_FO">TMT Forecast</th>
+                            @* <td>0</td>
                             <td>0</td>
                             <td>0</td>
                             <td>0</td>
@@ -307,11 +308,11 @@
                             <td>0</td>
                             <td>0</td>
                             <td>0</td>
-                            <td>0</td>
-                            <td>0</td>
+                            <td>0</td> *@
                         </tr>
                         <tr id="TBodyR2">
                             <th class="text-start" id="F_HMMT_Prod">HMMT Prod.Forecast</th>
+                            @* <td>0</td>
                             <td>0</td>
                             <td>0</td>
                             <td>0</td>
@@ -325,11 +326,11 @@
                             <td>0</td>
                             <td>0</td>
                             <td>0</td>
-                            <td>0</td>
-                            <td>0</td>
+                            <td>0</td> *@
                         </tr>
                         <tr id="TBodyR3">
                             <th class="text-start" id="F_HMMT_Order">HMMT Order Plan</th>
+                            @* <td>0</td>
                             <td>0</td>
                             <td>0</td>
                             <td>0</td>
@@ -343,11 +344,11 @@
                             <td>0</td>
                             <td>0</td>
                             <td>0</td>
-                            <td>0</td>
-                            <td>0</td>
+                            <td>0</td> *@
                         </tr>
                         <tr id="TBodyR4">
                             <th class="text-start" id="F_Cycle_Order">Production Volume</th>
+                            @* <td>0</td>
                             <td>0</td>
                             <td>0</td>
                             <td>0</td>
@@ -361,11 +362,11 @@
                             <td>0</td>
                             <td>0</td>
                             <td>0</td>
-                            <td>0</td>
-                            <td>0</td>
+                            <td>0</td> *@
                         </tr>
                         <tr id="TBodyR5">
                             <th class="text-start" id="F_MRP">MRP (Actual Production)</th>
+                            @* <td>0</td>
                             <td>0</td>
                             <td>0</td>
                             <td>0</td>
@@ -379,11 +380,11 @@
                             <td>0</td>
                             <td>0</td>
                             <td>0</td>
-                            <td>0</td>
-                            <td>0</td>
+                            <td>0</td> *@
                         </tr>
                         <tr id="TBodyR6">
                             <th class="text-start" id="F_Diff_MRP_FC">Diff Last MRP vs FC</th>
+                            @* <td>0</td>
                             <td>0</td>
                             <td>0</td>
                             <td>0</td>
@@ -397,11 +398,11 @@
                             <td>0</td>
                             <td>0</td>
                             <td>0</td>
-                            <td>0</td>
-                            <td>0</td>
+                            <td>0</td> *@
                         </tr>
                         <tr id="TBodyR7">
                             <th class="text-start" id="F_AbNormal_Part">Abnormal Part</th>
+                            @* <td>0</td>
                             <td>0</td>
                             <td>0</td>
                             <td>0</td>
@@ -415,11 +416,11 @@
                             <td>0</td>
                             <td>0</td>
                             <td>0</td>
-                            <td>0</td>
-                            <td>0</td>
+                            <td>0</td> *@
                         </tr>
                         <tr id="TBodyR8">
                             <th class="text-start" id="F_Total">Total</th>
+                            @* <td>0</td>
                             <td>0</td>
                             <td>0</td>
                             <td>0</td>
@@ -433,11 +434,11 @@
                             <td>0</td>
                             <td>0</td>
                             <td>0</td>
-                            <td>0</td>
-                            <td>0</td>
+                            <td>0</td> *@
                         </tr>
                         <tr id="TBodyR9">
                             <th class="text-start" id="F_Remain_LastTrip">Remain From Last Trip</th>
+                            @* <td>0</td>
                             <td>0</td>
                             <td>0</td>
                             <td>0</td>
@@ -451,11 +452,11 @@
                             <td>0</td>
                             <td>0</td>
                             <td>0</td>
-                            <td>0</td>
-                            <td>0</td>
+                            <td>0</td> *@
                         </tr>
                         <tr id="TBodyR10">
                             <th class="text-start" id="F_Order_Base">Order Base</th>
+                            @* <td>0</td>
                             <td>0</td>
                             <td>0</td>
                             <td>0</td>
@@ -469,11 +470,11 @@
                             <td>0</td>
                             <td>0</td>
                             <td>0</td>
-                            <td>0</td>
-                            <td>0</td>
+                            <td>0</td> *@
                         </tr>
                         <tr id="TBodyR11">
                             <th class="text-start" id="F_Lot_SizeOrder">ToTal Order</th>
+                            @* <td>0</td>
                             <td>0</td>
                             <td>0</td>
                             <td>0</td>
@@ -487,11 +488,11 @@
                             <td>0</td>
                             <td>0</td>
                             <td>0</td>
-                            <td>0</td>
-                            <td>0</td>
+                            <td>0</td> *@
                         </tr>
                         <tr id="TBodyR12">
                             <th class="text-start" id="F_KB_CutAdd">KB Cut (-) / Add (+)</th>
+                            @* <td>0</td>
                             <td>0</td>
                             <td>0</td>
                             <td>0</td>
@@ -505,11 +506,11 @@
                             <td>0</td>
                             <td>0</td>
                             <td>0</td>
-                            <td>0</td>
-                            <td>0</td>
+                            <td>0</td> *@
                         </tr> 
                         <tr id="TBodyR13">
                             <th class="text-start" id="F_Actual_Order">Actual Order</th>
+                            @* <td>0</td>
                             <td>0</td>
                             <td>0</td>
                             <td>0</td>
@@ -523,11 +524,11 @@
                             <td>0</td>
                             <td>0</td>
                             <td>0</td>
-                            <td>0</td>
-                            <td>0</td>
+                            <td>0</td> *@
                         </tr> 
                         <tr id="TBodyR14">
                             <th class="text-start" id="F_Urgent_Order">Urgent (Pcs.)</th>
+                            @* <td>0</td>
                             <td>0</td>
                             <td>0</td>
                             <td>0</td>
@@ -541,11 +542,11 @@
                             <td>0</td>
                             <td>0</td>
                             <td>0</td>
-                            <td>0</td>
-                            <td>0</td>
+                            <td>0</td> *@
                         </tr> 
                         <tr id="TBodyR15">
                             <th class="text-start">Adjust Order/Trip</th>
+                            @* <td>0</td>
                             <td>0</td>
                             <td>0</td>
                             <td>0</td>
@@ -559,11 +560,11 @@
                             <td>0</td>
                             <td>0</td>
                             <td>0</td>
-                            <td>0</td>
-                            <td>0</td>
+                            <td>0</td> *@
                         </tr>
                         <tr id="TBodyR16">
                             <th class="text-start">Receive Plan</th>
+                            @* <td>0</td>
                             <td>0</td>
                             <td>0</td>
                             <td>0</td>
@@ -577,11 +578,11 @@
                             <td>0</td>
                             <td>0</td>
                             <td>0</td>
-                            <td>0</td>
-                            <td>0</td>
+                            <td>0</td> *@
                         </tr>
                         <tr id="TBodyR17">
                             <th>BL (Plan)</th>
+                            @* <td>0</td>
                             <td>0</td>
                             <td>0</td>
                             <td>0</td>
@@ -595,11 +596,11 @@
                             <td>0</td>
                             <td>0</td>
                             <td>0</td>
-                            <td>0</td>
-                            <td>0</td>
+                            <td>0</td> *@
                         </tr>
                         <tr id="TBodyR18">
                             <th class="text-start">Receive Actual</th>
+                            @* <td>0</td>
                             <td>0</td>
                             <td>0</td>
                             <td>0</td>
@@ -613,11 +614,11 @@
                             <td>0</td>
                             <td>0</td>
                             <td>0</td>
-                            <td>0</td>
-                            <td>0</td>
+                            <td>0</td> *@
                         </tr>
                         <tr id="TBodyR19">
                             <th>BL (Actual)</th>
+@*                             <td>0</td>
                             <td>0</td>
                             <td>0</td>
                             <td>0</td>
@@ -631,17 +632,56 @@
                             <td>0</td>
                             <td>0</td>
                             <td>0</td>
-                            <td>0</td>
-                            <td>0</td>
+                            <td>0</td> *@
                         </tr>
 
                     </tbody>
                 </table>
 
-
                 <div class="row mt-1">
-                    <div class="col">
+                    <div class="col-2">
 
+                    </div>
+                    <div class="col">
+                        <div class="row">
+                            <div style="flex:0 0 10%">
+                                <span class="text-center" id="spanProcessDate">Process Date</span>
+                            </div>
+                            <div style="flex:0 0 10%">
+                                <span class="text-center" id="spanDeliveryDate">Delivery Date</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-2">
+                    <div class="col-2">
+                        <div class="row ms-2">
+                            <button type="button" class="btn btn-outline-dark col-5 me-1">Lock <i class="fa-solid fa-lock"></i></button>
+                            <button type="button" class="btn btn-outline-dark col-5 me-1">Unlock <i class="fa-solid fa-lock-open"></i></button>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="row ms-2">
+                            <div class="col">
+                                <input type="checkbox" class="form-check-input" id="chkBoxOrderTable" />
+                                <label class="form-check-label text-danger" for="chkBoxOrderTable">Order Table</label>
+                            </div>
+                            <div class="col">
+                                <input type="checkbox" class="form-check-input" id="chkBoxSliceTable" />
+                                <label class="form-check-label text-primary" for="chkBoxSliceTable">Slice Order</label>
+                            </div>
+                        </div>
+                        <div class="row ms-2">
+                            <div class="col"> 
+                                <input type="checkbox" class="form-check-input" id="chkBoxChgCycleTime" />
+                                <label class="form-check-label text-danger" for="chkBoxChgCycleTime">Change Cycle Time</label>
+                            </div>
+                            <div class="col">
+                                <input type="checkbox" class="form-check-input" id="chkBoxRecSlice" />
+                                <label class="form-check-label text-primary" for="chkBoxRecSlice">Receive Slice</label>
+                            </div>
+                        </div>
                     </div>
                     <div class="col">
                         <div class="d-flex justify-content-center">

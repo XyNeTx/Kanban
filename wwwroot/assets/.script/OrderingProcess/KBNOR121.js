@@ -325,16 +325,28 @@ const addDetailToTable = async (dateSet) => {
     });
 
 
-    //dT_Volume.forEach(function (item, i) {
-    //    if (dT_Volume[i] == undefined) break;
-    //    let F_Delivery_Date = dT_Volume[i].F_Delivery_Date.slice(6, 8) + "-" + dT_Volume[i].F_Delivery_Date.slice(4, 6) + "-" + dT_Volume[i].F_Delivery_Date.slice(0, 4);
-    //    let F_Delivery_Trip = dT_Volume[i].F_Delivery_Trip;
+    _xLib.AJAX_Get('/api/KBNOR121/Detail_Data', { Page: $("#txtPage").val().split("/")[0], F_Supplier_Cd: $("#inputSupplier").val() },
+        function (success) {
+            if (success.status == 200) {
+                success = _xLib.JSONparseAndTrim(success.data);
+                var Process_date = dT_DeliveryDate[0].F_Delivery_Date;
 
-    //    let _findPartNo = dT_Volume[i].F_Part_No + "-" + dT_Volume[i].F_Ruibetsu;
-    //    if ($("#readPartNo").val().includes(_findPartNo)) {
-    //        i = i + _increase;
+                //filter by process date, part no, supplier code, supplier plant, store code to get TMT_FO
+                var FilteredHeader = dT_Header.filter(x => x.F_Process_Date == Process_date
+                    && x.F_Part_No == $("#readPartNo").val().split("-")[0]
+                    && x.F_Ruibetsu == $("#readPartNo").val().split("-")[1]
+                    && x.F_Supplier_Code == $("#readSupplier").val().split("-")[0]
+                    && x.F_Supplier_Plant == $("#readSupplier").val().split("-")[1]
+                    && x.F_Store_Code == $("#readStoreCode").val()
+                )
 
-    //        let _insVolume = `tdR16T${F_Delivery_Trip}${F_Delivery_Date}`;
-    //    }
-    //});
+                console.log("FilteredHeader : ", FilteredHeader);
+
+                $("#readUseDay").val(FilteredHeader[0].F_TMT_FO);
+
+                console.log(success);
+            }
+        }
+    );
+
 };
