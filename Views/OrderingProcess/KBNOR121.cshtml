@@ -1,8 +1,4 @@
 ﻿@{
-    DateTime now = DateTime.Now;
-    DateTime Process_Date = now.Date.AddDays(1);
-    string Process_Shift = (now.Hour >= 7) && (now.Hour <= 17) ? "1 : Day Shift" : "2 : Night Shift";
-    string _ProcessDate = Process_Date.ToString("yyyy-MM-dd");
 }
 <style>
     .table th, .table td {
@@ -111,11 +107,11 @@
                         <div class="row">
                             <div class="input-group">
                                 <label class="input-group-text">Process Date For :</label>
-                                <input type="date" class="form-control" id="inputProcessDateFor" value="@_ProcessDate" readonly>
+                                <input type="date" class="form-control" id="inputProcessDateFor" value="" readonly>
                             </div>
                             <div class="input-group">
                                 <label class="input-group-text">Process Shift For :</label>
-                                <input type="text" class="form-control" id="inputProcessShiftFor" value="@Process_Shift" readonly>
+                                <input type="text" class="form-control" id="inputProcessShiftFor" value="" readonly>
                             </div>
                             <div class="input-group">
                                 <label class="input-group-text">Plant :</label>
@@ -155,61 +151,61 @@
                             <div class="row">
                                 <div class="col">
                                     <label class="form-label">Supplier</label>
-                                    <input type="text" class="form-control" id="readSupplier" value="0068-D" readonly />
+                                    <input type="text" class="form-control text-center" id="readSupplier" value="0068-D" readonly />
                                 </div>
                                 <div style="flex: 0 0 11%">
                                     <label class="form-label">Supplier Name</label>
-                                    <input type="text" class="form-control" id="readSupplierName" value="ADVICS" readonly />
+                                    <input type="text" class="form-control text-center" id="readSupplierName" value="ADVICS" readonly />
                                 </div>
                                 <div style="flex: 0 0 13%">
                                     <label class="form-label">Part No.</label>
-                                    <input type="text" class="form-control" id="readPartNo" readonly />
+                                    <input type="text" class="form-control text-center" id="readPartNo" readonly />
                                 </div>
                                 <div style="flex: 0 0 20%">
                                     <label class="form-label">Part Name</label>
-                                    <input type="text" class="form-control" id="readPartName" readonly />
+                                    <input type="text" class="form-control text-center" id="readPartName" readonly />
                                 </div>
                                 <div class="col">
                                     <label class="form-label">Store Code</label>
-                                    <input type="text" class="form-control" id="readStoreCode" readonly />
+                                    <input type="text" class="form-control text-center" id="readStoreCode" readonly />
                                 </div>
                                 <div class="col">
                                     <label class="form-label">Kanban No.</label>
-                                    <input type="text" class="form-control" id="readKanbanNo" value="0000" readonly />
+                                    <input type="text" class="form-control text-center" id="readKanbanNo" value="0000" readonly />
                                 </div>
                                 <div class="col">
                                     <label class="form-label">Qty/Pack</label>
-                                    <input type="text" class="form-control" id="readQtyPack" readonly />
+                                    <input type="text" class="form-control text-center" id="readQtyPack" readonly />
                                 </div>
                                 <div style="flex: 0 0 11%">
                                     <label class="form-label">Cycle Time</label>
-                                    <input type="text" class="form-control" id="readCycleTime" value="01-01-01" readonly />
+                                    <input type="text" class="form-control text-center" id="readCycleTime" value="01-01-01" readonly />
                                 </div>
                                 <div style="flex: 0 0 11%">
                                     <label class="form-label">Line</label>
-                                    <input type="text" class="form-control" id="readLine" readonly />
+                                    <input type="text" class="form-control text-center" id="readLine" readonly />
                                 </div>
                             </div>
                             <div class="row mt-2">
                                 <div class="col input-group">
                                     <label class="input-group-text">Use/Day(Pcs.)</label>
-                                    <input type="text" class="form-control" id="readUseDay" readonly />
+                                    <input type="text" class="form-control text-center" id="readUseDay" readonly />
                                 </div>
                                 <div class="col input-group">
                                     <label class="input-group-text">Forecast Max(Pcs.)</label>
-                                    <input type="text" class="form-control" id="readForecastMax" readonly />
+                                    <input type="text" class="form-control text-center" id="readForecastMax" readonly />
                                 </div>
                                 <div class="col input-group">
                                     <label class="input-group-text">Safety Stock</label>
-                                    <input type="text" class="form-control" id="readForecastMin" readonly />
+                                    <input type="text" class="form-control text-center" id="readSafetyStock" readonly />
                                 </div>
                                 <div class="col input-group">
                                     <label class="input-group-text">Max Area (KB)</label>
-                                    <input type="text" class="form-control" id="readMaxArea" readonly />
+                                    <input type="text" class="form-control text-center" id="readMaxArea" readonly />
                                 </div>
                                 <div class="col input-group">
                                     <label class="input-group-text">Total Limit/Trip</label>
-                                    <input type="text" class="form-control" id="readLimitTrip" readonly />
+                                    <input type="text" class="form-control text-center" id="readLimitTrip" readonly />
                                 </div>
                             </div>
                         </div>
@@ -217,19 +213,19 @@
                             <div class="row">
                                 <div class="input-group" >
                                     <label class="input-group-text col-7">Std+B(Pcs.) </label>
-                                    <input type="text" class="form-control" id="readStdBPcs" readonly />
+                                    <input type="text" class="form-control text-center" id="readStdBPcs" readonly />
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="input-group">
                                     <label class="input-group-text col-7">Std.Stock(Pcs.) </label>
-                                    <input type="text" class="form-control" id="readStdStock" readonly />
+                                    <input type="text" class="form-control text-center" id="readStdStock" readonly />
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="input-group">
                                     <label class="input-group-text col-7">Min.Stock(Pcs.) </label>
-                                    <input type="text" class="form-control" id="readMinStock" readonly />
+                                    <input type="text" class="form-control text-center" id="readMinStock" readonly />
                                 </div>
                             </div>
                         </div>

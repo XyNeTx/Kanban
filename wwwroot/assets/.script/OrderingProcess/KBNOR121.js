@@ -8,6 +8,7 @@ var dT_Header = "";
 var dT_PartControl = "";
 var dT_Period = "";
 var dT_Volume = "";
+var _command = "";
 
 $(document).ready(async function () {
     var text = $(".nav-right li span").text();
@@ -17,9 +18,14 @@ $(document).ready(async function () {
     shift == 1 ? shift = "1 - Day Shift" : shift = "2 - Night Shift";
     //console.log(date.slice(8, 10));
     $("#inputMRP").val("MRP : " + date.slice(8, 10) + "/" + date.slice(5, 7) + "/" + date.slice(0, 4))
-    var addDate = parseInt((date.slice(8, 10))) + 1;
-    addDate = addDate.toString().length == 1 ? "0" + addDate : addDate;
-    date = date.slice(0, 8) + addDate;
+    var parseDate = Date.parse(date.slice(5, 7) + "/" + date.slice(8, 10) + "/" + date.slice(0, 4));
+    var date = new Date(parseDate);
+    date.setDate(date.getDate() + 2);
+    date = date.toISOString().slice(0, 10);
+    //var addDate = parseInt((date.slice(8, 10)));
+    //addDate = addDate.toString().length == 1 ? "0" + addDate : addDate;
+    //date = date.slice(0, 8) + addDate;
+    console.log(date);
     $("#inputPlant").val(plant);
     $("#inputProcessDateFor").val(date);
     $("#inputProcessShiftFor").val(shift);
@@ -48,6 +54,12 @@ $(document).ready(async function () {
         $(this).addClass("text-center");
     });
 
+
+    //const clientInfo = {
+    //    userAgent: navigator.userAgent,
+    //    platform: navigator.platform,
+    //};
+    //console.log(clientInfo);
 
     xSplash.hide();
 });
@@ -107,9 +119,15 @@ $("#inputStore , #inputStoreTo").change(function () {
 });
 
 $("#btnPreview").click(async function () {
+    previewFunction(0);
+});
+
+const previewFunction = async (intRow) => {
+    //console.log("IntRow : ", intRow);
+    _command = "Preview";
     var obj = {
         action: "Preview",
-        supplier : $("#inputSupplier").val(),
+        supplier: $("#inputSupplier").val(),
     }
 
     await _xLib.AJAX_Post('/api/KBNOR121/Find_StartEnd_Date', JSON.stringify(obj), function (result) {
@@ -132,20 +150,24 @@ $("#btnPreview").click(async function () {
         dT_Volume = result.data.dT_Volume;
 
         //console.log(dT_PartControl.length);
+        if ($("#readSupplier").val() != dT_PartControl[0].F_Supplier_Code + "-" + dT_PartControl[0].F_Supplier_Plant) {
+            $("#txtPage").val("1/" + dT_PartControl.length);
+        }
 
-        $("#txtPage").val("1/" + dT_PartControl.length);
-        $("#readSupplier").val(dT_PartControl[0].F_Supplier_Code + "-" + dT_PartControl[0].F_Supplier_Plant);
-        $("#readPartNo").val(dT_PartControl[0].F_Part_No + "-" + dT_PartControl[0].F_Ruibetsu);
-        $("#readStoreCode").val(dT_PartControl[0].F_Store_Code);
-        $("#readKanbanNo").val(dT_PartControl[0].F_Kanban_No);
+        $("#readSupplier").val(dT_PartControl[intRow].F_Supplier_Code + "-" + dT_PartControl[intRow].F_Supplier_Plant);
+        $("#readPartNo").val(dT_PartControl[intRow].F_Part_No + "-" + dT_PartControl[0].F_Ruibetsu);
+        $("#readStoreCode").val(dT_PartControl[intRow].F_Store_Code);
+        $("#readKanbanNo").val(dT_PartControl[intRow].F_Kanban_No);
         $("#readCycleTime").val(dT_Date[dT_Date.length - 1].F_Cycle.slice(0, 2) + "-" + dT_Date[dT_Date.length - 1].F_Cycle.slice(2, 4) + "-" + dT_Date[dT_Date.length - 1].F_Cycle.slice(4, 6));
-        $("#readQtyPack").val(dT_Header[0].F_Qty_Box);
+        $("#readQtyPack").val(dT_Header[intRow].F_Qty_Box);
 
 
         //$("#tableMaster").DataTable().destroy();
 
         $("#tableMaster thead tr").empty();
         $("#tableMaster tbody tr td").remove();
+        $("#divRead").css("visibility", "hidden");
+        $("#tableMaster").css("visibility", "hidden");
 
         var THeadR1 = $("#THeadR1");
         var THeadR2 = $("#THeadR2");
@@ -176,8 +198,19 @@ $("#btnPreview").click(async function () {
                 if (item.F_Period != 0) THeadR2.append(`<th style="border:0px" colspan="${item.F_Period}" class="bg-primary">Night</th>`);
 
                 count = 1; // Reset count Use Count for assign T + Count
-                for (let i = 0; i < _dayColSpan + item.F_Period; i++) {
-                    THeadR3.append(`<th>T${count}</th>`);
+                //for (let i = 0; i < _dayColSpan + item.F_Period; i++) {
+                //    THeadR3.append(`<th>T${count}</th>`);
+                //    count++;
+                //}
+
+                for (let i = 0; i < _dayColSpan; i++) {
+                    if (i == 0) { THeadR3.append(`<th id='1stTDay'>T${count}</th>`); }
+                    else { THeadR3.append(`<th id='TDay${count}'>T${count}</th>`); }
+                    count++;
+                }
+                for (let i = 0; i < item.F_Period; i++) {
+                    if (i == 0) { THeadR3.append(`<th id='1stTNight'>T${count}</th>`); }
+                    else { THeadR3.append(`<th id='TNight${count}'>T${count}</th>`); }
                     count++;
                 }
 
@@ -191,12 +224,14 @@ $("#btnPreview").click(async function () {
             dateSet.push(itemDate);
 
         });
-        addDetailToTable(dateSet);
+        addDetailToTable(dateSet, intRow);
         //console.log("Preview");
     });
-});
+};
 
-const addDetailToTable = async (dateSet) => {
+const addDetailToTable = async (dateSet, intRow) => {
+    //console.log("DateSet : ", dateSet);
+    console.log("IntRow : ", intRow);
 
     //console.log("addDetailToTable : ", data);
     var _headLength = dT_Header.length; // Length of Header to for loop
@@ -212,8 +247,9 @@ const addDetailToTable = async (dateSet) => {
     //console.log("Length : ", _headLength);
     //console.log("Increase : ", _increase);
 
-    for (let i = 0; i <= _headLength; i += _increase) {
+    for (let i = intRow; i <= _headLength; i += _increase) {
         let _header = dT_Header[i]; // Make the Object easier to access
+        //console.log(_header);
 
         if (_header == undefined) break; //if out of index then break loop
 
@@ -254,13 +290,11 @@ const addDetailToTable = async (dateSet) => {
     _countDateSet = 0; //reset countDateSet
     _headColSpan = $("#THeadR1").find(`th:contains('${dateSet[0]}')`).attr("colspan");
 
-    for (let i = 0; i <= dT_Detail.length; i += _increase) {
+    for (let i = intRow; i <= dT_Detail.length; i += _increase) {
 
         if (dT_Detail[i] == undefined) break; //if out of index then break loop
 
         let date = dateSet[_countDateSet];
-        //if (date == undefined) date = dateSet[0];
-        //_headColSpan = $("#THeadR1").find(`th:contains('${date}')`).attr("colspan");
 
         // if date was change and Cycle was change then reset countT
         if (_headColSpan != $("#THeadR1").find(`th:contains('${date}')`).attr("colspan")) {
@@ -274,7 +308,7 @@ const addDetailToTable = async (dateSet) => {
             // count == -1 if it's last column T
             _countT = _countT > _headColSpan - 2 ? 1 : _countT;
         }
-
+        console.log(dT_Detail[i]);
         if (dT_Detail[i] == undefined) break; //if out of index then break loop
 
         for (let k = 1; k <= 19; k++) {
@@ -286,7 +320,9 @@ const addDetailToTable = async (dateSet) => {
                 let _KB = parseInt(dT_Detail[i][_setAccessDetail[k - 1]]) / parseInt($("#readQtyPack").val());
                 $(`#${_insIdDetail}`).text(_KB);
             }
-
+            else if (k == 4) {
+                $(`#${_insIdDetail}`).text();
+            }
             else $(`#${_insIdDetail}`).text(dT_Detail[i][_setAccessDetail[k - 1]]);
 
             if (k == 19) { _countT += 1; } //new column T
@@ -325,12 +361,24 @@ const addDetailToTable = async (dateSet) => {
     });
 
 
-    _xLib.AJAX_Get('/api/KBNOR121/Detail_Data', { Page: $("#txtPage").val().split("/")[0], F_Supplier_Cd: $("#inputSupplier").val() },
+    _xLib.AJAX_Get('/api/KBNOR121/Detail_Data', { intRow: $("#txtPage").val().split("/")[0] - 1, F_Supplier_Cd: $("#inputSupplier").val() },
         function (success) {
             if (success.status == 200) {
-                success = _xLib.JSONparseAndTrim(success.data);
-                var Process_date = dT_DeliveryDate[0].F_Delivery_Date;
+                success.data = _xLib.JSONparseAndTrim(success.data);
+                $("#readForecastMax").val(success.data.forecastMaxInt);
+                $("#readSafetyStock").val(success.data.safety_Stock);
+                $("#readMaxArea").val(success.data.max_Area);
+                $("#readLimitTrip").val(success.data.avgTrip);
+                $("#readStdBPcs").val(success.data.std_B);
+                $("#readStdStock").val(success.data.stdStock);
+                $("#readMinStock").val(success.data.minStock);
+                $("#readLine").val(success.data.f_Address);
+                $("#readPartName").val(success.data.f_Part_nm);
+                $("#readSupplierName").val(success.data.f_short_name);
 
+
+
+                var Process_date = dT_DeliveryDate[0].F_Delivery_Date;
                 //filter by process date, part no, supplier code, supplier plant, store code to get TMT_FO
                 var FilteredHeader = dT_Header.filter(x => x.F_Process_Date == Process_date
                     && x.F_Part_No == $("#readPartNo").val().split("-")[0]
@@ -339,14 +387,64 @@ const addDetailToTable = async (dateSet) => {
                     && x.F_Supplier_Plant == $("#readSupplier").val().split("-")[1]
                     && x.F_Store_Code == $("#readStoreCode").val()
                 )
-
                 console.log("FilteredHeader : ", FilteredHeader);
-
                 $("#readUseDay").val(FilteredHeader[0].F_TMT_FO);
 
-                console.log(success);
+                console.log(success.data);
             }
         }
     );
 
+    // Set Style for Table
+    $("table tbody tr td").each(await function () {
+        var id = $(this).attr("id");
+        if (id == undefined) return;
+        if (id.includes("Pcs") || id.includes("KB")) {
+            $(this).css("background-color", "#ced4da");
+        }
+    });
+
+    $("table thead tr th[id*='T']").each(function () {
+        //console.log($(this).attr("id"));
+        if ($(this).attr("id").includes("1stT")) {
+            let index = $(this).index() - 1; // -1 because index start at 0
+            let $td = $("table tbody tr").find("td").eq(index);
+
+            $td.css("font-weight", "bolder");
+
+            if ($(this).attr("id").includes("Day")) {
+                $td.addClass("bg-danger");
+            }
+            else if ($(this).attr("id").includes("Night")) {
+                $td.addClass("bg-primary");
+            }
+        }
+        else {
+            let index = $(this).index() - 1; // -1 because index start at 0
+            let $td = $("table tbody tr").find("td").eq(index);
+            //console.log($td.attr("id"));
+            $td.text(""); // empty it if it in same shift
+
+            let _prev$td = $("table tbody tr").find("td").eq(index - 1);
+            $td.addClass(_prev$td.attr("class")); // add bg class from previous td
+        }
+    });
+
+
+    $("#divRead").css("visibility", "visible");
+    $("#tableMaster").css("visibility", "visible");
+
 };
+
+$("#btnPrevPage").click(async function () {
+    var page = parseInt($("#txtPage").val().split("/")[0]);
+    if (page == 1) return;
+    $("#txtPage").val((parseInt(page) - 1) + "/" + dT_PartControl.length);
+    previewFunction($("#txtPage").val().split("/")[0] - 1); // -1 because index start at 0
+});
+$("#btnNextPage").click(async function () {
+    var page = parseInt($("#txtPage").val().split("/")[0]);
+    if (page == dT_PartControl.length) return;
+    $("#txtPage").val((parseInt(page) + 1) + "/" + dT_PartControl.length);
+    previewFunction($("#txtPage").val().split("/")[0] - 1); // -1 because index start at 0
+});

@@ -825,7 +825,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
 
                 float MRP = float.Parse(dtMRP.Rows[0]["F_MRP"].ToString());
                 float HMMT_Prod = float.Parse(dtMRP.Rows[0]["F_HMMT_Prod"].ToString());
-                string MRPCheck = "NoCheck";
+                string MRPCheck = "";
                 if(HMMT_Prod * 0.8 > MRP)
                 {
                     MRPCheck = "Less20Check";
@@ -836,7 +836,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
                 }
                 if (dtMRP.Rows.Count == 0)
                 {
-                    MRPCheck = "NoCheck";
+                    MRPCheck = "";
                 }
 
                 _SQL = $@"SELECT F_KB_CUT, F_KB_ADD, F_KB_STOP FROM TB_Calculate_H 
@@ -883,7 +883,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
 
                 if (dtSetOrder.Rows.Count == 0)
                 {
-                    SetOrderCheck = "NoCheck";
+                    SetOrderCheck = "";
                 }
 
                 _SQL = $@"SELECT * FROM( Select Distinct F_Supplier_Code, F_Supplier_Plant, F_Start_Order_Date AS F_Start_Date, F_Start_Date AS F_End_Date 
@@ -896,11 +896,11 @@ namespace KANBAN.Controllers.API.OrderingProcess
                         AND A.F_End_Date >= '{ProcessDate.ToString("yyyyMMdd")}' ";
 
                 var dtDeliveryTime = _FillDT.ExecuteSQL(_SQL);
-                string DeliveryTimeCheck = "NoCheck";
+                string ChgCycleCheck = "";
 
                 if (dtDeliveryTime != null)
                 {
-                    DeliveryTimeCheck = "DeliveryTimeChecked";
+                    ChgCycleCheck = "ChgCycleChecked";
                 }
 
                 _SQL = $@"SELECT A.Slide_Order + B.Slide_Order_Part AS SliceOrder 
@@ -922,7 +922,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
                         WHERE A.Slide_Order + B.Slide_Order_Part > 0 ";
 
                 var dtSlideOrder = _FillDT.ExecuteSQL(_SQL);
-                string SlideOrderCheck = "NoCheck";
+                string SlideOrderCheck = "";
                 if (dtSlideOrder.Rows.Count > 0)
                 {
                     SlideOrderCheck = "SlideOrderChecked";
@@ -946,7 +946,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
                         WHERE A.Slide_Order + B.Slide_Order_Part > 0 ";
 
                 var dtRecSlideOrder = _FillDT.ExecuteSQL(_SQL);
-                string RecSlideOrderCheck = "NoCheck";
+                string RecSlideOrderCheck = "";
                 if (dtRecSlideOrder.Rows.Count > 0)
                 {
                     RecSlideOrderCheck = "RecSlideOrderChecked";
@@ -979,7 +979,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
                         kb_Add = KB_Add,
                         kb_Stop = KB_Stop,
                         setOrderCheck = SetOrderCheck,
-                        deliveryTimeCheck = DeliveryTimeCheck,
+                        chgCycleCheck = ChgCycleCheck,
                         slideOrderCheck = SlideOrderCheck,
                         recSlideOrderCheck = RecSlideOrderCheck,
                         avgTrip = AvgTrip
