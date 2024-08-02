@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using System.Data;
 using System.Globalization;
 using System.Net;
+using System.Net.Sockets;
 
 namespace KANBAN.Controllers.API.OrderingProcess
 {
@@ -100,9 +101,11 @@ namespace KANBAN.Controllers.API.OrderingProcess
                 dateLogin = ProcessDate.AddDays(-1).Date;
 
                 string appUserName = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
-                string UserIPAddress = Request.HttpContext.Connection.RemoteIpAddress.ToString();
-                string UserIPAddress2 = Request.HttpContext.Connection.LocalIpAddress.ToString();
-
+                string ipaddress = HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                string windowUserName = System.Environment.UserName;
+                string windowClientName = System.Environment.MachineName;
+                string _computerName = Dns.GetHostName();
+                string _compName = System.Environment.MachineName;
 
                 return Ok(new
                 {
@@ -112,9 +115,12 @@ namespace KANBAN.Controllers.API.OrderingProcess
                     message = "Onloading is success.",
                     data = new
                     {
-                        UserIPAddress = UserIPAddress,
-                        UserIPAddress2 = UserIPAddress2,
-                        appUserName = appUserName
+                        appUserName = appUserName,
+                        ipaddress = ipaddress,
+                        _computerName = _computerName,
+                        _compName = _compName,
+                        windowUserName = windowUserName,
+                        windowClientName = windowClientName
                     }
                 });
             }

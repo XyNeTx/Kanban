@@ -44,6 +44,23 @@ $(document).ready(async function () {
         $(this).addClass("text-center");
     });
 
+    //await _xLib.AJAX_Get("http:\\hmmt-app07/sso/api/SingleSignOn/getLogin", "", function (result) {
+    //    console.log(result.data);
+    //});
+
+    $.ajax({
+        url: "http:\\\\hmmt-app07/sso/api/SingleSignOn/getLogin",
+        type: "GET",
+        xhrFields: {
+            withCredentials: true // Include credentials in the request
+        },
+
+        success: function (result) {
+            console.log(result);
+        }
+    });
+
+
 
     //const clientInfo = {
     //    userAgent: navigator.userAgent,

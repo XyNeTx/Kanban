@@ -1,7 +1,6 @@
 using HINOSystem.Context;
 using HINOSystem.Libs;
 using KANBAN.Context;
-using KANBAN.Libs;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
@@ -113,7 +112,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseSession();
+app.UseSession(); 
 
 app.UseAuthentication();
 app.UseAuthorization();
