@@ -29,7 +29,6 @@ namespace KANBAN.Controllers.API.OrderingProcess
         private readonly FillDataTable _FillDT;
 
         public KBNOR121Controller(
-            IConfiguration configuration,
             BearerClass bearerClass,
             ActionResultClass actionResultClass,
             KanbanConnection kanbanConnection,
@@ -40,7 +39,6 @@ namespace KANBAN.Controllers.API.OrderingProcess
             FillDataTable fillDataTable
             )
         {
-            _configuration = configuration;
             _BearerClass = bearerClass;
             _ActionResult = actionResultClass;
             _KB3Context = kB3Context;
@@ -516,7 +514,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
                     string.IsNullOrWhiteSpace(obj.PartNo) ? DBNull.Value : obj.PartNo.Substring(0, 10),
                     string.IsNullOrWhiteSpace(obj.PartNoTo) ? DBNull.Value : obj.PartNoTo.Substring(0, 10),
                     string.IsNullOrWhiteSpace(obj.PartNo) ? DBNull.Value : obj.PartNo.Substring(11, 2),
-                    string.IsNullOrWhiteSpace(obj.PartNoTo) ? DBNull.Value : obj.PartNoTo.Substring(11, 2), "Daily");
+                    string.IsNullOrWhiteSpace(obj.PartNoTo) ? DBNull.Value : obj.PartNoTo.Substring(11, 2), DBNull.Value);
 
                 if(DT_PartControl.Rows.Count == 0)
                 {
@@ -542,7 +540,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
                     string.IsNullOrWhiteSpace(obj.PartNo) ? DBNull.Value : obj.PartNo.Substring(0, 10),
                     string.IsNullOrWhiteSpace(obj.PartNoTo) ? DBNull.Value : obj.PartNoTo.Substring(0, 10),
                     string.IsNullOrWhiteSpace(obj.PartNo) ? DBNull.Value : obj.PartNo.Substring(11, 2),
-                    string.IsNullOrWhiteSpace(obj.PartNoTo) ? DBNull.Value : obj.PartNoTo.Substring(11, 2), "Daily");
+                    string.IsNullOrWhiteSpace(obj.PartNoTo) ? DBNull.Value : obj.PartNoTo.Substring(11, 2), DBNull.Value);
 
                 if (DT_Header.Rows.Count == 0)
                 {
@@ -563,7 +561,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
                     string.IsNullOrWhiteSpace(obj.PartNo) ? DBNull.Value : obj.PartNo.Substring(0, 10),
                     string.IsNullOrWhiteSpace(obj.PartNoTo) ? DBNull.Value : obj.PartNoTo.Substring(0, 10),
                     string.IsNullOrWhiteSpace(obj.PartNo) ? DBNull.Value : obj.PartNo.Substring(11, 2),
-                    string.IsNullOrWhiteSpace(obj.PartNoTo) ? DBNull.Value : obj.PartNoTo.Substring(11, 2), "Daily");
+                    string.IsNullOrWhiteSpace(obj.PartNoTo) ? DBNull.Value : obj.PartNoTo.Substring(11, 2), DBNull.Value);
 
                 if (DT_Detail.Rows.Count == 0)
                 {
@@ -584,7 +582,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
                     string.IsNullOrWhiteSpace(obj.PartNo) ? DBNull.Value : obj.PartNo.Substring(0, 10),
                     string.IsNullOrWhiteSpace(obj.PartNoTo) ? DBNull.Value : obj.PartNoTo.Substring(0, 10),
                     string.IsNullOrWhiteSpace(obj.PartNo) ? DBNull.Value : obj.PartNo.Substring(11, 2),
-                    string.IsNullOrWhiteSpace(obj.PartNoTo) ? DBNull.Value : obj.PartNoTo.Substring(11, 2), "Daily");
+                    string.IsNullOrWhiteSpace(obj.PartNoTo) ? DBNull.Value : obj.PartNoTo.Substring(11, 2), DBNull.Value);
 
                 if (DT_Volume.Rows.Count == 0)
                 {
@@ -605,7 +603,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
                     string.IsNullOrWhiteSpace(obj.PartNo) ? DBNull.Value : obj.PartNo.Substring(0, 10),
                     string.IsNullOrWhiteSpace(obj.PartNoTo) ? DBNull.Value : obj.PartNoTo.Substring(0, 10),
                     string.IsNullOrWhiteSpace(obj.PartNo) ? DBNull.Value : obj.PartNo.Substring(11, 2),
-                    string.IsNullOrWhiteSpace(obj.PartNoTo) ? DBNull.Value : obj.PartNoTo.Substring(11, 2), "Daily");
+                    string.IsNullOrWhiteSpace(obj.PartNoTo) ? DBNull.Value : obj.PartNoTo.Substring(11, 2), DBNull.Value);
 
                 if (DT_AdjustOrder_Trip.Rows.Count == 0)
                 {

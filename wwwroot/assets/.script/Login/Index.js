@@ -90,7 +90,26 @@
     });
 
 
+    $.ajax({
+        url: "http:\\\\hmmt-app07/sso/api/SingleSignOn/getLogin",
+        type: "GET",
+        xhrFields: {
+            withCredentials: true // Include credentials in the request
+        },
+
+        success: function (result) {
+            console.log(result);
+            console.log($('#txtProcessDate').val());
+        }
+    });
 
 
+});
 
+$("#formAuthentication").one('submit',function (e) {
+    e.preventDefault();
+    var processDate = $('#txtProcessDate').val();
+    var shift = $("#ddlShift").val() == 1 ? "D" : "N";
+    document.cookie = `loginDate=${processDate}${shift}`;
+    $(this).submit();
 });

@@ -9,6 +9,7 @@ var dT_PartControl = "";
 var dT_Period = "";
 var dT_Volume = "";
 var _command = "";
+var _CookieProcessDate = _xLib.GetCookie("processDate");
 
 $(document).ready(async function () {
     var text = $(".nav-right li span").text();
@@ -25,8 +26,9 @@ $(document).ready(async function () {
 
     //console.log(date);
     $("#inputPlant").val(plant);
-    $("#inputProcessDateFor").val(date);
-    $("#inputProcessShiftFor").val(shift);
+
+    $("#inputProcessDateFor").val(_CookieProcessDate.slice(0, 10));
+    $("#inputProcessShiftFor").val(_CookieProcessDate.slice(10, 11) == "D" ? "1 - Day Shift" : "2 - Night Shift");
 
     await _xLib.AJAX_Get('/api/KBNOR121/OnLoad', { Shift: shift, Process_Date: $("#inputProcessDateFor").val() });
 
@@ -131,6 +133,9 @@ $("#btnPreview").click(async function () {
 
 const previewFunction = async (intRow) => {
     //console.log("IntRow : ", intRow);
+    $("body").css("cursor", "process");
+    $("#divRead").css("visibility", "hidden");
+    $("#tableMaster").css("visibility", "hidden");
     _command = "Preview";
     var obj = {
         action: "Preview",
@@ -168,13 +173,15 @@ const previewFunction = async (intRow) => {
         $("#readCycleTime").val(dT_Date[dT_Date.length - 1].F_Cycle.slice(0, 2) + "-" + dT_Date[dT_Date.length - 1].F_Cycle.slice(2, 4) + "-" + dT_Date[dT_Date.length - 1].F_Cycle.slice(4, 6));
         $("#readQtyPack").val(dT_Header[intRow].F_Qty_Box);
 
+        $("#spanProcessDate").text(_CookieProcessDate.slice(8, 10) + "/" + _CookieProcessDate.slice(5, 7) + "/" + _CookieProcessDate.slice(0, 4));
+        $("#spanDeliveryDate").text(dT_DeliveryDate[0].F_Delivery_Date.slice(6, 8) + "/" + dT_DeliveryDate[0].F_Delivery_Date.slice(4, 6) + "/" + dT_DeliveryDate[0].F_Delivery_Date.slice(0, 4));
 
         //$("#tableMaster").DataTable().destroy();
 
         $("#tableMaster thead tr").empty();
         $("#tableMaster tbody tr td").remove();
-        $("#divRead").css("visibility", "hidden");
-        $("#tableMaster").css("visibility", "hidden");
+        //$("#divRead").css("visibility", "hidden");
+        //$("#tableMaster").css("visibility", "hidden");
 
         var THeadR1 = $("#THeadR1");
         var THeadR2 = $("#THeadR2");
@@ -250,7 +257,7 @@ const addDetailToTable = async (dateSet, intRow) => {
     let _setAccessDetail = ["F_TMT_FO", "F_HMMT_Prod", "F_HMMT_Order",
         "F_Cycle_Order", "F_MRP", "F_Diff_MRP_FC", "F_AbNormal_Part",
         "F_Total", "F_Remain_LastTrip", "F_Order_Base", "F_Lot_SizeOrder",
-        "F_KB_CutADD", "F_Actual_order", "F_Urgent_Order", "", "", "F_BL_Plan", "", "F_BL_Actual"];
+        "F_KB_CutADD", "F_Actual_order", "F_Urgent_Order","", "", "", "F_BL_Plan", "", "F_BL_Actual"];
     //console.log("Length : ", _headLength);
     //console.log("Increase : ", _increase);
 
@@ -268,7 +275,7 @@ const addDetailToTable = async (dateSet, intRow) => {
         //console.log(_header);
         //console.log(dateSet[_countDateSet])
         //insert DTHeader to Table Body Row was fixed at 14
-        for (let k = 1; k <= 19; k++) {
+        for (let k = 1; k <= 20; k++) {
             if (k >= 15 || k == 12) $(`#TBodyR${k}`).append(`<td id=tdR${k}Pcs${dateSet[_countDateSet]}></td>`)
             else $(`#TBodyR${k}`).append(`<td id=tdR${k}Pcs${dateSet[_countDateSet]}>${_header[_setAccessHeader[k - 1]]}</td>`)
         }
@@ -276,7 +283,7 @@ const addDetailToTable = async (dateSet, intRow) => {
         for (let j = 0; j <= _headColSpan - 2; j++) {
             var _id = j == 0 ? "KB" : `T` + (j); // j == 0 is KB and j > 0 is T + j
 
-            for (let k = 1; k <= 19; k++) {
+            for (let k = 1; k <= 20; k++) {
                 //$(`#TBodyR${k}`).append(`<td id=tdR${k}${_id}>${_header[_setAccessHeader[k-1]]}</td>`)
                 if (k == 12 && _id == "KB") {
                     _header["F_KB_CutAdd"] = parseInt(_header["F_KB_CutAdd"]) / parseInt($("#readQtyPack").val());
@@ -285,6 +292,9 @@ const addDetailToTable = async (dateSet, intRow) => {
                 else {
                     $(`#TBodyR${k}`).append(`<td id='tdR${k}${_id}${dateSet[_countDateSet]}'></td>`) // add id for easy to value
 
+                    //if (k == 1) {
+                    //    $(`#tdR${k}${_id}${dateSet[_countDateSet]}`).text(_header[_setAccessHeader[k - 1]]))
+                    //}
                 }
             }
         }
@@ -322,7 +332,7 @@ const addDetailToTable = async (dateSet, intRow) => {
             _countT = _countT > _headColSpan - 2 ? 1 : _countT;
         }
 
-        for (let k = 1; k <= 19; k++) {
+        for (let k = 1; k <= 20; k++) {
             let _insIdDetail = `tdR${k}T` + _countT + dateSet[_countDateSet];
             //console.log(i);
             //console.log(_insIdDetail);
@@ -338,10 +348,11 @@ const addDetailToTable = async (dateSet, intRow) => {
             }
             else $(`#${_insIdDetail}`).text(item[_setAccessDetail[k - 1]]);
 
-            if (k == 19) { _countT += 1; } //new column T
+            if (k == 20) { _countT += 1; } //new column T
         }
     });
 
+    // ------------------------------------ DT AdjustOrder_Trip -----------------------------------------
     dT_AdjustOrder_Trip.filter(x => x.F_Part_No + "-" + x.F_Ruibetsu == $("#readPartNo").val()
         && x.F_Supplier_Code == $("#inputSupplier").val().split("-")[0]
         && x.F_Supplier_Plant == $("#inputSupplier").val().split("-")[1]
@@ -350,7 +361,7 @@ const addDetailToTable = async (dateSet, intRow) => {
     ).forEach(function (item, i) {
         //console.log(item);
 
-        let _idAdjQty = `tdR15T${item.F_Delivery_Trip}${item.F_Delivery_Date.slice(6, 8)}-${item.F_Delivery_Date.slice(4, 6)}-${item.F_Delivery_Date.slice(0, 4)}`;
+        let _idAdjQty = `tdR16T${item.F_Delivery_Trip}${item.F_Delivery_Date.slice(6, 8)}-${item.F_Delivery_Date.slice(4, 6)}-${item.F_Delivery_Date.slice(0, 4)}`;
         if (item.F_Adj_Qty != 0) {
 
             $(`#${_idAdjQty}`).text(item.F_Adj_Qty);
@@ -359,15 +370,16 @@ const addDetailToTable = async (dateSet, intRow) => {
 
             for (let i = 1; i < _intColSpan - 1; i++) { //insert 0 to another T in same date
 
-                let _idAdjQty = `tdR15T${i}${item.F_Delivery_Date.slice(6, 8)}-${item.F_Delivery_Date.slice(4, 6)}-${item.F_Delivery_Date.slice(0, 4)}`;
+                let _idAdjQty = `tdR16T${i}${item.F_Delivery_Date.slice(6, 8)}-${item.F_Delivery_Date.slice(4, 6)}-${item.F_Delivery_Date.slice(0, 4)}`;
 
                 $(`#${_idAdjQty}`).text() == "" ? $(`#${_idAdjQty}`).text("0") : $(`#${_idAdjQty}`).text();
 
             }
         }
     });
+    // ------------------------------------ DT AdjustOrder_Trip -----------------------------------------
 
-
+    // ------------------------------------ DT Volume -----------------------------------------
     dT_Volume.filter(x => x.F_Part_No + "-" + x.F_Ruibetsu == $("#readPartNo").val()
         && x.F_Supplier_Code == $("#inputSupplier").val().split("-")[0]
         && x.F_Supplier_Plant == $("#inputSupplier").val().split("-")[1]
@@ -377,19 +389,36 @@ const addDetailToTable = async (dateSet, intRow) => {
         let F_Delivery_Date = item.F_Delivery_Date.slice(6, 8) + "-" + item.F_Delivery_Date.slice(4, 6) + "-" + item.F_Delivery_Date.slice(0, 4);
         let F_Delivery_Trip = item.F_Delivery_Trip;
 
-        let _insVolume = `tdR16T${F_Delivery_Trip}${F_Delivery_Date}`;
+        var _Row = [15, 17];
+        var _Key = ["F_Adj_Pattern", "F_Qty"];
 
-        let _VolumeKB = parseInt(item.F_Qty) / parseInt($("#readQtyPack").val()); // Convert Qty to KB
-        _VolumeKB = _VolumeKB == undefined ? 0 : _VolumeKB;
-        $(`#${_insVolume}`).text(_VolumeKB);
+        _Row.forEach(function (row, i) {
+            if (item[_Key[i]] == undefined || item[_Key[i]] == 0 || item[_Key[i]] == 0) return;
+            let _insPattern = `tdR${row}T${F_Delivery_Trip}${F_Delivery_Date}`;
+            let _PatternKB = parseInt(item[_Key[i]]) / parseInt($("#readQtyPack").val()); // Convert Qty to KB
+            _PatternKB = _PatternKB == undefined ? 0 : _PatternKB;
+            $(`#${_insPattern}`).text(_PatternKB);
+        });
+
     });
 
-    $("table tbody tr td[id*='tdR16T']").each(function () {
+    $("table tbody tr td[id*='tdR17T']").each(function () {
         if ($(this).text() == "") {
             $(this).text("0");
         }
     });
 
+
+    $("table tbody tr td[id*='tdR15T']").each(function () {
+        if ($(this).text() == "") {
+            $(this).text("0");
+        }
+    });
+
+    // ------------------------------------ DT Volume -----------------------------------------
+
+
+    // ------------------------------------ DT Actual -----------------------------------------
     dT_Actual_Receive.filter(x => x.F_PART_No + "-" + x.F_RUibetsu == $("#readPartNo").val()
         && x.F_Supplier_code == $("#inputSupplier").val().split("-")[0]
         && x.F_Supplier_Plant == $("#inputSupplier").val().split("-")[1]
@@ -399,16 +428,18 @@ const addDetailToTable = async (dateSet, intRow) => {
         let F_Delivery_Trip = item.F_Delivery_Trip;
         let _ActualReceiveKB = item.F_Receive_QTY / parseInt($("#readQtyPack").val());
 
-        let _insActualReceive = `tdR18T${F_Delivery_Trip}${F_Receive_Date}`;
+        let _insActualReceive = `tdR19T${F_Delivery_Trip}${F_Receive_Date}`;
 
         $(`#${_insActualReceive}`).text(_ActualReceiveKB);
     });
 
-    $("table tbody tr td[id*='tdR18T']").each(function () {
+    $("table tbody tr td[id*='tdR19T']").each(function () {
         if ($(this).text() == "") {
             $(this).text("0");
         }
     });
+
+    // ------------------------------------ DT Actual -----------------------------------------
 
     _xLib.AJAX_Get('/api/KBNOR121/Detail_Data', { intRow: $("#txtPage").val().split("/")[0] - 1, F_Supplier_Cd: $("#inputSupplier").val() },
         function (success) {
@@ -447,15 +478,11 @@ const addDetailToTable = async (dateSet, intRow) => {
 
 
     // Set Style for Table
-    $("table tbody tr td").each(await function () {
-        var id = $(this).attr("id");
-        if (id == undefined) return;
-        if (id.includes("Pcs") || id.includes("KB")) {
-            $(this).css("background-color", "#ced4da");
-        }
+    $("table tbody tr td[id*='Pcs'],table tbody tr td[id*='KB']").each(await function () {
+        $(this).css("background-color", "#ced4da");
     });
 
-    $("table thead tr th[id*='T']").each(function () {
+    $("table thead tr th[id*='TDay'], table thead tr th[id*='TNight']").each(function () {
         //console.log($(this).attr("id"));
         if ($(this).attr("id").includes("1stT")) {
             let index = $(this).index() - 1; // -1 because index start at 0
@@ -481,14 +508,14 @@ const addDetailToTable = async (dateSet, intRow) => {
         }
     });
 
-    var _Row = [1, 17, 19];
+    var _Row = [1, 18, 20];
     for (let i = 0; i < _Row.length; i++) {
         $(`table tbody tr td[id*='tdR${_Row[i]}Pcs']`).each(function () {
             $(this).css("font-weight", "900");
         });
     }
 
-
+    $("body").css("cursor", "default");
     $("#divRead").css("visibility", "visible");
     $("#tableMaster").css("visibility", "visible");
 
@@ -509,7 +536,7 @@ $("#btnNextPage").click(async function () {
 
 const sumKB = async (dateSet) => {
 
-    var _Row = [11, 13, 16, 18];
+    var _Row = [11, 13, 15, 17, 19];
 
     for (let i = 0; i < _Row.length; i++)
     {
@@ -533,23 +560,31 @@ const sumKB = async (dateSet) => {
                 _countDateSet += 1;
             }
         });
+
+        if (i >= 2) {
+            _countDateSet = 0;
+            $(`table tbody tr td[id*='tdR${_Row[i]}KB']`).each(function () {
+                let $Id = $(this).attr("id");
+                //console.log($Id);
+                let $KB = parseInt($(`#${$Id}`).text());
+                let $Pcs = $KB * parseInt($("#readQtyPack").val());
+                //console.log($Pcs);
+                //console.log(`tdR${ _Row[i]}Pcs${ dateSet[_countDateSet]}`);
+                $(`#tdR${_Row[i]}Pcs${dateSet[_countDateSet]}`).text($Pcs);
+                _countDateSet += 1;
+
+            });
+        }
     }
 
-    var _RowReceivePcs = [16, 18];
-    for (let i = 0; i < _RowReceivePcs.length; i++)
-    {
-        var _countDateSet = 0;
-        $(`table tbody tr td[id*='tdR${_RowReceivePcs[i]}KB']`).each(function ()
-        {
-            let $Id = $(this).attr("id");
-            //console.log($Id);
-            let $KB = parseInt($(`#${$Id}`).text());
-            let $Pcs = $KB * parseInt($("#readQtyPack").val());
-            //console.log($Pcs);
-            //console.log(`tdR${ _RowReceivePcs[i]}Pcs${ dateSet[_countDateSet]}`);
-            $(`#tdR${_RowReceivePcs[i]}Pcs${dateSet[_countDateSet]}`).text($Pcs);
-            _countDateSet += 1;
-
-        });
-    }
+    $("table tbody tr td[id*='tdR15KB']").each(function () {
+        let date = $(this).attr("id").slice(-10);
+        if ($(this).text() == "0") {
+            $("*[id*='tdR15T']").each(function () {
+                if ($(this).attr("id").includes(date)) {
+                    $(this).text("");
+                }
+            });
+        }
+    });
 }

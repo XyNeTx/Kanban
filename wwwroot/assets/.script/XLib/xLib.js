@@ -49,29 +49,37 @@ class xLib {
     SetProcessCookie(cName) {
         let cookie = document.cookie;
 
-        if (cookie.includes('process')) {
-            console.log(cookie.split(';').find(x => x.indexOf('process') >= 0).includes(`${cName}`));
-            if (!(cookie.split(';').find(x => x.indexOf('process') >= 0).includes(`${cName}`))) {
+        if (cookie.includes('_xProcess')) {
+            //console.log(cookie.split(';').find(x => x.indexOf('process') >= 0).includes(`${cName}`));
+            if (!(cookie.split(';').find(x => x.indexOf('_xProcess') >= 0).includes(`${cName}`))) {
                 //console.log(cookie);
                 //console.log(cookie.split(';').find(x => x.indexOf('process') >= 0));
-                var _appendCookie = cookie.split(';').filter(x => x.indexOf('process') >= 0) + `,${cName}`
+                var _appendCookie = cookie.split(';').filter(x => x.indexOf('_xProcess') >= 0) + `,${cName}`
                 // console.log(_appendCookie);
                 return document.cookie = _appendCookie;
             }
             return;
         }
-        return document.cookie = `process=${cName}`;
+        return document.cookie = `_xProcess=${cName}`;
     }
 
     GetProcessCookie() {
         var cookie = document.cookie;
-        var process = cookie.split(';').find(x => x.includes('process'));
+        var process = cookie.split(';').find(x => x.includes('_xProcess'));
         if(process == undefined) return null;
         //console.log(process);
         var arrProcess = process.split('=').pop().split(',');
         //console.log(arrProcess);
         return arrProcess;
     }
+
+    GetCookie(name) {
+        var cookie = document.cookie;
+        var _cookie = cookie.split(';').find(x => x.includes(name));
+        if (_cookie == undefined) return null;
+        return _cookie.split('=').pop();
+    };
+
 
     AJAX_Get(url, data, successFn, errorFn) {
         if (window.location.hostname.includes("tpcap")) {
