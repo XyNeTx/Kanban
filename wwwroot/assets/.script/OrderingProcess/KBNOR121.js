@@ -147,7 +147,7 @@ const previewFunction = async (intRow) => {
         console.log(result);
     });
 
-    await _xLib.AJAX_Post('/api/KBNOR121/Get_All_Data', JSON.stringify(obj), function (result) {
+    await _xLib.AJAX_Post('/api/KBNOR121/Get_All_Data', JSON.stringify(obj), async function (result) {
         result = _xLib.JSONparseAndTrimArray(result);
         console.log(result.data);
 
@@ -234,8 +234,13 @@ const previewFunction = async (intRow) => {
             dateSet.push(itemDate);
 
         });
-        addDetailToTable(dateSet, intRow);
-        sumKB(dateSet);
+        await addDetailToTable(dateSet, intRow);
+        await sumKB(dateSet);
+
+
+        $("body").css("cursor", "default");
+        $("#divRead").css("visibility", "visible");
+        $("#tableMaster").css("visibility", "visible");
         //console.log("Preview");
     });
 };
@@ -353,6 +358,7 @@ const addDetailToTable = async (dateSet, intRow) => {
     });
 
     // ------------------------------------ DT AdjustOrder_Trip -----------------------------------------
+
     dT_AdjustOrder_Trip.filter(x => x.F_Part_No + "-" + x.F_Ruibetsu == $("#readPartNo").val()
         && x.F_Supplier_Code == $("#inputSupplier").val().split("-")[0]
         && x.F_Supplier_Plant == $("#inputSupplier").val().split("-")[1]
@@ -377,9 +383,11 @@ const addDetailToTable = async (dateSet, intRow) => {
             }
         }
     });
+
     // ------------------------------------ DT AdjustOrder_Trip -----------------------------------------
 
     // ------------------------------------ DT Volume -----------------------------------------
+
     dT_Volume.filter(x => x.F_Part_No + "-" + x.F_Ruibetsu == $("#readPartNo").val()
         && x.F_Supplier_Code == $("#inputSupplier").val().split("-")[0]
         && x.F_Supplier_Plant == $("#inputSupplier").val().split("-")[1]
@@ -419,6 +427,7 @@ const addDetailToTable = async (dateSet, intRow) => {
 
 
     // ------------------------------------ DT Actual -----------------------------------------
+
     dT_Actual_Receive.filter(x => x.F_PART_No + "-" + x.F_RUibetsu == $("#readPartNo").val()
         && x.F_Supplier_code == $("#inputSupplier").val().split("-")[0]
         && x.F_Supplier_Plant == $("#inputSupplier").val().split("-")[1]
@@ -441,7 +450,7 @@ const addDetailToTable = async (dateSet, intRow) => {
 
     // ------------------------------------ DT Actual -----------------------------------------
 
-    _xLib.AJAX_Get('/api/KBNOR121/Detail_Data', { intRow: $("#txtPage").val().split("/")[0] - 1, F_Supplier_Cd: $("#inputSupplier").val() },
+    await _xLib.AJAX_Get('/api/KBNOR121/Detail_Data', { intRow: $("#txtPage").val().split("/")[0] - 1, F_Supplier_Cd: $("#inputSupplier").val() },
         function (success) {
             if (success.status == 200) {
                 success.data = _xLib.JSONparseAndTrim(success.data);
@@ -513,12 +522,22 @@ const addDetailToTable = async (dateSet, intRow) => {
         $(`table tbody tr td[id*='tdR${_Row[i]}Pcs']`).each(function () {
             $(this).css("font-weight", "900");
         });
+        //console.log(_Row[i]);
+        if (_Row[i] == 18 || _Row[i] == 20) {
+            //console.log("18,20");
+            var _intStockB = parseInt($("#readStdBPcs").val());
+            var _intMinStock = parseInt($("#readMinStock").val());
+            $(`table tbody tr td[id*='tdR${_Row[i]}T']`).each(function () {
+                var _bl = parseInt($(this).text());
+                //console.log(_bl);
+                //console.log(_intStockB);
+                //console.log(_intMinStock);
+                if (_bl > _intStockB) $(this).addClass("bg-warning");
+                else if (_bl < _intMinStock) $(this).addClass("bg-danger");
+                else if (_bl <= _intStockB && _bl >= _intMinStock) $(this).addClass("bg-success");
+            });
+        }
     }
-
-    $("body").css("cursor", "default");
-    $("#divRead").css("visibility", "visible");
-    $("#tableMaster").css("visibility", "visible");
-
 };
 
 $("#btnPrevPage").click(async function () {
