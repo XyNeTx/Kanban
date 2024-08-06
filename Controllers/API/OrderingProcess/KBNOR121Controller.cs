@@ -52,8 +52,9 @@ namespace KANBAN.Controllers.API.OrderingProcess
         private readonly string Txt_OrderType = "Daily Order";
         private readonly string Type_Import = "N";
         private static readonly DateTime Now = DateTime.Now;
-        private static DateTime dateLogin = DateTime.Now.Date;
-        private static string Txt_Shift = "Day";
+        private static DateTime LoginDate = DateTime.Now.Date;
+        private static string Proc_Shift = "Day"; 
+        private static string Login_Shift = "Day";
         private static string Txt_MRPStatus = "MRP : " + Now.Date.ToString();
         private static string UserCode = "";
         private static string Plant = "";
@@ -79,7 +80,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
         private static DataTable DT_AdjustOrder_Trip = new DataTable();
 
         [HttpGet]
-        public IActionResult OnLoad(string Shift , string Process_Date)
+        public IActionResult OnLoad(string Login_Date, string Shift , string Process_Date)
         {
             try
             {
@@ -92,11 +93,12 @@ namespace KANBAN.Controllers.API.OrderingProcess
                     message = "Please Login First"
                 });
 
-                Txt_Shift = (Shift.Substring(0, 1) == "1") ? "Day" : "Night";
+                Proc_Shift = (Shift.Substring(0, 1) == "1") ? "Day" : "Night";
+                Login_Shift = (Login_Date.Substring(10,1) == "D") ? "Day" : "Night";
                 UserCode = _BearerClass.UserCode;
                 Plant = _BearerClass.Plant;
                 ProcessDate = DateTime.ParseExact(Process_Date, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
-                dateLogin = ProcessDate.AddDays(-1).Date;
+                LoginDate = DateTime.ParseExact(Login_Date.Substring(0,10), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
 
                 string appUserName = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
                 string ipaddress = HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
@@ -389,7 +391,32 @@ namespace KANBAN.Controllers.API.OrderingProcess
 
                     var NoDayPreview = _FillDT.ExecuteSQL("exec [dbo].[sp_NumberOfDayToPreview] @p0,@p1,@p2,@p3,@p4",
                         Plant, obj.Supplier.Substring(0, 4), obj.Supplier.Substring(5, 1),
-                        storeCalendar, dateLogin.ToString("yyyyMMdd"));
+                            storeCalendar, LoginDate.ToString("yyyyMMdd"));
+
+                    if (NoDayPreview.Rows.Count == 0)
+                    {
+                        return NotFound(new
+                        {
+                            status = "404",
+                            response = "Not Found",
+                            title = "Error",
+                            message = "NumberOfDayToPreview Not Found"
+                        });
+                    }
+
+                    Start_Date = NoDayPreview.Rows[0]["Start_Date"].ToString();
+                    End_Date = NoDayPreview.Rows[0]["End_Date"].ToString();
+                    intAmountShow = int.Parse(NoDayPreview.Rows[0]["Display_Date"].ToString());
+                
+                }
+
+                else
+                {
+                    intRun = 0;
+
+                    var NoDayPreview = _FillDT.ExecuteSQL("exec [dbo].[sp_NumberOfDayToSearch] @p0,@p1,@p2,@p3,@p4,@p5",
+                        Plant, obj.Supplier.Substring(0, 4), obj.Supplier.Substring(5, 1),
+                            ProcessDate.ToString("yyyyMMdd"),Proc_Shift.Substring(0,1) ,UserCode);
 
                     if (NoDayPreview.Rows.Count == 0)
                     {
@@ -408,8 +435,9 @@ namespace KANBAN.Controllers.API.OrderingProcess
 
                 }
 
+
                 DT_DeliveryDate = _FillDT.ExecuteSQL("exec [dbo].[sp_getDeliveryDateTrip] @p0,@p1,@p2,@p3,@p4,@p5,@p6",
-                    Plant, obj.Supplier.Substring(0, 4), obj.Supplier.Substring(5, 1), ProcessDate.ToString("yyyyMMdd"), Txt_Shift.Substring(0, 1),
+                    Plant, obj.Supplier.Substring(0, 4), obj.Supplier.Substring(5, 1), ProcessDate.ToString("yyyyMMdd"), Proc_Shift.Substring(0, 1),
                     string.IsNullOrWhiteSpace(obj.Store) ? DBNull.Value : obj.Store, string.IsNullOrWhiteSpace(obj.StoreTo) ? DBNull.Value : obj.StoreTo);
 
                 if (DT_DeliveryDate.Rows.Count == 0)
@@ -510,7 +538,10 @@ namespace KANBAN.Controllers.API.OrderingProcess
 
                 DT_PartControl = _FillDT.ExecuteSQL(_SQL,
                     Start_Date, End_Date, obj.Supplier.Substring(0, 4), obj.Supplier.Substring(5, 1),
-                    obj.Kanban, obj.KanbanTo, obj.Store, obj.StoreTo,
+                    string.IsNullOrWhiteSpace(obj.Kanban) ? DBNull.Value : obj.Kanban,
+                    string.IsNullOrWhiteSpace(obj.KanbanTo) ? DBNull.Value : obj.KanbanTo,
+                    string.IsNullOrWhiteSpace(obj.Store) ? DBNull.Value : obj.Store,
+                    string.IsNullOrWhiteSpace(obj.StoreTo) ? DBNull.Value : obj.StoreTo,
                     string.IsNullOrWhiteSpace(obj.PartNo) ? DBNull.Value : obj.PartNo.Substring(0, 10),
                     string.IsNullOrWhiteSpace(obj.PartNoTo) ? DBNull.Value : obj.PartNoTo.Substring(0, 10),
                     string.IsNullOrWhiteSpace(obj.PartNo) ? DBNull.Value : obj.PartNo.Substring(11, 2),
@@ -536,7 +567,10 @@ namespace KANBAN.Controllers.API.OrderingProcess
 
                 DT_Header = _FillDT.ExecuteSQL(_SQL,
                     Start_Date, End_Date, obj.Supplier.Substring(0, 4), obj.Supplier.Substring(5, 1),
-                    obj.Kanban, obj.KanbanTo, obj.Store, obj.StoreTo,
+                    string.IsNullOrWhiteSpace(obj.Kanban) ? DBNull.Value : obj.Kanban,
+                    string.IsNullOrWhiteSpace(obj.KanbanTo) ? DBNull.Value : obj.KanbanTo,
+                    string.IsNullOrWhiteSpace(obj.Store) ? DBNull.Value : obj.Store,
+                    string.IsNullOrWhiteSpace(obj.StoreTo) ? DBNull.Value : obj.StoreTo,
                     string.IsNullOrWhiteSpace(obj.PartNo) ? DBNull.Value : obj.PartNo.Substring(0, 10),
                     string.IsNullOrWhiteSpace(obj.PartNoTo) ? DBNull.Value : obj.PartNoTo.Substring(0, 10),
                     string.IsNullOrWhiteSpace(obj.PartNo) ? DBNull.Value : obj.PartNo.Substring(11, 2),
@@ -557,7 +591,10 @@ namespace KANBAN.Controllers.API.OrderingProcess
 
                 DT_Detail = _FillDT.ExecuteSQL(_SQL,
                     Start_Date, End_Date, obj.Supplier.Substring(0, 4), obj.Supplier.Substring(5, 1),
-                    obj.Kanban, obj.KanbanTo, obj.Store, obj.StoreTo,
+                    string.IsNullOrWhiteSpace(obj.Kanban) ? DBNull.Value : obj.Kanban,
+                    string.IsNullOrWhiteSpace(obj.KanbanTo) ? DBNull.Value : obj.KanbanTo,
+                    string.IsNullOrWhiteSpace(obj.Store) ? DBNull.Value : obj.Store,
+                    string.IsNullOrWhiteSpace(obj.StoreTo) ? DBNull.Value : obj.StoreTo,
                     string.IsNullOrWhiteSpace(obj.PartNo) ? DBNull.Value : obj.PartNo.Substring(0, 10),
                     string.IsNullOrWhiteSpace(obj.PartNoTo) ? DBNull.Value : obj.PartNoTo.Substring(0, 10),
                     string.IsNullOrWhiteSpace(obj.PartNo) ? DBNull.Value : obj.PartNo.Substring(11, 2),
@@ -578,7 +615,10 @@ namespace KANBAN.Controllers.API.OrderingProcess
 
                 DT_Volume = _FillDT.ExecuteSQL(_SQL,
                     Start_Date, End_Date, obj.Supplier.Substring(0, 4), obj.Supplier.Substring(5, 1),
-                    obj.Kanban, obj.KanbanTo, obj.Store, obj.StoreTo,
+                    string.IsNullOrWhiteSpace(obj.Kanban) ? DBNull.Value : obj.Kanban,
+                    string.IsNullOrWhiteSpace(obj.KanbanTo) ? DBNull.Value : obj.KanbanTo,
+                    string.IsNullOrWhiteSpace(obj.Store) ? DBNull.Value : obj.Store,
+                    string.IsNullOrWhiteSpace(obj.StoreTo) ? DBNull.Value : obj.StoreTo,
                     string.IsNullOrWhiteSpace(obj.PartNo) ? DBNull.Value : obj.PartNo.Substring(0, 10),
                     string.IsNullOrWhiteSpace(obj.PartNoTo) ? DBNull.Value : obj.PartNoTo.Substring(0, 10),
                     string.IsNullOrWhiteSpace(obj.PartNo) ? DBNull.Value : obj.PartNo.Substring(11, 2),
@@ -599,7 +639,10 @@ namespace KANBAN.Controllers.API.OrderingProcess
 
                 DT_AdjustOrder_Trip = _FillDT.ExecuteSQL(_SQL,
                     Start_Date, End_Date, obj.Supplier.Substring(0, 4), obj.Supplier.Substring(5, 1),
-                    obj.Kanban, obj.KanbanTo, obj.Store, obj.StoreTo,
+                    string.IsNullOrWhiteSpace(obj.Kanban) ? DBNull.Value : obj.Kanban,
+                    string.IsNullOrWhiteSpace(obj.KanbanTo) ? DBNull.Value : obj.KanbanTo,
+                    string.IsNullOrWhiteSpace(obj.Store) ? DBNull.Value : obj.Store,
+                    string.IsNullOrWhiteSpace(obj.StoreTo) ? DBNull.Value : obj.StoreTo,
                     string.IsNullOrWhiteSpace(obj.PartNo) ? DBNull.Value : obj.PartNo.Substring(0, 10),
                     string.IsNullOrWhiteSpace(obj.PartNoTo) ? DBNull.Value : obj.PartNoTo.Substring(0, 10),
                     string.IsNullOrWhiteSpace(obj.PartNo) ? DBNull.Value : obj.PartNo.Substring(11, 2),
@@ -620,7 +663,8 @@ namespace KANBAN.Controllers.API.OrderingProcess
 
                 DT_Actual_Receive = _FillDT.ExecuteSQL(_SQL,
                     Start_Date, End_Date, obj.Supplier.Substring(0, 4), obj.Supplier.Substring(5, 1),
-                    obj.Store, obj.StoreTo,
+                    string.IsNullOrWhiteSpace(obj.Store) ? DBNull.Value : obj.Store,
+                    string.IsNullOrWhiteSpace(obj.StoreTo) ? DBNull.Value : obj.StoreTo,
                     string.IsNullOrWhiteSpace(obj.PartNo) ? DBNull.Value : obj.PartNo.Substring(0, 10),
                     string.IsNullOrWhiteSpace(obj.PartNoTo) ? DBNull.Value : obj.PartNoTo.Substring(0, 10),
                     string.IsNullOrWhiteSpace(obj.PartNo) ? DBNull.Value : obj.PartNo.Substring(11, 2),
@@ -666,6 +710,15 @@ namespace KANBAN.Controllers.API.OrderingProcess
         {
             try
             {
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401) return Unauthorized(new
+                {
+                    status = "401",
+                    response = "Unauthorized",
+                    title = "Unauthorized",
+                    message = "Please Login First"
+                });
+
                 int ForecastMaxInt = 0;
                 var ForecastMax = _FillDT.ExecuteSQL("EXEC [dbo].[sp_getForecastMax_New] " +
                     "@p0,@p1,@p2,@p3,@p4,@p5,@p6,@p7",Plant,F_Supplier_Cd.Substring(0,4),F_Supplier_Cd.Substring(5,1),
@@ -823,7 +876,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
                     "AND F_Ruibetsu = '" + DT_PartControl.Rows[intRow]["F_Ruibetsu"].ToString().Trim() + "'" +
                     "AND F_Store_Code = '" + DT_PartControl.Rows[intRow]["F_Store_Code"].ToString().Trim() + "'" +
                     "AND F_Kanban_No = '" + DT_PartControl.Rows[intRow]["F_Kanban_No"].ToString().Trim() + "'" +
-                    "AND F_Process_Date = '" + dateLogin.ToString("yyyyMMdd") + "'";
+                    "AND F_Process_Date = '" + LoginDate.ToString("yyyyMMdd") + "'";
 
                 var dtMRP = _FillDT.ExecuteSQL(_SQL);
 
@@ -883,11 +936,11 @@ namespace KANBAN.Controllers.API.OrderingProcess
                         +CONVERT(INT,F_Trip21)+CONVERT(INT,F_Trip22)+CONVERT(INT,F_Trip23)+CONVERT(INT,F_Trip24) > 0 ";
 
                 var dtSetOrder = _FillDT.ExecuteSQL(_SQL);
-                string SetOrderCheck = "KanbanOrderChecked";
+                string SetOrderCheck = "1";
 
                 if (dtSetOrder.Rows.Count == 0)
                 {
-                    SetOrderCheck = "";
+                    SetOrderCheck = "0";
                 }
 
                 _SQL = $@"SELECT * FROM( Select Distinct F_Supplier_Code, F_Supplier_Plant, F_Start_Order_Date AS F_Start_Date, F_Start_Date AS F_End_Date 
@@ -900,11 +953,11 @@ namespace KANBAN.Controllers.API.OrderingProcess
                         AND A.F_End_Date >= '{ProcessDate.ToString("yyyyMMdd")}' ";
 
                 var dtDeliveryTime = _FillDT.ExecuteSQL(_SQL);
-                string ChgCycleCheck = "";
+                string ChgCycleCheck = "0";
 
                 if (dtDeliveryTime != null)
                 {
-                    ChgCycleCheck = "ChgCycleChecked";
+                    ChgCycleCheck = "1";
                 }
 
                 _SQL = $@"SELECT A.Slide_Order + B.Slide_Order_Part AS SliceOrder 
@@ -926,10 +979,10 @@ namespace KANBAN.Controllers.API.OrderingProcess
                         WHERE A.Slide_Order + B.Slide_Order_Part > 0 ";
 
                 var dtSlideOrder = _FillDT.ExecuteSQL(_SQL);
-                string SlideOrderCheck = "";
+                string SlideOrderCheck = "0";
                 if (dtSlideOrder.Rows.Count > 0)
                 {
-                    SlideOrderCheck = "SlideOrderChecked";
+                    SlideOrderCheck = "1";
                 }
 
                 _SQL = $@"SELECT A.Rec_Slide_Order + B.Rec_Slide_Order_Part AS SliceOrder 
@@ -950,10 +1003,10 @@ namespace KANBAN.Controllers.API.OrderingProcess
                         WHERE A.Slide_Order + B.Slide_Order_Part > 0 ";
 
                 var dtRecSlideOrder = _FillDT.ExecuteSQL(_SQL);
-                string RecSlideOrderCheck = "";
+                string RecSlideOrderCheck = "0";
                 if (dtRecSlideOrder.Rows.Count > 0)
                 {
-                    RecSlideOrderCheck = "RecSlideOrderChecked";
+                    RecSlideOrderCheck = "1";
                 }
 
                 string AvgTrip = (Math.Floor(((decimal)ForecastMaxInt / CycleB) / QtyPack) * QtyPack).ToString();
@@ -988,6 +1041,115 @@ namespace KANBAN.Controllers.API.OrderingProcess
                         recSlideOrderCheck = RecSlideOrderCheck,
                         avgTrip = AvgTrip
                     }
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    response = "Internal Server Error",
+                    title = "Error",
+                    message = "Unexpected Error !!",
+                    error = ex.Message
+                });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Get_BL(VmOR121_CalBL obj)
+        {
+            try
+            {
+                var _autoRecalBl = _FillDT.ExecuteSQL("Exec dbo.sp_autoRecalculateBL_First @p0,@p1,@p2,@p3,@p4,@p5,@p6",
+                    obj.CurrentDate.Date.AddDays(-1).ToString("yyyy-MM-dd"),
+                    obj.Supplier.Substring(0, 4), obj.Supplier.Substring(5, 1),
+                    obj.PartNo.Split("-")[0], obj.PartNo.Split("-")[1],
+                    obj.Kanban, obj.Store);
+
+                if (_autoRecalBl.Rows.Count == 0)
+                {
+                    return NotFound(new
+                    {
+                        status = "404",
+                        response = "Not Found",
+                        title = "Error",
+                        message = "BL Not Found"
+                    });
+                }
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "OK",
+                    title = "Success",
+                    message = "Data Found",
+                    data = JsonConvert.SerializeObject(_autoRecalBl),
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    response = "Internal Server Error",
+                    title = "Error",
+                    message = "Unexpected Error !!",
+                    error = ex.Message
+                });
+            }
+        }
+
+        [HttpPost]
+        public IActionResult Chk_Status_CCR(VMKBNOR121_Preview obj)
+        {
+            try
+            {
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401) return Unauthorized(new
+                {
+                    status = "401",
+                    response = "Unauthorized",
+                    title = "Unauthorized",
+                    message = "Please Login First"
+                });
+
+                var _msParameter = _KB3Context.TB_MS_Parameter.Where(x => x.F_Code == "CI")
+                    .Select(x => new
+                    {
+                        x.F_Value2,
+                        x.F_Value3
+                    }).ToList();
+
+                string _btnCheck = "";
+
+                if(_msParameter.Count > 0)
+                {
+                    if (_msParameter[0].F_Value2 == 0 || _msParameter[0].F_Value2 == 3 
+                        || _msParameter[0].F_Value3 != LoginDate.ToString("yyyyMMdd") + Login_Shift.Substring(0,1))
+                        {
+                            _btnCheck = "Preview";
+                        }
+                    else
+                    {
+                        _btnCheck = "Search,Preview";
+
+                        if (obj.Action == "Process" && string.IsNullOrWhiteSpace(obj.Supplier)
+                            && string.IsNullOrWhiteSpace(obj.PartNo) && string.IsNullOrWhiteSpace(obj.Kanban)
+                            && string.IsNullOrWhiteSpace(obj.Store))
+                        {
+                            _btnCheck += ",Recalculate";
+                        }
+                    }
+                }
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "OK",
+                    title = "Success",
+                    message = "Data Found",
+                    data = _btnCheck
                 });
             }
             catch (Exception ex)

@@ -221,7 +221,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
                         _DT.Rows[i]["F_Part_No"].ToString(), _DT.Rows[i]["F_Ruibetsu"].ToString());
 
                     ProcessCount = decimal.Round(((decimal)i / _DT.Rows.Count) * 90.00m,2, MidpointRounding.AwayFromZero);
-            }
+                }
 
                 _Log.WriteLog("End Process Calculate Normal ON : " + sDate, UserCode, _BearerClass.Device);
 

@@ -10,6 +10,7 @@ var dT_Period = "";
 var dT_Volume = "";
 var _command = "";
 var _CookieProcessDate = _xLib.GetCookie("processDate");
+var _CookieLoginDate = _xLib.GetCookie("loginDate");
 
 $(document).ready(async function () {
     var text = $(".nav-right li span").text();
@@ -19,10 +20,6 @@ $(document).ready(async function () {
     shift == 1 ? shift = "1 - Day Shift" : shift = "2 - Night Shift";
     //console.log(date.slice(8, 10));
     $("#inputMRP").val("MRP : " + date.slice(8, 10) + "/" + date.slice(5, 7) + "/" + date.slice(0, 4))
-    var parseDate = Date.parse(date.slice(5, 7) + "/" + date.slice(8, 10) + "/" + date.slice(0, 4));
-    var date = new Date(parseDate);
-    date.setDate(date.getDate() + 2);
-    date = date.toISOString().slice(0, 10);
 
     //console.log(date);
     $("#inputPlant").val(plant);
@@ -30,7 +27,7 @@ $(document).ready(async function () {
     $("#inputProcessDateFor").val(_CookieProcessDate.slice(0, 10));
     $("#inputProcessShiftFor").val(_CookieProcessDate.slice(10, 11) == "D" ? "1 - Day Shift" : "2 - Night Shift");
 
-    await _xLib.AJAX_Get('/api/KBNOR121/OnLoad', { Shift: shift, Process_Date: $("#inputProcessDateFor").val() });
+    await _xLib.AJAX_Get('/api/KBNOR121/OnLoad', { Login_Date: _CookieLoginDate , Shift: shift, Process_Date: $("#inputProcessDateFor").val() });
 
     await _xLib.AJAX_Get('/api/KBNOR121/SupplierDropDown', '', function (result) {
         result = _xLib.JSONparseAndTrim(result);
@@ -41,14 +38,25 @@ $(document).ready(async function () {
         });
 
     });
+    var obj = {
+        action: "Onload",
+        supplier: "Onload",
+    }
+    await _xLib.AJAX_Post('/api/KBNOR121/Chk_Status_CCR', JSON.stringify(obj),
+        function (success) {
+            if (success.status == 200) {
+                success.data = _xLib.JSONparseAndTrim(success.data);
+                console.log(success.data);
+                $("#btnPreview").prop("disabled", !success.data.includes("Preview"));
+                $("#btnProcess").prop("disabled", !success.data.includes("Search"));
+                $("#btnReCal").prop("disabled", !success.data.includes("Recalculate"));
+            }
+        }
+    )
 
     $("thead tr th").each(function () {
         $(this).addClass("text-center");
     });
-
-    //await _xLib.AJAX_Get("http:\\hmmt-app07/sso/api/SingleSignOn/getLogin", "", function (result) {
-    //    console.log(result.data);
-    //});
 
     $.ajax({
         url: "http:\\\\hmmt-app07/sso/api/SingleSignOn/getLogin",
@@ -62,15 +70,11 @@ $(document).ready(async function () {
         }
     });
 
-
-
-    //const clientInfo = {
-    //    userAgent: navigator.userAgent,
-    //    platform: navigator.platform,
-    //};
-    //console.log(clientInfo);
-
     xSplash.hide();
+});
+
+$(document).on("click", "#radioKbStop , #radioKbAdd ,#radioKbCut , #MRP-20 ,#MRP20",function (e) {
+    e.preventDefault();
 });
 
 $("#btnEditNews").click(function () {
@@ -128,28 +132,57 @@ $("#inputStore , #inputStoreTo").change(function () {
 });
 
 $("#btnPreview").click(async function () {
-    previewFunction(0);
+    _command = "Preview";
+    previewFunction(0, _command);
+    window.scrollTo(0, 0);
 });
 
-const previewFunction = async (intRow) => {
+$("#btnProcess").click(async function () {
+    _command = "Process";
+    previewFunction(0, _command);
+    window.scrollTo(0, 0);
+});
+
+$("#btnPrevPage").click(async function () {
+    var page = parseInt($("#txtPage").val().split("/")[0]);
+    if (page == 1) return;
+    $("#txtPage").val((parseInt(page) - 1) + "/" + dT_PartControl.length);
+    previewFunction($("#txtPage").val().split("/")[0] - 1, _command); // -1 because index start at 0
+    window.scrollTo(0, 0);
+});
+
+$("#btnNextPage").click(async function () {
+    var page = parseInt($("#txtPage").val().split("/")[0]);
+    if (page == dT_PartControl.length) return;
+    $("#txtPage").val((parseInt(page) + 1) + "/" + dT_PartControl.length);
+    previewFunction($("#txtPage").val().split("/")[0] - 1, _command); // -1 because index start at 0
+    window.scrollTo(0, 0);
+});
+
+const previewFunction = async (intRow,_command) => {
     //console.log("IntRow : ", intRow);
-    $("body").css("cursor", "process");
+    $("#divSpinner").css("visibility", "visible");
     $("#divRead").css("visibility", "hidden");
     $("#tableMaster").css("visibility", "hidden");
-    _command = "Preview";
     var obj = {
-        action: "Preview",
+        action: _command,
         supplier: $("#inputSupplier").val(),
+        partNo: $("#inputPart").val(),
+        partNoTo: $("#inputPartTo").val(),
+        store: $("#inputStore").val(),
+        storeTo: $("#inputStoreTo").val(),
+        kanban : $("#inputKanban").val(),
+        kanbanTo: $("#inputKanban").val(),
     }
 
     await _xLib.AJAX_Post('/api/KBNOR121/Find_StartEnd_Date', JSON.stringify(obj), function (result) {
         result = _xLib.JSONparseAndTrim(result);
-        console.log(result);
+        //console.log(result);
     });
 
     await _xLib.AJAX_Post('/api/KBNOR121/Get_All_Data', JSON.stringify(obj), async function (result) {
         result = _xLib.JSONparseAndTrimArray(result);
-        console.log(result.data);
+        //console.log(result.data);
 
         dT_Actual_Receive = result.data.dT_Actual_Receive;
         dT_AdjustOrder_Trip = result.data.dT_AdjustOrder_Trip;
@@ -236,9 +269,21 @@ const previewFunction = async (intRow) => {
         });
         await addDetailToTable(dateSet, intRow);
         await sumKB(dateSet);
+        $("#inputMRP").val("MRP : " + _CookieLoginDate.slice(8, 10) + "/" + _CookieLoginDate.slice(5, 7) + "/" + _CookieLoginDate.slice(0, 4))
 
+        await _xLib.AJAX_Post('/api/KBNOR121/Chk_Status_CCR', JSON.stringify(obj),
+            function (success) {
+                if (success.status == 200) {
+                    success.data = _xLib.JSONparseAndTrim(success.data);
+                    console.log(success.data);
+                    $("#btnPreview").prop("disabled", !success.data.includes("Preview"));
+                    $("#btnProcess").prop("disabled", !success.data.includes("Search"));
+                    $("#btnReCal").prop("disabled", !success.data.includes("Recalculate"));
+                }
+            }
+        )
 
-        $("body").css("cursor", "default");
+        $("#divSpinner").css("visibility", "hidden");
         $("#divRead").css("visibility", "visible");
         $("#tableMaster").css("visibility", "visible");
         //console.log("Preview");
@@ -250,10 +295,10 @@ const addDetailToTable = async (dateSet, intRow) => {
     //console.log("IntRow : ", intRow);
 
     //console.log("addDetailToTable : ", data);
-    var _headLength = dT_Header.length; // Length of Header to for loop
-    var _increase = dT_PartControl.length; // Increase for Skip each PartControl
-    var _headColSpan = 0; // Colspan of Date in Header
-    let _countDateSet = 0; // Count DateSet for loop to change Date in each loop
+    var _headLength = dT_Header.length;         // Length of Header to for loop
+    var _increase = dT_PartControl.length;      // Increase for Skip each PartControl
+    var _headColSpan = 0;                       // Colspan of Date in Header
+    let _countDateSet = 0;                      // Count DateSet for loop to change Date in each loop
     let _setAccessHeader = ["F_TMT_FO", "F_HMMT_Prod", "F_HMMT_Order",
         "F_Cycle_Order", "F_MRP", "F_Diff_MRP_FC", "F_AbNormal_Part",
         "F_Total", "F_Remain_LastTrip", "F_Order_Base", "F_Lot_SizeOrder",
@@ -279,6 +324,7 @@ const addDetailToTable = async (dateSet, intRow) => {
 
         //console.log(_header);
         //console.log(dateSet[_countDateSet])
+
         //insert DTHeader to Table Body Row was fixed at 14
         for (let k = 1; k <= 20; k++) {
             if (k >= 15 || k == 12) $(`#TBodyR${k}`).append(`<td id=tdR${k}Pcs${dateSet[_countDateSet]}></td>`)
@@ -302,6 +348,46 @@ const addDetailToTable = async (dateSet, intRow) => {
                     //}
                 }
             }
+        }
+
+        var _headDate = $("#THeadR1").find(`th:contains('${dateSet[_countDateSet]}')`).text().replaceAll("-", "");
+        var _headYMD = _headDate.slice(4, 8) + _headDate.slice(2, 4) + _headDate.slice(0, 2);
+        var _intHeadDate = parseInt(_headYMD);
+        var _intDeliveryDate = parseInt(dT_DeliveryDate[0]["F_Delivery_Date"]);
+
+        const obj = {
+            CurrentDate: _headYMD.slice(0, 4) + "-" + _headYMD.slice(4, 6) + "-" + _headYMD.slice(6, 8),
+            Supplier: $("#readSupplier").val(),
+            PartNo: $("#readPartNo").val(),
+            Store: $("#readStoreCode").val(),
+            Kanban: $("#readKanbanNo").val()
+        }
+
+        await _xLib.AJAX_Post('/api/KBNOR121/Get_BL', JSON.stringify(obj),
+            async function (success) {
+                if (success.status == 200) {
+                    success = await _xLib.JSONparseAndTrim(success);
+                    console.log(success.data);
+                    $(`#tdR18Pcs${dateSet[_countDateSet]}`).text(success.data[0].F_BL_SET_Plan);
+                    $(`#tdR20Pcs${dateSet[_countDateSet]}`).text(success.data[0].F_BL_SET_Actual);
+                }
+            }
+        );
+
+        //console.log(_intHeadDate);
+        //console.log(_intDeliveryDate);
+
+        if (_intHeadDate == _intDeliveryDate) {
+            $("#THeadR1").find(`th:contains('${dateSet[_countDateSet]}')`).addClass("bg-danger");
+        }
+        else if (_intHeadDate == parseInt(_CookieProcessDate.slice(0, 10).replaceAll("-", ""))) {
+            $("#THeadR1").find(`th:contains('${dateSet[_countDateSet]}')`).addClass("bg-warning");
+        }
+        else if (_intHeadDate > _intDeliveryDate) {
+            $("#THeadR1").find(`th:contains('${dateSet[_countDateSet]}')`).addClass("bg-success");
+        }
+        else {
+            $("#THeadR1").find(`th:contains('${dateSet[_countDateSet]}')`).css("background-color", "rgb(206, 212, 218)");
         }
 
         _countDateSet += 1;
@@ -454,6 +540,7 @@ const addDetailToTable = async (dateSet, intRow) => {
         function (success) {
             if (success.status == 200) {
                 success.data = _xLib.JSONparseAndTrim(success.data);
+                console.log(success.data);
                 $("#readForecastMax").val(success.data.forecastMaxInt);
                 $("#readSafetyStock").val(success.data.safety_Stock);
                 $("#readMaxArea").val(success.data.max_Area);
@@ -465,6 +552,29 @@ const addDetailToTable = async (dateSet, intRow) => {
                 $("#readPartName").val(success.data.f_Part_nm);
                 $("#readSupplierName").val(success.data.f_short_name);
 
+                if (success.data.mrpCheck.includes("More")) {
+                    $("#MRP20").prop("checked", true);
+                    $("#THeadR3 th").find("input").parent().addClass("text-danger");
+                }
+                else if (success.data.mrpCheck.includes("Less")) {
+                    $("#MRP-20").prop("checked", true);
+                    $("#THeadR2 th").find("input").parent().addClass("text-danger");
+                }
+
+                const accessValue = ["recSlideOrderCheck", "setOrderCheck", "slideOrderCheck", "chgCycleCheck","kb_Add","kb_Cut","kb_Stop"];
+                const accessLabel = ["lbRecSlice", "lbOrderTable", "lbSliceOrder", "lbChgCycleTime", "lbKbAdd", "lbKbCut", "lbKbStop"];
+                const accessCheck = ["chkBoxRecSlice", "chkBoxOrderTable", "chkBoxSliceOrder", "chkBoxChgCycleTime", "radioKbAdd", "radioKbCut","radioKbStop"];
+
+                for (let i = 0; i < accessCheck.length; i++) {
+                    if (success.data[accessValue[i]] != 0) {
+                        $(`#${accessCheck[i]}`).prop("checked", true);
+                        $(`#${accessLabel[i]}`).removeClass("text-primary").addClass("text-danger");
+                    }
+                    else {
+                        $(`#${accessCheck[i]}`).prop("checked", false);
+                        $(`#${accessLabel[i]}`).removeClass("text-danger").addClass("text-primary");
+                    }
+                }
 
 
                 var Process_date = dT_DeliveryDate[0].F_Delivery_Date;
@@ -476,10 +586,10 @@ const addDetailToTable = async (dateSet, intRow) => {
                     && x.F_Supplier_Plant == $("#readSupplier").val().split("-")[1]
                     && x.F_Store_Code == $("#readStoreCode").val()
                 )
-                console.log("FilteredHeader : ", FilteredHeader);
+                //console.log("FilteredHeader : ", FilteredHeader);
                 $("#readUseDay").val(FilteredHeader[0].F_TMT_FO);
 
-                console.log(success.data);
+                //console.log(success.data);
             }
         }
     );
@@ -519,11 +629,13 @@ const addDetailToTable = async (dateSet, intRow) => {
 
     var _Row = [1, 18, 20];
     for (let i = 0; i < _Row.length; i++) {
-        $(`table tbody tr td[id*='tdR${_Row[i]}Pcs']`).each(function () {
-            $(this).css("font-weight", "900");
-        });
+        if (_Row[i] == 1) {
+            $(`table tbody tr td[id*='tdR${_Row[i]}Pcs']`).each(function () {
+                $(this).css("font-weight", "900");
+            });
+        }
         //console.log(_Row[i]);
-        if (_Row[i] == 18 || _Row[i] == 20) {
+        else if (_Row[i] == 18 || _Row[i] == 20) {
             //console.log("18,20");
             var _intStockB = parseInt($("#readStdBPcs").val());
             var _intMinStock = parseInt($("#readMinStock").val());
@@ -536,22 +648,14 @@ const addDetailToTable = async (dateSet, intRow) => {
                 else if (_bl < _intMinStock) $(this).addClass("bg-danger");
                 else if (_bl <= _intStockB && _bl >= _intMinStock) $(this).addClass("bg-success");
             });
+
+            //console.log(`#tdR${_Row[i]}Pcs${_CookieLoginDate.slice(8, 10) + "-" + _CookieLoginDate.slice(5, 7) + "-" + _CookieLoginDate.slice(0, 4)}`);
+
+            $(`#tdR${_Row[i]}Pcs${_CookieLoginDate.slice(8, 10) + "-" + _CookieLoginDate.slice(5, 7) + "-" + _CookieLoginDate.slice(0, 4)}`).css("font-weight", "900");
+
         }
     }
 };
-
-$("#btnPrevPage").click(async function () {
-    var page = parseInt($("#txtPage").val().split("/")[0]);
-    if (page == 1) return;
-    $("#txtPage").val((parseInt(page) - 1) + "/" + dT_PartControl.length);
-    previewFunction($("#txtPage").val().split("/")[0] - 1); // -1 because index start at 0
-});
-$("#btnNextPage").click(async function () {
-    var page = parseInt($("#txtPage").val().split("/")[0]);
-    if (page == dT_PartControl.length) return;
-    $("#txtPage").val((parseInt(page) + 1) + "/" + dT_PartControl.length);
-    previewFunction($("#txtPage").val().split("/")[0] - 1); // -1 because index start at 0
-});
 
 const sumKB = async (dateSet) => {
 
