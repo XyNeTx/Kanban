@@ -758,7 +758,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
                 {
                     QtyPack = 0;
                 }
-
+                var IsDevelop = Request.Cookies["IsDevelop"];
                 string sourceKB = Plant switch
                 {
                     "1" => "[hmmt-E_Kanban].[New_Kanban]",
@@ -768,22 +768,22 @@ namespace KANBAN.Controllers.API.OrderingProcess
                 };
 
                 string _SQL = $@"SELECT DISTINCT RTRIM(C.F_Part_nm) AS F_Part_nm, RTRIM(S.F_short_name) AS F_short_name, P.F_Address 
-                        FROM T_Construction C INNER JOIN T_Supplier_ms S ON C.F_supplier_cd = S.F_supplier_cd 
-                        AND C.F_plant =  S.F_Plant_cd AND C.F_Store_cd = S.F_Store_cd 
-                        LEFT JOIN {sourceKB}.[dbo].TB_MS_Kanban P ON C.F_supplier_cd = P.F_Supplier_Code collate THAI_CS_AS 
-                        AND C.F_plant = P.F_Supplier_Plant collate THAI_CS_AS AND C.F_Store_cd = P.F_Store_Code collate THAI_CS_AS 
-                        AND RIGHT('0000'+C.F_Sebango,4) = P.F_Kanban_No collate THAI_CS_AS 
-                        AND C.F_Part_no = P.F_Part_No collate THAI_CS_AS AND C.F_Ruibetsu = P.F_Ruibetsu collate THAI_CS_AS 
-                        WHERE C.F_Part_no = '" + DT_PartControl.Rows[intRow]["F_Part_No"].ToString().Trim() + "'" +
-                        "AND C.F_Ruibetsu = '" + DT_PartControl.Rows[intRow]["F_Ruibetsu"].ToString().Trim() + "'" +
-                        "AND C.F_Store_cd = '" + DT_PartControl.Rows[intRow]["F_Store_Code"].ToString().Trim() + "'" +
-                        "AND C.F_supplier_cd = '" + DT_PartControl.Rows[intRow]["F_Supplier_Code"].ToString().Trim() + "'" +
-                        "AND C.F_plant = '" + DT_PartControl.Rows[intRow]["F_Supplier_Plant"].ToString().Trim() + "'" +
-                        "AND C.F_Sebango = '" + DT_PartControl.Rows[intRow]["F_Kanban_No"].ToString().Trim().Substring(1, 3) + "'" +
-                        "AND C.F_Local_Str <= convert(char(8),getdate(),112) " +
-                        "AND C.F_Local_End >= convert(char(8),getdate(),112) " +
-                        "AND S.F_TC_Str <= convert(char(8),getdate(),112) " +
-                        "AND S.F_TC_End >= convert(char(8),getdate(),112) ";
+                    FROM T_Construction C INNER JOIN T_Supplier_ms S ON C.F_supplier_cd = S.F_supplier_cd 
+                    AND C.F_plant =  S.F_Plant_cd AND C.F_Store_cd = S.F_Store_cd 
+                    LEFT JOIN {sourceKB}.[dbo].TB_MS_Kanban P ON C.F_supplier_cd = P.F_Supplier_Code collate THAI_CS_AS 
+                    AND C.F_plant = P.F_Supplier_Plant collate THAI_CS_AS AND C.F_Store_cd = P.F_Store_Code collate THAI_CS_AS 
+                    AND RIGHT('0000'+C.F_Sebango,4) = P.F_Kanban_No collate THAI_CS_AS 
+                    AND C.F_Part_no = P.F_Part_No collate THAI_CS_AS AND C.F_Ruibetsu = P.F_Ruibetsu collate THAI_CS_AS 
+                    WHERE C.F_Part_no = '" + DT_PartControl.Rows[intRow]["F_Part_No"].ToString().Trim() + "'" +
+                    "AND C.F_Ruibetsu = '" + DT_PartControl.Rows[intRow]["F_Ruibetsu"].ToString().Trim() + "'" +
+                    "AND C.F_Store_cd = '" + DT_PartControl.Rows[intRow]["F_Store_Code"].ToString().Trim() + "'" +
+                    "AND C.F_supplier_cd = '" + DT_PartControl.Rows[intRow]["F_Supplier_Code"].ToString().Trim() + "'" +
+                    "AND C.F_plant = '" + DT_PartControl.Rows[intRow]["F_Supplier_Plant"].ToString().Trim() + "'" +
+                    "AND C.F_Sebango = '" + DT_PartControl.Rows[intRow]["F_Kanban_No"].ToString().Trim().Substring(1, 3) + "'" +
+                    "AND C.F_Local_Str <= convert(char(8),getdate(),112) " +
+                    "AND C.F_Local_End >= convert(char(8),getdate(),112) " +
+                    "AND S.F_TC_Str <= convert(char(8),getdate(),112) " +
+                    "AND S.F_TC_End >= convert(char(8),getdate(),112) ";
 
                 var dtNameAndLine = _FillDT.ExecuteSQLPPMDB(_SQL);
                 string F_Part_nm = "";

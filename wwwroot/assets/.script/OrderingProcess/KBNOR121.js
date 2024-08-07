@@ -182,7 +182,7 @@ const previewFunction = async (intRow,_command) => {
 
     await _xLib.AJAX_Post('/api/KBNOR121/Get_All_Data', JSON.stringify(obj), async function (result) {
         result = _xLib.JSONparseAndTrimArray(result);
-        //console.log(result.data);
+        console.log(result.data);
 
         dT_Actual_Receive = result.data.dT_Actual_Receive;
         dT_AdjustOrder_Trip = result.data.dT_AdjustOrder_Trip;
@@ -367,7 +367,7 @@ const addDetailToTable = async (dateSet, intRow) => {
             async function (success) {
                 if (success.status == 200) {
                     success = await _xLib.JSONparseAndTrim(success);
-                    console.log(success.data);
+                    //console.log(success.data);
                     $(`#tdR18Pcs${dateSet[_countDateSet]}`).text(success.data[0].F_BL_SET_Plan);
                     $(`#tdR20Pcs${dateSet[_countDateSet]}`).text(success.data[0].F_BL_SET_Actual);
                 }
@@ -691,9 +691,12 @@ const sumKB = async (dateSet) => {
                 //console.log($Id);
                 let $KB = parseInt($(`#${$Id}`).text());
                 let $Pcs = $KB * parseInt($("#readQtyPack").val());
-                //console.log($Pcs);
+                if (isNaN($Pcs)) $Pcs = 0;
+
+                console.log($Pcs);
                 //console.log(`tdR${ _Row[i]}Pcs${ dateSet[_countDateSet]}`);
                 $(`#tdR${_Row[i]}Pcs${dateSet[_countDateSet]}`).text($Pcs);
+                $Pcs == 0 ? $(`#tdR${_Row[i]}KB${dateSet[_countDateSet]}`).text($Pcs) : $(`#tdR${_Row[i]}Kb${dateSet[_countDateSet]}`).text($KB);
                 _countDateSet += 1;
 
             });

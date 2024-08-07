@@ -97,6 +97,19 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
+//var isDevelop = builder.Environment.IsDevelopment();
+//if (isDevelop)
+//{
+//    builder.Services.AddSession(builder =>
+//    {
+//        builder.Cookie.Name = "IsDevelop";
+//        builder.IdleTimeout = TimeSpan.FromMinutes(30);
+//        builder.Cookie.HttpOnly = true;
+//        builder.Cookie.IsEssential = true;
+
+//    });
+//}
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

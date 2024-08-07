@@ -80,6 +80,70 @@ class xLib {
         return _cookie.split('=').pop();
     };
 
+    SetCookie(name, value) {
+        return document.cookie = `${name}=${value}`;
+    }
+
+
+    AJAX_GetNoHeader(url, data, successFn, errorFn) {
+        if (window.location.hostname.includes("tpcap")) {
+            url = "/kanban" + url;
+        }
+        return $.ajax({
+            type: "GET",
+            url: url,
+            data: data,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: async function (xhr, status) {
+                //if (xhr.hasOwnProperty('data')) {
+                //    xhr.data = await JSON.parse(xhr.data);
+                //    console.log(xhr.data);
+                //    console.log(typeof xhr.data);
+                //    if (typeof xhr.data == 'object') xhr.data = _xLib.TrimArrayJSON(xhr.data);
+                //    else xhr.data = _xLib.TrimJSON(xhr.data);
+                //}
+                if (typeof successFn != 'function') return;
+                return successFn(xhr, status);
+            },
+            error: async function (xhr, status, error) {
+                if (xhr.status == 401) {
+                    await xSplash.hide();
+                    await xSwal.error("Error", "Session expired. Please login again.", function () {
+                        if (window.location.hostname.includes("tpcap")) {
+                            return window.open("/kanban/Login", "_self");
+                        }
+                        return window.open("/Login", "_self");
+                    });
+                }
+                else {
+                    await console.error(xhr);
+                    xSplash.hide();
+
+                    // error was return by apicontroller
+                    if (xhr.responseJSON.errors != undefined) {
+
+                        if (xhr.responseJSON.errors.message == undefined || xhr.responseJSON.errors.message == null || !xhr.responseJSON.errors.message) {
+                            var _error = "";
+                            for (var key in xhr.responseJSON.errors) {
+                                _error += xhr.responseJSON.errors[key][0] + "<br>";
+                            }
+                            return xSwal.ErrorHTML("Error", _error)
+                        }
+
+                        return xSwal.error("Error", xhr.responseJSON.message)
+                    }
+
+                    // error was return by developer catch it
+                    else if (xhr.responseJSON.response) {
+                        xSwal.error(xhr.responseJSON.response, xhr.responseJSON.message)
+                        return errorFn(xhr, status, error)
+                    }
+
+                }
+            }
+        });
+    }
 
     AJAX_Get(url, data, successFn, errorFn) {
         if (window.location.hostname.includes("tpcap")) {

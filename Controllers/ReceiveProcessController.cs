@@ -30,86 +30,44 @@ namespace HINOSystem.Controllers
         }
 
 
-        public IActionResult KBNCR110()
+        public IActionResult KBNRC110()
         {
             return _authenGuard.guard(ControllerContext);
         }
 
-        public IActionResult KBNCR120()
+        public IActionResult KBNRC120()
         {
             return _authenGuard.guard(ControllerContext);
         }
 
-        public IActionResult KBNCR210()
+        public IActionResult KBNRC210()
         {
             return _authenGuard.guard(ControllerContext);
         }
 
-        public IActionResult KBNCR130()
+        public IActionResult KBNRC130()
         {
             return _authenGuard.guard(ControllerContext);
         }
-        public IActionResult KBNCR140()
-        {
-            return _authenGuard.guard(ControllerContext);
-        }
-
-        public IActionResult KBNCR150()
+        public IActionResult KBNRC140()
         {
             return _authenGuard.guard(ControllerContext);
         }
 
-        public IActionResult KBNCR160()
+        public IActionResult KBNRC150()
         {
             return _authenGuard.guard(ControllerContext);
         }
 
-        public IActionResult KBNCR220()
+        public IActionResult KBNRC160()
         {
             return _authenGuard.guard(ControllerContext);
         }
 
-        public IActionResult KBNCR310()
+        public IActionResult KBNRC220()
         {
             return _authenGuard.guard(ControllerContext);
         }
-
-        public IActionResult KBNCR320()
-        {
-            return _authenGuard.guard(ControllerContext);
-        }
-
-        public IActionResult KBNCR410()
-        {
-            return _authenGuard.guard(ControllerContext);
-        }
-
-        public IActionResult KBNCR420()
-        {
-            return _authenGuard.guard(ControllerContext);
-        }
-
-        public IActionResult KBNCR430()
-        {
-            return _authenGuard.guard(ControllerContext);
-        }
-
-        public IActionResult KBNCR440()
-        {
-            return _authenGuard.guard(ControllerContext);
-        }
-
-        public IActionResult KBNCR450()
-        {
-            return _authenGuard.guard(ControllerContext);
-        }
-
-        public IActionResult KBNCR460()
-        {
-            return _authenGuard.guard(ControllerContext);
-        }
-
-
 
     }
 

@@ -49,5 +49,38 @@ namespace KANBAN.Controllers
             var dt = _FillDT.ExecuteSQL(sql);
             return Ok(JsonConvert.SerializeObject(dt));
         }
+
+        [HttpGet]
+        public IActionResult GetLoginDate()
+        {
+            var masterControl = _KB3Context.TB_MS_CTL.Where(x => x.F_Shift == "A")
+                .OrderBy(x => x.F_Shift).FirstOrDefault();
+
+            DateTime now = DateTime.Now;
+            string shift = "1";
+
+            if (now.ToString("HH:mm").CompareTo(masterControl.F_Start_Time) < 0)
+            {
+                now = now.AddDays(-1);
+                shift = "2";
+            }
+            else if (now.ToString("HH:mm").CompareTo(masterControl.F_End_Time) > 0)
+            {
+                shift = "2";
+            }
+
+            return Ok(new
+            {
+                status = "200",
+                response = "OK",
+                message = "Success",
+                data = new
+                {
+                    date = now.ToString("yyyy-MM-dd"),
+                    shift = shift
+                }
+            });
+
+        }
     }
 }
