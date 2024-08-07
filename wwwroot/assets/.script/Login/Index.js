@@ -106,10 +106,13 @@
 
 });
 
-$("#formAuthentication").one('submit',function (e) {
-    e.preventDefault();
-    var processDate = $('#txtProcessDate').val();
-    var shift = $("#ddlShift").val() == 1 ? "D" : "N";
-    document.cookie = `loginDate=${processDate}${shift}`;
-    $(this).submit();
+$("#btnSubmit").click(function () {
+    $("#formAuthentication").one('submit', function (e) {
+        e.preventDefault();
+        var processDate = $('#txtProcessDate').val();
+        var shift = $("#ddlShift").val() == 1 ? "D" : "N";
+        document.cookie = `loginDate=${processDate}${shift}`;
+        $(this).submit();
+    });
+
 });

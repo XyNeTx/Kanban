@@ -69,6 +69,7 @@ namespace HINOSystem.Controllers
         //### Last Modify
         //# 2023-06-21  Prachaya Chotchoung
         #region Login page for supplier
+        [HttpGet]
         public IActionResult Index()
         {
             this.fncCheckEnvironment();
@@ -138,15 +139,33 @@ namespace HINOSystem.Controllers
                 var getUser = _KB3Context.User.Where(x => x.Code == _txtUserName).FirstOrDefault();
                 if(getUser == null)
                 {
-                    ViewData["ErrorText"] = "You Didn't have Permission to access this system.";
-                    return View();
+                    TempData["ErrorText"] = "You Didn't have Permission to access this system.";
+                    return RedirectToAction("Index", "Login");
                 }
                 else
                 {
                     if(getUser.LastLogin < DateTime.Now.AddMonths(-2))
                     {
-                        ViewData["ErrorText"] = "Your didn't login for 60 days, Please contact IT Dept.";
-                        return View();
+                        if(getUser.Status.ToLower() == "active")
+                        {
+                            TempData["ErrorText"] = "Your didn't login for 60 days, Please contact IT Dept.";
+                            getUser.Status = "INACTIVE";
+                            _KB3Context.User.Update(getUser);
+                            _KB3Context.SaveChanges();
+                            return RedirectToAction("Index", "Login");
+                        }
+                        else if (getUser.Status.ToLower() == "inactive")
+                        {
+                            TempData["ErrorText"] = "Your didn't login for 60 days, Please contact IT Dept.";
+                            getUser.Status = "ACTIVE";
+                            getUser.LastLogin = DateTime.Now;
+                            _KB3Context.User.Update(getUser);
+                            _KB3Context.SaveChanges();
+                            return RedirectToAction("Index", "Login");
+                        }
+
+                        TempData["ErrorText"] = "Your didn't login for 60 days, Please contact IT Dept.";
+                        return RedirectToAction("Index", "Login");
                     }
                 }
 
@@ -158,15 +177,15 @@ namespace HINOSystem.Controllers
 
                 if (_dataTable == null)
                 {
-                    ViewData["ErrorText"] = "Connection failed: Named Pipes Provider (Please try again later).";
+                    TempData["ErrorText"] = "Connection failed: Named Pipes Provider (Please try again later).";
                     this.fncActionLog("LOGIN", "FAILED", _SQL, ViewData["ErrorText"].ToString(), User: _txtUserName, Token: "");
-                    return View();
+                    return RedirectToAction("Index", "Login");
                 }
                 if (_dataTable.Rows.Count <= 0)
                 {
-                    ViewData["ErrorText"] = "Invalid account or Password incorrect.";
+                    TempData["ErrorText"] = "Invalid account or Password incorrect.";
                     this.fncActionLog("LOGIN", "FAILED", _SQL, ViewData["ErrorText"].ToString(), User: _txtUserName, Token: "", DeviceName: _txtDeviceName, IPAddress: _txtIPAddress);
-                    return View();
+                    return RedirectToAction("Index", "Login");
                 }
 
 
