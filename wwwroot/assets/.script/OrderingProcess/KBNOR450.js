@@ -58,6 +58,8 @@
 
         var dateFrom = $('#itmDeliveryFrom').val();
         var dateTo = $('#itmDeliveryTo').val();
+        var pdsFrom = $("#itmPDSFrom").val();
+        var pdsTo = $("#itmPDSTo").val();
         
         await xAjax.Execute({
             data: {
@@ -72,9 +74,27 @@
             },
         });
 
+        var pdsList = [];
+
+        $("#itmPDSFrom option").each(function () {
+            pdsList.push($(this).val());
+        });
+        console.log(pdsList);
+
+
+        await pdsList.forEach(async function (each) {
+            await xAjax.Post({
+                url: 'KBNOR700/PDS_GENBARCODE',
+                data: {
+                    'PDSNO': each + "D"
+                },
+            });
+        })
+
         xSwal.success('Success','Redirecting to View Report');
         console.log('spKBNOR450_RPT_PDS');
         window.open(`http://hmmta-tpcap/E-Report/Report.aspx?Register=PDS&PDSNoFrom=${$('#itmPDSFrom').val()}&PDSNoTo=${$('#itmPDSTo').val()}&DateFrom=${dateFrom}&DateTo=${dateTo}`)
+        _xLib.OpenReport("/KBNOR700PDS", `pUserCode=${ajexHeader.UserCode}&OrderNo=${$('#itmPDSFrom').val()}&OrderNoTo=${$('#itmPDSTo').val()}&DeliveryDate=${dateFrom}&DeliveryDateTo=${dateTo}`)
 
     });
 
