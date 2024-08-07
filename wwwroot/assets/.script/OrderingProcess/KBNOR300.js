@@ -35,14 +35,22 @@
             $('#btnKBNOR370').attr('class', 'btn btn-light');
         } 
 
-
+        let _processCk = _xLib.GetProcessCookie();
+        //console.log(_processCk);
+        if (_processCk != null) {
+            _processCk.forEach(function (item) {
+                let _btnName = `btn${item}`;
+                $(`#${_btnName}`).removeClass('btn-success').css('background-color', '#faa2c1');
+                $(`#${_btnName}`).css("color", "white");
+            });
+        }
 
         xSplash.hide();
     }
     initial();
 
 
-    xAjax.onClick('btnKBNOR310', async function () {
+    xAjax.onClick('btnKBNOR310', async function (e) {
         var _dt = await xAjax.ExecuteJSON({
             data: {
                 "Module": "[exec].[spKBNOR300_310]",
@@ -53,32 +61,46 @@
         });
         //console.log(_dt.rows);
         if (_dt.rows[0].F_Value2 == 0) MsgBox("กรุณารอการยืนยันข้อมูลจากหน่วยงาน CCR", MsgBoxStyle.Information, "INTERFACE DATA");
-        if (_dt.rows[0].F_Value2 != 0) xAjax.redirect('KBNOR310');
+        if (_dt.rows[0].F_Value2 != 0) {
+            let _redirect = e.target.id.replace('btn', '');
+            _xLib.SetProcessCookie(_redirect);
+            xAjax.redirect('KBNOR310');
+        }
     });
 
 
-    xAjax.onClick('btnKBNOR320', function () {
-        xAjax.redirect('KBNOR320');
+    xAjax.onClick('btnKBNOR320', function (e) {
+        let _redirect = e.target.id.replace('btn', '');
+        _xLib.SetProcessCookie(_redirect);
+        xAjax.redirect(_redirect);
     });
 
 
-    xAjax.onClick('btnKBNOR321', function () {
-        xAjax.redirect('KBNOR321');
+    xAjax.onClick('btnKBNOR321', function (e) {
+        let _redirect = e.target.id.replace('btn', '');
+        _xLib.SetProcessCookie(_redirect);
+        xAjax.redirect(_redirect);
     });
 
 
-    xAjax.onClick('btnKBNOR330', function () {
-        xAjax.redirect('KBNOR330');
+    xAjax.onClick('btnKBNOR330', function (e) {
+        let _redirect = e.target.id.replace('btn', '');
+        _xLib.SetProcessCookie(_redirect);
+        xAjax.redirect(_redirect);
     });
 
 
-    xAjax.onClick('btnKBNOR360', function () {
-        xAjax.redirect('KBNOR360');
+    xAjax.onClick('btnKBNOR360', function (e) {
+        let _redirect = e.target.id.replace('btn', '');
+        _xLib.SetProcessCookie(_redirect);
+        xAjax.redirect(_redirect);
     });
 
 
-    xAjax.onClick('btnKBNOR370', function () {
-        xAjax.redirect('KBNOR370');
+    xAjax.onClick('btnKBNOR370', function (e) {
+        let _redirect = e.target.id.replace('btn', '');
+        _xLib.SetProcessCookie(_redirect);
+        xAjax.redirect(_redirect);
     });
 
 

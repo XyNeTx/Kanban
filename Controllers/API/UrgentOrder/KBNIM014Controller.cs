@@ -177,6 +177,11 @@ namespace HINOSystem.Controllers.API.Master
 
                 await _KB3Context.Database.ExecuteSqlRawAsync($"EXEC [exec].[spKBNIM014] @p0,@p1",Plant,UserID);
 
+
+                var _delList = await _KB3Context.TB_Import_EKanban_Pack.Where(x => x.F_Plant_CD == Plant && x.F_Update_By == UserID).ToListAsync();
+
+                _KB3Context.RemoveRange(_delList);
+
                 _KB3Transaction.Commit();
 
 

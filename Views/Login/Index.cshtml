@@ -142,6 +142,7 @@
                     </div>
                 </div>
                 <p class="mt-4" style="color:red;">@ViewData["ErrorText"]</p>
+                <p class="mt-4" style="color:red;">@TempData["ErrorText"]</p>
                 <form id="formAuthentication" class="mb-3 needs-validation" method="POST" novalidate>
                     <input type="hidden" id="txtDomain" name="txtDomain" :value="formAuthentication.txtDomain" />
                     <input type="hidden" id="txtDeviceName" name="txtDeviceName" :value="formAuthentication.txtDeviceName" />
@@ -189,7 +190,7 @@
                         </select>
                     </div>
                     <div class="mb-1">
-                        <button type="submit" class="btn d-grid w-100" style="background-color:#1abc9c; color:white;">Log On</button>
+                        <button type="submit" id="btnSubmit" class="btn d-grid w-100" style="background-color:#1abc9c; color:white;">Log On</button>
                     </div>
                 </form>
                 <div style="font-size:small;">

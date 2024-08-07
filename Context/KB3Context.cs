@@ -1,19 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using HINOSystem.Models.KB3.Master;
+﻿using HINOSystem.Models.KB3.Master;
+using KANBAN.Models.KB3.Login;
+using KANBAN.Models.KB3.Master;
+using KANBAN.Models.KB3.OrderingProcess;
 using KANBAN.Models.KB3.Receive_Process;
 using KANBAN.Models.KB3.ReportOrder;
-using KANBAN.Models;
 using KANBAN.Models.KB3.UrgentOrder;
-using NPOI.SS.Formula.Functions;
-using System.Configuration;
-using KANBAN.Libs;
 using KANBAN.Models.KB3.VLT;
-using KANBAN.Models.KB3.OrderingProcess;
-using KANBAN.Models.KB3.Master;
+using Microsoft.EntityFrameworkCore;
 
 namespace HINOSystem.Context
 {
@@ -46,7 +39,15 @@ namespace HINOSystem.Context
             }
         }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<UserErp>().ToTable("User", "erp");
+
+            // Add additional configuration here if needed
+        }
+
         public DbSet<TB_MS_CodeOrder> TB_MS_CodeOrder { get; set; }
+        public DbSet<UserErp> User { get; set; }
         public DbSet<TB_MS_Company> TB_MS_Company { get; set; }
         public DbSet<TB_MS_CTL> TB_MS_CTL { get; set; }
         public DbSet<TB_MS_DeliveryTime> TB_MS_DeliveryTime { get; set; }

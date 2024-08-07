@@ -39,46 +39,68 @@
         //    $('#btnKBNOR470').attr('class', 'btn btn-light');
         //}
 
-
+        let _processCk = _xLib.GetProcessCookie();
+        console.log(_processCk);
+        if (_processCk != null) {
+            _processCk.forEach(function (item) {
+                let _btnName = `btn${item}`;
+                $(`#${_btnName}`).removeClass('btn-success').css('background-color', '#faa2c1');
+                $(`#${_btnName}`).css("color", "white");
+            });
+        }
 
         xSplash.hide();
     }
     initial();
 
 
-    xAjax.onClick('btnKBNOR410', function () {
-        xAjax.redirect('KBNOR410');
+    xAjax.onClick('btnKBNOR410', function (e) {
+        let _redirect = e.target.id.replace('btn', '');
+        _xLib.SetProcessCookie(_redirect);
+        xAjax.redirect(_redirect);
     });
 
 
-    xAjax.onClick('btnKBNOR420', function () {
-        xAjax.redirect('KBNOR420');
+    xAjax.onClick('btnKBNOR420', function (e) {
+        let _redirect = e.target.id.replace('btn', '');
+        _xLib.SetProcessCookie(_redirect);
+        xAjax.redirect(_redirect);
     });
 
 
-    xAjax.onClick('btnKBNOR440', function () {
-        xAjax.redirect('KBNOR440');
+    xAjax.onClick('btnKBNOR440', function (e) {
+        let _redirect = e.target.id.replace('btn', '');
+        _xLib.SetProcessCookie(_redirect);
+        xAjax.redirect(_redirect);
     });
 
 
-    xAjax.onClick('btnKBNOR450', function () {
-        xAjax.redirect('KBNOR450');
+    xAjax.onClick('btnKBNOR450', function (e) {
+        let _redirect = e.target.id.replace('btn', '');
+        _xLib.SetProcessCookie(_redirect);
+        xAjax.redirect(_redirect);
     });
 
 
-    xAjax.onClick('btnKBNOR460', function () {
-        xAjax.redirect('KBNOR460');
+    xAjax.onClick('btnKBNOR460', function (e) {
+        let _redirect = e.target.id.replace('btn', '');
+        _xLib.SetProcessCookie(_redirect);
+        xAjax.redirect(_redirect);
     });
 
 
-    xAjax.onClick('btnKBNOR460EX', function () {
-        xAjax.redirect('KBNOR460EX');
+    xAjax.onClick('btnKBNOR460EX', function (e) {
+        let _redirect = e.target.id.replace('btn', '');
+        _xLib.SetProcessCookie(_redirect);
+        xAjax.redirect(_redirect);
     });
 
 
-    xAjax.onClick('btnKBNOR470', function () {
-        xAjax.redirect('KBNOR470');
-    });
+    xAjax.onClick('btnKBNOR470', function (e) {
+        let _redirect = e.target.id.replace('btn', '');
+        _xLib.SetProcessCookie(_redirect);
+        xAjax.redirect(_redirect);
+    }); 
 
 
 
