@@ -44,20 +44,20 @@
     });
 
     
-    xAjax.onClick('btnSearch', async function () {
-        var _dt = await xAjax.ExecuteJSON({
-            data: {
-                "Module": "[dbo].[SP_DisplayUrgent]",
-                "OrderType": "SRV",
-                "Plant": ajexHeader.Plant,
-                "UserCode": ajexHeader.UserCode
-            },
-        });
+    //xAjax.onClick('btnSearch', async function () {
+    //    var _dt = await xAjax.ExecuteJSON({
+    //        data: {
+    //            "Module": "[dbo].[SP_DisplayUrgent]",
+    //            "OrderType": "SRV",
+    //            "Plant": ajexHeader.Plant,
+    //            "UserCode": ajexHeader.UserCode
+    //        },
+    //    });
 
-        if (_dt.rows != null) xDataTable.bind('#tblMaster', _dt.rows);
-        if (_dt.rows == null) MsgBox("ไม่พบข้อมูล Urgent Order", MsgBoxStyle.Information, "Interface Urgent Data");
+    //    if (_dt.rows != null) xDataTable.bind('#tblMaster', _dt.rows);
+    //    if (_dt.rows == null) MsgBox("ไม่พบข้อมูล Urgent Order", MsgBoxStyle.Information, "Interface Urgent Data");
 
-    });
+    //});
 
 
     xAjax.onClick('btnInterface', async function () {
@@ -68,15 +68,15 @@
                 xItem.progress({ id: 'prgProcess', current: 5, label: 'Start Interface Data from Import Data : {{##.##}} %' });
 
                 //''Clear Old Data 
-                //await xAjax.ExecuteJSON({
-                //    data: {
-                //        "Module": "[exec].[spKBNOR110_INTERFACE_D1]",
-                //        "@OrderType": "N",
-                //        "@Plant": ajexHeader.Plant,
-                //        "@UserCode": ajexHeader.UserCode
-                //    },
-                //});
-                //xItem.progress({ id: 'prgProcess', current: 10, label: 'Interface Data : Clear Old Order : {{##.##}} %' });
+                await xAjax.ExecuteJSON({
+                    data: {
+                        "Module": "[exec].[spKBNOR110_INTERFACE_D1]",
+                        "@OrderType": "N",
+                        "@Plant": ajexHeader.Plant,
+                        "@UserCode": ajexHeader.UserCode
+                    },
+                });
+                xItem.progress({ id: 'prgProcess', current: 10, label: 'Interface Data : Clear Old Order : {{##.##}} %' });
 
                 //let _remark = '';
 
@@ -88,7 +88,13 @@
                         "@UserCode": ajexHeader.UserCode
                     },
                 });
-                xItem.progress({ id: 'prgProcess', current: 20, label: 'Interface Data from Import Data : {{##.##}} %' });
+                xItem.progress({ id: 'prgProcess', current: 40, label: 'Interface Data from Import Data : {{##.##}} %' });
+
+                if (_dtChk.rows != null) xDataTable.bind('#tblMaster', _dtChk.rows);
+                if (_dtChk.rows == null) MsgBox("ไม่พบข้อมูล Interface Normal Order", MsgBoxStyle.Information, "Interface Normal Data");
+
+                $("#table-wrapper").css("visibility", "hidden");
+
                 //if (_dtChk.rows != null) {
                 //    for (var i = 0; i < _dtChk.rows.length; i++) {
                 //        var _dt = await xAjax.Execute({

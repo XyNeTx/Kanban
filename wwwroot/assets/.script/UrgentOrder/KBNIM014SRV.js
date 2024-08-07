@@ -63,6 +63,7 @@ $("#btnImport").click(async function () {
             data: JSON.stringify(data),
             contentType: "application/json; charset=utf-8",
             dataType: "json",
+            headers: ajexHeader,
             success: function (response) {
                 console.log("Success: ", response);
                 if (response.status === "200") {

@@ -156,6 +156,11 @@
 
             console.log(_pds);
 
+            let dateFrom = ($('#chkDeliveryDate').val() == 1 ? itmDelivery.value : '2024-07-01');
+            let dateTo = ($('#chkDeliveryDate').val() == 1 ? itmDeliveryTo.value : '2999-12-31');
+
+            window.open(`http://hmmta-tpcap/E-Report/Report.aspx?Register=PDS&PDSNoFrom=${itmPDS.value}&PDSNoTo=${itmPDSTo.value}&DateFrom=${dateFrom}&DateTo=${dateTo}`);
+
             await xAjax.Post({
                 url: 'KBNOR700/PDS_GENBARCODE',
                 data: {
@@ -264,7 +269,7 @@
                 xItem.progress({ id: 'prgProcess', current: _pcent, label: 'Processing, Please wait : ' + i + '/' + _dtKanban.rows.length + ' ({{##.##}}) %' });
 
             }
-
+                                              
             for (var i = 0; i < _dt.rows.length; i++) {
                 _OrderType = Trim(_dt.rows[i].F_Order_Type);
                 _OrderType = (_OrderType == 'N' ? 'NORMAL' : (_OrderType == 'S' ? 'SPECIAL' : (_OrderType == 'U' ? 'URGENT' : '')));

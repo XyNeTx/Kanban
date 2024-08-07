@@ -20,6 +20,7 @@
         ],
         Modal: 'modalMaster',
         Form: 'frmMaster',
+        //processing :false,
         PostData: [
             { name: 'F_Plant', value: _PLANT_ }
         ],
@@ -66,7 +67,24 @@
                 },
             });
             xItem.progress({ id: 'prgProcess', current: 25, label: 'Delete TB_PDS_DETAIL : {{##.##}} %' });
-            MsgBox("Process GEN PDS Data for Urgent Order Completed.", MsgBoxStyle.Information, "Process Complete");
+/*            MsgBox("Process GEN PDS Data for Urgent Order Completed.", MsgBoxStyle.Information, "Process Complete");*/
+
+            var _dt = await xAjax.xExecuteJSON({
+                data: {
+                    "Module": "[exec].[spKBNOR440_ShowResult]",
+                    "OrderType": "U",
+                    "Plant": ajexHeader.Plant,
+                    "UserCode": ajexHeader.UserCode
+                },
+            });
+
+            console.log(_dt);
+
+            if (_dt.rows != null) xDataTable.bind('#tblMaster', _dt.rows);
+            if (_dt.rows == null) MsgBox("ไม่พบข้อมูล PDS Urgent Order", MsgBoxStyle.Information, "Interface Urgent Data");
+
+            $("#table-wrapper").css("visibility", "hidden");
+
 
             xItem.progress({ id: 'prgProcess', current: 100, label: 'Generate PDS Completed : {{##.##}} %' });
             xSwal.success('Success', 'Generate PDS Completed');

@@ -86,6 +86,13 @@ namespace HINOSystem.Controllers.API.Master
             
             _BearerClass.Authentication(Request);
 
+            //string UserID = HttpContext.Session.GetString("USER_CODE");
+            //string Plant = HttpContext.Session.GetString("USER_PLANT");
+
+            //var _delList = await _KB3Context.TB_Import_EKanban_Pack.Where(x => x.F_Plant_CD == Plant && x.F_Update_By == UserID).ToListAsync();
+
+            //_KB3Context.RemoveRange(_delList);
+
             if (_BearerClass.Status == 401) return Unauthorized(new
             {
                 status = "401",
@@ -97,15 +104,12 @@ namespace HINOSystem.Controllers.API.Master
             try
             {
                 _KB3Transaction.CreateSavepoint("Start_ImportSave");
+
                 string UserID = HttpContext.Session.GetString("USER_CODE");
                 string Plant = HttpContext.Session.GetString("USER_PLANT");
 
-                var _delList = await _KB3Context.TB_Import_EKanban_Pack.Where(x => x.F_Plant_CD == Plant && x.F_Update_By == UserID).ToListAsync();
-
-                _KB3Context.RemoveRange(_delList);
-
                 obj.F_Plant_CD = Plant;
-                obj.F_Update_By = UserID;
+                obj.F_Update_By = UserID; 
                 obj.F_Update_Date = DateTime.Now;
 
                 if (ModelState.IsValid)

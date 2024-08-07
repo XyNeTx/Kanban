@@ -6,15 +6,16 @@
         running: 0,
         order: -1,
         columnTitle: {
-            "EN": ['PDS No.', 'Supplier', 'Delivery Date', 'Delivery Trip'],
-            "TH": ['PDS No.', 'Supplier', 'Delivery Date', 'Delivery Trip'],
-            "JP": ['PDS No.', 'Supplier', 'Delivery Date', 'Delivery Trip'],
+            "EN": ['PDS No.', 'Supplier', 'Delivery Date', 'Delivery Trip', 'Remark'],
+            "TH": ['PDS No.', 'Supplier', 'Delivery Date', 'Delivery Trip', 'Remark'],
+            "JP": ['PDS No.', 'Supplier', 'Delivery Date', 'Delivery Trip', 'Remark'],
         },
         column: [
             { "data": "F_OrderNo" },
             { "data": "F_Supplier_Code" },
             { "data": "F_Delivery_Date" },
-            { "data": "F_Delivery_Trip" }
+            { "data": "F_Delivery_Trip" },
+            { "data": "F_Remark" }
         ],
         addnew: false,
     });
@@ -33,10 +34,10 @@
         },
         column: [
             { "data": "F_OrderNo" },
-            { "data": "Supplier_Code" },
-            { "data": "Delivery_Date" },
-            { "data": "Part_No" },
-            { "data": "F_Status" }
+            { "data": "F_Supplier_Code" },
+            { "data": "F_Delivery_Date" },
+            { "data": "F_Delivery_Trip" },
+            { "data": "F_Remark" }
         ],
         addnew: false,
     });
@@ -70,6 +71,7 @@
             if (_dt.rows != null) xDataTable.bind('#tblMaster', _dt.rows);
             //console.log(_dt);
 
+
             var _dtDetail = await xAjax.ExecuteJSON({
                 data: {
                     "Module": "[exec].[spKBNOR460_DETAIL]",
@@ -91,7 +93,7 @@
             });
 
         }
-
+        $("#table-wrapper").css("visibility", "hidden");
         xSplash.hide();
     }
     initial();
