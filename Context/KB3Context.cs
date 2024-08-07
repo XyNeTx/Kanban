@@ -1,4 +1,5 @@
 ﻿using HINOSystem.Models.KB3.Master;
+using KANBAN.Models.KB3.Login;
 using KANBAN.Models.KB3.Master;
 using KANBAN.Models.KB3.OrderingProcess;
 using KANBAN.Models.KB3.Receive_Process;
@@ -38,7 +39,15 @@ namespace HINOSystem.Context
             }
         }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<UserErp>().ToTable("User", "erp");
+
+            // Add additional configuration here if needed
+        }
+
         public DbSet<TB_MS_CodeOrder> TB_MS_CodeOrder { get; set; }
+        public DbSet<UserErp> User { get; set; }
         public DbSet<TB_MS_Company> TB_MS_Company { get; set; }
         public DbSet<TB_MS_CTL> TB_MS_CTL { get; set; }
         public DbSet<TB_MS_DeliveryTime> TB_MS_DeliveryTime { get; set; }

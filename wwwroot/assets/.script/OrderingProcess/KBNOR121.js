@@ -325,7 +325,7 @@ const addDetailToTable = async (dateSet, intRow) => {
         //console.log(_header);
         //console.log(dateSet[_countDateSet])
 
-        //insert DTHeader to Table Body Row was fixed at 14
+        //insert DTHeader to Table Body Row was fixed at 15
         for (let k = 1; k <= 20; k++) {
             if (k >= 15 || k == 12) $(`#TBodyR${k}`).append(`<td id=tdR${k}Pcs${dateSet[_countDateSet]}></td>`)
             else $(`#TBodyR${k}`).append(`<td id=tdR${k}Pcs${dateSet[_countDateSet]}>${_header[_setAccessHeader[k - 1]]}</td>`)

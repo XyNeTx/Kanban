@@ -25,6 +25,8 @@ using NPOI.OpenXmlFormats.Dml.Chart;
 using System.Security.Policy;
 using NPOI.OpenXmlFormats.Wordprocessing;
 using NuGet.Common;
+using KANBAN.Models.KB3.Login;
+using HINOSystem.Context;
 
 
 namespace HINOSystem.Controllers
@@ -35,6 +37,7 @@ namespace HINOSystem.Controllers
         private readonly IHttpContextAccessor? _httpContextAccessor;
         private readonly ERPConnection _erpConnect;
         private readonly BearerClass _BearerClass;
+        private readonly KB3Context _KB3Context;
 
         private string Systems = "KB3";
         private string SystemCode = "Systems:KB3";
@@ -49,13 +52,15 @@ namespace HINOSystem.Controllers
             IConfiguration configuration,
             IHttpContextAccessor? httpContextAccessor,
             ERPConnection erpConnect,
-            BearerClass bearerClass
+            BearerClass bearerClass,
+            KB3Context kB3Context
             )
         {
             _config = configuration;
             _httpContextAccessor = httpContextAccessor;
             _erpConnect = erpConnect;
             _BearerClass = bearerClass;
+            _KB3Context = kB3Context;
 
             this._DB = _config.GetValue<string>(this.SystemCode + ":Database");
         }
@@ -128,6 +133,22 @@ namespace HINOSystem.Controllers
                 string _txtProcessDate = Request.Form["txtProcessDate"].ToString().Trim();
                 string _ddlFactory = Request.Form["ddlFactory"].ToString().Trim();
                 string _ddlShift = Request.Form["ddlShift"].ToString().Trim();
+
+
+                var getUser = _KB3Context.User.Where(x => x.Code == _txtUserName).FirstOrDefault();
+                if(getUser == null)
+                {
+                    ViewData["ErrorText"] = "You Didn't have Permission to access this system.";
+                    return View();
+                }
+                else
+                {
+                    if(getUser.LastLogin < DateTime.Now.AddMonths(-2))
+                    {
+                        ViewData["ErrorText"] = "Your didn't login for 60 days, Please contact IT Dept.";
+                        return View();
+                    }
+                }
 
 
                 this.fncCheckEnvironment(_txtUserName);
