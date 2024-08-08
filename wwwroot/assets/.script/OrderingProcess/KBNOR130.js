@@ -56,12 +56,15 @@
         MsgBox("Do you want Issued PDS Normal Data?", MsgBoxStyle.OkCancel, async function () {
 
             xItem.progress({ id: 'prgProcess', current: 5, label: 'Start Process Normal : {{##.##}} %' });
-  
-            var _dtChk = await xAjax.ExecuteJSON({
+
+            Var _ProcessDate = _CookieProcessDate.substring(1, 8)
+            Var _ProcessShift = _CookieProcessDate.substring(9, 9)
+
+            var _dtChk = await xAjax.xExecuteJSON({
                 data: {
-                    "Module": "[exec].[spKBNOR130_CALCULATE]",
-                    "@ProcessDate": "20240813",
-                    "@ProcessShift": "D",
+                    "Module": "[exec].[spKBNOR130_GENPDS]",
+                    "@ProcessDate": _ProcessDate,
+                    "@ProcessShift": _ProcessShift,
                     "@Plant": ajexHeader.Plant,
                     "@UserCode": ajexHeader.UserCode
                 },

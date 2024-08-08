@@ -127,7 +127,7 @@
                             "@UserCode": ajexHeader.UserCode,
                             "@F_OrderNo": _arMaster[i].F_OrderNo
                         },
-
+                    });
 
                     xItem.progress({ id: 'prgProcess', current: 100, label: 'Process Regis Completed : {{##.##}} %' });
 
