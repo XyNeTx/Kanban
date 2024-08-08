@@ -102,7 +102,7 @@ namespace KANBAN.Controllers.API.UrgentOrder
                 _KB3Context.Database.ExecuteSqlRawAsync($"DELETE FROM TB_IMPORT_SERVICE WHERE F_UPDATE_BY = @p0",USERID);
                 foreach (var each in listObj)
                 {
-                    if(each.F_PO_No.Substring(0,3) == "T99" || each.F_PO_No.Substring(0,3) == "T89" || each.F_PO_No.Substring(0,3) == "TC1")
+                    if(each.F_PO_No.Substring(0,3) == "T99" || each.F_PO_No.Substring(0,3) == "T89" || each.F_PO_No.Substring(0,3) == "TC2")
                     {
                         if(each.F_Part_No.Count() == 10)
                         {

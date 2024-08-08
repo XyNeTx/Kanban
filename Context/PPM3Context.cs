@@ -20,13 +20,23 @@ namespace KANBAN.Context
         {
             if (!optionsBuilder.IsConfigured && _httpContextAccessor.HttpContext != null)
             {
-                var plantHeader = _httpContextAccessor.HttpContext.Request.Headers["Plant"].ToString();
-                string connectionString = plantHeader switch
+                var plantCookie = _httpContextAccessor.HttpContext.Request.Cookies["plantCode"].ToString();
+                var isDev = _httpContextAccessor.HttpContext.Request.Cookies["isDev"].ToString();
+                if (isDev != null)
+                {
+                    isDev = isDev == "1" ? "Dev" : "";
+                }
+                var plantDev = plantCookie + isDev;
+                string connectionString = plantDev switch
                 {
                     "3" => _config.GetConnectionString("PPM3Connection"),
                     "2" => _config.GetConnectionString("PPMConnection"),
                     "1" => _config.GetConnectionString("PPMConnection"),
-                    _ => _config.GetConnectionString("PPM3Connection")
+                    "3Dev" => _config.GetConnectionString("DevPPM3Connection"),
+                    "2Dev" => _config.GetConnectionString("DevPPMConnection"),
+                    "1Dev" => _config.GetConnectionString("DevPPMConnection"),
+                    "Dev" => _config.GetConnectionString("DevPPM3Connection"),
+                    _ => _config.GetConnectionString("DevPPM3Connection")
                 };
 
                 optionsBuilder.UseSqlServer(connectionString);

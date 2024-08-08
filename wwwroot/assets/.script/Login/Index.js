@@ -1,4 +1,4 @@
-﻿$(document).ready(function () {
+﻿$(document).ready(async function () {
 
 
     const formAuthentication = {
@@ -23,7 +23,10 @@
         setCookie('UI_MenuIcon', 'style4');
         setCookie('UI_SideBar', 'shrink');
     }
-
+    console.log(_xLib.GetCookie("isDev"));
+    await _xLib.GetCookie("isDev") == null || _xLib.GetCookie("isDev") == "" ? _xLib.SetCookie('isDev', 0) : _xLib.GetCookie('isDev');
+    await _xLib.GetCookie("debug") == 1 ? _xLib.SetCookie("isDev", 1) : _xLib.SetCookie("isDev", 0);
+    console.log(_xLib.GetCookie("isDev"));
     initial = async function () {
         xSplash.show();
 
@@ -61,7 +64,6 @@
             }
         })
 
-        _xLib.GetCookie("isDev") == "" ? _xLib.SetCookie('isDev', 0) : _xLib.GetCookie('isDev');
 
         await $.ajax({
             url: "http:\\\\hmmt-app07/sso/api/SingleSignOn/getLogin",
@@ -77,6 +79,7 @@
                 $('#txtDeviceName').val(result.computerName);
                 $('#txtFullDeviceName').val(result.fullComputerName);
                 $('#ddlFactory').val(result.userDetail.locationCode);
+                _xLib.SetCookie('plantCode', result.userDetail.locationCode);
             },
             error: function (error) {
                 console.log(error);
@@ -115,7 +118,7 @@
     let iSpy = 0;
     $('#imgHINOLogo').on('click',function (e) {
         iSpy++;
-        if (iSpy == 3) {
+        if (iSpy == 6) {
             let _debug = getCookie('debug');
             let _isDev = _xLib.SetCookie('isDev', 1);
             if (_debug == 0) {
@@ -147,6 +150,7 @@ $("#btnSubmit").click(function () {
         var processDate = $('#txtProcessDate').val();
         var shift = $("#ddlShift").val() == 1 ? "D" : "N";
         document.cookie = `loginDate=${processDate}${shift}`;
+        _xLib.SetCookie('plantCode', $('#ddlFactory').val());
         $("#ddlShift").prop('disabled', false);
         $(this).submit();
     });

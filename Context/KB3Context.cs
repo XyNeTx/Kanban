@@ -26,12 +26,22 @@ namespace HINOSystem.Context
         {
             if (!optionsBuilder.IsConfigured && _httpContextAccessor.HttpContext != null)
             {
-                var plantHeader = _httpContextAccessor.HttpContext.Request.Headers["Plant"].ToString();
-                string connectionString = plantHeader switch
+                var plantCookie = _httpContextAccessor.HttpContext.Request.Cookies["plantCode"].ToString();
+                var isDev = _httpContextAccessor.HttpContext.Request.Cookies["isDev"].ToString();
+                if (isDev != null)
+                {
+                    isDev = isDev == "1" ? "Dev" : "";
+                }
+                var plantDev = plantCookie + isDev;
+                string connectionString = plantDev switch
                 {
                     "3" => _config.GetConnectionString("DefaultConnection"),
                     "2" => _config.GetConnectionString("KB2Connection"),
                     "1" => _config.GetConnectionString("KB1Connection"),
+                    "3Dev" => _config.GetConnectionString("DevDefaultConnection"),
+                    "2Dev" => _config.GetConnectionString("DevKB2Connection"),
+                    "1Dev" => _config.GetConnectionString("DevKB1Connection"),
+                    "Dev" => _config.GetConnectionString("DevDefaultConnection"),
                     _ => _config.GetConnectionString("DefaultConnection")
                 };
 

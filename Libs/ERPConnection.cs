@@ -29,38 +29,32 @@ using System.IO;
 using Microsoft.AspNetCore.Http;
 using System.Xml.Linq;
 using Org.BouncyCastle.Utilities.Net;
+using HINOSystem.Context;
 
 
 namespace HINOSystem.Libs
 {
     public class ERPConnection
     {
-        private readonly IConfiguration _configuration;
-        private readonly string _connectionStirng;
-
+        private readonly KB3Context _KB3Context;
 
         public HttpContext _context;
 
-        public ERPConnection(IConfiguration configuration)
+        public ERPConnection(KB3Context kB3Context)
         {
-            _configuration = configuration;
-            _connectionStirng = _configuration.GetValue<string>("ConnectionStrings:DefaultConnection");
+            _KB3Context = kB3Context;
         }
-
-        public string GetConncetionString() => _connectionStirng;
-
 
         public void setContext(HttpContext httpContext)
         {
             _context = httpContext;
         }
 
-
         public DataTable ExecuteSQL(string SQL, HttpContext httpContext = null, bool skipLog = false, BearerClass pUser = null, string pAction = "EXECUTE", string pControllerName = "", string pActionName = "", string pSystem = "")
         {
             try
             {
-                SqlConnection cn = new SqlConnection(_connectionStirng);
+                SqlConnection cn = new SqlConnection(_KB3Context.Database.GetConnectionString());
                 cn.Open();
 
                 SqlCommand cmd = new SqlCommand(SQL, cn);
@@ -97,7 +91,7 @@ namespace HINOSystem.Libs
             {
 
 
-                SqlConnection cn = new SqlConnection(_connectionStirng);
+                SqlConnection cn = new SqlConnection(_KB3Context.Database.GetConnectionString());
                 cn.Open();
 
                 SqlCommand cmd = new SqlCommand(SQL, cn);
@@ -136,7 +130,7 @@ namespace HINOSystem.Libs
         {
             try
             {
-            SqlConnection cn = new SqlConnection(_connectionStirng);
+            SqlConnection cn = new SqlConnection(_KB3Context.Database.GetConnectionString());
             cn.Open();
 
             SqlCommand cmd = new SqlCommand(SQL, cn);
@@ -153,9 +147,6 @@ namespace HINOSystem.Libs
                 if (skipLog != true) this.executeLog(httpContext, SQL, pAction, "FAILED", ex.Message , pUser: pUser, pControllerName: pControllerName, pActionName: pActionName, pSystem: pSystem);
             }
         }
-
-
-
 
 
         public void executeLog(HttpContext httpContext, string pSQL, string pAction, string pResult, string pMessage, BearerClass pUser = null, string pControllerName = "", string pActionName = "", string pSystem = "")
@@ -205,7 +196,7 @@ namespace HINOSystem.Libs
                                 )";
 
 
-            SqlConnection cn = new SqlConnection(_connectionStirng);
+            SqlConnection cn = new SqlConnection(_KB3Context.Database.GetConnectionString());
             cn.Open();
             SqlCommand cmd = new SqlCommand(_SQL_Log, cn);
             cmd.ExecuteNonQuery();

@@ -1,66 +1,22 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Http;
+﻿using HINOSystem.Context;
 using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System.Net.Mail;
-using System.Net;
-using System.Text;
-using Microsoft.AspNetCore.Http.Extensions;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection.PortableExecutable;
-using System.DirectoryServices;
-using System.DirectoryServices.AccountManagement;
-using Microsoft.Net.Http.Headers;
-using System.Collections.Specialized;
-using System.DirectoryServices.ActiveDirectory;
-using System.IO;
-using Microsoft.AspNetCore.Http;
-using System.Xml.Linq;
-using System.Net.Http;
+using Newtonsoft.Json;
+using System.Data;
+using System.Text;
 
 
 namespace HINOSystem.Libs
 {
     public class KanbanConnection
     {
-        private readonly IConfiguration _configuration;
-        private string _connectionStirng;
+        private readonly KB3Context _KB3Context;
+        private readonly HttpContext _httpContext;
 
-        private readonly string _cnKB1Stirng;
-        private readonly string _cnKB2Stirng;
-        private readonly string _cnKB3Stirng;
-        public dynamic Plant = 3;
-
-        public HttpContext _context;
-
-        public KanbanConnection(IConfiguration configuration)
+        public KanbanConnection(KB3Context kB3Context, HttpContext httpContext)
         {
-            _configuration = configuration;
-            _connectionStirng = _configuration.GetValue<string>("ConnectionStrings:DefaultConnection");
-
-            _cnKB1Stirng = _configuration.GetValue<string>("ConnectionStrings:KB1Connection");
-            _cnKB2Stirng = _configuration.GetValue<string>("ConnectionStrings:KB2Connection");
-            _cnKB3Stirng = _configuration.GetValue<string>("ConnectionStrings:KB3Connection");
-        }
-
-        public string GetConncetionString() => _connectionStirng;
-
-
-        public void setContext(HttpContext httpContext)
-        {
-            _context = httpContext;
+            _KB3Context = kB3Context;
+            _httpContext = httpContext;
         }
 
 
@@ -68,12 +24,8 @@ namespace HINOSystem.Libs
         {
             try
             {
-                if (pUser != null) this.Plant = pUser.Plant.ToString();
-                if (this.Plant.ToString() == "1") this._connectionStirng = _cnKB1Stirng;
-                if (this.Plant.ToString() == "2") this._connectionStirng = _cnKB2Stirng;
-                if (this.Plant.ToString() == "3") this._connectionStirng = _cnKB3Stirng;
 
-                SqlConnection cn = new SqlConnection(this._connectionStirng);
+                SqlConnection cn = new SqlConnection(_KB3Context.Database.GetConnectionString());
                 cn.Open();
 
                 SqlCommand cmd = new SqlCommand(SQL, cn);
@@ -106,13 +58,8 @@ namespace HINOSystem.Libs
 
         public string ExecuteJSON(string SQL, HttpContext httpContext = null, bool skipLog = false, BearerClass pUser = null, string pAction = "EXECUTE JSON", string pControllerName = "", string pActionName = "", string pSystem = "")
         {
-            if (pUser != null) this.Plant = pUser.Plant.ToString();
-            if (this.Plant.ToString() == "1") this._connectionStirng = _cnKB1Stirng;
-            if (this.Plant.ToString() == "2") this._connectionStirng = _cnKB2Stirng;
-            if (this.Plant.ToString() == "3") this._connectionStirng = _cnKB3Stirng;
             
-
-            SqlConnection cn = new SqlConnection(this._connectionStirng);
+            SqlConnection cn = new SqlConnection(_KB3Context.Database.GetConnectionString());
             try
             {
                 cn.Open();
@@ -158,12 +105,7 @@ namespace HINOSystem.Libs
         {
             try
             {
-                if (pUser != null) this.Plant = pUser.Plant.ToString();
-                if (this.Plant.ToString() == "1") this._connectionStirng = _cnKB1Stirng;
-                if (this.Plant.ToString() == "2") this._connectionStirng = _cnKB2Stirng;
-                if (this.Plant.ToString() == "3") this._connectionStirng = _cnKB3Stirng;
-
-                SqlConnection cn = new SqlConnection(this._connectionStirng);
+                SqlConnection cn = new SqlConnection(_KB3Context.Database.GetConnectionString());
                 cn.Open();
 
                 SqlCommand cmd = new SqlCommand(SQL, cn);
@@ -186,7 +128,7 @@ namespace HINOSystem.Libs
 
         public void writeLog(string pSQL = "", string pAction = "", string pResult = "", string pMessage = "", BearerClass pUser = null, string pControllerName = "", string pActionName = "", string pSystem = "")
         {
-            this.executeLog(this._context, pSQL, pAction, pResult, pMessage, pUser, pControllerName, pActionName, pSystem);
+            this.executeLog(_httpContext, pSQL, pAction, pResult, pMessage, pUser, pControllerName, pActionName, pSystem);
         }
 
 
@@ -239,7 +181,7 @@ namespace HINOSystem.Libs
 
 
 
-            SqlConnection cn = new SqlConnection(_cnKB3Stirng);
+            SqlConnection cn = new SqlConnection(_KB3Context.Database.GetConnectionString());
             cn.Open();
             SqlCommand cmd = new SqlCommand(_SQL_Log, cn);
             cmd.ExecuteNonQuery();

@@ -1,32 +1,10 @@
-﻿using System.Net.Mail;
-using System.Net;
-using System.Text;
-using Microsoft.AspNetCore.Http.Extensions;
-using Microsoft.AspNetCore.Mvc;
-using System.Data;
-using System;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using System.Reflection.PortableExecutable;
-using System.DirectoryServices;
-using System.DirectoryServices.AccountManagement;
-using Microsoft.Net.Http.Headers;
-using System.Collections.Specialized;
-using System.DirectoryServices.ActiveDirectory;
-using System.IO;
-using System;
-using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json.Linq;
-using System.Security.Policy;
-using NPOI.SS.UserModel;
-using NPOI.XSSF.UserModel;
-
-using System.Globalization;
-//using Microsoft.Office.Interop.Excel;
-using NPOI.OpenXmlFormats.Spreadsheet;
-using Org.BouncyCastle.Asn1.Ocsp;
+﻿//using Microsoft.Office.Interop.Excel;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using NPOI.SS.UserModel;
+using System.Data;
 using System.Security.Cryptography;
+using System.Text;
 
 namespace HINOSystem.Libs
 {
@@ -88,7 +66,6 @@ namespace HINOSystem.Libs
                 );
             }
             //_KBCN.Plant = (_KBCN.Plant.ToString() == "" ? pRequest.Headers["Plant"].ToString() : _KBCN.Plant);
-            _KBCN.Plant = 3;
             DataTable _dt = _KBCN.ExecuteSQL("SELECT * FROM [erp].[User] WHERE Token = '" + pRequest.Headers["Authorization"].ToString().Replace("Bearer ", "") + "' ", skipLog: true);
             if (_dt.Rows.Count <= 0)
             {
@@ -140,7 +117,6 @@ namespace HINOSystem.Libs
                                 }"
                 );
             }
-            _KBCN.Plant = "3";
             DataTable _dt = _KBCN.ExecuteSQL("SELECT * FROM [erp].[User] WHERE Token = '" + pHeader.Replace("Bearer ", "") + "' ", skipLog: true);
             if (_dt.Rows.Count <= 0)
             {
@@ -177,7 +153,6 @@ namespace HINOSystem.Libs
                                 }"
                 );
             }
-            _KBCN.Plant = "3";
             DataTable _dt = _KBCN.ExecuteSQL("SELECT * FROM [erp].[User] WHERE Token = '" + pHeader.Replace("Bearer ", "") + "' ", skipLog: true);
             if (_dt.Rows.Count <= 0)
             {

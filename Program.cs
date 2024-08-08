@@ -56,36 +56,36 @@ builder.Services.AddCors(options =>
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-//builder.Services.AddHttpContextAccessor();
 
 //Add DbConnect
-builder.Services.AddSingleton<DefaultConnection>();
-builder.Services.AddSingleton<ERPConnection>();
-builder.Services.AddSingleton<KanbanConnection>();
+builder.Services.AddScoped<DefaultConnection>();
+builder.Services.AddScoped<ERPConnection>();
+builder.Services.AddScoped<KanbanConnection>();
 builder.Services.AddSingleton<CloudConnection>();
 builder.Services.AddSingleton<ProcWebConnection>();
 builder.Services.AddSingleton<PPM3Connection>();
 
-builder.Services.AddSingleton<cnConnect>();
-builder.Services.AddSingleton<DbConnect>();
-builder.Services.AddSingleton<WarrantyClaimConnect>();
-builder.Services.AddSingleton<HRConnect>();
-builder.Services.AddSingleton<PPMConnect>();
+builder.Services.AddScoped<cnConnect>();
+builder.Services.AddScoped<DbConnect>();
+builder.Services.AddScoped<WarrantyClaimConnect>();
+builder.Services.AddScoped<HRConnect>();
+builder.Services.AddScoped<PPMConnect>();
 
 
 //Authenity Guard
-builder.Services.AddSingleton<AuthenGuard>();
+builder.Services.AddScoped<AuthenGuard>();
 
 //Library Class
-builder.Services.AddSingleton<BearerClass>();
-builder.Services.AddSingleton<EmailClass>();
+builder.Services.AddScoped<BearerClass>();
+builder.Services.AddScoped<EmailClass>();
 builder.Services.AddSingleton<NPOIClass>();
 builder.Services.AddSingleton<PdfSharpClass>();
-builder.Services.AddSingleton<CookieClass>();
-builder.Services.AddSingleton<ActionResultClass>();
+builder.Services.AddScoped<CookieClass>();
+builder.Services.AddScoped<ActionResultClass>();
 builder.Services.AddScoped<FillDataTable>();
 builder.Services.AddScoped<SerilogLibs>();
-builder.Services.AddSingleton<TextFileClass>();
+builder.Services.AddScoped<TextFileClass>();
+
 
 
 
