@@ -66,7 +66,7 @@ namespace HINOSystem.Controllers.API.Master
                 _BearerClass.Authentication(Request);
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
-                _KBCN.Plant = _BearerClass.Plant;
+                
 
                 _SQL = @"
                     SELECT F_Plant
@@ -118,7 +118,7 @@ namespace HINOSystem.Controllers.API.Master
                 _BearerClass.Authentication(Request);
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
-                _KBCN.Plant = _BearerClass.Plant;
+                
 
                 _json = JsonConvert.DeserializeObject(pData);
 
@@ -131,7 +131,7 @@ namespace HINOSystem.Controllers.API.Master
                     _SQL = @"                    
                     EXEC [HMMT-E_KANBAN].[New_Kanban].[dbo].[sp_DT_DailyBalance] '" + _F_Start_Date.Replace("-", "").Replace("-", "") + @"','" + _F_End_Date.Replace("-", "").Replace("-", "") + @"', '" + _F_Supplier.Substring(0, 4) + @"', '" + _F_Supplier.Substring(5, 1) + @"'
                 ";
-                    _KBCN.Plant = _json.F_Plant;
+                    
                     _jsData = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
 
                 }
@@ -210,7 +210,7 @@ namespace HINOSystem.Controllers.API.Master
                 _BearerClass.Authentication(Request);
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
-                _KBCN.Plant = _BearerClass.Plant;
+                
 
                 _SQL = @"
                     UPDATE [dbo].[TB_MS_OldPart]
@@ -259,7 +259,7 @@ namespace HINOSystem.Controllers.API.Master
                 _BearerClass.Authentication(Request);
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
-                _KBCN.Plant = _BearerClass.Plant;
+                
 
                 _SQL = @"
                     DELETE [dbo].[TB_MS_OldPart]

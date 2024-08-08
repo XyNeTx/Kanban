@@ -87,7 +87,7 @@ namespace HINOSystem.Controllers.API.Master
 
             try
             {
-                _KBCN.Plant = _BearerClass.Plant;
+                
 
                 _SQL = @" EXEC [exec].[spKBNOR460_INITIAL] 
                     'U',

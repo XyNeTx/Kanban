@@ -66,7 +66,7 @@ namespace HINOSystem.Controllers.API.Master
                 _BearerClass.Authentication(Request);
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
-                _KBCN.Plant = _BearerClass.Plant;
+                
 
                 _SQL = @" EXEC [exec].[spTB_MS_FACTORY] ";
                 string _jsTB_MS_Factory = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName: ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
@@ -100,8 +100,7 @@ namespace HINOSystem.Controllers.API.Master
                 _BearerClass.Authentication(Request);
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
-                _KBCN.Plant = _BearerClass.Plant;
-
+                
                 _json = JsonConvert.DeserializeObject(pData);
 
                 _SQL = @" EXEC [exec].[spKBNMS003_SEARCH] '" + _BearerClass.Plant + "' ";
@@ -133,7 +132,7 @@ namespace HINOSystem.Controllers.API.Master
                 _BearerClass.Authentication(Request);
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
-                _KBCN.Plant = _BearerClass.Plant;
+                
 
                 string[] _F = Request.Form["F_Parent_Part_Name"].ToString().Split("-");
                 string _F_Parent_Part = (_F.Length > 0 ? _F[0] : "");
@@ -182,7 +181,7 @@ namespace HINOSystem.Controllers.API.Master
                 _BearerClass.Authentication(Request);
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
-                _KBCN.Plant = _BearerClass.Plant;
+                
 
                 string[] _F = Request.Form["F_Parent_Part_Name"].ToString().Split("-");
                 string _F_Parent_Part = (_F.Length > 0 ? _F[0] : "");
@@ -239,7 +238,7 @@ namespace HINOSystem.Controllers.API.Master
                 _BearerClass.Authentication(Request);
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
-                _KBCN.Plant = _BearerClass.Plant;
+                
 
                 _SQL = @"
                     DELETE FROM [dbo].[TB_MS_PartSet]

@@ -35,10 +35,10 @@ namespace HINOSystem.Controllers.API.erp
             dynamic _json = JsonConvert.DeserializeObject(pData);
             try
             {
-                _KBCN.Plant = 3;
+                
                 _BearerClass.Authentication(Request);
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
-                _KBCN.Plant = _BearerClass.Plant;
+                
 
                 _sql = @" EXEC [erp].[HistorySQL] '" + _json.Action + @"' ";
                 string _HistorySQL = _KBCN.ExecuteJSON(_sql, skipLog: true);

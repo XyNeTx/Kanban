@@ -124,12 +124,12 @@ namespace HINOSystem.Controllers.API.Master
 
 
                 _SQL = @" EXEC [exec].[spKBNIM013INV_SEARCH] '" + _json.F_Plant + "' ";
-                _KBCN.Plant = _json.F_Plant;
+                
                 string _jstblPDS = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
 
 
                 _SQL = @" EXEC [exec].[spKBNIM013INV_SEARCH_DETAIL] '" + _json.F_Plant + "' ";
-                _KBCN.Plant = _json.F_Plant;
+                
                 string _jstblSeparate = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName: ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
 
 

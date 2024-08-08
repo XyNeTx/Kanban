@@ -69,7 +69,7 @@ namespace HINOSystem.Controllers.API.Master
                 _BearerClass.Authentication(Request);
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
-                _KBCN.Plant = _BearerClass.Plant;
+                
 
                 _SQL = @" EXEC [exec].[spTB_MS_FACTORY] ";
                 string _jsTB_MS_Factory = _KBCN.ExecuteJSON(_SQL
@@ -107,7 +107,7 @@ namespace HINOSystem.Controllers.API.Master
                 _BearerClass.Authentication(Request);
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
-                _KBCN.Plant = _BearerClass.Plant;
+                
 
                 _json = JsonConvert.DeserializeObject(pData);
 
@@ -190,7 +190,7 @@ namespace HINOSystem.Controllers.API.Master
                 _BearerClass.Authentication(Request);
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
-                _KBCN.Plant = _BearerClass.Plant;
+                
 
                 _SQL = @"
                     UPDATE [dbo].[TB_MS_OrderType]
@@ -242,7 +242,7 @@ namespace HINOSystem.Controllers.API.Master
                 _BearerClass.Authentication(Request);
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass), "application/json");
 
-                _KBCN.Plant = _BearerClass.Plant;
+                
 
                 _SQL = @"
                     DELETE FROM [dbo].[TB_MS_OrderType]
@@ -286,7 +286,7 @@ namespace HINOSystem.Controllers.API.Master
         //        _BearerClass.Authentication(Request);
         //        if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
-        //        _KBCN.Plant = _BearerClass.Plant;
+        //        
 
         //        string F_Plant = Convert.ToString(_BearerClass.Records.F_Plant).Trim();
         //        string F_OrderType = Convert.ToString(_BearerClass.Records.F_OrderType).Trim();

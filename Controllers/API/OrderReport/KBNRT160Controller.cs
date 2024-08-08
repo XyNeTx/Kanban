@@ -48,38 +48,6 @@ namespace KANBAN.Controllers.API.OrderReport
             _PPMInvenContext = pPMInvenContext;
         }
 
-        public void setConString()
-        {
-            try
-            {
-                if (_KBCN.Plant.ToString() == "3")
-                {
-                    var KBConnectString = _configuration.GetConnectionString("KB3Connection");
-                    var PPMConnectString = _configuration.GetConnectionString("PPM3Connection");
-                    _KB3Context.Database.SetConnectionString(KBConnectString);
-                    _PPM3Context.Database.SetConnectionString(PPMConnectString);
-                }
-                else if (_KBCN.Plant.ToString() == "2")
-                {
-                    var KBConnectString = _configuration.GetConnectionString("KB2Connection");
-                    var PPMConnectString = _configuration.GetConnectionString("PPMConnection");
-                    _KB3Context.Database.SetConnectionString(KBConnectString);
-                    _PPM3Context.Database.SetConnectionString(PPMConnectString);
-                }
-                else if (_KBCN.Plant.ToString() == "1")
-                {
-                    var KBConnectString = _configuration.GetConnectionString("KB1Connection");
-                    var PPMConnectString = _configuration.GetConnectionString("PPMConnection");
-                    _KB3Context.Database.SetConnectionString(KBConnectString);
-                    _PPM3Context.Database.SetConnectionString(PPMConnectString);
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
-        }
-
         public async Task<IActionResult> Initial()
         {
             try
@@ -376,6 +344,7 @@ namespace KANBAN.Controllers.API.OrderReport
                 string _result = "";
                 string userName = HttpContext.Session.GetString("USER_NAME");
                 string hostName = HttpContext.Session.GetString("USER_DEVICENAME");
+                string Plant = HttpContext.Request.Cookies["plantCode"].ToString();
                 await _KB3Context.Database.ExecuteSqlRawAsync
                         ("DELETE FROM RPT_KBNRT_160 WHERE F_Update_By = @UserLogon AND F_Host_name = @Host_name",
                         new SqlParameter("@UserLogon", userName),
@@ -404,7 +373,7 @@ namespace KANBAN.Controllers.API.OrderReport
                     " AND ( F_Issued_Shift = @ShiftFrom OR F_Issued_Shift = @ShiftTo ) ",
                     new SqlParameter("@UserName", userName),
                     new SqlParameter("@HostName", hostName),
-                    new SqlParameter("@Plant", _KBCN.Plant),
+                    new SqlParameter("@Plant", Plant),
                     new SqlParameter("@SupFrom", supFrom),
                     new SqlParameter("@SupTo", supTo),
                     new SqlParameter("@KBNFrom", kbnFrom),

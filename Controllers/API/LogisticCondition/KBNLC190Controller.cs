@@ -107,7 +107,7 @@ namespace HINOSystem.Controllers.API.Master
                     WHERE  F_YM='" + _json.Period + @"'  
                     AND  F_Plant='" + _json.Plant + @"'  
                     Order by F_Rev";
-                _KBCN.Plant = _json.F_Plant;
+                
                 string _jsImport_Delivery = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
 
                 string _result = @"{

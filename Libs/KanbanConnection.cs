@@ -11,16 +11,16 @@ namespace HINOSystem.Libs
     public class KanbanConnection
     {
         private readonly KB3Context _KB3Context;
-        private readonly HttpContext _httpContext;
+        private readonly IHttpContextAccessor _httpContext;
 
-        public KanbanConnection(KB3Context kB3Context, HttpContext httpContext)
+        public KanbanConnection(KB3Context kB3Context, IHttpContextAccessor httpContext)
         {
             _KB3Context = kB3Context;
             _httpContext = httpContext;
         }
 
 
-        public DataTable ExecuteSQL(string SQL, HttpContext httpContext = null, bool skipLog = false, BearerClass pUser = null, string pAction = "EXECUTE QUERY", string pControllerName = "", string pActionName = "", string pSystem = "")
+        public DataTable ExecuteSQL(string SQL, IHttpContextAccessor httpContext = null, bool skipLog = false, BearerClass pUser = null, string pAction = "EXECUTE QUERY", string pControllerName = "", string pActionName = "", string pSystem = "")
         {
             try
             {
@@ -56,7 +56,7 @@ namespace HINOSystem.Libs
         }
 
 
-        public string ExecuteJSON(string SQL, HttpContext httpContext = null, bool skipLog = false, BearerClass pUser = null, string pAction = "EXECUTE JSON", string pControllerName = "", string pActionName = "", string pSystem = "")
+        public string ExecuteJSON(string SQL, IHttpContextAccessor httpContext = null, bool skipLog = false, BearerClass pUser = null, string pAction = "EXECUTE JSON", string pControllerName = "", string pActionName = "", string pSystem = "")
         {
             
             SqlConnection cn = new SqlConnection(_KB3Context.Database.GetConnectionString());
@@ -101,7 +101,7 @@ namespace HINOSystem.Libs
         }
 
 
-        public Boolean Execute(string SQL, HttpContext httpContext = null, bool skipLog = false, BearerClass pUser = null, string pAction = "EXECUTE", string pControllerName = "", string pActionName = "", string pSystem = "")
+        public Boolean Execute(string SQL, IHttpContextAccessor httpContext = null, bool skipLog = false, BearerClass pUser = null, string pAction = "EXECUTE", string pControllerName = "", string pActionName = "", string pSystem = "")
         {
             try
             {
@@ -133,7 +133,7 @@ namespace HINOSystem.Libs
 
 
 
-        public void executeLog(HttpContext httpContext = null, string pSQL = "", string pAction = "", string pResult = "", string pMessage = "", BearerClass pUser = null, string pControllerName = "", string pActionName = "", string pSystem = "")
+        public void executeLog(IHttpContextAccessor httpContext = null, string pSQL = "", string pAction = "", string pResult = "", string pMessage = "", BearerClass pUser = null, string pControllerName = "", string pActionName = "", string pSystem = "")
         {
             string _user = "SYSTEM"
                 , _token = ""
@@ -142,8 +142,8 @@ namespace HINOSystem.Libs
 
             if (httpContext != null)
             {
-                _user = httpContext.Session.GetString("USER_CODE").ToString();
-                _token = httpContext.Session.GetString("TOKEN").ToString();
+                _user = httpContext.HttpContext.Session.GetString("USER_CODE").ToString();
+                _token = httpContext.HttpContext.Session.GetString("TOKEN").ToString();
             }
             if (pUser != null)
             {

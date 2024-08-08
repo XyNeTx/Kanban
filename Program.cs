@@ -61,9 +61,9 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<DefaultConnection>();
 builder.Services.AddScoped<ERPConnection>();
 builder.Services.AddScoped<KanbanConnection>();
-builder.Services.AddSingleton<CloudConnection>();
-builder.Services.AddSingleton<ProcWebConnection>();
-builder.Services.AddSingleton<PPM3Connection>();
+builder.Services.AddScoped<CloudConnection>();
+builder.Services.AddScoped<ProcWebConnection>();
+builder.Services.AddScoped<PPM3Connection>();
 
 builder.Services.AddScoped<cnConnect>();
 builder.Services.AddScoped<DbConnect>();

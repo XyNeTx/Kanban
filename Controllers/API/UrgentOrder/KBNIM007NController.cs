@@ -50,32 +50,6 @@ namespace HINOSystem.Controllers.API.Master
             _FillDT = fillDT;
         }
 
-        public void setConString()
-        {
-            try
-            {
-                if (_KBCN.Plant.ToString() == "3")
-                {
-                    var connectString = _configuration.GetConnectionString("KB3Connection");
-                    _KB3Context.Database.SetConnectionString(connectString);
-                }
-                else if (_KBCN.Plant.ToString() == "2")
-                {
-                    var connectString = _configuration.GetConnectionString("KB2Connection");
-                    _KB3Context.Database.SetConnectionString(connectString);
-                }
-                else if (_KBCN.Plant.ToString() == "1")
-                {
-                    var connectString = _configuration.GetConnectionString("KB1Connection");
-                    _KB3Context.Database.SetConnectionString(connectString);
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
-        }
-
         [HttpPost]
         public IActionResult initial([FromBody] string pData = null)
         {

@@ -73,7 +73,7 @@ namespace HINOSystem.Controllers.API.Master
                 _BearerClass.Authentication(Request);
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
-                _KBCN.Plant = _BearerClass.Plant;
+                
 
                 _SQL = @" [exec].[spKBNOR600] '" + _data.OrderType.ToString() + @"','" + _BearerClass.Plant + @"','" + _BearerClass.UserCode + @"' ";
 
@@ -115,7 +115,7 @@ namespace HINOSystem.Controllers.API.Master
                 _BearerClass.Authentication(Request);
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
-                _KBCN.Plant = _BearerClass.Plant;
+                
 
                 if (pPostData != null) _data = JsonConvert.DeserializeObject(pPostData);
 
@@ -160,7 +160,7 @@ namespace HINOSystem.Controllers.API.Master
                 _BearerClass.Authentication(Request);
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
-                _KBCN.Plant = _BearerClass.Plant;
+                
 
                 if (pPostData != null) _data = JsonConvert.DeserializeObject(pPostData);
 

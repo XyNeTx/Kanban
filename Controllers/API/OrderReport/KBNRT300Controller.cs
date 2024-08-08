@@ -43,37 +43,6 @@ namespace KANBAN.Controllers.API.OrderReport
             _ProcDB = procDB;
         }
 
-        public void setConString()
-        {
-            try
-            {
-                if (_KBCN.Plant.ToString() == "3")
-                {
-                    var KBConnectString = _configuration.GetConnectionString("KB3Connection");
-                    var PPMConnectString = _configuration.GetConnectionString("PPM3Connection");
-                    _KB3Context.Database.SetConnectionString(KBConnectString);
-                    _PPM3Context.Database.SetConnectionString(PPMConnectString);
-                }
-                else if (_KBCN.Plant.ToString() == "2")
-                {
-                    var KBConnectString = _configuration.GetConnectionString("KB2Connection");
-                    var PPMConnectString = _configuration.GetConnectionString("PPMConnection");
-                    _KB3Context.Database.SetConnectionString(KBConnectString);
-                    _PPM3Context.Database.SetConnectionString(PPMConnectString);
-                }
-                else if (_KBCN.Plant.ToString() == "1")
-                {
-                    var KBConnectString = _configuration.GetConnectionString("KB1Connection");
-                    var PPMConnectString = _configuration.GetConnectionString("PPMConnection");
-                    _KB3Context.Database.SetConnectionString(KBConnectString);
-                    _PPM3Context.Database.SetConnectionString(PPMConnectString);
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
-        }
 
         public async Task<IActionResult> ClickReport([FromBody] string data)
         {

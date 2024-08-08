@@ -87,7 +87,7 @@ namespace HINOSystem.Controllers.API.Master
 
             try
             {
-                _KBCN.Plant = _BearerClass.Plant;
+                
 
                 //_SQL = @" ";
                 //string _jsTB_MS_Factory = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName: ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
@@ -125,7 +125,7 @@ namespace HINOSystem.Controllers.API.Master
 
             try
             {
-                _KBCN.Plant = _BearerClass.Plant;
+                
 
                 if (pPostData != null) _data = JsonConvert.DeserializeObject(pPostData);
 
@@ -207,7 +207,7 @@ namespace HINOSystem.Controllers.API.Master
 
             try
             {
-                _KBCN.Plant = _BearerClass.Plant;
+                
 
                 if (pPostData != null) _data = JsonConvert.DeserializeObject(pPostData);
 

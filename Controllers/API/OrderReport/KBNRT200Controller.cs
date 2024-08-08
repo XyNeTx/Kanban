@@ -46,37 +46,6 @@ namespace KANBAN.Controllers.API.OrderReport
             _PPMInvenContext = pPMInvenContext;
         }
 
-        public void setConString()
-        {
-            try
-            {
-                if (_KBCN.Plant.ToString() == "3")
-                {
-                    var KBConnectString = _configuration.GetConnectionString("KB3Connection");
-                    var PPMConnectString = _configuration.GetConnectionString("PPM3Connection");
-                    _KB3Context.Database.SetConnectionString(KBConnectString);
-                    _PPM3Context.Database.SetConnectionString(PPMConnectString);
-                }
-                else if (_KBCN.Plant.ToString() == "2")
-                {
-                    var KBConnectString = _configuration.GetConnectionString("KB2Connection");
-                    var PPMConnectString = _configuration.GetConnectionString("PPMConnection");
-                    _KB3Context.Database.SetConnectionString(KBConnectString);
-                    _PPM3Context.Database.SetConnectionString(PPMConnectString);
-                }
-                else if (_KBCN.Plant.ToString() == "1")
-                {
-                    var KBConnectString = _configuration.GetConnectionString("KB1Connection");
-                    var PPMConnectString = _configuration.GetConnectionString("PPMConnection");
-                    _KB3Context.Database.SetConnectionString(KBConnectString);
-                    _PPM3Context.Database.SetConnectionString(PPMConnectString);
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
-        }
         public async Task<IActionResult> OnReportBtnClick([FromBody] string data)
         {
             try
@@ -91,7 +60,7 @@ namespace KANBAN.Controllers.API.OrderReport
 
                 string UserName = HttpContext.Session.GetString("USER_NAME");
                 string HostName = HttpContext.Session.GetString("USER_DEVICENAME");
-                char Plant = _KBCN.Plant.ToString()[0];
+                char Plant = HttpContext.Request.Cookies["plantCode"].ToString()[0];
 
                 if (string.IsNullOrWhiteSpace(UserName) || string.IsNullOrWhiteSpace(HostName))
                 {

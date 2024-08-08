@@ -66,7 +66,7 @@ namespace HINOSystem.Controllers.API.Master
                 _BearerClass.Authentication(Request);
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
-                _KBCN.Plant = _BearerClass.Plant;
+                
 
                 _SQL = @"
                     SELECT F_Plant
@@ -107,7 +107,7 @@ namespace HINOSystem.Controllers.API.Master
                 _BearerClass.Authentication(Request);
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
-                _KBCN.Plant = _BearerClass.Plant;
+                
 
                 _json = JsonConvert.DeserializeObject(pData);
 
@@ -126,7 +126,7 @@ namespace HINOSystem.Controllers.API.Master
                     WHERE 1=1
                 ";
 
-                if ( _json != null ) _SQL += " AND F_Plant = "+ _KBCN.Plant;
+                if ( _json != null ) _SQL += " AND F_Plant = ";
 
                 string _jsTB_MS_OrderType = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
 
@@ -204,7 +204,7 @@ namespace HINOSystem.Controllers.API.Master
                 _BearerClass.Authentication(Request);
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
-                _KBCN.Plant = _BearerClass.Plant;
+                
 
                 _SQL = @"
                     UPDATE [dbo].[TB_MS_OldPart]
@@ -253,7 +253,7 @@ namespace HINOSystem.Controllers.API.Master
                 _BearerClass.Authentication(Request);
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
-                _KBCN.Plant = _BearerClass.Plant;
+                
 
                 _SQL = @"
                     DELETE [dbo].[TB_MS_OldPart]

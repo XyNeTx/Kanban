@@ -124,7 +124,7 @@ namespace HINOSystem.Controllers.API.Master
 
 
                 _SQL = @" EXEC [exec].[spKBNIM002M_SEARCH] '" + _json.F_Plant + "' ";
-                _KBCN.Plant = _json.F_Plant;
+                
                 string _jsonData = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
 
 

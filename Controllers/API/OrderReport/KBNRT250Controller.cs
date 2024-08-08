@@ -43,37 +43,6 @@ namespace KANBAN.Controllers.API.OrderReport
             _FillDT = fillDataTable;
         }
 
-        public void setConString()
-        {
-            try
-            {
-                if (_KBCN.Plant.ToString() == "3")
-                {
-                    var KBConnectString = _configuration.GetConnectionString("KB3Connection");
-                    var PPMConnectString = _configuration.GetConnectionString("PPM3Connection");
-                    _KB3Context.Database.SetConnectionString(KBConnectString);
-                    _PPM3Context.Database.SetConnectionString(PPMConnectString);
-                }
-                else if (_KBCN.Plant.ToString() == "2")
-                {
-                    var KBConnectString = _configuration.GetConnectionString("KB2Connection");
-                    var PPMConnectString = _configuration.GetConnectionString("PPMConnection");
-                    _KB3Context.Database.SetConnectionString(KBConnectString);
-                    _PPM3Context.Database.SetConnectionString(PPMConnectString);
-                }
-                else if (_KBCN.Plant.ToString() == "1")
-                {
-                    var KBConnectString = _configuration.GetConnectionString("KB1Connection");
-                    var PPMConnectString = _configuration.GetConnectionString("PPMConnection");
-                    _KB3Context.Database.SetConnectionString(KBConnectString);
-                    _PPM3Context.Database.SetConnectionString(PPMConnectString);
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
-        }
 
         public async Task<IActionResult> F_System_Flag()
         {
@@ -135,6 +104,7 @@ namespace KANBAN.Controllers.API.OrderReport
                 string dateTo = _json["dateTo"];
                 string timeFrom = _json["timeFrom"];
                 string timeTo = _json["timeTo"];
+                string Plant = HttpContext.Request.Cookies["plantCode"].ToString();
 
                 if (string.IsNullOrWhiteSpace(UserName) || string.IsNullOrWhiteSpace(HostName))
                 {
@@ -162,7 +132,7 @@ namespace KANBAN.Controllers.API.OrderReport
                 {
                     _Serilog.WriteLog("Generate VLT DATA Report", UserName, HostName);
                     string _JsonData = JsonConvert.SerializeObject(UserName);
-                    string _JsonData2 = JsonConvert.SerializeObject(_KBCN.Plant);
+                    string _JsonData2 = JsonConvert.SerializeObject(Plant);
                     _result = @"{
                                     ""status"":""200"",
                                     ""response"":""OK"",

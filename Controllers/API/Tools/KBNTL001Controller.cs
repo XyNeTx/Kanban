@@ -46,7 +46,7 @@ namespace HINOSystem.Controllers.API.Master
 
             try
             {
-                _KBCN.Plant = 3;
+                
                 _BearerClass.Authentication(Request);
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
@@ -62,7 +62,7 @@ namespace HINOSystem.Controllers.API.Master
                     WHERE 1=1
                     AND F_OrderNo = '" + _json.pdsno + @"' 
                 ";
-                _KBCN.Plant = 1;
+                
                 string _jsonReceiveSpecial9Y = _KBCN.ExecuteJSON(_SQL, skipLog: true);
 
                 _KBCN.writeLog(_SQL
@@ -85,7 +85,7 @@ namespace HINOSystem.Controllers.API.Master
                     AND F_OrderNo = '" + _json.pdsno + @"'
                     ORDER BY d.F_No 
                 ";
-                _KBCN.Plant = 1;
+                
                 string _jsonReceiveDate = _KBCN.ExecuteJSON(_SQL, skipLog: true);
 
                 _SQL = @"
@@ -152,7 +152,7 @@ namespace HINOSystem.Controllers.API.Master
 
             try
             {
-                _KBCN.Plant = 3;
+                
                 _BearerClass.Authentication(Request);
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
@@ -160,7 +160,7 @@ namespace HINOSystem.Controllers.API.Master
 
 
                 _SQL = "EXEC [QQ].[Chg_IssuedDate] '" + _json.pdsno + "' ";
-                _KBCN.Plant = 1;
+                
                 _KBCN.Execute(_SQL, skipLog: true);
 
                 _KBCN.writeLog(_SQL
@@ -203,14 +203,14 @@ namespace HINOSystem.Controllers.API.Master
 
             try
             {
-                _KBCN.Plant = 3;
+                
                 _BearerClass.Authentication(Request);
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
                 dynamic _json = JsonConvert.DeserializeObject(pData);
 
                 _SQL = "EXEC [QQ].[Chg_ReceiveDate] '" + _json.pdsno + "', '" + _json.receivedate + "' ";
-                _KBCN.Plant = 1;
+                
                 _KBCN.Execute(_SQL, skipLog: true);
 
                 _KBCN.writeLog(_SQL

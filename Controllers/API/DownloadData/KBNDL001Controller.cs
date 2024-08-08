@@ -103,11 +103,11 @@ namespace HINOSystem.Controllers.API.Master
 
             try
             {
-                _KBCN.Plant = 3;
+                
                 _BearerClass.Authentication(Request);
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
-                _KBCN.Plant = 1;
+                
 
                 _SQL = @" EXEC [exec].[spKBNDL001_INI_PDS] '1'";
                 string _jsPDSNo = _KBCN.ExecuteJSON(_SQL, pControllerName: ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
@@ -151,11 +151,11 @@ namespace HINOSystem.Controllers.API.Master
 
             try
             {
-                _KBCN.Plant = 3;
+                
                 _BearerClass.Authentication(Request);
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
-                _KBCN.Plant = _BearerClass.Plant;
+                
                 if (pPostData != null) _data = JsonConvert.DeserializeObject(pPostData);
 
                 string _pdsno = Convert.ToString(_data.PDSNO);
@@ -225,11 +225,11 @@ namespace HINOSystem.Controllers.API.Master
                 }";
             try
             {
-                _KBCN.Plant = 3;
+                
                 _BearerClass.Authentication(Request);
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
-                _KBCN.Plant = _BearerClass.Plant;
+                
                 if (pPostData != null) _data = JsonConvert.DeserializeObject(pPostData);
 
                 string _pdsno = Convert.ToString(_data.PDSNO);
@@ -307,11 +307,11 @@ namespace HINOSystem.Controllers.API.Master
 
             try
             {
-                _KBCN.Plant = 3;
+                
                 _BearerClass.Authentication(Request);
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
-                _KBCN.Plant = _BearerClass.Plant;
+                
                 if (pPostData != null) _data = JsonConvert.DeserializeObject(pPostData);
 
                 //Clear  TB_PDS_DETAIL

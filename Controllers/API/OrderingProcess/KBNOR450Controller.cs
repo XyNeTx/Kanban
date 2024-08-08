@@ -87,7 +87,7 @@ namespace HINOSystem.Controllers.API.Master
 
             try
             {
-                _KBCN.Plant = _BearerClass.Plant;
+                
 
                 _SQL = @" EXEC [exec].[spKBNOR450_INI_PDS] 
                     'U',
@@ -140,7 +140,7 @@ namespace HINOSystem.Controllers.API.Master
 
             try
             {
-                _KBCN.Plant = _BearerClass.Plant;
+                
 
                 if (pPostData != null) _data = JsonConvert.DeserializeObject(pPostData);
 
@@ -222,7 +222,7 @@ namespace HINOSystem.Controllers.API.Master
 
             try
             {
-                _KBCN.Plant = _BearerClass.Plant;
+                
 
                 if (pPostData != null) _data = JsonConvert.DeserializeObject(pPostData);
 

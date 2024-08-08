@@ -50,53 +50,23 @@ namespace KANBAN.Controllers.API.OrderReport
         public string OrderSpecial = "";
         public string Type = "SPECIAL";
 
-        public void setConString()
-        {
-            try
-            {
-                if (_KBCN.Plant.ToString() == "3")
-                {
-                    var KBConnectString = _configuration.GetConnectionString("KB3Connection");
-                    var PPMConnectString = _configuration.GetConnectionString("PPM3Connection");
-                    _KB3Context.Database.SetConnectionString(KBConnectString);
-                    _PPM3Context.Database.SetConnectionString(PPMConnectString);
-                }
-                else if (_KBCN.Plant.ToString() == "2")
-                {
-                    var KBConnectString = _configuration.GetConnectionString("KB2Connection");
-                    var PPMConnectString = _configuration.GetConnectionString("PPMConnection");
-                    _KB3Context.Database.SetConnectionString(KBConnectString);
-                    _PPM3Context.Database.SetConnectionString(PPMConnectString);
-                }
-                else if (_KBCN.Plant.ToString() == "1")
-                {
-                    var KBConnectString = _configuration.GetConnectionString("KB1Connection");
-                    var PPMConnectString = _configuration.GetConnectionString("PPMConnection");
-                    _KB3Context.Database.SetConnectionString(KBConnectString);
-                    _PPM3Context.Database.SetConnectionString(PPMConnectString);
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
-        }
 
         public void SetVariable()
         {
             try
             {
-                if (_KBCN.Plant.ToString() == "1")
+                string Plant = HttpContext.Request.Cookies["plantCode"].ToString();
+                if (Plant.ToString() == "1")
                 {
                     OrderNormal = "1";
                     OrderSpecial = "9";
                 }
-                else if (_KBCN.Plant.ToString() == "2")
+                else if (Plant.ToString() == "2")
                 {
                     OrderNormal = "2";
                     OrderSpecial = "8";
                 }
-                else if (_KBCN.Plant.ToString() == "3")
+                else if (Plant.ToString() == "3")
                 {
                     OrderNormal = "3";
                     OrderSpecial = "7";
@@ -359,6 +329,7 @@ namespace KANBAN.Controllers.API.OrderReport
                 bool F_tax_ch = _json.DT["F_tax_ch"];
                 char F_Status_P = _json.DT["F_Status_P"];
                 char F_Status_Other = _json.DT["F_Status_Other"];
+                string Plant = HttpContext.Request.Cookies["plantCode"].ToString();
 
                 await _KB3Context.Database.ExecuteSqlRawAsync("Insert into  [RPT_Invoice].[TB_Inv_Header_EPRO] " +
                     " (F_Plant,F_inv_cd,  F_tac_inv, F_pds_cd, F_sup_cd, F_sup_plant, F_inv_date, F_vat " +
@@ -369,7 +340,7 @@ namespace KANBAN.Controllers.API.OrderReport
                     $" '{F_amount_vat}','{F_tax_ch}','{F_Status_P}','{F_Status_Other}','{UserName}') ");
 
                 string _jsonData = JsonConvert.SerializeObject(UserName);
-                string _jsonData2 = JsonConvert.SerializeObject(_KBCN.Plant);
+                string _jsonData2 = JsonConvert.SerializeObject(Plant);
                 string _result = @"{
                                     ""status"":""200"",
                                     ""response"":""OK"",

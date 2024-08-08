@@ -43,38 +43,6 @@ namespace KANBAN.Controllers.API.OrderReport
             _PPMInvenContext = pPMInvenContext;
         }
 
-        public void setConString()
-        {
-            try
-            {
-                if (_KBCN.Plant.ToString() == "3")
-                {
-                    var KBConnectString = _configuration.GetConnectionString("KB3Connection");
-                    var PPMConnectString = _configuration.GetConnectionString("PPM3Connection");
-                    _KB3Context.Database.SetConnectionString(KBConnectString);
-                    _PPM3Context.Database.SetConnectionString(PPMConnectString);
-                }
-                else if (_KBCN.Plant.ToString() == "2")
-                {
-                    var KBConnectString = _configuration.GetConnectionString("KB2Connection");
-                    var PPMConnectString = _configuration.GetConnectionString("PPMConnection");
-                    _KB3Context.Database.SetConnectionString(KBConnectString);
-                    _PPM3Context.Database.SetConnectionString(PPMConnectString);
-                }
-                else if (_KBCN.Plant.ToString() == "1")
-                {
-                    var KBConnectString = _configuration.GetConnectionString("KB1Connection");
-                    var PPMConnectString = _configuration.GetConnectionString("PPMConnection");
-                    _KB3Context.Database.SetConnectionString(KBConnectString);
-                    _PPM3Context.Database.SetConnectionString(PPMConnectString);
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
-        }
-
         public async Task<IActionResult> Initial()
         {
             try
@@ -164,7 +132,7 @@ namespace KANBAN.Controllers.API.OrderReport
                 string dateTo = _json["dateTo"];
                 int tripFrom = _json["tripFrom"];
                 int tripTo = _json["tripTo"];
-                char plant = _KBCN.Plant.ToString()[0];
+                string plant = HttpContext.Request.Cookies["plantCode"].ToString();
                 string UserName = HttpContext.Session.GetString("USER_NAME");
                 string HostName = HttpContext.Session.GetString("USER_DEVICENAME");
 
@@ -178,7 +146,7 @@ namespace KANBAN.Controllers.API.OrderReport
                     new SqlParameter("@UserName", UserName),
                     new SqlParameter("@HostName", HostName));
 
-                var rptList = await _KB3Context.V_KBNRT_190_Rpt.Where(x => x.F_Plant == plant)
+                var rptList = await _KB3Context.V_KBNRT_190_Rpt.Where(x => x.F_Plant == plant[0])
                     .Where(x => x.Sup_Code.CompareTo(supFrom) >= 0 && x.Sup_Code.CompareTo(supTo) <= 0)
                     .Where(x => x.F_Kanban_No.CompareTo(kbnFrom) >= 0 && x.F_Kanban_No.CompareTo(kbnTo) <= 0)
                     .Where(x => x.F_Delivery_Dock.CompareTo(storeFrom) >= 0 && x.F_Delivery_Dock.CompareTo(storeTo) <= 0)
@@ -251,7 +219,7 @@ namespace KANBAN.Controllers.API.OrderReport
                 string partTo = _json["partTo"];
                 string dateFrom = _json["dateFrom"];
                 string dateTo = _json["dateTo"];
-                char plant = _KBCN.Plant.ToString()[0];
+                string plant = HttpContext.Request.Cookies["plantCode"].ToString();
                 string UserName = HttpContext.Session.GetString("USER_NAME");
                 string HostName = HttpContext.Session.GetString("USER_DEVICENAME");
 
@@ -260,7 +228,7 @@ namespace KANBAN.Controllers.API.OrderReport
                     new SqlParameter("@UserName", UserName),
                     new SqlParameter("@HostName", HostName));
 
-                var rptList = await _KB3Context.V_KBNRT_190_Rpt.Where(x => x.F_Plant == plant)
+                var rptList = await _KB3Context.V_KBNRT_190_Rpt.Where(x => x.F_Plant == plant[0])
                     .Where(x => x.Sup_Code.CompareTo(supFrom) >= 0 && x.Sup_Code.CompareTo(supTo) <= 0)
                     .Where(x => x.F_Kanban_No.CompareTo(kbnFrom) >= 0 && x.F_Kanban_No.CompareTo(kbnTo) <= 0)
                     .Where(x => x.F_Delivery_Dock.CompareTo(storeFrom) >= 0 && x.F_Delivery_Dock.CompareTo(storeTo) <= 0)

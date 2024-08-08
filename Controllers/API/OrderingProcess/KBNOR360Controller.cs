@@ -74,7 +74,7 @@ namespace HINOSystem.Controllers.API.Master
 
             try
             {
-                _KBCN.Plant = _BearerClass.Plant;
+                
 
                 if (pPostData != null) _data = JsonConvert.DeserializeObject(pPostData);
 
@@ -129,7 +129,7 @@ namespace HINOSystem.Controllers.API.Master
                 _BearerClass.Authentication(Request);
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
-                _KBCN.Plant = _BearerClass.Plant;
+                
 
                 if (pPostData != null) _data = JsonConvert.DeserializeObject(pPostData);
 
