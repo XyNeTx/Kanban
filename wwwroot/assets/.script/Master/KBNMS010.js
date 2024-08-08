@@ -34,71 +34,7 @@ $(document).ready(function () {
 
 
 
-    _setDayInMonth = function (data) {
-        let _sDate = xDate.Now('yyyy-MM-01');
-        if ($('#F_YM').val() != '') _sDate = $('#F_YM').val() + '-01';
 
-        let _date = new Date(_sDate);
-        //console.log(_date);
-
-        let _sd = new Date(_date.setMonth(_date.getMonth()));
-        //console.log(_sd);
-
-        let _e = new Date(_date.setMonth(_date.getMonth() + 1));
-        //console.log(_e);
-
-        let _ed = new Date(_e.getFullYear(), _e.getMonth(), 0);
-        //console.log(_ed);
-
-
-        for (var i = 0; i <= 41; i++) {
-
-            if (i >= _sd.getDay() && i < (_sd.getDay() + _ed.getDate())) {
-                let _n = ((_sd.getDay() - i) * -1) + 1;
-
-                if (!data) { // original from P'Tor
-                    $('#' + i + 'D').text(_n).append("<input type='hidden' name='F_workCd_D" + i + "' id='F_workCd_D" + i + "' value='" + 1 + "' />");
-                    $('#' + i + 'N').text(_n).append("<input type='hidden' name='F_workCd_N" + i + "' id='F_workCd_N" + i + "' value='" + 1 + "' />");
-
-                    $('#' + i + 'D').attr('class', 'bg-success text-center fw-bolder');
-                    $('#' + i + 'N').attr('class', 'bg-success text-center fw-bolder');
-                }
-
-                else { // Inquiry Data in DB
-                    let _dVal = data[`f_workCd_D${i}`];
-                    let _nVal = data[`f_workCd_N${i}`];
-                    //console.log(`f_workCd_D${i} : `, _dVal);
-                    //console.log(`f_workCd_N${i} : `, _nVal);
-
-                    if (_dVal == 1) {
-                        $('#' + i + 'D').text(_n).append("<input type='hidden' name='F_workCd_D" + i + "' id='F_workCd_D" + i + "' value='" + 1 + "' />");
-                        $('#' + i + 'D').attr('class', 'bg-success text-center fw-bolder');
-                    }
-                    else {
-                        $('#' + i + 'D').text(_n).append("<input type='hidden' name='F_workCd_D" + i + "' id='F_workCd_D" + i + "' value='" + 0 + "' />");
-                        $('#' + i + 'D').attr('class', 'bg-danger text-center fw-bolder');
-                    }
-                    if (_nVal == 1) {
-                        $('#' + i + 'N').text(_n).append("<input type='hidden' name='F_workCd_N" + i + "' id='F_workCd_N" + i + "' value='" + 1 + "' />");
-                        $('#' + i + 'N').attr('class', 'bg-success text-center fw-bolder');
-                    }
-                    else {
-                        $('#' + i + 'N').text(_n).append("<input type='hidden' name='F_workCd_N" + i + "' id='F_workCd_N" + i + "' value='" + 0 + "' />");
-                        $('#' + i + 'N').attr('class', 'bg-danger text-center fw-bolder');
-                    }
-                }
-
-            }
-            else {
-                $('#' + i + 'D').text('');
-                $('#' + i + 'N').text('');
-
-                $('#' + i + 'D').removeAttr('class');
-                $('#' + i + 'N').removeAttr('class');
-            }
-        }
-
-    }
     _setDayInMonth();
 
 
@@ -136,6 +72,74 @@ $("#F_YM , #F_Store_cd").change(function () {
         )
     }
 });
+
+_setDayInMonth = function (data) {
+    //console.log(data);
+    let _sDate = xDate.Now('yyyy-MM-01');
+    if ($('#F_YM').val() != '') _sDate = $('#F_YM').val() + '-01';
+
+    let _date = new Date(_sDate);
+    //console.log(_date);
+
+    let _sd = new Date(_date.setMonth(_date.getMonth()));
+    //console.log(_sd);
+
+    let _e = new Date(_date.setMonth(_date.getMonth() + 1));
+    //console.log(_e);
+
+    let _ed = new Date(_e.getFullYear(), _e.getMonth(), 0);
+    //console.log(_ed);
+
+    let j = 1;
+    for (var i = 0; i <= 41; i++) {
+        if (i >= _sd.getDay() && i < (_sd.getDay() + _ed.getDate())) {
+            let _n = ((_sd.getDay() - i) * -1) + 1;
+
+            if (!data) { // original from P'Tor
+                $('#' + i + 'D').text(_n).append("<input type='hidden' name='F_workCd_D" + i + "' id='F_workCd_D" + i + "' value='" + 1 + "' />");
+                $('#' + i + 'N').text(_n).append("<input type='hidden' name='F_workCd_N" + i + "' id='F_workCd_N" + i + "' value='" + 1 + "' />");
+
+                $('#' + i + 'D').attr('class', 'bg-success text-center fw-bolder');
+                $('#' + i + 'N').attr('class', 'bg-success text-center fw-bolder');
+            }
+
+            else { // Inquiry Data in DB
+                if( j > 31) break;
+                let _dVal = data[`f_workCd_D${j}`];
+                let _nVal = data[`f_workCd_N${j}`];
+                //console.log(`f_workCd_D${j} : `, _dVal);
+                //console.log(`f_workCd_N${j} : `, _nVal);
+
+                if (_dVal == 1) {
+                    $('#' + i + 'D').text(_n).append("<input type='hidden' name='F_workCd_D" + j + "' id='F_workCd_D" + j + "' value='" + 1 + "' />");
+                    $('#' + i + 'D').attr('class', 'bg-success text-center fw-bolder');
+                }
+                else {
+                    $('#' + i + 'D').text(_n).append("<input type='hidden' name='F_workCd_D" + j + "' id='F_workCd_D" + j + "' value='" + 0 + "' />");
+                    $('#' + i + 'D').attr('class', 'bg-danger text-center fw-bolder');
+                }
+                if (_nVal == 1) {
+                    $('#' + i + 'N').text(_n).append("<input type='hidden' name='F_workCd_N" + j + "' id='F_workCd_N" + j + "' value='" + 1 + "' />");
+                    $('#' + i + 'N').attr('class', 'bg-success text-center fw-bolder');
+                }
+                else {
+                    $('#' + i + 'N').text(_n).append("<input type='hidden' name='F_workCd_N" + j + "' id='F_workCd_N" + j + "' value='" + 0 + "' />");
+                    $('#' + i + 'N').attr('class', 'bg-danger text-center fw-bolder');
+                }
+                j++;
+            }
+
+        }
+        else {
+            $('#' + i + 'D').text('');
+            $('#' + i + 'N').text('');
+
+            $('#' + i + 'D').removeAttr('class');
+            $('#' + i + 'N').removeAttr('class');
+        }
+    }
+
+}
 
 $("#buttonNew").click(function () {
     _cmd = "New";
