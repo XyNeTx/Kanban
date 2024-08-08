@@ -46,7 +46,7 @@ $(document).ready(async function () {
         function (success) {
             if (success.status == 200) {
                 success.data = _xLib.JSONparseAndTrim(success.data);
-                console.log(success.data);
+                //console.log(success.data);
                 $("#btnPreview").prop("disabled", !success.data.includes("Preview"));
                 $("#btnProcess").prop("disabled", !success.data.includes("Search"));
                 $("#btnReCal").prop("disabled", !success.data.includes("Recalculate"));
@@ -56,18 +56,6 @@ $(document).ready(async function () {
 
     $("thead tr th").each(function () {
         $(this).addClass("text-center");
-    });
-
-    $.ajax({
-        url: "http:\\\\hmmt-app07/sso/api/SingleSignOn/getLogin",
-        type: "GET",
-        xhrFields: {
-            withCredentials: true // Include credentials in the request
-        },
-
-        success: function (result) {
-            console.log(result);
-        }
     });
 
     xSplash.hide();
@@ -153,7 +141,7 @@ $("#btnPrevPage").click(async function () {
 
 $("#btnNextPage").click(async function () {
     var page = parseInt($("#txtPage").val().split("/")[0]);
-    if (page == dT_PartControl.length) return;
+    if (page == parseInt($("#txtPage").val().split("/")[1])) return;
     $("#txtPage").val((parseInt(page) + 1) + "/" + dT_PartControl.length);
     previewFunction($("#txtPage").val().split("/")[0] - 1, _command); // -1 because index start at 0
     window.scrollTo(0, 0);
@@ -275,7 +263,7 @@ const previewFunction = async (intRow,_command) => {
             function (success) {
                 if (success.status == 200) {
                     success.data = _xLib.JSONparseAndTrim(success.data);
-                    console.log(success.data);
+                    //console.log(success.data);
                     $("#btnPreview").prop("disabled", !success.data.includes("Preview"));
                     $("#btnProcess").prop("disabled", !success.data.includes("Search"));
                     $("#btnReCal").prop("disabled", !success.data.includes("Recalculate"));
@@ -693,7 +681,7 @@ const sumKB = async (dateSet) => {
                 let $Pcs = $KB * parseInt($("#readQtyPack").val());
                 if (isNaN($Pcs)) $Pcs = 0;
 
-                console.log($Pcs);
+                //console.log($Pcs);
                 //console.log(`tdR${ _Row[i]}Pcs${ dateSet[_countDateSet]}`);
                 $(`#tdR${_Row[i]}Pcs${dateSet[_countDateSet]}`).text($Pcs);
                 $Pcs == 0 ? $(`#tdR${_Row[i]}KB${dateSet[_countDateSet]}`).text($Pcs) : $(`#tdR${_Row[i]}Kb${dateSet[_countDateSet]}`).text($KB);
@@ -713,4 +701,18 @@ const sumKB = async (dateSet) => {
             });
         }
     });
+
 }
+
+$("#buttonCancel").click(function () {
+    $("#divSelect , #divRead").find("input").val("");
+    $("#divSelect , #divRead").find("select").val("");
+    $("#divSelect , #divRead").find("textarea").val("");
+    $("#txtPage").val("1/1");
+    $("#tableMaster thead tr").empty();
+    $("#tableMaster tbody tr td").remove();
+});
+
+$("#buttonExit").click(function () {
+    window.location.href = "KBNOR100";
+});

@@ -71,7 +71,7 @@
             <div class="card-body">
                 @*------------------- div select to preview ----------------------*@
                 <div class="row" id="divPreview">
-                    <div class="col-4 p-1 pt-4" style="border:solid;border-color:aqua;border-width:medium;">
+                    <div id="divSelect" class="col-4 p-1 pt-4" style="border:solid;border-color:aqua;border-width:medium;">
                         <div class="row">
                             <div class="input-group col-7" style="padding-right:.25rem">
                                 <label class="input-group-text col-5" style="padding-left:.35rem; for="inputSupplier">Supplier :</label>
@@ -204,13 +204,13 @@
                             <div class="row">
                                 <div class="col" style="padding:0 0.5rem 0 0">
                                     <label class="form-label" for="readSupplier">Supplier</label>
-                                    <input type="text" class="form-control text-center" id="readSupplier" value="0068-D" readonly />
+                                    <input type="text" class="form-control text-center" id="readSupplier" readonly />
                                 </div>
                                 <div style="flex: 0 0 11.5%;padding:0 0.5rem 0 0">
                                     <label class="form-label" for="readSupplierName">Supplier Name</label>
-                                    <input type="text" class="form-control text-center" id="readSupplierName" value="ADVICS" readonly />
+                                    <input type="text" class="form-control text-center" id="readSupplierName" readonly />
                                 </div>
-                                <div style="flex: 0 0 14%;padding:0 0.5rem 0 0">
+                                <div style="flex: 0 0 15%;padding:0 0.5rem 0 0">
                                     <label class="form-label" for="readPartNo">Part No.</label>
                                     <input type="text" class="form-control text-center" id="readPartNo" readonly />
                                 </div>
@@ -234,7 +234,7 @@
                                     <label class="form-label" for="readCycleTime">Cycle Time</label>
                                     <input type="text" class="form-control text-center" id="readCycleTime" value="01-01-01" readonly />
                                 </div>
-                                <div style="flex: 0 0 10%;padding:0 0.5rem 0 0">
+                                <div style="flex: 0 0 9%;padding:0 0.5rem 0 0">
                                     <label class="form-label" for="readLine">Line</label>
                                     <input type="text" class="form-control text-center" id="readLine" readonly />
                                 </div>
@@ -389,7 +389,7 @@
                         </div>
                     </div>
                     <div class="col-4" >
-                        <div class="row">
+                        <div class="row ms-4">
                             <div class="col-3">
                                 <input type="radio" class="form-check-input" id="radioKbStop" />
                                 <label class="form-check-label text-primary" id="lbKbStop" for="radioKbStop">Stop</label>
@@ -437,18 +437,20 @@
                         </div>
                     </div>
                     <div class="col-3">
-                        <div class="d-flex">
+                        <div class="d-flex ms-4 ps-4">
                             <button type="button" class="btn btn-outline-dark btn-rounded col-2" id="btnPrevPage"><i class="fa-solid fa-backward-step"></i></button>
-                            <input type="text" class="form-control text-center col-3" id="txtPage" value="1/6" readonly>
+                            <input type="text" class="form-control text-center col-3" id="txtPage" value="1/1" readonly>
                             <button type="button" class="btn btn-outline-dark btn-rounded col-2" id="btnNextPage"><i class="fa-solid fa-forward-step"></i></button>
                         </div>
                     </div>
                     <div class="col">
-                        <div class="d-flex align-end">
+                        <div class="d-flex align-end justify-content-end">
                             <button type="button" style="font-size:0.65rem;padding:0.35rem 0.35rem;" class="btn btn-outline-dark btn-rounded col-4" id="btnBlCal" disabled>
                                 Re-Calculate BL
                             </button>
-                            <button type="button" style="font-size:0.65rem;padding:0.35rem 0.35rem;" class="btn btn-outline-dark btn-rounded col-4" id="btnReCal" disabled>Re-Calculate</button>
+                            <button type="button" style="font-size:0.65rem;padding:0.35rem 0.35rem;" class="btn btn-outline-dark btn-rounded col-4" id="btnReCal" disabled>
+                                Re-Calculate
+                            </button>
                         </div>
                     </div>
                 </div>

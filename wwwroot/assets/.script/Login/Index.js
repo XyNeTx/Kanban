@@ -23,10 +23,10 @@
         setCookie('UI_MenuIcon', 'style4');
         setCookie('UI_SideBar', 'shrink');
     }
-    console.log(_xLib.GetCookie("isDev"));
+    //console.log(_xLib.GetCookie("isDev"));
     await _xLib.GetCookie("isDev") == null || _xLib.GetCookie("isDev") == "" ? _xLib.SetCookie('isDev', 0) : _xLib.GetCookie('isDev');
     await _xLib.GetCookie("debug") == 1 ? _xLib.SetCookie("isDev", 1) : _xLib.SetCookie("isDev", 0);
-    console.log(_xLib.GetCookie("isDev"));
+    //console.log(_xLib.GetCookie("isDev"));
     initial = async function () {
         xSplash.show();
 
@@ -36,7 +36,7 @@
         xAPI.getUser({
             //systemname: 'Hino Kanban F.3',
             then: function (result) {
-                console.log(result);
+                //console.log(result);
                 if (result.response == 'OK') {
 
                     if (getCookie('debug') == '') setCookie('debug', 0);
@@ -73,7 +73,7 @@
             },
 
             success: function (result) {
-                console.log(result);
+                //console.log(result);
                 $('#txtUserName').val(result.userName);
                 //$('#txtUserName').val("20234011");
                 $('#txtDeviceName').val(result.computerName);
@@ -82,7 +82,7 @@
                 _xLib.SetCookie('plantCode', result.userDetail.locationCode);
             },
             error: function (error) {
-                console.log(error);
+                //console.log(error);
                 xSwal.error('Error', "Can't Get User to Login");
             }
 
@@ -90,7 +90,7 @@
 
         await _xLib.AJAX_GetNoHeader(`/xapi/GetLoginDate`, '',
             function (success) {
-                console.log(success);
+                //console.log(success);
                 if (success.status == "200") {
                     $("#txtProcessDate").val(success.data.date);
                     $("#ddlShift").val(success.data.shift);
@@ -104,13 +104,16 @@
                 }
             },
             function (error) {
-                console.log(error);
+                //console.log(error);
                 xSwal.error('Error', "Can't Get Login Date");
             }
         );
-        xSplash.hide();
+
     }
-    initial();
+
+
+    await initial();
+    xSplash.hide();
 
 
 

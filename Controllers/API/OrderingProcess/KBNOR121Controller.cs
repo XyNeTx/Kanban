@@ -1164,5 +1164,25 @@ namespace KANBAN.Controllers.API.OrderingProcess
                 });
             }
         }
+
+        [HttpGet]
+        public IActionResult Bl_Recalculate()
+        {
+            try
+            {
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    response = "Internal Server Error",
+                    title = "Error",
+                    message = "Unexpected Error !!",
+                    error = ex.Message
+                });
+            }
+        }
     }
 }
