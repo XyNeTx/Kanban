@@ -95,12 +95,13 @@ _setDayInMonth = function (data) {
         if (i >= _sd.getDay() && i < (_sd.getDay() + _ed.getDate())) {
             let _n = ((_sd.getDay() - i) * -1) + 1;
 
-            if (!data) { // original from P'Tor
-                $('#' + i + 'D').text(_n).append("<input type='hidden' name='F_workCd_D" + i + "' id='F_workCd_D" + i + "' value='" + 1 + "' />");
-                $('#' + i + 'N').text(_n).append("<input type='hidden' name='F_workCd_N" + i + "' id='F_workCd_N" + i + "' value='" + 1 + "' />");
+            if (!data && j <= 31) { // original from P'Tor
+                $('#' + i + 'D').text(_n).append("<input type='hidden' name='F_workCd_D" + j + "' id='F_workCd_D" + j + "' value='" + 1 + "' />");
+                $('#' + i + 'N').text(_n).append("<input type='hidden' name='F_workCd_N" + j + "' id='F_workCd_N" + j + "' value='" + 1 + "' />");
 
                 $('#' + i + 'D').attr('class', 'bg-success text-center fw-bolder');
                 $('#' + i + 'N').attr('class', 'bg-success text-center fw-bolder');
+                j++;
             }
 
             else { // Inquiry Data in DB

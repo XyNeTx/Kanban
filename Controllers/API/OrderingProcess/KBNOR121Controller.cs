@@ -1166,11 +1166,132 @@ namespace KANBAN.Controllers.API.OrderingProcess
         }
 
         [HttpGet]
-        public IActionResult Bl_Recalculate()
+        public IActionResult Bl_Recalculate(VMKBNOR121_Preview obj)
         {
             try
             {
-                return Ok();
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401) return Unauthorized(new
+                {
+                    status = "401",
+                    response = "Unauthorized",
+                    title = "Unauthorized",
+                    message = "Please Login First"
+                });
+
+                if(obj.Action == "Process")
+                {
+                    if(obj.Kanban.CompareTo(obj.KanbanTo) > 0)
+                    {
+                        return BadRequest(new
+                        {
+                            status = "400",
+                            response = "Bad Request",
+                            title = "Error",
+                            message = "Kanban From > Kanban To"
+                        });
+                    }
+                    if(obj.Store.CompareTo(obj.StoreTo) > 0)
+                    {
+                        return BadRequest(new
+                        {
+                            status = "400",
+                            response = "Bad Request",
+                            title = "Error",
+                            message = "Store From > Store To"
+                        });
+                    }
+                    if(obj.PartNo.CompareTo(obj.PartNoTo) > 0)
+                    {
+                        return BadRequest(new
+                        {
+                            status = "400",
+                            response = "Bad Request",
+                            title = "Error",
+                            message = "Part No From > Part No To"
+                        });
+                    }
+                    var dymStore = Plant switch
+                    {
+                        "1" => "1A",
+                        "2" => "2B",
+                        "3" => "3C",
+                        _ => "3C"
+                    };
+
+                    string _SQL = $@"SELECT CONVERT(Integer, F_workCd_D{LoginDate.ToString("dd")}) 
+                                 + CONVERT(Integer, F_workCd_N{LoginDate.ToString("dd")}) AS F_Work 
+                                FROM TB_Calendar WHERE F_Store_cd = '{dymStore}' 
+                                AND F_YM = '{LoginDate.ToString("yyyyMM")}' ";
+
+                    var _workingDay = _FillDT.ExecuteSQL(_SQL);
+                    
+                    if(_workingDay.Rows.Count > 0 )
+                    {
+                        if (_workingDay.Rows[0]["F_Work"].ToString() == "" || _workingDay.Rows[0]["F_Work"].ToString() == "0")
+                        {
+                            return BadRequest(new
+                            {
+                                status = "400",
+                                response = "Bad Request",
+                                title = "Error",
+                                message = "Working Day = 0"
+                            });
+                        }
+                    }
+
+                    else if (_workingDay.Rows.Count == 0)
+                    {
+                        return NotFound(new
+                        {
+                            status = "404",
+                            response = "Not Found",
+                            title = "Error",
+                            message = "No Working Day Found"
+                        });
+                    }
+                }
+                else
+                {
+                    if (obj.Kanban.CompareTo(obj.KanbanTo) > 0)
+                    {
+                        return BadRequest(new
+                        {
+                            status = "400",
+                            response = "Bad Request",
+                            title = "Error",
+                            message = "Kanban From > Kanban To"
+                        });
+                    }
+                    if (obj.Store.CompareTo(obj.StoreTo) > 0)
+                    {
+                        return BadRequest(new
+                        {
+                            status = "400",
+                            response = "Bad Request",
+                            title = "Error",
+                            message = "Store From > Store To"
+                        });
+                    }
+                    if (obj.PartNo.CompareTo(obj.PartNoTo) > 0)
+                    {
+                        return BadRequest(new
+                        {
+                            status = "400",
+                            response = "Bad Request",
+                            title = "Error",
+                            message = "Part No From > Part No To"
+                        });
+                    }
+                }
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "OK",
+                    title = "Success",
+                    message = "Data Found",
+                });
             }
             catch (Exception ex)
             {
@@ -1183,6 +1304,251 @@ namespace KANBAN.Controllers.API.OrderingProcess
                     error = ex.Message
                 });
             }
+        }
+
+        public void get_startDate(int _intRow, string Action)
+        {
+            if (Action == "Re-Calculate BL")
+            {
+                for (int i = 0; i < DT_PartControl.Rows.Count; i++)
+                {
+                    set_startDate(i);
+                }
+            }
+            else if (Action == "Re-Calculate")
+            {
+                set_startDate(_intRow);
+            }
+        }
+        public async void set_startDate(int _intRow)
+        {
+            string Start_Date,End_Date = "";
+            string storeCode = Plant switch
+            {
+                "1" => "1A",
+                "2" => "2B",
+                "3" => "3C",
+                _ => "3C"
+            };
+
+            var _ProcessDate = await _KB3Context.TB_Calculate_D.Where(x =>
+                x.F_Supplier_Code == DT_PartControl.Rows[_intRow]["F_Supplier_Code"].ToString().Trim() &&
+                x.F_Supplier_Plant == DT_PartControl.Rows[_intRow]["F_Supplier_Plant"].ToString().Trim() &&
+                x.F_Part_No == DT_PartControl.Rows[_intRow]["F_Part_No"].ToString().Trim() &&
+                x.F_Ruibetsu == DT_PartControl.Rows[_intRow]["F_Ruibetsu"].ToString().Trim() &&
+                x.F_Store_Code == DT_PartControl.Rows[_intRow]["F_Store_Code"].ToString().Trim() &&
+                x.F_Kanban_No == DT_PartControl.Rows[_intRow]["F_Kanban_No"].ToString().Trim() &&
+                (x.Flag_Chg_BL_Stock == true || x.Flag_Cancel_PDS == true || x.Flag_Chg_MRP == true ||
+                x.Flag_Chg_Urgent == true || x.Flag_Adjust_Order == true)
+                ).OrderBy(x => x.F_Process_Date).FirstOrDefaultAsync();
+
+            if (_ProcessDate != null)
+            {
+                Start_Date = _ProcessDate.F_Process_Date;
+            }
+            else
+            {
+                Start_Date = LoginDate.ToString("yyyyMMdd");
+            }
+
+            string _execSQL = "exec [dbo].[sp_NumberOfDayToPreview] @p0,@p1,@p2,@p3,@p4";
+            var _dt = _FillDT.ExecuteSQL(_execSQL,Plant, DT_PartControl.Rows[_intRow]["F_Supplier_Code"].ToString().Trim(),
+                DT_PartControl.Rows[_intRow]["F_Supplier_Plant"].ToString().Trim(),storeCode,LoginDate.ToString("yyyyMMdd"));
+
+            if (Start_Date == LoginDate.ToString("yyyyMMdd"))
+            {
+                Start_Date = _dt.Rows[0]["Start_Date"].ToString();
+            }
+            End_Date = _dt.Rows[0]["End_Date"].ToString();
+
+
+            re_Calculate_Trail(Start_Date,End_Date,_intRow);
+        }
+
+        public async void re_Calculate_Trail(string start_date, string end_date,int _intRow)
+        {
+            DateTime dateLast_Trip = new DateTime();
+            int Last_BL_Plan, Last_BL_Actual = 0;
+            bool blnFromSetStock = false;
+            DataTable DT_Adjust,DT_Actual,DT_LastBL,DT = new DataTable();
+
+            dateLast_Trip = DateTime.ParseExact(end_date, "yyyyMMdd", CultureInfo.InvariantCulture);
+            string dateECI = get_ECIDate(start_date,end_date,_intRow);
+
+            string _execSQL = "exec [dbo].[sp_autoRecalculateBL_First] @p0,@p1,@p2,@p3,@p4,@p5,@p6";
+            
+            DT = _FillDT.ExecuteSQL(_execSQL, dateLast_Trip.AddDays(-1).ToString("yyyyMMdd"),
+                DT_PartControl.Rows[_intRow]["F_Supplier_Code"].ToString(), DT_PartControl.Rows[_intRow]["F_Supplier_Plant"].ToString(),
+                DT_PartControl.Rows[_intRow]["F_Part_No"].ToString(), DT_PartControl.Rows[_intRow]["F_Ruibetsu"].ToString(),
+                DT_PartControl.Rows[_intRow]["F_Kanban_No"].ToString(), DT_PartControl.Rows[_intRow]["F_Store_Code"].ToString());
+        
+            if(DT.Rows.Count > 0)
+            {
+                Last_BL_Plan = int.TryParse(DT.Rows[0]["F_BL_SET_Plan"].ToString(), out int F_BL_SET_Plan) ? F_BL_SET_Plan : 0;
+                Last_BL_Actual = int.TryParse(DT.Rows[0]["F_BL_SET_Actual"].ToString(), out int F_BL_SET_Actual) ? F_BL_SET_Actual : 0;
+                blnFromSetStock = DT.Rows[0]["F_Not_Recalculate"].ToString() == "1" ? true : false;
+            }
+            else
+            {
+                Last_BL_Plan = 0;
+                Last_BL_Actual = 0;
+                blnFromSetStock = false;
+            }
+
+            _execSQL = "exec [dbo].[sp_autoRecalculateBL_Second] @p0,@p1,@p2,@p3,@p4,@p5,@p6,@p7";
+            DT = _FillDT.ExecuteSQL(_execSQL, dateLast_Trip.ToString("yyyyMMdd"),
+                end_date, DT_PartControl.Rows[_intRow]["F_Supplier_Code"].ToString(), DT_PartControl.Rows[_intRow]["F_Supplier_Plant"].ToString(),
+                DT_PartControl.Rows[_intRow]["F_Part_No"].ToString(), DT_PartControl.Rows[_intRow]["F_Ruibetsu"].ToString(),
+                DT_PartControl.Rows[_intRow]["F_Kanban_No"].ToString(), DT_PartControl.Rows[_intRow]["F_Store_Code"].ToString());
+        
+            _execSQL = "exec [dbo].[sp_autoRecalculateBL_Third] @p0,@p1,@p2,@p3,@p4,@p5,@p6,@p7";
+            DT_Actual = _FillDT.ExecuteSQL(_execSQL, dateLast_Trip.ToString("yyyyMMdd"),
+                        end_date, DT_PartControl.Rows[_intRow]["F_Supplier_Code"].ToString(), DT_PartControl.Rows[_intRow]["F_Supplier_Plant"].ToString(),
+                        DT_PartControl.Rows[_intRow]["F_Part_No"].ToString(), DT_PartControl.Rows[_intRow]["F_Ruibetsu"].ToString(),
+                        DT_PartControl.Rows[_intRow]["F_Kanban_No"].ToString(), DT_PartControl.Rows[_intRow]["F_Store_Code"].ToString());
+        
+            _execSQL = "exec [dbo].[sp_autoRecalculateBL_Fourth] @p0,@p1,@p2,@p3,@p4,@p5,@p6,@p7";
+            DT_Adjust = _FillDT.ExecuteSQL(_execSQL, dateLast_Trip.ToString("yyyyMMdd"),
+                        end_date, DT_PartControl.Rows[_intRow]["F_Supplier_Code"].ToString(), DT_PartControl.Rows[_intRow]["F_Supplier_Plant"].ToString(),
+                        DT_PartControl.Rows[_intRow]["F_Part_No"].ToString(), DT_PartControl.Rows[_intRow]["F_Ruibetsu"].ToString(),
+                        DT_PartControl.Rows[_intRow]["F_Kanban_No"].ToString(), DT_PartControl.Rows[_intRow]["F_Store_Code"].ToString());
+        
+            if(DT.Rows.Count > 0)
+            {
+                int InRec,InActual,BLPlan, BLActual = 0;
+                DateTime dateDelivery = new DateTime();
+                string BLPlan_Solution, BLActual_Solution = "";
+                DataRow DR_Receive, DR_Adjust = null;
+
+                using var _KB3Transaction = _KB3Context.Database.BeginTransaction();
+
+                try
+                {
+                    for (int i = 0; i < DT.Rows.Count;i++)
+                    {
+                        BLPlan_Solution = "";
+                        BLActual_Solution = "";
+
+                        if (i > 0)
+                        {
+                            if (DT.Rows[i]["F_Process_Round"].ToString() == DT.Rows[i - 1]["F_Process_Round"].ToString()
+                                && DT.Rows[i]["F_Process_Date"].ToString() == DT.Rows[i - 1]["F_Process_Date"].ToString())
+                            {
+                                dateDelivery = DateTime.TryParseExact(DT.Rows[i]["F_Process_Date"].ToString(), "yyyyMMdd", CultureInfo.InvariantCulture, DateTimeStyles.None, out dateDelivery) ? dateDelivery : new DateTime();
+                                
+                                if(dateDelivery == new DateTime())
+                                {
+                                    throw new Exception("Date Delivery Not Found");
+                                }
+
+                                _execSQL = "exec [dbo].[sp_autoRecalculateBL_First] @p0,@p1,@p2,@p3,@p4,@p5,@p6";
+                                DT_LastBL = _FillDT.ExecuteSQL(_execSQL, dateDelivery.AddDays(-1).ToString("yyyyMMdd"),
+                                            DT_PartControl.Rows[_intRow]["F_Supplier_Code"].ToString(), DT_PartControl.Rows[_intRow]["F_Supplier_Plant"].ToString(),
+                                            DT_PartControl.Rows[_intRow]["F_Part_No"].ToString(), DT_PartControl.Rows[_intRow]["F_Ruibetsu"].ToString(),
+                                            DT_PartControl.Rows[_intRow]["F_Kanban_No"].ToString(), DT_PartControl.Rows[_intRow]["F_Store_Code"].ToString());
+
+                                if (DT_LastBL.Rows.Count > 0)
+                                {
+                                    Last_BL_Plan = int.TryParse(DT_LastBL.Rows[0]["F_BL_SET_Plan"].ToString(), out int F_BL_SET_Plan) ? F_BL_SET_Plan : 0;
+                                    Last_BL_Actual = int.TryParse(DT_LastBL.Rows[0]["F_BL_SET_Actual"].ToString(), out int F_BL_SET_Actual) ? F_BL_SET_Actual : 0;
+                                }
+                                else
+                                {
+                                    Last_BL_Plan = 0;
+                                    Last_BL_Actual = 0;
+                                }
+                            }
+                        }
+
+                        DR_Receive = DT_Actual.Select("F_Delivery_trip = '" + DT.Rows[_intRow]["F_Process_Round"].ToString() + "' " +
+                            "AND F_Receive_date '" + DT.Rows[_intRow]["F_Process_Date"].ToString() + "' " +
+                            "AND F_Supplier_Code '" + DT.Rows[_intRow]["F_Supplier_Code"].ToString() + "' " +
+                            "AND F_Supplier_Plant '" + DT.Rows[_intRow]["F_Supplier_Plant"].ToString() + "' " +
+                            "AND F_Part_No '" + DT.Rows[_intRow]["F_Part_No"].ToString() + "' " +
+                            "AND F_Ruibetsu '" + DT.Rows[_intRow]["F_Ruibetsu"].ToString() + "' " +
+                            "AND F_Store_CD '" + DT.Rows[_intRow]["F_Store_Code"].ToString() + "' "
+                            ).FirstOrDefault();
+
+                        if(DR_Receive != null)
+                        {
+                            InActual = int.TryParse(DR_Receive["IN_ACTUAL"].ToString(), out int F_In_Actual) ? F_In_Actual : 0;
+                        }
+                        else
+                        {
+                            InActual = 0;
+                        }
+
+                        if (DT.Rows[_intRow]["F_Flag_Pattern"].ToString() == "1")
+                        {
+                            InRec = int.TryParse(DT.Rows[_intRow]["F_Adj_Pattern"].ToString(), out int F_Adj_Pattern) ? F_Adj_Pattern : 0;
+                        }
+                        else
+                        {
+                            InRec = int.TryParse(DT.Rows[_intRow]["IN_Plan"].ToString(), out int IN_Plan) ? IN_Plan : 0;
+                        }
+
+                        DR_Adjust = DT_Adjust.Select("F_Delivery_trip = '" + DT.Rows[_intRow]["F_Process_Round"].ToString() + "' " +
+                            "AND F_Receive_date '" + DT.Rows[_intRow]["F_Process_Date"].ToString() + "' " +
+                            "AND F_Supplier_Code '" + DT.Rows[_intRow]["F_Supplier_Code"].ToString() + "' " +
+                            "AND F_Supplier_Plant '" + DT.Rows[_intRow]["F_Supplier_Plant"].ToString() + "' " +
+                            "AND F_Part_No '" + DT.Rows[_intRow]["F_Part_No"].ToString() + "' " +
+                            "AND F_Ruibetsu '" + DT.Rows[_intRow]["F_Ruibetsu"].ToString() + "' " +
+                            "AND F_Store_CD '" + DT.Rows[_intRow]["F_Store_Code"].ToString() + "' ",
+                            "F_Process_Date DESC, F_Process_Round DESC").FirstOrDefault();
+
+                        if (DR_Adjust != null)
+                        {
+                            if (DR_Adjust["F_Flag_Pattern"].ToString() == "1")
+                            {
+                                InRec = int.TryParse(DR_Adjust["F_Adj_Pattern"].ToString(), out int F_Adj_Pattern) ? F_Adj_Pattern : 0;
+                            }
+                            else if (DR_Adjust["F_Flag_Adj"].ToString() == "1")
+                            {
+                                InRec = int.TryParse(DR_Adjust["F_Adj_Qty"].ToString(), out int IN_Plan) ? IN_Plan : 0;
+                            }
+                        }
+
+                        if (DT.Rows[_intRow]["F_Process_Date"].ToString().CompareTo(dateECI) < 0)
+                        {
+                            if (DT.Rows[_intRow]["F_Process_Round"].ToString() == "1")
+                            {
+                                if (blnFromSetStock)
+                                {
+                                    BLPlan_Solution = "BL = (BL + In(Rec) ) + Urgent";
+                                    BLPlan = (Last_BL_Plan + InRec) + int.Parse(DT.Rows[_intRow]["F_Urgent_Order"].ToString());
+                                    BLPlan_Solution = BLPlan_Solution + "BLPlan : " + BLPlan + " = (" +Last_BL_Plan.ToString() + " + " +
+                                        InRec + ") + " + DT.Rows[_intRow]["F_Urgent_Order"].ToString();
+                                    BLActual = (Last_BL_Actual + InActual);
+                                    BLActual_Solution = "BLActual : " + BLActual + " = (" + Last_BL_Actual.ToString() + " + " + InActual + ")";
+
+                                    if (DT.Rows[_intRow]["Flag_HalfChg_BL_Stock"].ToString() == "False")
+                                    {
+                                        BLPlan_Solution = "BL = ( BL + In(Rec) ) - MRP + Urgent";
+                                        BLPlan = (Last_BL_Plan + InRec) - int.Parse(DT.Rows[_intRow]["F_MRP"].ToString()) + int.Parse(DT.Rows[_intRow]["F_Urgent_Order"].ToString());
+                                        BLPlan_Solution = BLPlan_Solution + "BLPlan : " + BLPlan + " = (" + Last_BL_Plan.ToString() + " + " + InRec + ") - " + DT.Rows[_intRow]["F_MRP"].ToString() + " + " + DT.Rows[_intRow]["F_Urgent_Order"].ToString();
+                                        BLActual = (Last_BL_Actual + InActual) - int.Parse(DT.Rows[_intRow]["F_MRP"].ToString());
+                                        BLActual_Solution = "BLActual : " + BLActual + " = (" + Last_BL_Actual.ToString() + " + " + InActual + ") - " + DT.Rows[_intRow]["F_MRP"].ToString();
+
+                                    }
+                                }
+                            }
+                        }
+
+
+                    }
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+            }
+
+        }
+
+        public string get_ECIDate(string start_date, string end_date, int _intRow)
+        {
+            return "";
         }
     }
 }
