@@ -595,13 +595,18 @@ const addDetailToTable = async (dateSet, intRow) => {
             let index = $(this).index() - 1; // -1 because index start at 0
             let $td = $("table tbody tr").find("td").eq(index);
 
-            $td.css("font-weight", "900");
 
             if ($(this).attr("id").includes("Day")) {
-                $td.addClass("bg-danger");
+                if ($td.attr("id").includes("R1")) {
+                    $td.addClass("bg-danger");
+                    $td.css("font-weight", "900");
+                }
             }
             else if ($(this).attr("id").includes("Night")) {
-                $td.addClass("bg-primary");
+                if ($td.attr("id").includes("R1")) {
+                    $td.addClass("bg-primary");
+                    $td.css("font-weight", "900");
+                }
             }
         }
         else {
@@ -703,6 +708,27 @@ const sumKB = async (dateSet) => {
     });
 
 }
+
+$("#btnBlCal").click(function () {
+
+    var obj = {
+        action: "Re-Calculate BL",
+        supplier: $("#readSupplier").val(),
+        partNo: $("#readPartNo").val(),
+        partNoTo: $("#inputPartTo").val(),
+        store: $("#readStoreCode").val(),
+        storeTo: $("#inputStoreTo").val(),
+        kanban: $("#readKanbanNo").val(),
+        kanbanTo: $("#inputKanban").val(),
+    }
+
+    _xLib.AJAX_Post('/api/KBNOR121/Bl_Recalculate', JSON.stringify(obj),
+        function (result) {
+            console.log(result);
+        }, function (error) {
+            console.error(error);
+    });
+})
 
 $("#buttonCancel").click(function () {
     $("#divSelect , #divRead").find("input").val("");
