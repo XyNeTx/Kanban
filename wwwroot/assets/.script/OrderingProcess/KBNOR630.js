@@ -136,6 +136,7 @@
                 xItem.progress({ id: 'prgProcess', current: 5, label: 'Processing Please wait : {{##.##}} %' });
 
                 //'TB_REC_HEADER  SET F_Status ='D'
+                console.log(txtDeliveryDate.value)
                 await xAjax.Execute({
                     data: {
                         "Module": "[exec].[spKBNOR630_CANCEL]",
