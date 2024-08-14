@@ -2,7 +2,7 @@
 
 namespace KANBAN.Models.KB3.OrderingProcess
 {
-    public class VmOR121_CalBL
+    public class VMKBNOR121_GetBL
     {
         [Required(ErrorMessage = "Can't Get Date")]
         public DateTime CurrentDate { get; set; }

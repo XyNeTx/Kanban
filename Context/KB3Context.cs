@@ -70,7 +70,7 @@ namespace HINOSystem.Context
         public DbSet<TB_MS_Dock_Code> TB_MS_Dock_Code { get; set; }
         public DbSet<TB_MS_Factory> TB_MS_Factory { get; set; }
         public DbSet<TB_MS_Heijunka> TB_MS_Heijunka { get; set; }
-        public DbSet<TB_MS_Inform_News> TB_MS_Inform_News { get; set; }
+        //public DbSet<TB_MS_Inform_News> TB_MS_Inform_News { get; set; }
         public DbSet<TB_MS_Kanban> TB_MS_Kanban { get; set; }
         public DbSet<TB_MS_Label> TB_MS_Label { get; set; }
         public DbSet<TB_MS_LinecodeMSP> TB_MS_LinecodeMSP { get; set; }
@@ -141,6 +141,7 @@ namespace HINOSystem.Context
         public DbSet<TB_BL_SET> TB_BL_SET { get; set; }
         public DbSet<TB_BL_SET_HISTORY_DELETE> TB_BL_SET_HISTORY_DELETE { get; set; }
         public DbSet<TB_Calculate_D> TB_Calculate_D { get; set; }
+        public DbSet<KANBAN.Models.KB3.OrderingProcess.TB_MS_Inform_News> TB_MS_Inform_News { get; set; }
 
         //protected override void OnModelCreating(ModelBuilder modelBuilder)
         //{

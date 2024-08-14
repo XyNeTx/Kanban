@@ -66,8 +66,35 @@ $(document).on("click", "#radioKbStop , #radioKbAdd ,#radioKbCut , #MRP-20 ,#MRP
 });
 
 $("#btnEditNews").click(function () {
-    var textArea = document.getElementById("txtNews").innerHTML;
-    console.log(textArea);
+    //var textArea = $("#txtNews").val();
+    //console.log(textArea);
+
+    var obj = {
+        F_Supplier_Code: $("#readSupplier").val().split("-")[0],
+        F_Supplier_Plant: $("#readSupplier").val().split("-")[1],
+        F_Part_No: $("#readPartNo").val().split("-")[0],
+        F_Ruibetsu: $("#readPartNo").val().split("-")[1],
+        F_Store_Code: $("#readStoreCode").val(),
+        F_Kanban_No: $("#readKanbanNo").val(),
+        F_Text: $("#txtNews").val()
+    }
+
+    if (obj.F_Kanban_No == "" && obj.F_Supplier_Code == "" && obj.F_Supplier_Plant == "" && obj.F_Part_No == "" && obj.F_Ruibetsu == "" && obj.F_Store_Code == "") {
+        return xSwal.error("Error", "Please Select Data Before Update News");
+    }
+
+    console.log(obj);
+
+    _xLib.AJAX_Post('/api/KBNOR121/UpdateInformNews', JSON.stringify(obj),
+        function (result) {
+            if (result.status == 200) {
+                xSwal.success("Success", "Update News Success");
+            }
+        },
+        function (error) {
+            xSwal.error("Error", "Update News Fail");
+        }
+    );
 });
 
 $("#inputSupplier").change(function () {
@@ -539,6 +566,7 @@ const addDetailToTable = async (dateSet, intRow) => {
                 $("#readLine").val(success.data.f_Address);
                 $("#readPartName").val(success.data.f_Part_nm);
                 $("#readSupplierName").val(success.data.f_short_name);
+                $("#txtNews").val(success.data.informNews);
 
                 if (success.data.mrpCheck.includes("More")) {
                     $("#MRP20").prop("checked", true);
@@ -709,26 +737,55 @@ const sumKB = async (dateSet) => {
 
 }
 
+$(document).on('click', '#divCheckBox', function (e) {
+    e.preventDefault();
+    return;
+});
+
 $("#btnBlCal").click(function () {
 
     var obj = {
         action: "Re-Calculate BL",
         supplier: $("#readSupplier").val(),
         partNo: $("#readPartNo").val(),
-        partNoTo: $("#inputPartTo").val(),
         store: $("#readStoreCode").val(),
-        storeTo: $("#inputStoreTo").val(),
         kanban: $("#readKanbanNo").val(),
-        kanbanTo: $("#inputKanban").val(),
     }
 
     _xLib.AJAX_Post('/api/KBNOR121/Bl_Recalculate', JSON.stringify(obj),
         function (result) {
-            console.log(result);
+            if (result.status == 200) {
+                previewFunction($("#txtPage").val().split("/")[0] - 1, _command);
+            }
         }, function (error) {
+            xSwal.error("Error", error.message);
             console.error(error);
     });
 })
+
+$("#btnReCal").click(function () {
+
+    var obj = {
+        action: "Re-Calculate",
+        supplier: $("#readSupplier").val(),
+        partNo: $("#readPartNo").val(),
+        store: $("#readStoreCode").val(),
+        kanban: $("#readKanbanNo").val(),
+    }
+
+    _xLib.AJAX_Post('/api/KBNOR121/Recalculate', JSON.stringify(obj),
+        function (result) {
+            if (result.status == 200) {
+                previewFunction($("#txtPage").val().split("/")[0] - 1, _command);
+            }
+        },
+        function (error) {
+            xSwal.error("Error", error.message);
+            console.error(error);
+        }
+    );
+
+});
 
 $("#buttonCancel").click(function () {
     $("#divSelect , #divRead").find("input").val("");

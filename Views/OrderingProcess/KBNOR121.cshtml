@@ -224,7 +224,7 @@
                                 </div>
                                 <div class="col" style="padding:0 0.5rem 0 0">
                                     <label class="form-label" for="readKanbanNo">Kanban No.</label>
-                                    <input type="text" class="form-control text-center" id="readKanbanNo" value="0000" readonly />
+                                    <input type="text" class="form-control text-center" id="readKanbanNo" readonly />
                                 </div>
                                 <div class="col" style="padding:0 0.5rem 0 0">
                                     <label class="form-label" for="readQtyPack">Qty/Pack</label>
@@ -232,7 +232,7 @@
                                 </div>
                                 <div style="flex: 0 0 10%;padding:0 0.5rem 0 0">
                                     <label class="form-label" for="readCycleTime">Cycle Time</label>
-                                    <input type="text" class="form-control text-center" id="readCycleTime" value="01-01-01" readonly />
+                                    <input type="text" class="form-control text-center" id="readCycleTime" readonly />
                                 </div>
                                 <div style="flex: 0 0 9%;padding:0 0.5rem 0 0">
                                     <label class="form-label" for="readLine">Line</label>
@@ -410,11 +410,11 @@
                 <div class="row mt-2">
                     <div class="col-2">
                         <div class="row ms-2">
-                            <button type="button" class="btn btn-outline-dark col-5 me-1">Lock <i class="fa-solid fa-lock"></i></button>
-                            <button type="button" class="btn btn-outline-dark col-6 me-1">Unlock <i class="fa-solid fa-lock-open"></i></button>
+                            <button type="button" class="btn btn-outline-dark col-5 me-1" disabled>Lock <i class="fa-solid fa-lock"></i></button>
+                            <button type="button" class="btn btn-outline-dark col-6 me-1" disabled>Unlock <i class="fa-solid fa-lock-open"></i></button>
                         </div>
                     </div>
-                    <div class="col-3">
+                    <div class="col-3" id="divCheckBox">
                         <div class="row ms-2">
                             <div class="col-7">
                                 <input type="checkbox" class="form-check-input" id="chkBoxOrderTable" readonly />

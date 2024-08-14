@@ -15,7 +15,7 @@ namespace KANBAN.Models.KB3.Login
         public string? Password { get; set; }
 
         
-        public long Title_ID { get; set; }
+        public long? Title_ID { get; set; }
 
         
         [StringLength(100)]
@@ -26,7 +26,7 @@ namespace KANBAN.Models.KB3.Login
         public string? Surname { get; set; }
 
         
-        public long TitleTH_ID { get; set; }
+        public long? TitleTH_ID { get; set; }
 
         
         [StringLength(100)]
@@ -37,7 +37,7 @@ namespace KANBAN.Models.KB3.Login
         public string? SurnameTH { get; set; }
 
         
-        public long TitleJP_ID { get; set; }
+        public long? TitleJP_ID { get; set; }
 
         
         [StringLength(100)]
@@ -127,6 +127,6 @@ namespace KANBAN.Models.KB3.Login
         public string? CreateBy { get; set; }
 
         
-        public int isDelete { get; set; }
+        public int? isDelete { get; set; }
     }
 }
