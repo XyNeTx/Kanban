@@ -1,6 +1,12 @@
-﻿$(document).ready(function () {
+﻿var _CookieProcessDate = _xLib.GetCookie("processDate");
+var _CookieLoginDate = _xLib.GetCookie("loginDate");
+$(document).ready(function () {
 
 
+
+    $("#txtProcessDate").val(_CookieProcessDate.substring(0, 4) + "-" + _CookieProcessDate.substring(5, 7) + "-" + _CookieProcessDate.substring(8, 10));
+    var shift = _CookieProcessDate.substring(10, 11) == "D" ? "1 - Day Shift" : "2 - Night Shift";
+    $("#txtProcessShift").val(shift);
 
     initial = async function () {
         let _processCk = await _xLib.GetProcessCookie();
@@ -12,11 +18,7 @@
                 $(`#${_btnName}`).css("color", "white");
             });
         }
-        await _xLib.AJAX_Get('/xapi/GetProcessDate', { dateShift: _xLib.GetCookie("loginDate").replaceAll("-", "") }, function (data) {
-            console.log(data[0].Column1);
-            var _Date = data[0].Column1.slice(0, 4) + '-' + data[0].Column1.slice(4, 6) + '-' + data[0].Column1.slice(6, 8) + data[0].Column1.slice(8, 9);
-            document.cookie = `processDate=${_Date}`;
-        });
+        
         xSplash.hide();
     }
     initial();

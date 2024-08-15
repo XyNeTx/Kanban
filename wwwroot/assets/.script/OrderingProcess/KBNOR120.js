@@ -1,7 +1,14 @@
-﻿$(document).ready(function () {
+﻿var _CookieProcessDate = _xLib.GetCookie("processDate");
+var _CookieLoginDate = _xLib.GetCookie("loginDate");
+
+$(document).ready(function () {
     xAjax.onClick('btnExit', function () {
         xAjax.redirect('KBNOR100');
     });
+
+    $("#txtProcessDate").val(_CookieProcessDate.substring(0, 4) + "-" + _CookieProcessDate.substring(5, 7) + "-" + _CookieProcessDate.substring(8, 10));
+    var shift = _CookieProcessDate.substring(10, 11) == "D" ? "1 - Day Shift" : "2 - Night Shift";
+    $("#txtProcessShift").val(shift);
 
     _xLib.AJAX_Get("/api/KBNOR120/OnLoad", { Shift : $("#txtProcessShift").val() },
         function (success) {

@@ -15,6 +15,7 @@ namespace HINOSystem.Context
 
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IConfiguration _config;
+        private static string plantDev = "";
 
         public KB3Context(DbContextOptions<KB3Context> options, IHttpContextAccessor httpContextAccessor , IConfiguration configuration)
             : base(options)
@@ -38,7 +39,7 @@ namespace HINOSystem.Context
                 {
                     strIsDev = isDev.ToString() == "1" ? "Dev" : "";
                 }
-                string plantDev = strPlant + strIsDev;
+                plantDev = strPlant + strIsDev;
                 string connectionString = plantDev switch
                 {
                     "3" => _config.GetConnectionString("DefaultConnection"),

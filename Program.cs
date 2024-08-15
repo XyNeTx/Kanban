@@ -1,6 +1,7 @@
 using HINOSystem.Context;
 using HINOSystem.Libs;
 using KANBAN.Context;
+using KANBAN.Libs;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
@@ -64,6 +65,7 @@ builder.Services.AddScoped<KanbanConnection>();
 builder.Services.AddScoped<CloudConnection>();
 builder.Services.AddScoped<ProcWebConnection>();
 builder.Services.AddScoped<PPM3Connection>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 builder.Services.AddScoped<cnConnect>();
 builder.Services.AddScoped<DbConnect>();

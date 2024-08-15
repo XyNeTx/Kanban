@@ -1,4 +1,7 @@
-﻿$(document).ready(function () {
+﻿var _CookieProcessDate = _xLib.GetCookie("processDate");
+var _CookieLoginDate = _xLib.GetCookie("loginDate");
+
+$(document).ready(function () {
 
 
     const KBNOR130 = new MasterTemplate({
@@ -25,7 +28,9 @@
         ],
     });
 
-
+    $("#txtProcessDate").val(_CookieProcessDate.substring(0, 4) + "-" + _CookieProcessDate.substring(5, 7) + "-" + _CookieProcessDate.substring(8, 10));
+    var shift = _CookieProcessDate.substring(10, 11) == "D" ? "1 - Day Shift" : "2 - Night Shift";
+    $("#txtProcessShift").val(shift);
 
     KBNOR130.prepare();
 
@@ -57,8 +62,8 @@
 
             xItem.progress({ id: 'prgProcess', current: 5, label: 'Start Process Normal : {{##.##}} %' });
 
-            Var _ProcessDate = _CookieProcessDate.substring(1, 8)
-            Var _ProcessShift = _CookieProcessDate.substring(9, 9)
+            var _ProcessDate = _CookieProcessDate.substring(0, 10)
+            var _ProcessShift = _CookieProcessDate.substring(10, 11)
 
             var _dtChk = await xAjax.xExecuteJSON({
                 data: {

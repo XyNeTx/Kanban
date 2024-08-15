@@ -1,4 +1,11 @@
-﻿$(document).ready(function () {
+﻿var _CookieProcessDate = _xLib.GetCookie("processDate");
+var _CookieLoginDate = _xLib.GetCookie("loginDate");
+$(document).ready(async function () {
+
+    $("#txtProcessDate").val(_CookieProcessDate.substring(0, 4) + "-" + _CookieProcessDate.substring(5, 7) + "-" + _CookieProcessDate.substring(8, 10));
+    var shift = _CookieProcessDate.substring(10, 11) == "D" ? "1 - Day Shift" : "2 - Night Shift";
+    $("#txtProcessShift").val(shift);
+
 
     tblMaster = xDataTable.Initial({
         name: 'tblMaster',
@@ -36,7 +43,7 @@
             { "data": "F_OrderNo" },
             { "data": "F_Supplier_Code" },
             { "data": "F_Delivery_Date" },
-            { "data": "F_Delivery_Trip" },
+            { "data": "Part_No" },
             { "data": "F_Remark" }
         ],
         addnew: false,
@@ -142,12 +149,14 @@
                     this.initial();
                     MsgBox("Process Registration Data for Urgent Order Completed.", MsgBoxStyle.Information, "Process Complete");
 
-
+                    await SendEmailZeroPrice();
                 },
                 function () {
                     xItem.progress({ id: 'prgProcess', current: 0, label: 'Process : {{##.##}} %' });
 
                 });
+
+            
 
         } catch (error) {
             // Code to handle the error
@@ -232,4 +241,30 @@
 
 
 })
+
+async function SendEmailZeroPrice() {
+    console.log($("div .pcoded-navigatio-lavel ").text());
+    var obj = {
+        User_Name: $("div .pcoded-navigatio-lavel ").text().trim(),
+        Program: "KBNOR460 : Registration Data for Urgent Order",
+        ProcessDate: $("#txtProcessDate").val(),
+        ProcessShift: $("#txtProcessShift").val().substring(4, 5)
+    };
+    console.log(obj);
+
+    _xLib.AJAX_Post("/api/KBNOR460/SendEmailZeroPrice", JSON.stringify(obj),
+        function (success)
+        {
+            if (success.status == 200)
+            {
+                console.log(success);
+                xSwal.success("Success", "Send Email with Zero Price Complete") 
+            }
+        },
+        function (error)
+        {
+            xSwal.error("Error", "Can't Send Email with Zero Price")
+        }
+    )
+}
 
