@@ -1,67 +1,75 @@
-﻿$(document).ready(function () {
+﻿$(document).ready(async function () {
 
-    const xKBNMS003 = new MasterTemplate({
-        Controller: _PAGE_,
-        Table: 'tblMaster',
-        ColumnTitle: {
-            "EN": ['Plant', 'Parent Part', 'Ruibetsu', 'Effective Date', 'End Date'],
-            "TH": ['Plant', 'Parent Part', 'Ruibetsu', 'Effective Date', 'End Date'],
-            "JP": ['Plant', 'Parent Part', 'Ruibetsu', 'Effective Date', 'End Date'],
+
+    await $("#tableMain").DataTable({
+        "processing": true,
+        "serverSide": false,
+        scrollY: '350px',
+        scrollCollapse: true,
+        paging: false,
+        searching: false,
+        info: false,
+        ordering: false,
+        width: "80%",
+        columns: [
+            {
+                title: "No", width: "10%", render: function (data, type, row, meta) {
+                    return '<input type="checkbox" class="chkBoxDT" name="inputChkBox" value=' + meta.row + ' checked>';
+                },
+            },
+            { title: "PDS No.", data: "F_OrderNo",width: "20%" },
+            { title: "Supplier", data: "F_SUpplier_Code", width: "15%" },
+            { title: "Delivery Date", data: "F_Delivery_Date", width: "15%" },
+            { title: "Part No.", data: "F_PART_NO", width: "20%" },
+            //{ title: "Remark", data: "", width: "20%" }
+        ]
+    });
+
+    await $("table thead tr th").addClass("text-center");
+    await $("table body tr td").addClass("text-center");
+
+    _xLib.AJAX_Get("/api/KBNOR470/List_Data", '',
+        function (success) {
+            if (success.status == 200) {
+                success = _xLib.JSONparseAndTrim(success);
+                console.log(success)
+                $("#tableMain").DataTable().clear().draw();
+                $("#tableMain").DataTable().rows.add(success.data).draw();
+            }
         },
-        ColumnValue: [
-            { "data": "F_Plant" },
-            { "data": "F_Parent_Part" },
-            { "data": "F_Part_Name" },
-            { "data": "F_Effect_Date" },
-            { "data": "F_End_Date" }
-        ],
-        Modal: 'modalMaster',
-        Form: 'frmMaster',
-        PostData: [
-            { name: 'F_Plant', value: _PLANT_ }
-        ],
-    });
+        function (error) {
+            console.log(error);
+            xSwal.error("Error", "Data Not Found");
+        }
+    );
 
-    xKBNMS003.prepare();
-
-    xKBNMS003.initial(function (result) {
-        //xDropDownList.bind('#frmCondition #F_Plant', result.data.TB_MS_Factory, 'F_Plant', 'F_Plant_Name');
-        //xDropDownList.bind('#frmMaster #F_Plant', result.data.TB_MS_Factory, 'F_Plant', 'F_Plant_Name');
-
-        xKBNMS003.search();
-    });
-
-    onSave = function () {
-        xKBNMS003.save(function () {
-            xKBNMS003.search();
-        });
-    }
-
-    onDelete = function () {
-        xKBNMS003.delete(function () {
-            xKBNMS003.search();
-        });
-    }
-
-    onDeleteAll = function () {
-        xKBNMS003.deleteall(function () {
-            xKBNMS003.search();
-        });
-    }
-
-    onPrint = function () { }
-
-    onExecute = function () { }
-
-    //xAjax.onChange('#frmCondition #F_Plant', function () {
-    //    $('#frmMaster #F_Plant').val($('#frmCondition #F_Plant').val());
-
-    //    xKBNMS003.search();
-    //});
-
-
-
-
-
+    xSplash.hide();
 })
+
+$("#btnUnlock").click(function () {
+    var listObj = [];
+
+    $(".chkBoxDT:checked").each(function () {
+        var data = $("#tableMain").DataTable().row($(this).val()).data();
+        data.F_SUpplier_Code = data.F_SUpplier_Code.split("-")[0];
+        data.F_PART_NO = data.F_PART_NO.split("-")[0];
+        data.F_Delivery_Date = moment(data.F_Delivery_Date).format("YYYYMMDD");
+        listObj.push(data);
+    });
+    //console.log(moment().format("YYYY-MM-DD"))
+    //console.log(listObj);
+
+    _xLib.AJAX_Post("/api/KBNOR470/Unlock", JSON.stringify(listObj),
+        function (success) {
+            if(success.status == 200)
+            {
+                xSwal.success("Success", "Unlock Data Complete")
+            }
+        },
+        function (error) {
+            console.log(error);
+            xSwal.error("Error", "Unlock Data Not Complete");
+        }
+    );
+});
 
