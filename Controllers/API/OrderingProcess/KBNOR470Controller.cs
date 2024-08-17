@@ -139,6 +139,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
                 var _distinctList = listObj.DistinctBy(x => new
                 {
                     x.F_SUpplier_Code,
+                    x.F_SUpplier_Plant,
                     x.F_OrderNo,
                     x.F_Delivery_Date
                 });

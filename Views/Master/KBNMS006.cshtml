@@ -3,111 +3,312 @@
     <div class="col-xl-12 col-md-12 col-sm-12">
         <div class="card border-left-primary shadow h-100">
             <div class="card-body">
-
-                <form id="frmCondition">
-@*
-                    <div class="row">
-                        <div class="col-6">
-                            <item type="select" id="F_Plant" label="Plant" value="3" readonly></item>
-                        </div>
-                    </div>
-*@
-                </form>
-
                 <div class="row">
-                    <div class="col mt-4">
-                        <table id="tblMaster" class="display" style="width:100%"></table>
+                    <div id="divSelect" class="col-3">
+                        <select class="SelectPicker" id="selectSupplier" data-live-search="true" data-width="100%" title="Supplier Code : "></select>
+                        <select class="SelectPicker mt-1" id="selectKanban" data-live-search="true" data-width="100%" title="Kanban No : "></select>
+                        <select class="SelectPicker mt-1" id="selectStore" data-live-search="true" data-width="100%" title="Store Code : "></select>
+                        <select class="SelectPicker mt-1" id="selectPartNo" data-live-search="true" data-width="100%" title="Part No : "></select>
+                        
+                        <div class="row mt-1 ms-4">
+                            <div class="col">
+                                <input type="radio" class="form-check-input" id="radStop" name="radio" />
+                                <label class="form-check-label" for="radStop">Stop</label>
+                            </div>
+                            <div class="col">
+                                <input type="radio" class="form-check-input" id="radCut" name="radio" />
+                                <label class="form-check-label" for="radCut">Cut</label>
+                            </div>
+                            <div class="col">
+                                <input type="radio" class="form-check-input" id="radBox" name="radio" />
+                                <label class="form-check-label" for="radBox">Box</label>
+                            </div>
+                        </div>
+                        <div class="row flex-row-reverse mt-2">
+                            <label class="btn btn-rounded btn-outline-success mt-2 mb-0 col-4" for="inputFile">Import File</label>
+                            <button type="button" id="btnSearch" class="btn btn-rounded btn-outline-dark mt-2 mb-0 me-2 col-4">Search</button>
+                            <input type="file" class="form-control col-1 mt-2 bg-success" style="visibility:hidden" id="inputFile" />
+                        </div>
+                        
                     </div>
-                </div>
-
-            </div>
-        </div>
-    </div>
-
-</div>
-
-
-<!-- Modal Master -->
-<div class="modal fade" id="modalMaster" tabindex="-1" aria-labelledby="modalMasterLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalMasterLabel"> @ViewData["AppName"] <span></span></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form id="frmMaster" class="needs-validation" autocomplete="off" novalidate>
-                <div class="modal-body" style="padding-left:10px;padding-top:5px;padding-right:10px;">
-
-                    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar">
-                        <div class="btn-group btn-group-sm me-2" role="group" aria-label="Toolbar">
-
-                            <button type="button" class="btn btn-success" id="btnSave" name="btnSave" onclick="onSave();" title="Save data" @(ViewData["ComponentToolbarSave"].ToString() == "true" ? "" : "disabled")>
-                                <i class="ti-save"></i>
-                            </button>
-                            <button type="button" class="btn btn-success" id="btnPrint" name="btnPrint" onclick="onPrint();" title="Print" @(ViewData["ComponentToolbarPrint"].ToString() == "true" ? "" : "disabled")>
-                                <i class="ti-printer"></i>
-                            </button>
-                            <button type="button" class="btn btn-success" id="btnExecute" name="btnExecute" onclick="onExecute()" title="Execute/Run" @(ViewData["ComponentToolbarExecute"].ToString() == "true" ? "" : "disabled")>
-                                <i class="fas fa-bolt"></i>
-                            </button>
-                            <button type="button" class="btn btn-success" id="btnDelete" name="btnDelete" onclick="onDelete();" title="Delete" @(ViewData["ComponentToolbarDelete"].ToString() == "true" ? "" : "disabled")>
-                                <i class="far fa-trash-alt"></i>
-                            </button>
-
+                    <div id="divRead" class="col-5">
+                        <div class="input-group">
+                            <label class="input-group-text col-3" for="readSupplierCode">Supplier Code</label>
+                            <input type="text" class="form-control bg-light" id="readSupplierCode" readonly />
+                        </div>
+                        <div class="input-group">
+                            <label class="input-group-text col-3" for="readSupplierName">Supplier Name</label>
+                            <input type="text" class="form-control bg-light" id="readSupplierName" readonly />
+                        </div>
+                        <div class="row">
+                            <div class="input-group col-6" style="padding-right:0rem !important">
+                                <label class="input-group-text col-6" for="readKanban">Kanban No.</label>
+                                <input type="text" class="form-control bg-light" id="readKanban" readonly />
+                            </div>
+                            <div class="input-group col-6">
+                                <label class="input-group-text" for="readBoxQty">Box Q'ty</label>
+                                <input type="text" class="form-control bg-light" id="readBoxQty" readonly />
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label class="input-group-text col-3" for="readStore">Store Code</label>
+                            <input type="text" class="form-control col-3 bg-light" id="readStore" readonly />
+                        </div>
+                        <div class="input-group">
+                            <label class="input-group-text col-3" for="readPartNo">Part No.</label>
+                            <input type="text" class="form-control bg-light" id="readPartNo" readonly />
+                        </div>
+                        <div class="input-group">
+                            <label class="input-group-text col-3" for="readPartName">Part Name</label>
+                            <input type="text" class="form-control bg-light" id="readPartName" readonly />
                         </div>
                     </div>
-
-                    <input type="hidden" class="form-control" id="_Action" name="_Action" value="POST">
-                    <input type="hidden" class="form-control" id="F_Plant" name="F_Plant">
-                    <div class="bg-white border rounded-3">
-                        <section class="w-100 p-2">
-                            <div class="row g-2">
-                                <div class="col-md-6">
-                                    <div class="input-group mb-3">
-                                        <label class="input-group-text" for="F_OrderType">Order Type</label>
-                                        <input type="text" class="form-control" id="F_OrderType" name="F_OrderType" autocomplete="off" required noedit>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row g-2">
-                                <div class="col-md-6">
-                                    <div class="input-group mb-3">
-                                        <label class="input-group-text" for="F_Effect_Date">Effective Date</label>
-                                        <input type="text" class="form-control col-xl-8" id="F_Effect_Date" name="F_Effect_Date" format="yyyy-mm-dd" noedit />
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="input-group mb-3">
-                                        <label class="input-group-text" for="F_End_Date">End Date</label>
-                                        <input type="text" class="form-control" id="F_End_Date" name="F_End_Date" format="yyyy-mm-dd">
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
+                    <div class="col-4">
+                        <div class="input-group">
+                            <label class="input-group-text" for="readCycle">Cycle</label>
+                            <input type="text" class="form-control bg-light col-6" id="readCycle" readonly />
+                        </div>
+                        <div class="d-flex justify-content-end align-items-end position-absolute bottom-0 end-0 ">
+                            <button type="button" class="btn btn-rounded btn-outline-dark col-10">Cancel</button>
+                            <button type="button" class="btn btn-rounded btn-outline-danger col-10">Exit</button>
+                        </div>
                     </div>
-
                 </div>
-            </form>
-
-            <div class="modal-footer" style="padding-left:20px; padding-right:20px;">
-                <i class="modal-reference mr-auto">Reference Code : <i id="_REFERCODE_"></i></i>
-                @if (ViewData["UserGroupID"].ToString() == "1" || ViewData["UserGroupID"].ToString() == "2")
-                {
-                    <a href="#" data-bs-toggle="modal" data-bs-target="#ModalHistory" data-bs-remote="UserMaintenance">
-                        <i class="fas fa-scroll" title="History Log"></i>
-                    </a>
-                }
+                <div class="row mt-3">
+                    <div class="col-4">
+                        <div class="input-group">
+                            <label class="input-group-text col-3" for="readAddress">Address</label>
+                            <input type="text" class="form-control bg-light" id="readAddress" readonly />
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="input-group">
+                            <label class="input-group-text col-3" for="readDock">Dock Code</label>
+                            <input type="text" class="form-control bg-light" id="readDock" readonly />
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-center col-4 pe-0">
+                        <button type="button" class="btn btn-rounded btn-outline-warning w-50">Save Kanban</button>
+                    </div>
+                </div>
+                <div id="divKBStop" class="row mt-3">
+                    <div class="col-6">
+                        <div class="row border-2 border-dark">
+                            <h6> 1. Kanban Stop</h6>
+                        </div>
+                        <div class="input-group ps-0 col-6">
+                            <label class="input-group-text col-5 " for="stopStatus">Status</label>
+                            <input type="text" class="form-control col-6 bg-light" id="stopStatus" readonly />
+                        </div>
+                        <div class="row">
+                            <div class="input-group col-6">
+                                <label class="input-group-text col-5" for="stopDeliDate">Delivery Date</label>
+                                <input type="text" class="form-control col-6 bg-light" id="stopDeliDate" />
+                            </div>
+                            <div class="input-group col-6">
+                                <label class="input-group-text col-5" for="stopTrip">Trip</label>
+                                <input type="text" class="form-control bg-light col-5" id="stopTrip" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-group col-6">
+                                <label class="input-group-text col-5" for="stopStartDate">Start Date</label>
+                                <input type="text" class="form-control col-6 bg-light" id="stopStartDate" />
+                            </div>
+                            <div class="input-group col-6">
+                                <label class="input-group-text col-5" for="stopShift">Shift</label>
+                                <input type="text" class="form-control col-5 bg-light" id="stopShift" />
+                            </div>
+                        </div>
+                        <div class="row" style="visibility:hidden">
+                            <div class="input-group col-6">
+                                <label class="input-group-text col-5" for="stopUpdateBy">Update By</label>
+                                <input type="text" class="form-control col-6 bg-light" id="stopUpdateBy" />
+                            </div>
+                        </div>
+                        <div class="row" style="visibility:hidden">
+                            <div class="input-group col-6">
+                                <label class="input-group-text col-5" for="stopUpdateBy">Update By</label>
+                                <input type="text" class="form-control col-6 bg-light" id="stopUpdateBy" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-group col-6">
+                                <label class="input-group-text col-5" for="stopUpdateBy">Update By</label>
+                                <input type="text" class="form-control col-6 bg-light" id="stopUpdateBy" />
+                            </div>
+                            <div class="input-group col-6">
+                                <label class="input-group-text col-5" for="stopUpdateDate">Update Date</label>
+                                <input type="text" class="form-control col-5 bg-light" id="stopUpdateDate" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-group col-6">
+                                <label class="input-group-text col-5" for="stopProcessBy">Process By</label>
+                                <input type="text" class="form-control col-6 bg-light" id="stopProcessBy" />
+                            </div>
+                            <div class="input-group col-6">
+                                <label class="input-group-text col-5" for="stopProcessDate">Process Date</label>
+                                <input type="text" class="form-control col-5 bg-light" id="stopProcessDate" />
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col"></div>
+                            <button type="button" class="btn btn-rounded btn-outline-dark col" id="stopBtnStop">Stop</button>
+                            <button type="button" class="btn btn-rounded btn-outline-dark col" id="stopBtnEdit">Edit</button>
+                            <button type="button" class="btn btn-rounded btn-outline-dark col" id="stopBtnCanc">Cancel</button>
+                            <button type="button" class="btn btn-rounded btn-outline-dark col" id="stopBtnSave">Save</button>
+                            <button type="button" class="btn btn-rounded btn-outline-dark col" id="stopBtnStart">Start</button>
+                            <div class="col"></div>
+                        </div>
+                    </div>
+                    <div id="divKBCut" class="col-6">
+                        <div class="row border-2 border-dark">
+                            <h6> 2. Kanban Cut</h6>
+                        </div>
+                        <div class="input-group ps-0 col-6">
+                            <label class="input-group-text col-5" for="cutStatus">Status</label>
+                            <input type="text" class="form-control col-6 bg-light" id="cutStatus" readonly />
+                        </div>
+                        <div class="row">
+                            <div class="input-group col-6">
+                                <label class="input-group-text col-5" for="cutDeliDate">Delivery Date</label>
+                                <input type="text" class="form-control col-6 bg-light" id="cutDeliDate" />
+                            </div>
+                            <div class="input-group col-6">
+                                <label class="input-group-text col-5" for="cutTrip">Trip</label>
+                                <input type="text" class="form-control bg-light col-5" id="cutTrip" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-group col-6">
+                                <label class="input-group-text col-5" for="cutStartDate">Start Date</label>
+                                <input type="text" class="form-control col-6 bg-light" id="cutStartDate" />
+                            </div>
+                            <div class="input-group col-6">
+                                <label class="input-group-text col-5" for="cutShift">Shift</label>
+                                <input type="text" class="form-control col-5 bg-light" id="cutShift" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-group col-6">
+                                <label class="input-group-text col-5" for="cutKB">KB Cut</label>
+                                <input type="text" class="form-control col-6 bg-light" id="cutKB" />
+                            </div>
+                            <div class="input-group col-6">
+                                <label class="input-group-text col-5" for="cutKBCycle">KB Cut/Cycle</label>
+                                <input type="text" class="form-control col-6 bg-light" id="cutKBCycle" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-group col-6">
+                                <label class="input-group-text col-5" for="cutRemain">KB Remain</label>
+                                <input type="text" class="form-control col-6 bg-light" id="cutRemain" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-group col-6">
+                                <label class="input-group-text col-5" for="cutUpdateBy">Update By</label>
+                                <input type="text" class="form-control col-6 bg-light" id="cutUpdateBy" />
+                            </div>
+                            <div class="input-group col-6">
+                                <label class="input-group-text col-5" for="cutUpdateDate">Update Date</label>
+                                <input type="text" class="form-control col-5 bg-light" id="cutUpdateDate" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-group col-6">
+                                <label class="input-group-text col-5" for="cutProcessBy">Process By</label>
+                                <input type="text" class="form-control col-6 bg-light" id="cutProcessBy" />
+                            </div>
+                            <div class="input-group col-6">
+                                <label class="input-group-text col-5" for="cutProcessDate">Process Date</label>
+                                <input type="text" class="form-control col-5 bg-light" id="cutProcessDate" />
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col"></div>
+                            <button type="button" class="btn btn-rounded btn-outline-dark col" id="stopBtnStop">Stop</button>
+                            <button type="button" class="btn btn-rounded btn-outline-dark col" id="stopBtnEdit">Edit</button>
+                            <button type="button" class="btn btn-rounded btn-outline-dark col" id="stopBtnCanc">Cancel</button>
+                            <button type="button" class="btn btn-rounded btn-outline-dark col" id="stopBtnSave">Save</button>
+                            <button type="button" class="btn btn-rounded btn-outline-dark col" id="stopBtnStart">Start</button>
+                            <div class="col"></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="divBoxChg" class="row mt-3">
+                    <div class="col-6">
+                        <div class="row border-2 border-dark">
+                            <h6> 3. Box Quantity Change</h6>
+                        </div>
+                        <div class="input-group ps-0 col-6">
+                            <label class="input-group-text col-5" for="boxStatus">Status</label>
+                            <input type="text" class="form-control col-6 bg-light" id="boxStatus" readonly />
+                        </div>
+                        <div class="row">
+                            <div class="input-group col-6">
+                                <label class="input-group-text col-5" for="boxDeliDate">Delivery Date</label>
+                                <input type="text" class="form-control col-6 bg-light" id="boxDeliDate" />
+                            </div>
+                            <div class="input-group col-6">
+                                <label class="input-group-text col-5" for="boxTrip">Trip</label>
+                                <input type="text" class="form-control bg-light col-5" id="boxTrip" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-group col-6">
+                                <label class="input-group-text col-5" for="boxStartDate">Start Date</label>
+                                <input type="text" class="form-control col-6 bg-light" id="boxStartDate" />
+                            </div>
+                            <div class="input-group col-6">
+                                <label class="input-group-text col-5" for="boxShift">Shift</label>
+                                <input type="text" class="form-control col-5 bg-light" id="boxShift" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-group col-6">
+                                <label class="input-group-text col-5" for="boxQty">New Box Qty</label>
+                                <input type="text" class="form-control col-6 bg-light" id="boxQty" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-group col-6">
+                                <label class="input-group-text col-5" for="boxUpdateBy">Update By</label>
+                                <input type="text" class="form-control col-6 bg-light" id="boxUpdateBy" />
+                            </div>
+                            <div class="input-group col-6">
+                                <label class="input-group-text col-5" for="boxUpdateDate">Update Date</label>
+                                <input type="text" class="form-control col-5 bg-light" id="boxUpdateDate" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-group col-6">
+                                <label class="input-group-text col-5" for="boxProcessBy">Process By</label>
+                                <input type="text" class="form-control col-6 bg-light" id="boxProcessBy" />
+                            </div>
+                            <div class="input-group col-6">
+                                <label class="input-group-text col-5" for="boxProcessDate">Process Date</label>
+                                <input type="text" class="form-control col-5 bg-light" id="boxProcessDate" />
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col"></div>
+                            <button type="button" class="btn btn-rounded btn-outline-dark col" id="stopBtnStop">Stop</button>
+                            <button type="button" class="btn btn-rounded btn-outline-dark col" id="stopBtnEdit">Edit</button>
+                            <button type="button" class="btn btn-rounded btn-outline-dark col" id="stopBtnCanc">Cancel</button>
+                            <button type="button" class="btn btn-rounded btn-outline-dark col" id="stopBtnSave">Save</button>
+                            <button type="button" class="btn btn-rounded btn-outline-dark col" id="stopBtnStart">Start</button>
+                            <div class="col"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
-
         </div>
     </div>
+
 </div>
-
-
 
 @section Scripts{
-    
-    @*<script type="text/javascript" src="~/assets/.script/Template/Master.js"></script>*@
     <script type="text/javascript" src="~/assets/.script/Master/KBNMS006.js?@ViewData["Version"]"></script>
-    @*<script type="text/javascript" src="~/assets/adminty/vue@3/vueApp/Master/KBNMS006.vue.js?@ViewData["Version"]"></script>*@
 }

@@ -147,7 +147,7 @@ namespace HINOSystem.Controllers.API.Master
                     F_End_Date = Request.Form["F_End_Date"].ToString().Replace("-", string.Empty),
                     F_Type_Order = Request.Form["F_Type_Order"].ToString(),
                     F_Cycle = Request.Form["F_Cycle"].ToString().Replace("-", string.Empty),
-                    F_Flg_ClearModule = 1,
+                    F_Flg_ClearModule = true,
                     F_PDS_Group = Request.Form["F_PDS_Group"].ToString(),
                     F_Create_Date = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss")),
                     F_Create_By = _BearerClass.UserCode.ToString(),

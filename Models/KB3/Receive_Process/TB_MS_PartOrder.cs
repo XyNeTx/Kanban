@@ -16,7 +16,7 @@ namespace KANBAN.Models.KB3.Receive_Process
         public string? F_End_Date { get; set; }
         public string? F_Type_Order { get; set; }
         public string? F_Cycle { get; set; }
-        public byte? F_Flg_ClearModule { get; set; }
+        public bool? F_Flg_ClearModule { get; set; }
         public string? F_PDS_Group { get; set; }
         public DateTime? F_Create_Date { get; set; }
         public string? F_Create_By { get; set; }

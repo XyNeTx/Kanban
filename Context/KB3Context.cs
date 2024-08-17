@@ -143,6 +143,7 @@ namespace HINOSystem.Context
         public DbSet<TB_BL_SET_HISTORY_DELETE> TB_BL_SET_HISTORY_DELETE { get; set; }
         public DbSet<TB_Calculate_D> TB_Calculate_D { get; set; }
         public DbSet<KANBAN.Models.KB3.OrderingProcess.TB_MS_Inform_News> TB_MS_Inform_News { get; set; }
+        public DbSet<TB_Kanban_Chg_Qty> TB_Kanban_Chg_Qty { get; set; }
 
         //protected override void OnModelCreating(ModelBuilder modelBuilder)
         //{
