@@ -1,15 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 
-namespace HINOSystem.Models.KB3.Master
+namespace KANBAN.Models.KB3.Master
 {
+
     [PrimaryKey(nameof(F_Plant), nameof(F_Supplier_Code), nameof(F_Supplier_Plant)
-        , nameof(F_Store_Code), nameof(F_Kanban_No), nameof(F_Part_No)
-        , nameof(F_Ruibetsu))]
+               , nameof(F_Store_Code), nameof(F_Kanban_No), nameof(F_Part_No)
+               , nameof(F_Ruibetsu),nameof(F_Delivery_Date),nameof(F_Delivery_Trip))]
 
-    public class TB_MS_Kanban
+    public class TB_Kanban_Stop
     {
-
         [StringLength(1)]
         public string F_Plant { get; set; }
         [StringLength(4)]
@@ -24,24 +24,16 @@ namespace HINOSystem.Models.KB3.Master
         public string F_Part_No { get; set; }
         [StringLength(2)]
         public string F_Ruibetsu { get; set; }
+        [StringLength(1)]
+        public string? F_Status { get; set; }
+        [StringLength(8)]
+        public string F_Delivery_Date { get; set; }
+        [StringLength(2)]
+        public string F_Delivery_Trip { get; set; }
         [StringLength(8)]
         public string? F_Start_Date { get; set; }
-        [StringLength(8)]
-        public string? F_End_Date { get; set; }
-        public int? F_Box_Qty { get; set; }
-        [StringLength(6)]
-        public string? F_Cycle { get; set; }
-        public int? F_Box_Capacity { get; set; }
-        [StringLength(5)]
-        public string? F_Supply_Code { get; set; }
-        [StringLength(60)]
-        public string? F_Part_Name { get; set; }
-        [StringLength(80)]
-        public string? F_Supplier_Name { get; set; }
-        [StringLength(50)]
-        public string? F_Description { get; set; }
-        [StringLength(20)]
-        public string? F_Address { get; set; }
+        [StringLength(1)]
+        public string? F_Start_Shift { get; set; }
         public DateTime? F_Create_Date { get; set; }
         [StringLength(25)]
         public string? F_Create_By { get; set; }
@@ -49,7 +41,6 @@ namespace HINOSystem.Models.KB3.Master
         [StringLength(25)]
         public string? F_Update_By { get; set; }
 
+
     }
 }
-
-

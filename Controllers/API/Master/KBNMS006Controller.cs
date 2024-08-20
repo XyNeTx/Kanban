@@ -2,7 +2,6 @@
 using HINOSystem.Libs;
 using KANBAN.Context;
 using KANBAN.Libs;
-using KANBAN.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -106,7 +105,7 @@ namespace HINOSystem.Controllers.API.Master
                 });
             }
         }
-        
+
         [HttpGet]
         public async Task<IActionResult> GetKanban(string? F_Supplier_Code)
         {
@@ -128,7 +127,7 @@ namespace HINOSystem.Controllers.API.Master
                 string plant = Request.Cookies["plantCode"].ToString();
 
                 var kanban = _KB3Context.TB_MS_PartOrder.AsNoTracking()
-                    .Where(x => x.F_Start_Date.CompareTo(now) <= 0 && 
+                    .Where(x => x.F_Start_Date.CompareTo(now) <= 0 &&
                     x.F_End_Date.CompareTo(now) >= 0 &&
                     x.F_Store_Code.StartsWith(plant)).AsEnumerable();
 
@@ -139,7 +138,7 @@ namespace HINOSystem.Controllers.API.Master
                 }
 
 
-                if(kanban.Count() == 0)
+                if (kanban.Count() == 0)
                 {
                     return NotFound(new
                     {
@@ -156,7 +155,7 @@ namespace HINOSystem.Controllers.API.Master
                     response = "OK",
                     title = "Success",
                     message = "Data Found",
-                    data = kanban.Select(x=>x.F_Kanban_No).DistinctBy(x=>x).OrderBy(x => x).AsEnumerable()
+                    data = kanban.Select(x => x.F_Kanban_No).DistinctBy(x => x).OrderBy(x => x).AsEnumerable()
                 });
             }
             catch (Exception ex)
@@ -171,7 +170,7 @@ namespace HINOSystem.Controllers.API.Master
                 });
             }
         }
-        
+
         [HttpGet]
         public async Task<IActionResult> GetStore(string? F_Part_No)
         {
@@ -221,7 +220,7 @@ namespace HINOSystem.Controllers.API.Master
                     title = "Success",
                     message = "Data Found",
                     data = store.Select(x => x.F_Store_Code).DistinctBy(x => x).OrderBy(x => x).AsEnumerable()
-            });
+                });
             }
             catch (Exception ex)
             {
@@ -235,7 +234,7 @@ namespace HINOSystem.Controllers.API.Master
                 });
             }
         }
-        
+
         [HttpGet]
         public async Task<IActionResult> GetPartNo(string? F_Store_Code)
         {
@@ -285,10 +284,10 @@ namespace HINOSystem.Controllers.API.Master
                     title = "Success",
                     message = "Data Found",
                     data = partno.Select(x => new
-                        {
-                            F_Part_No = x.F_Part_No + "-" + x.F_Ruibetsu
-                        }).DistinctBy(x => x.F_Part_No).OrderBy(x => x.F_Part_No).AsEnumerable()
-            });
+                    {
+                        F_Part_No = x.F_Part_No + "-" + x.F_Ruibetsu
+                    }).DistinctBy(x => x.F_Part_No).OrderBy(x => x.F_Part_No).AsEnumerable()
+                });
             }
             catch (Exception ex)
             {
@@ -304,7 +303,7 @@ namespace HINOSystem.Controllers.API.Master
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetSupplierDetail(string F_Supplier_Code,string? F_Store_Code)
+        public async Task<IActionResult> GetSupplierDetail(string F_Supplier_Code, string? F_Store_Code)
         {
             try
             {
@@ -322,12 +321,12 @@ namespace HINOSystem.Controllers.API.Master
                 }
 
                 var supplierDetail = _PPM3Context.T_Supplier_MS.AsNoTracking()
-                    .Where(x=>x.F_supplier_cd == F_Supplier_Code.Substring(0, 4) &&
+                    .Where(x => x.F_supplier_cd == F_Supplier_Code.Substring(0, 4) &&
                     x.F_Plant_cd == F_Supplier_Code.Substring(5, 1)[0] &&
                     x.F_TC_Str.CompareTo(now) <= 0 &&
                     x.F_TC_End.CompareTo(now) >= 0 &&
                     x.F_Store_cd.StartsWith(plant))
-                    .OrderByDescending(x=>x.F_TC_Str).AsEnumerable();
+                    .OrderByDescending(x => x.F_TC_Str).AsEnumerable();
 
                 if (!string.IsNullOrWhiteSpace(F_Store_Code))
                 {
@@ -353,7 +352,7 @@ namespace HINOSystem.Controllers.API.Master
                     message = "Supplier Detail Found",
                     data = supplierDetail.Select(x => new
                     {
-                        F_Supplier_Name = "(" + x.F_short_name.Trim() + ") " + x.F_name.Trim(),
+                        F_Supplier_Name = "(" + x.F_short_name?.Trim() + ") " + x.F_name?.Trim(),
                         F_Cycle = ("00" + x.F_Cycle_A).Substring(("00" + x.F_Cycle_A).Length - 2, 2)
                         + "-" + ("00" + x.F_Cycle_B).Substring(("00" + x.F_Cycle_B).Length - 2, 2)
                         + "-" + ("00" + x.F_Cycle_C).Substring(("00" + x.F_Cycle_C).Length - 2, 2)
@@ -377,7 +376,7 @@ namespace HINOSystem.Controllers.API.Master
 
 
         [HttpGet]
-        public async Task<IActionResult> GetKanbanDetail(string F_Kanban_No,string? F_Supplier_Code,string? F_Store_Code,string? F_Part_No)
+        public async Task<IActionResult> GetKanbanDetail(string F_Kanban_No, string? F_Supplier_Code, string? F_Store_Code, string? F_Part_No)
         {
             try
             {
@@ -409,7 +408,7 @@ namespace HINOSystem.Controllers.API.Master
                 {
                     kanbanDetail = kanbanDetail.Where(x => x.F_Store_cd == F_Store_Code);
                 }
-                if(!string.IsNullOrWhiteSpace(F_Part_No))
+                if (!string.IsNullOrWhiteSpace(F_Part_No))
                 {
                     kanbanDetail = kanbanDetail.Where(x => x.F_Part_no == F_Part_No.Substring(0, 10) &&
                         x.F_Ruibetsu == F_Part_No.Substring(11, 2));
@@ -434,8 +433,8 @@ namespace HINOSystem.Controllers.API.Master
                     message = "Kanban Detail Found",
                     data = kanbanDetail.Select(x => new
                     {
-                        F_qty_box = x.F_qty_box.ToString().Trim()
-                    }).DistinctBy(x=>x.F_qty_box).AsEnumerable()
+                        F_qty_box = x.F_qty_box.ToString().Trim(),
+                    }).DistinctBy(x => x.F_qty_box).AsEnumerable()
                 });
 
             }
@@ -471,7 +470,7 @@ namespace HINOSystem.Controllers.API.Master
                     });
                 }
 
-                if(string.IsNullOrWhiteSpace(F_Kanban_No) && string.IsNullOrWhiteSpace(F_Supplier_Code) && string.IsNullOrWhiteSpace(F_Store_Code) && string.IsNullOrWhiteSpace(F_Part_No))
+                if (string.IsNullOrWhiteSpace(F_Kanban_No) && string.IsNullOrWhiteSpace(F_Supplier_Code) && string.IsNullOrWhiteSpace(F_Store_Code) && string.IsNullOrWhiteSpace(F_Part_No))
                 {
                     return BadRequest(new
                     {
@@ -482,7 +481,7 @@ namespace HINOSystem.Controllers.API.Master
                     });
                 }
 
-                if(!string.IsNullOrWhiteSpace(F_Supplier_Code) && string.IsNullOrWhiteSpace(F_Kanban_No))
+                if (!string.IsNullOrWhiteSpace(F_Supplier_Code) && string.IsNullOrWhiteSpace(F_Kanban_No))
                 {
                     return BadRequest(new
                     {
@@ -492,8 +491,8 @@ namespace HINOSystem.Controllers.API.Master
                         message = "Please Select Kanban No Before"
                     });
                 }
-                
-                if(string.IsNullOrWhiteSpace(F_Supplier_Code) && !string.IsNullOrWhiteSpace(F_Kanban_No))
+
+                if (string.IsNullOrWhiteSpace(F_Supplier_Code) && !string.IsNullOrWhiteSpace(F_Kanban_No))
                 {
                     return BadRequest(new
                     {
@@ -504,7 +503,7 @@ namespace HINOSystem.Controllers.API.Master
                     });
                 }
 
-                if(!string.IsNullOrWhiteSpace(F_Store_Code) && string.IsNullOrWhiteSpace(F_Part_No))
+                if (!string.IsNullOrWhiteSpace(F_Store_Code) && string.IsNullOrWhiteSpace(F_Part_No))
                 {
                     return BadRequest(new
                     {
@@ -515,7 +514,7 @@ namespace HINOSystem.Controllers.API.Master
                     });
                 }
 
-                if(string.IsNullOrWhiteSpace(F_Store_Code) && !string.IsNullOrWhiteSpace(F_Part_No))
+                if (string.IsNullOrWhiteSpace(F_Store_Code) && !string.IsNullOrWhiteSpace(F_Part_No))
                 {
                     return BadRequest(new
                     {
@@ -565,17 +564,87 @@ namespace HINOSystem.Controllers.API.Master
                 {
                     chgQty = chgQty.Where(x => x.F_Store_Code == F_Store_Code).AsEnumerable();
                 }
-                if(!string.IsNullOrWhiteSpace(F_Supplier_Code))
+                if (!string.IsNullOrWhiteSpace(F_Supplier_Code))
                 {
                     chgQty = chgQty.Where(x => x.F_Supplier_Code == F_Supplier_Code.Substring(0, 4) &&
                         x.F_Supplier_Plant == F_Supplier_Code.Substring(5, 1)).AsEnumerable();
                 }
-                if(!string.IsNullOrWhiteSpace(F_Kanban_No))
+                if (!string.IsNullOrWhiteSpace(F_Kanban_No))
                 {
                     chgQty = chgQty.Where(x => x.F_Kanban_No == F_Kanban_No).AsEnumerable();
                 }
 
-                
+                // ------------------------------ STOP -------------------------
+
+                var stop = _KB3Context.TB_Kanban_Stop.AsNoTracking()
+                    .Where(x => x.F_Plant == plant).AsEnumerable();
+
+                if (!string.IsNullOrWhiteSpace(F_Part_No))
+                {
+                    stop = stop.Where(x => x.F_Part_No == F_Part_No.Substring(0, 10) &&
+                           x.F_Ruibetsu == F_Part_No.Substring(11, 2)).AsEnumerable();
+                }
+                if (!string.IsNullOrWhiteSpace(F_Store_Code))
+                {
+                    stop = stop.Where(x => x.F_Store_Code == F_Store_Code).AsEnumerable();
+                }
+                if (!string.IsNullOrWhiteSpace(F_Supplier_Code))
+                {
+                    stop = stop.Where(x => x.F_Supplier_Code == F_Supplier_Code.Substring(0, 4) &&
+                            x.F_Supplier_Plant == F_Supplier_Code.Substring(5, 1)).AsEnumerable();
+                }
+                if (!string.IsNullOrWhiteSpace(F_Kanban_No))
+                {
+                    stop = stop.Where(x => x.F_Kanban_No == F_Kanban_No).AsEnumerable();
+                }
+
+                // ------------------------------ CUT -------------------------
+                var cut = _KB3Context.TB_Kanban_Cut.AsNoTracking()
+                    .Where(x => x.F_Plant == plant).AsEnumerable();
+
+                if (!string.IsNullOrWhiteSpace(F_Part_No))
+                {
+                    cut = cut.Where(x => x.F_Part_No == F_Part_No.Substring(0, 10) &&
+                               x.F_Ruibetsu == F_Part_No.Substring(11, 2)).AsEnumerable();
+                }
+                if (!string.IsNullOrWhiteSpace(F_Store_Code))
+                {
+                    cut = cut.Where(x => x.F_Store_Code == F_Store_Code).AsEnumerable();
+                }
+                if (!string.IsNullOrWhiteSpace(F_Supplier_Code))
+                {
+                    cut = cut.Where(x => x.F_Supplier_Code == F_Supplier_Code.Substring(0, 4) &&
+                                x.F_Supplier_Plant == F_Supplier_Code.Substring(5, 1)).AsEnumerable();
+                }
+                if (!string.IsNullOrWhiteSpace(F_Kanban_No))
+                {
+                    cut = cut.Where(x => x.F_Kanban_No == F_Kanban_No).AsEnumerable();
+                }
+
+                // ------------------------------ Master -------------------------
+
+                var master = _KB3Context.TB_MS_Kanban.AsNoTracking()
+                    .Where(x => x.F_Plant == plant).AsEnumerable();
+
+                if (!string.IsNullOrWhiteSpace(F_Part_No))
+                {
+                    master = master.Where(x => x.F_Part_No == F_Part_No.Substring(0, 10) &&
+                           x.F_Ruibetsu == F_Part_No.Substring(11, 2)).AsEnumerable();
+                }
+                if (!string.IsNullOrWhiteSpace(F_Store_Code))
+                {
+                    master = master.Where(x => x.F_Store_Code == F_Store_Code).AsEnumerable();
+                }
+                if (!string.IsNullOrWhiteSpace(F_Supplier_Code))
+                {
+                    master = master.Where(x => x.F_Supplier_Code == F_Supplier_Code.Substring(0, 4) &&
+                             x.F_Supplier_Plant == F_Supplier_Code.Substring(5, 1)).AsEnumerable();
+                }
+                if (!string.IsNullOrWhiteSpace(F_Kanban_No))
+                {
+                    master = master.Where(x => x.F_Kanban_No == F_Kanban_No).AsEnumerable();
+                }
+
 
                 return Ok(new
                 {
@@ -592,14 +661,45 @@ namespace HINOSystem.Controllers.API.Master
                             F_Delivery_Date = x.F_Delivery_Date.Trim(),
                             F_Delivery_Trip = x.F_Delivery_Trip.Trim(),
                             x.F_New_Qty,
-                            x.F_Start_Date,
-                            x.F_Start_Shift,
+                            F_Start_Date = x.F_Start_Date?.Trim(),
+                            F_Start_Shift = x.F_Start_Shift?.Trim(),
                             x.F_Create_Date,
-                            x.F_Create_By,
+                            F_Create_By = x.F_Create_By?.Trim(),
                             x.F_Update_Date,
-                            x.F_Update_By
+                            F_Update_By = x.F_Update_By?.Trim(),
+                        }).FirstOrDefault(),
+                        stop = stop.Select(x => new
+                        {
+                            F_Status = x.F_Status == null ? "0" : x.F_Status,
+                            F_Delivery_Date = x.F_Delivery_Date.Trim(),
+                            F_Delivery_Trip = x.F_Delivery_Trip.Trim(),
+                            F_Start_Date = x.F_Start_Date?.Trim(),
+                            F_Start_Shift = x.F_Start_Shift?.Trim(),
+                            x.F_Create_Date,
+                            F_Create_By = x.F_Create_By?.Trim(),
+                            x.F_Update_Date,
+                            F_Update_By = x.F_Update_By?.Trim(),
+                        }).FirstOrDefault(),
+                        cut = cut.Select(x => new
+                        {
+                            F_Status = x.F_Status == null ? "0" : x.F_Status,
+                            F_Delivery_Date = x.F_Delivery_Date.Trim(),
+                            F_Delivery_Trip = x.F_Delivery_Trip.Trim(),
+                            x.F_KB_Cut,
+                            x.F_KB_Cut_RN,
+                            x.F_KB_Remain,
+                            F_Start_Date = x.F_Start_Date.Trim(),
+                            F_Start_Shift = x.F_Start_Shift.Trim(),
+                            F_Create_By = x.F_Create_By.Trim(),
+                            F_Update_By = x.F_Update_By.Trim(),
+                            x.F_Create_Date,
+                            x.F_Update_Date,
+                        }).FirstOrDefault(),
+                        master = master.Select(x => new
+                        {
+                            F_Address = x.F_Address?.Trim(),
+                            F_Supplier_Code = x.F_Supplier_Code.Trim(),
                         }).FirstOrDefault()
-
                     }
                 });
             }
@@ -622,7 +722,7 @@ namespace HINOSystem.Controllers.API.Master
             {
                 string accessDB = plant == "3" ? "HMMTA-PPM" : "HMMT-PPM";
 
-                string _sql = $"SELECT RTRIM(P.F_Supplier_Cd)+'-'+RTRIM(P.F_Supplier_Plant) AS F_supplier_cd" +
+                string _sql = $"SELECT TOP 1 RTRIM(P.F_Supplier_Cd)+'-'+RTRIM(P.F_Supplier_Plant) AS F_supplier_cd" +
                         $",RTRIM(S.F_name) AS F_name, RTRIM(P.F_Part_No)+'-'+RTRIM(P.F_Ruibetsu) AS F_Part_no " +
                         $",P.F_Store_Code AS F_Store_cd, RIGHT('0000'+ CONVERT(VARCHAR,P.F_Kanban_No),4) AS F_Kanban " +
                         $",RIGHT('0000'+ CONVERT(VARCHAR,C.F_Sebango),4) AS F_Kanban" +
@@ -672,7 +772,7 @@ namespace HINOSystem.Controllers.API.Master
             }
             catch (Exception ex)
             {
-                _log.WriteErrorLog(ex.Message,_BearerClass.UserCode,_BearerClass.Device);
+                _log.WriteErrorLog(ex.Message, _BearerClass.UserCode, _BearerClass.Device);
                 return null;
             }
         }

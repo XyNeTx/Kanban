@@ -100,6 +100,15 @@ class xLib {
         return document.cookie = `${name}=${value}`;
     }
 
+    LoginDateDD() {
+        var cookieLoginDate = this.GetCookie('loginDate');
+        return moment(cookieLoginDate.substring(0,10)).format("DD/MM/YYYY");
+    }
+
+    GetUserName() {
+        return $(".pcoded-navigatio-lavel").text().trim();
+    }
+
 
     AJAX_GetNoHeader(url, data, successFn, errorFn) {
         if (window.location.hostname.includes("tpcap")) {
