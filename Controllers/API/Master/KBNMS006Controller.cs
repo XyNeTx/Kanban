@@ -1,7 +1,9 @@
 ﻿using HINOSystem.Context;
 using HINOSystem.Libs;
+using HINOSystem.Models.KB3.Master;
 using KANBAN.Context;
 using KANBAN.Libs;
+using KANBAN.Models.KB3.Master;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -698,7 +700,7 @@ namespace HINOSystem.Controllers.API.Master
                         master = master.Select(x => new
                         {
                             F_Address = x.F_Address?.Trim(),
-                            F_Supplier_Code = x.F_Supplier_Code.Trim(),
+                            F_Supply_Code = x.F_Supply_Code.Trim(),
                         }).FirstOrDefault()
                     }
                 });
@@ -775,6 +777,864 @@ namespace HINOSystem.Controllers.API.Master
                 _log.WriteErrorLog(ex.Message, _BearerClass.UserCode, _BearerClass.Device);
                 return null;
             }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SaveKanban(TB_MS_Kanban obj)
+        {
+            try
+            {
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401)
+                {
+                    return Unauthorized(new
+                    {
+                        status = "401",
+                        response = "Unauthorized",
+                        title = "Error",
+                        message = "Please Login then try again",
+                    });
+                }
+
+                var dbObj = await _KB3Context.TB_MS_Kanban.FirstOrDefaultAsync(x => x.F_Plant == obj.F_Plant
+                && x.F_Supplier_Code == obj.F_Supplier_Code && x.F_Supplier_Plant == obj.F_Supplier_Plant
+                && x.F_Store_Code == obj.F_Store_Code && x.F_Kanban_No == obj.F_Kanban_No
+                && x.F_Part_No == obj.F_Part_No && x.F_Ruibetsu == obj.F_Ruibetsu);
+
+                if(dbObj != null)
+                {
+                    dbObj.F_Supply_Code = obj.F_Supply_Code;
+                    dbObj.F_Address = obj.F_Address;
+                    dbObj.F_Update_By = _BearerClass.UserCode;
+                    dbObj.F_Update_Date = DateTime.Now;
+
+                    _KB3Context.TB_MS_Kanban.Update(dbObj);
+                }
+                else
+                {
+                    obj.F_Update_By = _BearerClass.UserCode;
+                    obj.F_Update_Date = DateTime.Now;
+                    obj.F_Create_By = _BearerClass.UserCode;
+                    obj.F_Create_Date = DateTime.Now;
+                    _KB3Context.TB_MS_Kanban.Add(obj);
+                }
+                _log.WriteLogMsg($"KBNMS006 : SaveKanban | obj : {JsonConvert.SerializeObject(dbObj)}");
+                await _KB3Context.SaveChangesAsync();
+
+                return Ok(new
+                {
+                    status = "200",
+                    resposne = "OK",
+                    title = "Success",
+                    message = "Save Data Success"
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500 ,new
+                {
+                    status = "500",
+                    response = "Internal Server Error",
+                    title = "Error",
+                    message = "Unexpected Error",
+                    error = ex.Message
+                });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SaveBoxQtyChg (TB_Kanban_Chg_Qty obj)
+        {
+            try
+            {
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401)
+                {
+                    return Unauthorized(new
+                    {
+                        status = "401",
+                        response = "Unauthorized",
+                        title = "Error",
+                        message = "Please Login then try again",
+                    });
+                }
+
+                string supplier = obj.F_Supplier_Code.Substring(0, 4) + "-" + obj.F_Supplier_Plant;
+
+                if (await IsProcessDatePast(obj.F_Delivery_Date, int.Parse(obj.F_Delivery_Trip), supplier, obj.F_Kanban_No))
+                {
+                    return BadRequest(new
+                    {
+                        status = "400",
+                        response = "Bad Request",
+                        title = "Error",
+                        message = "Delivery Date นี้ Process ไปเรียบร้อยแล้ว"
+                    });
+                }
+                if(await IsProcessDateHoliday(obj.F_Delivery_Date, obj.F_Store_Code))
+                {
+                    return BadRequest(new
+                    {
+                        status = "400",
+                        response = "Bad Request",
+                        title = "Error",
+                        message = "Delivery Date นี้เป็นวันหยุด"
+                    });
+                }
+                
+                if ( int.Parse(obj.F_Delivery_Trip) > await GetCycleTime(obj.F_Delivery_Date, int.Parse(obj.F_Delivery_Trip), supplier))
+                {
+                    return BadRequest(new
+                    {
+                        status = "400",
+                        response = "Bad Request",
+                        title = "Error",
+                        message = "Delivery Trip มากกว่า Cycle Time"
+                    });
+                }
+
+
+                var dbObj = await _KB3Context.TB_Kanban_Chg_Qty.FirstOrDefaultAsync(x => x.F_Plant == obj.F_Plant
+                && x.F_Supplier_Code == obj.F_Supplier_Code && x.F_Supplier_Plant == obj.F_Supplier_Plant
+                && x.F_Store_Code == obj.F_Store_Code && x.F_Kanban_No == obj.F_Kanban_No
+                && x.F_Part_No == obj.F_Part_No && x.F_Ruibetsu == obj.F_Ruibetsu);
+
+                if(dbObj != null)
+                {
+                    _KB3Context.TB_Kanban_Chg_Qty.Remove(dbObj);
+                    await _KB3Context.SaveChangesAsync();
+                    dbObj.F_Status = "0";
+                    dbObj.F_Delivery_Date = obj.F_Delivery_Date;
+                    dbObj.F_Delivery_Trip = obj.F_Delivery_Trip;
+                    dbObj.F_New_Qty = obj.F_New_Qty;
+                    dbObj.F_Update_Date = DateTime.Now;
+                    dbObj.F_Update_By = _BearerClass.UserCode;
+                    _KB3Context.TB_Kanban_Chg_Qty.Add(dbObj);
+                }
+                else
+                {
+                    obj.F_Status = "0";
+                    obj.F_Create_By = _BearerClass.UserCode;
+                    obj.F_Create_Date = DateTime.Now;
+                    obj.F_Update_By = _BearerClass.UserCode;
+                    obj.F_Update_Date = DateTime.Now;
+                    _KB3Context.TB_Kanban_Chg_Qty.Add(obj);
+                }
+
+                _log.WriteLogMsg($"KBNMS006 : SaveBoxQtyChg | obj : {JsonConvert.SerializeObject(dbObj)}");
+
+                await _KB3Context.SaveChangesAsync();
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "OK",
+                    title = "Success",
+                    message = "Save Data Success"
+                });
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    response = "Internal Server Error",
+                    title = "Error",
+                    message = "Unexpected Error",
+                    error = ex.Message
+                });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> StartBoxQtyChg (TB_Kanban_Chg_Qty obj)
+        {
+            try
+            {
+
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401)
+                {
+                    return Unauthorized(new
+                    {
+                        status = "401",
+                        response = "Unauthorized",
+                        title = "Error",
+                        message = "Please Login then try again",
+                    });
+                }
+
+                var dbObj = await _KB3Context.TB_Kanban_Chg_Qty.FirstOrDefaultAsync(x => x.F_Plant == obj.F_Plant
+                && x.F_Supplier_Code == obj.F_Supplier_Code && x.F_Supplier_Plant == obj.F_Supplier_Plant
+                && x.F_Store_Code == obj.F_Store_Code && x.F_Kanban_No == obj.F_Kanban_No
+                && x.F_Part_No == obj.F_Part_No && x.F_Ruibetsu == obj.F_Ruibetsu);
+
+                if (dbObj == null)
+                {
+                    return NotFound(new
+                    {
+                        status = "404",
+                        response = "Not Found",
+                        title = "Error",
+                        message = "Data Not Found"
+                    });
+                }
+
+                dbObj.F_Status = "1";
+                dbObj.F_Update_Date = DateTime.Now;
+                dbObj.F_Update_By = _BearerClass.UserCode;
+
+                _KB3Context.TB_Kanban_Chg_Qty.Update(dbObj);
+                await _KB3Context.SaveChangesAsync();
+                _log.WriteLogMsg($"KBNMS006 : StartBoxQtyChg | obj : {JsonConvert.SerializeObject(dbObj)}");
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "OK",
+                    title = "Success",
+                    message = "Start Success"
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    response = "Internal Server Error",
+                    title = "Error",
+                    message = "Unexpected Error",
+                    error = ex.Message
+                });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> StopBoxQtyChg(TB_Kanban_Chg_Qty obj)
+        {
+            try
+            {
+
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401)
+                {
+                    return Unauthorized(new
+                    {
+                        status = "401",
+                        response = "Unauthorized",
+                        title = "Error",
+                        message = "Please Login then try again",
+                    });
+                }
+
+                var dbObj = await _KB3Context.TB_Kanban_Chg_Qty.FirstOrDefaultAsync(x => x.F_Plant == obj.F_Plant
+                && x.F_Supplier_Code == obj.F_Supplier_Code && x.F_Supplier_Plant == obj.F_Supplier_Plant
+                && x.F_Store_Code == obj.F_Store_Code && x.F_Kanban_No == obj.F_Kanban_No
+                && x.F_Part_No == obj.F_Part_No && x.F_Ruibetsu == obj.F_Ruibetsu);
+
+                if (dbObj == null)
+                {
+                    return NotFound(new
+                    {
+                        status = "404",
+                        response = "Not Found",
+                        title = "Error",
+                        message = "Data Not Found"
+                    });
+                }
+
+                dbObj.F_Status = "0";
+                dbObj.F_Update_Date = DateTime.Now;
+                dbObj.F_Update_By = _BearerClass.UserCode;
+
+                _KB3Context.TB_Kanban_Chg_Qty.Update(dbObj);
+                await _KB3Context.SaveChangesAsync();
+                _log.WriteLogMsg($"KBNMS006 : StopBoxQtyChg | obj : {JsonConvert.SerializeObject(dbObj)}");
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "OK",
+                    title = "Success",
+                    message = "Stop Success"
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    response = "Internal Server Error",
+                    title = "Error",
+                    message = "Unexpected Error",
+                    error = ex.Message
+                });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SaveKBStop(TB_Kanban_Stop obj)
+        {
+            try
+            {
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401)
+                {
+                    return Unauthorized(new
+                    {
+                        status = "401",
+                        response = "Unauthorized",
+                        title = "Error",
+                        message = "Please Login then try again",
+                    });
+                }
+
+                string supplier = obj.F_Supplier_Code.Substring(0, 4) + "-" + obj.F_Supplier_Plant;
+
+                if (await IsProcessDatePast(obj.F_Delivery_Date, int.Parse(obj.F_Delivery_Trip), supplier, obj.F_Kanban_No))
+                {
+                    return BadRequest(new
+                    {
+                        status = "400",
+                        response = "Bad Request",
+                        title = "Error",
+                        message = "Delivery Date นี้ Process ไปเรียบร้อยแล้ว"
+                    });
+                }
+                
+                if (await IsProcessDateHoliday(obj.F_Delivery_Date, obj.F_Store_Code))
+                {
+                    return BadRequest(new
+                    {
+                        status = "400",
+                        response = "Bad Request",
+                        title = "Error",
+                        message = "Delivery Date นี้เป็นวันหยุด"
+                    });
+                }
+
+                if (int.Parse(obj.F_Delivery_Trip) > await GetCycleTime(obj.F_Delivery_Date, int.Parse(obj.F_Delivery_Trip), supplier))
+                {
+                    return BadRequest(new
+                    {
+                        status = "400",
+                        response = "Bad Request",
+                        title = "Error",
+                        message = "Delivery Trip มากกว่า Cycle Time"
+                    });
+                }
+
+                var dbObj = await _KB3Context.TB_Kanban_Stop.FirstOrDefaultAsync(x => x.F_Plant == obj.F_Plant
+                               && x.F_Supplier_Code == obj.F_Supplier_Code && x.F_Supplier_Plant == obj.F_Supplier_Plant
+                                              && x.F_Store_Code == obj.F_Store_Code && x.F_Kanban_No == obj.F_Kanban_No
+                                                             && x.F_Part_No == obj.F_Part_No && x.F_Ruibetsu == obj.F_Ruibetsu);
+
+                if (dbObj != null)
+                {
+                    _KB3Context.TB_Kanban_Stop.Remove(dbObj);
+                    await _KB3Context.SaveChangesAsync();
+                    dbObj.F_Status = "0";
+                    dbObj.F_Delivery_Date = obj.F_Delivery_Date;
+                    dbObj.F_Delivery_Trip = obj.F_Delivery_Trip;
+                    dbObj.F_Update_Date = DateTime.Now;
+                    dbObj.F_Update_By = _BearerClass.UserCode;
+                    _KB3Context.TB_Kanban_Stop.Add(dbObj);
+                }
+                else
+                {
+                    obj.F_Status = "0";
+                    obj.F_Create_By = _BearerClass.UserCode;
+                    obj.F_Create_Date = DateTime.Now;
+                    obj.F_Update_By = _BearerClass.UserCode;
+                    obj.F_Update_Date = DateTime.Now;
+                    _KB3Context.TB_Kanban_Stop.Add(obj);
+                }
+
+                _log.WriteLogMsg($"KBNMS006 : SaveKBStop | obj : {JsonConvert.SerializeObject(dbObj)}");
+
+                await _KB3Context.SaveChangesAsync();
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "OK",
+                    title = "Success",
+                    message = "Save Data Success"
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    response = "Internal Server Error",
+                    title = "Error",
+                    message = "Unexpected Error",
+                    error = ex.Message
+                });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> StartKBStop(TB_Kanban_Stop obj)
+        {
+            try
+            {
+                _BearerClass.Authentication(Request);
+                if(_BearerClass.Status == 401)
+                {
+                    return Unauthorized(new
+                    {
+                        status = "401",
+                        response = "Unauthorized",
+                        title = "Error",
+                        message = "Please Login then try again",
+                    });
+                }
+
+                var dbObj = await _KB3Context.TB_Kanban_Stop.FirstOrDefaultAsync(x => x.F_Plant == obj.F_Plant
+                && x.F_Supplier_Code == obj.F_Supplier_Code && x.F_Supplier_Plant == obj.F_Supplier_Plant
+                && x.F_Store_Code == obj.F_Store_Code && x.F_Kanban_No == obj.F_Kanban_No
+                && x.F_Part_No == obj.F_Part_No && x.F_Ruibetsu == obj.F_Ruibetsu);
+
+                if (dbObj == null)
+                {
+                    return NotFound(new
+                    {
+                        status = "404",
+                        response = "Not Found",
+                        title = "Error",
+                        message = "Data Not Found"
+                    });
+                }
+
+                dbObj.F_Status = "1";
+                dbObj.F_Update_Date = DateTime.Now;
+                dbObj.F_Update_By = _BearerClass.UserCode;
+
+                _KB3Context.TB_Kanban_Stop.Update(dbObj);
+                await _KB3Context.SaveChangesAsync();
+
+                _log.WriteLogMsg($"KBNMS006 : StartKBStop | obj : {JsonConvert.SerializeObject(dbObj)}");
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "OK",
+                    title = "Success",
+                    message = "Start KB Stop Success"
+                });
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    response = "Internal Server Error",
+                    title = "Error",
+                    message = "Unexpected Error",
+                    error = ex.Message
+                });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> StopKBStop(TB_Kanban_Stop obj)
+        {
+            try
+            {
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401)
+                {
+                    return Unauthorized(new
+                    {
+                        status = "401",
+                        response = "Unauthorized",
+                        title = "Error",
+                        message = "Please Login then try again",
+                    });
+                }
+
+                var dbObj = await _KB3Context.TB_Kanban_Stop.FirstOrDefaultAsync(x => x.F_Plant == obj.F_Plant
+                               && x.F_Supplier_Code == obj.F_Supplier_Code && x.F_Supplier_Plant == obj.F_Supplier_Plant
+                                              && x.F_Store_Code == obj.F_Store_Code && x.F_Kanban_No == obj.F_Kanban_No
+                                                             && x.F_Part_No == obj.F_Part_No && x.F_Ruibetsu == obj.F_Ruibetsu);
+
+                if (dbObj == null)
+                {
+                    return NotFound(new
+                    {
+                        status = "404",
+                        response = "Not Found",
+                        title = "Error",
+                        message = "Data Not Found"
+                    });
+                }
+
+                dbObj.F_Status = "0";
+                dbObj.F_Update_Date = DateTime.Now;
+                dbObj.F_Update_By = _BearerClass.UserCode;
+
+                _KB3Context.TB_Kanban_Stop.Update(dbObj);
+                await _KB3Context.SaveChangesAsync();
+
+                _log.WriteLogMsg($"KBNMS006 : StopKBStop | obj : {JsonConvert.SerializeObject(dbObj)}");
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "OK",
+                    title = "Success",
+                    message = "Stop KB Stop Success"
+                });
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    response = "Internal Server Error",
+                    title = "Error",
+                    message = "Unexpected Error",
+                    error = ex.Message
+                });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SaveKBCut(TB_Kanban_Cut obj)
+        {
+            try
+            {
+
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401)
+                {
+                    return Unauthorized(new
+                    {
+                        status = "401",
+                        response = "Unauthorized",
+                        title = "Error",
+                        message = "Please Login then try again",
+                    });
+                }
+
+                string supplier = obj.F_Supplier_Code.Substring(0, 4) + "-" + obj.F_Supplier_Plant;
+                
+                if(await IsProcessDatePast(obj.F_Delivery_Date, int.Parse(obj.F_Delivery_Trip), supplier, obj.F_Kanban_No))
+                {
+                    return BadRequest(new
+                    {
+                        status = "400",
+                        response = "Bad Request",
+                        title = "Error",
+                        message = "Delivery Date นี้ Process ไปเรียบร้อยแล้ว"
+                    });
+                }
+                if (await IsProcessDateHoliday(obj.F_Delivery_Date, obj.F_Store_Code))
+                {
+                    return BadRequest(new
+                    {
+                        status = "400",
+                        response = "Bad Request",
+                        title = "Error",
+                        message = "Delivery Date นี้เป็นวันหยุด"
+                    });
+                }
+                if(int.Parse(obj.F_Delivery_Trip) > await GetCycleTime(obj.F_Delivery_Date, int.Parse(obj.F_Delivery_Trip), supplier))
+                {
+                    return BadRequest(new
+                    {
+                        status = "400",
+                        response = "Bad Request",
+                        title = "Error",
+                        message = "Delivery Trip มากกว่า Cycle Time"
+                    });
+                }
+
+                var dbObj = await _KB3Context.TB_Kanban_Cut.FirstOrDefaultAsync(x => x.F_Plant == obj.F_Plant
+                               && x.F_Supplier_Code == obj.F_Supplier_Code && x.F_Supplier_Plant == obj.F_Supplier_Plant
+                                              && x.F_Store_Code == obj.F_Store_Code && x.F_Kanban_No == obj.F_Kanban_No
+                                                             && x.F_Part_No == obj.F_Part_No && x.F_Ruibetsu == obj.F_Ruibetsu);
+
+                if (dbObj != null)
+                {
+                    _KB3Context.TB_Kanban_Cut.Remove(dbObj);
+                    await _KB3Context.SaveChangesAsync();
+                    dbObj.F_Status = "0";
+                    dbObj.F_Delivery_Date = obj.F_Delivery_Date;
+                    dbObj.F_Delivery_Trip = obj.F_Delivery_Trip;
+                    dbObj.F_KB_Cut = obj.F_KB_Cut;
+                    dbObj.F_KB_Cut_RN = obj.F_KB_Cut_RN;
+                    dbObj.F_Update_Date = DateTime.Now;
+                    dbObj.F_Update_By = _BearerClass.UserCode;
+                    _KB3Context.TB_Kanban_Cut.Add(dbObj);
+                }
+                else
+                {
+                    obj.F_Status = "0";
+                    obj.F_Create_By = _BearerClass.UserCode;
+                    obj.F_Create_Date = DateTime.Now;
+                    obj.F_Update_By = _BearerClass.UserCode;
+                    obj.F_Update_Date = DateTime.Now;
+                    _KB3Context.TB_Kanban_Cut.Add(obj);
+                }
+
+                _log.WriteLogMsg($"KBNMS006 : SaveKBCut | obj : {JsonConvert.SerializeObject(obj)}");
+
+                await _KB3Context.SaveChangesAsync();
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "OK",
+                    title = "Success",
+                    message = "Save Data Success"
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    response = "Internal Server Error",
+                    title = "Error",
+                    message = "Unexpected Error",
+                    error = ex.Message
+                });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> StartKBCut(TB_Kanban_Cut obj)
+        {
+            try
+            {
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401)
+                {
+                    return Unauthorized(new
+                    {
+                        status = "401",
+                        response = "Unauthorized",
+                        title = "Error",
+                        message = "Please Login then try again",
+                    });
+                }
+
+                var dbObj = await _KB3Context.TB_Kanban_Cut.FirstOrDefaultAsync(x => x.F_Plant == obj.F_Plant
+                && x.F_Supplier_Code == obj.F_Supplier_Code && x.F_Supplier_Plant == obj.F_Supplier_Plant
+                && x.F_Store_Code == obj.F_Store_Code && x.F_Kanban_No == obj.F_Kanban_No
+                && x.F_Part_No == obj.F_Part_No && x.F_Ruibetsu == obj.F_Ruibetsu);
+
+                if (dbObj == null)
+                {
+                    return NotFound(new
+                    {
+                        status = "404",
+                        response = "Not Found",
+                        title = "Error",
+                        message = "Data Not Found"
+                    });
+                }
+
+                dbObj.F_Status = "1";
+                dbObj.F_Update_Date = DateTime.Now;
+                dbObj.F_Update_By = _BearerClass.UserCode;
+
+                _KB3Context.TB_Kanban_Cut.Update(dbObj);
+                await _KB3Context.SaveChangesAsync();
+
+                _log.WriteLogMsg($"KBNMS006 : StartKBCut | obj : {JsonConvert.SerializeObject(dbObj)}");
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "OK",
+                    title = "Success",
+                    message = "Start KB Stop Success"
+                });
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    response = "Internal Server Error",
+                    title = "Error",
+                    message = "Unexpected Error",
+                    error = ex.Message
+                });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> StopKBCut(TB_Kanban_Cut obj)
+        {
+            try
+            {
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401)
+                {
+                    return Unauthorized(new
+                    {
+                        status = "401",
+                        response = "Unauthorized",
+                        title = "Error",
+                        message = "Please Login then try again",
+                    });
+                }
+
+                var dbObj = await _KB3Context.TB_Kanban_Cut.FirstOrDefaultAsync(x => x.F_Plant == obj.F_Plant
+                               && x.F_Supplier_Code == obj.F_Supplier_Code && x.F_Supplier_Plant == obj.F_Supplier_Plant
+                                              && x.F_Store_Code == obj.F_Store_Code && x.F_Kanban_No == obj.F_Kanban_No
+                                                             && x.F_Part_No == obj.F_Part_No && x.F_Ruibetsu == obj.F_Ruibetsu);
+
+                if (dbObj == null)
+                {
+                    return NotFound(new
+                    {
+                        status = "404",
+                        response = "Not Found",
+                        title = "Error",
+                        message = "Data Not Found"
+                    });
+                }
+
+                dbObj.F_Status = "0";
+                dbObj.F_Update_Date = DateTime.Now;
+                dbObj.F_Update_By = _BearerClass.UserCode;
+
+                _KB3Context.TB_Kanban_Cut.Update(dbObj);
+                await _KB3Context.SaveChangesAsync();
+
+                _log.WriteLogMsg($"KBNMS006 : StopKBCut | obj : {JsonConvert.SerializeObject(dbObj)}");
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "OK",
+                    title = "Success",
+                    message = "Stop KB Stop Success"
+                });
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    response = "Internal Server Error",
+                    title = "Error",
+                    message = "Unexpected Error",
+                    error = ex.Message
+                });
+            }
+        }
+
+        public async Task<bool> IsProcessDatePast (string date,int trip,string supplier,string kanban)
+        {
+            try
+            {
+                bool result = false;
+                string _sql = $"SELECT DISTINCT V.F_Delivery_Date, V.F_Delivery_Trip, F_Lock " +
+                    $"FROM TB_Calculate_D D LEFT JOIN (Select F_Process_Date, F_Process_Round, F_Supplier_Code, F_Supplier_Plant " +
+                    $", F_Store_Code, F_Part_No, F_Ruibetsu, F_Kanban_No " +
+                    $", CASE WHEN F_Flag_Adj ='1' THEN F_Adj_DeliDate ELSE F_Delivery_Date END F_Delivery_Date " +
+                    $", CASE WHEN F_Flag_Adj ='1' THEN F_Adj_Deli_Trip ELSE F_Delivery_Trip END F_Delivery_Trip " +
+                    $", CASE WHEN F_Flag_Adj ='1' THEN F_Adj_Qty ELSE F_Qty END F_Qty,F_Lock " +
+                    $"From TB_Calculate_Volume) V ON D.F_Supplier_Code = V.F_Supplier_Code " +
+                    $"AND D.F_Supplier_Plant = V.F_Supplier_Plant AND D.F_Part_No = V.F_Part_No " +
+                    $"AND D.F_Ruibetsu = V.F_Ruibetsu AND D.F_Store_Code = V.F_Store_Code " +
+                    $"AND D.F_Kanban_No = V.F_Kanban_No AND D.F_Process_Date = V.F_Process_Date " +
+                    $"AND D.F_Process_Round = V.F_Process_Round ";
+
+                if(supplier != "9999")
+                {
+                    _sql += "WHERE D.F_Process_Date = (Select LEFT(F_Value3,8) From TB_MS_Parameter Where F_Code = 'LO') " +
+                        "AND D.F_Process_Shift = (Select RIGHT(F_Value3,1) From TB_MS_Parameter Where F_Code = 'LO') ";
+                }
+                else
+                {
+                    _sql += "WHERE D.F_Process_Date = (Select LEFT(F_Value3,8) From TB_MS_Parameter Where F_Code = 'LO_CKD') " +
+                        "AND D.F_Process_Shift = (Select RIGHT(F_Value3,1) From TB_MS_Parameter Where F_Code = 'LO_CKD') ";
+                }
+
+                _sql += $"AND V.F_Supplier_Code = '{supplier.Substring(0, 4)}' AND V.F_Supplier_Plant = '{supplier[5]}' " +
+                    $"AND V.F_Kanban_No = '{kanban}' AND D.F_KB_STOP  = '0'";
+
+                var _dt = _FillDT.ExecuteSQL(_sql);
+
+                if (_dt.Rows.Count == 0)
+                {
+                    return false;
+                }
+
+                else
+                {
+                    for(int i = 0; i < _dt.Rows.Count; i++)
+                    {
+
+                        string _base = (date + ("00" + trip.ToString()).Substring(("00" + trip.ToString()).Length - 2, 2));
+
+                        string _diff = _dt.Rows[i]["F_Delivery_Date"].ToString().Trim() +
+                                        ("00" + _dt.Rows[i]["F_Delivery_Trip"].ToString().Trim())
+                                        .Substring(("00" + _dt.Rows[i]["F_Delivery_Trip"].ToString().Trim()).Length - 2, 2);
+
+                        if (_base.CompareTo(_diff) <= 0)
+                        {
+                            result = true;
+                        }
+                    }
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> IsProcessDateHoliday (string date, string store)
+        {
+            try
+            {
+                bool result = false;
+
+                string _sql = $"SELECT SUM(CAST(F_Work AS INT)) " +
+                    $"FROM TB_Calendar_UNPIVOT WHERE F_Date = '{date}' " +
+                    $"AND F_Store_cd = '{store}' HAVING SUM(CAST(F_Work AS INT)) = 0";
+
+                var _dt = _FillDT.ExecuteSQL(_sql);
+
+                if (_dt.Rows.Count > 0)
+                {
+                    return true;
+                }
+                
+                return false;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public async Task<int> GetCycleTime (string date , int trip,string supplier)
+        {
+            string _sql = $"exec [dbo].[sp_getCycleTime] @p0,@p1,@p2,@p3";
+            var _dt = _FillDT.ExecuteSQL(_sql, supplier.Substring(0, 4), supplier[5], date, date);
+
+            if (_dt.Rows.Count > 0)
+            {
+                return int.TryParse(_dt.Rows[0]["F_Cycle"].ToString().Substring(4, 2), out int result) ? result : 0;
+            }
+            return 0;
         }
     }
 }

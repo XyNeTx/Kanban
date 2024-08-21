@@ -69,8 +69,8 @@
                             <input type="text" class="form-control bg-light col-6" id="readCycle" readonly />
                         </div>
                         <div class="d-flex justify-content-end align-items-end position-absolute bottom-0 end-0 ">
-                            <button type="button" class="btn btn-rounded btn-outline-dark col-10">Cancel</button>
-                            <button type="button" class="btn btn-rounded btn-outline-danger col-10">Exit</button>
+                            <button type="button" class="btn btn-rounded btn-outline-dark col-10" id="btnCancel">Cancel</button>
+                            <button type="button" class="btn btn-rounded btn-outline-danger col-10" id="btnExit">Exit</button>
                         </div>
                     </div>
                 </div>
@@ -88,12 +88,12 @@
                         </div>
                     </div>
                     <div class="d-flex justify-content-center col-4 pe-0">
-                        <button type="button" class="btn btn-rounded btn-outline-warning w-50">Save Kanban</button>
+                        <button type="button" class="btn btn-rounded btn-outline-warning w-50" id="btnSaveKB">Save Kanban</button>
                     </div>
                 </div>
                 <div id="divKBStop" class="row mt-3">
-                    <div class="col-6">
-                        <div class="row border-2 border-dark">
+                    <div class="col-6 border-2 border-dark">
+                        <div class="row">
                             <h6> 1. Kanban Stop</h6>
                         </div>
                         <div class="input-group ps-0 col-6">
@@ -107,7 +107,7 @@
                             </div>
                             <div class="input-group col-6">
                                 <label class="input-group-text col-5" for="stopTrip">Trip</label>
-                                <input type="text" class="form-control bg-light col-5" id="stopTrip" />
+                                <input type="number" min="1" class="form-control bg-light col-5" id="stopTrip" />
                             </div>
                         </div>
                         <div class="row">
@@ -177,7 +177,7 @@
                             </div>
                             <div class="input-group col-6">
                                 <label class="input-group-text col-5" for="cutTrip">Trip</label>
-                                <input type="text" class="form-control bg-light col-5" id="cutTrip" />
+                                <input type="number" min="1" class="form-control bg-light col-5" id="cutTrip" />
                             </div>
                         </div>
                         <div class="row">
@@ -193,17 +193,17 @@
                         <div class="row">
                             <div class="input-group col-6">
                                 <label class="input-group-text col-5" for="cutKB">KB Cut</label>
-                                <input type="text" class="form-control col-6 bg-light" id="cutKB" />
+                                <input type="number" min="0" class="form-control col-6 bg-light" id="cutKB" />
                             </div>
                             <div class="input-group col-6">
                                 <label class="input-group-text col-5" for="cutKBCycle">KB Cut/Cycle</label>
-                                <input type="text" class="form-control col-5 bg-light" id="cutKBCycle" />
+                                <input type="number" min="0" class="form-control col-5 bg-light" id="cutKBCycle" />
                             </div>
                         </div>
                         <div class="row">
                             <div class="input-group col-6">
                                 <label class="input-group-text col-5" for="cutRemain">KB Remain</label>
-                                <input type="text" class="form-control col-6 bg-light" id="cutRemain" />
+                                <input type="number" min="0" class="form-control col-6 bg-light" id="cutRemain" />
                             </div>
                         </div>
                         <div class="row">
@@ -253,7 +253,7 @@
                             </div>
                             <div class="input-group col-6">
                                 <label class="input-group-text col-5" for="boxTrip">Trip</label>
-                                <input type="text" class="form-control bg-light col-5" id="boxTrip" />
+                                <input type="number" min="1" class="form-control bg-light col-5" id="boxTrip" />
                             </div>
                         </div>
                         <div class="row">
@@ -269,7 +269,7 @@
                         <div class="row">
                             <div class="input-group col-6">
                                 <label class="input-group-text col-5" for="boxQty">New Box Qty</label>
-                                <input type="text" class="form-control col-6 bg-light" id="boxQty" />
+                                <input type="number" min="0" class="form-control col-6 bg-light" id="boxQty" />
                             </div>
                         </div>
                         <div class="row">

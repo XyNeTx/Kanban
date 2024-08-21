@@ -113,10 +113,6 @@
 
 
     await initial();
-    xSplash.hide();
-
-
-
 
     let iSpy = 0;
     $('#imgHINOLogo').on('click',function (e) {
@@ -134,8 +130,11 @@
             _xLib.SetCookie('isDev', _isDev);
             setCookie('debug', _debug);
             document.location.reload();
+            xSplash.hide();
         }
     });
+
+    xSplash.hide();
 
 });
 

@@ -209,7 +209,22 @@ class libSwal {
         this.question(pTitle, pMessage, pCallback);
     }
 
+    confirm(pTitle, pMessage) {
 
+        return Swal.fire({
+            icon: 'question',
+            title: pTitle,
+            text: pMessage,
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: i18nLayout.modal.swal.question.confirm,
+            cancelButtonText: i18nLayout.modal.swal.question.cancel,
+        }).then((result) => {
+            console.log(result);
+            return result.isConfirmed;
+        });
+    }
 
     success(pTitle = "", pMessage = "", pCallback = null) {
         Swal.fire({
