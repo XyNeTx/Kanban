@@ -4,6 +4,7 @@
         <div class="card border-left-primary shadow h-100">
             <div class="card-body">
                 <div class="row">
+                    <h6> Detail Part : </h6>
                     <div id="divSelect" class="col-3">
                         <select class="SelectPicker" id="selectSupplier" data-live-search="true" data-width="100%" title="Supplier Code : "></select>
                         <select class="SelectPicker mt-1" id="selectKanban" data-live-search="true" data-width="100%" title="Kanban No : "></select>
@@ -34,39 +35,39 @@
                     <div id="divRead" class="col-5">
                         <div class="input-group">
                             <label class="input-group-text col-3" for="readSupplierCode">Supplier Code</label>
-                            <input type="text" class="form-control bg-light" id="readSupplierCode" readonly />
+                            <input type="text" class="form-control " id="readSupplierCode" readonly />
                         </div>
                         <div class="input-group">
                             <label class="input-group-text col-3" for="readSupplierName">Supplier Name</label>
-                            <input type="text" class="form-control bg-light" id="readSupplierName" readonly />
+                            <input type="text" class="form-control " id="readSupplierName" readonly />
                         </div>
                         <div class="row">
                             <div class="input-group col-6" style="padding-right:0rem !important">
                                 <label class="input-group-text col-6" for="readKanban">Kanban No.</label>
-                                <input type="text" class="form-control bg-light" id="readKanban" readonly />
+                                <input type="text" class="form-control " id="readKanban" readonly />
                             </div>
                             <div class="input-group col-6">
                                 <label class="input-group-text" for="readBoxQty">Box Q'ty</label>
-                                <input type="text" class="form-control bg-light" id="readBoxQty" readonly />
+                                <input type="text" class="form-control " id="readBoxQty" readonly />
                             </div>
                         </div>
                         <div class="input-group">
                             <label class="input-group-text col-3" for="readStore">Store Code</label>
-                            <input type="text" class="form-control col-3 bg-light" id="readStore" readonly />
+                            <input type="text" class="form-control col-3 " id="readStore" readonly />
                         </div>
                         <div class="input-group">
                             <label class="input-group-text col-3" for="readPartNo">Part No.</label>
-                            <input type="text" class="form-control bg-light" id="readPartNo" readonly />
+                            <input type="text" class="form-control " id="readPartNo" readonly />
                         </div>
                         <div class="input-group">
                             <label class="input-group-text col-3" for="readPartName">Part Name</label>
-                            <input type="text" class="form-control bg-light" id="readPartName" readonly />
+                            <input type="text" class="form-control " id="readPartName" readonly />
                         </div>
                     </div>
                     <div class="col-4">
                         <div class="input-group">
                             <label class="input-group-text" for="readCycle">Cycle</label>
-                            <input type="text" class="form-control bg-light col-6" id="readCycle" readonly />
+                            <input type="text" class="form-control  col-6" id="readCycle" readonly />
                         </div>
                         <div class="d-flex justify-content-end align-items-end position-absolute bottom-0 end-0 ">
                             <button type="button" class="btn btn-rounded btn-outline-dark col-10" id="btnCancel">Cancel</button>
@@ -75,16 +76,17 @@
                     </div>
                 </div>
                 <div class="row mt-3">
+                    <h6> Information Data : </h6>
                     <div class="col-4">
                         <div class="input-group">
                             <label class="input-group-text col-3" for="readAddress">Address</label>
-                            <input type="text" class="form-control bg-light" id="readAddress" readonly />
+                            <input type="text" class="form-control " id="readAddress" readonly />
                         </div>
                     </div>
                     <div class="col-4">
                         <div class="input-group">
                             <label class="input-group-text col-3" for="readDock">Dock Code</label>
-                            <input type="text" class="form-control bg-light" id="readDock" readonly />
+                            <input type="text" class="form-control " id="readDock" readonly />
                         </div>
                     </div>
                     <div class="d-flex justify-content-center col-4 pe-0">
@@ -98,67 +100,67 @@
                         </div>
                         <div class="input-group ps-0 col-6">
                             <label class="input-group-text col-5 " for="stopStatus">Status</label>
-                            <input type="text" class="form-control col-6 bg-light" id="stopStatus" readonly />
+                            <input type="text" class="form-control col-6 " id="stopStatus" readonly />
                         </div>
                         <div class="row">
                             <div class="col-6">
                                 @* <label class="input-group-text col-5" for="stopDeliDate">Delivery Date</label> *@
-                                <input type="text" class="form-control col-6 bg-light" id="stopDeliDate" />
+                                <input type="text" class="form-control col-6 " id="stopDeliDate" />
                             </div>
                             <div class="input-group col-6">
                                 <label class="input-group-text col-5" for="stopTrip">Trip</label>
-                                <input type="number" min="1" class="form-control bg-light col-5" id="stopTrip" />
+                                <input type="number" min="1" class="form-control  col-5" id="stopTrip" />
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-6">
                                 @* <label class="input-group-text col-5" for="stopStartDate">Start Date</label> *@
-                                <input type="text" class="form-control col-6 bg-light" id="stopStartDate" />
+                                <input type="text" class="form-control col-6 " id="stopStartDate" />
                             </div>
                             <div class="input-group col-6">
                                 <label class="input-group-text col-5" for="stopShift">Shift</label>
-                                <input type="text" class="form-control col-5 bg-light" id="stopShift" />
+                                <input type="text" class="form-control col-5 " id="stopShift" />
                             </div>
                         </div>
                         <div class="row" style="visibility:hidden">
                             <div class="input-group col-6">
                                 <label class="input-group-text col-5" for="hide">Update By</label>
-                                <input type="text" class="form-control col-6 bg-light" id="hide" />
+                                <input type="text" class="form-control col-6 " id="hide" />
                             </div>
                         </div>
                         <div class="row" style="visibility:hidden">
                             <div class="input-group col-6">
                                 <label class="input-group-text col-5" for="hide2">Update By</label>
-                                <input type="text" class="form-control col-6 bg-light" id="hide2" />
+                                <input type="text" class="form-control col-6 " id="hide2" />
                             </div>
                         </div>
                         <div class="row">
                             <div class="input-group col-6">
                                 <label class="input-group-text col-5" for="stopUpdateBy">Update By</label>
-                                <input type="text" class="form-control col-6 bg-light" id="stopUpdateBy" />
+                                <input type="text" class="form-control col-6 " id="stopUpdateBy" />
                             </div>
                             <div class="col-6">
                                 @* <label class="input-group-text col-5" for="stopUpdateDate">Update Date</label> *@
-                                <input type="text" class="form-control col-5 bg-light" id="stopUpdateDate" />
+                                <input type="text" class="form-control col-5 " id="stopUpdateDate" />
                             </div>
                         </div>
                         <div class="row">
                             <div class="input-group col-6">
                                 <label class="input-group-text col-5" for="stopProcessBy">Process By</label>
-                                <input type="text" class="form-control col-6 bg-light" id="stopProcessBy" />
+                                <input type="text" class="form-control col-6 " id="stopProcessBy" />
                             </div>
                             <div class="col-6">
                                 @* <label class="input-group-text col-5" for="stopProcessDate">Process Date</label> *@
-                                <input type="text" class="form-control col-5 bg-light" id="stopProcessDate" />
+                                <input type="text" class="form-control col-5 " id="stopProcessDate" />
                             </div>
                         </div>
                         <div class="row mt-2">
                             <div class="col"></div>
-                            <button type="button" class="btn btn-rounded btn-outline-dark col" id="stopBtnStop">Stop</button>
-                            <button type="button" class="btn btn-rounded btn-outline-dark col" id="stopBtnEdit">Edit</button>
+                            <button type="button" class="btn btn-rounded btn-outline-dark col" id="stopBtnStop"><i class="fa-solid fa-stop me-1"></i>Stop</button>
+                            <button type="button" class="btn btn-rounded btn-outline-dark col" id="stopBtnEdit"><i class="fa-regular fa-pen-to-square me-1"></i>Edit</button>
                             <button type="button" class="btn btn-rounded btn-outline-dark col" id="stopBtnCanc">Cancel</button>
-                            <button type="button" class="btn btn-rounded btn-outline-dark col" id="stopBtnSave">Save</button>
-                            <button type="button" class="btn btn-rounded btn-outline-dark col" id="stopBtnStart">Start</button>
+                            <button type="button" class="btn btn-rounded btn-outline-dark col" id="stopBtnSave"><i class="fa-regular fa-floppy-disk me-1"></i>Save</button>
+                            <button type="button" class="btn btn-rounded btn-outline-dark col" id="stopBtnStart"><i class="fa-solid fa-play me-1"></i>Start</button>
                             <div class="col"></div>
                         </div>
                     </div>
@@ -168,71 +170,71 @@
                         </div>
                         <div class="input-group ps-0 col-6">
                             <label class="input-group-text col-5" for="cutStatus">Status</label>
-                            <input type="text" class="form-control col-6 bg-light" id="cutStatus" readonly />
+                            <input type="text" class="form-control col-6 " id="cutStatus" readonly />
                         </div>
                         <div class="row">
                             <div class="col-6">
                                 @* <label class="input-group-text col-5" for="cutDeliDate">Delivery Date</label> *@
-                                <input type="text" class="form-control col-6 bg-light" id="cutDeliDate" />
+                                <input type="text" class="form-control col-6 " id="cutDeliDate" />
                             </div>
                             <div class="input-group col-6">
                                 <label class="input-group-text col-5" for="cutTrip">Trip</label>
-                                <input type="number" min="1" class="form-control bg-light col-5" id="cutTrip" />
+                                <input type="number" min="1" class="form-control  col-5" id="cutTrip" />
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-6">
                                 @* <label class="input-group-text col-5" for="cutStartDate">Start Date</label> *@
-                                <input type="text" class="form-control col-6 bg-light" id="cutStartDate" />
+                                <input type="text" class="form-control col-6 " id="cutStartDate" />
                             </div>
                             <div class="input-group col-6">
                                 <label class="input-group-text col-5" for="cutShift">Shift</label>
-                                <input type="text" class="form-control col-5 bg-light" id="cutShift" />
+                                <input type="text" class="form-control col-5 " id="cutShift" />
                             </div>
                         </div>
                         <div class="row">
                             <div class="input-group col-6">
                                 <label class="input-group-text col-5" for="cutKB">KB Cut</label>
-                                <input type="number" min="0" class="form-control col-6 bg-light" id="cutKB" />
+                                <input type="number" min="0" class="form-control col-6 " id="cutKB" />
                             </div>
                             <div class="input-group col-6">
                                 <label class="input-group-text col-5" for="cutKBCycle">KB Cut/Cycle</label>
-                                <input type="number" min="0" class="form-control col-5 bg-light" id="cutKBCycle" />
+                                <input type="number" min="0" class="form-control col-5 " id="cutKBCycle" />
                             </div>
                         </div>
                         <div class="row">
                             <div class="input-group col-6">
                                 <label class="input-group-text col-5" for="cutRemain">KB Remain</label>
-                                <input type="number" min="0" class="form-control col-6 bg-light" id="cutRemain" />
+                                <input type="number" min="0" class="form-control col-6 " id="cutRemain" />
                             </div>
                         </div>
                         <div class="row">
                             <div class="input-group col-6">
                                 <label class="input-group-text col-5" for="cutUpdateBy">Update By</label>
-                                <input type="text" class="form-control col-6 bg-light" id="cutUpdateBy" />
+                                <input type="text" class="form-control col-6 " id="cutUpdateBy" />
                             </div>
                             <div class="col-6">
                                 @* <label class="input-group-text col-5" for="cutUpdateDate">Update Date</label> *@
-                                <input type="text" class="form-control col-5 bg-light" id="cutUpdateDate" />
+                                <input type="text" class="form-control col-5 " id="cutUpdateDate" />
                             </div>
                         </div>
                         <div class="row">
                             <div class="input-group col-6">
                                 <label class="input-group-text col-5" for="cutProcessBy">Process By</label>
-                                <input type="text" class="form-control col-6 bg-light" id="cutProcessBy" />
+                                <input type="text" class="form-control col-6 " id="cutProcessBy" />
                             </div>
                             <div class="col-6">
                                 @* <label class="input-group-text col-5" for="cutProcessDate">Process Date</label> *@
-                                <input type="text" class="form-control col-5 bg-light" id="cutProcessDate" />
+                                <input type="text" class="form-control col-5 " id="cutProcessDate" />
                             </div>
                         </div>
                         <div class="row mt-2">
                             <div class="col"></div>
-                            <button type="button" class="btn btn-rounded btn-outline-dark col" id="cutBtnStop">Stop</button>
-                            <button type="button" class="btn btn-rounded btn-outline-dark col" id="cutBtnEdit">Edit</button>
+                            <button type="button" class="btn btn-rounded btn-outline-dark col" id="cutBtnStop"><i class="fa-solid fa-stop me-1"></i>Stop</button>
+                            <button type="button" class="btn btn-rounded btn-outline-dark col" id="cutBtnEdit"><i class="fa-regular fa-pen-to-square me-1"></i>Edit</button>
                             <button type="button" class="btn btn-rounded btn-outline-dark col" id="cutBtnCanc">Cancel</button>
-                            <button type="button" class="btn btn-rounded btn-outline-dark col" id="cutBtnSave">Save</button>
-                            <button type="button" class="btn btn-rounded btn-outline-dark col" id="cutBtnStart">Start</button>
+                            <button type="button" class="btn btn-rounded btn-outline-dark col" id="cutBtnSave"><i class="fa-regular fa-floppy-disk me-1"></i>Save</button>
+                            <button type="button" class="btn btn-rounded btn-outline-dark col" id="cutBtnStart"><i class="fa-solid fa-play me-1"></i>Start</button>
                             <div class="col"></div>
                         </div>
                     </div>
@@ -244,61 +246,61 @@
                         </div>
                         <div class="input-group ps-0 col-6">
                             <label class="input-group-text col-5" for="boxStatus">Status</label>
-                            <input type="text" class="form-control col-6 bg-light" id="boxStatus" readonly />
+                            <input type="text" class="form-control col-6 " id="boxStatus" readonly />
                         </div>
                         <div class="row">
                             <div class="col-6">
                                 @* <label class="input-group-text" for="boxDeliDate">Delivery Date</label> *@
-                                <input type="text" class="form-control bg-light" id="boxDeliDate" />
+                                <input type="text" class="form-control " id="boxDeliDate" />
                             </div>
                             <div class="input-group col-6">
                                 <label class="input-group-text col-5" for="boxTrip">Trip</label>
-                                <input type="number" min="1" class="form-control bg-light col-5" id="boxTrip" />
+                                <input type="number" min="1" class="form-control  col-5" id="boxTrip" />
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-6">
                                 @* <label class="input-group-text col-5" for="boxStartDate">Start Date</label> *@
-                                <input type="text" class="form-control col-6 bg-light" id="boxStartDate" />
+                                <input type="text" class="form-control col-6 " id="boxStartDate" />
                             </div>
                             <div class="input-group col-6">
                                 <label class="input-group-text col-5" for="boxShift">Shift</label>
-                                <input type="text" class="form-control col-5 bg-light" id="boxShift" />
+                                <input type="text" class="form-control col-5 " id="boxShift" />
                             </div>
                         </div>
                         <div class="row">
                             <div class="input-group col-6">
                                 <label class="input-group-text col-5" for="boxQty">New Box Qty</label>
-                                <input type="number" min="0" class="form-control col-6 bg-light" id="boxQty" />
+                                <input type="number" min="0" class="form-control col-6 " id="boxQty" />
                             </div>
                         </div>
                         <div class="row">
                             <div class="input-group col-6">
                                 <label class="input-group-text col-5" for="boxUpdateBy">Update By</label>
-                                <input type="text" class="form-control col-6 bg-light" id="boxUpdateBy" />
+                                <input type="text" class="form-control col-6 " id="boxUpdateBy" />
                             </div>
                             <div class="col-6">
                                 @* <label class="input-group-text col-5" for="boxUpdateDate">Update Date</label> *@
-                                <input type="text" class="form-control col-5 bg-light" id="boxUpdateDate" />
+                                <input type="text" class="form-control col-5 " id="boxUpdateDate" />
                             </div>
                         </div>
                         <div class="row">
                             <div class="input-group col-6">
                                 <label class="input-group-text col-5" for="boxProcessBy">Process By</label>
-                                <input type="text" class="form-control col-6 bg-light" id="boxProcessBy" />
+                                <input type="text" class="form-control col-6 " id="boxProcessBy" />
                             </div>
                             <div class="col-6">
                                 @* <label class="input-group-text col-5" for="boxProcessDate">Process Date</label> *@
-                                <input type="text" class="form-control col-5 bg-light" id="boxProcessDate" />
+                                <input type="text" class="form-control col-5 " id="boxProcessDate" />
                             </div>
                         </div>
                         <div class="row mt-2">
                             <div class="col"></div>
-                            <button type="button" class="btn btn-rounded btn-outline-dark col" id="boxBtnStop">Stop</button>
-                            <button type="button" class="btn btn-rounded btn-outline-dark col" id="boxBtnEdit">Edit</button>
+                            <button type="button" class="btn btn-rounded btn-outline-dark col" id="boxBtnStop"><i class="fa-solid fa-stop me-1"></i>Stop</button>
+                            <button type="button" class="btn btn-rounded btn-outline-dark col" id="boxBtnEdit"><i class="fa-regular fa-pen-to-square me-1"></i>Edit</button>
                             <button type="button" class="btn btn-rounded btn-outline-dark col" id="boxBtnCanc">Cancel</button>
-                            <button type="button" class="btn btn-rounded btn-outline-dark col" id="boxBtnSave">Save</button>
-                            <button type="button" class="btn btn-rounded btn-outline-dark col" id="boxBtnStart">Start</button>
+                            <button type="button" class="btn btn-rounded btn-outline-dark col" id="boxBtnSave"><i class="fa-regular fa-floppy-disk me-1"></i>Save</button>
+                            <button type="button" class="btn btn-rounded btn-outline-dark col" id="boxBtnStart"><i class="fa-solid fa-play me-1"></i>Start</button>
                             <div class="col"></div>
                         </div>
                     </div>
@@ -306,7 +308,6 @@
             </div>
         </div>
     </div>
-
 </div>
 
 @section Scripts{

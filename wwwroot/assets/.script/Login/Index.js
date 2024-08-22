@@ -42,8 +42,8 @@
                     if (getCookie('debug') == '') setCookie('debug', 0);
                     if (getCookie('debug') == '1') console.log(result);
 
-                    $('#txtDomain').val(result.data.domain);
-                    $('#txtIPAddress').val(result.data.ipaddress);
+                    //$('#txtDomain').val(result.data.domain);
+                    //$('#txtIPAddress').val(result.data.ipaddress);
                     //$('#txtProcessDate').val(xDate.Date('yyyy-MM-dd'));
                     //$('#ddlFactory').val(3);
                     //$('#ddlShift').val((xDate.Time('hhmm') < 1930 ? "1" : "2"));
@@ -66,10 +66,13 @@
 
 
         await $.ajax({
-            url: "http:\\\\hmmt-app07/sso/api/SingleSignOn/getLogin",
+            url: "http://hmmt-app07/sso_test/api/SingleSignOn/GetLogin",
             type: "GET",
             xhrFields: {
                 withCredentials: true // Include credentials in the request
+            },
+            data: {
+                system_name: 'Hino Kanban System'
             },
 
             success: function (result) {
@@ -79,10 +82,13 @@
                 $('#txtDeviceName').val(result.computerName);
                 $('#txtFullDeviceName').val(result.fullComputerName);
                 $('#ddlFactory').val(result.userDetail.locationCode);
+                $('#txtDomain').val(result.domainName);
+                $('#txtIPAddress').val(result.addObj.f_IPAddress);
                 _xLib.SetCookie('plantCode', result.userDetail.locationCode);
             },
-            error: function (error) {
+            error: async function (error) {
                 //console.log(error);
+                await xSplash.hide();
                 xSwal.error('Error', "Can't Get User to Login");
             }
 
@@ -105,6 +111,7 @@
             },
             function (error) {
                 //console.log(error);
+                xSplash.hide();
                 xSwal.error('Error', "Can't Get Login Date");
             }
         );

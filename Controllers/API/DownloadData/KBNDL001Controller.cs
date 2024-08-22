@@ -1,51 +1,9 @@
-﻿using Microsoft.AspNetCore.Http.Extensions;
-using Microsoft.AspNetCore.Mvc;
-using System.Data;
-using System;
-using System.Web;
-using System.Security.Principal;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-
-using System.Reflection.PortableExecutable;
-using System.DirectoryServices;
-using System.DirectoryServices.AccountManagement;
-using Microsoft.Net.Http.Headers;
-using System.Collections.Specialized;
-using System.Net;
-using System.DirectoryServices.ActiveDirectory;
-using System.Net.Http;
-using Microsoft.AspNetCore.Authorization;
-
-using System.Security.Claims;
-using Org.BouncyCastle.Asn1.Ocsp;
-
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-
-using System.Threading.Tasks;
-
+﻿using HINOSystem.Context;
 using HINOSystem.Libs;
-using HINOSystem.Context;
-using HINOSystem.Models.KB3.Master;
-using NPOI.SS.Formula.Functions;
-using System.Dynamic;
-using Microsoft.SqlServer.Server;
-using Microsoft.VisualBasic;
-using System.Globalization;
-using Microsoft.AspNetCore.Http.HttpResults;
-
-using System.Drawing;
-using System.Diagnostics;
-using System.ComponentModel.DataAnnotations;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using PdfSharp.Charting;
-using NPOI.HPSF;
-
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Spire.Barcode;
-using System.Web.Services.Description;
-using NuGet.Configuration;
+using System.ComponentModel.DataAnnotations;
 
 
 namespace HINOSystem.Controllers.API.Master
@@ -110,10 +68,10 @@ namespace HINOSystem.Controllers.API.Master
                 
 
                 _SQL = @" EXEC [exec].[spKBNDL001_INI_PDS] '1'";
-                string _jsPDSNo = _KBCN.ExecuteJSON(_SQL, pControllerName: ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+                string _jsPDSNo = _KBCN.ExecuteJSONKB1(_SQL, pControllerName: ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
 
                 _SQL = @" EXEC [exec].[spKBNDL001_INI_SUPPLIER] '1'";
-                string _jsSupplier = _KBCN.ExecuteJSON(_SQL, pControllerName: ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+                string _jsSupplier = _KBCN.ExecuteJSONKB1(_SQL, pControllerName: ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
 
                 _result = @"{
                     ""status"":""200"",
@@ -348,7 +306,7 @@ namespace HINOSystem.Controllers.API.Master
                 //    }
                 //}
 
-                string _dt = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName: ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+                string _dt = _KBCN.ExecuteJSONKB1(_SQL, pUser: _BearerClass, pControllerName: ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
 
 
                 _result = @"{

@@ -12,11 +12,14 @@ namespace HINOSystem.Libs
     {
         private readonly KB3Context _KB3Context;
         private readonly IHttpContextAccessor _httpContext;
+        private readonly IConfiguration _configuration;
 
-        public KanbanConnection(KB3Context kB3Context, IHttpContextAccessor httpContext)
+
+        public KanbanConnection(KB3Context kB3Context, IHttpContextAccessor httpContext, IConfiguration configuration)
         {
             _KB3Context = kB3Context;
             _httpContext = httpContext;
+            _configuration = configuration;
         }
 
 
@@ -60,6 +63,50 @@ namespace HINOSystem.Libs
         {
             
             SqlConnection cn = new SqlConnection(_KB3Context.Database.GetConnectionString());
+            try
+            {
+                cn.Open();
+
+                SqlCommand cmd = new SqlCommand(SQL, cn);
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+
+                    var dataTable = new DataTable();
+                    dataTable.Load(reader);
+
+                    string JSONString = string.Empty;
+                    JSONString = JsonConvert.SerializeObject(dataTable);
+
+                    cmd.Dispose();
+                    cn.Close();
+
+                    if (skipLog != true) this.executeLog(httpContext, SQL, pAction, "OK", "ExecuteJSON", pUser: pUser, pControllerName: pControllerName, pActionName: pActionName, pSystem: pSystem);
+
+                    return JSONString;
+
+                }
+
+                cmd.Dispose();
+                cn.Close();
+
+            }
+            catch (Exception ex)
+            {
+                if (skipLog != true) this.executeLog(httpContext, SQL, pAction, "FAILED", ex.Message, pUser: pUser, pControllerName: pControllerName, pActionName: pActionName, pSystem: pSystem);
+
+                return "Error " + ex.Message;
+            }
+            finally
+            {
+                // Make sure to close the connection when you're done with it
+                cn.Close();
+            }
+        }
+
+        public string ExecuteJSONKB1(string SQL, IHttpContextAccessor httpContext = null, bool skipLog = false, BearerClass pUser = null, string pAction = "EXECUTE JSON", string pControllerName = "", string pActionName = "", string pSystem = "")
+        {
+
+            SqlConnection cn = new SqlConnection(_configuration.GetConnectionString("KB1Connection"));
             try
             {
                 cn.Open();

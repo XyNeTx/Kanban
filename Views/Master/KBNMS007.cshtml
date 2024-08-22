@@ -3,116 +3,419 @@
     <div class="col-xl-12 col-md-12 col-sm-12">
         <div class="card border-left-primary shadow h-100">
             <div class="card-body">
+                <div id="divDetail" class="row">
+                    <h6> Detail Part : </h6>
+                    <div id="divSelect" class="col-3">
+                        <select class="SelectPicker" id="selectSupplier" data-live-search="true" data-width="100%" title="Supplier Code : "></select>
+                        <select class="SelectPicker mt-1" id="selectKanban" data-live-search="true" data-width="100%" title="Kanban No : "></select>
+                        <select class="SelectPicker mt-1" id="selectStore" data-live-search="true" data-width="100%" title="Store Code : "></select>
+                        <select class="SelectPicker mt-1" id="selectPartNo" data-live-search="true" data-width="100%" title="Part No : "></select>
+                        
+                        <div class="row flex-row-reverse mt-2">
+                            <label class="btn btn-rounded btn-outline-success mt-2 mb-0 col-4" for="inputFile">Import File</label>
+                            <button type="button" id="btnSearch" class="btn btn-rounded btn-outline-dark mt-2 mb-0 me-2 col-4">Search</button>
+                            <input type="file" class="form-control col-1 mt-2 bg-success" style="visibility:hidden" id="inputFile" />
+                        </div>
 
-                <form id="frmCondition">
+                    </div>
+                    <div id="divRead" class="col-5">
+                        <div class="input-group">
+                            <label class="input-group-text col-3" for="readSupplierCode">Supplier Code</label>
+                            <input type="text" class="form-control " id="readSupplierCode" readonly />
+                        </div>
+                        <div class="input-group">
+                            <label class="input-group-text col-3" for="readSupplierName">Supplier Name</label>
+                            <input type="text" class="form-control " id="readSupplierName" readonly />
+                        </div>
+                        <div class="row">
+                            <div class="input-group col-6" style="padding-right:0rem !important">
+                                <label class="input-group-text col-6" for="readKanban">Kanban No.</label>
+                                <input type="text" class="form-control " id="readKanban" readonly />
+                            </div>
+                            <div class="input-group col-6">
+                                <label class="input-group-text" for="readBoxQty">Box Q'ty</label>
+                                <input type="text" class="form-control " id="readBoxQty" readonly />
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label class="input-group-text col-3" for="readStore">Store Code</label>
+                            <input type="text" class="form-control col-3 " id="readStore" readonly />
+                        </div>
+                        <div class="input-group">
+                            <label class="input-group-text col-3" for="readPartNo">Part No.</label>
+                            <input type="text" class="form-control " id="readPartNo" readonly />
+                        </div>
+                        <div class="input-group">
+                            <label class="input-group-text col-3" for="readPartName">Part Name</label>
+                            <input type="text" class="form-control " id="readPartName" readonly />
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="input-group">
+                            <label class="input-group-text" for="readCycle">Cycle</label>
+                            <input type="text" class="form-control col-6" id="readCycle" readonly />
+                        </div>
+                        <div class="d-flex justify-content-end align-items-end position-absolute bottom-0 end-0 ">
+                            <button type="button" class="btn btn-rounded btn-outline-dark col-10" id="btnCancel">Cancel</button>
+                            <button type="button" class="btn btn-rounded btn-outline-danger col-10" id="btnExit">Exit</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="divInfoData" class="row mt-3">
+                <h6> Information Data : </h6>
+                    <div class="col-4">
+                        <div class="input-group">
+                            <label class="input-group-text col-3" for="readAddress">Address</label>
+                            <input type="text" class="form-control" id="readAddress" readonly />
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="input-group">
+                            <label class="input-group-text col-3" for="readDock">Dock Code</label>
+                            <input type="text" class="form-control" id="readDock" readonly />
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-center col-4 pe-0">
+                        <button type="button" class="btn btn-rounded btn-outline-warning w-50" id="btnSaveKB">Save Kanban</button>
+                    </div>
+                </div>
+                <div id="divStatus" class="row mt-3">
+                    <div class="col-8">
+                        <div class="input-group">
+                            <label class="input-group-text col-2" for="readStatus">Status</label>
+                            <input type="text" class="form-control col-2" id="readStatus" readonly />
+                        </div>
+                        <div class="input-group">
+                            
+                            <input type="text" class="form-control col-2" id="readDeliveryDate" readonly />
+                        </div>
+                        <div class="row">
+                            <div class="col-6 me-0 pe-0">
+                                <div class="input-group">
+                                    <label class="input-group-text col-4" for="readStartDate">Start Date</label>
+                                    <input type="text" class="form-control col-4" id="readStartDate" readonly />
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="input-group">
+                                    <label class="input-group-text col-3" for="readShift">Shift</label>
+                                    <input type="text" class="form-control col-4" id="readShift" readonly />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label class="input-group-text col-2" for="readAddQty">Add Qty</label>
+                            <input type="number" class="form-control col-2" id="readAddQty" readonly />
+                        </div>
+                    </div>
+                </div>
+                <div id="divAddCycle" class="row mt-3">
+                    <div class="col-8">
+                        <div class="row mb-2">
+                            <input type="radio" class="form-check-input ms-2" id="radAddCycle" name="radioKB" disabled />
+                            <label class="form-check-label ms-4 ps-1" for="radAddCycle">KB Add/Cycle</label>
+                        </div>
+                        <div class="row">
+                            <div class="col-6 pe-0">
+                                <div class="input-group">
+                                    <label class="input-group-text col-4" for="inpAddTrip">KB Add/Trip</label>
+                                    <input type="text" class="form-control col-6" id="inpAddTrip" readonly />
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="input-group">
+                                    <label class="input-group-text col-3" for="inpStartTrip">Start Trip</label>
+                                    <input type="text" class="form-control col-4" id="inpStartTrip" readonly />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-8">
+                        <div class="row mb-2">
+                            <input type="radio" class="form-check-input ms-2" id="radAddTrip" name="radioKB" disabled/>
+                            <label class="form-check-label ms-4 ps-1" for="radAddTrip">KB Add/Trip</label>
+                        </div>
+                    </div>
+                </div>
+                <div id="divTrip" class="row">
                     <div class="row">
-                        <div class="col-6">
-                            <item type="select" id="F_Plant" label="Plant" value="3" readonly></item>
+                        <div class="col-1 pe-0 align-items-center mt-2">
+                            KB Add/Trip
+                        </div>
+                        <div class="col">
+                            <div class="input-group">
+                                <label class="input-group-text col-4" for="inpTrip1">Trip 1</label>
+                                <input type="number" min="0" class="form-control col-8" id="inpTrip1" readonly />
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="input-group">
+                                <label class="input-group-text col-4" for="inpTrip2">Trip 2</label>
+                                <input type="number" min="0" class="form-control col-8" id="inpTrip2" readonly />
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="input-group">
+                                <label class="input-group-text col-4" for="inpTrip3">Trip 3</label>
+                                <input type="number" min="0" class="form-control col-8" id="inpTrip3" readonly />
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="input-group">
+                                <label class="input-group-text col-4" for="inpTrip4">Trip 4</label>
+                                <input type="number" min="0" class="form-control col-8" id="inpTrip4" readonly />
+                            </div>
                         </div>
                     </div>
-                </form>
-
-                <div class="row">
-                    <div class="col mt-4">
-                        <table id="tblMaster" class="display" style="width:100%"></table>
+                    <div class="row">
+                        <div class="col-1 pe-0 align-items-center mt-2">
+                            
+                        </div>
+                        <div class="col">
+                            <div class="input-group">
+                                <label class="input-group-text col-4" for="inpTrip5">Trip 5</label>
+                                <input type="number" min="0" class="form-control col-8" id="inpTrip5" readonly />
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="input-group">
+                                <label class="input-group-text col-4" for="inpTrip6">Trip 6</label>
+                                <input type="number" min="0" class="form-control col-8" id="inpTrip6" readonly />
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="input-group">
+                                <label class="input-group-text col-4" for="inpTrip7">Trip 7</label>
+                                <input type="number" min="0" class="form-control col-8" id="inpTrip7" readonly />
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="input-group">
+                                <label class="input-group-text col-4" for="inpTrip8">Trip 8</label>
+                                <input type="number" min="0" class="form-control col-8" id="inpTrip8" readonly />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-1 pe-0 align-items-center mt-2">
+                            
+                        </div>
+                        <div class="col">
+                            <div class="input-group">
+                                <label class="input-group-text col-4" for="inpTrip9">Trip 9</label>
+                                <input type="number" min="0" class="form-control col-8" id="inpTrip9" readonly />
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="input-group">
+                                <label class="input-group-text col-4" for="inpTrip10">Trip 10</label>
+                                <input type="number" min="0" class="form-control col-8" id="inpTrip10" readonly />
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="input-group">
+                                <label class="input-group-text col-4" for="inpTrip11">Trip 11</label>
+                                <input type="number" min="0" class="form-control col-8" id="inpTrip11" readonly />
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="input-group">
+                                <label class="input-group-text col-4" for="inpTrip12">Trip 12</label>
+                                <input type="number" min="0" class="form-control col-8" id="inpTrip12" readonly />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-1 pe-0 align-items-center mt-2">
+                            
+                        </div>
+                        <div class="col">
+                            <div class="input-group">
+                                <label class="input-group-text col-4" for="inpTrip13">Trip 13</label>
+                                <input type="number" min="0" class="form-control col-8" id="inpTrip13" readonly />
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="input-group">
+                                <label class="input-group-text col-4" for="inpTrip14">Trip 14</label>
+                                <input type="number" min="0" class="form-control col-8" id="inpTrip14" readonly />
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="input-group">
+                                <label class="input-group-text col-4" for="inpTrip15">Trip 15</label>
+                                <input type="number" min="0" class="form-control col-8" id="inpTrip15" readonly />
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="input-group">
+                                <label class="input-group-text col-4" for="inpTrip16">Trip 16</label>
+                                <input type="number" min="0" class="form-control col-8" id="inpTrip16" readonly />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-1 pe-0 align-items-center mt-2">
+                            
+                        </div>
+                        <div class="col">
+                            <div class="input-group">
+                                <label class="input-group-text col-4" for="inpTrip17">Trip 17</label>
+                                <input type="number" min="0" class="form-control col-8" id="inpTrip17" readonly />
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="input-group">
+                                <label class="input-group-text col-4" for="inpTrip18">Trip 18</label>
+                                <input type="number" min="0" class="form-control col-8" id="inpTrip18" readonly />
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="input-group">
+                                <label class="input-group-text col-4" for="inpTrip19">Trip 19</label>
+                                <input type="number" min="0" class="form-control col-8" id="inpTrip19" readonly />
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="input-group">
+                                <label class="input-group-text col-4" for="inpTrip20">Trip 20</label>
+                                <input type="number" min="0" class="form-control col-8" id="inpTrip20" readonly />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-1 pe-0 align-items-center mt-2">
+                            
+                        </div>
+                        <div class="col">
+                            <div class="input-group">
+                                <label class="input-group-text col-4" for="inpTrip21">Trip 21</label>
+                                <input type="number" min="0" class="form-control col-8" id="inpTrip21" readonly />
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="input-group">
+                                <label class="input-group-text col-4" for="inpTrip22">Trip 22</label>
+                                <input type="number" min="0" class="form-control col-8" id="inpTrip22" readonly />
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="input-group">
+                                <label class="input-group-text col-4" for="inpTrip23">Trip 23</label>
+                                <input type="number" min="0" class="form-control col-8" id="inpTrip23" readonly />
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="input-group">
+                                <label class="input-group-text col-4" for="inpTrip24">Trip 24</label>
+                                <input type="number" min="0" class="form-control col-8" id="inpTrip24" readonly />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-1 pe-0 align-items-center mt-2">
+                            
+                        </div>
+                        <div class="col">
+                            <div class="input-group">
+                                <label class="input-group-text col-4" for="inpTrip25">Trip 25</label>
+                                <input type="number" min="0" class="form-control col-8" id="inpTrip25" readonly />
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="input-group">
+                                <label class="input-group-text col-4" for="inpTrip26">Trip 26</label>
+                                <input type="number" min="0" class="form-control col-8" id="inpTrip26" readonly />
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="input-group">
+                                <label class="input-group-text col-4" for="inpTrip27">Trip 27</label>
+                                <input type="number" min="0" class="form-control col-8" id="inpTrip27" readonly />
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="input-group">
+                                <label class="input-group-text col-4" for="inpTrip28">Trip 28</label>
+                                <input type="number" min="0" class="form-control col-8" id="inpTrip28" readonly />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-1 pe-0 align-items-center mt-2">
+                            
+                        </div>
+                        <div class="col">
+                            <div class="input-group">
+                                <label class="input-group-text col-4" for="inpTrip29">Trip 29</label>
+                                <input type="number" min="0" class="form-control col-8" id="inpTrip29" readonly />
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="input-group">
+                                <label class="input-group-text col-4" for="inpTrip30">Trip 30</label>
+                                <input type="number" min="0" class="form-control col-8" id="inpTrip30" readonly />
+                            </div>
+                        </div>
+                        <div class="col"></div>
+                        <div class="col"></div>
                     </div>
                 </div>
-
+                <div id="divUpdate" class="row mt-3">
+                    <div class="col-3">
+                        <div class="input-group">
+                            <label class="input-group-text col-5" for="readUpdateBy">Update By</label>
+                            <input type="text" min="0" class="form-control col-7" id="readUpdateBy" readonly />
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="input-group">
+                            <label class="input-group-text col-5" for="readUpdateDate">Update Date</label>
+                            <input type="text" min="0" class="form-control col-7" id="readUpdateDate" readonly />
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="input-group">
+                            <label class="input-group-text col-5" for="readProcessBy">Process By</label>
+                            <input type="text" min="0" class="form-control col-7" id="readProcessBy" readonly />
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="input-group">
+                            <label class="input-group-text col-5" for="readProcessDate">Process Date</label>
+                            <input type="text" min="0" class="form-control col-7" id="readProcessDate" readonly />
+                        </div>
+                    </div>
+                </div>
+                <div id="divBtn" class="row mt-3">
+                    <div class="col-6">
+                        <div class="row">
+                            <button type="button" id="btnStop" class="btn btn-rounded btn-outline-dark col">
+                                <i class="fa-solid fa-stop me-1"></i>Stop
+                            </button>
+                            <button type="button" id="btnEdit" class="btn btn-rounded btn-outline-dark col">
+                                <i class="fa-regular fa-pen-to-square me-1"></i>Edit
+                            </button>
+                            <button type="button" id="btnCancelBottom" class="btn btn-rounded btn-outline-dark col">Cancel</button>
+                            <button type="button" id="btnSave" class="btn btn-rounded btn-outline-dark col">
+                                <i class="fa-regular fa-floppy-disk me-1"></i>Save
+                            </button>
+                            <button type="button" id="btnStart" class="btn btn-rounded btn-outline-dark col">
+                                <i class="fa-solid fa-play me-1"></i>Start
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <span class="mt-2">Remark = 0 : None . 1 = Register . 2: Processing . 3 : Done</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-
 </div>
 
-
-<!-- Modal Master -->
-<div class="modal fade" id="modalMaster" tabindex="-1" aria-labelledby="modalMasterLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalMasterLabel"> @ViewData["AppName"] <span></span></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form id="frmMaster" class="needs-validation" autocomplete="off" novalidate>
-                <div class="modal-body" style="padding-left:10px;padding-top:5px;padding-right:10px;">
-
-                    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar">
-                        <div class="btn-group btn-group-sm me-2" role="group" aria-label="Toolbar">
-
-                            <button type="button" class="btn btn-success" id="btnSave" name="btnSave" onclick="onSave();" title="Save data" @(ViewData["ComponentToolbarSave"].ToString() == "true" ? "" : "disabled")>
-                                <i class="ti-save"></i>
-                            </button>
-                            <button type="button" class="btn btn-success" id="btnPrint" name="btnPrint" onclick="onPrint();" title="Print" @(ViewData["ComponentToolbarPrint"].ToString() == "true" ? "" : "disabled")>
-                                <i class="ti-printer"></i>
-                            </button>
-                            <button type="button" class="btn btn-success" id="btnExecute" name="btnExecute" onclick="onExecute()" title="Execute/Run" @(ViewData["ComponentToolbarExecute"].ToString() == "true" ? "" : "disabled")>
-                                <i class="fas fa-bolt"></i>
-                            </button>
-                            <button type="button" class="btn btn-success" id="btnDelete" name="btnDelete" onclick="onDelete();" title="Delete" @(ViewData["ComponentToolbarDelete"].ToString() == "true" ? "" : "disabled")>
-                                <i class="far fa-trash-alt"></i>
-                            </button>
-
-                        </div>
-                    </div>
-
-                    <input type="hidden" class="form-control" id="_Action" name="_Action" value="POST">
-                    <div class="bg-white border rounded-3">
-                        <section class="w-100 p-2">
-                            <div class="row g-2">
-                                <div class="col-md-6">
-                                    <div class="input-group mb-3">
-                                        <label class="input-group-text" for="F_Plant">Plant</label>
-                                        <select class="form-select" id="F_Plant" name="F_Plant" value="3" required noedit></select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row g-2">
-                                <div class="col-md-6">
-                                    <div class="input-group mb-3">
-                                        <label class="input-group-text" for="F_OrderType">Order Type</label>
-                                        <input type="text" class="form-control" id="F_OrderType" name="F_OrderType" autocomplete="off" required noedit>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row g-2">
-                                <div class="col-md-6">
-                                    <div class="input-group mb-3">
-                                        <label class="input-group-text" for="F_Effect_Date">Effective Date</label>
-                                        <input type="text" class="form-control col-xl-8" id="F_Effect_Date" name="F_Effect_Date" format="yyyy-mm-dd" noedit />
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="input-group mb-3">
-                                        <label class="input-group-text" for="F_End_Date">End Date</label>
-                                        <input type="text" class="form-control" id="F_End_Date" name="F_End_Date" format="yyyy-mm-dd">
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
-                    </div>
-
-                </div>
-            </form>
-
-            <div class="modal-footer" style="padding-left:20px; padding-right:20px;">
-                <i class="modal-reference mr-auto">Reference Code : <i id="_REFERCODE_"></i></i>
-                @if (ViewData["UserGroupID"].ToString() == "1" || ViewData["UserGroupID"].ToString() == "2")
-                {
-                    <a href="#" data-bs-toggle="modal" data-bs-target="#ModalHistory" data-bs-remote="UserMaintenance">
-                        <i class="fas fa-scroll" title="History Log"></i>
-                    </a>
-                }
-            </div>
-
-        </div>
-    </div>
-</div>
-
-
-
-@section Scripts{
-    
-    @*<script type="text/javascript" src="~/assets/.script/Template/Master.js"></script>*@
+@section Scripts {
     <script type="text/javascript" src="~/assets/.script/Master/KBNMS007.js?@ViewData["Version"]"></script>
-    @*<script type="text/javascript" src="~/assets/adminty/vue@3/vueApp/Master/KBNMS007.vue.js?@ViewData["Version"]"></script>*@
 }

@@ -435,7 +435,7 @@ namespace HINOSystem.Controllers.API.Master
                     message = "Kanban Detail Found",
                     data = kanbanDetail.Select(x => new
                     {
-                        F_qty_box = x.F_qty_box.ToString().Trim(),
+                        F_qty_box = x.F_qty_box?.ToString().Trim(),
                     }).DistinctBy(x => x.F_qty_box).AsEnumerable()
                 });
 
