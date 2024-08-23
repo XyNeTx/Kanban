@@ -187,7 +187,7 @@ namespace HINOSystem.Controllers.API.Master
 
 
         [HttpPost]
-        public async Task<IActionResult> SaveAddCycle(TB_Kanban_Add obj)
+        public async Task<IActionResult> Save(TB_Kanban_Add obj)
         {
             try
             {
@@ -204,7 +204,43 @@ namespace HINOSystem.Controllers.API.Master
                     });
                 }
 
+                var dbObj = _KB3Context.TB_Kanban_Add.FirstOrDefault(x => x.F_Kanban_No == obj.F_Kanban_No && x.F_Plant == _BearerClass.Plant
+                && x.F_Supplier_Code == obj.F_Supplier_Code && x.F_Supplier_Plant == obj.F_Supplier_Plant && x.F_Store_Code == obj.F_Store_Code
+                && x.F_Part_No == obj.F_Part_No && x.F_Ruibetsu == obj.F_Ruibetsu);
 
+                if(dbObj == null)
+                {
+                    obj.F_Status = "0";
+                    obj.F_Create_By = _BearerClass.UserCode;
+                    obj.F_Create_Date = DateTime.Now;
+                    obj.F_Update_By = _BearerClass.UserCode;
+                    obj.F_Update_Date = DateTime.Now;
+                    obj.F_Start_Date = "";
+                    obj.F_Start_Shift = "";
+                    obj.F_Finish_Date = null;
+                    obj.F_Finish_Trip = null;
+
+                    _KB3Context.TB_Kanban_Add.Add(obj);
+                }
+                else
+                {
+                    _KB3Context.TB_Kanban_Add.Remove(dbObj);
+
+                    obj.F_Create_By = dbObj.F_Create_By;
+                    obj.F_Create_Date = dbObj.F_Create_Date;
+                    dbObj = obj;
+                    dbObj.F_Status = "0";
+                    dbObj.F_Update_By = _BearerClass.UserCode;
+                    dbObj.F_Update_Date = DateTime.Now;
+                    dbObj.F_Start_Date = "";
+                    dbObj.F_Start_Shift = "";
+                    dbObj.F_Finish_Date = null;
+                    dbObj.F_Finish_Trip = null;
+
+                    _KB3Context.TB_Kanban_Add.Add(dbObj);
+                }
+
+                await _KB3Context.SaveChangesAsync();
 
                 return Ok(new
                 {

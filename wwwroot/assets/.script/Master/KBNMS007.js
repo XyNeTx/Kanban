@@ -141,6 +141,23 @@ $("#selectSupplier").change(async function () {
 
 });
 
+function SetInputReset() {
+    $("#radAddCycle").parent().prop("disabled", true);
+    $("#radAddTrip").parent().prop("disabled", true);
+    $("#radAddCycle").prop("checked", false);
+    $("#radAddTrip").prop("checked", false);
+    $("#divInfoData").find("input").val("");
+    $("#divInfoData").find("input").prop("readonly", true);
+    $("#divStatus").find("input").val("");
+    $("#divStatus").find("input").prop("readonly", true);
+    $("#divAddCycle").find("input").val("");
+    $("#divAddCycle").find("input").prop("readonly", true);
+    $("#divAddCycle").find("input").val("");
+    $("#divAddCycle").find("input").prop("readonly", true);
+    $("#divTrip").find("input").val("");
+    $("#divTrip").find("input").prop("readonly", true);
+    $('#readDeliveryDate').parent().find('button').prop('disabled', true);
+}
 
 $("#selectPartNo").change(async function () {
     await GetStore();
@@ -186,6 +203,8 @@ $("#btnSearch").click(async function () {
     $("#readAddress").prop("readonly", false);
     $("#readDock").prop("readonly", false);
 
+    SetInputReset();
+
     await _xLib.AJAX_Get("/api/KBNMS006/Search", obj,
         function (success) {
             if (success.status == 200) {
@@ -214,21 +233,42 @@ $("#btnSearch").click(async function () {
                 success = _xLib.JSONparseMixData(success);
                 console.log(success)
                 if (!success.data) {
-                    $("#divBtn").find("button").prop("disabled", true);
-                    $("#btnEdit").prop("disabled", false);
 
                     $("#readStatus").val("0 : None");
-                    $("#readUpdateDate").val(moment(cookieLoginDate.slice(0, 10),"YYYY-MM-DD").format("DD/MM/YYYY"));
+                    $("#readUpdateDate").val(moment(cookieLoginDate.slice(0, 10), "YYYY-MM-DD").format("DD/MM/YYYY"));
                     $("#readUpdateBy").val(_xLib.GetUserName().substring(0, 10));
                     $("#readProcessDate").val(moment(cookieLoginDate.slice(0, 10), "YYYY-MM-DD").format("DD/MM/YYYY"));
                     $("#readProcessBy").val(_xLib.GetUserName().substring(0, 10));
                     $("#readDeliveryDate").val(moment(cookieLoginDate.slice(0, 10), "YYYY-MM-DD").format("DD/MM/YYYY"));
-                    
+
                     $("#divTrip").find("input").val("");
                     $("#divAddCycle").find("input").val("");
 
-
                 }
+                else
+                {
+                    $("#readStatus").val(success.data.f_Status == "0" ? "0 : None" : success.data.f_Status == "1" ? "1 : Register"
+                        : success.data.f_Status == "2" ? "2 : Processing" : "3 : Done");
+
+                    $("#readUpdateDate").val(moment(success.data.f_Update_Date).format("DD/MM/YYYY"));
+                    $("#readUpdateBy").val(success.data.f_Update_By);
+                    $("#readProcessDate").val(moment(success.data.f_Create_Date).format("DD/MM/YYYY"));
+                    $("#readProcessBy").val(success.data.f_Create_By);
+                    $("#readDeliveryDate").val(moment(success.data.f_Delivery_Date, "YYYYMMDD").format("DD/MM/YYYY"));
+                    $("#readStartDate").val(moment(success.data.f_Start_Date, "YYYYMMDD").format("DD/MM/YYYY"));
+                    $("#readStartShift").val(success.data.f_Start_Shift);
+                    $("#readAddQty").val(success.data.f_KB_Add);
+                    $("#inpStartTrip").val(success.data.f_Delivery_Trip);
+                    $("#inpAddTrip").val(success.data.f_KB_Add_RN);
+
+                    for (let i = 1; i <= 30; i++) {
+                        let _id = "inpTrip" + i;
+                        $("#" + _id).val(success.data["f_Round" + i] == 0 ? "" : success.data["f_Round" + i]);
+                    }
+                }
+
+                $("#divBtn").find("button").prop("disabled", true);
+                $("#btnEdit").prop("disabled", false);
             }
         },
         function (error) {
@@ -332,16 +372,22 @@ $("#btnSave").click(async function () {
         F_Store_Code: $("#readStore").val(),
         F_Part_No: $("#readPartNo").val().split("-")[0],
         F_Ruibetsu: $("#readPartNo").val().split("-")[1],
-        F_Delivery_Date: $("#readDeliveryDate").val(),
+        F_Delivery_Date: moment($("#readDeliveryDate").val(), "DD/MM/YYYY").format("YYYYMMDD"),
         F_Delivery_Trip: $("#inpStartTrip").val(),
-        F_Finish_Date: cookieLoginDate.slice(0, 10),
-
+        F_Start_Date: "",
+        F_Start_Shift: "",
+        F_KB_Remain: $("#readAddQty").val(),
+        F_KB_Add: $("#readAddQty").val()
     }
 
     if ($("#radAddCycle").is(":checked")) {
-        obj.F_KB_Add = $("#readAddQty").val();
         obj.F_KB_Add_RN = $("#inpAddTrip").val();
-        obj.F_KB_Remain = $("#readAddQty").val();
+        obj.F_Delivery_Trip = $("#inpStartTrip").val();
+
+        for (let i = 1; i <= 30; i++) {
+            let _objId = "F_Round" + i;
+            obj[_objId] = "0";
+        }
     }
     else if ($("#radAddTrip").is(":checked")) {
         for(let i = 1; i <= parseInt($("#readCycle").val().substring(3, 5)); i++) {
@@ -349,8 +395,26 @@ $("#btnSave").click(async function () {
             let _objId = "F_Round" + i;
             obj[_objId] = $("#" + _id).val();
         }
+        for (let i = parseInt($("#readCycle").val().substring(3, 5)) + 1; i <= 30; i++) {
+            let _objId = "F_Round" + i;
+            obj[_objId] = "0";
+        }
     }
 
     console.log(obj);
 
+
+    if (await xSwal.confirm("Confirm", "Do you sure to save data?")) {
+        _xLib.AJAX_Post("/api/KBNMS007/Save", JSON.stringify(obj),
+            function (success) {
+                if (success.status == 200) {
+                    xSwal.success(success.title, success.message);
+                    $("#btnSearch").trigger("click");
+                }
+            },
+            function (error) {
+                xSwal.error("Error", error.responseJSON.message);
+            }
+        );
+    }
 });
