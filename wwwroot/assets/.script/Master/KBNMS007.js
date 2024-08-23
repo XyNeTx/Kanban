@@ -17,6 +17,7 @@ $(document).ready(async function () {
 
     $('#readDeliveryDate').parent().prepend(`<label class="input-group-text col-2" for="readDeliveryDate">Delivery Date</label>`);
     $('#readDeliveryDate').parent().find('button').prop('disabled', true);
+    $('#readDeliveryDate').parent().addClass("mb-0");
 
     xSplash.hide();
 });
@@ -317,5 +318,39 @@ $("#btnSaveKB").click(async function () {
             xSwal.error("Error", error.responseJSON.message);
         }
     );
+
+});
+
+$("#btnSave").click(async function () {
+
+
+    let obj = {
+        F_Plant: _xLib.GetCookie("plantCode"),
+        F_Kanban_No: $("#readKanban").val(),
+        F_Supplier_Code: $("#readSupplierCode").val().split("-")[0],
+        F_Supplier_Plant: $("#readSupplierCode").val().split("-")[1],
+        F_Store_Code: $("#readStore").val(),
+        F_Part_No: $("#readPartNo").val().split("-")[0],
+        F_Ruibetsu: $("#readPartNo").val().split("-")[1],
+        F_Delivery_Date: $("#readDeliveryDate").val(),
+        F_Delivery_Trip: $("#inpStartTrip").val(),
+        F_Finish_Date: cookieLoginDate.slice(0, 10),
+
+    }
+
+    if ($("#radAddCycle").is(":checked")) {
+        obj.F_KB_Add = $("#readAddQty").val();
+        obj.F_KB_Add_RN = $("#inpAddTrip").val();
+        obj.F_KB_Remain = $("#readAddQty").val();
+    }
+    else if ($("#radAddTrip").is(":checked")) {
+        for(let i = 1; i <= parseInt($("#readCycle").val().substring(3, 5)); i++) {
+            let _id = "inpTrip" + i;
+            let _objId = "F_Round" + i;
+            obj[_objId] = $("#" + _id).val();
+        }
+    }
+
+    console.log(obj);
 
 });

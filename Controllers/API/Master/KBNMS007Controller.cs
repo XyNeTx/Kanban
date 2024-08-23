@@ -184,5 +184,49 @@ namespace HINOSystem.Controllers.API.Master
                 });
             }
         }
+
+
+        [HttpPost]
+        public async Task<IActionResult> SaveAddCycle(TB_Kanban_Add obj)
+        {
+            try
+            {
+
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401)
+                {
+                    return Unauthorized(new
+                    {
+                        status = "401",
+                        response = "Unauthorized",
+                        title = "Error",
+                        message = "Please Login then try again",
+                    });
+                }
+
+
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "OK",
+                    title = "Success",
+                    message = "Data Saved",
+                });
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    response = "Internal Server Error",
+                    title = "Error",
+                    message = "Unexpected Error !",
+                    error = ex.Message
+                });
+            }
+        }
+
     }
 }
