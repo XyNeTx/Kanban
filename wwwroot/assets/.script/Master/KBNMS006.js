@@ -353,7 +353,7 @@ $("#btnSearch").click(async function () {
                     $("#divKBStop").find("input").prop("readonly", true);
                     $("#divKBStop").find("button").prop("disabled", true);
 
-                    if (success.data.stop.f_Status == "0" || success.data.stop.f_Status == "0")
+                    if (success.data.stop.f_Status == "0" || success.data.stop.f_Status == "3")
                     {
                         $("#stopBtnEdit").prop("disabled", false);
                         $("#stopBtnStart").prop("disabled", false);

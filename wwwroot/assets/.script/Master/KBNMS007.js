@@ -142,18 +142,22 @@ $("#selectSupplier").change(async function () {
 });
 
 function SetInputReset() {
-    $("#radAddCycle").parent().prop("disabled", true);
-    $("#radAddTrip").parent().prop("disabled", true);
+    //$("#radAddCycle").parent().prop("disabled", true);
+    //$("#radAddTrip").parent().prop("disabled", true);
     $("#radAddCycle").prop("checked", false);
     $("#radAddTrip").prop("checked", false);
     $("#divInfoData").find("input").val("");
     $("#divInfoData").find("input").prop("readonly", true);
     $("#divStatus").find("input").val("");
     $("#divStatus").find("input").prop("readonly", true);
+
     $("#divAddCycle").find("input").val("");
     $("#divAddCycle").find("input").prop("readonly", true);
-    $("#divAddCycle").find("input").val("");
-    $("#divAddCycle").find("input").prop("readonly", true);
+
+    $("#radAddCycle").prop("disabled", true);
+    $("#radAddCycle").prop("readonly", false);
+    $("#radAddTrip").prop("disabled", true);
+
     $("#divTrip").find("input").val("");
     $("#divTrip").find("input").prop("readonly", true);
     $('#readDeliveryDate').parent().find('button').prop('disabled', true);
@@ -200,11 +204,11 @@ $("#btnSearch").click(async function () {
     }
 
     //console.log($("#boxDeliDate").val())
-    $("#readAddress").prop("readonly", false);
-    $("#readDock").prop("readonly", false);
+    //$("#readAddress").prop("readonly", false);
+    //$("#readDock").prop("readonly", false);
 
-    SetInputReset();
-
+    await SetInputReset();
+     
     await _xLib.AJAX_Get("/api/KBNMS006/Search", obj,
         function (success) {
             if (success.status == 200) {
@@ -248,7 +252,8 @@ $("#btnSearch").click(async function () {
                 else
                 {
                     $("#readStatus").val(success.data.f_Status == "0" ? "0 : None" : success.data.f_Status == "1" ? "1 : Register"
-                        : success.data.f_Status == "2" ? "2 : Processing" : "3 : Done");
+                        : success.data.f_Status == "2" ? "2 : Processing" : "3 : Done"
+                    );
 
                     $("#readUpdateDate").val(moment(success.data.f_Update_Date).format("DD/MM/YYYY"));
                     $("#readUpdateBy").val(success.data.f_Update_By);
@@ -268,7 +273,17 @@ $("#btnSearch").click(async function () {
                 }
 
                 $("#divBtn").find("button").prop("disabled", true);
-                $("#btnEdit").prop("disabled", false);
+
+                if (success.data.f_Status == "0" || success.data.f_Status == "3") {
+                    $("#btnStart").prop("disabled", false);
+                    $("#btnEdit").prop("disabled", false);
+                }
+                else if (success.data.f_Status == "1" || success.data.f_Status == "2") {
+                    $("#btnStop").prop("disabled", false);
+                }
+
+                $("#readAddress").prop("readonly", false);
+                $("#readDock").prop("readonly", false);
             }
         },
         function (error) {
@@ -290,8 +305,8 @@ $("#btnEdit").click(function () {
 
 $("#radAddCycle").change(function () {
     if($(this).is(":checked")) {
-        $("#divTrip").find("input").prop("readonly", true);
         $("#divTrip").find("input").val("");
+        $("#divTrip").find("input").prop("readonly", true);
         $("#radAddTrip").prop("readonly", false);
 
         $("#divAddCycle").find("input").prop("readonly", false);
@@ -364,6 +379,74 @@ $("#btnSaveKB").click(async function () {
 $("#btnSave").click(async function () {
 
 
+    let obj = await GetKanbanAddObj();
+
+    //console.log(obj);
+
+
+    if (await xSwal.confirm("Confirm", "Do you sure to save data?")) {
+        _xLib.AJAX_Post("/api/KBNMS007/Save", JSON.stringify(obj),
+            function (success) {
+                if (success.status == 200) {
+                    xSwal.success(success.title, success.message);
+                    $("#btnSearch").trigger("click");
+                }
+            },
+            function (error) {
+                xSwal.error("Error", error.responseJSON.message);
+            }
+        );
+    }
+});
+
+$("#btnStart").click(async function () {
+
+    let obj = await GetKanbanAddObj();
+
+    if (await xSwal.confirm("Confirm", "Do you sure to start?")) {
+        _xLib.AJAX_Post("/api/KBNMS007/Start", JSON.stringify(obj),
+            function (success) {
+                if (success.status == 200) {
+                    xSwal.success(success.title, success.message);
+                    $("#btnSearch").trigger("click");
+                }
+            },
+            function (error) {
+                xSwal.error("Error", error.responseJSON.message);
+            }
+        );
+    }
+
+});
+
+$("#btnStop").click(async function () {
+
+    let obj = await GetKanbanAddObj();
+
+    if (await xSwal.confirm("Confirm", "Do you sure to stop?")) {
+        _xLib.AJAX_Post("/api/KBNMS007/Stop", JSON.stringify(obj),
+            function (success) {
+                if (success.status == 200) {
+                    xSwal.success(success.title, success.message);
+                    $("#btnSearch").trigger("click");
+                }
+            },
+            function (error) {
+                xSwal.error("Error", error.responseJSON.message);
+            }
+        );
+    }
+
+});
+
+$("#btnCancelBottom").click(async function () {
+
+    await SetInputReset();
+    $("#btnSearch").trigger("click");
+
+});
+
+function GetKanbanAddObj() {
     let obj = {
         F_Plant: _xLib.GetCookie("plantCode"),
         F_Kanban_No: $("#readKanban").val(),
@@ -390,7 +473,7 @@ $("#btnSave").click(async function () {
         }
     }
     else if ($("#radAddTrip").is(":checked")) {
-        for(let i = 1; i <= parseInt($("#readCycle").val().substring(3, 5)); i++) {
+        for (let i = 1; i <= parseInt($("#readCycle").val().substring(3, 5)); i++) {
             let _id = "inpTrip" + i;
             let _objId = "F_Round" + i;
             obj[_objId] = $("#" + _id).val();
@@ -401,20 +484,5 @@ $("#btnSave").click(async function () {
         }
     }
 
-    console.log(obj);
-
-
-    if (await xSwal.confirm("Confirm", "Do you sure to save data?")) {
-        _xLib.AJAX_Post("/api/KBNMS007/Save", JSON.stringify(obj),
-            function (success) {
-                if (success.status == 200) {
-                    xSwal.success(success.title, success.message);
-                    $("#btnSearch").trigger("click");
-                }
-            },
-            function (error) {
-                xSwal.error("Error", error.responseJSON.message);
-            }
-        );
-    }
-});
+    return obj;
+}
