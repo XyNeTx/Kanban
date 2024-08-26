@@ -55,13 +55,11 @@
         [StringLength(25)]
         public string? F_Create_By { get; set; }
 
-        [Required]
         public DateTime? F_Create_Date { get; set; }
 
         [StringLength(25)]
         public string? F_Update_By { get; set; }
 
-        [Required]
         public DateTime? F_Update_Date { get; set; }
 
         [Required]

@@ -29,256 +29,164 @@ using System.Threading.Tasks;
 using HINOSystem.Libs;
 using HINOSystem.Context;
 using HINOSystem.Models.KB3.Master;
+using KANBAN.Context;
+using KANBAN.Libs;
 
 namespace HINOSystem.Controllers.API.Master
 {
-    public class KBNMS008Controller : Controller
+
+    [ApiController]
+    [Route("api/[controller]/[action]")]
+    public class KBNMS008Controller : ControllerBase
     {
-        private readonly IConfiguration _configuration;
         private readonly BearerClass _BearerClass;
-        private readonly KanbanConnection _KBCN;
-
+        private readonly PPM3Context _PPM3Context;
+        private readonly PPMInvenContext _PPMInvenContext;
         private readonly KB3Context _KB3Context;
+        private readonly FillDataTable _FillDT;
+        private readonly SerilogLibs _log;
+        private readonly IEmailService _IEmail;
 
-        public KBNMS008Controller(
-            IConfiguration configuration,
+        public KBNMS008Controller
+        (
             BearerClass bearerClass,
-            KanbanConnection kanbanConnection,
-            KB3Context kB3Context
-            )
+            PPM3Context ppm3Context,
+            PPMInvenContext ppmInvenContext,
+            KB3Context kb3Context,
+            FillDataTable fillDataTable,
+            SerilogLibs log
+        )
         {
-            _configuration = configuration;
             _BearerClass = bearerClass;
-            _KBCN = kanbanConnection;
-            _KB3Context = kB3Context;
-
+            _PPM3Context = ppm3Context;
+            _PPMInvenContext = ppmInvenContext;
+            _KB3Context = kb3Context;
+            _FillDT = fillDataTable;
+            _log = log;
         }
 
+        public string yyyyMMdd = DateTime.Now.ToString("yyyyMMdd");
 
-
-        [HttpPost]
-        public IActionResult initial([FromBody] string pData = null)
+        public async Task<IActionResult> GetSupplier()
         {
-            dynamic _json = null;
-            string _SQL = "";
             try
             {
                 _BearerClass.Authentication(Request);
-                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
+                if(_BearerClass.Status == 401)
+                {
+                    return Unauthorized(new
+                    {
+                        status = "401",
+                        response = "Unauthorized",
+                        title = "Error",
+                        message = "Please Login then try again",
+                    });
+                }
 
-                
+                var dbObj = _KB3Context.TB_MS_PartOrder.Where(x=> x.F_Start_Date.CompareTo(yyyyMMdd) <= 0 && x.F_End_Date.CompareTo(yyyyMMdd) >= 0
+                    && x.F_Store_Code.StartsWith(_BearerClass.Plant))
+                    .ToList();
 
-                _SQL = @"
-                    SELECT F_Plant
-                        ,F_Plant_Name
-                        ,F_Location
-                        ,F_Update_By
-                        ,F_Update_Date
-                    FROM [dbo].[TB_MS_Factory]
-                ";
-                string _jsTB_MS_Factory = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+                if(dbObj.Count == 0)
+                {
+                    return NotFound(new
+                    {
+                        status = "404",
+                        response = "Not Found",
+                        title = "Error",
+                        message = "Data not found",
+                    });
+                }
 
-                string _result = @"{
-                    ""status"":""200"",
-                    ""response"":""OK"",
-                    ""message"": ""Data Found"",
-                    ""data"":
-                            {
-                                ""TB_MS_Factory"" : " + _jsTB_MS_Factory + @"
-                            }
-                }";
-                return Content(_result, "application/json");
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    title = "Success",
+                    message = "Data found",
+                    data = dbObj.Select(x=> new
+                    {
+                        F_Supplier_Code = x.F_Supplier_Cd.Trim() + "-" + x.F_Supplier_Plant,
+                    }).DistinctBy(x=>x.F_Supplier_Code)
+                });
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                return Content(e.Message.ToString(), "application/json");
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    message = "Unexpected error occurred",
+                    error = ex.Message
+                });
             }
         }
 
-
-
-        [HttpPost]
-        public IActionResult search([FromBody] string pData = null)
+        public async Task<IActionResult> GetSupplierDetail(string supplier,string? store,string? storeTo)
         {
-            dynamic _json = null;
-            string _SQL = "";
             try
             {
+
                 _BearerClass.Authentication(Request);
-                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
+                if (_BearerClass.Status == 401)
+                {
+                    return Unauthorized(new
+                    {
+                        status = "401",
+                        response = "Unauthorized",
+                        title = "Error",
+                        message = "Please Login then try again",
+                    });
+                };
 
-                
+                var name = _PPM3Context.T_Supplier_MS.Where(x => x.F_supplier_cd == supplier.Substring(0, 4) &&
+                    x.F_Plant_cd == supplier[5] && x.F_TC_Str.CompareTo(yyyyMMdd) <= 0 && x.F_TC_End.CompareTo(yyyyMMdd) >= 0
+                    && x.F_Store_cd.StartsWith(_BearerClass.Plant)).AsNoTracking().AsQueryable();
 
-                _json = JsonConvert.DeserializeObject(pData);
+                var cycle = _KB3Context.TB_MS_DeliveryTime.AsNoTracking().Where(x => x.F_Supplier_Code == supplier.Substring(0, 4) &&
+                        x.F_Supplier_Plant == supplier[5].ToString() && x.F_Start_Date.CompareTo(yyyyMMdd) <= 0 && x.F_End_Date.CompareTo(yyyyMMdd) >= 0
+                        && x.F_Plant.StartsWith(_BearerClass.Plant)).AsQueryable();
 
+                if (!string.IsNullOrWhiteSpace(store) && (!string.IsNullOrWhiteSpace(storeTo)))
+                {
+                    name.Where(x=> x.F_Store_cd.CompareTo(store) >= 0 && x.F_Store_cd.CompareTo(storeTo) <= 0);
+                }
 
-                _SQL = @"
-                    SELECT '' AS RunningNo
-                        ,F_Plant
-                        ,F_Parent_Part
-                        ,F_Ruibetsu
-                        ,F_Part_Name
-                        ,F_Store_Cd
-	                    , FORMAT(CAST(F_Start_Date AS DATE), 'yyyy-MM-dd') AS F_Start_Date
-	                    , FORMAT(CAST(F_End_Date AS DATE), 'yyyy-MM-dd') AS F_End_Date
-                        ,F_Update_By
-                        ,F_Update_Date
-                    FROM dbo.TB_MS_OldPart
-                    WHERE 1=1
-                ";
+                if (cycle == null || name == null)
+                {
+                    return NotFound(new
+                    {
+                        status = "404",
+                        response = "Not Found",
+                        title = "Error",
+                        message = "Data not found",
+                    });
+                }
 
-                if ( _json != null ) _SQL += " AND F_Plant = "+_json.F_Plant;
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    title = "Success",
+                    message = "Data found",
+                    data = name.Select(x => new
+                    {
+                        F_Supplier_Name = "(" + x.F_short_name.Trim() + ")" + x.F_name.Trim(),
+                        x.F_Safety_Stk
+                    }).FirstOrDefault(),
+                    cycle = cycle.Select(x => x.F_Cycle).Distinct().FirstOrDefault()
+                });
 
-                string _jsTB_MS_OrderType = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
-
-
-
-                string _result = @"{
-                    ""status"":""200"",
-                    ""response"":""OK"",
-                    ""message"": ""Data Found"",
-                    ""data"": " + _jsTB_MS_OrderType + @"
-                }";
-                return Content(_result, "application/json");
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                return Content(e.Message.ToString(), "application/json");
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    message = "Unexpected error occurred",
+                    error = ex.Message
+                });
             }
         }
 
-
-
-        [HttpPost]
-        public IActionResult save()
-        {
-            dynamic _json = null;
-            string _SQL = "";
-            try
-            {
-                _BearerClass.Authentication(Request);
-                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
-
-
-                TB_MS_OldPart _TB_MS_OldPart = new TB_MS_OldPart();
-                _TB_MS_OldPart.F_Plant = _BearerClass.Plant;
-                _TB_MS_OldPart.F_Parent_Part = Request.Form["F_Parent_Part"].ToString();
-                _TB_MS_OldPart.F_Ruibetsu = Request.Form["F_Ruibetsu"].ToString();
-                _TB_MS_OldPart.F_Part_Name = Request.Form["F_Part_Name"].ToString();
-                _TB_MS_OldPart.F_Store_Cd = Request.Form["F_Store_Cd"].ToString();
-                _TB_MS_OldPart.F_Start_Date = Request.Form["F_Start_Date"].ToString();
-                _TB_MS_OldPart.F_End_Date = Request.Form["F_End_Date"].ToString();
-                _TB_MS_OldPart.F_Update_By = _BearerClass.UserCode.ToString();
-                _TB_MS_OldPart.F_Update_Date = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss"));
-                _KB3Context.TB_MS_OldPart.Add(_TB_MS_OldPart);
-                _KB3Context.SaveChanges();
-
-
-                string _result = @"{
-                    ""status"":""200"",
-                    ""response"":""OK"",
-                    ""message"": ""Data has been save""
-                }";
-                return Content(_result, "application/json");
-            }
-            catch (Exception e)
-            {
-                return Content(e.Message.ToString(), "application/json");
-            }
-        }
-
-
-
-
-        [HttpPatch]
-        public IActionResult save(int id = 0)
-        {
-            dynamic _json = null;
-            string _SQL = "";
-            string _result = @"{
-                        ""status"":""200"",
-                        ""response"":""OK"",
-                        ""message"": ""Data not found""
-                    }";
-            try
-            {
-                _BearerClass.Authentication(Request);
-                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
-
-                
-
-                _SQL = @"
-                    UPDATE [dbo].[TB_MS_OldPart]
-                    SET F_Part_Name = '" + Request.Form["F_Part_Name"].ToString().Replace("-", "") + @"'
-                        ,F_End_Date = '" + Request.Form["F_End_Date"].ToString().Replace("-","") + @"'
-                        ,F_Update_By = '" + _BearerClass.UserCode + @"'
-                        ,F_Update_Date = '" + DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss")) + @"'
-                    WHERE 1=1
-                    AND F_Plant = '" + Request.Form["F_Plant"].ToString() + @"'
-                    AND F_Parent_Part = '" + Request.Form["F_Parent_Part"].ToString() + @"'
-                    AND F_Ruibetsu = '" + Request.Form["F_Ruibetsu"].ToString().Replace("-", "") + @"'
-                    AND F_Store_Cd = '" + Request.Form["F_Store_Cd"].ToString().Replace("-", "") + @"'
-                    AND F_Start_Date = '" + Request.Form["F_Start_Date"].ToString().Replace("-", "") + @"'
-                ";
-                _KBCN.Execute(_SQL);
-
-
-                _result = @"{
-                    ""status"":""200"",
-                    ""response"":""OK"",
-                    ""message"": ""Data has been save""
-                }";
-                return Content(_result, "application/json");
-            }
-            catch (Exception e)
-            {
-                return Content(e.Message.ToString(), "application/json");
-            }
-        }
-
-
-
-
-        [HttpPost]
-        public IActionResult delete(int id = 0)
-        {
-            dynamic _json = null;
-            string _SQL = "";
-            string _result = @"{
-                        ""status"":""200"",
-                        ""response"":""OK"",
-                        ""message"": ""Data not found""
-                    }";
-            try
-            {
-                _BearerClass.Authentication(Request);
-                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
-
-                
-
-                _SQL = @"
-                    DELETE [dbo].[TB_MS_OldPart]
-                    WHERE 1=1
-                    AND F_Plant = '" + Request.Form["F_Plant"].ToString() + @"'
-                    AND F_Parent_Part = '" + Request.Form["F_Parent_Part"].ToString() + @"'
-                    AND F_Ruibetsu = '" + Request.Form["F_Ruibetsu"].ToString().Replace("-", "") + @"'
-                    AND F_Store_Cd = '" + Request.Form["F_Store_Cd"].ToString().Replace("-", "") + @"'
-                    AND F_Start_Date = '" + Request.Form["F_Start_Date"].ToString().Replace("-", "") + @"'
-                ";
-                _KBCN.Execute(_SQL);
-
-
-                _result = @"{
-                    ""status"":""200"",
-                    ""response"":""OK"",
-                    ""message"": ""Data has been delete""
-                }";
-                return Content(_result, "application/json");
-            }
-            catch (Exception e)
-            {
-                return Content(e.Message.ToString(), "application/json");
-            }
-        }
     }
 }

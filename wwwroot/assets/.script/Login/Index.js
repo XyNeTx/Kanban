@@ -32,37 +32,26 @@
 
         initTheme();
 
-        xAPI.initial();
-        xAPI.getUser({
-            //systemname: 'Hino Kanban F.3',
-            then: function (result) {
-                //console.log(result);
-                if (result.response == 'OK') {
+        //xAPI.initial();
+        //xAPI.getUser({
+        //    //systemname: 'Hino Kanban F.3',
+        //    then: function (result) {
+        //        //console.log(result);
+        //        if (result.response == 'OK') {
 
-                    if (getCookie('debug') == '') setCookie('debug', 0);
-                    if (getCookie('debug') == '1') console.log(result);
+                    
 
-                    //$('#txtDomain').val(result.data.domain);
-                    //$('#txtIPAddress').val(result.data.ipaddress);
-                    //$('#txtProcessDate').val(xDate.Date('yyyy-MM-dd'));
-                    //$('#ddlFactory').val(3);
-                    //$('#ddlShift').val((xDate.Time('hhmm') < 1930 ? "1" : "2"));
+        //            if (_DEV_) {
+        //                console.info('DEVELOPER ACTIVE');
+        //                //$('#txtUserName').removeAttr('readonly');
+        //                //if (result.data.username == '20223983') $('#txtUserName').val('DEVELOPER');
+        //            } else {
+        //                console.info('PRODUCTION ACTIVE');
+        //            }
 
-
-                    if (getCookie('debug') == '1') $('#txtUserName').val('DEVELOPER');
-                    if (getCookie('debug') == '1') $('#txtUserName').removeAttr('readonly');
-
-                    if (_DEV_) {
-                        console.info('DEVELOPER ACTIVE');
-                        //$('#txtUserName').removeAttr('readonly');
-                        //if (result.data.username == '20223983') $('#txtUserName').val('DEVELOPER');
-                    } else {
-                        console.info('PRODUCTION ACTIVE');
-                    }
-
-                }
-            }
-        })
+        //        }
+        //    }
+        //})
 
 
         await $.ajax({
@@ -76,6 +65,11 @@
             },
 
             success: function (result) {
+                if (getCookie('debug') == '') setCookie('debug', 0);
+                if (getCookie('debug') == '1') console.log(result);
+
+                if (getCookie('debug') == '1') $('#txtUserName').val('DEVELOPER');
+                if (getCookie('debug') == '1') $('#txtUserName').removeAttr('readonly');
                 //console.log(result);
                 $('#txtUserName').val(result.userName);
                 //$('#txtUserName').val("20234011");

@@ -1,67 +1,102 @@
-﻿$(document).ready(function () {
+﻿$(document).ready(async function () {
 
-    const xKBNMS008 = new MasterTemplate({
-        Controller: _PAGE_,
-        Table: 'tblMaster',
-        ColumnTitle: {
-            "EN": ['No.', 'Plant', 'F_Parent_Part', 'F_Part_Name', 'Effective Date', 'End Date'],
-            "TH": ['No.', 'Plant', 'F_Parent_Part', 'F_Part_Name', 'Effective Date', 'End Date'],
-        },
-        ColumnValue: [
-            { "data": "RunningNo" },
-            { "data": "F_Plant" },
-            { "data": "F_Parent_Part" },
-            { "data": "F_Part_Name" },
-            { "data": "F_Start_Date" },
-            { "data": "F_End_Date" }
+    await GetSupplier();
+
+    await $(".SelectPicker").selectpicker();
+
+    $("#tableMain").DataTable({
+        "processing": true,
+        "serverSide": false,
+        width: '100%',
+        paging: false,
+        scrollCollapse: true,
+        scrollX: false,
+        scrollY: '350px',
+        "columns": [
+            { title: "Part No", data: "PartNo" },
+            { title: "Kanban No", data: "KanbanNo" },
+            { title: "Last Order Diff(Pcs)", data: "LastOrderDiff" },
+            { title: "Forecast(Pcs)", data: "Forecast" },
+            { title: "Trip 1" , data: "Trip1" },
+            { title: "Trip 2" , data: "Trip2" },
+            { title: "Qty/Pack" , data: "QtyPack" },
+            { title: "Total(KB)" , data: "TotalKB" },
+            { title: "Total(Pcs)" , data: "TotalPcs" },
+            { title: "Order Diff(Pcs)" , data: "OrderDiff" },
         ],
-        Modal: 'modalMaster',
-        Form: 'frmMaster',
-        PostData: [
-            { name: 'F_Plant', value: '#frmCondition #F_Plant' }
-        ],
+        order : [[1,"asc"]]
+
     });
 
-    xKBNMS008.prepare();
+    $("#selectDelivery").datepicker({
+        uiLibrary: 'bootstrap5',
+        format: 'dd/mm/yyyy',
+        todayHighlight: true,
+        autoclose: true,
 
-    xKBNMS008.initial(function (result) {
-        xDropDownList.bind('#frmCondition #F_Plant', result.data.TB_MS_Factory, 'F_Plant', 'F_Plant_Name');
-        xDropDownList.bind('#frmMaster #F_Plant', result.data.TB_MS_Factory, 'F_Plant', 'F_Plant_Name');
-
-        xKBNMS008.search();
     });
 
-    onSave = function () {
-        xKBNMS008.save(function () {
-            xKBNMS008.search();
-        });
-    }
+    $("#selectDeliveryTo").datepicker({
+        uiLibrary: 'bootstrap5',
+        format: 'dd/mm/yyyy',
+        todayHighlight: true,
+        autoclose: true,
 
-    onDelete = function () {
-        xKBNMS008.delete(function () {
-            xKBNMS008.search();
-        });
-    }
-
-    onDeleteAll = function () {
-        xKBNMS008.deleteall(function () {
-            xKBNMS008.search();
-        });
-    }
-
-    onPrint = function () { }
-
-    onExecute = function () { }
-
-    xAjax.onChange('#frmCondition #F_Plant', function () {
-        $('#frmMaster #F_Plant').val($('#frmCondition #F_Plant').val());
-
-        xKBNMS008.search();
     });
 
+    $("#selectDate").datepicker({
+        uiLibrary: 'bootstrap5',
+        format: 'dd/mm/yyyy',
+        todayHighlight: true,
+        autoclose: true,
 
+    });
 
+    $("#selectDelivery").parent().prepend(`<label class="input-group-text" for="selectDelivery">Delivery Date :</label>`);
+    $("#selectDeliveryTo").parent().prepend(`<label class="input-group-text" for="selectDeliveryTo">TO : </label>`);
+    $("#selectDate").parent().prepend(`<label class="input-group-text" for="selectDate">Date ===> </label>`);
 
-
+    xSplash.hide();
 })
+
+function GetSupplier() {
+    _xLib.AJAX_Get("/api/KBNMS008/GetSupplier", "",
+        function (success) {
+            if (success.status == "200") {
+                $("selectSupplier").empty();
+                success.data.forEach(function (item) {
+                    $("#selectSupplier").append(`<option value="${item.f_Supplier_Code}">${item.f_Supplier_Code}</option>`);
+                });
+
+                $(".SelectPicker").selectpicker("refresh");
+            }
+        },
+        function (error) {
+            console.error(error);
+            xSwal.error("Error", "Can't Get Supplier Code");
+        }
+    );
+}
+
+$("#selectSupplier").change(async function () {
+    if ($(this).val() == "") {
+        return;
+    }
+
+    var obj = {
+        supplier : $(this).val()
+    }
+
+    _xLib.AJAX_Get("/api/KBNMS008/GetSupplierDetail", obj,
+        function (success) {
+            if (success.status == "200") {
+                console.log(success.data);
+            }
+        },
+        function (error) {
+            console.error(error);
+            xSwal.error("Error", "Can't Get Supplier Detail");
+        }
+    );
+});
 
