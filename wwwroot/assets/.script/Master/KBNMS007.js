@@ -15,7 +15,7 @@ $(document).ready(async function () {
         format: 'dd/mm/yyyy',
     });
 
-    $('#readDeliveryDate').parent().prepend(`<label class="input-group-text col-2" for="readDeliveryDate">Delivery Date</label>`);
+    $('#readDeliveryDate').parent().prepend(`<label class= "input-group-text col-2" for="readDeliveryDate">Delivery Date</label>`);
     $('#readDeliveryDate').parent().find('button').prop('disabled', true);
     $('#readDeliveryDate').parent().addClass("mb-0");
 

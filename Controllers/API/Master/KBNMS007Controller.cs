@@ -168,7 +168,7 @@ namespace HINOSystem.Controllers.API.Master
                     response = "OK",
                     title = "Success",
                     message = "Data Found",
-                    data = dbObj.FirstOrDefault()
+                    data = await dbObj.FirstOrDefaultAsync()
 
                 });
             }

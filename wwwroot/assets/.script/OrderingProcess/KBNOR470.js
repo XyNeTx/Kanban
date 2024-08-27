@@ -28,7 +28,7 @@
     await $("table thead tr th").addClass("text-center");
     await $("table body tr td").addClass("text-center");
 
-    _xLib.AJAX_Get("/api/KBNOR470/List_Data", '',
+    await _xLib.AJAX_Get("/api/KBNOR470/List_Data", '',
         function (success) {
             if (success.status == 200) {
                 success = _xLib.JSONparseAndTrim(success);

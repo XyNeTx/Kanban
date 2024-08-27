@@ -1,36 +1,10 @@
-﻿using Microsoft.AspNetCore.Http.Extensions;
-using Microsoft.AspNetCore.Mvc;
-using System.Data;
-using System;
-using System.Web;
-using System.Security.Principal;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-
-using System.Reflection.PortableExecutable;
-using System.DirectoryServices;
-using System.DirectoryServices.AccountManagement;
-using Microsoft.Net.Http.Headers;
-using System.Collections.Specialized;
-using System.Net;
-using System.DirectoryServices.ActiveDirectory;
-using System.Net.Http;
-using Microsoft.AspNetCore.Authorization;
-
-using System.Security.Claims;
-using Org.BouncyCastle.Asn1.Ocsp;
-
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-
-using System.Threading.Tasks;
-
+﻿using HINOSystem.Context;
 using HINOSystem.Libs;
-using HINOSystem.Context;
-using HINOSystem.Models.KB3.Master;
 using KANBAN.Context;
 using KANBAN.Libs;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Data;
 
 namespace HINOSystem.Controllers.API.Master
 {
@@ -67,7 +41,8 @@ namespace HINOSystem.Controllers.API.Master
 
         public string yyyyMMdd = DateTime.Now.ToString("yyyyMMdd");
 
-        public async Task<IActionResult> GetSupplier()
+        [HttpGet]
+        public IActionResult GetSupplier()
         {
             try
             {
@@ -83,7 +58,8 @@ namespace HINOSystem.Controllers.API.Master
                     });
                 }
 
-                var dbObj = _KB3Context.TB_MS_PartOrder.Where(x=> x.F_Start_Date.CompareTo(yyyyMMdd) <= 0 && x.F_End_Date.CompareTo(yyyyMMdd) >= 0
+                var dbObj = _KB3Context.TB_MS_PartOrder.Where(x=> x.F_Start_Date.CompareTo(yyyyMMdd) <= 0 
+                    && x.F_End_Date.CompareTo(yyyyMMdd) >= 0 && x.F_Type_Order.Trim() == "Pattern"
                     && x.F_Store_Code.StartsWith(_BearerClass.Plant))
                     .ToList();
 
@@ -121,7 +97,8 @@ namespace HINOSystem.Controllers.API.Master
             }
         }
 
-        public async Task<IActionResult> GetSupplierDetail(string supplier,string? store,string? storeTo)
+        [HttpGet]
+        public IActionResult GetSupplierDetail(string supplier,string? store,string? storeTo)
         {
             try
             {
@@ -188,5 +165,73 @@ namespace HINOSystem.Controllers.API.Master
             }
         }
 
+        [HttpGet]
+        public IActionResult GetKanban(string? supplier,string? store, string? partNo)
+        {
+            try
+            {
+
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401)
+                {
+                    return Unauthorized(new
+                    {
+                        status = "401",
+                        response = "Unauthorized",
+                        title = "Error",
+                        message = "Please Login then try again",
+                    });
+                };
+
+                var kanban = _KB3Context.TB_MS_PartOrder.Where(x => x.F_Start_Date.CompareTo(yyyyMMdd) <= 0
+                && x.F_End_Date.CompareTo(yyyyMMdd) >= 0 && x.F_Store_Code.StartsWith(_BearerClass.Plant)
+                && x.F_Type_Order.Trim() == "Pattern").OrderBy(x => x.F_Kanban_No).AsQueryable();
+
+                if (!string.IsNullOrWhiteSpace(supplier))
+                {
+                    kanban = kanban.Where(x => x.F_Supplier_Cd.Trim() == supplier.Substring(0, 4) 
+                        && x.F_Supplier_Plant == supplier[5]);
+                }
+                if (!string.IsNullOrWhiteSpace(store))
+                {
+                    kanban = kanban.Where(x => x.F_Store_Code == store);
+                }
+                if (!string.IsNullOrWhiteSpace(partNo))
+                {
+                    kanban = kanban.Where(x => x.F_Part_No.Trim() == partNo.Substring(0,10) 
+                        && x.F_Ruibetsu == partNo.Substring(11,2));
+                }
+
+                if(kanban == null)
+                {
+                    return NotFound(new
+                    {
+                        status = "404",
+                        response = "Not Found",
+                        title = "Error",
+                        message = "Data not found",
+                    });
+                }
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "OK",
+                    title = "Success",
+                    message = "Data found",
+                    data = kanban.Select(x => x.F_Kanban_No).Distinct()
+                });
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    StatusCode = 500,
+                    Message = "Unexpected error occurred",
+                    Error = ex.Message
+                });
+            }
+        }
     }
 }

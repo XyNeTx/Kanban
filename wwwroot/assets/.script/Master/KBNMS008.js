@@ -1,6 +1,8 @@
 ﻿$(document).ready(async function () {
 
+   
     await GetSupplier();
+    await GetKanban();
 
     await $(".SelectPicker").selectpicker();
 
@@ -63,17 +65,44 @@ function GetSupplier() {
     _xLib.AJAX_Get("/api/KBNMS008/GetSupplier", "",
         function (success) {
             if (success.status == "200") {
-                $("selectSupplier").empty();
+                $("#selectSupplier").empty();
                 success.data.forEach(function (item) {
                     $("#selectSupplier").append(`<option value="${item.f_Supplier_Code}">${item.f_Supplier_Code}</option>`);
                 });
-
-                $(".SelectPicker").selectpicker("refresh");
             }
         },
         function (error) {
             console.error(error);
             xSwal.error("Error", "Can't Get Supplier Code");
+        }
+    );
+}
+
+function GetKanban() {
+    var obj = {
+        supplier: $("#selectSupplier").val(),
+        store: $("#selectStore").val(),
+        storeTo: $("#selectStoreTo").val(),
+        partNo: $("#selectPartNo").val(),
+        partNoTo: $("#selectPartNoTo").val(),
+    }
+
+    _xLib.AJAX_Get("/api/KBNMS008/GetKanban", obj,
+        function (success) {
+            if (success.status == "200") {
+                console.log(success.data);
+                $("#selectKanban").empty();
+                $("#selectKanbanTo").empty();
+                success.data.forEach(function (item) {
+                    $("#selectKanban").append(`<option value="${item}">${item}</option>`);
+                    $("#selectKanbanTo").append(`<option value="${item}">${item}</option>`);
+                });
+                $(".SelectPicker").selectpicker("refresh");
+            }
+        },
+        function (error) {
+            console.error(error);
+            xSwal.error("Error", "Can't Get Kanban");
         }
     );
 }

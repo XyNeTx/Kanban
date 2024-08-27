@@ -12,6 +12,15 @@
         "txtIPAddress": "D",
     }
 
+    $(".date-picker").datepicker({
+        uiLibrary: 'bootstrap5',
+        format: 'dd/mm/yyyy',
+        todayHighlight: true,
+        autoclose: true,
+    });
+
+    $(".date-picker").parent().find("button").prop("disabled", true);
+
     initTheme = function () {
         setCookie('UI_ExpandIcon','style2');
         setCookie('UI_Header','theme1');
@@ -92,13 +101,13 @@
             function (success) {
                 //console.log(success);
                 if (success.status == "200") {
-                    $("#txtProcessDate").val(success.data.date);
+                    $("#txtProcessDate").val(moment(success.data.date).format("DD/MM/YYYY"));
                     $("#ddlShift").val(success.data.shift);
-                    $("#txtProcessDate").prop('readonly', true);
+                    $("#txtProcessDate").prop('disabled', true);
                     $("#ddlShift").prop('disabled', true);
 
                     if ($("#txtUserName").val() === "20234111" || _xLib.GetCookie("debug") === "1") {
-                        $("#txtProcessDate").prop('readonly', false);
+                        $("#txtProcessDate").parent().find("button").prop("disabled", false);
                         $("#ddlShift").prop('disabled', false);
                     }
                 }
@@ -150,11 +159,12 @@
 $("#btnSubmit").click(function () {
     $("#formAuthentication").one('submit', function (e) {
         e.preventDefault();
-        var processDate = $('#txtProcessDate').val();
+        var processDate = moment($('#txtProcessDate').val(),"DD/MM/YYYY").format("YYYY-MM-DD");
         var shift = $("#ddlShift").val() == 1 ? "D" : "N";
         document.cookie = `loginDate=${processDate}${shift}`;
         _xLib.SetCookie('plantCode', $('#ddlFactory').val());
         $("#ddlShift").prop('disabled', false);
+        $("#txtProcessDate").prop('disabled', false);
         $(this).submit();
     });
 
