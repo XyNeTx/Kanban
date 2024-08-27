@@ -162,7 +162,9 @@ class xLib {
                     // error was return by developer catch it
                     else if (xhr.responseJSON.response) {
                         xSwal.error(xhr.responseJSON.response, xhr.responseJSON.message)
-                        return errorFn(xhr, status, error)
+                        if (typeof errorFn == 'function') {
+                            return errorFn(xhr, status, error)
+                        }
                     }
 
                 }
@@ -223,7 +225,9 @@ class xLib {
                     // error was return by developer catch it
                     else if (xhr.responseJSON.response) {
                         xSwal.error(xhr.responseJSON.response, xhr.responseJSON.message)
-                        return errorFn(xhr, status, error)
+                        if (typeof errorFn == 'function') {
+                            return errorFn(xhr, status, error)
+                        }
                     }
 
                 }
@@ -274,7 +278,9 @@ class xLib {
                     // error was return by developer catch it
                     else if (xhr.responseJSON.response) {
                         xSwal.error(xhr.responseJSON.response, xhr.responseJSON.message)
-                        return errorFn(xhr, status, error)
+                        if (typeof errorFn == 'function') {
+                            return errorFn(xhr, status, error)
+                        }
                     }
 
                 }

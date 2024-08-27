@@ -166,7 +166,7 @@ namespace HINOSystem.Controllers.API.Master
         }
 
         [HttpGet]
-        public IActionResult GetKanban(string? supplier,string? store, string? partNo)
+        public IActionResult GetKanban(string? supplier,string? store, string? partNo,string? storeTo,string? partNoTo)
         {
             try
             {
@@ -194,12 +194,12 @@ namespace HINOSystem.Controllers.API.Master
                 }
                 if (!string.IsNullOrWhiteSpace(store))
                 {
-                    kanban = kanban.Where(x => x.F_Store_Code == store);
+                    kanban = kanban.Where(x => x.F_Store_Code.CompareTo(store) >= 0 && x.F_Store_Code.CompareTo(storeTo) <= 0);
                 }
                 if (!string.IsNullOrWhiteSpace(partNo))
                 {
-                    kanban = kanban.Where(x => x.F_Part_No.Trim() == partNo.Substring(0,10) 
-                        && x.F_Ruibetsu == partNo.Substring(11,2));
+                    kanban = kanban.Where(x => x.F_Part_No.CompareTo(partNo) >= 0 && x.F_Part_No.CompareTo(partNoTo) <= 0
+                    && x.F_Ruibetsu.CompareTo(partNo.Substring(11, 2)) >= 0 && x.F_Ruibetsu.CompareTo(partNoTo.Substring(11, 2)) <= 0);
                 }
 
                 if(kanban == null)
@@ -230,6 +230,149 @@ namespace HINOSystem.Controllers.API.Master
                     StatusCode = 500,
                     Message = "Unexpected error occurred",
                     Error = ex.Message
+                });
+            }
+        }
+
+        [HttpGet]
+        public IActionResult GetStore(string? supplier,string? kanban, string? partNo,string? kanbanTo,string? partNoTo)
+        {
+            try
+            {
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401)
+                {
+                    return Unauthorized(new
+                    {
+                        status = "401",
+                        response = "Unauthorized",
+                        title = "Error",
+                        message = "Please Login then try again",
+                    });
+                }
+
+                var store = _KB3Context.TB_MS_PartOrder.Where(x => x.F_Start_Date.CompareTo(yyyyMMdd) <= 0
+                        && x.F_End_Date!.CompareTo(yyyyMMdd) >= 0 && x.F_Store_Code.StartsWith(_BearerClass.Plant)
+                        && x.F_Type_Order!.Trim() == "Pattern").AsQueryable();
+
+                if(!string.IsNullOrWhiteSpace(supplier))
+                {
+                    store = store.Where(x => x.F_Supplier_Cd.Trim() == supplier.Substring(0, 4) 
+                                           && x.F_Supplier_Plant == supplier[5]);
+                }
+                if (!string.IsNullOrWhiteSpace(kanban))
+                {
+                    store = store.Where(x => x.F_Kanban_No.CompareTo(kanban) >= 0 && x.F_Kanban_No.CompareTo(kanbanTo) <= 0);
+                }
+                if (!string.IsNullOrWhiteSpace(partNo))
+                {
+                    store = store.Where(x => x.F_Part_No.CompareTo(partNo.Substring(0, 10)) >= 0
+                        && x.F_Part_No.CompareTo(partNoTo.Substring(0, 10)) <= 0
+                                             && x.F_Ruibetsu.CompareTo(partNo.Substring(11, 2)) >= 0
+                                             && x.F_Ruibetsu.CompareTo(partNoTo.Substring(11, 2)) <= 0);
+                }
+
+                if (store == null)
+                {
+                    return NotFound(new
+                    {
+                        status = "404",
+                        response = "Not Found",
+                        title = "Error",
+                        message = "Data not found",
+                    });
+                }
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "OK",
+                    title = "Success",
+                    message = "Data found",
+                    data = store.Select(x => x.F_Store_Code).Distinct().OrderBy(x => x)
+                });
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    StatusCode = 500,
+                    Message = "Unexpected error occurred",
+                    Error = ex.Message
+                });
+            }
+        }
+
+        [HttpGet]
+        public IActionResult GetPartNo(string? supplier, string? kanban, string? store,string? kanbanTo,string? storeTo)
+        {
+            try
+            {
+
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401)
+                {
+                    return Unauthorized(new
+                    {
+                        status = "401",
+                        response = "Unauthorized",
+                        title = "Error",
+                        message = "Please Login then try again",
+                    });
+                };
+
+                var part = _KB3Context.TB_MS_PartOrder.Where(x => x.F_Start_Date.CompareTo(yyyyMMdd) <= 0
+                                       && x.F_End_Date.CompareTo(yyyyMMdd) >= 0 && x.F_Store_Code.StartsWith(_BearerClass.Plant)
+                                                              && x.F_Type_Order.Trim() == "Pattern").AsQueryable();
+
+                if (!string.IsNullOrWhiteSpace(supplier))
+                {
+                    part = part.Where(x => x.F_Supplier_Cd.Trim() == supplier.Substring(0, 4)
+                                                              && x.F_Supplier_Plant == supplier[5]);
+                }
+                if (!string.IsNullOrWhiteSpace(kanban))
+                {
+                    part = part.Where(x => x.F_Kanban_No.CompareTo(kanban) >= 0 && x.F_Kanban_No.CompareTo(kanbanTo) <= 0);
+                }
+                if (!string.IsNullOrWhiteSpace(store))
+                {
+                    part = part.Where(x => x.F_Store_Code.CompareTo(store) >= 0 && x.F_Store_Code.CompareTo(storeTo) <= 0);
+                }
+
+                if (part == null)
+                {
+                    return NotFound(new
+                    {
+                        status = "404",
+                        response = "Not Found",
+                        title = "Error",
+                        message = "Data not found",
+                    });
+                }
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "OK",
+                    title = "Success",
+                    message = "Data found",
+                    data = part.Select(x => new
+                    {
+                        F_Part_No = x.F_Part_No.Trim() + "-" + x.F_Ruibetsu,
+                    }).Distinct().OrderBy(x => x.F_Part_No)
+                });
+
+            }
+            catch (Exception ex)
+            {
+
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    message = "Unexpected error occurred",
+                    error = ex.Message
+
                 });
             }
         }

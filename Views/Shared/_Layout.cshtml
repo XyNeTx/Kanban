@@ -502,6 +502,11 @@
 
             $('#_NAVDATETIME_').html('Today : ' + xDate.Now());
 
+            //console.log($(".navbar-logo a b").text());
+            //console.log(_xLib.GetCookie("isDev"));
+            if (_xLib.GetCookie("isDev") == 1) {
+                $(".navbar-logo a b").append(" (Dev)");
+            }
         });
 
     </script>
