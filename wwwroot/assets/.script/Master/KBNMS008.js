@@ -61,7 +61,7 @@
     $("#selectDeliveryTo").parent().prepend(`<label class="input-group-text" for="selectDeliveryTo">TO : </label>`);
     $("#selectDate").parent().prepend(`<label class="input-group-text" for="selectDate">Date ===> </label>`);
 
-    xSplash.hide();
+    await xSplash.hide();
 })
 
 function GetSupplier() {
@@ -179,6 +179,10 @@ $("#selectSupplier").change(async function () {
         function (success) {
             if (success.status == "200") {
                 console.log(success.data);
+                $("#readSupplier").val(obj.supplier);
+                $("#readSupplierName").val(success.data.f_Supplier_Name);
+                $("#readSafetyStock").val(success.data.f_Safety_Stk);
+                $("#readCycle").val(success.cycle.slice(0, 2) + "-" + success.cycle.slice(2, 4) + "-" + success.cycle.slice(4,6));
             }
         },
         function (error) {
