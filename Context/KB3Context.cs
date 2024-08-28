@@ -147,6 +147,7 @@ namespace HINOSystem.Context
         public DbSet<TB_Kanban_Stop> TB_Kanban_Stop { get; set; }
         public DbSet<TB_Kanban_Cut> TB_Kanban_Cut { get; set; }
         public DbSet<TB_Kanban_Add> TB_Kanban_Add { get; set; }
+        public DbSet<TMP_Planning_Order> TMP_Planning_Order { get; set; }
 
         //protected override void OnModelCreating(ModelBuilder modelBuilder)
         //{
