@@ -1,4 +1,14 @@
-﻿<div class="row">
+﻿<style>
+    #tableMain tbody tr td {
+        text-align: center;
+    }
+
+    #tableMain thead tr th {
+        text-align: center;
+    }
+</style>
+
+<div class="row">
     <div class="col-xl-12 col-md-12 col-sm-12">
         <div class="card border-left-primary shadow h-100">
             <div class="card-body">
@@ -105,7 +115,7 @@
                 </div>
 
                 <div class="row">
-                    <h6>Detail Data</h6>
+                    <h6><b>Detail Data</b></h6>
                 </div>
                 <div class="row">
                     <div class="col-4">
@@ -114,15 +124,25 @@
                 </div>
 
                 <div class="row">
-                    <table id="tableMain" class="table">
-                        <thead></thead>
-                        <tbody></tbody>
+                    <table id="tableMain" class="table w-100">
+                        <thead class="text-center"></thead>
+                        <tbody class="text-center"></tbody>
                     </table>
                 </div>
 
                 <div class="row justify-content-end">
-                    <button type="button" id="btnUpToList" class="btn btn-rounded btn-outline-dark col-1">Up To List</button>
-                    <button type="button" id="btnProcess" class="btn btn-rounded btn-outline-dark col-1">Process</button>
+                    <button type="button" id="btnConfirm" class="btn btn-rounded btn-outline-dark col-1">Confirm</button>
+                </div>
+
+                <div class="row mt-4">
+                    <h6><b>Import Data</b></h6>
+                    @* <div class="input-group">
+                        <label class="input-group-text " for="inpFile" >Import File : </label> *@
+                        <input type="file" accept=".xlsx,.xls" class="form-control col-10 me-2" id="inpFile" placeholder="Import Excel File" />
+                        <button type="button" id="btnImport" class="btn btn-rounded btn-outline-dark col-1">Import</button>
+                    @*     <div class="col"></div>
+                
+                    </div> *@
                 </div>
 
             </div>

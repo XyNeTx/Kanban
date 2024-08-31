@@ -1,21 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
-using System.Web;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Http.Extensions;
-using System.Collections;
+﻿using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.AspNetCore.Mvc;
 using System.Data;
-
-using System;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 using System.Net;
-using System.Security.Principal;
-using MathNet.Numerics.Statistics.Mcmc;
-using HINOSystem.Extensions;
-using NPOI.SS.Formula.Functions;
-using SkiaSharp;
 
 
 namespace HINOSystem.Libs
@@ -430,7 +416,7 @@ namespace HINOSystem.Libs
 	    , mp.ViewType
     FROM [erp].[Menu] m
         INNER JOIN [erp].[MenuParent] mp ON mp.Menu_ID = m._ID
-	    " + (int.Parse(ViewData["UserGroupID"].ToString()) > 2 ? " INNER " : " LEFT ") + @" JOIN (
+	    INNER " + @" JOIN (
 				    SELECT
 					    mp.*
 				    FROM
@@ -444,14 +430,14 @@ namespace HINOSystem.Libs
 						    mp.Parent_ID IS NOT NULL
 						    OR mp.Parent_ID <> 0
 					    )
-					    " + (int.Parse(ViewData["UserGroupID"].ToString()) > 2 ? "AND u.Code='" + _context.HttpContext.Session.GetString("USER_CODE").ToString() + "' " : "") + @"
+					    AND u.Code='" + _context.HttpContext.Session.GetString("USER_CODE").ToString() + "' " + @"
 
 				    ) ua ON Ua.Parent_ID=m._ID
 
     WHERE 1=1
     AND (mp.Parent_ID IS NULL OR mp.Parent_ID=0)
-    AND mp.isDelete=0 " + (int.Parse(ViewData["UserGroupID"].ToString()) > 2 ? "AND mp.Status='ACTIVE' " : "") + @"
-    AND m.isDelete=0 " + (int.Parse(ViewData["UserGroupID"].ToString()) > 2 ? "AND m.Status='ACTIVE' " : "") + @"
+    AND mp.isDelete=0 AND mp.Status='ACTIVE' " + @"
+    AND m.isDelete=0 AND m.Status='ACTIVE' " + @"
 	GROUP BY m._ID
         , m.Code
         , m.Name
@@ -625,9 +611,9 @@ namespace HINOSystem.Libs
         INNER JOIN [erp].[MenuParent] mp ON mp.Menu_ID = m._ID
     WHERE 1=1
     AND mp.Parent_ID=" + _id + @"
-    AND mp.isDelete=0 " + (int.Parse(ViewData["UserGroupID"].ToString()) > 2 ? "AND mp.Status='ACTIVE' " : "") + @"
-    AND m.isDelete=0 " + (int.Parse(ViewData["UserGroupID"].ToString()) > 2 ? "AND m.Status='ACTIVE' " : "") + @"
-    " + (int.Parse(ViewData["UserGroupID"].ToString()) > 2 ? "AND u.Code='" + _usercode + "' " : "") + @"
+    AND mp.isDelete=0 AND mp.Status='ACTIVE' " + @"
+    AND m.isDelete=0 AND m.Status='ACTIVE' " + @"
+    AND u.Code='" + _usercode + "' " + @"
     GROUP BY m._ID
         , m.Code
         , m.Name

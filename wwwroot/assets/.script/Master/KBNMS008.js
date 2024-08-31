@@ -1,8 +1,8 @@
 ﻿let _cookieLoginDate = _xLib.GetCookie("loginDate");
-
+let _workingTrip = 0;
 $(document).ready(async function () {
 
-   
+
     await GetSupplier();
     await $("#selectSupplier").val("");
     await GetKanban();
@@ -17,22 +17,22 @@ $(document).ready(async function () {
         "serverSide": false,
         width: '100%',
         paging: false,
-        scrollCollapse: true,
+        sorting: false,
+        searching: false,
         scrollX: true,
-        scrollY: '350px',
         "columns": [
-            { title: "Part No", data: "PartNo" },
-            { title: "Kanban No", data: "KanbanNo" },
-            { title: "Last Order Diff(Pcs)", data: "LastOrderDiff" },
-            { title: "Forecast(Pcs)", data: "Forecast" },
-            { title: "Trip 1" , data: "Trip1" },
-            { title: "Trip 2" , data: "Trip2" },
-            { title: "Qty/Pack" , data: "QtyPack" },
-            { title: "Total(KB)" , data: "TotalKB" },
-            { title: "Total(Pcs)" , data: "TotalPcs" },
-            { title: "Order Diff(Pcs)" , data: "OrderDiff" },
+            { title: "Part No", data: "f_Part_No", },
+            { title: "Kanban No", data: "f_Kanban_No", },
+            { title: "Last Order Diff(Pcs)", data: "f_Last_Order", },
+            { title: "Forecast(Pcs)", data: "f_FC_Max", },
+            { title: "Trip 1", data: "f_Trip1" },
+            { title: "Trip 2", data: "f_Trip2" },
+            { title: "Qty/Pack", data: "f_Qty", },
+            { title: "Total(KB)", data: "f_Total_KB", },
+            { title: "Total(Pcs)", data: "f_Total_Pcs", },
+            { title: "Order Diff(Pcs)", data: "f_Order_Diff", },
         ],
-        order : [[1,"asc"]]
+        order: [[1, "asc"]]
 
     });
 
@@ -41,9 +41,6 @@ $(document).ready(async function () {
         format: 'dd/mm/yyyy',
         todayHighlight: true,
         autoclose: true,
-        maxDate: function () {
-            return $("#selectDeliveryTo").val();
-        }
 
     });
 
@@ -51,9 +48,6 @@ $(document).ready(async function () {
         uiLibrary: 'bootstrap5',
         format: 'dd/mm/yyyy',
         todayHighlight: true,
-        minDate: function () {
-            return $("#selectDelivery").val();
-        }
     });
 
     $("#selectDate").datepicker({
@@ -61,7 +55,7 @@ $(document).ready(async function () {
         format: 'dd/mm/yyyy',
         todayHighlight: true,
         autoclose: true,
-        minDate: function() {
+        minDate: function () {
             return $("#selectDelivery").val();
         },
         maxDate: function () {
@@ -79,7 +73,8 @@ $(document).ready(async function () {
     $("#selectDate").parent().find("button").prop("disabled", true);
 
     await xSplash.hide();
-})
+});
+
 
 async function GetSupplier() {
     await _xLib.AJAX_Get("/api/KBNMS008/GetSupplier", "",
@@ -196,12 +191,12 @@ $("#selectSupplier").change(async function () {
     _xLib.AJAX_Get("/api/KBNMS008/GetSupplierDetail", obj,
         async function (success) {
             if (success.status == "200") {
-                console.log(success.data);
+                //console.log(success.data);
                 $("#readSupplier").val(obj.supplier);
                 $("#readSupplierName").val(success.data.f_Supplier_Name);
                 $("#readSafetyStock").val(success.data.f_Safety_Stk);
                 $("#readCycle").val(success.cycle.slice(0, 2) + "-" + success.cycle.slice(2, 4) + "-" + success.cycle.slice(4, 6));
-                await GetTrip(success.cycle.slice(2, 4));
+                await GetTrip();
             }
         },
         function (error) {
@@ -222,11 +217,16 @@ $("#selectSupplier").change(async function () {
     await GetPartNo();
 });
 
-function GetTrip(cycle) {
+function GetTrip() {
+    let cycle = $("#readCycle").val().substring(3,5);
     let columnTrip = [];
 
     for (let i = 1; i <= parseInt(cycle); i++) {
-        columnTrip.push({ title: "Trip " + i, data: "Trip" + i });
+        columnTrip.push(
+            {
+                title: "Trip " + i, data: "f_Trip" + i, width: '10%', id : "f_Trip" + i
+            }
+        );
     }
 
     $("#tableMain").DataTable().clear().destroy();
@@ -236,25 +236,32 @@ function GetTrip(cycle) {
         "serverSide": false,
         width: '100%',
         paging: false,
-        scrollCollapse: true,
         scrollX: true,
-        scrollY: '350px',
+        sorting: false,
+        orderable: false,
+        searching: false,
         "columns": [
-            { title: "Part No", data: "PartNo" },
-            { title: "Kanban No", data: "KanbanNo" },
-            { title: "Last Order Diff(Pcs)", data: "LastOrderDiff" },
-            { title: "Forecast(Pcs)", data: "Forecast" },
+            {
+                title: "Part No", data: function (data) {
+                    console.log(data);
+                    return `<td>${data.f_Part_No}-${data.f_Ruibetsu}</td>`;
+                }
+                /*title : "Part No", data : "f_Part_No"*/
+            },
+            { title: "Kanban No", data: "f_Kanban_No" },
+            { title: "Last Order Diff(Pcs)", data: "f_Last_Order" },
+            { title: "Forecast(Pcs)", data: "f_FC_Max" },
             ...columnTrip,
-            { title: "Qty/Pack", data: "QtyPack" },
-            { title: "Total(KB)", data: "TotalKB" },
-            { title: "Total(Pcs)", data: "TotalPcs" },
-            { title: "Order Diff(Pcs)", data: "OrderDiff" },
+            { title: "Qty/Pack", data: "f_Qty" },
+            { title: "Total(KB)", data: "f_Total_KB" },
+            { title: "Total(Pcs)", data: "f_Total_Pcs" },
+            { title: "Order Diff(Pcs)", data: "f_Order_Diff" },
         ],
-        order: [[1, "asc"]]
 
     });
 
-    $("#tableMain").DataTable().clear().draw();
+    $("#tableMain").DataTable().columns.adjust().draw();
+
     
 
 }
@@ -330,16 +337,109 @@ $("#selectPart , #selectPartTo").change(async function () {
     }
 });
 
-//$("#selectDelivery").change(function () {
-//    if ($("#selectDeliveryTo").val() != "") {
-//        $("#selectDate").parent().find("button").prop("disabled", false);
-//    }
-//});
-//$("#selectDeliveryTo").change(function () {
-//    if ($("#selectDelivery").val() != "") {
-//        $("#selectDate").parent().find("button").prop("disabled", false);
-//    }
-//});
+$("#selectDelivery").change(function () {
+
+    let thisValue = moment($(this).val(), "DD/MM/YYYY").format("YYYYMMDD");
+    let thisValueTo = moment($("#selectDeliveryTo").val(), "DD/MM/YYYY").format("YYYYMMDD");
+
+    if(thisValue > thisValueTo) {
+        $("#selectDeliveryTo").val($(this).val());
+    }
+
+});
+$("#selectDeliveryTo").change(function () {
+    let thisValue = moment($(this).val(), "DD/MM/YYYY").format("YYYYMMDD");
+    let thisValueFrom = moment($("#selectDelivery").val(), "DD/MM/YYYY").format("YYYYMMDD");
+
+    if(thisValue < thisValueFrom) {
+        $("#selectDelivery").val($(this).val());
+    }
+});
+
+$("#selectDate").change(function () {
+    if ($("#selectDate").val() == "") {
+        return;
+    }
+
+    let cycle = $("#readCycle").val().split("-")[2];
+
+    let Obj = {
+        F_Plant: "",
+        F_Supplier_Code: $("#selectSupplier").val().split("-")[0],
+        F_Supplier_Plant: $("#selectSupplier").val().split("-")[1],
+        F_Delivery_Date: moment($("#selectDate").val(), "DD/MM/YYYY").format("YYYYMMDD"),
+        F_Store_Code: "",
+        F_Kanban_No: "",
+        F_Part_No: "",
+        F_Ruibetsu: "",
+        F_Cycle: $("#readCycle").val().replaceAll("-", ""),
+    }
+
+    for (let i = 1; i <= 32; i++) {
+        if(i <= cycle){
+            Obj["F_Trip" + i] = 0;
+        }
+        else{
+            Obj["F_Trip" + i] = null;
+        }
+    }
+
+    _xLib.AJAX_Post("/api/KBNMS008/SelectDateChange", JSON.stringify(Obj),
+        async function (success) {
+            if (success.status == "200") {
+                success = _xLib.JSONparseMixData(success);
+                //console.log(success.data);
+                //console.log(success.data[0].F_Work);
+                if (success.data.periodDay != 0) {
+                    _workingTrip = success.data.periodDay;
+                }
+                else if (success.data.periodNight != 0) {
+                    _workingTrip = success.data.periodNight;
+                }
+                await ShowData();
+            }
+        },
+        function (error) {
+            console.error(error);
+            xSwal.error("Error", "Can't Get Data");
+        }
+    );
+
+});
+
+function ShowData() {
+    var obj = {
+        supplier: $("#selectSupplier").val(),
+        kanban: $("#selectKanban").val(),
+        kanbanTo: $("#selectKanbanTo").val(),
+        store: $("#selectStore").val(),
+        storeTo: $("#selectStoreTo").val(),
+        partNo: $("#selectPart").val(),
+        partNoTo: $("#selectPartTo").val(),
+        selDate : moment($("#selectDate").val(), "DD/MM/YYYY").format("YYYYMMDD"),
+    }
+
+    if (obj.selDate == "") {
+        xSwal.error("Error", "Please Select Date");
+        return;
+    }
+
+    _xLib.AJAX_Get("/api/KBNMS008/Show_Data", obj,
+    function (success) {
+            if (success.status == "200") {
+                //console.log(success.data);
+                $("#tableMain").DataTable().clear();
+                $("#tableMain").DataTable().columns.adjust().draw();
+                $("#tableMain").DataTable().rows.add(success.data).draw();
+
+            }
+        },
+        function (error) {
+            console.error(error);
+            xSwal.error("Error", "Can't Get Data");
+        }
+    );
+}
 
 $("#btnSearch").click(async function () {
     var obj = {
@@ -371,7 +471,9 @@ $("#btnSearch").click(async function () {
             if (success.status == "200") {
                 if ($("#selectDelivery").val() != "" && $("#selectDeliveryTo").val() != "") {
                     $("#selectDate").parent().find("button").prop("disabled", false);
+                    $("#selectDate").val($("#selectDelivery").val());
                 }
+                //console.log(success.data);
             }
         },
         function (error) {
@@ -379,4 +481,185 @@ $("#btnSearch").click(async function () {
             xSwal.error("Error", "Can't Get Data");
         }
     );
+});
+
+$(document).on("click", "#tableMain tbody tr td", function (e) {
+    var index = $(this).index();
+    var header = $("#tableMain thead tr th").eq(index).text();
+
+    if (header.includes("Trip")) {
+        let text = $(this).text();
+        //console.log(_workingTrip);
+        if (_workingTrip == 0 || header.split(" ")[1] <= _workingTrip) {
+            $(this).empty();
+            $(this).append(`<input type="number" min="0" class="inputTrip form-control" value="${text}" />`);
+            $(this).find("input").focus();
+        }
+    }
+});
+
+$(document).on("keydown", "#tableMain .inputTrip", function (e) {
+    var key = e.keyCode || e.which;
+    var trip = $(this).val();
+
+
+    if (key == 13) {
+        if (trip < 0) {
+            $(this).parent().empty();
+            $("#tableMain").DataTable().draw();
+            return xSwal.error("Error", "Trip Must Be More Than 0");
+            
+        }
+        var cell = $(this).parent();
+        $(this).parent().empty();
+        $("#tableMain").DataTable().cell(cell).data(trip).draw();
+    }
+
+});
+
+$("#btnConfirm").click(function () {
+
+    let data = $("#tableMain").DataTable().data().toArray();
+
+    _xLib.AJAX_Post("/api/KBNMS008/UpToList", JSON.stringify(data),
+        function (success) {
+            if (success.status == "200") {
+                $("#tableMain").DataTable().clear().draw();
+                $("#selectKanban").selectpicker("val", "");
+                $("#selectKanbanTo").selectpicker("val", "");
+                $("#selectStore").selectpicker("val", "");
+                $("#selectStoreTo").selectpicker("val", "");
+                $("#selectPart").selectpicker("val", "");
+                $("#selectPartTo").selectpicker("val", "");
+
+                $("#selectDelivery").val(moment(_cookieLoginDate, "YYYYMMDD").format("DD/MM/YYYY"));
+                $("#selectDeliveryTo").val(moment(_cookieLoginDate, "YYYYMMDD").format("DD/MM/YYYY"));
+                $("#selectDate").val("");
+
+                xSwal.success("Success", "Confirm Data Complete");
+            }
+        },
+        function (error) {
+            console.error(error);
+            xSwal.error("Error", error.responseJSON.message);
+        }
+    );
+
+});
+
+let _file = null;
+
+$("#inpFile").change(function () {
+    _file = this.files[0];
+});
+
+$("#btnImport").click(async function () {
+    if (!_file) return xSwal.error("Import File Error", "No file selected");
+    //console.log('File being processed:', file);
+
+    const arrayBuffer = await _file.arrayBuffer();
+    const read = await XLSX.read(arrayBuffer);
+
+    const _json = XLSX.utils.sheet_to_json(read.Sheets[read.SheetNames[0]]);
+
+    _json.forEach(function (row) {
+        for (var key in row) {
+            if (key.includes("T")) {
+                row["f_Trip" + key.slice(1)] = row[key];
+                delete row[key];
+            }
+        }
+
+        row["f_Supplier_Code"] = row["Supplier_Code"].split("-")[0];
+        row["f_Supplier_Plant"] = row["Supplier_Code"].split("-")[1];
+        row["f_Part_No"] = row["Part_No"].slice(0, 10);
+        row["f_Ruibetsu"] = row["Part_No"].slice(10, 12);
+        row["f_Kanban_No"] = row["Kanban_No"];
+        row["f_Delivery_Date"] = row["Delivery_Date"].toString();
+        row["f_Plant"] = _xLib.GetCookie("plantCode");
+        row["f_Store_Code"] = "00";
+        row["f_Last_Order"] = null;
+        row["f_FC_Max"] = null;
+        row["f_Qty"] = null;
+        row["f_Total_KB"] = null;
+        row["f_Total_Pcs"] = null;
+        row["f_Order_Diff"] = null;
+
+        delete row["Supplier_Code"];
+        delete row["Part_No"];
+        delete row["Kanban_No"];
+        delete row["Delivery_Date"];
+    });
+
+    $("#selectSupplier").selectpicker("val", _json[0].f_Supplier_Code + "-" + _json[0].f_Supplier_Plant);
+
+    var obj = {
+        supplier: $("#selectSupplier").val()
+    }
+
+    _xLib.AJAX_Get("/api/KBNMS008/GetSupplierDetail", obj,
+        async function (success) {
+            if (success.status == "200") {
+                //console.log(success.data);
+                $("#readSupplier").val(obj.supplier);
+                $("#readSupplierName").val(success.data.f_Supplier_Name);
+                $("#readSafetyStock").val(success.data.f_Safety_Stk);
+                $("#readCycle").val(success.cycle.slice(0, 2) + "-" + success.cycle.slice(2, 4) + "-" + success.cycle.slice(4, 6));
+                await GetTrip();
+                $("#tableMain").DataTable().clear().rows.add(_json).draw();
+            }
+        },
+        function (error) {
+            console.error(error);
+            xSwal.error("Error", "Can't Get Supplier Detail");
+        }
+    );
+
+    await $("#selectKanban").selectpicker("val", _json[0].f_Kanban_No);
+    await $("#selectKanbanTo").selectpicker("val", _json[_json.length - 1].f_Kanban_No);
+    await $("#selectStore").selectpicker("val", "");
+    await $("#selectStoreTo").selectpicker("val", "");
+    await $("#selectPart").selectpicker("val", _json[0].f_Part_No + "-" + _json[0].f_Ruibetsu);
+    await $("#selectPartTo").selectpicker("val", _json[_json.length - 1].f_Part_No + "-" + _json[_json.length - 1].f_Ruibetsu);
+
+    $("#selectDelivery").val(moment(_json[0].f_Delivery_Date, "YYYYMMDD").format("DD/MM/YYYY"));
+    $("#selectDeliveryTo").val(moment(_json[0].f_Delivery_Date, "YYYYMMDD").format("DD/MM/YYYY"));
+    $("#selectDate").val(moment(_json[0].f_Delivery_Date, "YYYYMMDD").format("DD/MM/YYYY"));
+    console.log(_json);
+
+    _xLib.AJAX_Post("/api/KBNMS008/GetImportList", JSON.stringify(_json),
+        function (success) {
+            if (success.status == "200") {
+
+                _json.forEach(function (item) {
+                    _xLib.AJAX_Post("/api/KBNMS008/SelectDateChange", JSON.stringify(item),
+                        async function (success) {
+                            if (success.status == "200") {
+                                success = _xLib.JSONparseMixData(success);
+                                //console.log(success.data);
+                                //console.log(success.data[0].F_Work);
+                                if (success.data.periodDay != 0) {
+                                    _workingTrip = success.data.periodDay;
+                                }
+                                else if (success.data.periodNight != 0) {
+                                    _workingTrip = success.data.periodNight;
+                                }
+                                await ShowData();
+                            }
+                        },
+                        function (error) {
+                            console.error(error);
+                            xSwal.error("Error", "Can't Get Data");
+                        }
+                    );
+                });
+                
+            }
+        },
+        function (error) {
+            console.error(error);
+            xSwal.error("Error", "Can't Get Data");
+        }
+    );
+
 });

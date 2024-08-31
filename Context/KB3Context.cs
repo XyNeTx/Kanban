@@ -149,6 +149,8 @@ namespace HINOSystem.Context
         public DbSet<TB_Kanban_Add> TB_Kanban_Add { get; set; }
         public DbSet<TMP_Planning_Order> TMP_Planning_Order { get; set; }
 
+        public DbSet<TB_Kanban_Planning> TB_Kanban_Planning { get; set; }
+
         //protected override void OnModelCreating(ModelBuilder modelBuilder)
         //{
         //    modelBuilder.Entity<PO>().ToTable("PO", schema: "iss");
