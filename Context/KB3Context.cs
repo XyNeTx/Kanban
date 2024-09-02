@@ -129,6 +129,7 @@ namespace HINOSystem.Context
         public DbSet<TB_VLT_INTERFACE> TB_VLT_INTERFACE { get; set; }
 
         public DbSet<TB_Import_Service> TB_Import_Service { get; set; }
+        public DbSet<TB_Import_Service_Excel> TB_Import_Service_Excel { get; set; }
 
         public DbSet<TB_Import_EKanban_Pack> TB_Import_EKanban_Pack { get; set; }
 

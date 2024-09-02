@@ -6,8 +6,8 @@ using System.Text.Json.Serialization;
 
 namespace KANBAN.Models.KB3.UrgentOrder
 {
-    [PrimaryKey(nameof(F_PO_No),nameof(F_Part_No),nameof(F_Ruibetsu),nameof(F_Delivery_Date),nameof(F_Update_By))]
-    public class TB_Import_Service
+    [PrimaryKey(nameof(F_PO_No), nameof(F_Part_No), nameof(F_Ruibetsu), nameof(F_Delivery_Date), nameof(F_Update_By))]
+    public class TB_Import_Service_Excel
     {
         [JsonProperty("Depot_Code_:")]
         [JsonPropertyName("Depot_Code_:")]
@@ -94,6 +94,9 @@ namespace KANBAN.Models.KB3.UrgentOrder
         [JsonProperty("Amount_/_Item")]
         [JsonPropertyName("Amount_/_Item")]
         public decimal F_Amount { get; set; }
+
+        [JsonPropertyName("Trip No")]
+        public int? F_Trip_No { get; set; }
 
         public string? F_Destination_Code { get; set; }
 

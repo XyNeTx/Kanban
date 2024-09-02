@@ -4,6 +4,12 @@ $(document).ready(function () {
     xSplash.hide();
 });
 
+$("input[name='radioType']").change(function (e) {
+    let _type = $("input[name='radioType']:checked").val();
+    $("#inputFile").val("");
+    $("#inputFile").prop("accept", _type);
+});
+
 $("#inputFile").change(function (e) {
     _files = e.target.files;
     console.log('Files:', _files);
@@ -47,47 +53,71 @@ async function UploadFile(_files) {
 
 $("#btnImport").click(async function () {
     $("#btnImport").prop("disabled", true);
-    try {
-        const data = await UploadFile(_files);
-        console.log('Data: ', data);
-        if (data.includes("Error")) return;
+    if ($("input[name='radioType']:checked").length === 0) return xSwal.error("Import File Error", "Please select file type");
 
-        let _url = "/api/KBNIM014SRV/InsertDataFromImport"
-        if (window.location.hostname.includes("tpcap")) {
-            _url = "/kanban" + _url;
+    if ($("input[name='radioType']:checked").val() === ".txt") {
+        try {
+            const data = await UploadFile(_files);
+            return console.log('Data: ', data);
+            if (data.includes("Error")) return;
+
+            let _url = "/api/KBNIM014SRV/InsertDataFromImport"
+            if (window.location.hostname.includes("tpcap")) {
+                _url = "/kanban" + _url;
+            }
+
+            $.ajax({
+                type: "POST",
+                url: _url,
+                data: JSON.stringify(data),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                headers: ajexHeader,
+                success: function (response) {
+                    console.log("Success: ", response);
+                    if (response.status === "200") {
+                        $("#btnImport").prop("disabled", false);
+                        return xSwal.success(response.title, response.message);
+                    }
+                    else {
+                        return xSwal.error(response.title, response.message);
+                    }
+                },
+                error: function (xhr, status, response) {
+                    console.error("Error: ", xhr.responseJSON);
+                    if (xhr.responseJSON.message.includes("Have Some Error")) {
+                        xSwal.error("Error !!", xhr.responseJSON.message);
+                        return _xLib.OpenReport("KBNIMERR", `&UserID=${xhr.responseJSON.userid}&Type=${xhr.responseJSON.type}`);
+                    }
+                    return xSwal.error(xhr.responseJSON.title, xhr.responseJSON.message);
+                }
+            });
+        } catch (error) {
+            console.error("UploadFile Error: ", error);
+        }
+        finally {
+            $("#btnImport").prop("disabled", false);
+        }
+    }
+    else if ($("input[name='radioType']:checked").val() === ".xlsx,.xls")
+    {
+        const file = _files[0];
+        if (!file) return xSwal.error("Import File Error", "No file selected");
+        //console.log('File being processed:', file);
+
+        const arrayBuffer = await file.arrayBuffer();
+        const read = await XLSX.read(arrayBuffer);
+
+        let newRead = read;
+
+        for (var key in newRead.Sheets[newRead.SheetNames[0]]) {
+            newRead.Sheets[newRead.SheetNames[0]][key].v = newRead.Sheets[newRead.SheetNames[0]][key].w;
         }
 
-        $.ajax({
-            type: "POST",
-            url: _url,
-            data: JSON.stringify(data),
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            headers: ajexHeader,
-            success: function (response) {
-                console.log("Success: ", response);
-                if (response.status === "200") {
-                    $("#btnImport").prop("disabled", false);
-                    return xSwal.success(response.title, response.message);
-                }
-                else {
-                    return xSwal.error(response.title, response.message); 
-                }
-            },
-            error: function (xhr, status, response) {
-                console.error("Error: ", xhr.responseJSON);
-                if (xhr.responseJSON.message.includes("Have Some Error")) {
-                    xSwal.error("Error !!", xhr.responseJSON.message);
-                    return _xLib.OpenReport("KBNIMERR", `&UserID=${xhr.responseJSON.userid}&Type=${xhr.responseJSON.type}`);
-                }
-                return xSwal.error(xhr.responseJSON.title, xhr.responseJSON.message); 
-            }
-        });
-    } catch (error) {
-        console.error("UploadFile Error: ", error);
-    }
-    finally {
+        const data = XLSX.utils.sheet_to_json(newRead.Sheets[newRead.SheetNames[0]]);
+
         $("#btnImport").prop("disabled", false);
+        return console.log('Parsed data:', data);
     }
 });
 

@@ -2,6 +2,19 @@
     <div class="col-xl-12 col-md-12 col-sm-12">
         <div class="card border-left-primary shadow h-100">
             <div class="card-body">
+                <div class="row">
+                    <div class="col-2">
+                        <label class="form-label align-content-center col-8">Type Import : </label>
+                    </div>
+                    <div class="col-2">
+                        <input type="radio" class="form-check-input" value=".txt" id="radTxt" name="radioType" checked />
+                        <label class="form-check-label" for="radTxt">Text File</label>
+                    </div>
+                    <div class="col-2">
+                        <input type="radio" class="form-check-input" value=".xlsx,.xls" id="radExl" name="radioType" />
+                        <label class="form-check-label" for="radExl">Excel File</label>
+                    </div>
+                </div>
                 <div class="mt-4 d-flex">
                     <label class="form-label me-2 align-content-center" for="inputFile">Import File : </label>
                     <input type="file" class="form-control col-6" id="inputFile" accept=".txt" />
