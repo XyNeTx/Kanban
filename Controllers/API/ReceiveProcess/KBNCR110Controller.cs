@@ -295,6 +295,7 @@ namespace HINOSystem.Controllers.API.Master
                                     singleRecDet.F_Receive_amount = singleRecDet.F_Unit_Amount;
                                     singleRecDet.F_Receive_Date = DateTime.Now.Date;
                                     _KB3Context.TB_REC_DETAIL.Update(singleRecDet);
+                                    _Serilog.WriteLogMsg($"Update TB_REC_DETAIL {JsonConvert.SerializeObject(singleRecDet)}");
                                 }
                                 if (!await InsToRecLocal(PDSNo))
                                 {
@@ -383,7 +384,8 @@ namespace HINOSystem.Controllers.API.Master
                         _trlList.Add(_trl);
                     }
                     _PPM3Context.T_Receive_Local.AddRange(_trlList);
-                    UploadToEpro(user);
+                    _Serilog.WriteLogMsg($"Insert T_Receive_Local {JsonConvert.SerializeObject(_trlList)}");
+                    await UploadToEpro(user);
                     await _KB3Context.SaveChangesAsync();
                     await _PPM3Context.SaveChangesAsync();
                 }

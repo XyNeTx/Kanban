@@ -373,8 +373,8 @@ namespace KANBAN.Controllers.API.ReceiveProcess
                                         F_Pack_Code = packCode
                                     };
                                     await _PPM3Context.AddAsync(local);
-                                    _SerilogLibs.WriteLog($"Receive Seperate Part Special : UPDATE TB_REC_DEtail : {PDSNo} Line 407", UserName, HostName);
-                                    _SerilogLibs.WriteLog($"Receive Seperate Part Special : {PDSNo} Line 408", UserName, HostName);
+                                    _SerilogLibs.WriteLog($"Receive Seperate Part Special : UPDATE TB_REC_DEtail : {JsonConvert.SerializeObject(local)} Line 376", UserName, HostName);
+                                    _SerilogLibs.WriteLog($"Receive Seperate Part Special : {JsonConvert.SerializeObject(local)} Line 377", UserName, HostName);
                                 }
                             }
                             else
@@ -388,6 +388,7 @@ namespace KANBAN.Controllers.API.ReceiveProcess
                                 {
                                     _singleReceiveAll.F_Receive_amount = sumQty;
                                     _KB3Context.TB_REC_DETAIL.Update(_singleReceiveAll);
+                                    _SerilogLibs.WriteLog($"Receive Seperate Part Special : UPDATE TB_REC_DEtail _singleReceiveAll : {JsonConvert.SerializeObject(_singleReceiveAll)} Line 391", UserName, HostName);
                                     string packCode = _singleReceiveAll.F_Address;
                                     if (packCode.StartsWith("Pack:"))
                                     {
@@ -423,6 +424,7 @@ namespace KANBAN.Controllers.API.ReceiveProcess
                                             F_Pack_Code = packCode
                                         };
                                         await _PPM3Context.AddAsync(local);
+                                        _SerilogLibs.WriteLogMsg($"Receive Seperate Part Special : Add T_Receive_Local : {JsonConvert.SerializeObject(local)} Line 427");
                                     }
                                 }
                                 else

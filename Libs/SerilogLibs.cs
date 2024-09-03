@@ -15,6 +15,7 @@ namespace HINOSystem.Libs
 
         public string GetLogMessage()
         {
+            _bearerClass.Authentication(_httpContextAccessor.HttpContext.Request);
             string Controller = _httpContextAccessor.HttpContext.Request.RouteValues["controller"].ToString();
             string Action = _httpContextAccessor.HttpContext.Request.RouteValues["action"].ToString();
             string UserName = _bearerClass.UserCode;
@@ -28,7 +29,8 @@ namespace HINOSystem.Libs
             try
             {
                 string logMessage = GetLogMessage();
-                Log.Information($"message : {logMessage} | {Message} | username : {UserName} | hostname : {HostName}");
+                //Log.Information($"message : {logMessage} | {Message} | username : {UserName} | hostname : {HostName}");
+                WriteLogMsg(Message);
             }
             catch (Exception ex)
             {

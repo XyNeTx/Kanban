@@ -1,275 +1,525 @@
 ﻿using HINOSystem.Context;
 using HINOSystem.Libs;
-using HINOSystem.Models.KB3.Master;
 using KANBAN.Context;
-using KANBAN.Models.KB3.Receive_Process;
+using KANBAN.Libs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
 namespace HINOSystem.Controllers.API.Master
 {
-    public class KBNMS013Controller : Controller
+    [ApiController]
+    [Route("api/[controller]/[action]")]
+    public class KBNMS013Controller : ControllerBase
     {
-        private readonly IConfiguration _configuration;
         private readonly BearerClass _BearerClass;
-        private readonly ActionResultClass _ActionResult;
-        private readonly KanbanConnection _KBCN;
-        private readonly PPMConnect _PPMConnect;
         private readonly PPM3Context _PPM3Context;
+        private readonly PPMInvenContext _PPMInvenContext;
         private readonly KB3Context _KB3Context;
-        private readonly SerilogLibs _Log;
+        private readonly FillDataTable _FillDT;
+        private readonly SerilogLibs _log;
+        private readonly IEmailService _IEmail;
 
 
         private readonly string StoragePath = @"wwwroot\Storage\Uploads";
 
-        public KBNMS013Controller(
-            IConfiguration configuration,
+        public KBNMS013Controller
+        (
             BearerClass bearerClass,
-            ActionResultClass actionResultClass,
-            KanbanConnection kanbanConnection,
-            PPMConnect ppmConnect,
-            KB3Context kB3Context,
-            PPM3Context pPM3Context,
-            SerilogLibs serilogLibs
-            )
+            PPM3Context ppm3Context,
+            PPMInvenContext ppmInvenContext,
+            KB3Context kb3Context,
+            FillDataTable fillDataTable,
+            SerilogLibs log
+        )
         {
-            _configuration = configuration;
             _BearerClass = bearerClass;
-            _ActionResult = actionResultClass;
-            _KB3Context = kB3Context;
-            _KBCN = kanbanConnection;
-            _PPMConnect = ppmConnect;
-            _PPM3Context = pPM3Context;
-            _Log = serilogLibs;
+            _PPM3Context = ppm3Context;
+            _PPMInvenContext = ppmInvenContext;
+            _KB3Context = kb3Context;
+            _FillDT = fillDataTable;
+            _log = log;
         }
 
+        public string now = DateTime.Now.ToString("yyyyMMdd");
 
-        [HttpPost]
-        public IActionResult initial([FromBody] string pData = null)
+        [HttpGet]
+        public IActionResult GetList(string supplier,string? store, string? typeOrder)
         {
-            dynamic _json = null;
-            string _SQL = "";
             try
             {
                 _BearerClass.Authentication(Request);
-                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
-
-                
-
-                _SQL = @" EXEC [exec].[spTB_MS_FACTORY] ";
-                string _jsTB_Factory = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
-                
-                _SQL = @" EXEC [exec].[spTB_MS_PartOrder] ";
-                string _jsTB_Supplier = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
-
-                string _result = @"{
-                    ""status"":""200"",
-                    ""response"":""OK"",
-                    ""message"": ""Data Found"",
-                    ""data"":
-                            {
-                                ""TB_Factory"" : " + _jsTB_Factory + @",
-                                ""TB_Supplier"" : " + _jsTB_Supplier + @"
-                            }
-                }";
-                return Content(_result, "application/json");
-            }
-            catch (Exception e)
-            {
-                return Content(e.Message.ToString(), "application/json");
-            }
-        }
-
-        [HttpPost]
-        public IActionResult search([FromBody] string pData = null)
-        {
-            dynamic _json = null;
-            string _SQL = "";
-            try
-            {
-                _BearerClass.Authentication(Request);
-                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
-
-                
-
-                _json = JsonConvert.DeserializeObject(pData);
-
-                _SQL = @" EXEC [exec].[spKBNMS013_SEARCH] '" + _BearerClass.Plant + "' ";
-                string _jsonData = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
-
-
-                string _result = @"{
-                    ""status"":""200"",
-                    ""response"":""OK"",
-                    ""message"": ""Data Found"",
-                    ""data"": " + _jsonData + @"
-                }";
-                return Content(_result, "application/json");
-            }
-            catch (Exception e)
-            {
-                return Content(e.Message.ToString(), "application/json");
-            }
-        }
-
-
-
-        [HttpPost]
-        public IActionResult save()
-        {
-            dynamic _json = null;
-            string _SQL = "";
-            try
-            {
-                
-                _BearerClass.Authentication(Request);
-
-                if (_BearerClass.Status == 401) return Unauthorized(new
+                if (_BearerClass.Status == 401)
                 {
-                    status = "401",
-                    response = "Unauthorized",
-                    title = "Unauthorized",
-                    message = "Please Login First"
+                    return Unauthorized();
+                }
+
+                string accessPPM = _FillDT.ppmConnect();
+
+
+                string sql = $@"SELECT  RTRIM(K.F_Plant) AS F_Plant,RTRIM(K.F_Supplier_Cd)+'-'+RTRIM(K.F_Supplier_Plant) AS F_Supplier_Code 
+                                ,RTRIM(S.F_name) AS F_name 
+                                ,RIGHT('00'+ CONVERT(VARCHAR,S.F_Cycle_A),2) 
+                                +'-'+RIGHT('00'+ CONVERT(VARCHAR,S.F_cycle_B),2) 
+                                +'-'+RIGHT('00'+ CONVERT(VARCHAR,S.F_cycle_C),2) AS F_Cycle 
+                                ,RTRIM(K.F_Part_No)+'-'+RTRIM(K.F_Ruibetsu) AS F_Part_No 
+                                ,RTRIM(K.F_Kanban_No) AS F_Kanban_No 
+                                ,RTRIM(C.F_Part_nm) AS F_Part_nm 
+                                ,RTRIM(K.F_Store_Code) AS F_Store_Code 
+                                ,SUBSTRING(K.F_Start_Date,7,2)+'/'+SUBSTRING(K.F_Start_Date,5,2)+'/'+SUBSTRING(K.F_Start_Date,1,4) AS F_Start_Date 
+                                ,SUBSTRING(K.F_End_Date,7,2)+'/'+SUBSTRING(K.F_End_Date,5,2)+'/'+SUBSTRING(K.F_End_Date,1,4) AS F_End_Date 
+                                ,RTRIM(K.F_Type_Order) AS F_Type_Order,RTRIM(tmk.F_Supply_Code) AS F_Dock_Code,RTRIM(K.F_PDS_Group) AS F_PDS_Group 
+                                FROM TB_MS_PartOrder K INNER JOIN {accessPPM}.[dbo].[T_Construction] C 
+                                ON K.F_Part_No = C.F_Part_no collate Thai_CI_AS 
+                                AND K.F_Ruibetsu = C. F_Ruibetsu collate Thai_CI_AS 
+                                AND K.F_Store_Code = C.F_Store_cd collate Thai_CI_AS 
+                                INNER JOIN {accessPPM}.[dbo].[T_Supplier_ms] S 
+                                ON K.F_Supplier_Cd = S.F_supplier_cd COLLATE SQL_Latin1_General_CP1_CI_AI 
+                                AND K.F_Supplier_Plant = S.F_Plant_cd COLLATE SQL_Latin1_General_CP1_CI_AI 
+                                AND K.F_Store_Code = S.F_Store_cd collate Thai_CI_AS 
+                                INNER JOIN TB_MS_Kanban tmk ON K.F_Plant = tmk.F_Plant AND K.F_Supplier_Cd = tmk.F_Supplier_Code 
+                                AND K.F_Supplier_Plant = tmk.F_Supplier_Plant AND K.F_Store_Code = tmk.F_Store_Code AND K.F_Store_Code = tmk.F_Store_Code 
+                                AND K.F_Part_No = tmk.F_Part_No AND K.F_Ruibetsu = tmk.F_Ruibetsu 
+                                WHERE S.F_TC_Str <= convert(char(8),getdate(),112) 
+                                AND S.F_TC_End >= convert(char(8),getdate(),112)  
+                                AND C.F_Local_Str <= convert(char(8),getdate(),112) 
+                                AND C.F_Local_End >= convert(char(8),getdate(),112) ";
+
+                if (!string.IsNullOrWhiteSpace(supplier))
+                {
+                    sql += $@"AND K.F_Supplier_Cd = '{supplier.Split("-")[0]}' AND K.F_Supplier_Plant = '{supplier.Split("-")[1]}' ";
+                }
+                if (!string.IsNullOrWhiteSpace(store))
+                {
+                    sql += $@"AND K.F_Store_Code = '{store}' ";
+                }
+                if (!string.IsNullOrWhiteSpace(typeOrder))
+                {
+                    sql += $@"AND K.F_Type_Order = '{typeOrder}' ";
+                }
+
+                sql += "GROUP BY RTRIM(K.F_Plant),RTRIM(K.F_Supplier_Cd)+'-'+RTRIM(K.F_Supplier_Plant) ,RTRIM(S.F_name) " +
+                    ",RIGHT('00'+ CONVERT(VARCHAR,S.F_Cycle_A),2) +'-'+RIGHT('00'+ CONVERT(VARCHAR,S.F_cycle_B),2) +'-'+RIGHT('00'+ CONVERT(VARCHAR,S.F_cycle_C),2) " +
+                    ",RTRIM(K.F_Part_No)+'-'+RTRIM(K.F_Ruibetsu) " +
+                    ",RTRIM(K.F_Kanban_No) ,RTRIM(C.F_Part_nm) ,RTRIM(K.F_Kanban_No),RTRIM(K.F_Store_Code) " +
+                    ",SUBSTRING(K.F_Start_Date,7,2)+'/'+SUBSTRING(K.F_Start_Date,5,2)+'/'+SUBSTRING(K.F_Start_Date,1,4) " +
+                    ",SUBSTRING(K.F_End_Date,7,2)+'/'+SUBSTRING(K.F_End_Date,5,2)+'/'+SUBSTRING(K.F_End_Date,1,4) " +
+                    ",RTRIM(K.F_Type_Order),RTRIM(tmk.F_Supply_Code),RTRIM(K.F_PDS_Group) " +
+                    "ORDER BY F_Supplier_Code, F_name, F_Cycle, F_Part_No, F_Kanban_No " +
+                    ",F_Part_nm, F_Store_Code, F_Start_Date, F_End_Date, F_Type_Order ";
+
+                var dt = _FillDT.ExecuteSQL(sql);
+                if (dt.Rows.Count == 0)
+                {
+                    return NotFound(new
+                    {
+                        status = "404",
+                        response = "Not Found",
+                        message = "Data Not Found!"
+                    });
+                }
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "OK",
+                    message = "Data Found!",
+                    data = JsonConvert.SerializeObject(dt),
                 });
-
-
-                KANBAN.Models.KB3.Receive_Process.TB_MS_PartOrder _TB_MS_PartOrder = new KANBAN.Models.KB3.Receive_Process.TB_MS_PartOrder
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
                 {
-                    F_Plant = _BearerClass.Plant[0],
-                    F_Supplier_Cd = Request.Form["F_Supplier_Code"].ToString().Split("-")[0],
-                    F_Supplier_Plant = Request.Form["F_Supplier_Code"].ToString().Split("-")[1][0],
-                    F_Part_No = Request.Form["F_Part_No"].ToString().Split("-")[0],
-                    F_Ruibetsu = Request.Form["F_Part_No"].ToString().Split("-")[1],
-                    F_Kanban_No = Request.Form["F_Kanban_No"].ToString(),
-                    F_Store_Code = Request.Form["F_Store_Code"].ToString(),
-                    F_Start_Date = Request.Form["F_Start_Date"].ToString().Replace("-", string.Empty),
-                    F_End_Date = Request.Form["F_End_Date"].ToString().Replace("-", string.Empty),
-                    F_Type_Order = Request.Form["F_Type_Order"].ToString(),
-                    F_Cycle = Request.Form["F_Cycle"].ToString().Replace("-", string.Empty),
-                    F_Flg_ClearModule = true,
-                    F_PDS_Group = Request.Form["F_PDS_Group"].ToString(),
-                    F_Create_Date = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss")),
-                    F_Create_By = _BearerClass.UserCode.ToString(),
-                    F_Update_Date = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss")),
-                    F_Update_by = _BearerClass.UserCode.ToString(),
-                    F_Check_Shift = 0,
-                    F_Last_Check = string.Empty,
-                    F_Next_Check = string.Empty,
-                };
-
-                _KB3Context.TB_MS_PartOrder.Add(_TB_MS_PartOrder);
-                _KB3Context.SaveChanges();
-                _Log.WriteLog($"Action : Save | Database : TB_MS_PartOrder | F_Part_No : {_TB_MS_PartOrder.F_Part_No} | " +
-                    $"F_Ruibetsu : {_TB_MS_PartOrder.F_Ruibetsu} | F_Supplier_Cd : {_TB_MS_PartOrder.F_Supplier_Cd} | " +
-                    $"F_Supplier_Plant : {_TB_MS_PartOrder.F_Supplier_Plant} | F_Kanban_No : {_TB_MS_PartOrder.F_Kanban_No} | " +
-                    $"F_Store_Code : {_TB_MS_PartOrder.F_Store_Code}", _BearerClass.UserCode, _BearerClass.Device);
-
-                string _result = @"{
-                    ""status"":""200"",
-                    ""response"":""OK"",
-                    ""message"": ""Data has been save""
-                }";
-                return Content(_result, "application/json");
-            }
-            catch (Exception e)
-            {
-                return Content(e.Message.ToString(), "application/json");
+                    status = "500",
+                    response = "Internal Server Error",
+                    message = "Unexpected Error!",
+                    error = ex.Message
+                });
             }
         }
 
-
-
-
-        [HttpPatch]
-        public IActionResult save(int id = 0)
+        [HttpGet]
+        public async Task<IActionResult> GetSupplier(string action, string? kanban, string? store, string? partNo)
         {
-            dynamic _json = null;
-            string _SQL = "";
-            string _result = @"{
-                        ""status"":""200"",
-                        ""response"":""OK"",
-                        ""message"": ""Data not found""
-                    }";
             try
             {
                 _BearerClass.Authentication(Request);
-                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
+                if (_BearerClass.Status == 401)
+                {
+                    return Unauthorized();
+                }
 
-                
+                if (action.ToLower() == "new")
+                {
+                    var supplier = _PPM3Context.T_Construction
+                        .Where(x => x.F_Local_Str.CompareTo(now) <= 0
+                        && x.F_Local_End.CompareTo(now) >= 0
+                        && x.F_Store_cd.StartsWith(_BearerClass.Plant)).AsQueryable();
 
-                _SQL = @"
-                    UPDATE [dbo].[TB_MS_OldPart]
-                    SET F_Part_Name = '" + Request.Form["F_Part_Name"].ToString().Replace("-", "") + @"'
-                        ,F_End_Date = '" + Request.Form["F_End_Date"].ToString().Replace("-","") + @"'
-                        ,F_Update_By = '" + _BearerClass.UserCode + @"'
-                        ,F_Update_Date = '" + DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss")) + @"'
-                    WHERE 1=1
-                    AND F_Plant = '" + Request.Form["F_Plant"].ToString() + @"'
-                    AND F_Parent_Part = '" + Request.Form["F_Parent_Part"].ToString() + @"'
-                    AND F_Ruibetsu = '" + Request.Form["F_Ruibetsu"].ToString().Replace("-", "") + @"'
-                    AND F_Store_Cd = '" + Request.Form["F_Store_Cd"].ToString().Replace("-", "") + @"'
-                    AND F_Start_Date = '" + Request.Form["F_Start_Date"].ToString().Replace("-", "") + @"'
-                ";
-                _KBCN.Execute(_SQL);
+                    if (!string.IsNullOrWhiteSpace(kanban))
+                    {
+                        supplier = supplier.Where(x => x.F_Sebango == kanban.Substring(1, 3));
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(store))
+                    {
+                        supplier = supplier.Where(x => x.F_Store_cd == store);
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(partNo))
+                    {
+                        supplier = supplier.Where(x => x.F_Part_no + "-" + x.F_Ruibetsu == partNo);
+                    }
+
+                    var data = await supplier.Select(x => new
+                    {
+                        F_Supplier = x.F_supplier_cd.Trim() + "-" + x.F_plant.ToString().Trim(),
+                    }).ToListAsync();
 
 
-                _result = @"{
-                    ""status"":""200"",
-                    ""response"":""OK"",
-                    ""message"": ""Data has been save""
-                }";
-                return Content(_result, "application/json");
+                    return Ok(new
+                    {
+                        status = "200",
+                        response = "OK",
+                        message = "Data Found!",
+                        data = data.DistinctBy(x => x.F_Supplier).OrderBy(x => x.F_Supplier)
+                    });
+                }
+                else
+                {
+
+                    var supplier = _KB3Context.TB_MS_PartOrder
+                        .Where(x => x.F_Start_Date.CompareTo(now) <= 0
+                            && x.F_End_Date.CompareTo(now) >= 0
+                            && x.F_Plant == _BearerClass.Plant[0]).AsQueryable();
+
+                    if (!string.IsNullOrWhiteSpace(kanban))
+                    {
+                        supplier = supplier.Where(x => x.F_Kanban_No == kanban);
+                    }
+                    if (!string.IsNullOrWhiteSpace(store))
+                    {
+                        supplier = supplier.Where(x => x.F_Store_Code == store);
+                    }
+                    if (!string.IsNullOrWhiteSpace(partNo))
+                    {
+                        supplier = supplier.Where(x => x.F_Part_No+"-"+x.F_Ruibetsu == partNo);
+                    }
+
+                    var data = await supplier.Select(x => new
+                    {
+                        F_Supplier = x.F_Supplier_Cd.Trim() + "-" + x.F_Supplier_Plant.ToString().Trim(),
+                    }).ToListAsync();
+                    
+                    
+                    return Ok(new
+                    {
+                        status = "200",
+                        response = "OK",
+                        message = "Data Found!",
+                        data = data.DistinctBy(x => x.F_Supplier).OrderBy(x => x.F_Supplier)
+                    });
+                }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                return Content(e.Message.ToString(), "application/json");
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    response = "Internal Server Error",
+                    message = "Unexpected Error!",
+                    error = ex.Message
+                });
             }
+
         }
 
-
-
-
-        [HttpPost]
-        public IActionResult delete(int id = 0)
+        [HttpGet]
+        public async Task<IActionResult> GetKanban(string action, string? supplier, string? store, string? partNo)
         {
-            dynamic _json = null;
-            string _SQL = "";
-            string _result = @"{
-                        ""status"":""200"",
-                        ""response"":""OK"",
-                        ""message"": ""Data not found""
-                    }";
             try
             {
                 _BearerClass.Authentication(Request);
-                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
+                if (_BearerClass.Status == 401)
+                {
+                    return Unauthorized();
+                }
 
-                
+                if (action.ToLower() == "new")
+                {
+                    var kanban = _PPM3Context.T_Construction
+                        .Where(x => x.F_Local_Str.CompareTo(now) <= 0
+                        && x.F_Local_End.CompareTo(now) >= 0
+                        && x.F_Store_cd.StartsWith(_BearerClass.Plant)).AsQueryable();
 
-                _SQL = @"
-                    DELETE [dbo].[TB_MS_OldPart]
-                    WHERE 1=1
-                    AND F_Plant = '" + Request.Form["F_Plant"].ToString() + @"'
-                    AND F_Parent_Part = '" + Request.Form["F_Parent_Part"].ToString() + @"'
-                    AND F_Ruibetsu = '" + Request.Form["F_Ruibetsu"].ToString().Replace("-", "") + @"'
-                    AND F_Store_Cd = '" + Request.Form["F_Store_Cd"].ToString().Replace("-", "") + @"'
-                    AND F_Start_Date = '" + Request.Form["F_Start_Date"].ToString().Replace("-", "") + @"'
-                ";
-                _KBCN.Execute(_SQL);
+                    if (!string.IsNullOrWhiteSpace(supplier))
+                    {
+                        kanban = kanban.Where(x => x.F_supplier_cd + "-" + x.F_plant == supplier);
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(store))
+                    {
+                        kanban = kanban.Where(x => x.F_Store_cd == store);
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(partNo))
+                    {
+                        kanban = kanban.Where(x => x.F_Part_no + "-" + x.F_Ruibetsu == partNo);
+                    }
+
+                    var data = await kanban.Select(x => new
+                    {
+                        F_Kanban = ("0000" + x.F_Sebango).Substring(x.F_Sebango.Length,4)
+                    }).ToListAsync();
 
 
-                _result = @"{
-                    ""status"":""200"",
-                    ""response"":""OK"",
-                    ""message"": ""Data has been delete""
-                }";
-                return Content(_result, "application/json");
+                    return Ok(new
+                    {
+                        status = "200",
+                        response = "OK",
+                        message = "Data Found!",
+                        data = data.DistinctBy(x => x.F_Kanban).OrderBy(x => x.F_Kanban)
+                    });
+                }
+                else
+                {
+
+                    var kanban = _KB3Context.TB_MS_PartOrder
+                        .Where(x => x.F_Start_Date.CompareTo(now) <= 0
+                            && x.F_End_Date.CompareTo(now) >= 0
+                            && x.F_Plant == _BearerClass.Plant[0]).AsQueryable();
+
+                    if (!string.IsNullOrWhiteSpace(supplier))
+                    {
+                        kanban = kanban.Where(x => x.F_Supplier_Cd + "-" + x.F_Supplier_Plant == supplier);
+                    }
+                    if (!string.IsNullOrWhiteSpace(store))
+                    {
+                        kanban = kanban.Where(x => x.F_Store_Code == store);
+                    }
+                    if (!string.IsNullOrWhiteSpace(partNo))
+                    {
+                        kanban = kanban.Where(x => x.F_Part_No + "-" + x.F_Ruibetsu == partNo);
+                    }
+
+                    var data = await kanban.Select(x => new
+                    {
+                        F_Kanban = ("0000" + x.F_Kanban_No).Substring(x.F_Kanban_No.Length, 4)
+                    }).ToListAsync();
+
+
+                    return Ok(new
+                    {
+                        status = "200",
+                        response = "OK",
+                        message = "Data Found!",
+                        data = data.DistinctBy(x => x.F_Kanban).OrderBy(x => x.F_Kanban)
+                    });
+                }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                return Content(e.Message.ToString(), "application/json");
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    response = "Internal Server Error",
+                    message = "Unexpected Error!",
+                    error = ex.Message
+                });
+            }
+
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> GetStore(string action, string? supplier, string? kanban, string? partNo)
+        {
+            try
+            {
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401)
+                {
+                    return Unauthorized();
+                }
+
+                if (action.ToLower() == "new")
+                {
+                    var store = _PPM3Context.T_Construction
+                        .Where(x => x.F_Local_Str.CompareTo(now) <= 0
+                                && x.F_Local_End.CompareTo(now) >= 0
+                                && x.F_Store_cd.StartsWith(_BearerClass.Plant)).AsQueryable();
+
+                    if (!string.IsNullOrWhiteSpace(supplier))
+                    {
+                        store = store.Where(x => x.F_supplier_cd + "-" + x.F_plant == supplier);
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(kanban))
+                    {
+                        store = store.Where(x => x.F_Sebango == kanban.Substring(1, 3));
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(partNo))
+                    {
+                        store = store.Where(x => x.F_Part_no + "-" + x.F_Ruibetsu == partNo);
+                    }
+
+                    var data = await store.Select(x => new
+                    {
+                        F_Store = x.F_Store_cd
+                    }).ToListAsync();
+
+                    return Ok(new
+                    {
+                        status = "200",
+                        response = "OK",
+                        message = "Data Found!",
+                        data = data.DistinctBy(x => x.F_Store).OrderBy(x => x.F_Store)
+                    });
+                }
+                else
+                {
+                    var store = _KB3Context.TB_MS_PartOrder
+                        .Where(x => x.F_Start_Date.CompareTo(now) <= 0
+                                && x.F_End_Date.CompareTo(now) >= 0
+                                && x.F_Plant == _BearerClass.Plant[0]).AsQueryable();
+
+                    if (!string.IsNullOrWhiteSpace(supplier))
+                    {
+                        store = store.Where(x => x.F_Supplier_Cd + "-" + x.F_Supplier_Plant == supplier);
+                    }
+                    if (!string.IsNullOrWhiteSpace(kanban))
+                    {
+                        store = store.Where(x => x.F_Kanban_No == kanban);
+                    }
+                    if (!string.IsNullOrWhiteSpace(partNo))
+                    {
+                        store = store.Where(x => x.F_Part_No + "-" + x.F_Ruibetsu == partNo);
+                    }
+
+                    var data = await store.Select(x => new
+                    {
+                        F_Store = x.F_Store_Code
+                    }).ToListAsync();
+
+                    return Ok(new
+                    {
+                        status = "200",
+                        response = "OK",
+                        message = "Data Found!",
+                        data = data.DistinctBy(x => x.F_Store).OrderBy(x => x.F_Store)
+                    });
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    response = "Internal Server Error",
+                    message = "Unexpected Error!",
+                    error = ex.Message
+                });
+            }
+
+
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> GetPartNo(string action, string? supplier, string? kanban, string? store)
+        {
+            try
+            {
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401)
+                {
+                    return Unauthorized();
+                }
+
+                if (action.ToLower() == "new")
+                {
+                    var partNo = _PPM3Context.T_Construction
+                        .Where(x => x.F_Local_Str.CompareTo(now) <= 0
+                                && x.F_Local_End.CompareTo(now) >= 0
+                                && x.F_Store_cd.StartsWith(_BearerClass.Plant)).AsQueryable();
+
+                    if (!string.IsNullOrWhiteSpace(supplier))
+                    {
+                        partNo = partNo.Where(x => x.F_supplier_cd + "-" + x.F_plant == supplier);
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(kanban))
+                    {
+                        partNo = partNo.Where(x => x.F_Sebango == kanban.Substring(1, 3));
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(store))
+                    {
+                        partNo = partNo.Where(x => x.F_Store_cd == store);
+                    }
+
+                    var data = await partNo.Select(x => new
+                    {
+                        F_PartNo = x.F_Part_no + "-" + x.F_Ruibetsu
+                    }).ToListAsync();
+
+                    return Ok(new
+                    {
+                        status = "200",
+                        response = "OK",
+                        message = "Data Found!",
+                        data = data.DistinctBy(x => x.F_PartNo).OrderBy(x => x.F_PartNo)
+                    });
+                }
+                else
+                {
+                    var partNo = _KB3Context.TB_MS_PartOrder
+                        .Where(x => x.F_Start_Date.CompareTo(now) <= 0
+                                && x.F_End_Date.CompareTo(now) >= 0
+                                && x.F_Plant == _BearerClass.Plant[0]).AsQueryable();
+
+                    if (!string.IsNullOrWhiteSpace(supplier))
+                    {
+                        partNo = partNo.Where(x => x.F_Supplier_Cd + "-" + x.F_Supplier_Plant == supplier);
+                    }
+                    if (!string.IsNullOrWhiteSpace(kanban))
+                    {
+                        partNo = partNo.Where(x => x.F_Kanban_No == kanban);
+                    }
+                    if (!string.IsNullOrWhiteSpace(store))
+                    {
+                        partNo = partNo.Where(x => x.F_Store_Code == store);
+                    }
+
+                    var data = await partNo.Select(x => new
+                    {
+                        F_PartNo = x.F_Part_No + "-" + x.F_Ruibetsu
+                    }).ToListAsync();
+
+                    return Ok(new
+                    {
+                        status = "200",
+                        response = "OK",
+                        message = "Data Found!",
+                        data = data.DistinctBy(x => x.F_PartNo).OrderBy(x => x.F_PartNo)
+                    });
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    response = "Internal Server Error",
+                    message = "Unexpected Error!",
+                    error = ex.Message
+                });
             }
         }
+
     }
 }

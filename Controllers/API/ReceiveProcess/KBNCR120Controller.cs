@@ -375,7 +375,7 @@ namespace HINOSystem.Controllers.API.Master
                                                 F_Pack_Code = ""
                                             };
                                             await _PPM3Context.AddAsync(local);
-                                            _Serilog.WriteLog($"Receive Part Seperate : {PDSNo} T_Receive_Local Line 445", UserName, HostName);
+                                            _Serilog.WriteLog($"Receive Part Seperate : {JsonConvert.SerializeObject(local)} T_Receive_Local Line 445", UserName, HostName);
                                         }
                                     }
                                     else
@@ -430,7 +430,7 @@ namespace HINOSystem.Controllers.API.Master
                                                     F_Pack_Code = ""
                                                 };
                                                 await _PPM3Context.AddAsync(local);
-                                                _Serilog.WriteLog($"Receive Part Seperate : {PDSNo} T_Receive_Local Line 500", UserName, HostName);
+                                                _Serilog.WriteLog($"Receive Part Seperate : {JsonConvert.SerializeObject(local)} T_Receive_Local Line 500", UserName, HostName);
                                             }
                                         }
                                         else
@@ -474,6 +474,7 @@ namespace HINOSystem.Controllers.API.Master
                                 {
                                     header.F_MRN_Flag = "2";
                                     _KB3Context.TB_REC_HEADER.Update(header);
+                                    _Serilog.WriteLogMsg($"Receive Separate All : {JsonConvert.SerializeObject(header)}");
                                 }
                             }
 

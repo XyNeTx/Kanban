@@ -119,6 +119,7 @@
     xAjax.onClick("#ReceiveBtn", function () {
         var _selData = [];
         var allPages = $('#tblMaster').DataTable().cells().nodes();
+        $("#ReceiveBtn").prop('disabled', true)
         $(allPages).find('input[type="checkbox"]').each(function () {
             if ($(this).prop('checked')) {
                 var _val = $($(this)).val();
@@ -148,6 +149,7 @@
                 xSplash.hide();
             }
         });
+        $("#ReceiveBtn").prop('disabled', false);
     });
 
     xAjax.onClick("#uploadEpro", function () {

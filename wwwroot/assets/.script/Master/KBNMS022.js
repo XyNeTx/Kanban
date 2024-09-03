@@ -1,70 +1,44 @@
-﻿$(document).ready(function () {
+﻿$(document).ready(async function () {
 
-    const xKBNMS022 = new MasterTemplate({
-        Controller: _PAGE_,
-        Table: 'tblMaster',
-        ColumnTitle: {
-            "EN": ['Supplier Code', 'Cycle Time', 'Delivery Start', 'Delivery End', 'Order Start', 'Order End', 'Delivery Trip', 'Time'],
-            "TH": ['Supplier Code', 'Cycle Time', 'Delivery Start', 'Delivery End', 'Order Start', 'Order End', 'Delivery Trip', 'Time'],
-            "JP": ['Supplier Code', 'Cycle Time', 'Delivery Start', 'Delivery End', 'Order Start', 'Order End', 'Delivery Trip', 'Time'],
+    $("#tableMain").DataTable({
+
+        "processing": true,
+        "columns": [
+            { "title": "Supplier Code", "data": "F_Supplier_Code" },
+            { "title": "Cycle Time", "data": "F_Cycle" },
+            { "title": "Delivery Start", "data": "F_Start_Date" },
+            { "title": "Delivery End", "data": "F_End_Date"},
+            { "title": "* Order Start", "data": "F_Start_Order_Date" },
+            { "title": "* Order End", "data":"F_End_Order_Date"},
+            { "title": "Delivery Trip", "data": "F_Delivery_Trip"},
+            { "title": "Time", "data": "F_Delivery_Time"},
+        ],
+        "order": [[0, "asc"]],
+        "paging": false,
+        "info": false,
+        "searching": true,
+        "scrollY": "350px",
+        "scrollCollapse": true,
+        "width": "100%",
+    });
+
+
+    await _xLib.AJAX_Get("/api/KBNMS022/GetList", null,
+        function (success) {
+            if (success.status == "200") {
+                success = _xLib.JSONparseAndTrim(success);
+                $("#tableMain").DataTable().clear().rows.add(success.data).draw();
+                //console.log(success);
+
+                $("table th, #tableMain td").addClass("text-center");
+                $("table thead").addClass("table-dark");
+            }
         },
-        ColumnValue: [
-            { "data": "F_Supplier_Code" },
-            { "data": "F_Cycle" },
-            { "data": "F_Start_Date" },
-            { "data": "F_End_Date" },
-            { "data": "F_Start_Order_Date" },
-            { "data": "F_End_Order_Date" },
-            { "data": "F_Delivery_Trip" },
-            { "data": "F_Delivery_Time" }
-        ],
-        Modal: 'modalMaster',
-        Form: 'frmMaster',
-        PostData: [
-            { name: 'F_Plant', value: _PLANT_ }
-        ],
-    });
+        function (error) {
+            xSwal.error("Error !!", "Can't get data from server.");
+        }
+    );
 
-    xKBNMS022.prepare();
-
-    xKBNMS022.initial(function (result) {
-        xDropDownList.bind('#frmCondition #F_Plant', result.data.TB_MS_Factory, 'F_Plant', 'F_Plant_Name');
-        xDropDownList.bind('#frmMaster #F_Plant', result.data.TB_MS_Factory, 'F_Plant', 'F_Plant_Name');
-
-        xKBNMS022.search();
-    });
-
-    onSave = function () {
-        xKBNMS022.save(function () {
-            xKBNMS022.search();
-        });
-    }
-
-    onDelete = function () {
-        xKBNMS022.delete(function () {
-            xKBNMS022.search();
-        });
-    }
-
-    onDeleteAll = function () {
-        xKBNMS022.deleteall(function () {
-            xKBNMS022.search();
-        });
-    }
-
-    onPrint = function () { }
-
-    onExecute = function () { }
-
-    xAjax.onChange('#frmCondition #F_Plant', function () {
-        $('#frmMaster #F_Plant').val($('#frmCondition #F_Plant').val());
-
-        xKBNMS022.search();
-    });
-
-
-
-
-
+    xSplash.hide();
 })
 

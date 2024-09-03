@@ -212,7 +212,6 @@
     <None Include="wwwroot\assets\.libs\class\lab.Splash\lab.Splash.js.map" />
     <None Include="wwwroot\assets\.libs\class\lab.Splash\lab.Splash.min.js" />
     <None Include="wwwroot\assets\.libs\class\lab.Splash\lab.Splash.min.js.map" />
-    <None Include="wwwroot\assets\.script\master\FileName.js" />
     <None Include="wwwroot\assets\.script\XLib\xLib.js" />
     <None Include="wwwroot\assets\.libs\display\display.ListOfValues.js" />
     <None Include="wwwroot\assets\.libs\splash\splash.bundle.js" />

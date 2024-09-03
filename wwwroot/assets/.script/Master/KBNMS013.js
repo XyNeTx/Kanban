@@ -1,89 +1,170 @@
-﻿$(document).ready(function () {
+﻿$(document).ready(async function () {
 
-    const KBNMS013 = new MasterTemplate({
-        Controller: _PAGE_,
-        Table: 'tblMaster',
-        ColumnTitle: {
-            "EN": ['Supplier Code', 'Cycle', 'Kanban No', 'Store Code', 'Part No', 'Start Date', 'End Date', 'Type Order', 'Dock Code', 'PDS Group'],
-            "TH": ['Supplier Code', 'Cycle', 'Kanban No', 'Store Code', 'Part No', 'Start Date', 'End Date', 'Type Order', 'Dock Code', 'PDS Group'],
-            "JP": ['Supplier Code', 'Cycle', 'Kanban No', 'Store Code', 'Part No', 'Start Date', 'End Date', 'Type Order', 'Dock Code', 'PDS Group'],
+    await $("#tableMain").DataTable({
+        "processing": true,
+        "serverSide": false,
+        width: '100%',
+        paging: false,
+        sorting: false,
+        searching: false,
+        scrollX: false,
+        scrollY: true,
+        scrollCollapse: true,
+        "columns": [
+            { title: "Supplier Code", data: "F_Supplier_Code", },
+            { title: "Cycle", data: "F_Cycle", },
+            { title: "Kanban No", data: "F_Kanban_No", },
+            { title: "Store Code", data: "F_Store_Code", },
+            { title: "Part No", data: "F_Part_No" },
+            { title: "Start Date", data: "F_Start_Date" },
+            { title: "End Date", data: "F_End_Date", },
+            { title: "Type Order", data: "F_Type_Order", },
+            { title: "Dock Code", data: "F_Dock_Code", },
+            { title: "PDS Group", data: "F_PDS_Group", },
+        ],
+        order: [[0, "asc"]]
+    });
+
+    await $("#inpStartDate").datepicker({
+        format: 'dd/mm/yyyy',
+        autoclose: true,
+        modal: true,
+        header: true,
+        footer: true,
+        showRightIcon: false
+    });
+    await $("#inpEndDate").datepicker({
+        format: 'dd/mm/yyyy',
+        autoclose: true,
+        modal: true,
+        header: true,
+        footer: true,
+        showRightIcon: false
+    });
+
+    await _xLib.AJAX_Get("/api/KBNMS013/GetSupplier", { action: "Inquiry" },
+        function (success) {
+            if (success.status == "200") {
+                $("#inpSupplierCode").empty();
+                $("#inpSupplierCode").append(`<option value="" hidden></option>`);
+                success.data.forEach((item) => {
+                    $("#inpSupplierCode").append(`<option value="${item.f_Supplier}">${item.f_Supplier}</option>`);
+                });
+
+                $("#inpSupplierCode").selectpicker("refresh");
+            }
         },
-        ColumnValue: [
-            { "data": "F_Supplier_Code" },
-            { "data": "F_Cycle" },
-            { "data": "F_Kanban_No" },
-            { "data": "F_Store_Code" },
-            { "data": "F_Part_No" },
-            { "data": "F_Start_Date" },
-            { "data": "F_End_Date" },
-            { "data": "F_Type_Order" },
-            { "data": "F_Dock_Code" },
-            { "data": "F_PDS_Group" }
-        ],
-        Modal: 'modalMaster',
-        Form: 'frmMaster',
-        PostData: [
-            { name: 'F_Plant', value: _PLANT_ }
-        ],
-    });
-
-    KBNMS013.prepare();
-
-    KBNMS013.initial(function (result) {
-        //xDropDownList.bind('frmCondition #F_Plant', result.data.TB_Factory, 'F_Plant', 'F_Plant_Name');
-        xDropDownList.bind('frmCondition #F_Supplier', result.data.TB_Supplier, 'F_Supplier_Code', 'F_Supplier_Code');
-
-        //xDropDownList.bind('frmMaster #F_Plant', result.data.TB_Factory, 'F_Plant', 'F_Plant_Name');
-
-        KBNMS013.search();
-    });
-
-    onSave = function () {
-        KBNMS013.save(function () {
-            KBNMS013.search();
-        });
-    }
-
-    onDelete = function () {
-        KBNMS013.delete(function () {
-            KBNMS013.search();
-        });
-    }
-
-    onDeleteAll = function () {
-        KBNMS013.deleteall(function () {
-            KBNMS013.search();
-        });
-    }
-
-    onPrint = function () { }
-
-    onExecute = function () { }
-
-
-    lovClick = function (ElementID) {
-        var _SQL = '';
-
-        if (ElementID == 'F_Kanban_No' && $('#F_Supplier_Code').val() != '') _SQL = "AND F_supplier_cd+'-'+F_plant = '" + $('#F_Supplier_Code').val() + "' ";
-        //if (ElementID == 'F_Store_Code' && $('#F_Supplier_Code').val() != '') _SQL = "AND F_supplier_cd+'-'+F_plant = '" + $('#F_Supplier_Code').val() + "' ";
-        if (ElementID == 'F_Part_No') {
-            if ($('#F_Supplier_Code').val() != '') _SQL = "AND F_supplier_cd+'-'+F_plant = '" + $('#F_Supplier_Code').val() + "' ";
-            if ($('#F_Kanban_No').val() != '') _SQL = "AND F_Sebango = '" + $('#F_Kanban_No').val() + "' ";
-            if ($('#F_Store_Code').val() != '') _SQL = "AND F_Store_cd = '" + $('#F_Store_Code').val() + "' ";
+        function (error) {
+            xSwal.error("Error", "Can't Get Supplier")
         }
+    );
 
-        ajexHeader.LOV = _SQL;
+    await _xLib.AJAX_Get("/api/KBNMS013/GetKanban", { action: "Inquiry" },
+        function (success) {
+            if (success.status == "200") {
+                $("#inpKanban").empty();
+                $("#inpKanban").append(`<option value="" hidden></option>`);
+                success.data.forEach((item) => {
+                    $("#inpKanban").append(`<option value="${item.f_Kanban}">${item.f_Kanban}</option>`);
+                });
+
+                $("#inpKanban").selectpicker("refresh");
+            }
+        },
+        function (error) {
+            xSwal.error("Error", "Can't Get Kanban")
+        }
+    );
+
+    await _xLib.AJAX_Get("/api/KBNMS013/GetStore", { action: "Inquiry" },
+        function (success) {
+            if (success.status == "200") {
+                $("#inpStore").empty();
+                $("#inpStore").append(`<option value="" hidden></option>`);
+                success.data.forEach((item) => {
+                    $("#inpStore").append(`<option value="${item.f_Store}">${item.f_Store}</option>`);
+                });
+
+                $("#inpStore").selectpicker("refresh");
+            }
+        },
+        function (error) {
+            xSwal.error("Error", "Can't Get Kanban")
+        }
+    );
+
+    await _xLib.AJAX_Get("/api/KBNMS013/GetPartNo", { action: "Inquiry" },
+        function (success) {
+            if (success.status == "200") {
+                $("#inpPartNo").empty();
+                $("#inpPartNo").append(`<option value="" hidden></option>`);
+                success.data.forEach((item) => {
+                    $("#inpPartNo").append(`<option value="${item.f_PartNo}">${item.f_PartNo}</option>`);
+                });
+
+                $("#inpPartNo").selectpicker("refresh");
+            }
+        },
+        function (error) {
+            xSwal.error("Error", "Can't Get Kanban")
+        }
+    );
+
+    $("table thead tr th , table tbody tr td").addClass("text-center");
+
+    $("#divDetail").find("select").prop("disabled", true);
+    $("#divDetail").find("input[type='text']").prop("readonly", true);
+    $(".selectpicker").selectpicker("refresh");
+
+    xSplash.hide();
+});
+
+$("#inpSupplierCode").on("change", async function () {
+    var obj = {
+        F_Supplier_Code: $("#inpSupplierCode").val(),
+        F_Store_Code: $("#inpStore").val() == null ? "" : $("#selectStore").val()
+    }
+    await _xLib.AJAX_Get("/api/KBNMS006/GetSupplierDetail", obj,
+        function (success) {
+            if (success.status == 200) {
+                var data = success.data;
+                $("#inpSupplierName").val(data.f_Supplier_Name);
+                $("#inpCycle").val(data.f_Cycle);
+            }
+        },
+        function (error) {
+            xSwal.error("Error", "Supplier Detail Not Found");
+        }
+    );
+
+    obj = {
+        supplier : $("#inpSupplierCode").val(),
+        store : $("#inpStore").val() == null ? "" : $("#inpStore").val(),
+        typeOrder: $("#inpTypeOrder").val() == null ? "" : $("#inpTypeOrder").val()
     }
 
-    //xAjax.onChange('frmCondition #F_Supplier', function () {
-    //    $('#frmMaster #F_Plant').val($('#frmCondition #F_Plant').val());
+    await _xLib.AJAX_Get("/api/KBNMS013/GetList", obj,
+        function (success) {
+            if (success.status == 200) {
+                    var success = _xLib.JSONparseAndTrim(success);
+                    console.table(success);
+                    $("#tableMain").DataTable().clear().draw();
+                    $("#tableMain").DataTable().rows.add(success.data).draw();
+                    $("table thead tr th , table tbody tr td").addClass("text-center");
+                }
+            },
+        function (error) {
+            xSwal.error("Error", "Data Not Found");
+        }
+    );
+});
 
-    //    KBNMS013.search();
-    //});
+$("#btnInquiry").on("click", async function () {
+
+    $("#divDetail").find("select").prop("disabled", false);
+    $("#inpStartDate, #inpEndDate").prop("readonly", false);
+    $(".selectpicker").selectpicker("refresh");
 
 
 
-
-
-})
-
+});

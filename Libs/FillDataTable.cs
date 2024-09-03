@@ -16,13 +16,15 @@ namespace HINOSystem.Libs
         private readonly IConfiguration _configuration;
         private readonly PPM3Context _PPM3Context;
         private readonly ProcDBContext _ProcDB;
+        private readonly IHttpContextAccessor _IHttp;
 
         public FillDataTable(
             KB3Context kB3Context, 
             KanbanConnection kBCN, 
             IConfiguration configuration, 
             PPM3Context pPM3Context, 
-            ProcDBContext procDB
+            ProcDBContext procDB,
+            IHttpContextAccessor iHttp
             )
         {
             _KB3Context = kB3Context;
@@ -30,6 +32,7 @@ namespace HINOSystem.Libs
             _configuration = configuration;
             _PPM3Context = pPM3Context;
             _ProcDB = procDB;
+            _IHttp = iHttp;
         }
 
         public DataTable ExecuteSQLProcDB(string sql, params object[] parameters)
@@ -81,6 +84,7 @@ namespace HINOSystem.Libs
                     using (SqlCommand cmd = new SqlCommand(sql, con))
                     {
                         cmd.CommandType = CommandType.Text;
+                        cmd.CommandTimeout = 300;
                         // Add parameters to the SqlCommand
                         for (int i = 0; i < parameters.Length; i++)
                         {
@@ -224,6 +228,26 @@ namespace HINOSystem.Libs
             }
 
             return dt;
+        }
+
+        public string ppmConnect()
+        {
+            string isDev = _IHttp.HttpContext.Request.Cookies.FirstOrDefault(x => x.Key == "isDev").Value == "1" ? "Dev" : "";
+            string plant = _IHttp.HttpContext.Request.Cookies.FirstOrDefault(x => x.Key == "plantCode").Value;
+            string cPlantDev = plant + isDev;
+
+            string ppmConnect = cPlantDev switch
+            {
+                "1" => "[HMMT-PPM].[PPMDB]",
+                "2" => "[HMMT-PPM].[PPMDB]",
+                "3" => "[HMMTA-PPM].[PPMDB]",
+                "1Dev" => "[HMMT-PPM].[PPMDB]",
+                "2Dev" => "[HMMT-PPM].[PPMDB]",
+                "3Dev" => "[PPMDB]",
+                _ => "[HMMTA-PPM].[PPMDB]"
+            };
+
+            return ppmConnect;
         }
     }
 }
