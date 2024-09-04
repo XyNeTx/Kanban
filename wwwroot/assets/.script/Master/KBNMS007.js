@@ -13,11 +13,21 @@ $(document).ready(async function () {
     $('#readDeliveryDate').datepicker({
         uiLibrary: 'bootstrap5',
         format: 'dd/mm/yyyy',
+        autoclose: true,
+        showRightIcon: false,
+    });
+    $('#readStartDate').datepicker({
+        uiLibrary: 'bootstrap5',
+        format: 'dd/mm/yyyy',
+        autoclose: true,
+        showRightIcon: false,
     });
 
     $('#readDeliveryDate').parent().prepend(`<label class= "input-group-text col-2" for="readDeliveryDate">Delivery Date</label>`);
-    $('#readDeliveryDate').parent().find('button').prop('disabled', true);
     $('#readDeliveryDate').parent().addClass("mb-0");
+
+    $('#readStartDate').parent().prepend(`<label class= "input-group-text col-4" for="readStartDate">Start Date</label>`);
+    $('#readStartDate').parent().addClass("mb-0");
 
     xSplash.hide();
 });
@@ -232,11 +242,16 @@ $("#btnSearch").click(async function () {
     );
 
     await _xLib.AJAX_Get("/api/KBNMS007/Search", obj,
-        function (success) {
+        async function (success) {
             if (success.status == 200) {
                 success = _xLib.JSONparseMixData(success);
                 console.log(success)
                 if (!success.data) {
+
+
+                    await $("#divTrip").find("input").val("");
+                    await $("#divAddCycle").find("input").val("");
+                    await $("#divStatus").find("input").val("");
 
                     $("#readStatus").val("0 : None");
                     $("#readUpdateDate").val(moment(cookieLoginDate.slice(0, 10), "YYYY-MM-DD").format("DD/MM/YYYY"));
@@ -245,8 +260,16 @@ $("#btnSearch").click(async function () {
                     $("#readProcessBy").val(_xLib.GetUserName().substring(0, 10));
                     $("#readDeliveryDate").val(moment(cookieLoginDate.slice(0, 10), "YYYY-MM-DD").format("DD/MM/YYYY"));
 
-                    $("#divTrip").find("input").val("");
-                    $("#divAddCycle").find("input").val("");
+
+                    //$("#readStartDate").val("");
+                    //$("#readShift").val("");
+                    //$("#readAddQty").val("");
+
+                    //$("#inpStartTrip").val("");
+                    //$("#inpAddTrip").val("");
+
+                    $("#divBtn").find("button").prop("disabled", true);
+                    $("#btnEdit").prop("disabled", false);
 
                 }
                 else
@@ -270,16 +293,17 @@ $("#btnSearch").click(async function () {
                         let _id = "inpTrip" + i;
                         $("#" + _id).val(success.data["f_Round" + i] == 0 ? "" : success.data["f_Round" + i]);
                     }
-                }
 
-                $("#divBtn").find("button").prop("disabled", true);
+                    $("#divBtn").find("button").prop("disabled", true);
 
-                if (success.data.f_Status == "0" || success.data.f_Status == "3") {
-                    $("#btnStart").prop("disabled", false);
-                    $("#btnEdit").prop("disabled", false);
-                }
-                else if (success.data.f_Status == "1" || success.data.f_Status == "2") {
-                    $("#btnStop").prop("disabled", false);
+                    if (success.data.f_Status == "0" || success.data.f_Status == "3") {
+                        $("#btnStart").prop("disabled", false);
+                        $("#btnEdit").prop("disabled", false);
+                    }
+                    else if (success.data.f_Status == "1" || success.data.f_Status == "2") {
+                        $("#btnStop").prop("disabled", false);
+                    }
+
                 }
 
                 $("#readAddress").prop("readonly", false);
@@ -299,7 +323,8 @@ $("#btnEdit").click(function () {
     $("#divBtn").find("button").prop("disabled", true);
     $("#btnCancelBottom").prop("disabled", false);
     $("#btnSave").prop("disabled", false);
-    $("#readDeliveryDate").parent().find('button').prop('disabled', false);
+    $("#readDeliveryDate").prop("readonly", false);
+    //$("#readDeliveryDate").parent().find('button').prop('disabled', false);
     $("#readAddQty").prop("readonly", false);
 });
 

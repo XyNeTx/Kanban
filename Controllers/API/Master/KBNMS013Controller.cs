@@ -1,5 +1,6 @@
 ﻿using HINOSystem.Context;
 using HINOSystem.Libs;
+using HINOSystem.Models.KB3.Master;
 using KANBAN.Context;
 using KANBAN.Libs;
 using Microsoft.AspNetCore.Mvc;
@@ -590,6 +591,85 @@ namespace HINOSystem.Controllers.API.Master
         }
 
 
+        [HttpPost]
+        public async Task<IActionResult> Save([FromQuery] string action,[FromBody] TB_MS_PartOrder obj)
+        {
+            try
+            {
 
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401)
+                {
+                    return Unauthorized();
+                }
+
+                if (ModelState.IsValid)
+                {
+                    var partOrder = _KB3Context.TB_MS_PartOrder
+                        .Where(x => x.F_Plant == obj.F_Plant
+                        && x.F_Supplier_Cd == obj.F_Supplier_Cd
+                        && x.F_Supplier_Plant == obj.F_Supplier_Plant
+                        && x.F_Store_Code == obj.F_Store_Code
+                        && x.F_Part_No == obj.F_Part_No
+                        && x.F_Ruibetsu == obj.F_Ruibetsu
+                        && x.F_Kanban_No == obj.F_Kanban_No
+                        && x.F_Start_Date == obj.F_Start_Date).FirstOrDefault();
+
+                    if (partOrder != null)
+                    {
+                        if (action == "update")
+                        {
+                            partOrder.F_Update_By = _BearerClass.UserCode;
+                            partOrder.F_Update_Date = DateTime.Now;
+                            partOrder.F_End_Date = obj.F_End_Date;
+                            partOrder.F_PDS_Group = obj.F_PDS_Group;
+                            partOrder.F_Type_Order = obj.F_Type_Order;
+                            _KB3Context.TB_MS_PartOrder.Update(partOrder);
+                        }
+                        else if (action == "delete")
+                        {
+                            _KB3Context.TB_MS_PartOrder.Remove(partOrder);
+                        }
+                    }
+                    if (action == "new")
+                    {
+                        obj.F_Create_By = _BearerClass.UserCode;
+                        obj.F_Create_Date = DateTime.Now;
+                        obj.F_Update_By = _BearerClass.UserCode;
+                        obj.F_Update_Date = DateTime.Now;
+                        _KB3Context.TB_MS_PartOrder.Add(obj);
+                    }
+                    
+                    await _KB3Context.SaveChangesAsync();
+
+                    return Ok(new
+                    {
+                        status = "200",
+                        response = "OK",
+                        message = "Data Saved!"
+                    });
+                }
+
+                return BadRequest(new
+                {
+                    status = "400",
+                    response = "Bad Request",
+                    message = "Invalid Data!",
+                    error = ModelState.Values.SelectMany(x => x.Errors).Select(x => x.ErrorMessage)
+                });
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    response = "Internal Server Error",
+                    message = "Unexpected Error!",
+                    error = ex.Message
+                });
+                throw;
+            }
+        }
     }
 }

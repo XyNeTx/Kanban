@@ -206,7 +206,7 @@ namespace HINOSystem.Controllers.API.Master
 
                 string supplier = obj.F_Supplier_Code + "-" + obj.F_Supplier_Plant;
 
-                if (await IsProcessDatePast(obj.F_Delivery_Date, int.Parse(obj.F_Delivery_Trip), supplier, obj.F_Kanban_No))
+                if (await IsProcessDatePast(obj.F_Delivery_Date, int.TryParse(obj.F_Delivery_Trip,out int trip) ? trip : 24, supplier, obj.F_Kanban_No))
                 {
                     return BadRequest(new
                     {
