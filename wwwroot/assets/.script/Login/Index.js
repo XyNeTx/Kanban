@@ -17,6 +17,7 @@
         format: 'dd/mm/yyyy',
         todayHighlight: true,
         autoclose: true,
+        showRightIcon: false
     });
 
     $(".date-picker").parent().find("button").prop("disabled", true);
@@ -32,35 +33,11 @@
         setCookie('UI_MenuIcon', 'style4');
         setCookie('UI_SideBar', 'shrink');
     }
-    //console.log(_xLib.GetCookie("isDev"));
-    await _xLib.GetCookie("isDev") == null || _xLib.GetCookie("isDev") == "" ? _xLib.SetCookie('isDev', 0) : _xLib.GetCookie('isDev');
-    await _xLib.GetCookie("debug") == 1 ? _xLib.SetCookie("isDev", 1) : _xLib.SetCookie("isDev", 0);
-    //console.log(_xLib.GetCookie("isDev"));
-    initial = async function () {
+
+    await (_xLib.GetCookie("isDev") == null || _xLib.GetCookie("isDev") == "") ? _xLib.SetCookie('isDev', 0) : _xLib.GetCookie('isDev');    initial = async function () {
         xSplash.show();
 
         initTheme();
-
-        //xAPI.initial();
-        //xAPI.getUser({
-        //    //systemname: 'Hino Kanban F.3',
-        //    then: function (result) {
-        //        //console.log(result);
-        //        if (result.response == 'OK') {
-
-                    
-
-        //            if (_DEV_) {
-        //                console.info('DEVELOPER ACTIVE');
-        //                //$('#txtUserName').removeAttr('readonly');
-        //                //if (result.data.username == '20223983') $('#txtUserName').val('DEVELOPER');
-        //            } else {
-        //                console.info('PRODUCTION ACTIVE');
-        //            }
-
-        //        }
-        //    }
-        //})
 
 
         await $.ajax({
@@ -79,7 +56,20 @@
 
                 if (getCookie('debug') == '1') $('#txtUserName').val('DEVELOPER');
                 if (getCookie('debug') == '1') $('#txtUserName').removeAttr('readonly');
+                if (_xLib.GetCookie('isDev') == '1') $('h4').append('<h5 class="mt-3">DEVELOPER MODE</h5>');
                 //console.log(result);
+                $("#txtProcessDate").prop('disabled', true);
+                $("#ddlShift").prop('disabled', true);
+
+                if (result.userDetail.departmentCode.startsWith("44")
+                    && !result.userDetail.departmentCode.includes("_"))
+                {
+                    console.assert(result.userDetail.departmentCode.startsWith("44"), "Department Code is not 44");
+                    $("#txtUserName").prop('readonly', false);
+                    $("#txtProcessDate").prop('disabled', false);
+                    $("#ddlShift").prop('disabled', false);
+                }
+
                 $('#txtUserName').val(result.userName);
                 //$('#txtUserName').val("20234011");
                 $('#txtDeviceName').val(result.computerName);
@@ -103,13 +93,6 @@
                 if (success.status == "200") {
                     $("#txtProcessDate").val(moment(success.data.date).format("DD/MM/YYYY"));
                     $("#ddlShift").val(success.data.shift);
-                    $("#txtProcessDate").prop('disabled', true);
-                    $("#ddlShift").prop('disabled', true);
-
-                    if ($("#txtUserName").val() === "20234111" || _xLib.GetCookie("debug") === "1") {
-                        $("#txtProcessDate").parent().find("button").prop("disabled", false);
-                        $("#ddlShift").prop('disabled', false);
-                    }
                 }
             },
             function (error) {
@@ -129,7 +112,7 @@
         iSpy++;
         if (iSpy == 6) {
             let _debug = getCookie('debug');
-            let _isDev = _xLib.SetCookie('isDev', 1);
+            let _isDev = getCookie('isDev');
             if (_debug == 0) {
                 _debug = 1;
                 _isDev = 1;
@@ -137,24 +120,34 @@
                 _debug = 0;
                 _isDev = 0;
             }
-            _xLib.SetCookie('isDev', _isDev);
+            setCookie('isDev', _isDev);
             setCookie('debug', _debug);
             document.location.reload();
             xSplash.hide();
         }
     });
 
+    //let clickUser = 0;
+    //$("#txtUserName").on("click", function () {
+    //    clickUser++;
+    //    if (clickUser == 3) {
+    //        let _isDev = _xLib.GetCookie('isDev');
+    //        console.log(_isDev);
+    //        if (_isDev == 0) {
+    //            _isDev = 1;
+    //        } else {
+    //            _isDev = 0;
+    //        }
+    //        _xLib.SetCookie('isDev', _isDev);
+    //        _xLib.SetCookie('debug', 1);
+    //        $("#txtUserName").prop('readonly', false);
+    //        document.location.reload();
+    //    }
+    //});
+
     xSplash.hide();
 
 });
-
-//$('.gj-datepicker').prop('disabled', true);
-
-//$(".btn btn-outline-secondary border-left-0").click(function (e) {
-//    if ($("#txtUserName") !== "20234111" || $("#txtUserName") !== "20062084") {
-//        e.preventDefault();
-//    }
-//});
 
 $("#btnSubmit").click(function () {
     $("#formAuthentication").one('submit', function (e) {

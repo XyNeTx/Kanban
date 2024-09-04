@@ -6,63 +6,39 @@ using System.Text.Json.Serialization;
 
 namespace KANBAN.Models.KB3.UrgentOrder
 {
-    [PrimaryKey(nameof(F_PO_No), nameof(F_Part_No), nameof(F_Ruibetsu), nameof(F_Delivery_Date), nameof(F_Update_By))]
+    [PrimaryKey(nameof(F_PO_No), nameof(F_Part_No), nameof(F_Ruibetsu)
+        ,nameof(F_Delivery_Date), nameof(F_Update_By),nameof(F_PO_Date),
+        nameof(F_Delivery_Qty),nameof(F_Trip_No))]
+
     public class TB_Import_Service_Excel
     {
-        [JsonProperty("Depot_Code_:")]
-        [JsonPropertyName("Depot_Code_:")]
-        public string? F_Dept_Code { get; set; }
-
-        [JsonProperty("Supplier_Code_:")]
-        [JsonPropertyName("Supplier_Code_:")]
-        public string? F_Supplier_Code { get; set; }
-
-        [JsonProperty("Factory_Code_:")]
-        [JsonPropertyName("Factory_Code_:")]
-        public string? F_Factory_Code { get; set; }
-
-        [JsonProperty("Supplier_Name_:")]
-        [JsonPropertyName("Supplier_Name_:")]
-        public string? F_Supplier_Name { get; set; }
-
-        public string? F_Invoice_No { get; set; }
-
-        public string? F_Invoice_Date { get; set; }
-
-        public string? F_Shipment_Date { get; set; }
-
-        [DataType(DataType.Currency)]
-        [Column(TypeName = "numeric(18, 2)")]
-        public decimal F_Total_Amount { get; set; } = 0;
-
-        [DataType(DataType.Currency)]
-        [Column(TypeName = "numeric(10, 2)")]
-        public decimal F_Vat_Amount { get; set; } = 0;
-
-        [DataType(DataType.Currency)]
-        [Column(TypeName = "numeric(18, 2)")]
-        public decimal F_Grand_Total { get; set; } = 0;
-
+        [StringLength(15)]
         public string? F_Receive_Case_No { get; set; }
 
         [JsonProperty("PO_NO._/_Shift_No.")]
         [JsonPropertyName("PO_NO._/_Shift_No.")]
+        [StringLength(10)]
         public string? F_PO_No { get; set; }
 
         [JsonProperty("PO_Item_No.")]
         [JsonPropertyName("PO_Item_No.")]
+        [StringLength(10)]
         public string? F_Item_No { get; set; }
 
         [JsonProperty("PO_P/No.")]
         [JsonPropertyName("PO_P/No.")]
+        [StringLength(10)]
         public string? F_Part_No { get; set; }
 
+        [StringLength(2)]
         public string? F_Ruibetsu { get; set; }
 
         [JsonProperty("Part_Name")]
         [JsonPropertyName("Part_Name")]
+        [StringLength(50)]
         public string? F_Part_Name { get; set; }
 
+        [StringLength(15)]
         public string? F_Supplier_Part_No { get; set; }
 
         [JsonProperty("PO_Qty")]
@@ -71,14 +47,17 @@ namespace KANBAN.Models.KB3.UrgentOrder
 
         [JsonProperty("PO_Date")]
         [JsonPropertyName("PO_Date")]
-        public string? F_PO_Date { get; set; }
+        [StringLength(10)]
+        public string F_PO_Date { get; set; }
 
         [JsonProperty("Delivery_Date")]
         [JsonPropertyName("Delivery_Date")]
-        public string? F_Delivery_Date { get; set; }
+        [StringLength(10)]
+        public string F_Delivery_Date { get; set; }
 
         [JsonProperty("Order_Type")]
         [JsonPropertyName("Order_Type")]
+        [StringLength(10)]
         public string? F_Order_Type { get; set; }
 
         public int F_Delivery_Qty { get; set; }
@@ -96,18 +75,24 @@ namespace KANBAN.Models.KB3.UrgentOrder
         public decimal F_Amount { get; set; }
 
         [JsonPropertyName("Trip No")]
-        public int? F_Trip_No { get; set; }
+        public int F_Trip_No { get; set; }
 
+        [StringLength(10)]
         public string? F_Destination_Code { get; set; }
 
+        [StringLength(75)]
         public string? F_Destination_Name { get; set; }
 
+        [StringLength(10)]
         public string? F_Address1 { get; set; }
 
+        [StringLength(10)]
         public string? F_Address2 { get; set; }
 
+        [StringLength(10)]
         public string? F_Customer_Order_No { get; set; }
 
+        [StringLength(25)]
         public string? F_Update_By { get; set; }
 
     }

@@ -53,12 +53,13 @@ async function UploadFile(_files) {
 
 $("#btnImport").click(async function () {
     $("#btnImport").prop("disabled", true);
+
     if ($("input[name='radioType']:checked").length === 0) return xSwal.error("Import File Error", "Please select file type");
 
     if ($("input[name='radioType']:checked").val() === ".txt") {
         try {
             const data = await UploadFile(_files);
-            return console.log('Data: ', data);
+            //console.log('Data: ', data);
             if (data.includes("Error")) return;
 
             let _url = "/api/KBNIM014SRV/InsertDataFromImport"
@@ -99,25 +100,125 @@ $("#btnImport").click(async function () {
             $("#btnImport").prop("disabled", false);
         }
     }
+
     else if ($("input[name='radioType']:checked").val() === ".xlsx,.xls")
     {
-        const file = _files[0];
-        if (!file) return xSwal.error("Import File Error", "No file selected");
-        //console.log('File being processed:', file);
+        try {
+            const file = _files[0];
+            if (!file) return xSwal.error("Import File Error", "No file selected");
+            //console.log('File being processed:', file);
 
-        const arrayBuffer = await file.arrayBuffer();
-        const read = await XLSX.read(arrayBuffer);
+            const arrayBuffer = await file.arrayBuffer();
+            const read = await XLSX.read(arrayBuffer);
 
-        let newRead = read;
+            let newRead = read;
 
-        for (var key in newRead.Sheets[newRead.SheetNames[0]]) {
-            newRead.Sheets[newRead.SheetNames[0]][key].v = newRead.Sheets[newRead.SheetNames[0]][key].w;
+            //const oldData = XLSX.utils.sheet_to_json(read.Sheets[read.SheetNames[0]]);
+            //console.log('oldData:', oldData);
+
+            for (var key in newRead.Sheets[newRead.SheetNames[0]]) {
+                newRead.Sheets[newRead.SheetNames[0]][key].v = newRead.Sheets[newRead.SheetNames[0]][key].w;
+            }
+
+            const data = XLSX.utils.sheet_to_json(newRead.Sheets[newRead.SheetNames[0]]);
+
+            let convertedData = data;
+
+            for (var key in convertedData) {
+
+                //convertedData[key]["Customer Order Number"] = convertedData[key]["Customer\n Order Number"];
+                //delete convertedData[key]["Customer\n Order Number"];
+
+                convertedData[key]["Amount_/_Item"] = convertedData[key]["Amount / Item"];
+                delete convertedData[key]["Amount / Item"];
+
+                convertedData[key]["F_Delivery_Qty"] = convertedData[key]["Delivery\n Qty"];
+                delete convertedData[key]["Delivery\n Qty"];
+
+                //convertedData[key]["Customer Order Number"] = convertedData[key]["Destination\n Code"];
+                //delete convertedData[key]["Destination\n Code"];
+
+                //convertedData[key]["Customer Order Number"] = convertedData[key]["Destination\n Name"];
+                //delete convertedData[key]["Destination\n Name"];
+
+                convertedData[key]["Delivery_Date"] = convertedData[key]["Delivery Date"];
+                delete convertedData[key]["Delivery Date"];
+
+                convertedData[key]["Order_Type"] = convertedData[key]["Order\n Type"];
+                delete convertedData[key]["Order\n Type"];
+
+                convertedData[key]["PO_Date"] = convertedData[key]["PO Date"];
+                delete convertedData[key]["PO Date"];
+
+
+                convertedData[key]["PO_Item_No."] = convertedData[key]["PO Item\n No."];
+                delete convertedData[key]["PO Item\n No."];
+
+                convertedData[key]["PO_NO._/_Shift_No."] = convertedData[key]["PO No. /\n Shift No."];
+                delete convertedData[key]["PO No. /\n Shift No."];
+
+                convertedData[key]["PO_P/No."] = convertedData[key]["PO P/No."];
+                delete convertedData[key]["PO P/No."];
+
+                convertedData[key]["PO_Qty"] = convertedData[key]["PO Qty"];
+                delete convertedData[key]["PO Qty"];
+
+                convertedData[key]["Part_Name"] = convertedData[key]["Part Name"];
+                delete convertedData[key]["Part Name"];
+
+                convertedData[key]["Price_/_Unit"] = convertedData[key]["Price / Unit"];
+                delete convertedData[key]["Price / Unit"];
+
+                //convertedData[key]["Customer Order Number"] = convertedData[key]["Receiving Case\n No."];
+                //delete convertedData[key]["Receiving Case\n No."];
+
+                //convertedData[key]["Customer Order Number"] = convertedData[key]["Supplier\n P/No."];
+                //delete convertedData[key]["Supplier\n P/No."];
+
+                //convertedData[key]["Customer Order Number"] = convertedData[key]["Supplier\n P/No."];
+                //delete convertedData[key]["Supplier\n P/No."];
+            }
+
+            console.log('Parsed data:', convertedData);
+
+            let _url = "/api/KBNIM014SRV/InsertDataFromImportExcel"
+            if (window.location.hostname.includes("tpcap")) {
+                _url = "/kanban" + _url;
+            }
+
+            $.ajax({
+                type: "POST",
+                url: _url,
+                data: JSON.stringify(data),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                headers: ajexHeader,
+                success: function (response) {
+                    console.log("Success: ", response);
+                    if (response.status === "200") {
+                        $("#btnImport").prop("disabled", false);
+                        return xSwal.success(response.title, response.message);
+                    }
+                    else {
+                        return xSwal.error(response.title, response.message);
+                    }
+                },
+                error: function (xhr, status, response) {
+                    console.error("Error: ", xhr.responseJSON);
+                    if (xhr.responseJSON.message.includes("Have Some Error")) {
+                        xSwal.error("Error !!", xhr.responseJSON.message);
+                        return _xLib.OpenReport("KBNIMERR", `&UserID=${xhr.responseJSON.userid}&Type=${xhr.responseJSON.type}`);
+                    }
+                    return xSwal.error(xhr.responseJSON.title, xhr.responseJSON.message);
+                }
+            });
         }
-
-        const data = XLSX.utils.sheet_to_json(newRead.Sheets[newRead.SheetNames[0]]);
-
-        $("#btnImport").prop("disabled", false);
-        return console.log('Parsed data:', data);
+        catch (error) {
+            console.error("UploadFile Error: ", error);
+        }
+        finally {
+            $("#btnImport").prop("disabled", false);
+        }
     }
 });
 

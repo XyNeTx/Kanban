@@ -6,7 +6,8 @@ using System.Text.Json.Serialization;
 
 namespace KANBAN.Models.KB3.UrgentOrder
 {
-    [PrimaryKey(nameof(F_PO_No),nameof(F_Part_No),nameof(F_Ruibetsu),nameof(F_Delivery_Date),nameof(F_Update_By))]
+    [PrimaryKey(nameof(F_PO_No),nameof(F_Part_No),nameof(F_Ruibetsu),
+        nameof(F_Delivery_Date),nameof(F_Update_By),nameof(F_PO_Date))]
     public class TB_Import_Service
     {
         [JsonProperty("Depot_Code_:")]
@@ -71,11 +72,11 @@ namespace KANBAN.Models.KB3.UrgentOrder
 
         [JsonProperty("PO_Date")]
         [JsonPropertyName("PO_Date")]
-        public string? F_PO_Date { get; set; }
+        public string F_PO_Date { get; set; }
 
         [JsonProperty("Delivery_Date")]
         [JsonPropertyName("Delivery_Date")]
-        public string? F_Delivery_Date { get; set; }
+        public string F_Delivery_Date { get; set; }
 
         [JsonProperty("Order_Type")]
         [JsonPropertyName("Order_Type")]

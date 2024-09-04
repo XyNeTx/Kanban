@@ -136,7 +136,7 @@ namespace HINOSystem.Controllers.API.Master
                 if (!string.IsNullOrEmpty(F_Supplier_Code))
                 {
                     kanban = kanban.Where(x => x.F_Supplier_Cd == F_Supplier_Code.Substring(0, 4) &&
-                        x.F_Supplier_Plant == F_Supplier_Code.Substring(5, 1)[0]).AsEnumerable();
+                        x.F_Supplier_Plant == F_Supplier_Code.Substring(5, 1)).AsEnumerable();
                 }
 
 

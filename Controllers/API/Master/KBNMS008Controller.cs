@@ -195,7 +195,7 @@ namespace HINOSystem.Controllers.API.Master
                 if (!string.IsNullOrWhiteSpace(supplier))
                 {
                     kanban = kanban.Where(x => x.F_Supplier_Cd.Trim() == supplier.Substring(0, 4)
-                        && x.F_Supplier_Plant == supplier[5]);
+                        && x.F_Supplier_Plant == supplier[5].ToString());
                 }
                 if (!string.IsNullOrWhiteSpace(store) && (!string.IsNullOrWhiteSpace(storeTo)))
                 {
@@ -263,7 +263,7 @@ namespace HINOSystem.Controllers.API.Master
                 if (!string.IsNullOrWhiteSpace(supplier))
                 {
                     store = store.Where(x => x.F_Supplier_Cd.Trim() == supplier.Substring(0, 4)
-                                           && x.F_Supplier_Plant == supplier[5]);
+                                           && x.F_Supplier_Plant == supplier[5].ToString());
                 }
                 if (!string.IsNullOrWhiteSpace(kanban) && (!string.IsNullOrWhiteSpace(kanbanTo)))
                 {
@@ -334,7 +334,7 @@ namespace HINOSystem.Controllers.API.Master
                 if (!string.IsNullOrWhiteSpace(supplier))
                 {
                     part = part.Where(x => x.F_Supplier_Cd.Trim() == supplier.Substring(0, 4)
-                                                              && x.F_Supplier_Plant == supplier[5]);
+                                                              && x.F_Supplier_Plant == supplier[5].ToString());
                 }
                 if (!string.IsNullOrWhiteSpace(kanban) && (!string.IsNullOrWhiteSpace(kanbanTo)))
                 {
@@ -455,7 +455,7 @@ namespace HINOSystem.Controllers.API.Master
             if (!string.IsNullOrWhiteSpace(supplier))
             {
                 dbObj = dbObj.Where(x => x.F_Supplier_Cd.Trim() == supplier.Substring(0, 4)
-                        && x.F_Supplier_Plant == supplier[5]);
+                        && x.F_Supplier_Plant == supplier[5].ToString());
             }
             if (!string.IsNullOrWhiteSpace(kanban) && (!string.IsNullOrWhiteSpace(kanbanTo)))
             {
@@ -1092,7 +1092,7 @@ namespace HINOSystem.Controllers.API.Master
                 if (!string.IsNullOrWhiteSpace(listObj[0].F_Supplier_Code))
                 {
                     dbObj = dbObj.Where(x => x.F_Supplier_Cd.Trim() == listObj[0].F_Supplier_Code.Substring(0, 4)
-                               && x.F_Supplier_Plant == listObj[0].F_Supplier_Plant[0]);
+                               && x.F_Supplier_Plant == listObj[0].F_Supplier_Plant[0].ToString());
                 }
                 if (!string.IsNullOrWhiteSpace(listObj[0].F_Kanban_No) && (!string.IsNullOrWhiteSpace(listObj[lastList].F_Kanban_No)))
                 {

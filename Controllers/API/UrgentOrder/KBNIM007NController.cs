@@ -438,7 +438,7 @@ namespace HINOSystem.Controllers.API.Master
 
                 var KB_No = await _KB3Context.TB_MS_PartOrder
                         .Where(x => x.F_Start_Date.CompareTo(now) <= 0 && x.F_End_Date.CompareTo(now) >= 0
-                        && x.F_Store_Code.StartsWith(Plant) && x.F_Supplier_Cd == SupCode && x.F_Supplier_Plant == SupPlant[0])
+                        && x.F_Store_Code.StartsWith(Plant) && x.F_Supplier_Cd == SupCode && x.F_Supplier_Plant == SupPlant[0].ToString())
                         .Select(x => new
                         {
                             F_Kanban_No = x.F_Kanban_No

@@ -7,6 +7,7 @@ using KANBAN.Models.KB3.ReportOrder;
 using KANBAN.Models.KB3.UrgentOrder;
 using KANBAN.Models.KB3.VLT;
 using Microsoft.EntityFrameworkCore;
+using TB_MS_PartOrder = HINOSystem.Models.KB3.Master.TB_MS_PartOrder;
 
 namespace HINOSystem.Context
 {
@@ -109,7 +110,7 @@ namespace HINOSystem.Context
         public DbSet<TB_REC_HEADER> TB_REC_HEADER { get; set; }
         public DbSet<TB_REC_DETAIL> TB_REC_DETAIL { get; set; }
         public DbSet<VW_KBNRC_220_RPT> VW_KBNRC_220_RPT { get; set; }
-        public DbSet<KANBAN.Models.KB3.Receive_Process.TB_MS_PartOrder> TB_MS_PartOrder { get; set; }
+        public DbSet<TB_MS_PartOrder> TB_MS_PartOrder { get; set; }
         public DbSet<TB_Import_Delivery> TB_Import_Delivery { get; set; }
         public DbSet<V_KBNRT_130> V_KBNRT_130_rpt { get; set; }
         public DbSet<V_KBNRT_140> V_KBNRT_140_rpt { get; set; }

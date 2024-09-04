@@ -169,7 +169,7 @@ namespace HINOSystem.Controllers.API.Master
 
                     if (!string.IsNullOrWhiteSpace(partNo))
                     {
-                        supplier = supplier.Where(x => x.F_Part_no + "-" + x.F_Ruibetsu == partNo);
+                        supplier = supplier.Where(x => x.F_Part_no.Trim() + "-" + x.F_Ruibetsu == partNo);
                     }
 
                     var data = await supplier.Select(x => new
@@ -192,7 +192,7 @@ namespace HINOSystem.Controllers.API.Master
                     var supplier = _KB3Context.TB_MS_PartOrder
                         .Where(x => x.F_Start_Date.CompareTo(now) <= 0
                             && x.F_End_Date.CompareTo(now) >= 0
-                            && x.F_Plant == _BearerClass.Plant[0]).AsQueryable();
+                            && x.F_Plant == _BearerClass.Plant[0].ToString()).AsQueryable();
 
                     if (!string.IsNullOrWhiteSpace(kanban))
                     {
@@ -204,7 +204,7 @@ namespace HINOSystem.Controllers.API.Master
                     }
                     if (!string.IsNullOrWhiteSpace(partNo))
                     {
-                        supplier = supplier.Where(x => x.F_Part_No+"-"+x.F_Ruibetsu == partNo);
+                        supplier = supplier.Where(x => x.F_Part_No.Trim() +"-"+x.F_Ruibetsu == partNo);
                     }
 
                     var data = await supplier.Select(x => new
@@ -265,7 +265,7 @@ namespace HINOSystem.Controllers.API.Master
 
                     if (!string.IsNullOrWhiteSpace(partNo))
                     {
-                        kanban = kanban.Where(x => x.F_Part_no + "-" + x.F_Ruibetsu == partNo);
+                        kanban = kanban.Where(x => x.F_Part_no.Trim() + "-" + x.F_Ruibetsu == partNo);
                     }
 
                     var data = await kanban.Select(x => new
@@ -288,11 +288,11 @@ namespace HINOSystem.Controllers.API.Master
                     var kanban = _KB3Context.TB_MS_PartOrder
                         .Where(x => x.F_Start_Date.CompareTo(now) <= 0
                             && x.F_End_Date.CompareTo(now) >= 0
-                            && x.F_Plant == _BearerClass.Plant[0]).AsQueryable();
+                            && x.F_Plant == _BearerClass.Plant[0].ToString()).AsQueryable();
 
                     if (!string.IsNullOrWhiteSpace(supplier))
                     {
-                        kanban = kanban.Where(x => x.F_Supplier_Cd + "-" + x.F_Supplier_Plant == supplier);
+                        kanban = kanban.Where(x => x.F_Supplier_Cd.Trim() + "-" + x.F_Supplier_Plant == supplier);
                     }
                     if (!string.IsNullOrWhiteSpace(store))
                     {
@@ -300,7 +300,7 @@ namespace HINOSystem.Controllers.API.Master
                     }
                     if (!string.IsNullOrWhiteSpace(partNo))
                     {
-                        kanban = kanban.Where(x => x.F_Part_No + "-" + x.F_Ruibetsu == partNo);
+                        kanban = kanban.Where(x => x.F_Part_No.Trim() + "-" + x.F_Ruibetsu == partNo);
                     }
 
                     var data = await kanban.Select(x => new
@@ -362,7 +362,7 @@ namespace HINOSystem.Controllers.API.Master
 
                     if (!string.IsNullOrWhiteSpace(partNo))
                     {
-                        store = store.Where(x => x.F_Part_no + "-" + x.F_Ruibetsu == partNo);
+                        store = store.Where(x => x.F_Part_no.Trim() + "-" + x.F_Ruibetsu == partNo);
                     }
 
                     var data = await store.Select(x => new
@@ -383,11 +383,11 @@ namespace HINOSystem.Controllers.API.Master
                     var store = _KB3Context.TB_MS_PartOrder
                         .Where(x => x.F_Start_Date.CompareTo(now) <= 0
                                 && x.F_End_Date.CompareTo(now) >= 0
-                                && x.F_Plant == _BearerClass.Plant[0]).AsQueryable();
+                                && x.F_Plant == _BearerClass.Plant[0].ToString()).AsQueryable();
 
                     if (!string.IsNullOrWhiteSpace(supplier))
                     {
-                        store = store.Where(x => x.F_Supplier_Cd + "-" + x.F_Supplier_Plant == supplier);
+                        store = store.Where(x => x.F_Supplier_Cd.Trim() + "-" + x.F_Supplier_Plant == supplier);
                     }
                     if (!string.IsNullOrWhiteSpace(kanban))
                     {
@@ -395,7 +395,7 @@ namespace HINOSystem.Controllers.API.Master
                     }
                     if (!string.IsNullOrWhiteSpace(partNo))
                     {
-                        store = store.Where(x => x.F_Part_No + "-" + x.F_Ruibetsu == partNo);
+                        store = store.Where(x => x.F_Part_No.Trim() + "-" + x.F_Ruibetsu == partNo);
                     }
 
                     var data = await store.Select(x => new
@@ -463,7 +463,7 @@ namespace HINOSystem.Controllers.API.Master
 
                     var data = await partNo.Select(x => new
                     {
-                        F_PartNo = x.F_Part_no + "-" + x.F_Ruibetsu
+                        F_PartNo = x.F_Part_no.Trim() + "-" + x.F_Ruibetsu
                     }).ToListAsync();
 
                     return Ok(new
@@ -479,7 +479,7 @@ namespace HINOSystem.Controllers.API.Master
                     var partNo = _KB3Context.TB_MS_PartOrder
                         .Where(x => x.F_Start_Date.CompareTo(now) <= 0
                                 && x.F_End_Date.CompareTo(now) >= 0
-                                && x.F_Plant == _BearerClass.Plant[0]).AsQueryable();
+                                && x.F_Plant == _BearerClass.Plant[0].ToString()).AsQueryable();
 
                     if (!string.IsNullOrWhiteSpace(supplier))
                     {
@@ -496,7 +496,7 @@ namespace HINOSystem.Controllers.API.Master
 
                     var data = await partNo.Select(x => new
                     {
-                        F_PartNo = x.F_Part_No + "-" + x.F_Ruibetsu
+                        F_PartNo = x.F_Part_No.Trim() + "-" + x.F_Ruibetsu
                     }).ToListAsync();
 
                     return Ok(new
@@ -520,6 +520,76 @@ namespace HINOSystem.Controllers.API.Master
                 });
             }
         }
+
+
+        [HttpGet]
+        public async Task<IActionResult> GetPartNoDetail(string partNo, string? supplier, string? kanban, string? store)
+        {
+            try
+            {
+
+                _BearerClass.Authentication(Request);
+                if (_BearerClass.Status == 401)
+                {
+                    return Unauthorized();
+                }
+
+                var partDetail = _PPM3Context.T_Construction
+                    .Where(x => x.F_Local_Str.CompareTo(now) <= 0
+                            && x.F_Local_End.CompareTo(now) >= 0
+                            && x.F_Store_cd.StartsWith(_BearerClass.Plant)
+                            && x.F_Cycle_A == '1'
+                            && x.F_Part_no.Trim() + "-" + x.F_Ruibetsu == partNo).AsQueryable();
+
+                if (!string.IsNullOrWhiteSpace(supplier))
+                {
+                    partDetail = partDetail.Where(x => x.F_supplier_cd + "-" + x.F_plant == supplier);
+                }
+                if (!string.IsNullOrWhiteSpace(kanban))
+                {
+                    partDetail = partDetail.Where(x => x.F_Sebango == kanban.Substring(1, 3));
+                }
+                if (!string.IsNullOrWhiteSpace(store))
+                {
+                    partDetail = partDetail.Where(x => x.F_Store_cd == store);
+                }
+
+                if (partDetail.Count() == 0)
+                {
+                    return NotFound(new
+                    {
+                        status = "404",
+                        response = "Not Found",
+                        message = "Data Not Found!"
+                    });
+                }
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "OK",
+                    message = "Data Found!",
+                    data = await partDetail.Select(x => new
+                    {
+                        x.F_Part_nm,
+                    }).FirstOrDefaultAsync()
+                });
+
+            }
+            catch (Exception ex)
+            {
+
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    response = "Internal Server Error",
+                    message = "Unexpected Error!",
+                    error = ex.Message
+                });
+            }
+        }
+
+
 
     }
 }

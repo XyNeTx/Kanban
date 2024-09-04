@@ -4,11 +4,17 @@
             <div class="card-body">
                 
                 <div class="row">
-                    <div class="col-8">
+                    <div class="col-8" id="divButton">
                         <button type="button" id="btnInquiry" class="btn btn-outline-dark">Inquiry</button>
                         <button type="button" id="btnNew" class="btn btn-outline-dark">New</button>
                         <button type="button" id="btnUpdate" class="btn btn-outline-dark">Update</button>
                         <button type="button" id="btnDelete" class="btn btn-outline-dark">Delete</button>
+                    </div>
+                    <div class="col-4">
+                        <div class="row justify-content-end">
+                            <button type="button" id="btnCancel" class="btn btn-outline-dark col-2">Cancel</button>
+                            <button asp-controller="Home" asp-action="Index" type="button" id="btnExit" class="btn btn-outline-danger col-2">Exit</button>
+                        </div>
                     </div>
                 </div>
                 <div class="row ">
