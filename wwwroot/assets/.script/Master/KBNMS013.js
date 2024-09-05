@@ -381,7 +381,7 @@ $("#btnSave").on("click", async function () {
             }
         },
         function (error) {
-            xSwal.error("Error", "Can't Save Data");
+            xSwal.error("Error", error.responseJSON.message);
         }
     );
 

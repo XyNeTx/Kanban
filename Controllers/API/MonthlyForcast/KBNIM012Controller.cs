@@ -1,148 +1,129 @@
-﻿using Microsoft.AspNetCore.Http.Extensions;
-using Microsoft.AspNetCore.Mvc;
-using System.Data;
-using System;
-using System.Web;
-using System.Security.Principal;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-
-using System.Reflection.PortableExecutable;
-using System.DirectoryServices;
-using System.DirectoryServices.AccountManagement;
-using Microsoft.Net.Http.Headers;
-using System.Collections.Specialized;
-using System.Net;
-using System.DirectoryServices.ActiveDirectory;
-using System.Net.Http;
-using Microsoft.AspNetCore.Authorization;
-
-using System.Security.Claims;
-using Org.BouncyCastle.Asn1.Ocsp;
-
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-
-using System.Threading.Tasks;
-
+﻿using HINOSystem.Context;
 using HINOSystem.Libs;
-using HINOSystem.Context;
-using HINOSystem.Models.KB3;
-using NPOI.HPSF;
-using Humanizer;
-using NPOI.SS.Formula.Functions;
-using NPOI.SS.Formula.Eval;
-using PdfSharp.Pdf.Filters;
-using MathNet.Numerics.LinearAlgebra.Factorization;
-using Microsoft.CodeAnalysis.Differencing;
-using Microsoft.VisualBasic;
-using static System.Net.Mime.MediaTypeNames;
-using NPOI.POIFS.Properties;
+using KANBAN.Context;
+using KANBAN.Libs;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using System.Data;
 //using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HINOSystem.Controllers.API.Master
 {
-    public class KBNIM012Controller : Controller
+    [ApiController]
+    [Route("api/[controller]/[action]")]
+    public class KBNIM012Controller : ControllerBase
     {
-        private readonly IConfiguration _configuration;
         private readonly BearerClass _BearerClass;
-        private readonly ActionResultClass _ActionResult;        
-        private readonly KanbanConnection _KBCN;
-        private readonly PPMConnect _PPMConnect;
-
+        private readonly PPM3Context _PPM3Context;
+        private readonly PPMInvenContext _PPMInvenContext;
         private readonly KB3Context _KB3Context;
+        private readonly FillDataTable _FillDT;
+        private readonly SerilogLibs _log;
 
 
-        private readonly string StoragePath = @"wwwroot\Storage\Uploads";
-
-        public KBNIM012Controller(
-            IConfiguration configuration,
+        public KBNIM012Controller
+        (
             BearerClass bearerClass,
-            ActionResultClass actionResultClass,
-            KanbanConnection kanbanConnection,
-            PPMConnect ppmConnect,
-            KB3Context kB3Context
-            )
+            PPM3Context ppm3Context,
+            PPMInvenContext ppmInvenContext,
+            KB3Context kb3Context,
+            FillDataTable fillDataTable,
+            SerilogLibs log
+        )
         {
-            _configuration = configuration;
             _BearerClass = bearerClass;
-            _ActionResult = actionResultClass;
-            _KB3Context = kB3Context;
-            _KBCN = kanbanConnection;
-            _PPMConnect = ppmConnect;
-
+            _PPM3Context = ppm3Context;
+            _PPMInvenContext = ppmInvenContext;
+            _KB3Context = kb3Context;
+            _FillDT = fillDataTable;
+            _log = log;
         }
 
-
-
-        [HttpPost]
-        public IActionResult initial([FromBody] string pData = null)
+        [HttpGet]
+        public IActionResult Onload()
         {
-            dynamic _json = null;
-            string _SQL = "";
             try
             {
+
                 _BearerClass.Authentication(Request);
-                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
+                if(_BearerClass.Status == 401)
+                {
+                    return StatusCode(401, new
+                    {
+                        status = "401",
+                        response = "Unauthorized",
+                        message = "Unauthorized Access!"
+                    });
+                }
 
-                if (pData != null) _json = JsonConvert.DeserializeObject(pData);
+                string sql = "Select Top 1 F_PO,F_Version From VW_MaxVersionForecast Order by substring(F_PO,1,6) desc,F_Version";
 
-                _SQL = @" EXEC [exec].[spTB_MS_FACTORY] ";
-                string _jsTB_MS_Factory = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+                DataTable dt = _FillDT.ExecuteSQLProcDB(sql);
 
-                string _result = @"{
-                    ""status"":""200"",
-                    ""response"":""OK"",
-                    ""message"": ""Data Found"",
-                    ""data"":
-                            {
-                                ""TB_MS_Factory"" : " + _jsTB_MS_Factory + @"
-                            }
-                }";
-                return Content(_result, "application/json");
+                sql = "Select Top 1 F_Version,F_Production_Date,F_Revision_NO from TB_IMPORT_FORECAST " +
+                    " Order by F_Production_Date desc,F_Version,F_Revision_NO desc";
+
+                DataTable dt2 = _FillDT.ExecuteSQL(sql);
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data Loaded Successfully!",
+                    data = new
+                    {
+                        maxVersion = dt.Rows[0]["F_Version"].ToString(),
+                        maxPO = dt.Rows[0]["F_PO"].ToString(),
+                        version = dt2.Rows[0]["F_Version"].ToString(),
+                        productionDate = dt2.Rows[0]["F_Production_Date"].ToString(),
+                        revisionNo = dt2.Rows[0]["F_Revision_NO"].ToString()
+                    }
+                });
+
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                return Content(e.Message.ToString(), "application/json");
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    response = "Internal Server Error",
+                    message = "Unexpected Error!",
+                    error = ex.Message
+                });
             }
         }
 
-
-
-        [HttpPost]
-        public IActionResult search([FromBody] string pData = null)
+        [HttpGet]
+        public async Task<IActionResult> GetSupplier()
         {
-            dynamic _json = null;
-            string _SQL = "";
             try
             {
+
                 _BearerClass.Authentication(Request);
-                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
+                if(_BearerClass.Status == 401)
+                {
+                    return StatusCode(401, new
+                    {
+                        status = "401",
+                        response = "Unauthorized",
+                        message = "Unauthorized Access!"
+                    });
+                }
 
-                _json = JsonConvert.DeserializeObject(pData);
+                return Ok();
 
-
-                _SQL = @" EXEC [exec].[spKBNMS001_SEARCH] '" + _json.F_Plant + "' ";
-                
-                string _jsonData = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
-
-
-
-                string _result = @"{
-                    ""status"":""200"",
-                    ""response"":""OK"",
-                    ""message"": ""Data Found"",
-                    ""data"": " + _jsonData + @"
-                }";
-                return Content(_result, "application/json");
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                return Content(e.Message.ToString(), "application/json");
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    response = "Internal Server Error",
+                    message = "Unexpected Error!",
+                    error = ex.Message
+                });
+                throw;
             }
         }
-
-
     }
 }

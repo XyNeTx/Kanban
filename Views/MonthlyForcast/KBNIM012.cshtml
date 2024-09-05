@@ -15,23 +15,29 @@
                                     <div class="col-3">
                                         <item type="button" id="btnInterface" label="Interface Monthly Forecast Data"></item>
                                     </div>
-                                    <div class="col" style="text-align:center;color:blue;font-size:16px;">
+                                    <div class="col" id="divCurrentTxt" style="text-align:center;color:blue;font-size:16px;">
                                         Current Data Interface : Production Month : 12/2023 Version : CONFIRM Revision No.: 2.0
                                     </div>
                                 </div>
 
                                 <div class="row">
                                     <div class="col-3">
-                                        <item type="month" id="ImportMonth" label="Month" default="now"></item>
+                                        <div class="input-group">
+                                            <label for="ImportMonth" class="input-group-text">Month :</label>
+                                            <input type="text" id="ImportMonth" class="form-control" readonly />
+                                        </div>
                                     </div>
                                     <div class="col-3">
-                                        <item type="text" id="ImportVersion" label="Version"></item>
+                                        <item type="text" id="ImportVersion" label="Version" readonly></item>
                                     </div>
                                     <div class="col-3">
-                                        <item type="text" id="ImportRevision" label="Revision"></item>
+                                        <item type="text" id="ImportRevision" label="Revision" readonly></item>
                                     </div>
                                     <div class="col-3">
-                                        <item type="date" id="ImportDate" label="Date" format="yyyy-mm-dd" default="now"></item>
+                                        <div class="input-group">
+                                            <label for="ImportDate" class="input-group-text">Date :</label>
+                                            <input type="text" id="ImportDate" class="form-control" readonly/>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -42,13 +48,16 @@
 
                                 <div class="row">
                                     <div class="col-3">
-                                        <item type="month" id="ConditionMonth" label="Month" default="now"></item>
+                                        <div class="input-group">
+                                            <label for="ConditionMonth" class="input-group-text">Month :</label>
+                                            <input type="text" id="ConditionMonth" class="form-control" readonly />
+                                        </div>
                                     </div>
                                     <div class="col-3">
-                                        <item type="text" id="ConditionVersion" label="Version"></item>
+                                        <item type="text" id="ConditionVersion" label="Version" readonly></item>
                                     </div>
                                     <div class="col-3">
-                                        <item type="text" id="ConditionRevision" label="Revision"></item>
+                                        <item type="text" id="ConditionRevision" label="Revision" readonly></item>
                                     </div>
                                 </div>
 
@@ -60,22 +69,45 @@
                                         <fieldset class="fieldset" id="fldConditionDetail">
                                             <div class="row">
                                                 <div class="col">
-                                                    <item type="lov" id="ConditionDetailSupplierCode" label="Supplier Code" data-controller="LOVKB3.PartList" data-value="F_Part_No:Code" data-description="F_Part_Name" class="col-2"></item>
+                                                    <div class="input-group">
+                                                        <label class="input-group-text" for="selectSupplier">Supplier Code</label>
+                                                        <select id="selectSupplier" class="selectpicker">
+                                                            <option value="" hidden></option>
+                                                        </select>
+                                                        <input type="text" class="form-control ms-2" id="readSupplier" readonly />
+                                                    </div>
+                                                    @* <item type="lov" id="ConditionDetailSupplierCode" label="Supplier Code" data-controller="LOVKB3.PartList" data-value="F_Part_No:Code" data-description="F_Part_Name" class="col-2"></item> *@
                                                 </div>
                                             </div>
                                             <div class="row">
                                                 <div class="col">
-                                                    <item type="list" id="ConditionDetailKanban" label="Kanban No." data-controller="LOVKB3.PartList" data-value="F_Part_No:Code" data-description="F_Part_Name" class="col-2"></item>
+                                                    <div class="input-group">
+                                                        <label class="input-group-text" for="selectKanban">Kanban No.</label>
+                                                        <select id="selectKanban" class="selectpicker">
+                                                            <option value="" hidden></option>
+                                                        </select>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="row">
                                                 <div class="col">
-                                                    <item type="list" id="ConditionDetailStoreCode" label="Store Code" data-controller="LOVKB3.PartList" data-value="F_Part_No:Code" data-description="F_Part_Name" class="col-2"></item>
+                                                    <div class="input-group">
+                                                        <label class="input-group-text" for="selectStore">Store Code</label>
+                                                        <select id="selectStore" class="selectpicker">
+                                                            <option value="" hidden></option>
+                                                        </select>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="row">
                                                 <div class="col">
-                                                    <item type="lov" id="ConditionDetailPartNo" label="Part No" data-controller="LOVKB3.PartList" data-value="F_Part_No:Code" data-description="F_Part_Name" class="col-2"></item>
+                                                    <div class="input-group">
+                                                        <label class="input-group-text" for="selectPart">Part No.</label>
+                                                        <select id="selectPart" class="selectpicker">
+                                                            <option value="" hidden></option>
+                                                        </select>
+                                                        <input type="text" class="form-control ms-2" id="readPart" readonly />
+                                                    </div>
                                                 </div>
                                             </div>
                                         </fieldset>
@@ -89,13 +121,20 @@
                                     <div class="col">
                                         <fieldset class="fieldset" id="fldConditionSupplier">
                                             <div class="row">
-                                                <div class="col">
-                                                    <item type="lov" id="ConditionSupplierSupplierCode" label="Supplier Code" data-controller="LOVKB3.PartList" data-value="F_Part_No:Code" data-description="F_Part_Name" class="col-2"></item>
+                                                <div class="input-group">
+                                                    <label class="input-group-text" for="selectSupplier2nd">Supplier Code</label>
+                                                    <select id="selectSupplier2nd" class="selectpicker">
+                                                        <option value="" hidden></option>
+                                                    </select>
+                                                    <input type="text" class="form-control ms-2" id="readSupplier2nd" readonly />
                                                 </div>
                                             </div>
                                             <div class="row">
-                                                <div class="col">
-                                                    <item type="list" id="ConditionSupplierStoreCode" label="Store Code" data-controller="LOVKB3.PartList" data-value="F_Part_No:Code" data-description="F_Part_Name" class="col-2"></item>
+                                                <div class="input-group">
+                                                    <label class="input-group-text" for="selectStore2nd">Store Code</label>
+                                                    <select id="selectStore2nd" class="selectpicker">
+                                                        <option value="" hidden></option>
+                                                    </select>
                                                 </div>
                                             </div>
                                         </fieldset>

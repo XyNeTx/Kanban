@@ -59,17 +59,37 @@ $("#F_YM , #F_Store_cd").change(function () {
     if (_cmd == "New") {
         _setDayInMonth();
     }
-    else if (_cmd = "Inquiry") {
-        _xLib.AJAX_Get("/api/KBNMS010/GetCalendarData", { F_YM: $("#F_YM").val().replaceAll("-", ""), F_Store_cd: $("#F_Store_cd").val() },
-            function (success) {
-                _xLib.TrimJSON(success.data);
-                console.log(success.data);
-                _setDayInMonth(success.data);
-            },
-            function (error) {
-                xSwal.error('Error', error.responseJSON.message);
-            }
-        )
+
+    else { //(_cmd = "Inquiry") {
+
+        if ($(this).attr("id") == "F_YM") {
+            _xLib.AJAX_Get('/api/KBNMS010/Get_StoreCode', { F_YM: $("#F_YM").val().replaceAll("-", ""), IsInquiry: true },
+                function (success) {
+                    _xLib.TrimArrayJSON(success.data);
+                    $('#F_Store_cd').empty();
+                    $("#F_Store_cd").append('<option value="" hidden></option>');
+                    success.data.forEach(function (item) {
+                        console.log(item);
+                        $('#F_Store_cd').append('<option value="' + item.f_Store_cd + '">' + item.f_Store_cd + '</option>');
+                    });
+                },
+                function (error) {
+                    xSwal.error('Error', error.responseJSON.message);
+                }
+            );
+        }
+        if ($("#F_Store_cd").val() && $("#F_YM").val()) {
+            _xLib.AJAX_Get("/api/KBNMS010/GetCalendarData", { F_YM: $("#F_YM").val().replaceAll("-", ""), F_Store_cd: $("#F_Store_cd").val() },
+                function (success) {
+                    _xLib.TrimJSON(success.data);
+                    console.log(success.data);
+                    _setDayInMonth(success.data);
+                },
+                function (error) {
+                    xSwal.error('Error', error.responseJSON.message);
+                }
+            )
+        }
     }
 });
 
@@ -189,15 +209,15 @@ $("#buttonInq").click(function () {
 $("#buttonUpd").click(function () {
     _cmd = "Update";
     if($("#F_YM").val() == '' || $("#F_Store_cd").val() == '') return xSwal.error('Error', 'Please select Monthly and Store Code')
-    $("#F_YM").prop('disabled', true);
-    $("#F_Store_cd").prop('disabled', true);
+    //$("#F_YM").prop('disabled', true);
+    //$("#F_Store_cd").prop('disabled', true);
 });
 
 $("#buttonDel").click(function () {
     _cmd = "Delete";
     if ($("#F_YM").val() == '' || $("#F_Store_cd").val() == '') return xSwal.error('Error', 'Please select Monthly and Store Code')
-    $("#F_YM").prop('disabled', true);
-    $("#F_Store_cd").prop('disabled', true);
+    //$("#F_YM").prop('disabled', true);
+    //$("#F_Store_cd").prop('disabled', true);
 });
 
 function getFormData($form) {
@@ -210,6 +230,27 @@ function getFormData($form) {
 
     return indexed_array;
 }
+
+$("#btnCopy").click(() => {
+    let F_YM = $("#F_YM").val().replaceAll("-", "");
+    _xLib.AJAX_Post('/api/KBNMS010/Copy?F_YM=' + F_YM, "",
+        function (result) {
+            if (result.status == 200) {
+                $("#frmCondition").trigger('reset');
+                $("#F_YM").prop('disabled', true);
+                $("#F_Store_cd").prop('disabled', true);
+                $("#F_YM").val(F_YM.substring(0, 4) + "-" + F_YM.substring(4, 6));
+                _setDayInMonth();
+                return xSwal.success('Success', result.message);
+            } else {
+                return xSwal.error('Error', result.message);
+            }
+        },
+        function (result) {
+            return xSwal.error('Error', result.responseJSON.message);
+        }
+    );
+});
 
 $("#buttonSave").click(function () {
 

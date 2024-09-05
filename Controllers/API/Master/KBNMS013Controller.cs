@@ -625,11 +625,23 @@ namespace HINOSystem.Controllers.API.Master
                             partOrder.F_PDS_Group = obj.F_PDS_Group;
                             partOrder.F_Type_Order = obj.F_Type_Order;
                             _KB3Context.TB_MS_PartOrder.Update(partOrder);
+
+                            _log.WriteLogMsg($"TB_MS_PartOrder(Save) Update : {JsonConvert.SerializeObject(partOrder)}");
                         }
                         else if (action == "delete")
                         {
                             _KB3Context.TB_MS_PartOrder.Remove(partOrder);
+                            _log.WriteLogMsg($"TB_MS_PartOrder(Save) Delete : {JsonConvert.SerializeObject(partOrder)}");
                         }
+                    }
+                    else
+                    {
+                        return NotFound(new
+                        {
+                            status = "404",
+                            response = "Not Found",
+                            message = "Data Not Found!"
+                        });
                     }
                     if (action == "new")
                     {
@@ -638,9 +650,11 @@ namespace HINOSystem.Controllers.API.Master
                         obj.F_Update_By = _BearerClass.UserCode;
                         obj.F_Update_Date = DateTime.Now;
                         _KB3Context.TB_MS_PartOrder.Add(obj);
+                        _log.WriteLogMsg($"TB_MS_PartOrder(Save) Insert : {JsonConvert.SerializeObject(obj)}");
                     }
                     
                     await _KB3Context.SaveChangesAsync();
+                    _log.WriteLogMsg($"TB_MS_PartOrder(Save) Commit : {JsonConvert.SerializeObject(obj)}");
 
                     return Ok(new
                     {

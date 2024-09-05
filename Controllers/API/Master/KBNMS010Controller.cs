@@ -193,6 +193,93 @@ namespace HINOSystem.Controllers.API.Master
         }
 
         [HttpPost]
+        public async Task<IActionResult> Copy([FromQuery] string F_YM)
+        {
+            try
+            {
+
+                _BearerClass.Authentication(Request);
+                if(_BearerClass.Status == 401)
+                {
+                    return StatusCode(401, new
+                    {
+                        status = "401",
+                        response = "Unauthorized",
+                        message = "Unauthorized Access!"
+                    });
+                }
+
+                var storeList = await _PPM3Context.T_Construction.Where(x => x.F_Store_cd.StartsWith(_BearerClass.Plant))
+                        .Select(x => new { F_Store_cd = x.F_Store_cd.Trim() }).ToListAsync();
+
+                storeList = storeList.DistinctBy(x => x.F_Store_cd).OrderBy(x => x.F_Store_cd).ToList();
+                
+                string defaultStore = _BearerClass.Plant switch
+                {
+                    "1" => "1A",
+                    "2" => "2B",
+                    "3" => "3C",
+                    _ => "3C"
+                };
+
+                var data = await _KB3Context.TB_Calendar.Where(x => x.F_YM == F_YM && x.F_Store_cd == defaultStore).FirstOrDefaultAsync();
+                
+                if (data == null)
+                {
+                    return NotFound(new
+                    {
+                        status = "404",
+                        response = "Not Found",
+                        title = "Not Found",
+                        message = "Not Found Data From Calendar " + F_YM + " Store " + defaultStore
+                    });
+                }
+                List<TB_Calendar> addList = new List<TB_Calendar>();
+                foreach (var store in storeList)
+                {
+
+                    var IsExisted = await _KB3Context.TB_Calendar.AnyAsync(x => x.F_YM == F_YM && x.F_Store_cd == store.F_Store_cd);
+                    if (IsExisted) continue;
+                    else
+                    {
+                        var addData = new TB_Calendar();
+                        addData = JsonConvert.DeserializeObject<TB_Calendar>(JsonConvert.SerializeObject(data)); // <--- Copy Data from Default Store --
+                        addData.F_Store_cd = store.F_Store_cd;
+                        addData.F_Create_By = _BearerClass.UserCode;
+                        addData.F_Create_Date = DateTime.Now;
+                        addData.F_Update_By = _BearerClass.UserCode;
+                        addData.F_Update_Date = DateTime.Now;
+                        addList.Add(addData);
+                    }
+                }
+                await _KB3Context.TB_Calendar.AddRangeAsync(addList);
+                await _KB3Context.SaveChangesAsync();
+
+                _Log.WriteLogMsg($"Copy : {JsonConvert.SerializeObject(addList)}");
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "OK",
+                    title = "Success",
+                    message = "Calendar Copied To All Store !"
+                });
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    response = "Internal Server Error",
+                    title = "Error",
+                    message = "Unexpected error",
+                    error = ex.Message
+                });
+            }
+        }
+
+        [HttpPost]
         public async Task<IActionResult> Save(TB_Calendar obj)
         {
             
