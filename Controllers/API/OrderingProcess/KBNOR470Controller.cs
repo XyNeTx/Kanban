@@ -49,8 +49,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
             try
             {
 
-                string _sql = $"select * from dbo.FN_GETPriceZeroUrgent(NULL,NULL)" +
-                    $" Order by F_SUpplier_Code,F_SUpplier_Plant,F_OrderNO ";
+                string _sql = "Exec [exec].[spKBNOR460_GetPriceZeroUrgent] NULL,NULL";
 
                 var _dt = _FillDT.ExecuteSQL(_sql);
 

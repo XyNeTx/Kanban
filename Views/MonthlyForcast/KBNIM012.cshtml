@@ -23,7 +23,7 @@
                                 <div class="row">
                                     <div class="col-3">
                                         <div class="input-group">
-                                            <label for="ImportMonth" class="input-group-text">Month :</label>
+                                            <label class="input-group-text">Month :</label>
                                             <input type="text" id="ImportMonth" class="form-control" readonly />
                                         </div>
                                     </div>
@@ -35,7 +35,7 @@
                                     </div>
                                     <div class="col-3">
                                         <div class="input-group">
-                                            <label for="ImportDate" class="input-group-text">Date :</label>
+                                            <label class="input-group-text">Date :</label>
                                             <input type="text" id="ImportDate" class="form-control" readonly/>
                                         </div>
                                     </div>
@@ -49,7 +49,7 @@
                                 <div class="row">
                                     <div class="col-3">
                                         <div class="input-group">
-                                            <label for="ConditionMonth" class="input-group-text">Month :</label>
+                                            <label class="input-group-text">Month :</label>
                                             <input type="text" id="ConditionMonth" class="form-control" readonly />
                                         </div>
                                     </div>
@@ -71,7 +71,7 @@
                                                 <div class="col">
                                                     <div class="input-group">
                                                         <label class="input-group-text" for="selectSupplier">Supplier Code</label>
-                                                        <select id="selectSupplier" class="selectpicker">
+                                                        <select id="selectSupplier" class="selectpicker" data-dropup-auto="false" data-size="5" data-live-search="true">
                                                             <option value="" hidden></option>
                                                         </select>
                                                         <input type="text" class="form-control ms-2" id="readSupplier" readonly />
@@ -83,7 +83,7 @@
                                                 <div class="col">
                                                     <div class="input-group">
                                                         <label class="input-group-text" for="selectKanban">Kanban No.</label>
-                                                        <select id="selectKanban" class="selectpicker">
+                                                        <select id="selectKanban" class="selectpicker" data-dropup-auto="false" data-size="8" data-live-search="true">
                                                             <option value="" hidden></option>
                                                         </select>
                                                     </div>
@@ -93,7 +93,7 @@
                                                 <div class="col">
                                                     <div class="input-group">
                                                         <label class="input-group-text" for="selectStore">Store Code</label>
-                                                        <select id="selectStore" class="selectpicker">
+                                                        <select id="selectStore" class="selectpicker" data-dropup-auto="false" data-size="8" data-live-search="true">
                                                             <option value="" hidden></option>
                                                         </select>
                                                     </div>
@@ -103,7 +103,7 @@
                                                 <div class="col">
                                                     <div class="input-group">
                                                         <label class="input-group-text" for="selectPart">Part No.</label>
-                                                        <select id="selectPart" class="selectpicker">
+                                                        <select id="selectPart" class="selectpicker" data-dropup-auto="false" data-size="8" data-live-search="true">
                                                             <option value="" hidden></option>
                                                         </select>
                                                         <input type="text" class="form-control ms-2" id="readPart" readonly />
@@ -123,7 +123,7 @@
                                             <div class="row">
                                                 <div class="input-group">
                                                     <label class="input-group-text" for="selectSupplier2nd">Supplier Code</label>
-                                                    <select id="selectSupplier2nd" class="selectpicker">
+                                                    <select id="selectSupplier2nd" class="selectpicker" data-dropup-auto="false" data-size="5" data-live-search="true" disabled>
                                                         <option value="" hidden></option>
                                                     </select>
                                                     <input type="text" class="form-control ms-2" id="readSupplier2nd" readonly />
@@ -132,7 +132,7 @@
                                             <div class="row">
                                                 <div class="input-group">
                                                     <label class="input-group-text" for="selectStore2nd">Store Code</label>
-                                                    <select id="selectStore2nd" class="selectpicker">
+                                                    <select id="selectStore2nd" class="selectpicker" data-dropup-auto="false" data-size="8" data-live-search="true" disabled>
                                                         <option value="" hidden></option>
                                                     </select>
                                                 </div>
@@ -145,6 +145,11 @@
                                     <div class="col-3">
                                         <item type="button" id="btnNextMonth" label="Inf. FO From N+1 To Next Month"></item>
                                     </div>
+                                    <div class="col-9">
+                                        <div class="row justify-content-end">
+                                            <a class="btn btn-success text-light col-2" id="btnSearch">Search Data</a>
+                                        </div>
+                                    </div>
                                 </div>
 
                             </fieldset>
@@ -153,7 +158,7 @@
 
                     <div class="row">
                         <div class="col">
-                            <item type="table" id="tblMaster" class="cell-border"></item>
+                            <item type="table" id="tblMaster" class="table table-bordered display nowrap"></item>
                         </div>
                     </div>
 

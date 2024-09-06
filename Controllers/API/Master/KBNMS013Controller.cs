@@ -605,6 +605,18 @@ namespace HINOSystem.Controllers.API.Master
 
                 if (ModelState.IsValid)
                 {
+
+                    if(obj.F_Start_Date.CompareTo(obj.F_End_Date) > 0)
+                    {
+                        return BadRequest(new
+                        {
+                            status = "400",
+                            response = "Bad Request",
+                            message = "Invalid Data!",
+                            error = "Please Select Start Date Less than End Date Before Process Data!"
+                        });
+                    }
+
                     var partOrder = _KB3Context.TB_MS_PartOrder
                         .Where(x => x.F_Plant == obj.F_Plant
                         && x.F_Supplier_Cd == obj.F_Supplier_Cd
@@ -645,6 +657,18 @@ namespace HINOSystem.Controllers.API.Master
                     }
                     if (action == "new")
                     {
+
+                        if (obj.F_Start_Date.CompareTo(DateTime.Now.ToString("yyyyMMdd")) < 0)
+                        {
+                            return BadRequest(new
+                            {
+                                status = "400",
+                                response = "Bad Request",
+                                message = "Invalid Data!",
+                                error = "Please Select Start Date From Present OR More Before Process Data!"
+                            });
+                        }
+
                         obj.F_Create_By = _BearerClass.UserCode;
                         obj.F_Create_Date = DateTime.Now;
                         obj.F_Update_By = _BearerClass.UserCode;

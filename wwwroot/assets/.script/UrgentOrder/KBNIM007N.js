@@ -483,8 +483,18 @@ $("#buttonImport").click(async function () {
     const file = _File[0];
     const arrayBuffer = await file.arrayBuffer();
     const read = await XLSX.read(arrayBuffer);
+    let _editRead = read.Sheets[read.SheetNames[0]];
+
+    console.log("Edit Read: ", _editRead);
+
+    for (let _edit in _editRead) {
+        // Edit Sheet
+        _editRead[_edit].v = _editRead[_edit].w;
+    }
+
     const _arrObj = XLSX.utils.sheet_to_json(read.Sheets[read.SheetNames[0]]);
-    //console.log('Data: ', _arrObj);
+
+    //return console.log('Data: ', _arrObj);
 
     return await OkClicked(_arrObj);
 });
