@@ -43,8 +43,8 @@ namespace HINOSystem.Controllers.API.Master
             _log = log;
         }
 
-        public string yyyyMMdd = DateTime.Now.ToString("yyyyMMdd");
-        public static DataTable DT_PartControl = new DataTable();
+        private string yyyyMMdd = DateTime.Now.ToString("yyyyMMdd");
+        private static DataTable DT_PartControl = new DataTable();
 
         [HttpGet]
         public IActionResult GetSupplier()
@@ -634,7 +634,7 @@ namespace HINOSystem.Controllers.API.Master
             }
         }
 
-        public async Task<bool> Insert_TMP(TMP_Planning_Order obj)
+        private async Task<bool> Insert_TMP(TMP_Planning_Order obj)
         {
             try
             {
@@ -744,7 +744,7 @@ namespace HINOSystem.Controllers.API.Master
             }
         }
 
-        public async Task<bool> Detail_Data(TMP_Planning_Order obj)
+        private async Task<bool> Detail_Data(TMP_Planning_Order obj)
         {
             try
             {

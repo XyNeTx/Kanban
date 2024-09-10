@@ -2,7 +2,10 @@ using HINOSystem.Context;
 using HINOSystem.Libs;
 using KANBAN.Context;
 using KANBAN.Libs;
+using KANBAN.Services;
+using KANBAN.Services.Import;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -57,6 +60,7 @@ builder.Services.AddCors(options =>
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddSwaggerGen();
 
 //Add DbConnect
 builder.Services.AddScoped<DefaultConnection>();
@@ -88,7 +92,20 @@ builder.Services.AddScoped<FillDataTable>();
 builder.Services.AddScoped<SerilogLibs>();
 builder.Services.AddScoped<TextFileClass>();
 
+builder.Services.AddScoped<IImportService ,ImportService>();
 
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Version = "v1",
+        Title = "API Test Service",
+        Description = "A Swagger Web Service for Testing API Endpoints in .NET 7",
+    });
+
+    // Additional Swagger configurations can go here
+    // For example, adding XML comments, security definitions, etc.
+});
 
 
 builder.Services.AddSession(options =>
@@ -112,6 +129,8 @@ builder.Services.AddSession(options =>
 //    });
 //}
 
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -120,6 +139,22 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
+}
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+
+    // Enable middleware to serve generated Swagger as a JSON endpoint.
+    app.UseSwagger();
+
+    // Enable middleware to serve Swagger UI, specifying the Swagger JSON endpoint.
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "API Test Service V1");
+        c.RoutePrefix = "swagger";
+        //c.RoutePrefix = string.Empty; // Serve Swagger UI at the app's root (http://localhost:<port>/)
+    });
 }
 
 app.UseHttpsRedirection();

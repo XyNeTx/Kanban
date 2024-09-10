@@ -916,6 +916,7 @@ namespace HINOSystem.Controllers.API.Master
             }
         }
 
+        [HttpGet]
         public async Task<IActionResult> InterfaceN1(string Txt_ProdYM,string Txt_ProdYM_Next)
         {
             _BearerClass.Authentication(Request);

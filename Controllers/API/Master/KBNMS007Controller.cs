@@ -327,6 +327,7 @@ namespace HINOSystem.Controllers.API.Master
             }
         }
 
+        [HttpGet]
         public async Task<IActionResult> Stop (TB_Kanban_Add obj)
         {
             try
@@ -388,7 +389,7 @@ namespace HINOSystem.Controllers.API.Master
             }
         }
 
-        public async Task<bool> IsProcessDatePast(string date, int trip, string supplier, string kanban)
+        private async Task<bool> IsProcessDatePast(string date, int trip, string supplier, string kanban)
         {
             try
             {
@@ -452,7 +453,7 @@ namespace HINOSystem.Controllers.API.Master
             }
         }
 
-        public async Task<bool> IsProcessDateHoliday(string date, string store)
+        private async Task<bool> IsProcessDateHoliday(string date, string store)
         {
             try
             {

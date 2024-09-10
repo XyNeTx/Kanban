@@ -45,14 +45,14 @@ namespace KANBAN.Controllers.API.OrderingProcess
             _FillDT = fillDataTable;
         }
 
-        public readonly string Txt_Type = "Normal Ordering";
-        public readonly string Type_Import = "N";
-        public readonly DateTime Now = DateTime.Now;
-        public readonly DateTime Txt_Date = DateTime.Now.Date;
-        public static string Txt_Shift = "Day";
-        public static string UserCode = "";
-        public static string Plant = "";
-        public static decimal ProcessCount = 0.00m;
+        private readonly string Txt_Type = "Normal Ordering";
+        private readonly string Type_Import = "N";
+        private readonly DateTime Now = DateTime.Now;
+        private readonly DateTime Txt_Date = DateTime.Now.Date;
+        private static string Txt_Shift = "Day";
+        private static string UserCode = "";
+        private static string Plant = "";
+        private static decimal ProcessCount = 0.00m;
 
         [HttpGet]
         public IActionResult OnLoad(string Shift)
@@ -152,6 +152,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
             }
         }
 
+        [HttpGet]
         public async Task<IActionResult> Process_Order(string sDate)
         {
             using var _KB3Transaction = _KB3Context.Database.BeginTransaction();
@@ -255,6 +256,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
             }
         }
 
+        [HttpGet]
         public async Task<IActionResult> Process_Order_Night(string sDate)
         {
             using var _KB3Transaction = _KB3Context.Database.BeginTransaction();

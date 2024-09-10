@@ -212,6 +212,7 @@
     <None Include="wwwroot\assets\.libs\class\lab.Splash\lab.Splash.js.map" />
     <None Include="wwwroot\assets\.libs\class\lab.Splash\lab.Splash.min.js" />
     <None Include="wwwroot\assets\.libs\class\lab.Splash\lab.Splash.min.js.map" />
+    <None Include="wwwroot\assets\.script\import\KBNIM010.js" />
     <None Include="wwwroot\assets\.script\XLib\xLib.js" />
     <None Include="wwwroot\assets\.libs\display\display.ListOfValues.js" />
     <None Include="wwwroot\assets\.libs\splash\splash.bundle.js" />
@@ -2258,6 +2259,9 @@
     <PackageReference Include="NPOI" Version="2.6.0" />
     <PackageReference Include="PdfSharp" Version="1.50.5147" />
     <PackageReference Include="Serilog.AspNetCore" Version="7.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.7.3" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.7.3" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.7.3" />
   </ItemGroup>
 
   <ItemGroup>
@@ -9701,6 +9705,7 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\assets\.script\Home\" />
+    <Folder Include="wwwroot\assets\.script\Import\" />
     <Folder Include="wwwroot\assets\i18n\JP\KB3\LogisticCondition\" />
     <Folder Include="wwwroot\assets\i18n\TH\KB3\LogisticCondition\" />
     <Folder Include="wwwroot\Storage\DownloadFile\" />

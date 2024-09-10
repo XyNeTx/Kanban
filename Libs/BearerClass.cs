@@ -13,6 +13,7 @@ namespace HINOSystem.Libs
         private readonly IConfiguration _config;
         private readonly ERPConnection _erpConnection;
         private readonly KanbanConnection _KBCN;
+        private readonly IHttpContextAccessor _http;
 
         protected IWorkbook workbook;
         protected IFormulaEvaluator formulaEvaluator;
@@ -41,12 +42,14 @@ namespace HINOSystem.Libs
         public BearerClass(
             IConfiguration configuration,
             KanbanConnection kanbanConnection,
-            ERPConnection erpConnection
+            ERPConnection erpConnection,
+            IHttpContextAccessor http
             )
         {
             _config = configuration;
             _erpConnection = erpConnection;
             _KBCN = kanbanConnection;
+            _http = http;
 
         }
 
@@ -104,6 +107,33 @@ namespace HINOSystem.Libs
 
         }
 
+        public bool CheckAuthen()
+        {
+            this.Authentication(_http.HttpContext.Request);
+            if (this.Status == 200)
+            {
+                return true;
+            }
+            else if (this.Status == 401)
+            {
+                return false;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public string StoreAccess()
+        {
+            return this.Plant switch
+            {
+                "1" => "1A",
+                "2" => "2B",
+                "3" => "3C",
+                _ => "3C",
+            };
+        }
 
 
         public JObject Authorization(string pHeader)

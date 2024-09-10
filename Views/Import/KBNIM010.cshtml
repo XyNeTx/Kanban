@@ -1,0 +1,51 @@
+﻿<div class="row">
+    <div class="col-xl-12 col-md-12 col-sm-12">
+        <div class="card border-left-primary shadow h-100">
+            <div class="card-body">
+                <div class="row mt-4">
+                    <div class="row mb-4 justify-content-center">
+                        <h3 class="text-center fw-bolder">Confirm All Import Data</h3>
+                    </div>
+                    <div class="row">
+                        <div class="col-3"></div>
+                        <div class="col-6">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="row justify-content-center">
+                                        <a id="btnConfirm" class="btn btn-outline-dark col-6 me-2" >Confirm</a>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="row justify-content-center">
+                                        <a id="btnExit" class="btn btn-outline-dark col-6 ms-2" >Exit</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-4 justify-content-center">
+                                <span class="text-danger text-center fs-6 fw-bold">Set TB_MS_Parameter.F_Value2=0 --> 1 WHERE F_Code = N'CI'</span>
+                            </div>
+                        </div>
+                        <div class="col-3"></div>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <div class="row justify-content-center">
+                            <h5 class="text-center fw-bold bg-info">DATA IMPORT</h5>
+                        </div>
+                        <table id="tableImport" class="table w-100"></table>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="row justify-content-center">
+                            <h5 class="text-center fw-bold bg-warning">DATA CONFIRM</h5>
+                        </div>
+                        <table id="tableConfrim" class="table w-100"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script type="text/javascript" src="~/assets/.script/Import/KBNIM010.js?@ViewData["Version"]"></script>
+}

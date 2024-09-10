@@ -718,6 +718,7 @@ namespace HINOSystem.Controllers.API.Master
             }
         }
 
+        [HttpGet]
         public async Task<DataTable> GetAllDetail(string? F_Kanban_No, string? F_Supplier_Code, string? F_Store_Code, string? F_Part_No)
         {
             try
@@ -1536,7 +1537,7 @@ namespace HINOSystem.Controllers.API.Master
             }
         }
 
-        public async Task<bool> IsProcessDatePast (string date,int trip,string supplier,string kanban)
+        private async Task<bool> IsProcessDatePast (string date,int trip,string supplier,string kanban)
         {
             try
             {
@@ -1600,7 +1601,7 @@ namespace HINOSystem.Controllers.API.Master
             }
         }
 
-        public async Task<bool> IsProcessDateHoliday (string date, string store)
+        private async Task<bool> IsProcessDateHoliday (string date, string store)
         {
             try
             {
@@ -1625,7 +1626,7 @@ namespace HINOSystem.Controllers.API.Master
             }
         }
 
-        public async Task<int> GetCycleTime (string date , int trip,string supplier)
+        private async Task<int> GetCycleTime (string date , int trip,string supplier)
         {
             string _sql = $"exec [dbo].[sp_getCycleTime] @p0,@p1,@p2,@p3";
             var _dt = _FillDT.ExecuteSQL(_sql, supplier.Substring(0, 4), supplier[5], date, date);

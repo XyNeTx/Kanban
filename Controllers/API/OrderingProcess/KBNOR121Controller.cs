@@ -1384,7 +1384,8 @@ namespace KANBAN.Controllers.API.OrderingProcess
             }
         }
 
-        public async Task get_startDate(int _intRow, string Action)
+
+        private async Task get_startDate(int _intRow, string Action)
         {
             if (Action == "Re-Calculate BL")
             {
@@ -1398,7 +1399,8 @@ namespace KANBAN.Controllers.API.OrderingProcess
                 await set_startDate(_intRow);
             }
         }
-        public async Task set_startDate(int _intRow)
+
+        private async Task set_startDate(int _intRow)
         {
             string Start_Date,End_Date = "";
             string storeCode = Plant switch
@@ -1443,7 +1445,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
             await re_Calculate_Trail(Start_Date,End_Date,_intRow);
         }
 
-        public async Task re_Calculate_Trail(string start_date, string end_date,int _intRow)
+        private async Task re_Calculate_Trail(string start_date, string end_date,int _intRow)
         {
             using var _KB3Transaction = _KB3Context.Database.BeginTransaction();
             try
@@ -1802,7 +1804,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
 
         }
 
-        public async Task<DateECI> get_ECIDate(string start_date, string end_date, int _intRow)
+        private async Task<DateECI> get_ECIDate(string start_date, string end_date, int _intRow)
         {
             DateECI dateECI = new DateECI();
             DataTable DT = new DataTable();

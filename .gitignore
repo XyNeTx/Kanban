@@ -361,5 +361,7 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
-/wwwroot/Storage/Image/QRCode/202407
+/wwwroot/Storage/Image/QRCode/
 /wwwroot/assets/template/Menu
+/wwwroot/Storage/Image/Barcode/
+/wwwroot/Storage/Image/QRCode/

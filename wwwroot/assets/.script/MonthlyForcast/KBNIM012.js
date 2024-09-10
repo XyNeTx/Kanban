@@ -57,6 +57,10 @@
             { title: "M3", data: "F_Amount_M3", },
 
         ],
+        fixedColumns: {
+            left : 7
+        },
+
         order: [[0, "asc"]]
     });
 
