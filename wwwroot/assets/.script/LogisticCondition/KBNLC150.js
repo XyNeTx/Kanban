@@ -7,13 +7,11 @@ $(document).ready(function () {
         function (success) {
             if (success.status == 200) {
                 console.log(success.data);
-                $('#F_Reversion').empty();
-                $('#F_Reversion').append('<option value="" hidden></option>');
+                $('#F_Revision').empty();
+                $('#F_Revision').append('<option value="" hidden></option>');
                 success.data = JSON.parse(success.data);
                 console.log(success.data);
-                success.data.forEach(function (item) {
-                    $('#F_Reversion').append('<option value="' + item.F_Rev + '">' + item.F_Rev + '</option>');
-                });
+                $('#F_Revision').append('<option value="' + success.data + '">' + success.data + '</option>');
             }
         },
         function (error) {
@@ -33,13 +31,12 @@ $("#F_Production_Month").change(function () {
         function (success) {
             if (success.status == 200) {
                 console.log(success.data);
-                $('#F_Reversion').empty();
-                $('#F_Reversion').append('<option value="" hidden></option>');
+                $('#F_Revision').empty();
+                $('#F_Revision').append('<option value="" hidden></option>');
                 success.data = JSON.parse(success.data);
                 console.log(success.data);
-                success.data.forEach(function (item) {
-                    $('#F_Reversion').append('<option value="' + item.F_Rev + '">' + item.F_Rev + '</option>');
-                });
+                $('#F_Revision').append('<option value="' + success.data + '">' + success.data + '</option>');
+
             }
         },
         function (error) {
@@ -56,6 +53,10 @@ $("#inpFile").change(function () {
 });
 
 $("#btnImport").click(async function () {
+
+    if ($("#F_Revision").val() == "") {
+        return xSwal.error("Import Error", "Please select Revision");
+    }
 
     let YM = $("#F_Production_Month").val().replace(/-/g, '');
 
@@ -82,7 +83,7 @@ $("#btnImport").click(async function () {
                 let data = XLSX.utils.sheet_to_json(newRead.Sheets[newRead.SheetNames[0]]);
 
                 for (let each in data) {
-                    data[each].F_Rev = $('#F_Reversion').val();
+                    data[each].F_Rev = $('#F_Revision').val();
                     data[each].F_Plant = _xLib.GetCookie('plantCode');
                     data[each].F_YM = $('#F_Production_Month').val().replace(/-/g, '');
                 }
@@ -100,12 +101,14 @@ $("#btnImport").click(async function () {
                             xSwal.error(error.responseJSON.response, error.responseJSON.message);
                         }
                     );
-                }, 5000);
+                }, 1000);
 
                 _xLib.AJAX_Post("/api/KBNLC150/Import", JSON.stringify(data),
                     function (success) {
                         if (success.status == 200) {
                             $("#pgsStatus").css('width', '100%');
+                            $("#pgsStatus").attr('aria-valuenow', '100');
+                            $("#pgsStatus").text('100%');
                             setTimeout(() => {
                                 xSwal.success("Import Success", success.message);
                             }, 1000)

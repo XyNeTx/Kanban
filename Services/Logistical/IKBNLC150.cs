@@ -65,25 +65,22 @@ namespace KANBAN.Services.Logistical
                 var dt = _FillDT.ExecuteSQL(_sql);
                 if(dt.Rows.Count > 0)
                 {
-                    for(int i = 0; i < dt.Rows.Count; i++)
-                    {
-                        dt.Rows[i]["F_Rev"] = int.Parse(dt.Rows[i]["F_Rev"].ToString()) + 1;
-                        publicRev = dt.Rows[i]["F_Rev"].ToString();
-                    }
-                    return JsonConvert.SerializeObject(dt);
+                    dt.Rows[dt.Rows.Count - 1]["F_Rev"] = int.Parse(dt.Rows[dt.Rows.Count - 1]["F_Rev"].ToString()) + 1;
+                    publicRev = dt.Rows[dt.Rows.Count - 1]["F_Rev"].ToString();
+                    return JsonConvert.SerializeObject(publicRev);
                 }
 
-                List<object> list = new List<object>();
-                object obj = new
-                {
-                    F_Plant = _BearerClass.Plant,
-                    F_YM = YM,
-                    F_Rev = 0
-                };
-                list.Add(obj);
+                //List<object> list = new List<object>();
+                //object obj = new
+                //{
+                //    F_Plant = _BearerClass.Plant,
+                //    F_YM = YM,
+                //    F_Rev = 0
+                //};
+                //list.Add(obj);
                 publicRev = "0";
 
-                return JsonConvert.SerializeObject(list);
+                return JsonConvert.SerializeObject(publicRev);
 
 
             }

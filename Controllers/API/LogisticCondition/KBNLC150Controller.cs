@@ -26,7 +26,6 @@ namespace HINOSystem.Controllers.API.Master
             _BearerClass = bearerClass;
             _KBCN = kanbanConnection;
             _Service = service;
-
         }
 
 
@@ -106,7 +105,6 @@ namespace HINOSystem.Controllers.API.Master
         }
 
 
-
         [HttpPost]
         public async Task<IActionResult> Import(List<VM_TB_Import_Delivery> listObj)
         {
@@ -153,6 +151,7 @@ namespace HINOSystem.Controllers.API.Master
                 });
             }
         }
+
 
         [HttpGet]
         public IActionResult GetProcessBar()

@@ -1,4 +1,4 @@
-﻿$(document).ready(function () {
+﻿$(document).ready(async function () {
 
     const xKBNOR450 = new MasterTemplate({
         Controller: _PAGE_,

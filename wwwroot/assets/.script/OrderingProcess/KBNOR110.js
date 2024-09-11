@@ -37,7 +37,6 @@ $(document).ready(function () {
 
 
 
-
     KBNOR110.initial(function (result) {
         xSplash.hide();
     });

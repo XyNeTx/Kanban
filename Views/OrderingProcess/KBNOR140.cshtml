@@ -106,7 +106,7 @@
                                     <div class="row">
                                         <div class="col">
 
-                                            <fieldset class="fieldset" id="fldDeliveryDate" disabled>
+                                            <fieldset class="fieldset" id="fldDeliveryDate">
                                                 <legend>
                                                     <item type="checkbox" id="chkDeliveryDate" label="Delivery Date : " value="0"></item>
                                                 </legend>
@@ -114,10 +114,16 @@
 
                                                 <div class="row">
                                                     <div class="col-5">
-                                                        <item type="date" id="itmDelivery" label="Delivery Date :" format="yyyy-mm-dd" default="now"></item>
+                                                        <div class="input-group">
+                                                            <label for="itmDelivery" class="input-group-text">Delivery Date : </label>
+                                                            <input type="text" id="itmDelivery" class="form-control col-8">
+                                                        </div>
                                                     </div>
                                                     <div class="col-4">
-                                                        <item type="date" id="itmDeliveryTo" label="To :" format="yyyy-mm-dd" default="now"></item>
+                                                        <div class="input-group">
+                                                            <label for="itmDeliveryTo" class="input-group-text">To : </label>
+                                                            <input type="text" id="itmDeliveryTo" class="form-control col-8">
+                                                        </div>
                                                     </div>
                                                 </div>
 
