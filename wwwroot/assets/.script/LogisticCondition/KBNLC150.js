@@ -1,62 +1,127 @@
-﻿$(document).ready(function () {
+﻿let Files = [];
+$(document).ready(function () {
 
-    initial = function () {
-        xSplash.hide();
-    }
-    initial();
+    let YM = moment().format('YYYYMM');
 
-
-
-
-
-
-
-    xAjax.onClick('#txtFile_button_', function () {
-        let _file = $('#txtFile').val();
-        if (_file == '') {
-            xSwal.Info({ "message": 'Please browse file name for Import Delivery Time Table!!!' });
-            return;
-        }
-
-        xSwal.question({
-            "message": 'Do you want Import Delivery Time Table?',
-            "then": function () {
-                xAjax.Post({
-                    url: 'KBNLC150/Import',
-                    data: {
-                        "Plant": _PLANT_,
-                        "Period": ReplaceAll($('#frmCondition #F_Production_Month').val(),'-',''),
-                    },
-                    then: function(result){
-                        console.log(result);
-                    }
-                })
+    _xLib.AJAX_Get("/api/KBNLC150/ShowRevision", { YM: YM },
+        function (success) {
+            if (success.status == 200) {
+                console.log(success.data);
+                $('#F_Reversion').empty();
+                $('#F_Reversion').append('<option value="" hidden></option>');
+                success.data = JSON.parse(success.data);
+                console.log(success.data);
+                success.data.forEach(function (item) {
+                    $('#F_Reversion').append('<option value="' + item.F_Rev + '">' + item.F_Rev + '</option>');
+                });
             }
-        })
-
-    })
-
-
-
-
-
-
-
-
-
-    var _t = 0;
-    var _x = xTimer.Stoper({
-        start: 200,
-        stop: 27800,
-        counting: function (_c) {
-            //console.log(_c);
-
-            //xItem.progress({
-            //    id: 'pgsStatus',
-            //    //min: _c.start,
-            //    //max: 1000,
-            //    current: _c.current/100
-            //})
+        },
+        function (error) {
+            xSwal.error(error.responseJSON.response, error.responseJSON.message);
         }
-    })
+    ).then(function () {
+        xSplash.hide();
+    });
+
+
+});
+
+$("#F_Production_Month").change(function () {
+    let YM = $("#F_Production_Month").val().replace(/-/g, '');
+
+    _xLib.AJAX_Get("/api/KBNLC150/ShowRevision", { YM: YM },
+        function (success) {
+            if (success.status == 200) {
+                console.log(success.data);
+                $('#F_Reversion').empty();
+                $('#F_Reversion').append('<option value="" hidden></option>');
+                success.data = JSON.parse(success.data);
+                console.log(success.data);
+                success.data.forEach(function (item) {
+                    $('#F_Reversion').append('<option value="' + item.F_Rev + '">' + item.F_Rev + '</option>');
+                });
+            }
+        },
+        function (error) {
+            xSwal.error(error.responseJSON.response, error.responseJSON.message);
+        }
+    );
+});
+
+$("#inpFile").change(function () {
+    //console.log(this);
+    Files = this.files[0];
+
+    //console.log(Files);
+});
+
+$("#btnImport").click(async function () {
+
+    let YM = $("#F_Production_Month").val().replace(/-/g, '');
+
+    _xLib.AJAX_Get("/api/KBNLC150/ShowRevision", { YM: YM },
+        async function (success) {
+            if (success.status == 200) {
+                const file = Files
+                //console.log(file);
+                if (!file) return xSwal.error("Import File Error", "No file selected");
+                //console.log('File being processed:', file);
+
+                const arrayBuffer = await file.arrayBuffer();
+                const read = await XLSX.read(arrayBuffer);
+
+                let newRead = read;
+
+                //const oldData = XLSX.utils.sheet_to_json(read.Sheets[read.SheetNames[0]]);
+                //console.log('oldData:', oldData);
+
+                for (var key in newRead.Sheets[newRead.SheetNames[0]]) {
+                    newRead.Sheets[newRead.SheetNames[0]][key].v = newRead.Sheets[newRead.SheetNames[0]][key].w;
+                }
+
+                let data = XLSX.utils.sheet_to_json(newRead.Sheets[newRead.SheetNames[0]]);
+
+                for (let each in data) {
+                    data[each].F_Rev = $('#F_Reversion').val();
+                    data[each].F_Plant = _xLib.GetCookie('plantCode');
+                    data[each].F_YM = $('#F_Production_Month').val().replace(/-/g, '');
+                }
+
+                const getProcessBar = setInterval(() => {
+                    _xLib.AJAX_Get("/api/KBNLC150/GetProcessBar", null,
+                        function (success) {
+                            if (success.status == 200) {
+                                $('#pgsStatus').css('width', success.data + '%');
+                                $('#pgsStatus').attr('aria-valuenow', success.data);
+                                $('#pgsStatus').text(success.data + '%');
+                            }
+                        },
+                        function (error) {
+                            xSwal.error(error.responseJSON.response, error.responseJSON.message);
+                        }
+                    );
+                }, 5000);
+
+                _xLib.AJAX_Post("/api/KBNLC150/Import", JSON.stringify(data),
+                    function (success) {
+                        if (success.status == 200) {
+                            $("#pgsStatus").css('width', '100%');
+                            setTimeout(() => {
+                                xSwal.success("Import Success", success.message);
+                            }, 1000)
+                            clearInterval(getProcessBar);
+                        }
+                    },
+                    function (error) {
+                        xSwal.error(error.responseJSON.response, error.responseJSON.message);
+                    }
+                );
+            }
+        },
+        function (error) {
+            xSwal.error(error.responseJSON.response, error.responseJSON.message);
+        }
+    )
+
+
 });

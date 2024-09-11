@@ -1,5 +1,6 @@
 ﻿using HINOSystem.Models.KB3.Master;
 using KANBAN.Models.KB3.Login;
+using KANBAN.Models.KB3.LogisticCondition;
 using KANBAN.Models.KB3.Master;
 using KANBAN.Models.KB3.OrderingProcess;
 using KANBAN.Models.KB3.Receive_Process;
@@ -152,6 +153,7 @@ namespace HINOSystem.Context
         public DbSet<TMP_Planning_Order> TMP_Planning_Order { get; set; }
 
         public DbSet<TB_Kanban_Planning> TB_Kanban_Planning { get; set; }
+        public DbSet<KBNLC_150> KBNLC_150 { get; set; }
 
         //protected override void OnModelCreating(ModelBuilder modelBuilder)
         //{

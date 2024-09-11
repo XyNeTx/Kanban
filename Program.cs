@@ -4,6 +4,7 @@ using KANBAN.Context;
 using KANBAN.Libs;
 using KANBAN.Services;
 using KANBAN.Services.Import;
+using KANBAN.Services.Logistical;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Serilog;
@@ -93,6 +94,7 @@ builder.Services.AddScoped<SerilogLibs>();
 builder.Services.AddScoped<TextFileClass>();
 
 builder.Services.AddScoped<IImportService ,ImportService>();
+builder.Services.AddScoped<ILogisticService, LogisticService>();
 
 builder.Services.AddSwaggerGen(c =>
 {
@@ -111,7 +113,7 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddSession(options =>
 {
     options.Cookie.Name = "Operation";
-    options.IdleTimeout = TimeSpan.FromSeconds(1800);
+    options.IdleTimeout = TimeSpan.FromHours(12);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });

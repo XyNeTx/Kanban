@@ -1,56 +1,31 @@
-﻿using Microsoft.AspNetCore.Http.Extensions;
-using Microsoft.AspNetCore.Mvc;
-using System.Data;
-using System;
-using System.Web;
-using System.Security.Principal;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-
-using System.Reflection.PortableExecutable;
-using System.DirectoryServices;
-using System.DirectoryServices.AccountManagement;
-using Microsoft.Net.Http.Headers;
-using System.Collections.Specialized;
-using System.Net;
-using System.DirectoryServices.ActiveDirectory;
-using System.Net.Http;
-using Microsoft.AspNetCore.Authorization;
-
-using System.Security.Claims;
-using Org.BouncyCastle.Asn1.Ocsp;
-
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-
-using System.Threading.Tasks;
-
+﻿using HINOSystem.Context;
 using HINOSystem.Libs;
-using HINOSystem.Context;
-using HINOSystem.Models.KB3;
+using KANBAN.Models.KB3.LogisticCondition;
+using KANBAN.Services.Logistical;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using System.Data;
 
 namespace HINOSystem.Controllers.API.Master
 {
-    public class KBNLC150Controller : Controller
+
+    [ApiController]
+    [Route("api/[controller]/[action]")]
+    public class KBNLC150Controller : ControllerBase
     {
-        private readonly IConfiguration _configuration;
         private readonly BearerClass _BearerClass;
         private readonly KanbanConnection _KBCN;
-
-        private readonly KB3Context _KB3Context;
+        private readonly ILogisticService _Service;
 
         public KBNLC150Controller(
-            IConfiguration configuration,
             BearerClass bearerClass,
             KanbanConnection kanbanConnection,
-            KB3Context kB3Context
+            ILogisticService service
             )
         {
-            _configuration = configuration;
             _BearerClass = bearerClass;
             _KBCN = kanbanConnection;
-            _KB3Context = kB3Context;
+            _Service = service;
 
         }
 
@@ -68,7 +43,7 @@ namespace HINOSystem.Controllers.API.Master
 
 
                 _SQL = @" EXEC [exec].[spTB_MS_FACTORY] ";
-                string _jsTB_MS_Factory = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+                string _jsTB_MS_Factory = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName: ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
 
                 string _result = @"{
                     ""status"":""200"",
@@ -88,67 +63,107 @@ namespace HINOSystem.Controllers.API.Master
         }
 
 
-
-
-        [HttpPost]
-        public IActionResult Import([FromBody] string pData = null)
+        [HttpGet]
+        public IActionResult ShowRevision(string YM)
         {
-            dynamic _json = null;
-            string _SQL = "";
+            if (!_BearerClass.CheckAuthen())
+            {
+                return StatusCode(401, new
+                {
+                    status = "401",
+                    response = "Unauthorized",
+                    message = "Please Login and try again"
+                });
+            }
+
             try
             {
-                _BearerClass.Authentication(Request);
-                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
+                string _result = _Service.IKBNLC150.ShowRevision(YM);
 
-                _json = JsonConvert.DeserializeObject(pData);                
+                if (string.IsNullOrWhiteSpace(_result))
+                {
+                    throw new Exception("No Data");
+                }
 
-                _SQL = @"
-                    SELECT Distinct  F_Plant, F_YM, F_Rev
-                    FROM  TB_Import_Delivery 
-                    WHERE  F_YM='"+ _json.Period + @"'  
-                    AND  F_Plant='"+ _json.Plant + @"'  
-                    Order by F_Rev desc";
-                //_KBCN.Plant = _json.Plant;
-                DataTable dt = _KBCN.ExecuteSQL(_SQL);
+                return Ok(new
+                {
+                    status = "200",
+                    response = "OK",
+                    message = "Success",
+                    data = _result
+                });
 
-                int _rev = (dt == null ? int.Parse(dt.Rows[0]["F_Rev"].ToString()) + 1 : 0);
-
-
-                _SQL = @"
-                    Delete From KBNLC_150 Where F_Import_By='" + _BearerClass.UserCode.ToString() + @"';
-                    Delete From TB_Import_Error Where F_Update_BY='" + _BearerClass.UserCode.ToString() + @"' AND F_Type='IDT';
-                    ";
-                _KBCN.Execute(_SQL);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                string _result = @"{
-                    ""status"":""200"",
-                    ""response"":""OK"",
-                    ""message"": ""Data has been save""
-                }";
-                return Content(_result, "application/json");
             }
             catch (Exception e)
             {
-                return Content(e.Message.ToString(), "application/json");
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    response = "Internal Server Error",
+                    message = e.Message,
+                });
             }
         }
 
 
 
+        [HttpPost]
+        public async Task<IActionResult> Import(List<VM_TB_Import_Delivery> listObj)
+        {
+            try
+            {
+
+                if (!_BearerClass.CheckAuthen())
+                {
+                    return StatusCode(401, new
+                    {
+                        status = "401",
+                        response = "Unauthorized",
+                        message = "Please Login and try again"
+                    });
+                }
+
+                if (await _Service.IKBNLC150.Import(listObj) == "Success")
+                {
+                    return Ok(new
+                    {
+                        status = "200",
+                        response = "OK",
+                        message = "Import Data Success"
+                    });
+                }
+                else
+                {
+                    return StatusCode(500, new
+                    {
+                        status = "500",
+                        response = "Internal Server Error",
+                        message = "Import Failed"
+                    });
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    response = "Internal Server Error",
+                    message = ex.Message
+                });
+            }
+        }
+
+        [HttpGet]
+        public IActionResult GetProcessBar()
+        {
+            return Ok(new
+            {
+                status = "200",
+                response = "OK",
+                message = "Success",
+                data = _Service.IKBNLC150.GetProcessBar()
+            });
+        }
     }
 }

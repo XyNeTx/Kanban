@@ -310,57 +310,7 @@
                                         </div>
                                     </div>
 
-
-                                    @*  <div class="btn-group" role="group" aria-label="Basic example">
-                                <div class="row">
-                                <div class="col" style="margin-bottom:5px;">
-                                @if (ViewData["ComponentToolbarPrint"].ToString() == "true")
-                                {
-                                <button type="button" @(ViewData["ComponentToolbarPrint"].ToString() == "true" ? "" : "disabled")
-                                class="btn btn-@(ViewData["ComponentToolbarPrint"].ToString() == "true" ? "success" : "secondary") dropdown-toggle"
-                                id="btnToolbarPrint"
-                                name="btnToolbarPrint"
-                                data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-print"></i> Export
-                                </button>
-                                <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                                <li><a class="dropdown-item" id="btnExport_Copy" href="#">Copy</a></li>
-                                <li><a class="dropdown-item" id="btnExport_CSV" href="#">CSV</a></li>
-                                <li><a class="dropdown-item" id="btnExport_XLS" href="#">Excel</a></li>
-                                <li><a class="dropdown-item" id="btnExport_PDF" href="#">PDF</a></li>
-                                <li><a class="dropdown-item" id="btnExport_Print" href="#">Print</a></li>
-                                </ul>
                                 }
-                                @if (ViewData["ComponentToolbarExecute"].ToString() == "true")
-                                {
-                                <button type="button" @(ViewData["ComponentToolbarExecute"].ToString() == "true" ? "" : "disabled")
-                                class="btn btn-@(ViewData["ComponentToolbarExecute"].ToString() == "true" ? "warning" : "secondary")"
-                                id="btnToolbarExecute"
-                                name="btnToolbarExecute"
-                                onclick="onExecute()">
-                                <i class="fas fa-bolt"></i> Run
-                                </button>
-                                }
-                                @if (ViewData["ComponentToolbarDelete"].ToString() == "true")
-                                {
-                                <button type="button" @(ViewData["ComponentToolbarDelete"].ToString() == "true" ? "" : "disabled")
-                                class="btn btn-@(ViewData["ComponentToolbarDelete"].ToString() == "true" ? "danger" : "secondary")"
-                                id="btnToolbarDelete"
-                                name="btnToolbarDelete"
-                                onclick="onDeleteAll()">
-                                <i class="far fa-trash-alt"></i> Delete
-                                </button>
-                                }
-                                </div>
-                                </div>
-                                </div>*@
-
-                                }
-                                @*<div>
-                                    <a href="#" data-bs-toggle="modal" data-bs-target="#ModalSystemHistory" data-bs-remote="ModalSQL">
-                                        <i class="fas fa-scroll" title="SQL"></i>
-                                    </a>
-                                </div>*@
                                 
                                 @RenderBody()
 
@@ -390,7 +340,6 @@
         <div id="splash-text">LOADING</div>
         <div id="splash-content"></div>
     </div>
-
 
     
     @Html.Partial("_Profile")

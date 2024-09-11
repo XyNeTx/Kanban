@@ -4,7 +4,7 @@ var _CookieLoginDate = _xLib.GetCookie("loginDate");
 $(document).ready(function () {
 
 
-    $("#txtProcessDate").val(_CookieProcessDate.substring(0, 4) + "-" + _CookieProcessDate.substring(5, 7) + "-" + _CookieProcessDate.substring(8, 10));
+    $("#txtProcessDate").val(moment(_CookieProcessDate.substring(0, 10), "YYYY-MM-DD").format("DD/MM/YYYY"));
     var shift = _CookieProcessDate.substring(10, 11) == "D" ? "1 - Day Shift" : "2 - Night Shift";
     $("#txtProcessShift").val(shift);
 

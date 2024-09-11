@@ -255,9 +255,9 @@ const previewFunction = async (intRow,_command) => {
                 THeadR3.append(`<th>Pcs</th>`);
                 THeadR3.append(`<th>KB</th>`);
 
-                if (_dayColSpan != 0) THeadR2.append(`<th style="border:0px" colspan="${_dayColSpan}" class="bg-danger">Day</th>`);
+                if (_dayColSpan != 0) THeadR2.append(`<th style="border:0px" colspan="${_dayColSpan}" class="bg-danger text-light">Day</th>`);
 
-                if (item.F_Period != 0) THeadR2.append(`<th style="border:0px" colspan="${item.F_Period}" class="bg-primary">Night</th>`);
+                if (item.F_Period != 0) THeadR2.append(`<th style="border:0px" colspan="${item.F_Period}" class="bg-primary text-light">Night</th>`);
 
                 count = 1; // Reset count Use Count for assign T + Count
 
@@ -694,6 +694,7 @@ const sumKB = async (dateSet) => {
             if ($Id.includes(dateSet[_countDateSet]))
             {
                 sum += parseInt($(`#${$Id}`).text());
+                if (isNaN(sum)) sum = 0;
                 $(`#tdR${_Row[i]}KB${dateSet[_countDateSet]}`).text(sum);
                 //console.log(sum);
             }
@@ -701,6 +702,7 @@ const sumKB = async (dateSet) => {
             {
                 //console.log("Sum : ", sum);
                 sum = parseInt($(`#${$Id}`).text());
+                if (isNaN(sum)) sum = 0;
                 _countDateSet += 1;
             }
         });

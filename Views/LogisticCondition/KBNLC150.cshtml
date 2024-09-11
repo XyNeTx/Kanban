@@ -5,13 +5,6 @@
             <div class="card-body">
 
                 <form id="frmCondition">
-@*
-                    <div class="row">
-                        <div class="col-6">
-                            <item type="select" id="F_Plant" label="Plant" value="@ViewData["_Plant"]" readonly></item>
-                        </div>
-                    </div>
-*@
                     <div class="row">
                         <div class="col mt-2">
 
@@ -19,7 +12,7 @@
                                 <legend>Select Data</legend>
 
                                 <div class="row">
-                                    <div class="col-3">
+                                    <div class="col-4">
                                         <item type="month" id="F_Production_Month" label="Production Month" default="now"></item>
                                     </div>
                                     <div class="col-2">
@@ -29,13 +22,16 @@
 
                                 <div class="row">
                                     <div class="col-8">
-                                        <item type="file" id="txtFile"></item>
+                                        <div class="row col-12">
+                                            <input type="file" class="form-control col-10 me-2" id="inpFile" accept=".xlsx" />
+                                            <a class="btn btn-rounded btn-info text-light fw-bold col" id="btnImport">Import</a>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <div class="row">
+                                <div class="row mt-2">
                                     <div class="col-8">
-                                        <item type="progress" id="pgsStatus" label="Processing: {{##.##}} %" max="278"></item>
+                                        <item type="progress" id="pgsStatus" label="Processing: {{##.##}} %"></item>
                                     </div>
                                 </div>
 

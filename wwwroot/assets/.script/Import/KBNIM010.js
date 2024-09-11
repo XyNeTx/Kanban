@@ -72,8 +72,8 @@ async function ListData(date, shift) {
             if (success.status == "200") {
                 data = JSON.parse(success.data[0]);
                 data2 = JSON.parse(success.data[1]);
-                console.log(data);
-                console.log(data2);
+                //console.log(data);
+                //console.log(data2);
 
                 $("#tableImport").DataTable().rows.add(data).draw();
                 $("#tableConfrim").DataTable().rows.add(data2).draw();
