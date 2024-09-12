@@ -113,7 +113,8 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddSession(options =>
 {
     options.Cookie.Name = "Operation";
-    options.IdleTimeout = TimeSpan.FromHours(12);
+    options.IdleTimeout = TimeSpan.FromHours(20);
+    options.IOTimeout = TimeSpan.FromHours(20);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });

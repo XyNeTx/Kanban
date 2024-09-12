@@ -106,28 +106,12 @@ namespace KANBAN.Controllers.API.OrderingProcess
                 ProcessDate = DateTime.ParseExact(Process_Date, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
                 LoginDate = DateTime.ParseExact(Login_Date.Substring(0,10), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
 
-                string appUserName = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
-                string ipaddress = HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-                string windowUserName = System.Environment.UserName;
-                string windowClientName = System.Environment.MachineName;
-                string _computerName = Dns.GetHostName();
-                string _compName = System.Environment.MachineName;
-
                 return Ok(new
                 {
                     status = "200",
                     response = "OK",
                     title = "Success",
                     message = "Onloading is success.",
-                    data = new
-                    {
-                        appUserName = appUserName,
-                        ipaddress = ipaddress,
-                        _computerName = _computerName,
-                        _compName = _compName,
-                        windowUserName = windowUserName,
-                        windowClientName = windowClientName
-                    }
                 });
             }
             catch (Exception ex)

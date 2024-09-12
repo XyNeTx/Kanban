@@ -9,11 +9,13 @@ namespace KANBAN.Services.Logistical
     public interface ILogisticService
     {
         IKBNLC150 IKBNLC150 { get; }
+        IKBNLC190 IKBNLC190 { get; }
     }
 
     public class LogisticService : ILogisticService
     {
         public IKBNLC150 IKBNLC150 { get; }
+        public IKBNLC190 IKBNLC190 { get; }
 
         public LogisticService(
             KB3Context kbContext,
@@ -25,6 +27,7 @@ namespace KANBAN.Services.Logistical
             )
         {
             IKBNLC150 = new KBNLC150(kbContext,BearerClass,PPM3Context, FillDT, log, emailService);
+            IKBNLC190 = new KBNLC190(kbContext,BearerClass,PPM3Context, FillDT, log, emailService);
         }
     }
 }

@@ -22,39 +22,30 @@
                                     <div class="col">
                                         <div class="row">
                                             <div class="col-4">
-                                                <item type="month" id="datPeriod" label="Production Month" default="now"></item>
+                                                <div class="input-group">
+                                                    <label class="input-group-text">Production Month :</label>
+                                                    <input type="text" class="form-control" id="inpProdMonth" />
+                                                </div>
                                             </div>
                                             <div class="col-3">
-                                                <item type="select" id="selRev" label="Rev"></item>
+                                                <div class="input-group">
+                                                    <label class="input-group-text">Rev : </label>
+                                                    <input type="text" class="form-control" id="inpRev" readonly />
+                                                </div>
                                             </div>
                                             <div class="col-4">
-                                                <item type="date" id="datStartDate" label="Start Date" format="yyyy-mm-dd"></item>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-1">  </div>
-                                            <div class="col-3">
-                                                <item type="radio" id="rdoSupplier" label="Supplier list confirmation" value="3" checked></item>
-                                            </div>
-                                            <div class="col-3">
-                                                <item type="radio" id="rdoSupplier" label="Supplier list NO confirmation" value="9"></item>
-                                            </div>
-                                            <div class="col-4">
-                                                <item type="radio" id="rdoSupplier" label="Supplier list NO answer" value="5"></item>
+                                                <div class="input-group">
+                                                    <label class="input-group-text">Start Date :</label>
+                                                    <input type="text" class="form-control" id="inpStartDate" />
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-
 
                                     <div class="col-2">
                                         <div class="row">
                                             <div class="col">
                                                 <item type="button" id="btnSearch" label="Search" style="width:100%"></item>
-                                            </div>
-                                        </div>
-                                        <div class="row mt-1">
-                                            <div class="col">
-                                                <item type="button" id="btnCheckStatus" label="Check Status" style="width:100%"></item>
                                             </div>
                                         </div>
                                     </div>
@@ -77,7 +68,7 @@
 
                                         <div class="row">
                                             <div class="col-10">
-                                                <item type="table" id="tblMaster"></item>
+                                                <table class="table w-100" id="tableMain"></table>
                                             </div>
                                             <div class="col">
                                                 <div class="row">

@@ -56,10 +56,14 @@
         if ($('#chkPDSNo').val() == 1 && ($('#itmPDSFrom').val() == '' || $('#itmPDSTo').val() == ''))
             MsgBox("Please input PDS From, To before print PDS...", MsgBoxStyle.Exclamation, "Exclamation");
 
-        var dateFrom = $('#itmDeliveryFrom').val();
-        var dateTo = $('#itmDeliveryTo').val();
-        var pdsFrom = $("#itmPDSFrom").val();
-        var pdsTo = $("#itmPDSTo").val();
+        if ($('#chkDeliveryDate').is(':checked')) {
+            var dateFrom = moment($('#itmDelivery').val(), "DD/MM/YYYY").format("YYYY-MM-DD") ?? '';
+            var dateTo = moment($('#itmDeliveryTo').val(), "DD/MM/YYYY").format("YYYY-MM-DD") ?? '';
+        }
+        else {
+            var dateFrom = '';
+            var dateTo = '';
+        }
         
         await xAjax.Execute({
             data: {
@@ -69,8 +73,8 @@
                 "@UserCode": ajexHeader.UserCode,
                 "@itmPDSFrom": $('#itmPDSFrom').val(),
                 "@itmPDSTo": $('#itmPDSTo').val(),
-                "@itmDeliveryFrom": $('#itmDeliveryFrom').val(),
-                "@itmDeliveryTo": $('#itmDeliveryTo').val()
+                "@itmDeliveryFrom": dateFrom,
+                "@itmDeliveryTo": dateTo
             },
         });
 
@@ -94,8 +98,12 @@
         xSwal.success('Success','Redirecting to View Report');
         console.log('spKBNOR450_RPT_PDS');
         window.open(`http://hmmta-tpcap/E-Report/Report.aspx?Register=PDS&PDSNoFrom=${$('#itmPDSFrom').val()}&PDSNoTo=${$('#itmPDSTo').val()}&DateFrom=${dateFrom}&DateTo=${dateTo}`)
-        _xLib.OpenReport("/KBNOR700PDS", `pUserCode=${ajexHeader.UserCode}&OrderNo=${$('#itmPDSFrom').val()}&OrderNoTo=${$('#itmPDSTo').val()}&DeliveryDate=${dateFrom}&DeliveryDateTo=${dateTo}`)
-
+        if (_xLib.GetCookie('isDev') == "1") {
+            await _xLib.OpenReport("/KBNOR700PDS_X2", `pUserCode=${ajexHeader.UserCode}&OrderNo=${$('#itmPDSFrom').val()}&OrderNoTo=${$('#itmPDSTo').val()}&DeliveryDate=${dateFrom}&DeliveryDateTo=${dateTo}`)
+        }
+        else {
+            await _xLib.OpenReport("/KBNOR700PDS", `pUserCode=${ajexHeader.UserCode}&OrderNo=${$('#itmPDSFrom').val()}&OrderNoTo=${$('#itmPDSTo').val()}&DeliveryDate=${dateFrom}&DeliveryDateTo=${dateTo}`)
+        }
     });
 
 
@@ -106,8 +114,13 @@
 
         var PDSFrom = $('#itmPDSFrom').val() ?? '';
         var PDSTo = $('#itmPDSTo').val() ?? '';
-        var DeliveryFrom = $('#itmDeliveryFrom').val().replaceAll("-", "") ?? '';
-        var DeliveryTo = $('#itmDeliveryTo').val().replaceAll("-", "") ?? '';
+        if ($("#chkDeliveryDate").is(":checked")) {
+            var DeliveryFrom = moment($('#itmDelivery').val(), "DD/MM/YYYY").format("YYYY-MM-DD") ?? '';
+            var DeliveryTo = moment($('#itmDeliveryTo').val(), "DD/MM/YYYY").format("YYYY-MM-DD") ?? '';
+        } else {
+            var DeliveryFrom = '';
+            var DeliveryTo = '';
+        }
 
         var _dt = await xAjax.ExecuteJSON({
             data: {
@@ -163,8 +176,14 @@
 
                     xSwal.success('Success', 'Redirecting to View Report');
 
-                    return _xLib.OpenReport("/KBNOR700KANBAN", `pUserCode=${ajexHeader.UserCode}` +
-                        `&OrderNo=${PDSFrom}&OrderNoTo=${PDSTo}&DeliveryDate=${DeliveryFrom}&DeliveryDateTo=${DeliveryTo}`);
+                    if (_xLib.GetCookie('isDev') == "1") {
+                        return _xLib.OpenReport("/KBNOR700KANBAN_X2", `pUserCode=${ajexHeader.UserCode}` +
+                            `&OrderNo=${PDSFrom}&OrderNoTo=${PDSTo}&DeliveryDate=${DeliveryFrom}&DeliveryDateTo=${DeliveryTo}`);
+                    }
+                    else {
+                        return _xLib.OpenReport("/KBNOR700KANBAN", `pUserCode=${ajexHeader.UserCode}` +
+                            `&OrderNo=${PDSFrom}&OrderNoTo=${PDSTo}&DeliveryDate=${DeliveryFrom}&DeliveryDateTo=${DeliveryTo}`);
+                    }
 
                     console.log('spKBNOR450_RPT_KANBAN');
                 }

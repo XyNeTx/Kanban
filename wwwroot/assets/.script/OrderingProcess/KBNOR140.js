@@ -31,10 +31,14 @@ $(document).ready(function () {
         if ($('#chkPDSNo').val() == 1 && ($('#itmPDS').val() == '' || $('#itmPDSTo').val() == ''))
             MsgBox("Please input PDS From, To before print PDS...", MsgBoxStyle.Exclamation, "Exclamation");
 
-        var dateFrom = moment($('#itmDelivery').val(), "DD/MM/YYYY").format("YYYY-MM-DD") ?? '';
-        var dateTo = moment($('#itmDeliveryTo').val(), "DD/MM/YYYY").format("YYYY-MM-DD") ?? '';
-        var pdsFrom = $("#itmPDS").val();
-        var pdsTo = $("#itmPDSTo").val();
+        if ($('#chkDeliveryDate').is(':checked')) {
+            var dateFrom = moment($('#itmDelivery').val(), "DD/MM/YYYY").format("YYYY-MM-DD") ?? '';
+            var dateTo = moment($('#itmDeliveryTo').val(), "DD/MM/YYYY").format("YYYY-MM-DD") ?? '';
+        }
+        else {
+            var dateFrom = '';
+            var dateTo = '';
+        }
 
         await xAjax.Execute({
             data: {
@@ -98,8 +102,14 @@ $(document).ready(function () {
 
         var PDSFrom = $('#itmPDS').val() ?? '';
         var PDSTo = $('#itmPDSTo').val() ?? '';
-        var DeliveryFrom = moment($('#itmDelivery').val(), "DD/MM/YYYY").format("YYYY-MM-DD") ?? '';
-        var DeliveryTo = moment($('#itmDeliveryTo').val(), "DD/MM/YYYY").format("YYYY-MM-DD") ?? '';
+
+        if ($("#chkDeliveryDate").is(":checked")) {
+            var DeliveryFrom = moment($('#itmDelivery').val(), "DD/MM/YYYY").format("YYYY-MM-DD") ?? '';
+            var DeliveryTo = moment($('#itmDeliveryTo').val(), "DD/MM/YYYY").format("YYYY-MM-DD") ?? '';
+        } else {
+            var DeliveryFrom = '';
+            var DeliveryTo = '';
+        }
 
         var _dt = await xAjax.ExecuteJSON({
             data: {
