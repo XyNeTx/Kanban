@@ -1,0 +1,70 @@
+﻿
+<div class="row">
+    <div class="col-xl-12 col-md-12 col-sm-12">
+        <div class="card border-left-primary shadow h-100">
+            <div class="card-body">
+                <form id="frmCondition">
+                    <div class="divProcessDate">
+                        <div class="row">
+
+                            <div class="col">
+                                <div class="input-group">
+                                    <label class="input-group-text">Process Date</label>
+                                    <input type="text" class="form-control" id="readProcessDate" name="readProcessDate" readonly>
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div class="input-group">
+                                    <label class="input-group-text">Plant</label>
+                                    <input type="text" class="form-control" id="readPlant" name="readPlant" readonly>
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div class="input-group">
+                                    <label class="input-group-text">Process Shift</label>
+                                    <input type="text" class="form-control" id="readProcessShift" name="readProcessShift" readonly>
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div class="input-group">
+                                    <label class="input-group-text">Type Order</label>
+                                    <input type="text" class="form-control" id="readTypeOrder" name="readTypeOrder" value="SPECIAL" readonly>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div id="divButton" class="row mt-4 justify-content-start">
+                        <div class="col-3"></div>
+                        <div class="col">
+                            <div class="input-group">
+                                <label class="input-group-text">New Customer OrderNo :</label>
+                                <select class="form-select" id="inpNewCustomerOrderNo" name="inpNewCustomerOrderNo">
+                                    <option value="" hidden></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-1"></div>
+                        <button type="button" class="btn btn-outline-dark col-1 " id="btnMerge" disabled>Unmerge</button>
+                        <button type="button" class="btn btn-outline-danger col-1 " id="btnExit">Exit</button>
+                    </div>
+
+                    <div class="mt-4">
+                        <table id="tableMain" class="table w-100">
+                        </table>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script type="text/javascript" src="~/assets/.script/SpecialOrdering/KBNOR210_3.js"></script>
+}

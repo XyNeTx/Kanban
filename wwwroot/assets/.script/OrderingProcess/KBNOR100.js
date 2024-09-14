@@ -18,7 +18,21 @@ $(document).ready(function () {
                 $(`#${_btnName}`).css("color", "white");
             });
         }
-        
+
+        await _xLib.AJAX_Get('/api/KBNOR100/Onload', { dateShift: _xLib.GetCookie("loginDate").replaceAll("-", "") },
+            function (data) {
+                console.log(data);
+            },
+            function (error) {
+                if (error.responseJSON.cmd) {
+                    error.responseJSON.cmd.forEach(function (item) {
+                        let _btnName = `btn${item}`;
+                        $(`#${_btnName}`).prop('disabled', true);
+                    });
+                }
+            }
+        );
+
         xSplash.hide();
     }
     initial();

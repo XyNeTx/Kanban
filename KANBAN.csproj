@@ -213,6 +213,11 @@
     <None Include="wwwroot\assets\.libs\class\lab.Splash\lab.Splash.min.js" />
     <None Include="wwwroot\assets\.libs\class\lab.Splash\lab.Splash.min.js.map" />
     <None Include="wwwroot\assets\.script\import\KBNIM010.js" />
+    <None Include="wwwroot\assets\.script\orderingprocess\KBNOR200.js" />
+    <None Include="wwwroot\assets\.script\SpecialOrdering\KBNOR210.js" />
+    <None Include="wwwroot\assets\.script\SpecialOrdering\KBNOR210_2.js" />
+    <None Include="wwwroot\assets\.script\SpecialOrdering\KBNOR210_3.js" />
+    <None Include="wwwroot\assets\.script\SpecialOrdering\KBNOR210_1.js" />
     <None Include="wwwroot\assets\.script\XLib\xLib.js" />
     <None Include="wwwroot\assets\.libs\display\display.ListOfValues.js" />
     <None Include="wwwroot\assets\.libs\splash\splash.bundle.js" />
@@ -9704,6 +9709,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Services\SpecialOrder\" />
     <Folder Include="wwwroot\assets\.script\Home\" />
     <Folder Include="wwwroot\assets\.script\Import\" />
     <Folder Include="wwwroot\assets\i18n\JP\KB3\LogisticCondition\" />

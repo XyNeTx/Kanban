@@ -1,268 +1,151 @@
-﻿using Microsoft.AspNetCore.Http.Extensions;
-using Microsoft.AspNetCore.Mvc;
-using System.Data;
-using System;
-using System.Web;
-using System.Security.Principal;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-
-using System.Reflection.PortableExecutable;
-using System.DirectoryServices;
-using System.DirectoryServices.AccountManagement;
-using Microsoft.Net.Http.Headers;
-using System.Collections.Specialized;
-using System.Net;
-using System.DirectoryServices.ActiveDirectory;
-using System.Net.Http;
-using Microsoft.AspNetCore.Authorization;
-
-using System.Security.Claims;
-using Org.BouncyCastle.Asn1.Ocsp;
-
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-
-using System.Threading.Tasks;
-
+﻿using HINOSystem.Context;
 using HINOSystem.Libs;
-using HINOSystem.Context;
 using HINOSystem.Models.KB3.Master;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using SkiaSharp;
+using System.Globalization;
 
 namespace HINOSystem.Controllers.API.Master
 {
-    public class KBNOR100Controller : Controller
+    [Route("api/[controller]/[action]")]
+    [ApiController]
+    public class KBNOR100Controller : ControllerBase
     {
         private readonly IConfiguration _configuration;
         private readonly BearerClass _BearerClass;
         private readonly KanbanConnection _KBCN;
-
+        private readonly FillDataTable _FillDT;
         private readonly KB3Context _KB3Context;
 
         public KBNOR100Controller(
             IConfiguration configuration,
             BearerClass bearerClass,
             KanbanConnection kanbanConnection,
-            KB3Context kB3Context
+            KB3Context kB3Context,
+            FillDataTable fillDataTable
             )
         {
             _configuration = configuration;
             _BearerClass = bearerClass;
             _KBCN = kanbanConnection;
             _KB3Context = kB3Context;
+            _FillDT = fillDataTable;
 
         }
 
 
-
-        [HttpPost]
-        public IActionResult initial([FromBody] string pData = null)
+        [HttpGet]
+        public IActionResult Onload(string dateShift)
         {
-            dynamic _json = null;
-            string _SQL = "";
             try
             {
-                //_KBCN.Plant
-                _BearerClass.Authentication(Request);
-                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
+                var waitCCR = _KB3Context.TB_MS_Parameter
+                    .Where(x => x.F_Code == "CI").FirstOrDefault();
 
+                List<string> list = new(new string[]{
+                    "KBNOR110",
+                    "KBNOR120",
+                    "KBNOR130",
+                    "KBNOR140",
+                    "KBNOR150"
+                });
 
-                _SQL = @"
-                    SELECT F_Plant
-                        ,F_Plant_Name
-                        ,F_Location
-                        ,F_Update_By
-                        ,F_Update_Date
-                    FROM [dbo].[TB_MS_Factory]
-                ";
-                string _jsTB_MS_Factory = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+                string sql = $"Select dbo.FN_GetProcess('{dateShift}',2) AS VALUE";
+                string date = _KB3Context.Database.SqlQueryRaw<string>(sql).FirstOrDefault();
 
-                string _result = @"{
-                    ""status"":""200"",
-                    ""response"":""OK"",
-                    ""message"": ""Data Found"",
-                    ""data"":
-                            {
-                                ""TB_MS_Factory"" : " + _jsTB_MS_Factory + @"
-                            }
-                }";
-                return Content(_result, "application/json");
+                if (waitCCR == null)
+                {
+                    return StatusCode(500, new
+                    {
+                        status = "500",
+                        response = "Internal Server Error",
+                        title = "Data Not Found",
+                        message = "ไม่พบข้อมูลในระบบ กรุณาติดต่อผู้ดูแลระบบ",
+                        error = "Data Not Found"
+                    });
+                }
+
+                if (waitCCR.F_Value2 == 0)
+                {
+                    return BadRequest(new
+                    {
+                        status = "400",
+                        response = "Bad Request",
+                        title = "Data Not Confirm",
+                        message = "กรุณารอการยืนยันข้อมูลจาก CCR ก่อนประมวลผลยอดการสั่งซื้อชิ้นส่วน",
+                        data = waitCCR,
+                        cmd = list.ToArray()
+                    });
+                }
+
+                if (waitCCR.F_Value3 != date)
+                {
+
+                    DateTime nDate = DateTime.ParseExact(waitCCR.F_Value3.Substring(0, 8), "yyyyMMdd", CultureInfo.InvariantCulture);
+
+                    return BadRequest(new
+                    {
+                        status = "400",
+                        response = "Bad Request",
+                        title = "Data Not Confirm",
+                        message = $"กรุณายืนยันวันที่จะดำเนินการออก Order อีกครั้งหนึง CCR แจ้งยืนยันการนำเข้าข้อมูลเพื่อออก Order วันที่ " +
+                                    $"{nDate.ToString("dd/MM/yyyy")} Shift {waitCCR.F_Value3.Substring(8, 1)}",
+                        data = waitCCR,
+                        cmd = list.ToArray()
+                    });
+                }
+
+                if (waitCCR.F_Value2 == 3)
+                {
+                    return BadRequest(new
+                    {
+                        status = "400",
+                        response = "Bad Request",
+                        title = "DATA IS CALCULATING",
+                        message = $"กรุณารอสักครู่..ระบบกำลังคำนวณการออก Order ชิ้นส่วน",
+                        data = waitCCR,
+                        cmd = list.ToArray()
+                    });
+                }
+
+                int compareForecast = _KB3Context.Database.SqlQueryRaw<int>("Select dbo.FN_CompareForecast() AS VALUE").FirstOrDefault();
+
+                if (compareForecast > 0)
+                {
+                    return BadRequest(new
+                    {
+                        status = "400",
+                        response = "Bad Request",
+                        title = "DATA IS CALCULATING",
+                        message = "มีข้อมูล Forecast ใหม่ กรุณากด Interface ข้อมูลจาก PPM",
+                        data = waitCCR,
+                        compareForecast = compareForecast
+                    });
+                }
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "OK",
+                    title = "Success",
+                    message = "Normal",
+                    data = waitCCR,
+                });
+
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                return Content(e.Message.ToString(), "application/json");
+                return StatusCode(500 ,new
+                {
+                    status = "500",
+                    response = "Internal Server Error",
+                    message = "Unexpected Error",
+                    error = ex.Message
+                });
             }
         }
 
-
-
-        [HttpPost]
-        public IActionResult search([FromBody] string pData = null)
-        {
-            dynamic _json = null;
-            string _SQL = "";
-            try
-            {
-                _BearerClass.Authentication(Request);
-                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
-
-                _json = JsonConvert.DeserializeObject(pData);
-
-
-                _SQL = @"
-                    SELECT '' AS RunningNo
-                        ,F_Plant
-                        ,F_OrderType
-						, FORMAT(CAST(F_Effect_Date AS DATE), 'yyyy-MM-dd') AS F_Effect_Date
-						, FORMAT(CAST(F_End_Date AS DATE), 'yyyy-MM-dd') AS F_End_Date
-                        ,F_Update_By
-                        ,F_Update_Date
-                    FROM [dbo].[TB_MS_OrderType]
-                    WHERE 1=1
-                    " + (_json != null ? " AND F_Plant = "+_json.F_Plant : "'AND 1=1 '" ) + @"
-                    ORDER BY F_Plant
-                ";
-
-                
-                string _jsonData = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
-
-
-
-                string _result = @"{
-                    ""status"":""200"",
-                    ""response"":""OK"",
-                    ""message"": ""Data Found"",
-                    ""data"": " + _jsonData + @"
-                }";
-                return Content(_result, "application/json");
-            }
-            catch (Exception e)
-            {
-                return Content(e.Message.ToString(), "application/json");
-            }
-        }
-
-
-
-        [HttpPost]
-        public IActionResult save()
-        {
-            dynamic _json = null;
-            string _SQL = "";
-            try
-            {
-                _BearerClass.Authentication(Request);
-                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
-
-
-                TB_MS_OrderType _TB_MS_OrderType = new TB_MS_OrderType();
-                _TB_MS_OrderType.F_Plant = _BearerClass.Plant;
-                _TB_MS_OrderType.F_OrderType = Request.Form["F_OrderType"].ToString();
-                _TB_MS_OrderType.F_Effect_Date = Request.Form["F_Effect_Date"].ToString().Replace("-", "");
-                _TB_MS_OrderType.F_End_Date = Request.Form["F_End_Date"].ToString().Replace("-", "");
-                _TB_MS_OrderType.F_Update_By = _BearerClass.UserCode.ToString();
-                _TB_MS_OrderType.F_Update_Date = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss"));
-                _KB3Context.TB_MS_OrderType.Add(_TB_MS_OrderType);
-                _KB3Context.SaveChanges();
-
-
-                string _result = @"{
-                    ""status"":""200"",
-                    ""response"":""OK"",
-                    ""message"": ""Data has been save""
-                }";
-                return Content(_result, "application/json");
-            }
-            catch (Exception e)
-            {
-                return Content(e.Message.ToString(), "application/json");
-            }
-        }
-
-
-
-
-        [HttpPatch]
-        public IActionResult save(int id = 0)
-        {
-            dynamic _json = null;
-            string _SQL = "";
-            string _result = @"{
-                        ""status"":""200"",
-                        ""response"":""OK"",
-                        ""message"": ""Data not found""
-                    }";
-            try
-            {
-                _BearerClass.Authentication(Request);
-                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
-
-
-                _SQL = @"
-                    UPDATE [dbo].[TB_MS_OrderType]
-                    SET F_End_Date = '" + Request.Form["F_End_Date"].ToString().Replace("-", "") + @"'
-                        ,F_Update_By = '" + _BearerClass.UserCode.ToString() + @"'
-                        ,F_Update_Date = '" + DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss")) + @"'
-                    WHERE 1=1
-                    AND F_Plant = '" + Request.Form["F_Plant"].ToString() + @"'
-                    AND F_OrderType = '" + Request.Form["F_OrderType"].ToString() + @"'
-                    AND F_Effect_Date = '" + Request.Form["F_Effect_Date"].ToString().Replace("-", "") + @"'
-                ";
-                _KBCN.Execute(_SQL);
-
-                _result = @"{
-                    ""status"":""200"",
-                    ""response"":""OK"",
-                    ""message"": ""Data has been save""
-                }";
-                return Content(_result, "application/json");
-            }
-            catch (Exception e)
-            {
-                return Content(e.Message.ToString(), "application/json");
-            }
-        }
-
-
-
-
-        [HttpPost]
-        public IActionResult delete(int id = 0)
-        {
-            dynamic _json = null;
-            string _SQL = "";
-            string _result = @"{
-                        ""status"":""200"",
-                        ""response"":""OK"",
-                        ""message"": ""Data not found""
-                    }";
-            try
-            {
-                _BearerClass.Authentication(Request);
-                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
-
-
-                _SQL = @"
-                    DELETE [dbo].[TB_MS_OrderType]
-                    WHERE 1=1
-                    AND F_Plant = '" + Request.Form["F_Plant"].ToString() + @"'
-                    AND F_OrderType = '" + Request.Form["F_OrderType"].ToString() + @"'
-                    AND F_Effect_Date = '" + Request.Form["F_Effect_Date"].ToString().Replace("-", "") + @"'
-                ";
-                _KBCN.Execute(_SQL);
-
-                _result = @"{
-                    ""status"":""200"",
-                    ""response"":""OK"",
-                    ""message"": ""Data has been delete""
-                }";
-                return Content(_result, "application/json");
-            }
-            catch (Exception e)
-            {
-                return Content(e.Message.ToString(), "application/json");
-            }
-        }
     }
 }

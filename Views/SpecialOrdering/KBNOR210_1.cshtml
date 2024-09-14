@@ -1,0 +1,146 @@
+﻿
+<div class="row">
+    <div class="col-xl-12 col-md-12 col-sm-12">
+        <div class="card border-left-primary shadow h-100">
+            <div class="card-body">
+                <form id="frmCondition">
+                    <div class="divProcessDate">
+                        <div class="row">
+
+                            <div class="col">
+                                <div class="input-group">
+                                    <label class="input-group-text">Process Date</label>
+                                    <input type="text" class="form-control" id="readProcessDate" name="readProcessDate" readonly>
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div class="input-group">
+                                    <label class="input-group-text">Plant</label>
+                                    <input type="text" class="form-control" id="readPlant" name="readPlant" readonly>
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div class="input-group">
+                                    <label class="input-group-text">Process Shift</label>
+                                    <input type="text" class="form-control" id="readProcessShift" name="readProcessShift" readonly>
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div class="input-group">
+                                    <label class="input-group-text">Type Order</label>
+                                    <input type="text" class="form-control" id="readTypeOrder" name="readTypeOrder" value="SPECIAL" readonly>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div id="divCustomer" class="row mt-4 justify-content-start">
+                        <div class="col-10">
+
+                            <div class="row">
+                                <div class="col">
+                                    <div class="input-group">
+                                        <label class="input-group-text">Customer OrderNo.</label>
+                                        <select class="form-select" id="inpCustomerOrderNo" name="inpCustomerOrderNo">
+                                            <option value="" hidden></option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="input-group">
+                                        <input type="checkbox" class="form-check-inline" id="chkDate" name="chkDate">
+                                        <label class="input-group-text">Delivery Date From</label>
+                                        <input type="text" class="form-control" id="inpDateFrom" name="inpDateFrom" value="@DateTime.Now.ToString("dd/MM/yyyy")">
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="input-group">
+                                        <label class="input-group-text">Delivery Date To</label>
+                                        <input type="text" class="form-control" id="inpDateTo" name="inpDateTo" value="@DateTime.Now.ToString("dd/MM/yyyy")">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col">
+                                    <div class="input-group">
+                                        <label class="input-group-text">Supplier Code</label>
+                                        <select class="form-select" id="inpSupplier" name="inpSupplier">
+                                            <option value="" hidden></option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="readSupplier" name="readSupplier" readonly>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="row">
+                                        <a class="btn btn-outline-dark col" id="btnSearch">Merge Report</a>
+                                        <a class="btn btn-outline-dark col" id="btnClear">Delete Parts Report</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col">
+                                    <div class="input-group">
+                                        <label class="input-group-text">Part No.</label>
+                                        <select class="form-select" id="inpPartNo" name="inpPartNo">
+                                            <option value="" hidden></option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="readPartNo" name="readPartNo" readonly>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="row">
+                                        <a class="btn btn-outline-dark col" id="btnSearch">Search</a>
+                                        <a class="btn btn-outline-dark col" id="btnClear">Clear</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="col">
+                            <a class="btn btn-success " id="btnUseCommonParts">Use Common Parts</a>
+                            <a class="btn btn-success mt-1" id="btnSpecialStockReport">Special Stock Report</a>
+                            <a class="btn btn-success mt-1" id="btnSetupStockRemain">Setup Stock Remain</a>
+                        </div>
+
+                    </div>
+
+                    <div class="row mt-4">
+                        <a class="btn btn-outline-dark ms-2 col-1" id="btnCheck">CheckAll</a>
+                        <a class="btn btn-outline-dark col-1" id="btnCheck">UncheckAll</a>
+                        <div class="col-2"></div>
+                        <div class="input-group col-4">
+                            <label class="input-group-text">New Delivery Date :</label>
+                            <input type="text" class="form-control" id="inpNewDeliveryDate" name="inpNewDeliveryDate" value="@DateTime.Now.ToString("dd/MM/yyyy")">
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <table id="tableMain" class="table w-100">
+                        </table>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script type="text/javascript" src="~/assets/.script/SpecialOrdering/KBNOR210_1.js"></script>
+}

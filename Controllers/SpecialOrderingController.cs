@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace KANBAN.Controllers
 {
-    public class SpecialOrderController : Controller
+    public class SpecialOrderingController : Controller
     {
         private readonly AuthenGuard _authenGuard;
 
@@ -16,7 +16,7 @@ namespace KANBAN.Controllers
         private readonly WarrantyClaimConnect _wrtConnect;
 
 
-        public SpecialOrderController(
+        public SpecialOrderingController(
             ILogger<HomeController> logger,
             DbConnect dbConnect,
             AuthenGuard authenGuard,
@@ -33,6 +33,23 @@ namespace KANBAN.Controllers
             _wrtConnect = wrtConnect;
         }
 
-
+        public IActionResult KBNOR210()
+        {
+            _authenGuard.ComponentToolbar = false;
+            return _authenGuard.guard(ControllerContext);
+        } 
+        public IActionResult KBNOR210_1()
+        {
+            _authenGuard.ComponentToolbar = false;
+            return _authenGuard.guard(ControllerContext);
+        } public IActionResult KBNOR210_2()
+        {
+            _authenGuard.ComponentToolbar = false;
+            return _authenGuard.guard(ControllerContext);
+        } public IActionResult KBNOR210_3()
+        {
+            _authenGuard.ComponentToolbar = false;
+            return _authenGuard.guard(ControllerContext);
+        }
     }
 }
