@@ -25,9 +25,15 @@ namespace HINOSystem.Controllers.API.wrt
         [HttpGet]  //Read
         public IActionResult Read(string _id = null)
         {
-            _BearerClass.Authentication(Request);
-            if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
-
+            if (_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
+            {
+                return StatusCode(_BearerClass.Status, new
+                {
+                    status = _BearerClass.Status,
+                    response = _BearerClass.Response,
+                    message = _BearerClass.Message
+                });
+            }
             string SQL = @"
                 SELECT '' AS RunningNo,*
                 FROM [erp].[User] 
@@ -52,9 +58,15 @@ namespace HINOSystem.Controllers.API.wrt
         [HttpPost] //Create
         public IActionResult Save()
         {
-            _BearerClass.Authentication(Request);
-            if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
-
+            if (_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
+            {
+                return StatusCode(_BearerClass.Status, new
+                {
+                    status = _BearerClass.Status,
+                    response = _BearerClass.Response,
+                    message = _BearerClass.Message
+                });
+            }
             string _SQL = @"INSERT INTO [erp].[Group] (Code, Name, NameTH, CreateAt, CreateBy)
                 VALUES('" + Request.Form["Code"].ToString() + @"'
                     ,  '" + Request.Form["Name"].ToString() + @"'
@@ -72,9 +84,15 @@ namespace HINOSystem.Controllers.API.wrt
         [HttpPatch] //Update
         public IActionResult Save(int id = 0)
         {
-            _BearerClass.Authentication(Request);
-            if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
-
+            if (_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
+            {
+                return StatusCode(_BearerClass.Status, new
+                {
+                    status = _BearerClass.Status,
+                    response = _BearerClass.Response,
+                    message = _BearerClass.Message
+                });
+            }
             string _SQL = @"UPDATE [erp].[Group]
                 SET Code = '" + Request.Form["Code"].ToString() + @"'
                     ,  Name = '" + Request.Form["Name"].ToString() + @"'
@@ -94,9 +112,15 @@ namespace HINOSystem.Controllers.API.wrt
         [HttpPost]  //Delete
         public IActionResult Delete(int _id)
         {
-            _BearerClass.Authentication(Request);
-            if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
-
+            if (_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
+            {
+                return StatusCode(_BearerClass.Status, new
+                {
+                    status = _BearerClass.Status,
+                    response = _BearerClass.Response,
+                    message = _BearerClass.Message
+                });
+            }
             string _SQL = @"UPDATE [erp].[Group]
                 SET isDelete = 1
                     ,  UpdateAt = GETDATE()

@@ -63,10 +63,16 @@ namespace HINOSystem.Controllers.API.Master
             string _SQL = "";
             try
             {
-                _BearerClass.Authentication(Request);
-                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
+                if (_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
+                {
+                    return StatusCode(_BearerClass.Status, new
+                    {
+                        status = _BearerClass.Status,
+                        response = _BearerClass.Response,
+                        message = _BearerClass.Message
+                    });
+                }
 
-                
 
                 _SQL = @" EXEC [exec].[spTB_MS_FACTORY] ";
                 string _jsTB_MS_Factory = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
@@ -97,10 +103,16 @@ namespace HINOSystem.Controllers.API.Master
             string _SQL = "";
             try
             {
-                _BearerClass.Authentication(Request);
-                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
+                if (_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
+                {
+                    return StatusCode(_BearerClass.Status, new
+                    {
+                        status = _BearerClass.Status,
+                        response = _BearerClass.Response,
+                        message = _BearerClass.Message
+                    });
+                }
 
-                
 
                 _json = JsonConvert.DeserializeObject(pData);
 
@@ -132,9 +144,15 @@ namespace HINOSystem.Controllers.API.Master
             string _SQL = "";
             try
             {
-                _BearerClass.Authentication(Request);
-                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
-
+                if (_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
+                {
+                    return StatusCode(_BearerClass.Status, new
+                    {
+                        status = _BearerClass.Status,
+                        response = _BearerClass.Response,
+                        message = _BearerClass.Message
+                    });
+                }
                 //TB_MS_PartCode 
                 TB_MS_OldPart _TB_MS_OldPart = new TB_MS_OldPart();
                 _TB_MS_OldPart.F_Plant = _BearerClass.Plant;
@@ -178,10 +196,16 @@ namespace HINOSystem.Controllers.API.Master
                     }";
             try
             {
-                _BearerClass.Authentication(Request);
-                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
+                if (_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
+                {
+                    return StatusCode(_BearerClass.Status, new
+                    {
+                        status = _BearerClass.Status,
+                        response = _BearerClass.Response,
+                        message = _BearerClass.Message
+                    });
+                }
 
-                
 
                 _SQL = @"
                     UPDATE [dbo].[TB_MS_OldPart]
@@ -227,10 +251,16 @@ namespace HINOSystem.Controllers.API.Master
                     }";
             try
             {
-                _BearerClass.Authentication(Request);
-                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
+                if (_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
+                {
+                    return StatusCode(_BearerClass.Status, new
+                    {
+                        status = _BearerClass.Status,
+                        response = _BearerClass.Response,
+                        message = _BearerClass.Message
+                    });
+                }
 
-                
 
                 _SQL = @"
                     DELETE [dbo].[TB_MS_OldPart]

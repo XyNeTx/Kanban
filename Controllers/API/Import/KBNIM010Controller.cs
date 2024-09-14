@@ -24,13 +24,13 @@ namespace KANBAN.Controllers.API.Import
         {
             try
             {
-                if (!_bearerClass.CheckAuthen())
+                if (_bearerClass.CheckAuthen() == 401 || _bearerClass.CheckAuthen() == 403)
                 {
-                    return StatusCode(401, new
+                    return StatusCode(_bearerClass.Status, new
                     {
-                        status = "401",
-                        response = "Unauthorized",
-                        message = "Invalid Token"
+                        status = _bearerClass.Status,
+                        response = _bearerClass.Response,
+                        message = _bearerClass.Message
                     });
                 }
 
@@ -70,13 +70,13 @@ namespace KANBAN.Controllers.API.Import
             try
             {
 
-                if (!_bearerClass.CheckAuthen())
+                if (_bearerClass.CheckAuthen() == 401 || _bearerClass.CheckAuthen() == 403)
                 {
-                    return StatusCode(401, new
+                    return StatusCode(_bearerClass.Status, new
                     {
-                        status = "401",
-                        response = "Unauthorized",
-                        message = "Invalid Token"
+                        status = _bearerClass.Status,
+                        response = _bearerClass.Response,
+                        message = _bearerClass.Message
                     });
                 }
                 return Ok(new
@@ -106,13 +106,13 @@ namespace KANBAN.Controllers.API.Import
             try
             {
 
-                if (!_bearerClass.CheckAuthen())
+                if (_bearerClass.CheckAuthen() == 401 || _bearerClass.CheckAuthen() == 403)
                 {
-                    return StatusCode(401, new
+                    return StatusCode(_bearerClass.Status, new
                     {
-                        status = "401",
-                        response = "Unauthorized",
-                        message = "Invalid Token"
+                        status = _bearerClass.Status,
+                        response = _bearerClass.Response,
+                        message = _bearerClass.Message
                     });
                 }
 

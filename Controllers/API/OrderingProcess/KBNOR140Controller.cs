@@ -38,13 +38,13 @@ namespace KANBAN.Controllers.API.OrderingProcess
             try
             {
 
-                if(!_BearerClass.CheckAuthen())
+                if (_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
                 {
-                    return StatusCode(401, new
+                    return StatusCode(_BearerClass.Status, new
                     {
-                        status = "401",
-                        response = "Unauthorized",
-                        message = "Unauthorized"
+                        status = _BearerClass.Status,
+                        response = _BearerClass.Response,
+                        message = _BearerClass.Message
                     });
                 }
 

@@ -368,7 +368,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
                     message = "Please Login First"
                 });
 
-                if (obj.Action == "Preview" || strAction == "Preview")
+                if (obj.Action == "Preview")
                 {
                     strAction = "Preview";
                     intRun = 0;

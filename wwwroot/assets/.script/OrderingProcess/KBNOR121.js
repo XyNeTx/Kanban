@@ -219,7 +219,7 @@ const previewFunction = async (intRow,_command) => {
         $("#readStoreCode").val(dT_PartControl[intRow].F_Store_Code);
         $("#readKanbanNo").val(dT_PartControl[intRow].F_Kanban_No);
         $("#readCycleTime").val(dT_Date[dT_Date.length - 1].F_Cycle.slice(0, 2) + "-" + dT_Date[dT_Date.length - 1].F_Cycle.slice(2, 4) + "-" + dT_Date[dT_Date.length - 1].F_Cycle.slice(4, 6));
-        $("#readQtyPack").val(dT_Header[intRow].F_Qty_Box);
+        $("#readQtyPack").val(dT_Header[intRow + dT_PartControl.length].F_Qty_Box);
 
         $("#spanProcessDate").text(_CookieProcessDate.slice(8, 10) + "/" + _CookieProcessDate.slice(5, 7) + "/" + _CookieProcessDate.slice(0, 4));
         $("#spanDeliveryDate").text(dT_DeliveryDate[0].F_Delivery_Date.slice(6, 8) + "/" + dT_DeliveryDate[0].F_Delivery_Date.slice(4, 6) + "/" + dT_DeliveryDate[0].F_Delivery_Date.slice(0, 4));
@@ -353,6 +353,8 @@ const addDetailToTable = async (dateSet, intRow) => {
                 //$(`#TBodyR${k}`).append(`<td id=tdR${k}${_id}>${_header[_setAccessHeader[k-1]]}</td>`)
                 if (k == 12 && _id == "KB") {
                     _header["F_KB_CutAdd"] = parseInt(_header["F_KB_CutAdd"]) / parseInt($("#readQtyPack").val());
+
+                    if (isNaN(_header["F_KB_CutAdd"])) _header["F_KB_CutAdd"] = 0;
                     $(`#TBodyR${k}`).append(`<td id='tdR${k}${_id}${dateSet[_countDateSet]}'>${_header["F_KB_CutAdd"]}</td>`)
                 }
                 else {
@@ -444,6 +446,7 @@ const addDetailToTable = async (dateSet, intRow) => {
             //console.log(_insIdDetail);
             if (k == 11 || k == 12 || k == 13) { //convert qty to KB fixed by row
                 let _KB = parseInt(item[_setAccessDetail[k - 1]]) / parseInt($("#readQtyPack").val());
+                if (isNaN(_KB) || _KB == Infinity) _KB = 0;
                 $(`#${_insIdDetail}`).text(_KB);
             }
             else if (k == 4) {
@@ -506,6 +509,7 @@ const addDetailToTable = async (dateSet, intRow) => {
             let _insPattern = `tdR${row}T${F_Delivery_Trip}${F_Delivery_Date}`;
             let _PatternKB = parseInt(item[_Key[i]]) / parseInt($("#readQtyPack").val()); // Convert Qty to KB
             _PatternKB = _PatternKB == undefined ? 0 : _PatternKB;
+            if (isNaN(_PatternKB) || _PatternKB == Infinity) _PatternKB = 0;
             $(`#${_insPattern}`).text(_PatternKB);
         });
 
@@ -694,7 +698,7 @@ const sumKB = async (dateSet) => {
             if ($Id.includes(dateSet[_countDateSet]))
             {
                 sum += parseInt($(`#${$Id}`).text());
-                if (isNaN(sum)) sum = 0;
+                if (isNaN(sum) || sum == Infinity) sum = 0;
                 $(`#tdR${_Row[i]}KB${dateSet[_countDateSet]}`).text(sum);
                 //console.log(sum);
             }
@@ -702,7 +706,7 @@ const sumKB = async (dateSet) => {
             {
                 //console.log("Sum : ", sum);
                 sum = parseInt($(`#${$Id}`).text());
-                if (isNaN(sum)) sum = 0;
+                if (isNaN(sum) || sum == Infinity) sum = 0;
                 _countDateSet += 1;
             }
         });
@@ -714,10 +718,12 @@ const sumKB = async (dateSet) => {
                 //console.log($Id);
                 let $KB = parseInt($(`#${$Id}`).text());
                 let $Pcs = $KB * parseInt($("#readQtyPack").val());
-                if (isNaN($Pcs)) $Pcs = 0;
+                if (isNaN($Pcs) || $Pcs == Infinity) $Pcs = 0;
+                if (isNaN($KB) || $KB == Infinity) $KB = 0;
 
-                //console.log($Pcs);
-                //console.log(`tdR${ _Row[i]}Pcs${ dateSet[_countDateSet]}`);
+                //console.log("KB ", $KB, "date", dateSet[_countDateSet], "Pcs ", $Pcs);
+                //console.log(`tdR${_Row[i]}Pcs${dateSet[_countDateSet]}`);
+
                 $(`#tdR${_Row[i]}Pcs${dateSet[_countDateSet]}`).text($Pcs);
                 $Pcs == 0 ? $(`#tdR${_Row[i]}KB${dateSet[_countDateSet]}`).text($Pcs) : $(`#tdR${_Row[i]}Kb${dateSet[_countDateSet]}`).text($KB);
                 _countDateSet += 1;

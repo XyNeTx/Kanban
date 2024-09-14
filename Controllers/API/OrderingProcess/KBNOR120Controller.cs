@@ -113,7 +113,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
                 string dir = Directory.GetCurrentDirectory();
 
                 ProcessStartInfo startInfo = new ProcessStartInfo();
-                startInfo.FileName = "\\\\hmmta-tpcap\\kanban\\wwwroot\\Storage\\New_Kanban_AutoRun_RecalculateBL.exe";
+                startInfo.FileName = " \\\\156.71.5.160\\hcst\\Source\\New_Kanban_F3\\5.Program\\New_Kanban_F3_AutoRun\\New_Kanban_F3_AutoRun_RecalculateBL\\New_Kanban_AutoRun_RecalculateBL\\bin\\Debug\\New_Kanban_F3_AutoRun_RecalculateBL.exe";
                 startInfo.UseShellExecute = true;
                 startInfo.CreateNoWindow = true;
                 startInfo.WindowStyle = ProcessWindowStyle.Hidden;

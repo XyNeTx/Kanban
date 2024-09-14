@@ -134,12 +134,25 @@ class xLib {
             error: async function (xhr, status, error) {
                 if (xhr.status == 401) {
                     await xSplash.hide();
+                    
                     await xSwal.error("Error", "Session expired. Please login again.", function () {
                         if (window.location.hostname.includes("tpcap")) {
                             return window.open("/kanban/Login", "_self");
                         }
                         return window.open("/Login", "_self");
                     });
+                }
+                else if (xhr.status == 403) {
+                    console.log(xhr);
+                    // forbidden
+                    await xSplash.hide();
+                    await xSwal.error("Forbidden", "You are not allow to access this page.", function () {
+                        if (window.location.hostname.includes("tpcap")) {
+                            return window.open("/kanban/Home", "_self");
+                        }
+                        return window.open("/Home", "_self");
+                    }
+                    );
                 }
                 else {
                     await console.error(xhr);
@@ -204,6 +217,18 @@ class xLib {
                         return window.open("/Login", "_self");
                     });
                 }
+                else if (xhr.status == 403) {
+                    //console.log(xhr);
+                    // forbidden
+                    await xSplash.hide();
+                    await xSwal.error("Forbidden", "You are not allow to access this page.", function () {
+                        if (window.location.hostname.includes("tpcap")) {
+                            return window.open("/kanban/Home", "_self");
+                        }
+                        return window.open("/Home", "_self");
+                    }
+                    );
+                }
                 else {
                     await console.error(xhr);
                     xSplash.hide();
@@ -256,6 +281,18 @@ class xLib {
                         }
                         return window.open("/Login", "_self");
                     });
+                }
+                else if (xhr.status == 403) {
+                    //console.log(xhr);
+                    // forbidden
+                    await xSplash.hide();
+                    await xSwal.error("Forbidden", "You are not allow to access this page.", function () {
+                        if (window.location.hostname.includes("tpcap")) {
+                            return window.open("/kanban/Home", "_self");
+                        }
+                        return window.open("/Home", "_self");
+                    }
+                    );
                 }
                 else {
                     await console.error(xhr);
@@ -310,6 +347,18 @@ class xLib {
                         return window.open("/Login", "_self");
                     });
                 }
+                else if (xhr.status == 403) {
+                    console.log(xhr);
+                    // forbidden
+                    await xSplash.hide();
+                    await xSwal.error("Forbidden", "You are not allow to access this page.", function () {
+                        if (window.location.hostname.includes("tpcap")) {
+                            return window.open("/kanban/Home", "_self");
+                        }
+                        return window.open("/Home", "_self");
+                    }
+                    );
+                }
                 else {
                     await console.error(xhr);
                     xSplash.hide();
@@ -342,6 +391,18 @@ class xLib {
     }
 
     OpenReport(reportName,query) {
+        var _url = "http://hmmt-app03/Reports/Pages/ReportViewer.aspx?/KB3"
+        _url = _url + reportName + "&" + query;
+        window.open(_url, '_blank');
+    }
+
+    OpenReportObj(reportName, obj) {
+
+        var query = "";
+        for (var key in obj) {
+            query += key + "=" + obj[key] + "&";
+        }
+
         var _url = "http://hmmt-app03/Reports/Pages/ReportViewer.aspx?/KB3"
         _url = _url + reportName + "&" + query;
         window.open(_url, '_blank');

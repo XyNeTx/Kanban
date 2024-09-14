@@ -11,27 +11,27 @@ namespace HINOSystem.Controllers.API.Master
     public class KBNLC190Controller : ControllerBase
     {
         private readonly ILogisticService _services;
-        private readonly BearerClass _Bearer;
+        private readonly BearerClass _BearerClass;
 
         public KBNLC190Controller(
             ILogisticService services,
             BearerClass Bearer
             )
         {
-            _Bearer = Bearer;
+            _BearerClass = Bearer;
             _services = services;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetRev(string YM)
         {
-            if (!_Bearer.CheckAuthen())
+            if (_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
             {
-                return StatusCode(401, new
+                return StatusCode(_BearerClass.Status, new
                 {
-                    status = "401",
-                    response = "Unauthorized",
-                    message = "Unauthorized"
+                    status = _BearerClass.Status,
+                    response = _BearerClass.Response,
+                    message = _BearerClass.Message
                 });
             }
             try
@@ -61,13 +61,13 @@ namespace HINOSystem.Controllers.API.Master
         [HttpGet]
         public async Task<IActionResult> Search(string YM, int Rev)
         {
-            if (!_Bearer.CheckAuthen())
+            if (_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
             {
-                return StatusCode(401, new
+                return StatusCode(_BearerClass.Status, new
                 {
-                    status = "401",
-                    response = "Unauthorized",
-                    message = "Unauthorized"
+                    status = _BearerClass.Status,
+                    response = _BearerClass.Response,
+                    message = _BearerClass.Message
                 });
             }
 
@@ -103,13 +103,13 @@ namespace HINOSystem.Controllers.API.Master
         [HttpPost]
         public async Task<IActionResult> Interface(VM_KBNLC190_Interface obj)
         {
-            if (!_Bearer.CheckAuthen())
+            if (_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
             {
-                return StatusCode(401, new
+                return StatusCode(_BearerClass.Status, new
                 {
-                    status = "401",
-                    response = "Unauthorized",
-                    message = "Unauthorized"
+                    status = _BearerClass.Status,
+                    response = _BearerClass.Response,
+                    message = _BearerClass.Message
                 });
             }
 
@@ -129,7 +129,8 @@ namespace HINOSystem.Controllers.API.Master
                 {
                     status = "500",
                     response = "Internal Server Error",
-                    message = "Data has not been Interface"
+                    message = "Data has not been Interface",
+                    userid = _BearerClass.UserCode,
                 });
             }
             catch (Exception ex)

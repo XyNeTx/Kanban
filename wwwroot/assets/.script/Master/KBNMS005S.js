@@ -27,7 +27,7 @@ $(document).ready(async function () {
     $("#divButton").find("button").prop("disabled", false);
 
     await GetDateAndShift();
-    $(".dataTable  thead tr th").addClass("text-center");
+    $(".dataTable thead tr th").addClass("text-center");
 
     xSplash.hide();
 });
@@ -170,6 +170,12 @@ $("#buttonCcl").click(async function () {
 
 $("#buttonSave").click(async function () {
     $("#buttonSave").prop("disabled", true);
+    $("#buttonSave").parent().append(`<div id='spinLoader' class="d-flex justify-content-center">
+    <div class="spinner-border text-danger" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+    </div>`);
+
     if (_cmd == "New" || _cmd == "Upd") {
         var arrayObj = $("#tableMaster").DataTable().rows().data().toArray();
 
@@ -185,10 +191,12 @@ $("#buttonSave").click(async function () {
         }
 
         _xLib.AJAX_Post('/api/KBNMS005S/Save', JSON.stringify(arrayObj),
-            function (success) {
+            async function (success) {
                 if (success.status == "200") {
-                    xSwal.success("Success !!", success.message);
-                    $("#tableMaster").DataTable().clear().draw();
+                    await xSwal.success("Success !!", success.message);
+                    await $("#tableMaster").DataTable().clear().draw();
+                    await $("#buttonSave").prop("disabled", false);
+                    await $("#spinLoader").remove();
                 }
             },
             function (error) {
@@ -212,10 +220,12 @@ $("#buttonSave").click(async function () {
         arrayObj.F_Total_Actual = parseInt(arrayObj.F_Total_Actual);
 
         _xLib.AJAX_Post('/api/KBNMS005S/Delete', JSON.stringify(arrayObj),
-            function (success) {
+            async function (success) {
                 if (success.status == "200") {
-                    xSwal.success("Success !!", success.message);
-                    $("#tableMaster").DataTable().rows('.selected').remove().draw();
+                    await $("#tableMaster").DataTable().rows('.selected').remove().draw();
+                    await xSwal.success("Success !!", success.message);
+                    await $("#buttonSave").prop("disabled", false);
+                    await $("#spinLoader").remove();
                 }
             },
             function (error) {
@@ -223,5 +233,5 @@ $("#buttonSave").click(async function () {
             }
         );
     }
-    $("#buttonSave").prop("disabled", false);
+
 });

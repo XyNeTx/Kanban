@@ -124,6 +124,15 @@ $("#btnInterface").click(function () {
         function (error) {
             console.log(error);
             xSwal.error(error.responseJSON.response, error.responseJSON.message);
+
+            let obj = {
+                UserID = error.responseJSON.userid,
+                Type = "KBNLC190",
+            }
+
+            if (error.responseJSON.message.includes("Error Found")) {
+                _xLib.OpenReportObj("KBNIMERR", obj);
+            }
         }
     );
 });

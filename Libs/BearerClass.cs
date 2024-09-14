@@ -1,7 +1,9 @@
 ﻿//using Microsoft.Office.Interop.Excel;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using NPOI.SS.Formula.Functions;
 using NPOI.SS.UserModel;
+using SkiaSharp;
 using System.Data;
 using System.Security.Cryptography;
 using System.Text;
@@ -103,25 +105,32 @@ namespace HINOSystem.Libs
             this.LOV = pRequest.Headers["LOV"].ToString();
             this.Data = JObject.Parse(JsonConvert.SerializeObject(_dr));
 
-            return this;
+            Int64 UserID = _dr.Table.Rows[0].Field<Int64>("_ID");
+            string sql = "SELECT * FROM [erp].[UserAuthorize] WHERE User_ID = " + UserID + " AND Remark LIKE '%" + this.ActionName + "%' ";
+            _dt = _KBCN.ExecuteSQL(sql, skipLog: true);
 
+            if(_dt == null || _dt.Rows.Count <= 0)
+            {
+                this.Status = 403;
+                this.Response = "FORBIDDEN";
+                this.Message = "You are not allowed to access this page.";
+
+                this.Result = JObject.Parse(@"{
+                                        ""status"":""403"",
+                                        ""response"":""FORBIDDEN"",
+                                        ""message"": ""You are not allowed to access this page.""
+                                    }"
+                );
+
+                return this.Result;
+            }
+            return this;
         }
 
-        public bool CheckAuthen()
+        public int CheckAuthen()
         {
             this.Authentication(_http.HttpContext.Request);
-            if (this.Status == 200)
-            {
-                return true;
-            }
-            else if (this.Status == 401)
-            {
-                return false;
-            }
-            else
-            {
-                return false;
-            }
+            return this.Status;
         }
 
         public string StoreAccess()

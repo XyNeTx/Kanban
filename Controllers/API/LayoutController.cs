@@ -49,9 +49,15 @@ namespace HINOSystem.Controllers.API
         [HttpPatch] //Update profile
         public IActionResult Profile(int id = 0)
         {
-            _BearerClass.Authentication(Request);
-            if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
-
+            if (_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
+            {
+                return StatusCode(_BearerClass.Status, new
+                {
+                    status = _BearerClass.Status,
+                    response = _BearerClass.Response,
+                    message = _BearerClass.Message
+                });
+            }
             string _sql = @"UPDATE [erp].[User]
                 SET Code = '" + Request.Form["Code"].ToString() + @"'
                     ,  Name = '" + Request.Form["Name"].ToString() + @"'

@@ -46,9 +46,15 @@ namespace HINOSystem.Controllers.API.erp
             string _SQL = "";
             try
             {
-                _BearerClass.Authentication(Request);
-                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
-
+                if (_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
+                {
+                    return StatusCode(_BearerClass.Status, new
+                    {
+                        status = _BearerClass.Status,
+                        response = _BearerClass.Response,
+                        message = _BearerClass.Message
+                    });
+                }
 
                 _SQL = @" EXEC [exec].[spERP01M011_SEARCH] '3' ";
                 string _erpGroup = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
@@ -79,9 +85,15 @@ namespace HINOSystem.Controllers.API.erp
             string _SQL = "";
             try
             {
-                _BearerClass.Authentication(Request);
-                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
-
+                if (_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
+                {
+                    return StatusCode(_BearerClass.Status, new
+                    {
+                        status = _BearerClass.Status,
+                        response = _BearerClass.Response,
+                        message = _BearerClass.Message
+                    });
+                }
                 //_json = JsonConvert.DeserializeObject(pData);
 
 
@@ -113,9 +125,15 @@ namespace HINOSystem.Controllers.API.erp
             string _SQL = "";
             try
             {
-                _BearerClass.Authentication(Request);
-                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Data), "application/json");
-
+                if (_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
+                {
+                    return StatusCode(_BearerClass.Status, new
+                    {
+                        status = _BearerClass.Status,
+                        response = _BearerClass.Response,
+                        message = _BearerClass.Message
+                    });
+                }
 
                 erpUser _erpUser = new erpUser();
                 _erpUser.Code = Request.Form["Code"].ToString();
@@ -157,9 +175,15 @@ namespace HINOSystem.Controllers.API.erp
             string _SQL = "";
             try
             {
-                _BearerClass.Authentication(Request);
-                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Data), "application/json");
-
+                if (_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
+                {
+                    return StatusCode(_BearerClass.Status, new
+                    {
+                        status = _BearerClass.Status,
+                        response = _BearerClass.Response,
+                        message = _BearerClass.Message
+                    });
+                }
                 var _erpUser = _ERPContext.erpUser
                                     .FirstOrDefault(x => x._ID == int.Parse(Request.Form["_ID"].ToString()));
                 if (_erpUser != null)
@@ -232,9 +256,15 @@ namespace HINOSystem.Controllers.API.erp
             string _SQL = "";
             try
             {
-                _BearerClass.Authentication(Request);
-                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Data), "application/json");
-
+                if (_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
+                {
+                    return StatusCode(_BearerClass.Status, new
+                    {
+                        status = _BearerClass.Status,
+                        response = _BearerClass.Response,
+                        message = _BearerClass.Message
+                    });
+                }
                 var _erpUser = _ERPContext.erpUser
                                     .FirstOrDefault(x => x._ID == int.Parse(Request.Form["_ID"].ToString()));
                 if (_erpUser != null)
