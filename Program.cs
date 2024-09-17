@@ -5,6 +5,7 @@ using KANBAN.Libs;
 using KANBAN.Services;
 using KANBAN.Services.Import;
 using KANBAN.Services.Logistical;
+using KANBAN.Services.SpecialOrdering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Serilog;
@@ -95,6 +96,7 @@ builder.Services.AddScoped<TextFileClass>();
 
 builder.Services.AddScoped<IImportService ,ImportService>();
 builder.Services.AddScoped<ILogisticService, LogisticService>();
+builder.Services.AddScoped<ISpecialOrderingServices, SpecialOrderingServices>();
 
 builder.Services.AddSwaggerGen(c =>
 {

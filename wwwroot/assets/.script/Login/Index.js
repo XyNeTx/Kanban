@@ -1,5 +1,8 @@
 ﻿$(document).ready(async function () {
 
+    $("#txtUserName").prop('readonly', true);
+    $("#txtProcessDate").prop('disabled', true);
+    $("#ddlShift").prop('disabled', true);
 
     const formAuthentication = {
         "txtUserName": "20223983",
@@ -34,7 +37,10 @@
         setCookie('UI_SideBar', 'shrink');
     }
 
-    await (_xLib.GetCookie("isDev") == null || _xLib.GetCookie("isDev") == "") ? _xLib.SetCookie('isDev', 0) : _xLib.GetCookie('isDev');    initial = async function () {
+    await (_xLib.GetCookie("isDev") == null || _xLib.GetCookie("isDev") == "")
+        ? _xLib.SetCookie('isDev', 0) : null;
+
+    initial = async function () {
         xSplash.show();
 
         initTheme();
@@ -51,11 +57,11 @@
             },
 
             success: function (result) {
-                if (getCookie('debug') == '') setCookie('debug', 0);
-                if (getCookie('debug') == '1') console.log(result);
+                //if (getCookie('debug') == '') setCookie('debug', 0);
+                //if (getCookie('debug') == '1') console.log(result);
 
-                if (getCookie('debug') == '1') $('#txtUserName').val('DEVELOPER');
-                if (getCookie('debug') == '1') $('#txtUserName').removeAttr('readonly');
+                //if (getCookie('debug') == '1') $('#txtUserName').val('DEVELOPER');
+                //if (getCookie('debug') == '1') $('#txtUserName').removeAttr('readonly');
                 if (_xLib.GetCookie('isDev') == '1') $('h4').append('<h5 class="mt-3">DEVELOPER MODE</h5>');
                 //console.log(result);
                 $("#txtProcessDate").prop('disabled', true);
@@ -111,39 +117,17 @@
     $('#imgHINOLogo').on('click',function (e) {
         iSpy++;
         if (iSpy == 6) {
-            let _debug = getCookie('debug');
             let _isDev = getCookie('isDev');
-            if (_debug == 0) {
-                _debug = 1;
+            if (_isDev == 0) {
                 _isDev = 1;
             } else {
-                _debug = 0;
                 _isDev = 0;
             }
             setCookie('isDev', _isDev);
-            setCookie('debug', _debug);
             document.location.reload();
             xSplash.hide();
         }
     });
-
-    //let clickUser = 0;
-    //$("#txtUserName").on("click", function () {
-    //    clickUser++;
-    //    if (clickUser == 3) {
-    //        let _isDev = _xLib.GetCookie('isDev');
-    //        console.log(_isDev);
-    //        if (_isDev == 0) {
-    //            _isDev = 1;
-    //        } else {
-    //            _isDev = 0;
-    //        }
-    //        _xLib.SetCookie('isDev', _isDev);
-    //        _xLib.SetCookie('debug', 1);
-    //        $("#txtUserName").prop('readonly', false);
-    //        document.location.reload();
-    //    }
-    //});
 
     xSplash.hide();
 

@@ -5,6 +5,7 @@ using KANBAN.Models.KB3.Master;
 using KANBAN.Models.KB3.OrderingProcess;
 using KANBAN.Models.KB3.Receive_Process;
 using KANBAN.Models.KB3.ReportOrder;
+using KANBAN.Models.KB3.SpecialOrdering;
 using KANBAN.Models.KB3.UrgentOrder;
 using KANBAN.Models.KB3.VLT;
 using Microsoft.EntityFrameworkCore;
@@ -154,6 +155,7 @@ namespace HINOSystem.Context
 
         public DbSet<TB_Kanban_Planning> TB_Kanban_Planning { get; set; }
         public DbSet<KBNLC_150> KBNLC_150 { get; set; }
+        public DbSet<TB_Transaction_Spc> TB_Transaction_Spc { get; set; }
 
         //protected override void OnModelCreating(ModelBuilder modelBuilder)
         //{

@@ -46,7 +46,7 @@ $(document).ready(async function () {
         function (success) {
             if (success.status == 200) {
                 success.data = _xLib.JSONparseAndTrim(success.data);
-                //console.log(success.data);
+                console.log(success.data);
                 $("#btnPreview").prop("disabled", !success.data.includes("Preview"));
                 $("#btnProcess").prop("disabled", !success.data.includes("Search"));
                 $("#btnReCal").prop("disabled", !success.data.includes("Recalculate"));
@@ -150,12 +150,16 @@ $("#btnPreview").click(async function () {
     _command = "Preview";
     previewFunction(0, _command);
     window.scrollTo(0, 0);
+    $("#btnBlCal").prop("disabled", false);
+    $("#btnReCal").prop("disabled", true);
 });
 
 $("#btnProcess").click(async function () {
     _command = "Process";
     previewFunction(0, _command);
     window.scrollTo(0, 0);
+    $("#btnBlCal").prop("disabled", false);
+    $("#btnReCal").prop("disabled", false);
 });
 
 $("#btnPrevPage").click(async function () {
@@ -764,6 +768,7 @@ $("#btnBlCal").click(function () {
         function (result) {
             if (result.status == 200) {
                 previewFunction($("#txtPage").val().split("/")[0] - 1, _command);
+                xSwal.success("Success", "Recalculate BL Success");
             }
         }, function (error) {
             xSwal.error("Error", error.message);
@@ -785,6 +790,7 @@ $("#btnReCal").click(function () {
         function (result) {
             if (result.status == 200) {
                 previewFunction($("#txtPage").val().split("/")[0] - 1, _command);
+                xSwal.success("Success", "Recalculate Success");
             }
         },
         function (error) {

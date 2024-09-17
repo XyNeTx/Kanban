@@ -1150,9 +1150,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
                     {
                         _btnCheck = "Search,Preview";
 
-                        if (obj.Action == "Process" && string.IsNullOrWhiteSpace(obj.Supplier)
-                            && string.IsNullOrWhiteSpace(obj.PartNo) && string.IsNullOrWhiteSpace(obj.Kanban)
-                            && string.IsNullOrWhiteSpace(obj.Store))
+                        if (obj.Action == "Process")
                         {
                             _btnCheck += ",Recalculate";
                         }
@@ -1921,7 +1919,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
 
                     await _KB3Context.Database.ExecuteSqlRawAsync(_sql);
 
-                    sLastDate = _KB3Context.Database.SqlQueryRaw<string>($"select dbo.FN_GetLastDate('{LoginDate.ToString("yyyyMMdd")}')").FirstOrDefault();
+                    sLastDate = _KB3Context.Database.SqlQueryRaw<string>($"select dbo.FN_GetLastDate('{LoginDate.ToString("yyyyMMdd")}') AS VALUE").FirstOrDefault();
 
                     _sql = $"UPDATE TB_Calculate_D SET F_Urgent_Order = U.F_Unit_Amount ,Flag_Chg_Urgent = '1' " +
                         $"FROM TB_Calculate_D D INNER JOIN (Select H.F_Supplier_Code, H.F_Supplier_Plant, H.F_Delivery_Date, H.F_Delivery_Trip " +
@@ -1955,20 +1953,27 @@ namespace KANBAN.Controllers.API.OrderingProcess
 
                     await _KB3Context.Database.ExecuteSqlRawAsync(_sql);
 
-                    _sql = $"exec [dbo].[SP_RecalBL_Night]";
-                    await _KB3Context.Database.ExecuteSqlRawAsync(_sql, LoginDate.ToString("yyyyMMdd"),
-                        obj.Supplier.Split("-")[0], obj.Supplier.Split("-")[1],
-                        obj.Store, obj.Kanban);
+                    _sql = $"exec [dbo].[SP_RecalBL_Night] '{LoginDate.ToString("yyyyMMdd")}'," +
+                        $"'{obj.Supplier.Split("-")[0]}','{obj.Supplier.Split("-")[1]}'," +
+                        $"'{obj.Store}','{obj.Kanban}'";
+
+                    await _KB3Context.Database.ExecuteSqlRawAsync(_sql);
 
                     _Log.WriteLogMsg("message : Update TB_Calculate_D : SP_RecalBL_Night");
 
-                    _sql = $"exec [dbo].[SP_CALCULATE_OTHER_CONDITION]";
-                    await _KB3Context.Database.ExecuteSqlRawAsync(_sql, LoginDate.ToString("yyyyMMdd"));
+                    _sql = $"exec [dbo].[SP_CALCULATE_OTHER_CONDITION] '{LoginDate.ToString("yyyyMMdd")}'";
+                    await _KB3Context.Database.ExecuteSqlRawAsync(_sql);
                     
                     _Log.WriteLogMsg("message : Update TB_Calculate_D : SP_CALCULATE_OTHER_CONDITION");
                 }
 
-                return await Recalculate(obj);
+                return Ok(new
+                {
+                    status = "200",
+                    response = "OK",
+                    title = "Success",
+                    message = "Recalculate Success"
+                });
             }
             catch (Exception ex)
             {

@@ -9709,7 +9709,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Services\SpecialOrder\" />
     <Folder Include="wwwroot\assets\.script\Home\" />
     <Folder Include="wwwroot\assets\.script\Import\" />
     <Folder Include="wwwroot\assets\i18n\JP\KB3\LogisticCondition\" />

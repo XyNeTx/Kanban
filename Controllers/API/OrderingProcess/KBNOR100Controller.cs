@@ -80,7 +80,7 @@ namespace HINOSystem.Controllers.API.Master
                     });
                 }
 
-                if (waitCCR.F_Value3 != date)
+                if (waitCCR.F_Value3 != dateShift)
                 {
 
                     DateTime nDate = DateTime.ParseExact(waitCCR.F_Value3.Substring(0, 8), "yyyyMMdd", CultureInfo.InvariantCulture);

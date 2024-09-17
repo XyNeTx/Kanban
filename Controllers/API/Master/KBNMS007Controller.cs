@@ -327,7 +327,7 @@ namespace HINOSystem.Controllers.API.Master
             }
         }
 
-        [HttpGet]
+        [HttpPost]
         public async Task<IActionResult> Stop (TB_Kanban_Add obj)
         {
             try

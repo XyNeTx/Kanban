@@ -113,11 +113,10 @@ namespace KANBAN.Controllers.API.OrderingProcess
                 string dir = Directory.GetCurrentDirectory();
 
                 ProcessStartInfo startInfo = new ProcessStartInfo();
-                startInfo.FileName = " \\\\156.71.5.160\\hcst\\Source\\New_Kanban_F3\\5.Program\\New_Kanban_F3_AutoRun\\New_Kanban_F3_AutoRun_RecalculateBL\\New_Kanban_AutoRun_RecalculateBL\\bin\\Debug\\New_Kanban_F3_AutoRun_RecalculateBL.exe";
+                startInfo.FileName = "\\\\156.71.5.160\\hcst\\Source\\New_Kanban_F3\\5.Program\\New_Kanban_F3_AutoRun\\New_Kanban_F3_AutoRun_RecalculateBL\\New_Kanban_AutoRun_RecalculateBL\\bin\\Debug\\New_Kanban_F3_AutoRun_RecalculateBL.exe";
                 startInfo.UseShellExecute = true;
                 startInfo.CreateNoWindow = true;
                 startInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                startInfo.Verb = "runas";
                 Process.Start(startInfo);
 
                 await _KB3Context.Database.ExecuteSqlRawAsync($@"UPDATE TB_MS_PARAMETER SET F_VALUE2 ='2',F_Update_Date=Getdate()
@@ -196,7 +195,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
                 _Log.WriteLog("Interface NG Data : " + _SQL,UserCode,_BearerClass.Device);
 
                 _SQL = $@"Select distinct F_Supplier_Code, F_Supplier_Plant, F_Store_Code, F_Kanban_No ,F_Part_No, F_Ruibetsu 
-                         From TB_Calculate_H  Where (F_Process_Date = '{sDate}') and F_Supplier_Code <> '9999' and F_Supplier_Code <> '9995' Order by 1,2,3,4,5,6";
+                         From TB_Calculate_H  Where (F_Process_Date = '{sDate}')  Order by 1,2,3,4,5,6"; //and F_Supplier_Code <> '9999' and F_Supplier_Code <> '9995'
 
                 var _DT = _FillDT.ExecuteSQL(_SQL);
 
@@ -285,7 +284,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
 
                 string _SQL = $@"SELECT distinct F_Supplier_Code,F_Supplier_plant,F_PART_no,F_Ruibetsu,F_Kanban_No,F_Store_Code 
                                 FROM TB_CALCULATE_D  WHERE F_Process_Shift ='N' and F_Process_Date=@p0 
-                                and F_Supplier_Code <> '9999' and F_Supplier_Code <>'9995' Order by 1,2,3,4,5,6";
+                                 Order by 1,2,3,4,5,6"; //and F_Supplier_Code <> '9999' and F_Supplier_Code <>'9995'
 
                 var _DT = _FillDT.ExecuteSQL(_SQL,sDate);
 

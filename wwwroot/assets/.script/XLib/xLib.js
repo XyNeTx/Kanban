@@ -320,6 +320,10 @@ class xLib {
                         }
                     }
 
+                    else {
+                        xSwal.error("Error", xhr.responseJSON.message)
+                    }
+
                 }
             }
         });

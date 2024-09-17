@@ -71,7 +71,7 @@ $(document).ready(function () {
                 xItem.progress({ id: 'prgProcess', current: 5, label: 'Start Interface Data from Import Data : {{##.##}} %' });
 
                 //''Clear Old Data 
-                await xAjax.ExecuteJSON({
+                await xAjax.xExecuteJSON({
                     data: {
                         "Module": "[exec].[spKBNOR110_INTERFACE_D1]",
                         "@OrderType": "N",
@@ -83,7 +83,7 @@ $(document).ready(function () {
 
                 //let _remark = '';
 
-                var _dtChk = await xAjax.ExecuteJSON({
+                var _dtChk = await xAjax.xExecuteJSON({
                     data: {
                         "Module": "[exec].[spKBNOR110_INTERFACE_M1]",
                         "@OrderType": "N",
@@ -91,7 +91,7 @@ $(document).ready(function () {
                         "@UserCode": ajexHeader.UserCode
                     },
                 });
-                xItem.progress({ id: 'prgProcess', current: 40, label: 'Interface Data from Import Data : {{##.##}} %' });
+                xItem.progress({ id: 'prgProcess', current: 100, label: 'Interface Data from Import Data : {{##.##}} %' });
 
                 if (_dtChk.rows != null) xDataTable.bind('#tblMaster', _dtChk.rows);
                 if (_dtChk.rows == null) MsgBox("ไม่พบข้อมูล Interface Normal Order", MsgBoxStyle.Information, "Interface Normal Data");

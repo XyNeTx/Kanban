@@ -43,7 +43,7 @@ $("#btnCalculate").click(function () {
         _url = "/api/KBNOR120/Process_Order_Night";
     }
 
-    _xLib.AJAX_Get(_url, { sDate: $("#txtProcessForDate").val() },
+    _xLib.AJAX_Get(_url, { sDate: $("#txtProcessDate").val() },
         function (success) {
             if (success.status == "200") {
                 //xSwal.success("Success", "Order Processed Successfully");
