@@ -106,9 +106,12 @@ namespace KANBAN.Services.SpecialOrdering
 
                     _kbContext.TB_Transaction_Spc.Update(exist);
 
+                    _log.WriteLogMsg($"Merge Data = {JsonConvert.SerializeObject(exist)}");
+
                 }
 
                 await _kbContext.SaveChangesAsync();
+                _log.WriteLogMsg($"Merge Success");
                 transaction.Commit();
 
                 return true;
@@ -117,6 +120,7 @@ namespace KANBAN.Services.SpecialOrdering
             catch (Exception ex)
             {
                 transaction.RollbackToSavepoint("BeforeMerge");
+                _log.WriteLogMsg($"Merge Failed | {ex.Message}");
                 throw new Exception(ex.Message);
             }
         }

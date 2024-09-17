@@ -10,11 +10,13 @@ namespace KANBAN.Services.SpecialOrdering
     public interface ISpecialOrderingServices
     {
         IKBNOR210_2 IKBNOR210_2 { get; }
+        IKBNOR210_3 IKBNOR210_3 { get; }
     }
 
     public class SpecialOrderingServices : ISpecialOrderingServices
     {
         public IKBNOR210_2 IKBNOR210_2 { get; }
+        public IKBNOR210_3 IKBNOR210_3 { get; }
 
         public SpecialOrderingServices(KB3Context kbContext,
             BearerClass bearerClass,
@@ -25,6 +27,13 @@ namespace KANBAN.Services.SpecialOrdering
         {
 
             IKBNOR210_2 = new KBNOR210_2(kbContext,
+            bearerClass,
+            ppm3Context,
+            fillDT,
+            log,
+            emailService);
+            
+            IKBNOR210_3 = new KBNOR210_3(kbContext,
             bearerClass,
             ppm3Context,
             fillDT,
