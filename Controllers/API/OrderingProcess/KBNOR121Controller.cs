@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using NPOI.OpenXmlFormats.Vml;
 using System.Data;
 using System.Globalization;
 using System.Net;
@@ -1834,10 +1835,10 @@ namespace KANBAN.Controllers.API.OrderingProcess
                     dateECI.Begining_Calculate = dateLast_Trip.ToString("yyyyMMdd");
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 _Log.WriteLogMsg("Update TB_Calculate_D :  Not Complete");
-                throw;
+                throw new Exception(ex.Message);
             }
 
             return dateECI;
@@ -1883,10 +1884,15 @@ namespace KANBAN.Controllers.API.OrderingProcess
 
                 if(Login_Shift == "D")
                 {
-                    _sql = "exec [dbo].[SP_CALCULATE_KBNOR120]";
-                    _dt = _FillDT.ExecuteSQL(_sql,LoginDate.ToString("yyyyMMdd"),
-                        obj.Supplier.Substring(0,4),obj.Supplier.Substring(5,1),
-                        obj.Store,obj.Kanban, obj.PartNo.Split("-")[0],
+                    _sql = "exec [dbo].[SP_CALCULATE_KBNOR120] @p0,@p1,@p2,@p3,@p4,@p5,@p6";
+                    //_dt = _FillDT.ExecuteSQL(_sql,LoginDate.ToString("yyyyMMdd"),
+                    //    obj.Supplier.Substring(0,4),obj.Supplier.Substring(5,1),
+                    //    obj.Store,obj.Kanban, obj.PartNo.Split("-")[0],
+                    //    obj.PartNo.Split("-")[1]);
+
+                    await _KB3Context.Database.ExecuteSqlRawAsync(_sql,LoginDate.ToString("yyyyMMdd"),
+                        obj.Supplier.Substring(0, 4), obj.Supplier.Substring(5, 1),
+                        obj.Store, obj.Kanban, obj.PartNo.Split("-")[0],
                         obj.PartNo.Split("-")[1]);
 
                     _Log.WriteLogMsg("message : Update TB_Calculate_D : SP_CALCULATE_KBNOR120");
@@ -1983,7 +1989,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
                     status = "500",
                     response = "Internal Server Error",
                     title = "Error",
-                    message = "Internal Server Error",
+                    message = ex.Message,
                     error = ex.Message
                 });
             }
@@ -2022,7 +2028,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
                     status = "500",
                     response = "Internal Server Error",
                     title = "Error",
-                    message = "Internal Server Error",
+                    message = ex.Message,
                     error = ex.Message
                 });
             }

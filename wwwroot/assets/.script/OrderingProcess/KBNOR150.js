@@ -126,12 +126,17 @@ $(document).ready(function () {
 
                     xItem.progress({ id: 'prgProcess', current: 10, label: 'INSERT TB_REC_HEADER AND TB_REC_DETAIL : {{##.##}} %' });
 
+                    var _ProcessDate = _CookieProcessDate.substring(0, 10)
+                    var _ProcessShift = _CookieProcessDate.substring(10, 11)
+
                     await xAjax.xExecuteJSON({
                         data: {
                             "Module": "[exec].[spKBNOR150_Regis]",
-                            "@Plant": ajexHeader.Plant,
-                            "@UserCode": ajexHeader.UserCode,
-                            "@F_OrderNo": _arMaster[i].F_OrderNo
+                            "@pPlant": ajexHeader.Plant,
+                            "@pUser": ajexHeader.UserCode,
+                            "@pOrderType": "N",
+                            "@pProcessDate": _ProcessDate.replaceAll("-", ""),
+                            "@pProcessShift": _ProcessShift,
                         },
                     });
 

@@ -259,7 +259,7 @@ const previewFunction = async (intRow,_command) => {
                 THeadR3.append(`<th>Pcs</th>`);
                 THeadR3.append(`<th>KB</th>`);
 
-                if (_dayColSpan != 0) THeadR2.append(`<th style="border:0px" colspan="${_dayColSpan}" class="bg-danger text-light">Day</th>`);
+                if (_dayColSpan != 0) THeadR2.append(`<th style="border:0px;background-color:#F65900" colspan="${_dayColSpan}" class="text-light">Day</th>`);
 
                 if (item.F_Period != 0) THeadR2.append(`<th style="border:0px" colspan="${item.F_Period}" class="bg-primary text-light">Night</th>`);
 
@@ -625,7 +625,7 @@ const addDetailToTable = async (dateSet, intRow) => {
         $(this).css("background-color", "#ced4da");
     });
 
-    $("table thead tr th[id*='TDay'], table thead tr th[id*='TNight']").each(function () {
+    $("table thead tr th[id*='TDay'], table thead tr th[id*='TNight']").each(async function () {
         //console.log($(this).attr("id"));
         if ($(this).attr("id").includes("1stT")) {
             let index = $(this).index() - 1; // -1 because index start at 0
@@ -634,7 +634,9 @@ const addDetailToTable = async (dateSet, intRow) => {
 
             if ($(this).attr("id").includes("Day")) {
                 if ($td.attr("id").includes("R1")) {
-                    $td.addClass("bg-danger");
+                    //$td.addClass("bg-danger");
+                    //console.log($td.attr("id"));
+                    $td.css("background-color", "#F65900");
                     $td.css("font-weight", "900");
                 }
             }
@@ -652,6 +654,9 @@ const addDetailToTable = async (dateSet, intRow) => {
             $td.text(""); // empty it if it in same shift
 
             let _prev$td = $("table tbody tr").find("td").eq(index - 1);
+            await $td.attr("style", "");
+            //console.log(_prev$td.attr("style"));
+            $td.attr("style",_prev$td.attr("style")); // add bg color from previous td)
             $td.addClass(_prev$td.attr("class")); // add bg class from previous td
         }
     });

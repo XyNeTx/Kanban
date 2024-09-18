@@ -249,7 +249,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
                     status = "500",
                     response = "Internal Server Error",
                     title = "Error",
-                    message = "Process Order is error.",
+                    message = ex.Message,
                     error = ex.Message
                 });
             }
@@ -364,7 +364,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
                     status = "500",
                     response = "Internal Server Error",
                     title = "Error",
-                    message = "Process Order Night is error.",
+                    message = ex.Message,
                     error = ex.Message
                 });
             }

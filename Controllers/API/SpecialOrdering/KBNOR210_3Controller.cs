@@ -105,7 +105,6 @@ namespace KANBAN.Controllers.API.SpecialOrder
         [HttpPost]
         public async Task<IActionResult> Unmerge(List<VM_Merge_KBNOR210_2> listObj) // ใช้เพราะไม่อยากสร้าง model ใหม่้เฉยๆ
         {
-
             try
             {
                 if(_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)

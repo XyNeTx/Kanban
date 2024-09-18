@@ -76,7 +76,7 @@ namespace KANBAN.Controllers.API.Master
                         {
                             F_Supplier_Code = x.F_Supplier_Cd + "-" + x.F_Supplier_Plant
                         })
-                        .AsEnumerable()
+                        .AsNoTracking().AsEnumerable()
                         .DistinctBy(x => x.F_Supplier_Code)
                         .OrderBy(x => x.F_Supplier_Code)
                         .ToList();
@@ -98,7 +98,7 @@ namespace KANBAN.Controllers.API.Master
                         {
                             F_Supplier_Code = x.F_Sup_Cd + "-" + x.F_Sup_Plant
                         })
-                        .AsEnumerable()
+                        .AsNoTracking().AsEnumerable()
                         .DistinctBy(x => x.F_Supplier_Code)
                         .OrderBy(x => x.F_Supplier_Code)
                         .ToList();
@@ -120,7 +120,7 @@ namespace KANBAN.Controllers.API.Master
                     status = "500",
                     response = "Internal Server Error",
                     title = "Internal Server Error",
-                    message = "Unexpected Error Occured",
+                    message = ex.Message.ToString(),
                     error = ex.Message.ToString()
                 });
             }
@@ -153,9 +153,7 @@ namespace KANBAN.Controllers.API.Master
                             F_Store_Code = x.F_Store_Code.Trim(),
                             F_Supplier_Code = x.F_Supplier_Cd + "-" + x.F_Supplier_Plant
                         })
-                        .AsEnumerable()
-                        .DistinctBy(x => x.F_Store_Code)
-                        .OrderBy(x => x.F_Store_Code)
+                        .AsNoTracking().AsEnumerable()
                         .ToList();
 
 
@@ -184,7 +182,8 @@ namespace KANBAN.Controllers.API.Master
                         response = "OK",
                         title = "Success",
                         message = "Data Found",
-                        data = data,
+                        data = data.DistinctBy(x => x.F_Store_Code)
+                        .OrderBy(x => x.F_Store_Code),
                         supplier_name = F_Supplier_Name
                     });
                 }
@@ -197,9 +196,7 @@ namespace KANBAN.Controllers.API.Master
                             F_Store_Code = x.F_Store_Cd.Trim(),
                             F_Supplier_Code = x.F_Sup_Cd + "-" + x.F_Sup_Plant
                         })
-                        .AsEnumerable()
-                        .DistinctBy(x => x.F_Store_Code)
-                        .OrderBy(x => x.F_Store_Code)
+                        .AsNoTracking().AsEnumerable()
                         .ToList();
 
                     if (!string.IsNullOrWhiteSpace(F_Supplier_Code))
@@ -227,7 +224,8 @@ namespace KANBAN.Controllers.API.Master
                         response = "OK",
                         title = "Success",
                         message = "Data Found",
-                        data = data,
+                        data = data.DistinctBy(x => x.F_Store_Code)
+                        .OrderBy(x => x.F_Store_Code),
                         supplier_name = F_Supplier_Name
                     });
                 }
@@ -239,7 +237,7 @@ namespace KANBAN.Controllers.API.Master
                     status = "500",
                     response = "Internal Server Error",
                     title = "Internal Server Error",
-                    message = "Unexpected Error Occured",
+                    message = ex.Message.ToString(),
                     error = ex.Message.ToString()
                 });
             }
@@ -292,7 +290,7 @@ namespace KANBAN.Controllers.API.Master
                     status = "500",
                     response = "Internal Server Error",
                     title = "Internal Server Error",
-                    message = "Unexpected Error Occured",
+                    message = ex.Message.ToString(),
                     error = ex.Message.ToString()
                 });
             }
@@ -368,7 +366,7 @@ namespace KANBAN.Controllers.API.Master
                     status = "500",
                     response = "Internal Server Error",
                     title = "Internal Server Error",
-                    message = "Unexpected Error Occured",
+                    message = ex.Message.ToString(),
                     error = ex.Message.ToString()
                 });
             }
@@ -468,7 +466,7 @@ namespace KANBAN.Controllers.API.Master
                     status = "500",
                     response = "Internal Server Error",
                     title = "Internal Server Error",
-                    message = "Unexpected Error Occured",
+                    message = ex.Message.ToString(),
                     error = ex.Message.ToString()
                 });
             }
@@ -546,7 +544,7 @@ namespace KANBAN.Controllers.API.Master
                     status = "500",
                     response = "Internal Server Error",
                     title = "Internal Server Error",
-                    message = "Unexpected Error Occured",
+                    message = ex.Message.ToString(),
                     error = ex.Message.ToString()
                 });
             }

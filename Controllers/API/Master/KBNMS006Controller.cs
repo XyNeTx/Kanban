@@ -776,7 +776,7 @@ namespace HINOSystem.Controllers.API.Master
             catch (Exception ex)
             {
                 _log.WriteErrorLog(ex.Message, _BearerClass.UserCode, _BearerClass.Device);
-                return null;
+                throw new Exception(ex.Message);
             }
         }
 

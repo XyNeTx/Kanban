@@ -484,6 +484,9 @@ $("#btnSearch").click(async function () {
 });
 
 $(document).on("click", "#tableMain tbody tr td", function (e) {
+    //console.log(e);
+    if (e.target.tagName == "INPUT") { return; }
+
     var index = $(this).index();
     var header = $("#tableMain thead tr th").eq(index).text();
 
@@ -498,12 +501,12 @@ $(document).on("click", "#tableMain tbody tr td", function (e) {
     }
 });
 
-$(document).on("keydown", "#tableMain .inputTrip", function (e) {
+$(document).on("keydown blur", "#tableMain .inputTrip", function (e) {
     var key = e.keyCode || e.which;
     var trip = $(this).val();
+    console.log(key);
 
-
-    if (key == 13) {
+    if (key === 13 || key === 0) {
         if (trip < 0) {
             $(this).parent().empty();
             $("#tableMain").DataTable().draw();
