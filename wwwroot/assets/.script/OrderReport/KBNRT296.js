@@ -81,8 +81,8 @@ $("#SummaryReportBtn").on("click", async function () {
         console.log("Complete 74");
         console.log(result);
         var filename = location.pathname.substring(location.pathname.lastIndexOf('/') + 1);
-        var reportUrl = "http://hmmt-app03/Reportserver/report/KB3/";
-        window.location.href = reportUrl + filename + '?userName=' + result.data + '&YearMonth=' + yearMonth + '&MonthYear=' + MonthYear +
+        var reportUrl = "http://hmmt-app03/Reports/Pages/ReportViewer.aspx?/KB3/";
+        window.location.href = reportUrl + filename + '&userName=' + result.data + '&YearMonth=' + yearMonth + '&MonthYear=' + MonthYear +
             '&Plant=' + result.data2 + '&OrderType=' + OrderType + '&SupFrom=' + supFrom + '&SupTo=' + supTo;
     }
     else {
@@ -133,8 +133,8 @@ $("#DetailReportBtn").on("click", async function () {
             });
         }
         var filename = location.pathname.substring(location.pathname.lastIndexOf('/') + 1)+"Detail";
-        var reportUrl = "http://hmmt-app03/Reportserver/report/KB3/";
-        window.location.href = reportUrl + filename + '?userName=' + result.data + '&YearMonth=' + yearMonth + '&MonthYear=' + MonthYear +
+        var reportUrl = "http://hmmt-app03/Reports/Pages/ReportViewer.aspx?/KB3/";
+        window.location.href = reportUrl + filename + '&userName=' + result.data + '&YearMonth=' + yearMonth + '&MonthYear=' + MonthYear +
             '&Plant=' + result.data2 + '&OrderType=' + OrderType + '&SupFrom=' + supFrom + '&SupTo=' + supTo;
     }
     else {

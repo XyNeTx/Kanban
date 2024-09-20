@@ -81,8 +81,8 @@
             then: function (result) {
                 if (result.status == 200) {
                     var filename = location.pathname.substring(location.pathname.lastIndexOf('/') + 1);
-                    var reportUrl = "http://hmmt-app03/Reportserver/report/KB3/";
-                    window.location.href = reportUrl + filename + '?HostName=' + result.data2 + '&UserName=' + result.data
+                    var reportUrl = "http://hmmt-app03/Reports/Pages/ReportViewer.aspx?/KB3/";
+                    window.location.href = reportUrl + filename + '&HostName=' + result.data2 + '&UserName=' + result.data
                         + '&UserCode=' + result.data3;
                 }
                 else {

@@ -111,6 +111,17 @@ namespace KANBAN.Controllers.API.OrderReport
 
                 List<TB_Inquriy_KB_rpt_TMP> InquriyList = new();
                 InquriyList = await _KB3Context.TB_Inquriy_KB_rpt_TMP.Where(x => x.F_Update_by == UserName && x.F_Host_Name == HostName).ToListAsync();
+                
+                if(InquriyList.Count == 0)
+                {
+                    return StatusCode(404, new
+                    {
+                        status = "404",
+                        response = "Not Found",
+                        message = "Data (Inquriy List) not found"
+                    });
+                }
+                
                 foreach (var inquriy in InquriyList)
                 {
                     var processDate = inquriy.F_Deli_date.Trim();

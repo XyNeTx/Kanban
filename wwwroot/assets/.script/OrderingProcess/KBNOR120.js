@@ -19,7 +19,7 @@ $(document).ready(function () {
         }
     );
 });
-$("#btnCalculate").click(function () {
+$("#btnCalculate").click(async function () {
     $("#divProgressBar").css("visibility", "visible");
     $("#widthProgressBar").css("width", "0%").attr("aria-valuenow", 0).removeClass("bg-success");
     $("#btnCalculate").prop("disabled", true);
@@ -43,22 +43,13 @@ $("#btnCalculate").click(function () {
         _url = "/api/KBNOR120/Process_Order_Night";
     }
 
-    _xLib.AJAX_Get(_url, { sDate: $("#txtProcessDate").val() },
-        function (success) {
+    var eventProcessOrder = await _xLib.AJAX_Get(_url, { sDate: $("#txtProcessDate").val() },
+        async function (success) {
             if (success.status == "200") {
                 //xSwal.success("Success", "Order Processed Successfully");
                 $("#widthProgressBar").css("width", "100%").attr("aria-valuenow", 100).addClass("bg-success");
                 $("#spanProgressBar").text("Calculating Normal Order Completed");
-                _xLib.AJAX_Get("/api/KBNOR120/Calculate", '',
-                    function (success) {
-                        if (success.status == "200") {
-                            xSplash.hide();
-                            $("#btnCalculate").prop("disabled", false);
-                            $("#divProgressBar").css("visibility", "hidden");
-                            xSwal.success("Success", "Data Calculated Successfully");
-                        }
-                    }
-                );
+                return success;
             }
         },
         function (error) {
@@ -69,5 +60,23 @@ $("#btnCalculate").click(function () {
         }
     );
     
+    if(eventProcessOrder.status == "200")
+    {
+        await _xLib.AJAX_Get("/api/KBNOR120/Calculate", '',
+            async function (success) {
+                if (success.status == "200") {
+                    await clearInterval(_interval);
+                    xSplash.hide();
+                    $("#btnCalculate").prop("disabled", false);
+                    $("#divProgressBar").css("visibility", "hidden");
+                    xSwal.success("Success", "Data Calculated Successfully");
+                }
+            }
+        );
 
+        var oShell = new ActiveXObject("Shell.Application");
+        var commandtoRun = "\\\\hmmta-tpcap\\kanban\\wwwroot\\Storage\\New_Kanban_F3_AutoRun_RecalculateBL.exe";
+        oShell.ShellExecute(commandtoRun, "", "", "open", "1");
+
+    }
 });

@@ -36,8 +36,8 @@ $(document).ready(function () {
             var dateTo = moment($('#itmDeliveryTo').val(), "DD/MM/YYYY").format("YYYY-MM-DD") ?? '';
         }
         else {
-            var dateFrom = '';
-            var dateTo = '';
+            var dateFrom = '2024-09-01';
+            var dateTo = '2999-12-31';
         }
 
         await xAjax.Execute({
@@ -107,8 +107,8 @@ $(document).ready(function () {
             var DeliveryFrom = moment($('#itmDelivery').val(), "DD/MM/YYYY").format("YYYY-MM-DD") ?? '';
             var DeliveryTo = moment($('#itmDeliveryTo').val(), "DD/MM/YYYY").format("YYYY-MM-DD") ?? '';
         } else {
-            var DeliveryFrom = '';
-            var DeliveryTo = '';
+            var DeliveryFrom = '2024-09-01';
+            var DeliveryTo = '2999-12-31';
         }
 
         var _dt = await xAjax.ExecuteJSON({

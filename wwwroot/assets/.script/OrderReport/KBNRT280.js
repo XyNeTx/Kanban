@@ -41,10 +41,10 @@ $("#ReportBtn").on("click", async function () {
             console.log(result);
             if (result.status === "200") {
                 var filename = location.pathname.substring(location.pathname.lastIndexOf('/') + 1);
-                var reportUrl = "http://hmmt-app03/Reportserver/report/KB3/";
+                var reportUrl = "http://hmmt-app03/Reports/Pages/ReportViewer.aspx?/KB3/";
                 if (ReportChecked === "S") { filename += "SUM" }
                 else if (ReportChecked === "D") { filename += "DETAIL" }
-                window.location.href = reportUrl + filename + '?userName=' + result.data + '&delayChecked=' + DelayCheck +
+                window.location.href = reportUrl + filename + '&userName=' + result.data + '&delayChecked=' + DelayCheck +
                     '&Plant=' + result.data2 + '&Type=' + OrderChecked + '&DateFrom=' + DateFromShow + '&DateTo=' + DateToShow;
             }
             else {

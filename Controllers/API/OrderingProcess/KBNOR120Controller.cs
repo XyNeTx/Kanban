@@ -4,6 +4,7 @@ using KANBAN.Context;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System.Diagnostics;
 
 namespace KANBAN.Controllers.API.OrderingProcess
@@ -109,16 +110,8 @@ namespace KANBAN.Controllers.API.OrderingProcess
                     message = "Please Login First"
                 });
 
-
-                string dir = Directory.GetCurrentDirectory();
-
-                ProcessStartInfo startInfo = new ProcessStartInfo();
-                startInfo.FileName = "\\\\156.71.5.160\\hcst\\Source\\New_Kanban_F3\\5.Program\\New_Kanban_F3_AutoRun\\New_Kanban_F3_AutoRun_RecalculateBL\\New_Kanban_AutoRun_RecalculateBL\\bin\\Debug\\New_Kanban_F3_AutoRun_RecalculateBL.exe";
-                startInfo.UseShellExecute = true;
-                startInfo.CreateNoWindow = true;
-                startInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                Process.Start(startInfo);
-
+                await ProcessStartEXE();
+                // Update the database after successful process execution
                 await _KB3Context.Database.ExecuteSqlRawAsync($@"UPDATE TB_MS_PARAMETER SET F_VALUE2 ='2',F_Update_Date=Getdate()
                     ,F_Update_By='{UserCode}' where F_COde='ST'");
 
@@ -135,19 +128,57 @@ namespace KANBAN.Controllers.API.OrderingProcess
                     response = "OK",
                     title = "Success",
                     message = "Calculate is success.",
+                    //output = output,
+                    //exited = exited
                 });
+
 
             }
             catch (Exception ex)
             {
+                _Log.WriteLogMsg("Calculate is error : " + ex.Message);
                 return StatusCode(500, new
                 {
                     status = "500",
                     response = "Internal Server Error",
                     title = "Error",
-                    message = "Calculate is error.",
+                    message = ex.Message,
                     error = ex.Message
                 });
+            }
+        }
+
+        public async Task ProcessStartEXE()
+        {
+            try
+            {
+                using (Process p = new Process())
+                {
+                    p.StartInfo.FileName = "schtasks";
+                    p.StartInfo.Arguments = "/run /tn \"KB3_BL\"";  // Name of the scheduled task
+                    p.StartInfo.UseShellExecute = false;
+                    p.StartInfo.CreateNoWindow = true;
+                    p.StartInfo.RedirectStandardOutput = true;  // Capture output
+                    p.StartInfo.RedirectStandardError = true;  // Capture errors too
+
+                    p.Start();
+
+                    // Read output and error streams asynchronously
+                    string output = await p.StandardOutput.ReadToEndAsync();
+                    string error = await p.StandardError.ReadToEndAsync();
+
+                    // Wait for the process to exit asynchronously
+                    await p.WaitForExitAsync();
+
+                    // Log both the output and any error that occurred
+                    _Log.WriteLog("Start Process EXE: " + p.StartInfo.FileName + " Output: " + output + " Error: " + error, UserCode, _BearerClass.Device);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _Log.WriteLogMsg("Process Start EXE is error : " + ex.Message);
+                throw new Exception(ex.Message);
             }
         }
 
@@ -211,7 +242,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
                     });
                 }
 
-                _Log.WriteLog("Get Data Calculate_H : " + _DT.Rows.Count + "Records | " + _SQL, UserCode, _BearerClass.Device);
+                _Log.WriteLog("Get Data Calculate_H : " + _DT.Rows.Count + " Records | " + _SQL, UserCode, _BearerClass.Device);
 
                 for(int i = 0; i < _DT.Rows.Count; i++)
                 {
@@ -243,6 +274,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
             }
             catch (Exception ex)
             {
+                _Log.WriteLogMsg("Process Order is error : " + ex.Message);
                 _KB3Transaction.RollbackToSavepoint("BeforeProcessOrder");
                 return StatusCode(500, new
                 {
@@ -358,6 +390,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
             }
             catch (Exception ex)
             {
+                _Log.WriteLogMsg("Process Order Night is error : " + ex.Message);
                 _KB3Transaction.RollbackToSavepoint("BeforeProcessOrderNight");
                 return StatusCode(500, new
                 {

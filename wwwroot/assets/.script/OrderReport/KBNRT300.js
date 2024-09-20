@@ -131,8 +131,8 @@
                 console.log(result);
                 if (result.status === "200") {
                     var filename = location.pathname.substring(location.pathname.lastIndexOf('/') + 1);
-                    var reportUrl = "http://hmmt-app03/Reportserver/report/KB3/";
-                    window.location.href = reportUrl + filename + kbnType + '?SupFrom=' + supFrom + '&SupTo=' + supTo + '&UserName=' + result.data
+                    var reportUrl = "http://hmmt-app03/Reports/Pages/ReportViewer.aspx?/KB3/";
+                    window.location.href = reportUrl + filename + kbnType + '&SupFrom=' + supFrom + '&SupTo=' + supTo + '&UserName=' + result.data
                         + '&KBNFrom=' + kbnFrom + '&KBNTo=' + kbnTo + '&DateFrom=' + dateFrom + '&DateTo=' + dateTo
                         + '&ShiftFrom=' + shiftFrom + '&ShiftTo=' + shiftTo + '&TripFrom=' + tripFrom + '&TripTo=' + tripTo + '&KBNType=' + kbnType;
                 }

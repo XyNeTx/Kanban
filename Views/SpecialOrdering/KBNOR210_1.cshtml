@@ -82,8 +82,8 @@
                                 </div>
                                 <div class="col">
                                     <div class="row">
-                                        <a class="btn btn-outline-dark col" id="btnSearch">Merge Report</a>
-                                        <a class="btn btn-outline-dark col" id="btnClear">Delete Parts Report</a>
+                                        <a class="btn btn-outline-dark col" id="btnMergeReport">Merge Report</a>
+                                        <a class="btn btn-outline-dark col" id="btnDeletePartsReport">Delete Parts Report</a>
                                     </div>
                                 </div>
                             </div>
@@ -113,16 +113,16 @@
                         </div>
 
                         <div class="col">
-                            <a class="btn btn-success " id="btnUseCommonParts">Use Common Parts</a>
-                            <a class="btn btn-success mt-1" id="btnSpecialStockReport">Special Stock Report</a>
-                            <a class="btn btn-success mt-1" id="btnSetupStockRemain">Setup Stock Remain</a>
+                            <a class="btn btn-success text-light " id="btnUseCommonParts">Use Common Parts</a>
+                            <a class="btn btn-success mt-1 text-light" id="btnSpecialStockReport">Special Stock Report</a>
+                            <a class="btn btn-success mt-1 text-light" id="btnSetupStockRemain">Setup Stock Remain</a>
                         </div>
 
                     </div>
 
                     <div class="row mt-4">
                         <a class="btn btn-outline-dark ms-2 col-1" id="btnCheck">CheckAll</a>
-                        <a class="btn btn-outline-dark col-1" id="btnCheck">UncheckAll</a>
+                        <a class="btn btn-outline-dark col-1" id="btnUncheck">UncheckAll</a>
                         <div class="col-2"></div>
                         <div class="input-group col-4">
                             <label class="input-group-text">New Delivery Date :</label>
@@ -131,8 +131,14 @@
                     </div>
 
                     <div class="mt-4">
-                        <table id="tableMain" class="table w-100">
+                        <table id="tableMain" class="table w-100 table-bordered">
                         </table>
+                    </div>
+
+                    <div class="row mt-4 justify-content-end">
+                        <a class="btn btn-primary col-1 text-light" id="btnSave">Save</a>
+                        <a class="btn btn-danger col-1 text-light" id="btnDelete">Delete</a>
+                        <a class="btn btn-warning col-1 text-light" id="btnExit">Exit</a>
                     </div>
 
                 </form>

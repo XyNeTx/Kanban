@@ -15,15 +15,33 @@ class xLib {
     }
 
     TrimJSON(jsonResult) {
-        for (let each in jsonResult.data) {
-            if (jsonResult.data[each] == null) {
-                jsonResult.data[each] = '';
+        try {
+            if (jsonResult.hasOwnProperty('data')) {
+                for (let each in jsonResult.data) {
+                    if (jsonResult.data[each] == null) {
+                        jsonResult.data[each] = '';
+                    }
+                    else {
+                        if (typeof jsonResult[each][eachObj] == 'string') jsonResult[each][eachObj] = jsonResult[each][eachObj].trim();
+                    }
+                }
             }
             else {
-                if (typeof jsonResult[each][eachObj] == 'string') jsonResult[each][eachObj] = jsonResult[each][eachObj].trim();
+                for (let each in jsonResult) {
+                    if (jsonResult[each] == null) {
+                        jsonResult[each] = '';
+                    }
+                    else {
+                        if (typeof jsonResult[each] == 'string') jsonResult[each] = jsonResult[each].trim();
+                    }
+                }
             }
+            return jsonResult;
         }
-        return jsonResult;
+        catch (e) {
+            console.error(e);
+            return jsonResult;
+        }
     }
 
     JSONparseAndTrim(jsonResult) {
@@ -48,10 +66,11 @@ class xLib {
 
     JSONparseMixData(jsonResult) {
         if (jsonResult.hasOwnProperty('data')) {
+            jsonResult.data = JSON.parse(jsonResult.data);
             for (var key in jsonResult.data) {
                 try {
-                    jsonResult.data[key] = JSON.parse(jsonResult.data[key]);
-                    if (typeof jsonResult.data[key] == 'object') jsonResult.data[key] = this.TrimArrayJSON(jsonResult.data[key]);
+                    //jsonResult.data[key] = JSON.parse(jsonResult.data[key]);
+                    if (typeof jsonResult.data[key] == 'object') jsonResult.data[key] = this.TrimJSON(jsonResult.data[key]);
                     else jsonResult.data[key] = this.TrimJSON(jsonResult.data[key]);
                 }
                 catch (e) {
@@ -120,6 +139,7 @@ class xLib {
             data: data,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
+            timeout: 5400000,
             success: async function (xhr, status) {
                 //if (xhr.hasOwnProperty('data')) {
                 //    xhr.data = await JSON.parse(xhr.data);
@@ -196,6 +216,7 @@ class xLib {
             headers: ajexHeader,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
+            timeout: 5400000,
             success: async function (xhr, status) {
                 //if (xhr.hasOwnProperty('data')) {
                 //    xhr.data = await JSON.parse(xhr.data);
@@ -267,10 +288,11 @@ class xLib {
         return $.ajax({
             type: "POST",
             url: url,
-            data: data,
+            data: typeof data == 'string' ? data : JSON.stringify(data),
             headers: ajexHeader,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
+            timeout: 5400000,
             success: successFn,
             error: async function (xhr, status, error) {
                 if (xhr.status == 401) {
@@ -336,10 +358,11 @@ class xLib {
         return $.ajax({
             type: "POST",
             url: url,
-            data: data,
+            data: typeof data == 'string' ? data : JSON.stringify(data),
             headers: ajexHeader,
             contentType: "text/plain; charset=utf-8",
             dataType: "json",
+            timeout: 5400000,
             success: successFn,
             error: async function (xhr, status, error) {
                 if (xhr.status == 401) {

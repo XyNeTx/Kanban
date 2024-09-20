@@ -89,8 +89,8 @@
 
         var userName = $("#profile-avatar").prop("title");
 
-        var reportUrl = "http://hmmt-app03/Reportserver/report/KB3/";
-        window.location.href = reportUrl + filename + '?StoreFrom=' + storeFrom + '&StoreTo=' + storeTo +
+        var reportUrl = "http://hmmt-app03/Reports/Pages/ReportViewer.aspx?/KB3/";
+        window.location.href = reportUrl + filename + '&StoreFrom=' + storeFrom + '&StoreTo=' + storeTo +
         '&MonthFrom=' + monthFrom + '&MonthTo=' + monthTo + '&UserName=' + userName;
     });
 });

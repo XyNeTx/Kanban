@@ -85,8 +85,8 @@
         }
         var userName = $("#profile-avatar").prop("title");
         var filename = location.pathname.substring(location.pathname.lastIndexOf('/') + 1);
-        var reportUrl = "http://hmmt-app03/Reportserver/report/KB3/";
-        window.location.href = reportUrl + filename + '?MonthFrom=' + monthFrom + '&MonthTo=' + monthTo +
+        var reportUrl = "http://hmmt-app03/Reports/Pages/ReportViewer.aspx?/KB3/";
+        window.location.href = reportUrl + filename + '&MonthFrom=' + monthFrom + '&MonthTo=' + monthTo +
             '&SupFrom=' + supFrom + '&SupTo=' + supTo + '&UserName=' + userName;
     });
 });

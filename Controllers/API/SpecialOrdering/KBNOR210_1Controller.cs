@@ -1,7 +1,9 @@
 ﻿using HINOSystem.Libs;
+using KANBAN.Models.KB3.SpecialOrdering;
 using KANBAN.Services.SpecialOrdering;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace KANBAN.Controllers.API.SpecialOrder
 {
@@ -135,6 +137,94 @@ namespace KANBAN.Controllers.API.SpecialOrder
                     message = "Data Found",
                     data = data
                 });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    response = "Error",
+                    message = ex.Message
+                });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetPOMergeData(string? PDSNo, string? SuppCd, string? PartNo, bool? chkDeli, string? DeliFrom, string? DeliTo)
+        {
+            try
+            {
+
+                if(_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
+                {
+                    return StatusCode(_BearerClass.Status, new
+                    {
+                        status = _BearerClass.Status,
+                        response = _BearerClass.Response,
+                        message = _BearerClass.Message
+                    });
+                }
+
+                var data = await _services.IKBNOR210_1.GetPOMergeData(PDSNo, SuppCd, PartNo, chkDeli, DeliFrom, DeliTo);
+
+                if (data.Rows.Count == 0)
+                {
+                    return StatusCode(404, new
+                    {
+                        status = "404",
+                        response = "Not Found",
+                        message = "Data not found"
+                    });
+                }
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data Found",
+                    data = JsonConvert.SerializeObject(data)
+                });
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    response = "Error",
+                    message = ex.Message
+                });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Save (List<VM_Save_KBNOR210_1> obj)
+        {
+            try
+            {
+                if (_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
+                {
+                    return StatusCode(_BearerClass.Status, new
+                    {
+                        status = _BearerClass.Status,
+                        response = _BearerClass.Response,
+                        message = _BearerClass.Message
+                    });
+                }
+
+
+                foreach (var item in obj)
+                {
+                    await _services.IKBNOR210_1.Save(item);
+                }
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data saved"
+                });
+
             }
             catch (Exception ex)
             {

@@ -264,15 +264,15 @@ xAjax.onClick("#ReportBtn", function () {
             //console.log(result);
             if (result.status === "200") {
                 var filename = location.pathname.substring(location.pathname.lastIndexOf('/') + 1);
-                var reportUrl = "http://hmmt-app03/Reportserver/report/KB3/";
+                var reportUrl = "http://hmmt-app03/Reports/Pages/ReportViewer.aspx?/KB3/";
                 if (dock === "GW") {
-                    var fullUrl = reportUrl + filename + 'GW?SupFrom=' + supFrom + '&SupTo=' + supTo + '&UserName=' + result.data
+                    var fullUrl = reportUrl + filename + 'GW&SupFrom=' + supFrom + '&SupTo=' + supTo + '&UserName=' + result.data
                         + '&KBNFrom=' + kbnFrom + '&KBNTo=' + kbnTo + '&Date=' + date + '&Shift=' + shift
                         + '&StoreFrom=' + storeFrom + '&StoreTo=' + storeTo + '&PartFrom=' + partFrom + '&PartTo=' + partTo + '&Dock=' + dock;
                     window.open(fullUrl);
                 }
                 else {
-                    var fullUrl = reportUrl + filename + '?SupFrom=' + supFrom + '&SupTo=' + supTo + '&UserName=' + result.data
+                    var fullUrl = reportUrl + filename + '&SupFrom=' + supFrom + '&SupTo=' + supTo + '&UserName=' + result.data
                         + '&KBNFrom=' + kbnFrom + '&KBNTo=' + kbnTo + '&Date=' + date + '&Shift=' + shift
                         + '&StoreFrom=' + storeFrom + '&StoreTo=' + storeTo + '&PartFrom=' + partFrom + '&PartTo=' + partTo + '&Dock=' + dock;
                     window.open(fullUrl);
@@ -311,12 +311,12 @@ xAjax.onClick("#ReportAllBtn", function () {
             //console.log(result);
             if (result.status === "200") {
                 var filename = location.pathname.substring(location.pathname.lastIndexOf('/') + 1);
-                var reportUrl = "http://hmmt-app03/Reportserver/report/KB3/";
-                var fullUrl = reportUrl + filename + '?SupFrom=' + supFrom + '&SupTo=' + supTo + '&UserName=' + result.data
+                var reportUrl = "http://hmmt-app03/Reports/Pages/ReportViewer.aspx?/KB3/";
+                var fullUrl = reportUrl + filename + '&SupFrom=' + supFrom + '&SupTo=' + supTo + '&UserName=' + result.data
                     + '&KBNFrom=' + kbnFrom + '&KBNTo=' + kbnTo + '&Date=' + date + '&Shift=' + shift
                     + '&StoreFrom=' + storeFrom + '&StoreTo=' + storeTo + '&PartFrom=' + partFrom + '&PartTo=' + partTo + '&Dock=' + dock;
                 window.open(fullUrl);
-                var fullUrlGW = reportUrl + filename + 'GW?SupFrom=' + supFrom + '&SupTo=' + supTo + '&UserName=' + result.data
+                var fullUrlGW = reportUrl + filename + 'GW&SupFrom=' + supFrom + '&SupTo=' + supTo + '&UserName=' + result.data
                     + '&KBNFrom=' + kbnFrom + '&KBNTo=' + kbnTo + '&Date=' + date + '&Shift=' + shift
                     + '&StoreFrom=' + storeFrom + '&StoreTo=' + storeTo + '&PartFrom=' + partFrom + '&PartTo=' + partTo + '&Dock=GW';
                 window.open(fullUrlGW);

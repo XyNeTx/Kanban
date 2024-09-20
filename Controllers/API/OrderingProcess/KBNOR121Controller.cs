@@ -570,14 +570,14 @@ namespace KANBAN.Controllers.API.OrderingProcess
 
                 DT_Header = _FillDT.ExecuteSQL(_SQL,
                     Start_Date, End_Date, obj.Supplier.Substring(0, 4), obj.Supplier.Substring(5, 1),
-                    string.IsNullOrWhiteSpace(obj.Kanban) ? DBNull.Value : obj.Kanban,
-                    string.IsNullOrWhiteSpace(obj.KanbanTo) ? DBNull.Value : obj.KanbanTo,
-                    string.IsNullOrWhiteSpace(obj.Store) ? DBNull.Value : obj.Store,
-                    string.IsNullOrWhiteSpace(obj.StoreTo) ? DBNull.Value : obj.StoreTo,
                     string.IsNullOrWhiteSpace(obj.PartNo) ? DBNull.Value : obj.PartNo.Substring(0, 10),
                     string.IsNullOrWhiteSpace(obj.PartNoTo) ? DBNull.Value : obj.PartNoTo.Substring(0, 10),
                     string.IsNullOrWhiteSpace(obj.PartNo) ? DBNull.Value : obj.PartNo.Substring(11, 2),
-                    string.IsNullOrWhiteSpace(obj.PartNoTo) ? DBNull.Value : obj.PartNoTo.Substring(11, 2), DBNull.Value);
+                    string.IsNullOrWhiteSpace(obj.PartNoTo) ? DBNull.Value : obj.PartNoTo.Substring(11, 2),
+                    string.IsNullOrWhiteSpace(obj.Kanban) ? DBNull.Value : obj.Kanban,
+                    string.IsNullOrWhiteSpace(obj.KanbanTo) ? DBNull.Value : obj.KanbanTo,
+                    string.IsNullOrWhiteSpace(obj.Store) ? DBNull.Value : obj.Store,
+                    string.IsNullOrWhiteSpace(obj.StoreTo) ? DBNull.Value : obj.StoreTo, DBNull.Value);
 
                 if (DT_Header.Rows.Count == 0)
                 {
@@ -594,14 +594,14 @@ namespace KANBAN.Controllers.API.OrderingProcess
 
                 DT_Detail = _FillDT.ExecuteSQL(_SQL,
                     Start_Date, End_Date, obj.Supplier.Substring(0, 4), obj.Supplier.Substring(5, 1),
-                    string.IsNullOrWhiteSpace(obj.Kanban) ? DBNull.Value : obj.Kanban,
-                    string.IsNullOrWhiteSpace(obj.KanbanTo) ? DBNull.Value : obj.KanbanTo,
-                    string.IsNullOrWhiteSpace(obj.Store) ? DBNull.Value : obj.Store,
-                    string.IsNullOrWhiteSpace(obj.StoreTo) ? DBNull.Value : obj.StoreTo,
                     string.IsNullOrWhiteSpace(obj.PartNo) ? DBNull.Value : obj.PartNo.Substring(0, 10),
                     string.IsNullOrWhiteSpace(obj.PartNoTo) ? DBNull.Value : obj.PartNoTo.Substring(0, 10),
                     string.IsNullOrWhiteSpace(obj.PartNo) ? DBNull.Value : obj.PartNo.Substring(11, 2),
-                    string.IsNullOrWhiteSpace(obj.PartNoTo) ? DBNull.Value : obj.PartNoTo.Substring(11, 2), DBNull.Value);
+                    string.IsNullOrWhiteSpace(obj.PartNoTo) ? DBNull.Value : obj.PartNoTo.Substring(11, 2),
+                    string.IsNullOrWhiteSpace(obj.Kanban) ? DBNull.Value : obj.Kanban,
+                    string.IsNullOrWhiteSpace(obj.KanbanTo) ? DBNull.Value : obj.KanbanTo,
+                    string.IsNullOrWhiteSpace(obj.Store) ? DBNull.Value : obj.Store,
+                    string.IsNullOrWhiteSpace(obj.StoreTo) ? DBNull.Value : obj.StoreTo, DBNull.Value);
 
                 if (DT_Detail.Rows.Count == 0)
                 {
@@ -618,14 +618,14 @@ namespace KANBAN.Controllers.API.OrderingProcess
 
                 DT_Volume = _FillDT.ExecuteSQL(_SQL,
                     Start_Date, End_Date, obj.Supplier.Substring(0, 4), obj.Supplier.Substring(5, 1),
-                    string.IsNullOrWhiteSpace(obj.Kanban) ? DBNull.Value : obj.Kanban,
-                    string.IsNullOrWhiteSpace(obj.KanbanTo) ? DBNull.Value : obj.KanbanTo,
-                    string.IsNullOrWhiteSpace(obj.Store) ? DBNull.Value : obj.Store,
-                    string.IsNullOrWhiteSpace(obj.StoreTo) ? DBNull.Value : obj.StoreTo,
                     string.IsNullOrWhiteSpace(obj.PartNo) ? DBNull.Value : obj.PartNo.Substring(0, 10),
                     string.IsNullOrWhiteSpace(obj.PartNoTo) ? DBNull.Value : obj.PartNoTo.Substring(0, 10),
                     string.IsNullOrWhiteSpace(obj.PartNo) ? DBNull.Value : obj.PartNo.Substring(11, 2),
-                    string.IsNullOrWhiteSpace(obj.PartNoTo) ? DBNull.Value : obj.PartNoTo.Substring(11, 2), DBNull.Value);
+                    string.IsNullOrWhiteSpace(obj.PartNoTo) ? DBNull.Value : obj.PartNoTo.Substring(11, 2),
+                    string.IsNullOrWhiteSpace(obj.Kanban) ? DBNull.Value : obj.Kanban,
+                    string.IsNullOrWhiteSpace(obj.KanbanTo) ? DBNull.Value : obj.KanbanTo,
+                    string.IsNullOrWhiteSpace(obj.Store) ? DBNull.Value : obj.Store,
+                    string.IsNullOrWhiteSpace(obj.StoreTo) ? DBNull.Value : obj.StoreTo, DBNull.Value);
 
                 if (DT_Volume.Rows.Count == 0)
                 {
@@ -642,14 +642,14 @@ namespace KANBAN.Controllers.API.OrderingProcess
 
                 DT_AdjustOrder_Trip = _FillDT.ExecuteSQL(_SQL,
                     Start_Date, End_Date, obj.Supplier.Substring(0, 4), obj.Supplier.Substring(5, 1),
-                    string.IsNullOrWhiteSpace(obj.Kanban) ? DBNull.Value : obj.Kanban,
-                    string.IsNullOrWhiteSpace(obj.KanbanTo) ? DBNull.Value : obj.KanbanTo,
-                    string.IsNullOrWhiteSpace(obj.Store) ? DBNull.Value : obj.Store,
-                    string.IsNullOrWhiteSpace(obj.StoreTo) ? DBNull.Value : obj.StoreTo,
                     string.IsNullOrWhiteSpace(obj.PartNo) ? DBNull.Value : obj.PartNo.Substring(0, 10),
                     string.IsNullOrWhiteSpace(obj.PartNoTo) ? DBNull.Value : obj.PartNoTo.Substring(0, 10),
                     string.IsNullOrWhiteSpace(obj.PartNo) ? DBNull.Value : obj.PartNo.Substring(11, 2),
-                    string.IsNullOrWhiteSpace(obj.PartNoTo) ? DBNull.Value : obj.PartNoTo.Substring(11, 2), DBNull.Value);
+                    string.IsNullOrWhiteSpace(obj.PartNoTo) ? DBNull.Value : obj.PartNoTo.Substring(11, 2),
+                    string.IsNullOrWhiteSpace(obj.Kanban) ? DBNull.Value : obj.Kanban,
+                    string.IsNullOrWhiteSpace(obj.KanbanTo) ? DBNull.Value : obj.KanbanTo,
+                    string.IsNullOrWhiteSpace(obj.Store) ? DBNull.Value : obj.Store,
+                    string.IsNullOrWhiteSpace(obj.StoreTo) ? DBNull.Value : obj.StoreTo, DBNull.Value);
 
                 if (DT_AdjustOrder_Trip.Rows.Count == 0)
                 {
@@ -666,12 +666,12 @@ namespace KANBAN.Controllers.API.OrderingProcess
 
                 DT_Actual_Receive = _FillDT.ExecuteSQL(_SQL,
                     Start_Date, End_Date, obj.Supplier.Substring(0, 4), obj.Supplier.Substring(5, 1),
-                    string.IsNullOrWhiteSpace(obj.Store) ? DBNull.Value : obj.Store,
-                    string.IsNullOrWhiteSpace(obj.StoreTo) ? DBNull.Value : obj.StoreTo,
                     string.IsNullOrWhiteSpace(obj.PartNo) ? DBNull.Value : obj.PartNo.Substring(0, 10),
                     string.IsNullOrWhiteSpace(obj.PartNoTo) ? DBNull.Value : obj.PartNoTo.Substring(0, 10),
                     string.IsNullOrWhiteSpace(obj.PartNo) ? DBNull.Value : obj.PartNo.Substring(11, 2),
-                    string.IsNullOrWhiteSpace(obj.PartNoTo) ? DBNull.Value : obj.PartNoTo.Substring(11, 2));
+                    string.IsNullOrWhiteSpace(obj.PartNoTo) ? DBNull.Value : obj.PartNoTo.Substring(11, 2),
+                    string.IsNullOrWhiteSpace(obj.Store) ? DBNull.Value : obj.Store,
+                    string.IsNullOrWhiteSpace(obj.StoreTo) ? DBNull.Value : obj.StoreTo);
 
 
                 return Ok(new

@@ -228,12 +228,12 @@ async function ReportClick() {
         then: function (result) {
             if (result.status === "200") {
                 var filename = location.pathname.substring(location.pathname.lastIndexOf('/') + 1);
-                var reportUrl = "http://hmmt-app03/Reportserver/report/KB3/";
+                var reportUrl = "http://hmmt-app03/Reports/Pages/ReportViewer.aspx?/KB3/";
                 prodMonth = prodMonth.replaceAll("-", "");
-                window.location.href = reportUrl + filename + '?prodMonth=' + prodMonth + '&Revision=' + result.data2 +
+                window.location.href = reportUrl + filename + '&prodMonth=' + prodMonth + '&Revision=' + result.data2 +
                     '&SupFrom=' + supFrom + '&SupTo=' + supTo + '&KBNFrom=' + kbnFrom + '&KBNTo=' + kbnTo +
                     '&PartFrom=' + partFrom + '&PartTo=' + partTo + '&StoreFrom=' + storeFrom + '&StoreTo=' + storeTo +
-                    '&UserName=' + result.data + '&Status=' + status;
+                    '&UserName=' + result.data + '&Status=' + "";
             }
             else {
                 return xSwal.Error(result.title, result.message);
@@ -273,9 +273,9 @@ async function AbnormalReport() {
         then: function (result) {
             if (result.status === "200") {
                 var filename = location.pathname.substring(location.pathname.lastIndexOf('/') + 1);
-                var reportUrl = "http://hmmt-app03/Reportserver/report/KB3/";
+                var reportUrl = "http://hmmt-app03/Reports/Pages/ReportViewer.aspx?/KB3/";
                 prodMonth = prodMonth.replaceAll("-", "");
-                window.location.href = reportUrl + filename + '?prodMonth=' + prodMonth + '&Revision=' + result.data2 +
+                window.location.href = reportUrl + filename + '&prodMonth=' + prodMonth + '&Revision=' + result.data2 +
                     '&SupFrom=' + supFrom + '&SupTo=' + supTo + '&KBNFrom=' + kbnFrom + '&KBNTo=' + kbnTo +
                     '&PartFrom=' + partFrom + '&PartTo=' + partTo + '&StoreFrom=' + storeFrom + '&StoreTo=' + storeTo +
                     '&UserName=' + result.data + '&Status=' + status;

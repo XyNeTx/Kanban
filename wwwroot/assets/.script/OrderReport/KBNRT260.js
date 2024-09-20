@@ -48,9 +48,9 @@ async function ReportClick() {
         then: function (result) {
             if (result.status === "200") {
                 var filename = location.pathname.substring(location.pathname.lastIndexOf('/') + 1);
-                var reportUrl = "http://hmmt-app03/Reportserver/report/KB3/";
+                var reportUrl = "http://hmmt-app03/Reports/Pages/ReportViewer.aspx?/KB3/";
                 prodMonth = prodMonth.replaceAll("-", "");
-                window.location.href = reportUrl + "KBNRT260" + '?prodMonth=' + prodMonth + '&checkedValue=' + checkedValue + '&UserName=' + result.data + '&Revision=' + Revision;
+                window.location.href = reportUrl + "KBNRT260" + '&prodMonth=' + prodMonth + '&checkedValue=' + checkedValue + '&UserName=' + result.data + '&Revision=' + Revision;
             }
             else {
                 return xSwal.Error(result.title, result.message);

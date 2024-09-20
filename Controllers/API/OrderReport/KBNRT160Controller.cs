@@ -57,28 +57,28 @@ namespace KANBAN.Controllers.API.OrderReport
 
                 var supplierDB = await _KB3Context.TB_MS_PartOrder.Select(x => new
                 {
-                    Sup_CD = x.F_Supplier_Cd.Trim() + '-' + x.F_Supplier_Plant.ToString().Trim(),
-                }).OrderBy(x => x.Sup_CD).Distinct().ToListAsync();
+                    Sup_CD = x.F_Supplier_Cd.Trim() + "-" + x.F_Supplier_Plant.ToString().Trim(),
+                }).ToListAsync();
 
                 var kanbanDB = await _KB3Context.TB_MS_PartOrder.Select(x => new
                 {
                     F_Sebango = x.F_Kanban_No
-                }).OrderBy(x => x.F_Sebango).Distinct().ToListAsync();
+                }).ToListAsync();
 
                 var storeDB = await _KB3Context.TB_MS_PartOrder.Select(x => new
                 {
                     F_Store_CD = x.F_Store_Code
-                }).OrderBy(x => x.F_Store_CD).Distinct().ToListAsync();
+                }).ToListAsync();
 
                 var partDB = await _KB3Context.TB_MS_PartOrder.Select(x => new
                 {
-                    prt_no = x.F_Part_No + '-' + x.F_Ruibetsu.Trim()
-                }).OrderBy(x => x.prt_no).Distinct().ToListAsync();
+                    prt_no = x.F_Part_No + "-" + x.F_Ruibetsu.Trim()
+                }).ToListAsync();
 
-                string _jsonData = JsonConvert.SerializeObject(supplierDB);
-                string _jsonData2 = JsonConvert.SerializeObject(kanbanDB);
-                string _jsonData3 = JsonConvert.SerializeObject(storeDB);
-                string _jsonData4 = JsonConvert.SerializeObject(partDB);
+                string _jsonData = JsonConvert.SerializeObject(supplierDB.OrderBy(x => x.Sup_CD).Distinct());
+                string _jsonData2 = JsonConvert.SerializeObject(kanbanDB.OrderBy(x => x.F_Sebango).Distinct());
+                string _jsonData3 = JsonConvert.SerializeObject(storeDB.OrderBy(x => x.F_Store_CD).Distinct());
+                string _jsonData4 = JsonConvert.SerializeObject(partDB.OrderBy(x => x.prt_no).Distinct());
                 string userName = HttpContext.Session.GetString("USER_NAME");
                 string hostName = HttpContext.Session.GetString("USER_DEVICENAME");
 
@@ -162,43 +162,43 @@ namespace KANBAN.Controllers.API.OrderReport
                 var kanbanDB = await _KB3Context.TB_MS_PartOrder
                     .Select(x => new
                     {
-                        F_Supplier_Cd = x.F_Supplier_Cd + '-' + x.F_Supplier_Plant,
+                        F_Supplier_Cd = x.F_Supplier_Cd + "-" + x.F_Supplier_Plant,
                         F_Kanban_No = x.F_Kanban_No
                     })
                     .Where(x => x.F_Supplier_Cd.CompareTo(supFrom) >= 0 && x.F_Supplier_Cd.CompareTo(supTo) <= 0)
                     .Select(x => new
                     {
                         F_Sebango = x.F_Kanban_No
-                    }).OrderBy(x => x.F_Sebango).Distinct().ToListAsync();
+                    }).ToListAsync();
 
                 var storeDB = await _KB3Context.TB_MS_PartOrder
                     .Select(x => new
                     {
-                        F_Supplier_Cd = x.F_Supplier_Cd + '-' + x.F_Supplier_Plant,
+                        F_Supplier_Cd = x.F_Supplier_Cd + "-" + x.F_Supplier_Plant,
                         F_Store_Code = x.F_Store_Code
                     })
                     .Where(x => x.F_Supplier_Cd.CompareTo(supFrom) >= 0 && x.F_Supplier_Cd.CompareTo(supTo) <= 0)
                     .Select(x => new
                     {
                         F_Store_CD = x.F_Store_Code
-                    }).OrderBy(x => x.F_Store_CD).Distinct().ToListAsync();
+                    }).ToListAsync();
 
                 var partDB = await _KB3Context.TB_MS_PartOrder
                     .Select(x => new
                     {
-                        F_Supplier_Cd = x.F_Supplier_Cd + '-' + x.F_Supplier_Plant,
+                        F_Supplier_Cd = x.F_Supplier_Cd + "-" + x.F_Supplier_Plant,
                         F_Part_No = x.F_Part_No,
                         F_Ruibetsu = x.F_Ruibetsu
                     })
                     .Where(x => x.F_Supplier_Cd.CompareTo(supFrom) >= 0 && x.F_Supplier_Cd.CompareTo(supTo) <= 0)
                     .Select(x => new
                     {
-                        prt_no = x.F_Part_No + '-' + x.F_Ruibetsu.Trim()
-                    }).OrderBy(x => x.prt_no).Distinct().ToListAsync();
+                        prt_no = x.F_Part_No + "-" + x.F_Ruibetsu.Trim()
+                    }).ToListAsync();
 
-                string _jsonData = JsonConvert.SerializeObject(kanbanDB);
-                string _jsonData2 = JsonConvert.SerializeObject(storeDB);
-                string _jsonData3 = JsonConvert.SerializeObject(partDB);
+                string _jsonData = JsonConvert.SerializeObject(kanbanDB.OrderBy(x => x.F_Sebango).Distinct());
+                string _jsonData2 = JsonConvert.SerializeObject(storeDB.OrderBy(x => x.F_Store_CD).Distinct());
+                string _jsonData3 = JsonConvert.SerializeObject(partDB.OrderBy(x => x.prt_no).Distinct());
 
                 _result = @"{
                                     ""status"":""200"",
@@ -236,7 +236,7 @@ namespace KANBAN.Controllers.API.OrderReport
                 var storeDB = await _KB3Context.TB_MS_PartOrder
                     .Select(x => new
                     {
-                        F_Supplier_Cd = x.F_Supplier_Cd + '-' + x.F_Supplier_Plant,
+                        F_Supplier_Cd = x.F_Supplier_Cd + "-" + x.F_Supplier_Plant,
                         F_Kanban_No = x.F_Kanban_No,
                         F_Store_Code = x.F_Store_Code
                     })
@@ -245,12 +245,12 @@ namespace KANBAN.Controllers.API.OrderReport
                     .Select(x => new
                     {
                         F_Store_CD = x.F_Store_Code
-                    }).OrderBy(x => x.F_Store_CD).Distinct().ToListAsync();
+                    }).ToListAsync();
 
                 var partDB = await _KB3Context.TB_MS_PartOrder
                     .Select(x => new
                     {
-                        F_Supplier_Cd = x.F_Supplier_Cd + '-' + x.F_Supplier_Plant,
+                        F_Supplier_Cd = x.F_Supplier_Cd + "-" + x.F_Supplier_Plant,
                         F_Kanban_No = x.F_Kanban_No,
                         F_Part_No = x.F_Part_No,
                         F_Ruibetsu = x.F_Ruibetsu
@@ -259,11 +259,11 @@ namespace KANBAN.Controllers.API.OrderReport
                     .Where(x => x.F_Kanban_No.CompareTo(kbnFrom) >= 0 && x.F_Kanban_No.CompareTo(kbnTo) <= 0)
                     .Select(x => new
                     {
-                        prt_no = x.F_Part_No + '-' + x.F_Ruibetsu.Trim()
-                    }).OrderBy(x => x.prt_no).Distinct().ToListAsync();
+                        prt_no = x.F_Part_No + "-" + x.F_Ruibetsu.Trim()
+                    }).ToListAsync();
 
-                string _jsonData = JsonConvert.SerializeObject(storeDB);
-                string _jsonData2 = JsonConvert.SerializeObject(partDB);
+                string _jsonData = JsonConvert.SerializeObject(storeDB.OrderBy(x => x.F_Store_CD).Distinct());
+                string _jsonData2 = JsonConvert.SerializeObject(partDB.OrderBy(x => x.prt_no).Distinct());
 
                 _result = @"{
                                     ""status"":""200"",
@@ -302,7 +302,7 @@ namespace KANBAN.Controllers.API.OrderReport
                 var partDB = await _KB3Context.TB_MS_PartOrder
                     .Select(x => new
                     {
-                        F_Supplier_Cd = x.F_Supplier_Cd + '-' + x.F_Supplier_Plant,
+                        F_Supplier_Cd = x.F_Supplier_Cd + "-" + x.F_Supplier_Plant,
                         F_Kanban_No = x.F_Kanban_No,
                         F_Store_Code = x.F_Store_Code,
                         F_Part_No = x.F_Part_No,
@@ -313,10 +313,10 @@ namespace KANBAN.Controllers.API.OrderReport
                     .Where(x => x.F_Store_Code.CompareTo(storeFrom) >= 0 && x.F_Store_Code.CompareTo(storeTo) <= 0)
                     .Select(x => new
                     {
-                        prt_no = x.F_Part_No + '-' + x.F_Ruibetsu.Trim()
-                    }).OrderBy(x => x.prt_no).Distinct().ToListAsync();
+                        prt_no = x.F_Part_No + "-" + x.F_Ruibetsu.Trim()
+                    }).ToListAsync();
 
-                string _jsonData = JsonConvert.SerializeObject(partDB);
+                string _jsonData = JsonConvert.SerializeObject(partDB.OrderBy(x => x.prt_no).Distinct());
 
                 _result = @"{
                                     ""status"":""200"",
