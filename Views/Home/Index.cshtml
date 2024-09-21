@@ -10,9 +10,7 @@
 
 </div>
 
-
-@section Scripts{
-    
-    @*<script type="text/javascript" src="~/assets/.script/Template/Master.js"></script>*@
-    <script type="text/javascript" src="~/assets/.script/Home/Index.js"></script>
+@using KANBAN.Libs
+@section Scripts {
+    <script type="text/javascript" src="@FileVersionHelper.VersionedScriptPath("/assets/.script/Home/Index.js")"></script>
 }

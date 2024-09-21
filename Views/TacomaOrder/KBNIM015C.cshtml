@@ -119,8 +119,7 @@
 
 
 
-@section Scripts{
-    
-    @*<script type="text/javascript" src="~/assets/.script/Template/Master.js"></script>*@
-    <script type="text/javascript" src="~/assets/.script/TacomaOrder/KBNIM015C.js?@ViewData["Version"]"></script>
+@using KANBAN.Libs
+@section Scripts {
+    <script type="text/javascript" src="@FileVersionHelper.VersionedScriptPath("/assets/.script/TacomaOrder/KBNIM015C.js")"></script>
 }

@@ -117,5 +117,4 @@ $("#btnUnmerge").click(async function () {
             xSwal.error(error.responseJSON.response, error.responseJSON.message);
         }
     );
-
 });

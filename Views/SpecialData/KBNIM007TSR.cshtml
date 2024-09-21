@@ -49,9 +49,7 @@
 
 
 
-@section Scripts{
-    
-    @*<script type="text/javascript" src="~/assets/.script/Template/Action.js"></script>*@
-    @*<script type="text/javascript" src="~/assets/.script/Template/Master.js"></script>*@
-    <script type="text/javascript" src="~/assets/.script/SpecialData/KBNIM007TSR.js?@ViewData["Version"]"></script>
+@using KANBAN.Libs
+@section Scripts {
+    <script type="text/javascript" src="@FileVersionHelper.VersionedScriptPath("/assets/.script/SpecialData/KBNIM007TSR.js")"></script>
 }

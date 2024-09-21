@@ -25,7 +25,7 @@
     </div>
 </div>
 
+@using KANBAN.Libs
 @section Scripts {
-    
-    <script type="text/javascript" src="~/assets/.script/OrderReport/KBNRT240.js?@ViewData["Version"]"></script>
+    <script type="text/javascript" src="@FileVersionHelper.VersionedScriptPath("/assets/.script/OrderReport/KBNRT240.js")"></script>
 }

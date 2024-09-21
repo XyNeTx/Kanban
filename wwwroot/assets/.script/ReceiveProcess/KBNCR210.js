@@ -114,6 +114,7 @@
     });
 
     xAjax.onClick("#ReceiveBtn", function () {
+        $("#ReceiveBtn").prop("disabled", true);
         if (isEditing) {
             return alert("Please Save Edit Dev.Qty Before Receive Part!");
         }
@@ -165,5 +166,7 @@
                 xSplash.hide();
             }
         });
+
+        $("#ReceiveBtn").prop("disabled", false);
     });
 });

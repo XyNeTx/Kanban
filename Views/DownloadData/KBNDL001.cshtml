@@ -144,7 +144,7 @@
 
 </div>
 
-
-@section Scripts{    
-    <script type="text/javascript" src="~/assets/.script/DownloadData/KBNDL001.js?@ViewData["Version"]"></script>
+@using KANBAN.Libs
+@section Scripts {
+    <script type="text/javascript" src="@FileVersionHelper.VersionedScriptPath("/assets/.script/DownloadData/KBNDL001.js")"></script>
 }

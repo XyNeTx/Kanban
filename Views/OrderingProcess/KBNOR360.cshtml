@@ -105,6 +105,7 @@
 
 
 
-@section Scripts{
-    <script type="text/javascript" src="~/assets/.script/OrderingProcess/KBNOR360.js?@ViewData["Version"]"></script>
+@using KANBAN.Libs
+@section Scripts {
+    <script type="text/javascript" src="@FileVersionHelper.VersionedScriptPath("/assets/.script/OrderingProcess/KBNOR360.js")"></script>
 }

@@ -92,6 +92,7 @@
 
 
 
-@section Scripts{
-    <script type="text/javascript" src="~/assets/.script/Master/KBNMS009.js?@ViewData["VersionJS"]"></script>
+@using KANBAN.Libs
+@section Scripts {
+    <script type="text/javascript" src="@FileVersionHelper.VersionedScriptPath("/assets/.script/Master/KBNMS009.js")"></script>
 }

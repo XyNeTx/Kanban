@@ -231,11 +231,8 @@
 
 </div>
 
-@section Scripts{
+@using KANBAN.Libs
+@section Scripts {
     <link rel="stylesheet" href="~/assets/css/Calendar.css" type="text/css" />
-
-    
-    @*<script type="text/javascript" src="~/assets/.script/Template/Action.js"></script>*@
-    @*<script type="text/javascript" src="~/assets/.script/Template/Master.js"></script>*@
-    <script type="text/javascript" src="~/assets/.script/SpecialData/KBNIM007.js?@ViewData["Version"]"></script>
+    <script type="text/javascript" src="@FileVersionHelper.VersionedScriptPath("/assets/.script/SpecialData/KBNIM007.js")"></script>
 }

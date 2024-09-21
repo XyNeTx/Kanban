@@ -46,6 +46,9 @@
         </div>
     </div>
 </div>
+
+
+@using KANBAN.Libs
 @section Scripts {
-    <script type="text/javascript" src="~/assets/.script/Import/KBNIM010.js?@ViewData["Version"]"></script>
+    <script type="text/javascript" src="@FileVersionHelper.VersionedScriptPath("/assets/.script/Import/KBNIM010.js")"></script>
 }

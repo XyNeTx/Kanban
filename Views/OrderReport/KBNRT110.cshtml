@@ -1,4 +1,5 @@
-﻿<div class="row">
+﻿@using KANBAN.Libs
+<div class="row">
 
     <div class="col-xl-12 col-md-12 col-sm-12">
         <div class="card border-left-primary shadow h-100">
@@ -57,5 +58,5 @@
 @section Scripts {
     
     @*<script type="text/javascript" src="~/assets/.script/Template/Master.js"></script>*@
-    <script type="text/javascript" src="~/assets/.script/OrderReport/KBNRT110.js?@ViewData["Version"]"></script>
+    <script type="text/javascript" src="@FileVersionHelper.VersionedScriptPath("/assets/.script/OrderReport/KBNRT110.js")"></script>
 }

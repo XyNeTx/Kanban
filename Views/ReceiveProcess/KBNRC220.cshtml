@@ -1,4 +1,5 @@
-﻿<header>
+﻿@using KANBAN.Libs
+<header>
     <style>
         input::-webkit-outer-spin-button,
         input::-webkit-inner-spin-button {
@@ -88,5 +89,5 @@
 </div>
 
 @section Scripts {
-    <script type="text/javascript" src="~/assets/.script/ReceiveProcess/KBNCR220.js?@ViewData["Version"]"></script>
+    <script type="text/javascript" src="@FileVersionHelper.VersionedScriptPath("/assets/.script/ReceiveProcess/KBNCR220.js")"></script>
 }

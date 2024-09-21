@@ -20,9 +20,6 @@
         ],
     });
 
-
-
-
     KBNCR110.prepare();
 
     KBNCR110.initial(function (result) {
@@ -117,6 +114,7 @@
     });
 
     xAjax.onClick("#ReceiveBtn", function () {
+        $("#ReceiveBtn").prop('disabled', true)
         var _selData = [];
         var allPages = $('#tblMaster').DataTable().cells().nodes();
         $("#ReceiveBtn").prop('disabled', true)

@@ -62,8 +62,7 @@
     </div>
 </div>
 
+@using KANBAN.Libs
 @section Scripts {
-    
-    @*<script type="text/javascript" src="~/assets/.script/Template/Master.js"></script>*@
-    <script type="text/javascript" src="~/assets/.script/OrderReport/KBNRT140.js?@ViewData["Version"]"></script>
+    <script type="text/javascript" src="@FileVersionHelper.VersionedScriptPath("/assets/.script/OrderReport/KBNRT140.js")"></script>
 }

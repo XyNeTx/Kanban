@@ -192,7 +192,7 @@
 </div>
 
 
-
-@section Scripts{    
-    <script type="text/javascript" src="~/assets/.script/OrderingProcess/KBNOR200.js"></script>
+@using KANBAN.Libs
+@section Scripts {
+    <script type="text/javascript" src="@FileVersionHelper.VersionedScriptPath("/assets/.script/OrderingProcess/KBNOR200.js")"></script>
 }

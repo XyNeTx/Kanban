@@ -125,9 +125,7 @@
 
 
 
-@section Scripts{
-    
-    @*<script type="text/javascript" src="~/assets/.script/Template/Master.js"></script>*@
-    <script type="text/javascript" src="~/assets/.script/Master/KBNMS026.js?@ViewData["Version"]"></script>
-    @*<script type="text/javascript" src="~/assets/adminty/vue@3/vueApp/Master/KBNMS026.vue.js?@ViewData["Version"]"></script>*@
+@using KANBAN.Libs
+@section Scripts {
+    <script type="text/javascript" src="@FileVersionHelper.VersionedScriptPath("/assets/.script/Master/KBNMS026.js")"></script>
 }

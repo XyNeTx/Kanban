@@ -68,6 +68,9 @@
 
 
 
-@section Scripts{
-    <script type="text/javascript" src="~/assets/.script/UrgentOrder/KBNIM014C.js?@ViewData["Version"]"></script>
+
+@using KANBAN.Libs
+@section Scripts {
+    <script type="text/javascript" src="@FileVersionHelper.VersionedScriptPath("/assets/.script/UrgentOrder/KBNIM014C.js")"></script>
 }
+

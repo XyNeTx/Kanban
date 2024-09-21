@@ -322,7 +322,6 @@ $("#btnSearch").click(async function () {
             console.error(error);
         }
     );
-
 });
 
 $("#btnCheck").click(function () {
