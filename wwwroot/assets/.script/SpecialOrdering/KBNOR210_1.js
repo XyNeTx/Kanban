@@ -14,8 +14,6 @@ $(document).ready(async function () {
 
     await LoadDataChangeDelivery();
 
-
-
     xSplash.hide();
 
 });
@@ -339,24 +337,6 @@ $("#btnUncheck").click(function () {
     });
 });
 
-//$(document).on("click", "input[type='checkbox']", function () {
-
-//    if ($(this).prop("checked")) {
-//        var checkBoxIndex = $(this).closest("td").index();
-
-//        var obj = $("#tableMain").DataTable().row($(this).closest("tr")).data();
-//        var objIndex = $("#tableMain").DataTable().row($(this).closest("tr")).index();
-
-//        var oldPds = $("#tableMain").DataTable().row(objIndex - 1).data();
-
-//        console.log(checkBoxIndex);
-//        console.log(obj);
-//        console.log(objIndex);
-//        console.log(oldPds);
-//    }
-
-//});
-
 $("#btnSave").click(async function () {
     let listObj = [];
     $("#tableMain tbody tr td").find("input[type='checkbox']:checked").each(function () {
@@ -393,5 +373,191 @@ $("#btnSave").click(async function () {
         }
     );
 
+});
 
+//Modal USE COMMON PARTS (KBNOR210_1_STC_3) : Set Stock Remain
+$(document).on("show.bs.modal", "#KBNOR210_1_STC_3", async function (e) {
+
+    if (!$("#inpCustomerOrderNo").val())
+    {
+        $("#KBNOR210_1_STC_3").modal("hide");
+
+        return xSwal.error("Error", "Please select Customer Order No.");
+    }
+
+    $("#btnUseCommonParts").attr("data-bs-orderno", $("#inpCustomerOrderNo").val());
+    //$("body").css("visibility", "hidden")
+    xSplash.show();
+
+    if ($("#tableKBNOR210_1_STC_3").find("thead").length != 0) {
+        $("#tableKBNOR210_1_STC_3").DataTable().destroy();
+    }
+
+    await $("#tableKBNOR210_1_STC_3").DataTable({
+        width: '100%',
+        paging: false,
+        scrollCollapse: true,
+        "processing": false,
+        "serverSide": false,
+        scrollX: false,
+        scrollY: '400px',
+        searching: false,
+        info: false,
+        ordering: false,
+        autoWidth: true,  // Enable autoWidth
+        columns: [
+            { title: "Supplier Code", data: "F_Supplier" },
+            { title: "Part No.", data: "F_Part_No" },
+            { title: "Store Code", data: "F_Store_Cd" },
+            { title: "Actual Stock\n(PCS.)", data: "F_Actual_Qty" },
+            {
+                title: "", render: function () {
+                    return `<input type="checkbox" />`;
+                }
+            },
+            { title: "Order No.", data: "F_OrderNo" },
+            { title: "Customer \nOrder Qty", data: "F_Qty" },
+            { title: "Use Stock\nQty", data: "F_Use_StockQty" },
+            {
+                title: "RemainQty", render: function (x,y,data) {
+
+                    if (data.F_Remain == 0) {
+                        let remain =  parseInt(data.F_Qty) - parseInt(data.F_Use_StockQty);
+                        return `<span style="color:red;">${remain}</span>`;
+                    }
+                    else {
+                        return data.F_Remain;
+                    }
+
+                }
+            },
+        ],
+        order: [[1, 'asc']]
+    });
+
+    $("#tableKBNOR210_1_STC_3 thead tr th").css("text-align", "center");
+
+    // Make sure the modal is fully shown before adjusting columns
+    await $('#KBNOR210_1_STC_3').on('shown.bs.modal', function (e) {
+
+        $("#spanCustomerOrderNo").text(OrderNo);
+
+        $("#tableKBNOR210_1_STC_3").DataTable().columns.adjust().draw();
+
+
+        xSplash.hide();
+    });
+
+    let OrderNo = $(e.relatedTarget).data("bs-orderno");
+    _xLib.AJAX_Get("/api/KBNOR210_1/LoadGridData", { OrderNo: OrderNo },
+        function (success) {
+            success.data = JSON.parse(success.data);
+            success = _xLib.JSONparseMixData(success);
+            console.log(success);
+            $("#tableKBNOR210_1_STC_3").DataTable().clear().rows.add(success.data).draw();
+            $("#tableKBNOR210_1_STC_3 tbody tr td").css("text-align", "center");
+            $("#tableKBNOR210_1_STC_3 thead tr th").css("text-align", "center");
+        },
+        function (error) {
+            console.error(error);
+        }
+    );
+
+    
+});
+
+
+//Modal INSIDE Modal (KBNOR210_1_STC_3_1)
+$(document).on("dblclick", "#tableKBNOR210_1_STC_3 tbody tr td", async function () {
+    let index = $("#tableKBNOR210_1_STC_3").DataTable().column(this).index();
+
+    let obj = $("#tableKBNOR210_1_STC_3").DataTable().row($(this).closest("tr")).data();
+
+    if (index != 5) {
+        //console.log("Show Modal");
+        return;
+    }
+
+    $("#KBNOR210_1_STC_3_1").modal("show");
+
+    xSplash.show();
+
+    if ($("#tableKBNOR210_1_STC_3_1").find("thead").length != 0) {
+        $("#tableKBNOR210_1_STC_3_1").DataTable().destroy();
+    }
+
+    await $("#tableKBNOR210_1_STC_3_1").DataTable({
+        width: '100%',
+        paging: false,
+        scrollCollapse: true,
+        "processing": false,
+        "serverSide": false,
+        scrollX: false,
+        scrollY: '400px',
+        searching: false,
+        info: false,
+        ordering: false,
+        autoWidth: true,  // Enable autoWidth
+        columns: [
+            { title: "PO Customer", data: "F_PO_Customer" },
+            { title: "Delivery Date", data: "F_Delivery_Date" },
+            { title: "Part No.", data: "F_Part_No" },
+            { title: "Store Code", data: "F_Store_Cd" },
+            { title: "Order Qty.", data: "F_Order_Qty" },
+            { title: "Use Stock Qty", data: "F_Use_Qty" },
+            { title: "Order Qty Remain", data: "F_Remain_Qty" },
+        ],
+        order: [[1, 'asc']]
+    });
+
+    $("#tableKBNOR210_1_STC_3_1 thead tr th").css("text-align", "center");
+    console.log(obj);
+    // Make sure the modal is fully shown before adjusting columns
+    await $('#KBNOR210_1_STC_3_1').on('shown.bs.modal', function (e) {
+        $("#tableKBNOR210_1_STC_3_1").DataTable().columns.adjust().draw();    
+    });
+
+    _xLib.AJAX_Get("/api/KBNOR210_1/GetDataKBNOR210_1_STC_3_1", obj,
+        function (success) {
+            success = _xLib.JSONparseMixData(success);
+            console.log(success);
+            $("#tableKBNOR210_1_STC_3_1").DataTable().clear().rows.add(success.data).draw();
+            $("#tableKBNOR210_1_STC_3_1 tbody tr td").css("text-align", "center");
+            $("#tableKBNOR210_1_STC_3_1 thead tr th").css("text-align", "center");
+            xSplash.hide();
+        },
+        function (error) {
+            xSplash.hide();
+            xSwal.error(error.responseJSON.response, error.responseJSON.message);
+        }
+    )
+
+});
+
+$(document).on("click", "#tableKBNOR210_1_STC_3 tbody tr td", function () {
+
+    var index = $("#tableKBNOR210_1_STC_3").DataTable().column(this).index();
+
+    if (index < 3) {
+        return;
+    }
+
+    let _oriValue = $(this).text();
+
+    $(this).empty();
+    $(this).append(`<input type="number" min="0" value="${_oriValue}" />`);
+    $(this).find("input").focus();
+
+});
+
+$(document).on("focusout", "#tableKBNOR210_1_STC_3 tbody tr td", function () {
+    let index = $("#tableKBNOR210_1_STC_3").DataTable().column(this).index();
+
+    if (index < 3) {
+        return;
+    }
+
+    let _value = $(this).find("input").val();
+    $(this).empty();
+    $(this).text(_value);
 });

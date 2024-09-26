@@ -68,7 +68,7 @@ $(document).ready(function () {
             var _dtChk = await xAjax.xExecuteJSON({
                 data: {
                     "Module": "[exec].[spKBNOR130_GENPDS]",
-                    "@ProcessDate": _ProcessDate,
+                    "@ProcessDate": _ProcessDate.replaceAll("-",""),
                     "@ProcessShift": _ProcessShift,
                     "@Plant": ajexHeader.Plant,
                     "@UserCode": ajexHeader.UserCode

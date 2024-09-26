@@ -484,8 +484,8 @@ function GetKanbanAddObj() {
         F_Delivery_Trip: $("#inpStartTrip").val(),
         F_Start_Date: "",
         F_Start_Shift: "",
-        F_KB_Remain: $("#readAddQty").val(),
-        F_KB_Add: $("#readAddQty").val()
+        F_KB_Remain: $("#readAddQty").val() == "" ? 0 : $("#readAddQty").val(),
+        F_KB_Add: $("#readAddQty").val() == "" ? 0 : $("#readAddQty").val(),
     }
 
     if ($("#radAddCycle").is(":checked")) {
@@ -494,18 +494,18 @@ function GetKanbanAddObj() {
 
         for (let i = 1; i <= 30; i++) {
             let _objId = "F_Round" + i;
-            obj[_objId] = "0";
+            obj[_objId] = 0;
         }
     }
     else if ($("#radAddTrip").is(":checked")) {
         for (let i = 1; i <= parseInt($("#readCycle").val().substring(3, 5)); i++) {
             let _id = "inpTrip" + i;
             let _objId = "F_Round" + i;
-            obj[_objId] = $("#" + _id).val();
+            obj[_objId] = parseInt($("#" + _id).val());
         }
         for (let i = parseInt($("#readCycle").val().substring(3, 5)) + 1; i <= 30; i++) {
             let _objId = "F_Round" + i;
-            obj[_objId] = "0";
+            obj[_objId] = 0
         }
     }
 

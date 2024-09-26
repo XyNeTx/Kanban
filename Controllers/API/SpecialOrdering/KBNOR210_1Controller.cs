@@ -236,5 +236,119 @@ namespace KANBAN.Controllers.API.SpecialOrder
                 });
             }
         }
+
+        [HttpGet]
+        public IActionResult LoadGridData(string OrderNo)
+        {
+            try
+            {
+                if (_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
+                {
+                    return StatusCode(_BearerClass.Status, new
+                    {
+                        status = _BearerClass.Status,
+                        response = _BearerClass.Response,
+                        message = _BearerClass.Message
+                    });
+                }
+
+                var data = _services.IKBNOR210_1.LoadGridData(OrderNo);
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data Found",
+                    data = JsonConvert.SerializeObject(data)
+                });
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    response = "Error",
+                    message = ex.Message
+                });
+            }
+        }
+        
+        [HttpGet]
+        public async Task<IActionResult> GetDataKBNOR210_1_STC_3_1(string F_OrderNo, string F_Part_No, string F_Store_Cd, string F_Supplier, string? Delivery, int F_Use_StockQty)
+        {
+            try
+            {
+                if (_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
+                {
+                    return StatusCode(_BearerClass.Status, new
+                    {
+                        status = _BearerClass.Status,
+                        response = _BearerClass.Response,
+                        message = _BearerClass.Message
+                    });
+                }
+
+                var data = await _services.IKBNOR210_1.GetDataKBNOR210_1_STC_3_1(F_OrderNo, F_Part_No, F_Store_Cd, F_Supplier, Delivery, F_Use_StockQty);
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data Found",
+                    data = JsonConvert.SerializeObject(data)
+                });
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    response = "Error",
+                    message = ex.Message
+                });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SaveKBNOR210_1_STC_3_1(List<VM_Save_KBNOR210_1_STC_3_1> listObj)
+        {
+            try
+            {
+                if (_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
+                {
+                    return StatusCode(_BearerClass.Status, new
+                    {
+                        status = _BearerClass.Status,
+                        response = _BearerClass.Response,
+                        message = _BearerClass.Message
+                    });
+                }
+
+                foreach (var item in listObj)
+                {
+                    await _services.IKBNOR210_1.SaveKBNOR210_1_STC_3_1(item);
+                }
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data saved"
+                });
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    response = "Error",
+                    message = ex.Message
+                });
+            }
+        }
+
     }
 }

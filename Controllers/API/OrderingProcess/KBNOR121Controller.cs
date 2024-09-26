@@ -1882,7 +1882,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
                     });
                 }
 
-                if(Login_Shift == "D")
+                if(Login_Shift.ToUpper() == "DAY")
                 {
                     _sql = "exec [dbo].[SP_CALCULATE_KBNOR120] @p0,@p1,@p2,@p3,@p4,@p5,@p6";
                     //_dt = _FillDT.ExecuteSQL(_sql,LoginDate.ToString("yyyyMMdd"),

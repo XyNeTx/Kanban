@@ -362,8 +362,9 @@ const addDetailToTable = async (dateSet, intRow) => {
                     $(`#TBodyR${k}`).append(`<td id='tdR${k}${_id}${dateSet[_countDateSet]}'>${_header["F_KB_CutAdd"]}</td>`)
                 }
                 else {
-                    $(`#TBodyR${k}`).append(`<td id='tdR${k}${_id}${dateSet[_countDateSet]}'></td>`) // add id for easy to value
-
+                    if (dateSet[_countDateSet] != _CookieProcessDate) {
+                        $(`#TBodyR${k}`).append(`<td id='tdR${k}${_id}${dateSet[_countDateSet]}'></td>`) // add id for easy to value
+                    }
                     //if (k == 1) {
                     //    $(`#tdR${k}${_id}${dateSet[_countDateSet]}`).text(_header[_setAccessHeader[k - 1]]))
                     //}
@@ -620,9 +621,24 @@ const addDetailToTable = async (dateSet, intRow) => {
 
 
 
+    $(`table tbody tr td:not([id*='Pcs']),table tbody tr td:not([id*='KB'])`).each(function () {
+        let index = $(this).index();
+        let ProcessDate = _CookieProcessDate.slice(8, 10) + "-" + _CookieProcessDate.slice(5, 7) + "-" + _CookieProcessDate.slice(0, 4);
+        let shift = _CookieProcessDate.slice(10, 11);
+
+        //console.log($(`table thead tr[id='THeadR2'] th`).eq(`${index}`).text());
+
+        if ($(`table thead tr[id='THeadR2'] th`).eq(`${index}`).text().slice(0, 1) == shift &&
+            $(this).attr("id").includes(ProcessDate)) {
+            return;
+        }
+        $(this).css("background-color", "#ced4da");
+    });
+
     // Set Style for Table
     $("table tbody tr td[id*='Pcs'],table tbody tr td[id*='KB']").each(await function () {
-        $(this).css("background-color", "#ced4da");
+        $(this).css("background-color", "#b9b9b9");
+        $(this).css("border", "1px solid #e3e6f0");
     });
 
     $("table thead tr th[id*='TDay'], table thead tr th[id*='TNight']").each(async function () {
@@ -776,7 +792,7 @@ $("#btnBlCal").click(function () {
                 xSwal.success("Success", "Recalculate BL Success");
             }
         }, function (error) {
-            xSwal.error("Error", error.message);
+            xSwal.error("Error", error.responseJSON.message);
             console.error(error);
     });
 })
@@ -799,7 +815,7 @@ $("#btnReCal").click(function () {
             }
         },
         function (error) {
-            xSwal.error("Error", error.message);
+            xSwal.error("Error", error.responseJSON.message);
             console.error(error);
         }
     );

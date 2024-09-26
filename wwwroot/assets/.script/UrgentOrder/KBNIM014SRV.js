@@ -129,7 +129,7 @@ $("#btnImport").click(async function () {
                 //convertedData[key]["Customer Order Number"] = convertedData[key]["Customer\n Order Number"];
                 //delete convertedData[key]["Customer\n Order Number"];
 
-                convertedData[key]["Amount_/_Item"] = convertedData[key]["Amount / Item"];
+                convertedData[key]["Amount_/_Item"] = parseFloat(convertedData[key]["Amount / Item"].replace(/,/g, ""));
                 delete convertedData[key]["Amount / Item"];
 
                 convertedData[key]["F_Delivery_Qty"] = convertedData[key]["Delivery\n Qty"];
@@ -166,7 +166,8 @@ $("#btnImport").click(async function () {
                 convertedData[key]["Part_Name"] = convertedData[key]["Part Name"];
                 delete convertedData[key]["Part Name"];
 
-                convertedData[key]["Price_/_Unit"] = convertedData[key]["Price / Unit"];
+                convertedData[key]["Price_/_Unit"] = parseFloat(convertedData[key]["Price / Unit"].replace(/,/g, ""));
+
                 delete convertedData[key]["Price / Unit"];
 
                 //convertedData[key]["Customer Order Number"] = convertedData[key]["Receiving Case\n No."];
@@ -189,7 +190,7 @@ $("#btnImport").click(async function () {
             $.ajax({
                 type: "POST",
                 url: _url,
-                data: JSON.stringify(data),
+                data: JSON.stringify(convertedData),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 headers: ajexHeader,
@@ -207,13 +208,14 @@ $("#btnImport").click(async function () {
                     console.error("Error: ", xhr.responseJSON);
                     if (xhr.responseJSON.message.includes("Have Some Error")) {
                         xSwal.error("Error !!", xhr.responseJSON.message);
-                        return _xLib.OpenReport("KBNIMERR", `&UserID=${xhr.responseJSON.userid}&Type=${xhr.responseJSON.type}`);
+                        return _xLib.OpenReport("/KBNIMERR", `UserID=${xhr.responseJSON.userid}&Type=${xhr.responseJSON.type}`);
                     }
                     return xSwal.error(xhr.responseJSON.title, xhr.responseJSON.message);
                 }
             });
         }
         catch (error) {
+            xSwal.error("Import File Error", error);
             console.error("UploadFile Error: ", error);
         }
         finally {

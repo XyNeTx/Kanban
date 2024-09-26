@@ -457,7 +457,7 @@ async function OkClicked(_arrObj) {
         function (error) {
             if (error.responseJSON.message.includes("Have Some Error")) {
                 xSwal.error("Error !!", error.responseJSON.message);
-                return _xLib.OpenReport("KBNIMERR", `&UserID=${error.responseJSON.userid}&Type=${error.responseJSON.type}`);
+                return _xLib.OpenReport("/KBNIMERR", `UserID=${error.responseJSON.userid}&Type=${error.responseJSON.type}`);
             }
             xSwal.error("Error !!", error.responseJSON.message);
         }

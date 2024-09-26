@@ -66,15 +66,24 @@ class xLib {
 
     JSONparseMixData(jsonResult) {
         if (jsonResult.hasOwnProperty('data')) {
-            jsonResult.data = JSON.parse(jsonResult.data);
+            //jsonResult.data = JSON.parse(jsonResult.data);
             for (var key in jsonResult.data) {
                 try {
-                    //jsonResult.data[key] = JSON.parse(jsonResult.data[key]);
-                    if (typeof jsonResult.data[key] == 'object') jsonResult.data[key] = this.TrimJSON(jsonResult.data[key]);
-                    else jsonResult.data[key] = this.TrimJSON(jsonResult.data[key]);
+                    jsonResult.data[key] = JSON.parse(jsonResult.data[key]);
+                    if (typeof jsonResult.data[key] == 'object') jsonResult.data[key] = this.TrimArrayJSON(jsonResult.data[key]);
+                    else jsonResult.data[key] = this.TrimJSON(jsonResult.data);
                 }
                 catch (e) {
-                    jsonResult.data[key] = jsonResult.data[key];
+                    if (typeof jsonResult.data[key] == 'object') {
+                        for (var key in jsonResult.data) {
+                            for (var key2 in jsonResult.data[key]) {
+                                if (typeof jsonResult.data[key][key2] == 'string') {
+                                    jsonResult.data[key][key2] = jsonResult.data[key][key2].trim();
+                                }
+                            }
+                        }
+                    }
+                    return jsonResult;
                 }
             }
         }

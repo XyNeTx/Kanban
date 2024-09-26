@@ -757,7 +757,7 @@ namespace HINOSystem.Controllers.API.Master
                 _KB3Transaction.Commit();
 
                 string _SQL = "SELECT F_PDS_CD, F_Row, F_Field, F_Remark, F_Update_By, F_Update_Date, F_Type FROM " +
-                        $"TB_Import_Error Where F_Type ='KBMIM007N' and F_Update_By = '{UserID}' ";
+                        $"TB_Import_Error Where F_Type ='KBNIM007N' and F_Update_By = '{UserID}' ";
 
                 DataTable dtErr = _FillDT.ExecuteSQL(_SQL);
 
@@ -770,7 +770,7 @@ namespace HINOSystem.Controllers.API.Master
                         title = "Bad Request",
                         message = "Data Saved but Have Some Error Please Check",
                         userid = UserID,
-                        type = "KBMIM007N",
+                        type = "KBNIM007N",
                     });
                 }
 

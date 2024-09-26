@@ -5,6 +5,7 @@ using KANBAN.Libs;
 using KANBAN.Models.KB3.SpecialOrdering;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System.Data;
 
 namespace KANBAN.Services.SpecialOrdering
@@ -15,8 +16,10 @@ namespace KANBAN.Services.SpecialOrdering
         Task<string> GetSupplierName(string SuppCd);
         Task<string> GetPartName(string PartNo);
         Task<DataTable> GetPOMergeData(string? PDSNo, string? SuppCd, string? PartNo, bool? chkDeli, string? DeliFrom, string? DeliTo);
-
         Task Save(VM_Save_KBNOR210_1 obj);
+        DataTable LoadGridData(string OrderNo);
+        Task<DataTable> GetDataKBNOR210_1_STC_3_1(string F_OrderNo, string F_Part_No, string F_Store_Cd, string F_Supplier, string? Delivery, int F_Use_StockQty);
+        Task SaveKBNOR210_1_STC_3_1(VM_Save_KBNOR210_1_STC_3_1 obj);
     }
 
     public class KBNOR210_1 : IKBNOR210_1
@@ -393,5 +396,125 @@ namespace KANBAN.Services.SpecialOrdering
             }
         }
 
+
+        // Modal KBNOR210_1_STC_3 : Use Stock Part
+        public DataTable LoadGridData (string OrderNo)
+        {
+            try
+            {
+
+                string _sql = "Select F_Supplier, Rtrim(F_Part_no) AS F_Part_No ,F_Store_Cd " +
+                    ",Sum(F_Actual_Qty) AS F_Actual_Qty, '' as Flag, F_OrderNo " +
+                    ",Sum(F_Qty) AS F_Qty , Sum(F_Remain) AS F_Remain, Isnull(Sum(F_Use_StockQty),0) As  F_Use_StockQty " +
+                    $"From dbo.FN_getUseOrderSPCData('{OrderNo}') " +
+                    $"Group by F_Supplier, Rtrim(F_Part_no),F_OrderNo,F_Store_CD " +
+                    $"Order by F_Supplier ";
+
+                var _dt = _FillDT.ExecuteSQL(_sql);
+
+                if (_dt.Rows.Count == 0)
+                {
+                    throw new Exception("Data not found");
+                }
+
+                return _dt;
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+
+
+        // Modal KBNOR210_1_STC_3_1 : 
+        public async Task<DataTable> GetDataKBNOR210_1_STC_3_1 (string F_OrderNo, string F_Part_No, string F_Store_Cd, string F_Supplier, string? Delivery , int F_Use_StockQty)
+        {
+            using var transaction = _kbContext.Database.BeginTransaction();
+            try
+            {
+                Delivery = "";
+                F_Part_No = F_Part_No.Replace("-", "");
+                F_Supplier = F_Supplier.Replace("-", "");
+
+                transaction.CreateSavepoint("Start GetDataKBNOR210_1_STC_3_1");
+
+                string _sql = $@"SELECT    F_PDS_No, F_PO_Customer, F_Delivery_Date, F_Part_No, 
+                                F_Store_Cd, F_Order_Qty, F_Use_Qty, (F_Order_Qty - F_Use_Qty) As F_Remain_Qty  
+                                FROM         TB_STOCK_KB_SPC_PART_TEMP 
+                                Where F_PDS_No = '{F_OrderNo}' and Replace(F_Part_No,'-','') = '{F_Part_No}' 
+                                Order by  F_PO_Customer,F_Delivery_Date,F_Part_No,F_Store_Cd ";
+
+                var _dt = _FillDT.ExecuteSQL(_sql);
+
+                if (_dt.Rows.Count == 0)
+                {
+                    await _kbContext.Database.ExecuteSqlRawAsync("EXEC sp_generateorderuseFIFO @p0,@p1,@p2,@p3,@p4,@p5,@p6"
+                        , new SqlParameter("@p0", F_OrderNo)
+                        , new SqlParameter("@p1", F_Part_No)
+                        , new SqlParameter("@p2", F_Store_Cd)
+                        , new SqlParameter("@p3", F_Supplier)
+                        , new SqlParameter("@p4", Delivery)
+                        , new SqlParameter("@p5", F_Use_StockQty)
+                        , new SqlParameter("@p6", _BearerClass.UserCode)
+                        );
+                    transaction.Commit();
+                }
+
+
+                _sql = $@"SELECT F_PDS_No, F_PO_Customer, F_Delivery_Date, F_Part_No, 
+                        F_Store_Cd, F_Order_Qty, F_Use_Qty, (F_Order_Qty - F_Use_Qty) As F_Remain_Qty  
+                        FROM TB_STOCK_KB_SPC_PART_TEMP 
+                        Where F_PDS_No = '{F_OrderNo}' and Replace(F_Part_No,'-','') = '{F_Part_No}' 
+                        Order by  F_PO_Customer,F_Delivery_Date,F_Part_No,F_Store_Cd ";
+
+                _dt = _FillDT.ExecuteSQL(_sql);
+
+                if (_dt.Rows.Count == 0)
+                {
+                    throw new Exception("Data not found");
+                }
+
+
+                return _dt;
+            }
+            catch (Exception ex)
+            {
+                transaction.RollbackToSavepoint("Start GetDataKBNOR210_1_STC_3_1");
+                throw new Exception(ex.Message);
+            }
+
+        }
+
+        public async Task SaveKBNOR210_1_STC_3_1(VM_Save_KBNOR210_1_STC_3_1 obj)
+        {
+            using var transaction = _kbContext.Database.BeginTransaction();
+            try
+            {
+
+                transaction.CreateSavepoint("Start SaveKBNOR210_1_STC_3_1");
+
+                await _kbContext.Database.ExecuteSqlRawAsync
+                    ($"Delete From TB_STOCK_KB_SPC_PART_TEMP Where F_PDS_No = '{obj.F_PDS_No}' " +
+                    $"and F_Part_no = '{obj.F_Part_No}' ");
+
+                await _kbContext.Database.ExecuteSqlRawAsync
+                    ($"Insert into TB_STOCK_KB_SPC_PART_TEMP " +
+                    $"(F_PDS_No, F_PO_Customer, F_Delivery_Date, F_Part_No, F_Store_Cd, " +
+                    $"F_Order_Qty, F_Use_Qty, F_Update_By, F_Update_Date) " +
+                    $"VALUES ('{obj.F_PDS_No}','{obj.F_PO_Customer}','{obj.F_Delivery_Date}','{obj.F_Part_No}', " +
+                    $"'{obj.F_Store_Cd}',{obj.F_Order_Qty},{obj.F_Use_Qty},'{_BearerClass.UserCode}',getDate()) ");
+
+                transaction.Commit();
+
+            }
+            catch (Exception ex)
+            {
+                transaction.RollbackToSavepoint("Start SaveKBNOR210_1_STC_3_1");
+                throw new Exception(ex.Message);
+            }
+
+        }
     }
 }

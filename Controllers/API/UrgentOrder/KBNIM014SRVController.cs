@@ -165,7 +165,7 @@ namespace KANBAN.Controllers.API.UrgentOrder
 
                 string USERID = HttpContext.Session.GetString("USER_CODE");
 
-                await _KB3Context.Database.ExecuteSqlRawAsync($"DELETE FROM TB_IMPORT_SERVICE WHERE F_UPDATE_BY = @p0", USERID);
+                await _KB3Context.Database.ExecuteSqlRawAsync($"DELETE FROM TB_IMPORT_SERVICE_Excel WHERE F_UPDATE_BY = @p0", USERID);
                 
                 foreach (var each in listObj)
                 {
