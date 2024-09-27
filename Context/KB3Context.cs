@@ -55,13 +55,17 @@ namespace HINOSystem.Context
                     _ => _config.GetConnectionString("DefaultConnection")
                 };
 
-                optionsBuilder.UseSqlServer(connectionString);
+                optionsBuilder.UseSqlServer(connectionString, option => 
+                    option.CommandTimeout(600)
+                );
             }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<UserErp>().ToTable("User", "erp");
+            modelBuilder.Entity<UserAuthorize>().ToTable("UserAuthorize", "erp");
+            modelBuilder.Entity<Menu>().ToTable("Menu", "erp");
 
             // Add additional configuration here if needed
         }
@@ -156,6 +160,8 @@ namespace HINOSystem.Context
         public DbSet<TB_Kanban_Planning> TB_Kanban_Planning { get; set; }
         public DbSet<KBNLC_150> KBNLC_150 { get; set; }
         public DbSet<TB_Transaction_Spc> TB_Transaction_Spc { get; set; }
+        public DbSet<UserAuthorize> UserAuthorize { get; set; }
+        public DbSet<Menu> Menu { get; set; }
 
         //protected override void OnModelCreating(ModelBuilder modelBuilder)
         //{

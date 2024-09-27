@@ -466,7 +466,7 @@ $(document).on("show.bs.modal", "#KBNOR210_1_STC_3", async function (e) {
     
 });
 
-
+let ObjActualStock = 0;
 //Modal INSIDE Modal (KBNOR210_1_STC_3_1)
 $(document).on("dblclick", "#tableKBNOR210_1_STC_3 tbody tr td", async function () {
     let index = $("#tableKBNOR210_1_STC_3").DataTable().column(this).index();
@@ -512,14 +512,15 @@ $(document).on("dblclick", "#tableKBNOR210_1_STC_3 tbody tr td", async function 
 
     $("#tableKBNOR210_1_STC_3_1 thead tr th").css("text-align", "center");
     console.log(obj);
+    ObjActualStock = obj.F_Actual_Qty;
     // Make sure the modal is fully shown before adjusting columns
     await $('#KBNOR210_1_STC_3_1').on('shown.bs.modal', function (e) {
         $("#tableKBNOR210_1_STC_3_1").DataTable().columns.adjust().draw();    
     });
-
+    
     _xLib.AJAX_Get("/api/KBNOR210_1/GetDataKBNOR210_1_STC_3_1", obj,
-        function (success) {
-            success = _xLib.JSONparseMixData(success);
+        async function (success) {
+            success = await _xLib.JSONparseMixData(success);
             console.log(success);
             $("#tableKBNOR210_1_STC_3_1").DataTable().clear().rows.add(success.data).draw();
             $("#tableKBNOR210_1_STC_3_1 tbody tr td").css("text-align", "center");
@@ -533,31 +534,96 @@ $(document).on("dblclick", "#tableKBNOR210_1_STC_3 tbody tr td", async function 
     )
 
 });
+let _oriValue = 0;
+$(document).on("click", "#tableKBNOR210_1_STC_3_1 tbody tr td", function () {
 
-$(document).on("click", "#tableKBNOR210_1_STC_3 tbody tr td", function () {
+    var index = $("#tableKBNOR210_1_STC_3_1").DataTable().column(this).index();
 
-    var index = $("#tableKBNOR210_1_STC_3").DataTable().column(this).index();
-
-    if (index < 3) {
+    if (index < 4) {
         return;
     }
 
-    let _oriValue = $(this).text();
+    _oriValue = $(this).text();
 
     $(this).empty();
-    $(this).append(`<input type="number" min="0" value="${_oriValue}" />`);
+    $(this).append(`<input type="number" min="0" value="" />`);
     $(this).find("input").focus();
 
 });
 
-$(document).on("focusout", "#tableKBNOR210_1_STC_3 tbody tr td", function () {
-    let index = $("#tableKBNOR210_1_STC_3").DataTable().column(this).index();
+$(document).on("focusout keypress", "#tableKBNOR210_1_STC_3_1 tbody tr td", function (e) {
 
-    if (index < 3) {
+    if (e.type == "keypress" && e.which != 13) {
         return;
     }
 
+    let index = $("#tableKBNOR210_1_STC_3_1").DataTable().column(this).index();
+
+    if (index < 4 && index >= 6) {
+        return;
+    }
+
+    //console.log(_oriValue);
     let _value = $(this).find("input").val();
+    //console.log(_value);
     $(this).empty();
-    $(this).text(_value);
+    if (_value == "") {
+        _value = _oriValue;
+    }
+
+    if (index == 4) {
+        let useStock = $(this).closest("tr").find("td:eq(5)").text();
+
+        if (parseInt(_value) < parseInt(useStock)) {
+            //$(this).closest("tr").find("td:eq(5)").css("color", "red");
+            $("#tableKBNOR210_1_STC_3_1").DataTable().cell(this).data(_oriValue).draw();
+            return xSwal.error("Error", "Use Stock Qty must be less than Order Qty");
+        }
+        else {
+            let orderRemain = parseInt(_value) - parseInt(useStock);
+            $("#tableKBNOR210_1_STC_3_1").DataTable().cell({
+                row: $(this).closest("tr").index(),
+                column: 6
+            }).data(orderRemain).draw();
+        }
+    }
+    else {
+        //index == 5
+        let orderQty = $(this).closest("tr").find("td:eq(4)").text();
+        let useStock = $(this).closest("tr").find("td:eq(5)").text();
+
+        if (parseInt(orderQty) < parseInt(_value)) {
+            //$(this).closest("tr").find("td:eq(4)").css("color", "red");
+            $("#tableKBNOR210_1_STC_3_1").DataTable().cell(this).data(_oriValue).draw();
+            return xSwal.error("Error", "Use Stock Qty must be less than Order Qty");
+        }
+
+        let orderRemain = parseInt(orderQty) - parseInt(_value);
+        $("#tableKBNOR210_1_STC_3_1").DataTable().cell({
+            row: $(this).closest("tr").index(),
+            column: 6
+        }).data(orderRemain).draw();
+    }
+    $("#tableKBNOR210_1_STC_3_1").DataTable().cell(this).data(_value).draw();
+
+    let sum = 0;
+    $("#tableKBNOR210_1_STC_3_1").DataTable().rows().data().each(function (value, index) {
+        sum += parseInt(value.F_Use_Qty);
+    });
+
+    //console.log(sum);
+    //console.log(ObjActualStock);
+    if(sum > ObjActualStock)
+    {
+        $("#tableKBNOR210_1_STC_3_1").DataTable().cell(this).data(_oriValue).draw();
+        return xSwal.error("Error", "Total Use Stock Qty must be less than Actual Stock Qty");
+    }
+
+
+});
+
+$("#btnSTC_3_1Save").click(async function () {
+
+    $("#KBNOR210_1_STC_3_1").modal("hide");
+
 });

@@ -57,3 +57,20 @@
 
 
 });
+
+
+$("#btnPrintDock").click(function () {
+
+    let obj = {
+        F_YM : $("#F_Period").val().replaceAll("-", ""),
+        F_Rev : $("#F_Rev").val(),
+        F_Dock_Cd : $("#F_DockFrom").val().trim(),
+        F_Dock_Cd_To: $("#F_DockTo").val().trim(),
+        F_Truck_Card: $("#F_RouteFrom").val().trim(),
+        F_Truck_Card_To: $("#F_RouteTo").val().trim(),
+        UserName : _xLib.GetUserName(),
+    }
+
+    _xLib.OpenReportObj("/KBNLC180", obj);
+
+});

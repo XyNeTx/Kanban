@@ -45,7 +45,9 @@ namespace KANBAN.Context
                     _ => _config.GetConnectionString("DevPPM3Connection")
                 };
 
-                optionsBuilder.UseSqlServer(connectionString);
+                optionsBuilder.UseSqlServer(connectionString, option =>
+                    option.CommandTimeout(600)
+                );
             }
         }
 

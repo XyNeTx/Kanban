@@ -83,6 +83,16 @@ class xLib {
                             }
                         }
                     }
+                    else {
+                        jsonResult.data = JSON.parse(jsonResult.data);
+                        for(let i = 0; i < jsonResult.data.length; i++) {
+                            for (var key in jsonResult.data[i]) {
+                                if (typeof jsonResult.data[i][key] == 'string') {
+                                    jsonResult.data[i][key] = jsonResult.data[i][key].trim();
+                                }
+                            }
+                        }
+                    }
                     return jsonResult;
                 }
             }
@@ -438,6 +448,7 @@ class xLib {
         for (var key in obj) {
             query += key + "=" + obj[key] + "&";
         }
+        if (query.endsWith('&')) query = query.substring(0, query.length - 1);
 
         var _url = "http://hmmt-app03/Reports/Pages/ReportViewer.aspx?/KB3"
         _url = _url + reportName + "&" + query;
