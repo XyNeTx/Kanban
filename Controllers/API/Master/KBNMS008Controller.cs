@@ -505,7 +505,7 @@ namespace HINOSystem.Controllers.API.Master
         }
 
         [HttpPost]
-        public async Task<IActionResult> SelectDateChange(TMP_Planning_Order obj)
+        public async Task<IActionResult> SelectDateChange(TMP_Planning_Order obj, [FromQuery] bool isImport = false)
         {
             try
             {
@@ -568,8 +568,11 @@ namespace HINOSystem.Controllers.API.Master
                         message = "Not Working",
                     });
                 };
+                
+                var isInsert = await Insert_TMP(obj,isImport);
+                var isDetail = await Detail_Data(obj);
 
-                if (!await Insert_TMP(obj) && !await Detail_Data(obj))
+                if (!isInsert || !isDetail)
                 {
                     return BadRequest(new
                     {
@@ -634,7 +637,7 @@ namespace HINOSystem.Controllers.API.Master
             }
         }
 
-        private async Task<bool> Insert_TMP(TMP_Planning_Order obj)
+        private async Task<bool> Insert_TMP(TMP_Planning_Order obj,bool isImport)
         {
             try
             {
@@ -655,17 +658,104 @@ namespace HINOSystem.Controllers.API.Master
                 };
 
                 string sql = "";
+                var TMP_Planning = new List<TMP_Planning_Order>();
 
-                for (int i = 0; i < DT_PartControl.Rows.Count; i++)
+                if (isImport == false)
                 {
-                    var TMP_Planning = _KB3Context.TMP_Planning_Order.Where(x => x.F_Supplier_Code == DT_PartControl.Rows[i]["F_Supplier_Cd"].ToString().Trim() &&
-                            x.F_Supplier_Plant == DT_PartControl.Rows[i]["F_Supplier_Plant"].ToString().Trim() &&
-                            x.F_Kanban_No == DT_PartControl.Rows[i]["F_Kanban_No"].ToString().Trim() &&
-                            x.F_Store_Code == DT_PartControl.Rows[i]["F_Store_Code"].ToString().Trim() &&
-                            x.F_Part_No == DT_PartControl.Rows[i]["F_Part_No"].ToString().Trim() &&
-                            x.F_Ruibetsu == DT_PartControl.Rows[i]["F_Ruibetsu"].ToString().Trim() &&
-                            x.F_Delivery_Date == obj.F_Delivery_Date && x.F_Plant == _BearerClass.Plant).ToList();
+                    for (int i = 0; i < DT_PartControl.Rows.Count; i++)
+                    {
 
+                        TMP_Planning = _KB3Context.TMP_Planning_Order.Where(x => x.F_Supplier_Code == DT_PartControl.Rows[i]["F_Supplier_Cd"].ToString().Trim() &&
+                                x.F_Supplier_Plant == DT_PartControl.Rows[i]["F_Supplier_Plant"].ToString().Trim() &&
+                                x.F_Kanban_No == DT_PartControl.Rows[i]["F_Kanban_No"].ToString().Trim() &&
+                                x.F_Store_Code == DT_PartControl.Rows[i]["F_Store_Code"].ToString().Trim() &&
+                                x.F_Part_No == DT_PartControl.Rows[i]["F_Part_No"].ToString().Trim() &&
+                                x.F_Ruibetsu == DT_PartControl.Rows[i]["F_Ruibetsu"].ToString().Trim() &&
+                                x.F_Delivery_Date == obj.F_Delivery_Date && x.F_Plant == _BearerClass.Plant).ToList();
+
+                        if (TMP_Planning.Count == 0)
+                        {
+                            string cycle = obj.F_Cycle == null ? "P.F_Cycle" : $"'{obj.F_Cycle}'";
+                            sql = $"INSERT INTO TMP_Planning_Order(F_Plant, F_Delivery_Date, F_Supplier_Code, F_Supplier_Plant " +
+                                $", F_Store_Code, F_Kanban_No, F_Part_No, F_Ruibetsu, F_Cycle, F_Qty, F_Safety_Stk " +
+                                $", F_Trip1, F_Trip2, F_Trip3, F_Trip4, F_Trip5, F_Trip6, F_Trip7, F_Trip8, F_Trip9, F_Trip10 " +
+                                $", F_Trip11, F_Trip12, F_Trip13, F_Trip14, F_Trip15, F_Trip16, F_Trip17, F_Trip18, F_Trip19, F_Trip20 " +
+                                $", F_Trip21, F_Trip22, F_Trip23, F_Trip24, F_Trip25, F_Trip26, F_Trip27, F_Trip28, F_Trip29, F_Trip30 " +
+                                $", F_Trip31, F_Trip32, F_Create_Date, F_Create_By) SELECT '{_BearerClass.Plant}' AS F_Plant " +
+                                $", '{obj.F_Delivery_Date}' AS F_Delivery_Date  , RTRIM(C.F_supplier_cd) AS F_Supplier_Code " +
+                                $", RTRIM(C.F_plant) AS F_Supplier_Plant " +
+                                $", RTRIM(C.F_Store_cd) AS F_Store_Code " +
+                                $", RIGHT('0000'+ CONVERT(VARCHAR,C.F_Sebango),4) AS F_Kanban_No " +
+                                $", RTRIM(C.F_Part_no) AS F_Part_No " +
+                                $", RTRIM(C.F_Ruibetsu) AS F_Ruibetsu " +
+                                $", {cycle} AS F_Cycle " +
+                                $", CASE WHEN Chg.F_New_Qty = '' OR Chg.F_New_Qty IS NULL THEN C.F_qty_box " +
+                                $" ELSE Chg.F_New_Qty END AS F_Qty " +
+                                $", RTRIM(C.F_Safety_Stk) AS F_Safety_Stock " +
+                                $", '{obj.F_Trip1}' AS F_Trip1 , '{obj.F_Trip2}' AS F_Trip2" +
+                                $", '{obj.F_Trip3}' AS F_Trip3 , '{obj.F_Trip4}' AS F_Trip4" +
+                                $", '{obj.F_Trip5}' AS F_Trip5 , '{obj.F_Trip6}' AS F_Trip6" +
+                                $", '{obj.F_Trip7}' AS F_Trip7 , '{obj.F_Trip8}' AS F_Trip8" +
+                                $", '{obj.F_Trip9}' AS F_Trip9 , '{obj.F_Trip10}' AS F_Trip10" +
+                                $", '{obj.F_Trip11}' AS F_Trip11 , '{obj.F_Trip12}' AS F_Trip12" +
+                                $", '{obj.F_Trip13}' AS F_Trip13 , '{obj.F_Trip14}' AS F_Trip14" +
+                                $", '{obj.F_Trip15}' AS F_Trip15 , '{obj.F_Trip16}' AS F_Trip16" +
+                                $", '{obj.F_Trip17}' AS F_Trip17 , '{obj.F_Trip18}' AS F_Trip18" +
+                                $", '{obj.F_Trip19}' AS F_Trip19 , '{obj.F_Trip20}' AS F_Trip20" +
+                                $", '{obj.F_Trip21}' AS F_Trip21 , '{obj.F_Trip22}' AS F_Trip22" +
+                                $", '{obj.F_Trip23}' AS F_Trip23 , '{obj.F_Trip24}' AS F_Trip24" +
+                                $", '{obj.F_Trip25}' AS F_Trip25 , '{obj.F_Trip26}' AS F_Trip26" +
+                                $", '{obj.F_Trip27}' AS F_Trip27 , '{obj.F_Trip28}' AS F_Trip28" +
+                                $", '{obj.F_Trip29}' AS F_Trip29 , '{obj.F_Trip30}' AS F_Trip30" +
+                                $", '{obj.F_Trip31}' AS F_Trip31 , '{obj.F_Trip32}' AS F_Trip32" +
+                                $", '{DateTime.Now}' AS F_Create_Date " +
+                                $", '{_BearerClass.UserCode}' AS F_Create_By " +
+                                $"FROM {ppmConnect}.[dbo].[T_Construction] C  " +
+                                $"INNER JOIN TB_MS_PartOrder P " +
+                                $"ON C.F_supplier_cd = P.F_Supplier_Cd collate Thai_CI_AS " +
+                                $"AND C.F_plant = P.F_Supplier_Plant collate Thai_CI_AS " +
+                                $"AND C.F_Store_cd = P.F_Store_Code collate Thai_CI_AS " +
+                                $"AND RIGHT('0000'+C.F_Sebango,4) = P.F_Kanban_No collate Thai_CI_AS " +
+                                $"AND C.F_Part_no = P.F_Part_No collate Thai_CI_AS " +
+                                $"AND C.F_Ruibetsu = P.F_Ruibetsu collate Thai_CI_AS " +
+                                $"LEFT JOIN TB_Kanban_Chg_Qty Chg " +
+                                $"ON  C.F_supplier_cd = Chg.F_Supplier_Code collate Thai_CI_AS " +
+                                $"AND C.F_plant = Chg.F_Supplier_Plant collate Thai_CI_AS " +
+                                $"AND C.F_Store_cd = Chg.F_Store_Code collate Thai_CI_AS " +
+                                $"AND RIGHT('0000'+C.F_Sebango,4) = Chg.F_Kanban_No collate Thai_CI_AS " +
+                                $"AND C.F_Part_no = Chg.F_Part_No collate Thai_CI_AS " +
+                                $"AND C.F_Ruibetsu = Chg.F_Ruibetsu collate Thai_CI_AS " +
+                                $"WHERE C.F_Part_no = '{DT_PartControl.Rows[i]["F_Part_No"].ToString().Trim()}' " +
+                                $"AND C.F_Ruibetsu = '{DT_PartControl.Rows[i]["F_Ruibetsu"].ToString().Trim()}' " +
+                                $"AND C.F_Store_cd = '{DT_PartControl.Rows[i]["F_Store_Code"].ToString().Trim()}' " +
+                                $"AND C.F_supplier_cd = '{DT_PartControl.Rows[i]["F_Supplier_Cd"].ToString().Trim()}' " +
+                                $"AND C.F_plant = '{DT_PartControl.Rows[i]["F_Supplier_Plant"].ToString().Trim()}' " +
+                                $"AND C.F_Sebango = '{DT_PartControl.Rows[i]["F_Kanban_No"].ToString().Trim().Substring(1, 3)}' " +
+                                $"AND C.F_Local_Str <= convert(char(8),getdate(),112) " +
+                                $"AND C.F_Local_End >= convert(char(8),getdate(),112) ";
+
+                            await _KB3Context.Database.ExecuteSqlRawAsync(sql);
+                            _log.WriteLogMsg($"Insert TMP_Planning_Order : {sql}");
+
+                        }
+                    }
+                }
+                else
+                {
+                    string getStoreCd = _PPM3Context.T_Construction.Where(x => x.F_supplier_cd == obj.F_Supplier_Code &&
+                            x.F_plant == obj.F_Supplier_Plant[0] &&
+                            x.F_Sebango == obj.F_Kanban_No.Substring(1, 3) &&
+                            x.F_Part_no == obj.F_Part_No && x.F_Ruibetsu == obj.F_Ruibetsu)
+                        .Select(x => x.F_Store_cd).FirstOrDefault();
+
+                    TMP_Planning = _KB3Context.TMP_Planning_Order.Where(x => x.F_Supplier_Code == obj.F_Supplier_Code &&
+                            x.F_Supplier_Plant == obj.F_Supplier_Plant &&
+                            x.F_Kanban_No == obj.F_Kanban_No &&
+                            x.F_Store_Code == getStoreCd &&
+                            x.F_Part_No == obj.F_Part_No &&
+                            x.F_Ruibetsu == obj.F_Ruibetsu &&
+                            x.F_Delivery_Date == obj.F_Delivery_Date &&
+                            x.F_Plant == _BearerClass.Plant).ToList();
 
 
                     if (TMP_Planning.Count == 0)
@@ -720,12 +810,12 @@ namespace HINOSystem.Controllers.API.Master
                             $"AND RIGHT('0000'+C.F_Sebango,4) = Chg.F_Kanban_No collate Thai_CI_AS " +
                             $"AND C.F_Part_no = Chg.F_Part_No collate Thai_CI_AS " +
                             $"AND C.F_Ruibetsu = Chg.F_Ruibetsu collate Thai_CI_AS " +
-                            $"WHERE C.F_Part_no = '{DT_PartControl.Rows[i]["F_Part_No"].ToString().Trim()}' " +
-                            $"AND C.F_Ruibetsu = '{DT_PartControl.Rows[i]["F_Ruibetsu"].ToString().Trim()}' " +
-                            $"AND C.F_Store_cd = '{DT_PartControl.Rows[i]["F_Store_Code"].ToString().Trim()}' " +
-                            $"AND C.F_supplier_cd = '{DT_PartControl.Rows[i]["F_Supplier_Cd"].ToString().Trim()}' " +
-                            $"AND C.F_plant = '{DT_PartControl.Rows[i]["F_Supplier_Plant"].ToString().Trim()}' " +
-                            $"AND C.F_Sebango = '{DT_PartControl.Rows[i]["F_Kanban_No"].ToString().Trim().Substring(1, 3)}' " +
+                            $"WHERE C.F_Part_no = '{obj.F_Part_No}' " +
+                            $"AND C.F_Ruibetsu = '{obj.F_Ruibetsu}' " +
+                            $"AND C.F_Store_cd = '{getStoreCd}' " +
+                            $"AND C.F_supplier_cd = '{obj.F_Supplier_Code}' " +
+                            $"AND C.F_plant = '{obj.F_Supplier_Plant}' " +
+                            $"AND C.F_Sebango = '{obj.F_Kanban_No.Substring(1, 3)}' " +
                             $"AND C.F_Local_Str <= convert(char(8),getdate(),112) " +
                             $"AND C.F_Local_End >= convert(char(8),getdate(),112) ";
 
@@ -733,6 +823,7 @@ namespace HINOSystem.Controllers.API.Master
                         _log.WriteLogMsg($"Insert TMP_Planning_Order : {sql}");
 
                     }
+
                 }
 
                 return true;
@@ -1059,6 +1150,7 @@ namespace HINOSystem.Controllers.API.Master
                 });
             }
         }
+
         [HttpPost]
         public async Task<IActionResult> GetImportList (List<TMP_Planning_Order> listObj)
         {
@@ -1145,6 +1237,107 @@ namespace HINOSystem.Controllers.API.Master
             }
             catch (Exception ex)
             {
+
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    message = "Unexpected error occurred",
+                    error = ex.Message
+                });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UploadImportToKanbanPlan()
+        {
+            try
+            {
+
+                if(_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
+                {
+                    return Unauthorized(new
+                    {
+                        status = _BearerClass.Status,
+                        response = _BearerClass.Response,
+                        message = _BearerClass.Message,
+                    });
+                }
+
+                var listObj = _KB3Context.TMP_Planning_Order.Where(x => x.F_Plant == _BearerClass.Plant
+                                   && x.F_Create_By == _BearerClass.UserCode
+                                   && x.F_Update_By == null
+                                   && x.F_Update_Date == null).ToList();
+
+                foreach (var obj in listObj)
+                {
+                    obj.F_Update_By = _BearerClass.UserCode;
+                    obj.F_Update_Date = DateTime.Now;
+
+                    _KB3Context.TMP_Planning_Order.Update(obj);
+
+                    var propList = obj.GetType().GetProperties()
+                        .Where(x => x.Name.StartsWith("F_Trip")).ToList();
+
+                    int cycle = int.Parse(obj.F_Cycle.Substring(2, 2));
+
+                    foreach (var prop in propList)
+                    {
+                        if (prop.Name.StartsWith("F_Trip"))
+                        {
+                            string _deliveryTrip = prop.Name.Substring(6);
+
+                            if (int.Parse(_deliveryTrip) > cycle)
+                            {
+                                break;
+                            }
+
+                            int _orderKB = int.Parse(prop.GetValue(obj).ToString());
+
+                            TB_Kanban_Planning planObj = new TB_Kanban_Planning
+                            {
+                                F_Create_By = obj.F_Update_By,
+                                F_Create_Date = obj.F_Update_Date.Value,
+                                F_Update_By = obj.F_Update_By,
+                                F_Update_Date = obj.F_Update_Date.Value,
+                                F_Plant = obj.F_Plant,
+                                F_Supplier_Code = obj.F_Supplier_Code,
+                                F_Supplier_Plant = obj.F_Supplier_Plant,
+                                F_Store_Code = obj.F_Store_Code,
+                                F_Kanban_No = obj.F_Kanban_No,
+                                F_Part_No = obj.F_Part_No,
+                                F_Ruibetsu = obj.F_Ruibetsu,
+                                F_Status = "0",
+                                F_Delivery_Date = obj.F_Delivery_Date,
+                                F_Delivery_Trip = _deliveryTrip.ToString(),
+                                F_Order_PCS = (_orderKB * obj.F_Qty.Value),
+                                F_Order_KB = _orderKB,
+                                F_Qty_Pack = obj.F_Qty.Value,
+                                F_Cycle = obj.F_Cycle,
+                            };
+
+                            _KB3Context.TB_Kanban_Planning.Add(planObj);
+                        }
+                    }
+
+                    _log.WriteLogMsg($" Upload Import To Kanban Planning : {JsonConvert.SerializeObject(obj)}");
+                }
+
+                //_KB3Context.TMP_Planning_Order.RemoveRange(listObj);
+                //_log.WriteLogMsg($"Remove TMP_Planning_Order : {JsonConvert.SerializeObject(listObj)}");
+                await _KB3Context.SaveChangesAsync();
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "OK",
+                    title = "Success",
+                    message = "Data Imported",
+                });
+
+            }
+            catch (Exception ex)
+            {
+                _log.WriteLogMsg($"UploadImportToKanbanPlan ERROR!!! : {ex.Message}");
 
                 return StatusCode(500, new
                 {

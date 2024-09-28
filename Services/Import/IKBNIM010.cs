@@ -119,7 +119,7 @@ namespace KANBAN.Services.Import
                 await _kbContext.Database.ExecuteSqlRawAsync($"Update TB_MS_Parameter " +
                     $"Set F_Value2='1',F_Update_Date=getdate(), F_Update_By='{_bearerClass.UserCode}' " +
                     $",F_Value3= '{date.Substring(6, 4) + date.Substring(3, 2) + date.Substring(0, 2) + shift}' " +
-                    $" Where F_Code = N'CI' AND F_Value2='0' ");
+                    $" Where F_Code = N'CI_CKD' AND F_Value2='0' ");
 
                 _log.WriteLogMsg("KBNIM010 | Confirm All Update from TB_MS_Parameter Set F_Value2='1' | " +
                     "Update TB_MS_Parameter " +

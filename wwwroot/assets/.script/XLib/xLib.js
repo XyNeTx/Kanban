@@ -82,8 +82,28 @@ class xLib {
                                 }
                             }
                         }
+                        return jsonResult;
                     }
                     else {
+                        if (typeof jsonResult.data == 'object') {
+
+                            for (var key in jsonResult.data) {
+                                if (typeof jsonResult.data[key] == 'string') {
+                                    jsonResult.data[key] = jsonResult.data[key].trim();
+                                }
+                                else if (typeof jsonResult.data[key] == 'array') {
+                                    for (var key2 in jsonResult.data[key]) {
+                                        if (typeof jsonResult.data[key][key2] == 'string') {
+                                            jsonResult.data[key][key2] = jsonResult.data[key][key2].trim();
+                                        }
+                                    }
+
+                                }
+                                return jsonResult;
+                            }
+
+                        }
+
                         jsonResult.data = JSON.parse(jsonResult.data);
                         for(let i = 0; i < jsonResult.data.length; i++) {
                             for (var key in jsonResult.data[i]) {
@@ -92,6 +112,7 @@ class xLib {
                                 }
                             }
                         }
+                        return jsonResult;
                     }
                     return jsonResult;
                 }

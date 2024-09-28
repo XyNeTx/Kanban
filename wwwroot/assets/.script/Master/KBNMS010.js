@@ -253,11 +253,19 @@ $("#btnCopy").click(() => {
 });
 
 $("#buttonSave").click(function () {
+    var _data = getFormData($("#frmCondition"));
+    _data.F_YM = $("#F_YM").val().replaceAll("-", "");
+    _data.F_Store_cd = $("#F_Store_cd").val();
+
+    for (let i = 29; i <= 31; i++) {
+        if (_data.hasOwnProperty(`F_workCd_D${i}`) == false) _data[`F_workCd_D${i}`] = "0";
+        if (_data.hasOwnProperty(`F_workCd_N${i}`) == false) _data[`F_workCd_N${i}`] = "0";
+    }
 
     if (_cmd == "New") {
-        var _data = getFormData($("#frmCondition"));
-        _data.F_YM = _data.F_YM.replaceAll("-", "");
-        console.log(_data);
+        //var _data = getFormData($("#frmCondition"));
+        //_data.F_YM = _data.F_YM.replaceAll("-", "");
+        //console.log(_data);
         _xLib.AJAX_Post('/api/KBNMS010/Save', JSON.stringify(_data),
             function (result) {
                 if (result.status == 200) {
@@ -277,10 +285,10 @@ $("#buttonSave").click(function () {
 
     else if (_cmd == "Update") {
         xSwal.question("Are you sure?", "Do you want to update this data?", function () {
-            var _data = getFormData($("#frmCondition"));
-            _data.F_YM = $("#F_YM").val().replaceAll("-", "");
-            _data.F_Store_cd = $("#F_Store_cd").val();
-            console.log(_data);
+            //var _data = getFormData($("#frmCondition"));
+            //_data.F_YM = $("#F_YM").val().replaceAll("-", "");
+            //_data.F_Store_cd = $("#F_Store_cd").val();
+            //console.log(_data);
             _xLib.AJAX_Post('/api/KBNMS010/Update', JSON.stringify(_data),
                 function (result) {
                     if (result.status == 200) {
@@ -301,10 +309,10 @@ $("#buttonSave").click(function () {
 
     else if (_cmd == "Delete") {
         xSwal.question("Are you sure?", "Do you want to delete this data?", function () {
-            var _data = getFormData($("#frmCondition"));
-            _data.F_YM = $("#F_YM").val().replaceAll("-", "");
-            _data.F_Store_cd = $("#F_Store_cd").val();
-            console.log(_data);
+            //var _data = getFormData($("#frmCondition"));
+            //_data.F_YM = $("#F_YM").val().replaceAll("-", "");
+            //_data.F_Store_cd = $("#F_Store_cd").val();
+            //console.log(_data);
             _xLib.AJAX_Post('/api/KBNMS010/Delete', JSON.stringify(_data),
                 function (result) {
                     if (result.status == 200) {

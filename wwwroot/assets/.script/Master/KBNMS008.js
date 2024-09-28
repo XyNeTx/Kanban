@@ -243,7 +243,7 @@ function GetTrip() {
         "columns": [
             {
                 title: "Part No", data: function (data) {
-                    console.log(data);
+                    //console.log(data);
                     return `<td>${data.f_Part_No}-${data.f_Ruibetsu}</td>`;
                 }
                 /*title : "Part No", data : "f_Part_No"*/
@@ -523,6 +523,9 @@ $(document).on("keydown blur", "#tableMain .inputTrip", function (e) {
 $("#btnConfirm").click(function () {
 
     let data = $("#tableMain").DataTable().data().toArray();
+    data.forEach(function (item) {
+        item.F_Cycle = $("#readCycle").val().replaceAll("-", "");
+    });
 
     _xLib.AJAX_Post("/api/KBNMS008/UpToList", JSON.stringify(data),
         function (success) {
@@ -557,112 +560,144 @@ $("#inpFile").change(function () {
 });
 
 $("#btnImport").click(async function () {
-    if (!_file) return xSwal.error("Import File Error", "No file selected");
-    //console.log('File being processed:', file);
+    try {
 
-    const arrayBuffer = await _file.arrayBuffer();
-    const read = await XLSX.read(arrayBuffer);
+        $("#btnImport").prop("disabled", true);
 
-    const _json = XLSX.utils.sheet_to_json(read.Sheets[read.SheetNames[0]]);
+        if (!_file) return xSwal.error("Import File Error", "No file selected");
+        //console.log('File being processed:', file);
 
-    _json.forEach(function (row) {
-        for (var key in row) {
-            if (key.includes("T")) {
-                row["f_Trip" + key.slice(1)] = row[key];
-                delete row[key];
+        const arrayBuffer = await _file.arrayBuffer();
+        const read = await XLSX.read(arrayBuffer);
+
+        const _json = XLSX.utils.sheet_to_json(read.Sheets[read.SheetNames[0]]);
+
+        _json.forEach(function (row) {
+            for (var key in row) {
+                if (key.includes("T")) {
+                    row["f_Trip" + key.slice(1)] = row[key];
+                    delete row[key];
+                }
             }
+
+            row["f_Supplier_Code"] = row["Supplier_Code"].split("-")[0];
+            row["f_Supplier_Plant"] = row["Supplier_Code"].split("-")[1];
+            row["f_Part_No"] = row["Part_No"].toString().slice(0, 10);
+            row["f_Ruibetsu"] = row["Part_No"].toString().slice(10, 12);
+            row["f_Kanban_No"] = row["Kanban_No"];
+            row["f_Delivery_Date"] = row["Delivery_Date"].toString();
+            row["f_Plant"] = _xLib.GetCookie("plantCode");
+            row["f_Store_Code"] = "00";
+            row["f_Last_Order"] = null;
+            row["f_FC_Max"] = null;
+            row["f_Qty"] = null;
+            row["f_Total_KB"] = null;
+            row["f_Total_Pcs"] = null;
+            row["f_Order_Diff"] = null;
+
+            delete row["Supplier_Code"];
+            delete row["Part_No"];
+            delete row["Kanban_No"];
+            delete row["Delivery_Date"];
+        });
+
+        $("#selectSupplier").selectpicker("val", _json[0].f_Supplier_Code + "-" + _json[0].f_Supplier_Plant);
+
+        var obj = {
+            supplier: $("#selectSupplier").val()
         }
 
-        row["f_Supplier_Code"] = row["Supplier_Code"].split("-")[0];
-        row["f_Supplier_Plant"] = row["Supplier_Code"].split("-")[1];
-        row["f_Part_No"] = row["Part_No"].slice(0, 10);
-        row["f_Ruibetsu"] = row["Part_No"].slice(10, 12);
-        row["f_Kanban_No"] = row["Kanban_No"];
-        row["f_Delivery_Date"] = row["Delivery_Date"].toString();
-        row["f_Plant"] = _xLib.GetCookie("plantCode");
-        row["f_Store_Code"] = "00";
-        row["f_Last_Order"] = null;
-        row["f_FC_Max"] = null;
-        row["f_Qty"] = null;
-        row["f_Total_KB"] = null;
-        row["f_Total_Pcs"] = null;
-        row["f_Order_Diff"] = null;
-
-        delete row["Supplier_Code"];
-        delete row["Part_No"];
-        delete row["Kanban_No"];
-        delete row["Delivery_Date"];
-    });
-
-    $("#selectSupplier").selectpicker("val", _json[0].f_Supplier_Code + "-" + _json[0].f_Supplier_Plant);
-
-    var obj = {
-        supplier: $("#selectSupplier").val()
-    }
-
-    _xLib.AJAX_Get("/api/KBNMS008/GetSupplierDetail", obj,
-        async function (success) {
-            if (success.status == "200") {
-                //console.log(success.data);
-                $("#readSupplier").val(obj.supplier);
-                $("#readSupplierName").val(success.data.f_Supplier_Name);
-                $("#readSafetyStock").val(success.data.f_Safety_Stk);
-                $("#readCycle").val(success.cycle.slice(0, 2) + "-" + success.cycle.slice(2, 4) + "-" + success.cycle.slice(4, 6));
-                await GetTrip();
-                $("#tableMain").DataTable().clear().rows.add(_json).draw();
+        await _xLib.AJAX_Get("/api/KBNMS008/GetSupplierDetail", obj,
+            async function (success) {
+                if (success.status == "200") {
+                    //console.log(success.data);
+                    $("#readSupplier").val(obj.supplier);
+                    $("#readSupplierName").val(success.data.f_Supplier_Name);
+                    $("#readSafetyStock").val(success.data.f_Safety_Stk);
+                    $("#readCycle").val(success.cycle.slice(0, 2) + "-" + success.cycle.slice(2, 4) + "-" + success.cycle.slice(4, 6));
+                    await GetTrip();
+                    //$("#tableMain").DataTable().clear().rows.add(_json).draw();
+                }
+            },
+            function (error) {
+                console.error(error);
+                xSwal.error("Error", "Can't Get Supplier Detail");
             }
-        },
-        function (error) {
-            console.error(error);
-            xSwal.error("Error", "Can't Get Supplier Detail");
-        }
-    );
+        );
 
-    await $("#selectKanban").selectpicker("val", _json[0].f_Kanban_No);
-    await $("#selectKanbanTo").selectpicker("val", _json[_json.length - 1].f_Kanban_No);
-    await $("#selectStore").selectpicker("val", "");
-    await $("#selectStoreTo").selectpicker("val", "");
-    await $("#selectPart").selectpicker("val", _json[0].f_Part_No + "-" + _json[0].f_Ruibetsu);
-    await $("#selectPartTo").selectpicker("val", _json[_json.length - 1].f_Part_No + "-" + _json[_json.length - 1].f_Ruibetsu);
+        //await $("#selectKanban").selectpicker("val", _json[0].f_Kanban_No);
+        //await $("#selectKanbanTo").selectpicker("val", _json[_json.length - 1].f_Kanban_No);
+        //await $("#selectStore").selectpicker("val", "");
+        //await $("#selectStoreTo").selectpicker("val", "");
+        //await $("#selectPart").selectpicker("val", _json[0].f_Part_No + "-" + _json[0].f_Ruibetsu);
+        //await $("#selectPartTo").selectpicker("val", _json[_json.length - 1].f_Part_No + "-" + _json[_json.length - 1].f_Ruibetsu);
 
-    $("#selectDelivery").val(moment(_json[0].f_Delivery_Date, "YYYYMMDD").format("DD/MM/YYYY"));
-    $("#selectDeliveryTo").val(moment(_json[0].f_Delivery_Date, "YYYYMMDD").format("DD/MM/YYYY"));
-    $("#selectDate").val(moment(_json[0].f_Delivery_Date, "YYYYMMDD").format("DD/MM/YYYY"));
-    console.log(_json);
+        //$("#selectDelivery").val(moment(_json[0].f_Delivery_Date, "YYYYMMDD").format("DD/MM/YYYY"));
+        //$("#selectDeliveryTo").val(moment(_json[_json.length - 1].f_Delivery_Date, "YYYYMMDD").format("DD/MM/YYYY"));
+        //$("#selectDate").val(moment(_json[0].f_Delivery_Date, "YYYYMMDD").format("DD/MM/YYYY"));
+        //console.log(_json);
 
-    _xLib.AJAX_Post("/api/KBNMS008/GetImportList", JSON.stringify(_json),
-        function (success) {
-            if (success.status == "200") {
+        await _xLib.AJAX_Post("/api/KBNMS008/GetImportList", JSON.stringify(_json),
+            async function (success) {
+                if (success.status == "200") {
 
-                _json.forEach(function (item) {
-                    _xLib.AJAX_Post("/api/KBNMS008/SelectDateChange", JSON.stringify(item),
-                        async function (success) {
+                    for (let i = 0; i < _json.length; i++) {
+                        //console.log(_json[i]);
+                        _json[i]["f_Cycle"] = $("#readCycle").val().replaceAll("-", "");
+                        await _xLib.AJAX_Post("/api/KBNMS008/SelectDateChange?isImport=true", JSON.stringify(_json[i]),
+                            async function (success) {
+                                if (success.status == "200") {
+                                    success = _xLib.JSONparseMixData(success);
+                                    //console.log(success.data);
+                                    //console.log(success.data[0].F_Work);
+                                    if (success.data.periodDay != 0 || success.data.periodDay != "") {
+                                        _workingTrip = success.data.periodDay;
+                                    }
+                                    else if (success.data.periodNight != 0 || success.data.periodNight != "") {
+                                        _workingTrip = success.data.periodNight;
+                                    }
+                                    //console.log(_json[0].f_Store_Code);
+                                    //console.log(_json[_json.length - 1].f_Store_Code);
+                                    //await $("#selectStore").selectpicker("val", _json[0].f_Store_Code);
+                                    //await $("#selectStoreTo").selectpicker("val", _json[_json.length - 1].f_Store_Code);
+                                }
+                            },
+                            function (error) {
+                                console.error(error);
+                                xSwal.error("Error", "Can't Get Data");
+                            }
+                        );
+                    }
+
+                    await _xLib.AJAX_Post("/api/KBNMS008/UploadImportToKanbanPlan", "",
+                        function (success) {
                             if (success.status == "200") {
-                                success = _xLib.JSONparseMixData(success);
-                                //console.log(success.data);
-                                //console.log(success.data[0].F_Work);
-                                if (success.data.periodDay != 0) {
-                                    _workingTrip = success.data.periodDay;
-                                }
-                                else if (success.data.periodNight != 0) {
-                                    _workingTrip = success.data.periodNight;
-                                }
-                                await ShowData();
+                                xSwal.success("Success", "Import Data Complete");
+                                $("#btnImport").prop("disabled", false);
                             }
                         },
                         function (error) {
                             console.error(error);
-                            xSwal.error("Error", "Can't Get Data");
+                            xSwal.error("Error", "Can't Import Data");
                         }
                     );
-                });
-                
+                    //await ShowData();
+                }
+            },
+            function (error) {
+                console.error(error);
+                xSwal.error("Error", "Can't Get Data");
             }
-        },
-        function (error) {
-            console.error(error);
-            xSwal.error("Error", "Can't Get Data");
-        }
-    );
+        );
+    }
+    catch (error) {
+        console.error(error);
+        xSwal.error("Error", "Can't Import Data");
+    }
+    finally {
+        () => {
+            $("#btnImport").prop("disabled", false);
+        };
+    }
 
 });
