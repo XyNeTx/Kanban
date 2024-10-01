@@ -201,7 +201,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
                 SqlParameter[] sqlParameters = new SqlParameter[]
                 {
                     new SqlParameter("@Plant", Plant),
-                    new SqlParameter("@OrderType", "Daily"), // Assuming "Daily" is always required
+                    new SqlParameter("@OrderType", DBNull.Value), // Assuming "Daily" is always required
                     new SqlParameter("@Supplier_Code", !string.IsNullOrWhiteSpace(Supplier) ? Supplier.Substring(0, 4) : (object)DBNull.Value),
                     new SqlParameter("@Supplier_Plant", !string.IsNullOrWhiteSpace(Supplier) ? Supplier.Substring(5, 1) : (object)DBNull.Value),
                     // Add other parameters similarly if they are provided, else set to DBNull.Value
@@ -267,7 +267,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
 
                 var dt = _FillDT.ExecuteSQL("EXEC [dbo].[sp_NormalOrder_getStoreCode] @p0,@p1,@p2,@p3,@p4,@p5,@p6,@p7,@p8,@p9,@p10,@p11",
                     Plant, DBNull.Value, DBNull.Value, DBNull.Value, DBNull.Value, DBNull.Value, DBNull.Value, DBNull.Value, DBNull.Value, DBNull.Value, DBNull.Value,
-                    "Daily");
+                    DBNull.Value);
 
                 if(dt.Rows.Count == 0)
                 {
@@ -320,7 +320,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
                 var dt = _FillDT.ExecuteSQL("EXEC [dbo].[sp_NormalOrder_getPartNo] @p0,@p1,@p2,@p3,@p4,@p5,@p6,@p7,@p8,@p9,@p10,@p11",
                     Plant, DBNull.Value, DBNull.Value, DBNull.Value, DBNull.Value, DBNull.Value, DBNull.Value, DBNull.Value, DBNull.Value,
                     string.IsNullOrWhiteSpace(Store_Cd_From) ? DBNull.Value : Store_Cd_From, string.IsNullOrWhiteSpace(Store_Cd_To) ? DBNull.Value : Store_Cd_To,
-                    "Daily");
+                    DBNull.Value);
 
                 if(dt.Rows.Count == 0)
                 {

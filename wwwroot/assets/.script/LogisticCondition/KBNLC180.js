@@ -74,3 +74,28 @@ $("#btnPrintDock").click(function () {
     _xLib.OpenReportObj("/KBNLC180", obj);
 
 });
+
+$("#btnPrintTruck").click(function () {
+    let obj =
+    {
+        YM : $("#F_Period").val().replaceAll("-", ""),
+        Rev : $("#F_Rev").val(),
+        incharge: $("#txtIncharge").val().trim(),
+        Dept: $("#txtDepartment").val().trim(),
+        Route1: $("#F_Route1").val().trim(),
+        Route2: $("#F_Route2").val().trim(),
+    }
+
+    _xLib.AJAX_Get("/api/KBNLC180/Truck_Card_Report", obj,
+        function (success) {
+
+            xSwal.success(success.response, success.message);
+
+        },
+        function (error) {
+            xSwal.error(error.responseJSON.response, error.responseJSON.message);
+        }
+
+    );
+    
+});

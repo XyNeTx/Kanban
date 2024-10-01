@@ -17,8 +17,13 @@
         "info": false,
         width: '100%',
         scrollCollapse: true,
+        scrollY: "350px",
+        scrollX: true,
         order: [ 1, 'asc' ],
     });
+
+    $("table thead tr th").css("text-align", "center");
+    $("table tbody tr td").css("text-align", "center");
 
     xAjax.onClick('btnExit', function () {
         xAjax.redirect('KBNOR100');
@@ -33,6 +38,8 @@
                 success.data = _xLib.TrimArrayJSON(success.data);
                 console.log(success.data);
                 $("#tblMaster").DataTable().rows.add(success.data).clear().draw();
+                $("table thead tr th").css("text-align", "center");
+                $("table tbody tr td").css("text-align", "center");
             }
         },
         function (error) {
@@ -51,6 +58,9 @@ $("#txtDate , input[name='rdoOrderTypeName']").on('change', async function () {
                 success.data = _xLib.TrimArrayJSON(success.data);
                 console.log(success.data);
                 $("#tblMaster").DataTable().clear().rows.add(success.data).draw();
+                $("table thead tr th").css("text-align", "center");
+                $("table tbody tr td").css("text-align", "center");
+
             }
         },
         function (error) {
@@ -79,7 +89,7 @@ $("#inputFile").change(async function (e) {
             if (success.status == "200") {
                 xSwal.success("Success", success.message);
                 if (success.message.includes("Error") || success.message.includes("error")) {
-                    _xLib.OpenReport("/KBNIMERR", `&UserID=${ajexHeader.UserCode}&Type=KBNOR160`);
+                    _xLib.OpenReport("/KBNIMERR", `UserID=${ajexHeader.UserCode}&Type=KBNOR160`);
                 }
             }
         },

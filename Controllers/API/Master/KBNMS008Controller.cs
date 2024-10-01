@@ -1169,6 +1169,12 @@ namespace HINOSystem.Controllers.API.Master
                     });
                 }
 
+                var existList = _KB3Context.TMP_Planning_Order.Where(x => x.F_Plant == _BearerClass.Plant
+                                   && x.F_Create_By == _BearerClass.UserCode).ToList();
+
+                _KB3Context.TMP_Planning_Order.RemoveRange(existList);
+                await _KB3Context.SaveChangesAsync();
+
                 var dbObj = _KB3Context.TB_MS_PartOrder.Where(x => x.F_Start_Date.CompareTo(yyyyMMdd) <= 0
                          && x.F_End_Date.CompareTo(yyyyMMdd) >= 0 && x.F_Store_Code.StartsWith(_BearerClass.Plant)
                          && x.F_Type_Order.Trim() == "Pattern").AsNoTracking().AsQueryable();
@@ -1250,10 +1256,12 @@ namespace HINOSystem.Controllers.API.Master
         [HttpPost]
         public async Task<IActionResult> UploadImportToKanbanPlan()
         {
+            using var _kb3Trans = _KB3Context.Database.BeginTransaction();
+
             try
             {
-
-                if(_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
+                _kb3Trans.CreateSavepoint("Star UploadToKanbanPlan");
+                if (_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
                 {
                     return Unauthorized(new
                     {
@@ -1264,17 +1272,10 @@ namespace HINOSystem.Controllers.API.Master
                 }
 
                 var listObj = _KB3Context.TMP_Planning_Order.Where(x => x.F_Plant == _BearerClass.Plant
-                                   && x.F_Create_By == _BearerClass.UserCode
-                                   && x.F_Update_By == null
-                                   && x.F_Update_Date == null).ToList();
+                                   && x.F_Create_By == _BearerClass.UserCode).ToList();
 
                 foreach (var obj in listObj)
                 {
-                    obj.F_Update_By = _BearerClass.UserCode;
-                    obj.F_Update_Date = DateTime.Now;
-
-                    _KB3Context.TMP_Planning_Order.Update(obj);
-
                     var propList = obj.GetType().GetProperties()
                         .Where(x => x.Name.StartsWith("F_Trip")).ToList();
 
@@ -1293,12 +1294,21 @@ namespace HINOSystem.Controllers.API.Master
 
                             int _orderKB = int.Parse(prop.GetValue(obj).ToString());
 
+                            string sql = $"SELECT F_Lock AS VALUE FROM TB_calculate_volume " +
+                                $"WHERE F_Supplier_Code = '{obj.F_Supplier_Code}' AND F_Supplier_Plant = '{obj.F_Supplier_Plant}' " +
+                                $"AND F_Store_Code = '{obj.F_Store_Code}' AND F_Kanban_No = '{obj.F_Kanban_No}' " +
+                                $"AND F_Part_No = '{obj.F_Part_No}' AND F_Ruibetsu= '{obj.F_Ruibetsu}' " +
+                                $"AND F_Delivery_Date = '{obj.F_Delivery_Date}' AND F_Process_Round = '{_deliveryTrip.ToString()}' ";
+
+                            string _lock = _KB3Context.Database.SqlQueryRaw<string?>(sql).FirstOrDefault();
+
+
                             TB_Kanban_Planning planObj = new TB_Kanban_Planning
                             {
-                                F_Create_By = obj.F_Update_By,
-                                F_Create_Date = obj.F_Update_Date.Value,
-                                F_Update_By = obj.F_Update_By,
-                                F_Update_Date = obj.F_Update_Date.Value,
+                                F_Create_By = obj.F_Create_By,
+                                F_Create_Date = obj.F_Create_Date.Value,
+                                F_Update_By = obj.F_Create_By,
+                                F_Update_Date = obj.F_Create_Date.Value,
                                 F_Plant = obj.F_Plant,
                                 F_Supplier_Code = obj.F_Supplier_Code,
                                 F_Supplier_Plant = obj.F_Supplier_Plant,
@@ -1315,16 +1325,39 @@ namespace HINOSystem.Controllers.API.Master
                                 F_Cycle = obj.F_Cycle,
                             };
 
-                            _KB3Context.TB_Kanban_Planning.Add(planObj);
+                            var exist = _KB3Context.TB_Kanban_Planning.Where(x => x.F_Plant == planObj.F_Plant
+                                    && x.F_Supplier_Code == planObj.F_Supplier_Code
+                                    && x.F_Supplier_Plant == planObj.F_Supplier_Plant
+                                    && x.F_Store_Code == planObj.F_Store_Code
+                                    && x.F_Kanban_No == planObj.F_Kanban_No
+                                    && x.F_Part_No == planObj.F_Part_No
+                                    && x.F_Ruibetsu == planObj.F_Ruibetsu
+                                    && x.F_Delivery_Date == planObj.F_Delivery_Date
+                                    && x.F_Delivery_Trip == planObj.F_Delivery_Trip).AsNoTracking().SingleOrDefault();
+
+                            if (exist == null && _lock == null)
+                            {
+                                _KB3Context.TB_Kanban_Planning.Add(planObj);
+                                _KB3Context.SaveChanges();
+                            }
+                            else
+                            {
+                                if (exist != null && (_lock == "0" || _lock == null))
+                                {
+                                    _KB3Context.TB_Kanban_Planning.Update(planObj);
+                                    _KB3Context.SaveChanges();
+                                }
+                                else
+                                {
+                                    _log.WriteLogMsg($"Lock Data : {JsonConvert.SerializeObject(planObj)}");
+
+                                }
+                            }
                         }
                     }
-
                     _log.WriteLogMsg($" Upload Import To Kanban Planning : {JsonConvert.SerializeObject(obj)}");
                 }
-
-                //_KB3Context.TMP_Planning_Order.RemoveRange(listObj);
-                //_log.WriteLogMsg($"Remove TMP_Planning_Order : {JsonConvert.SerializeObject(listObj)}");
-                await _KB3Context.SaveChangesAsync();
+                _kb3Trans.Commit();
 
                 return Ok(new
                 {

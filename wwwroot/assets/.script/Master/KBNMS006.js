@@ -794,7 +794,7 @@ function Get_Kanban_Cut() {
         F_Part_No: $("#readPartNo").val().split("-")[0],
         F_Ruibetsu: $("#readPartNo").val().split("-")[1],
         F_Delivery_Date: moment($("#stopDeliDate").val(), "DD/MM/YYYY").format("YYYYMMDD"),
-        F_Delivery_Trip: $("#stopTrip").val(),
+        F_Delivery_Trip: $("#cutTrip").val(),
         F_Start_Date: moment($("#stopStartDate").val(), "DD/MM/YYYY").format("YYYYMMDD"),
         F_Start_Shift: $("#stopShift").val(),
         F_KB_Cut: $("#cutKB").val(),

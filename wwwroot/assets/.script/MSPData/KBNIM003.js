@@ -78,7 +78,7 @@
                     url: 'KBNIM003/Import',
                     data: formData,
                     then: function (result) {
-
+                        xSwal.success("Success!!", "Import data Complete.");
                         console.log(result);
 
                         xTimer.Clock.Stop({

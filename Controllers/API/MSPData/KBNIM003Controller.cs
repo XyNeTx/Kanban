@@ -149,8 +149,19 @@ namespace HINOSystem.Controllers.API.Master
             try
             {
                 var controller = Request.Headers["Referer"].ToString();
-                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
+
+                if (_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
+                {
+                    return StatusCode(_BearerClass.Status, new
+                    {
+
+                        status = _BearerClass.Status,
+                        response = _BearerClass.Response,
+                        message = _BearerClass.Message
+
+                    });
+                }
                 //_json = JsonConvert.DeserializeObject(pData);
 
                 string fullPath = this.StoragePath + @"\" + DateTime.Now.ToString("yyyyMM") + @"\" + DateTime.Now.ToString("dd") + @"\" + fileName;
@@ -158,13 +169,13 @@ namespace HINOSystem.Controllers.API.Master
 
 
                 _SQL = @" 
-    Delete From TB_Import_EKanban Where F_Update_BY='" + _BearerClass.UserCode.ToString() + @"' and F_TYpe ='EKanban'; 
+                    Delete From TB_Import_EKanban Where F_Update_BY='" + _BearerClass.UserCode.ToString() + @"' and F_TYpe ='EKanban'; 
 
-    Delete From TB_Import_Error Where F_Update_BY='" + _BearerClass.UserCode.ToString() + @"' and F_TYpe ='D_EKanban'; 
+                    Delete From TB_Import_Error Where F_Update_BY='" + _BearerClass.UserCode.ToString() + @"' and F_TYpe ='D_EKanban'; 
     
-    Delete From TB_Import_Error Where F_Update_BY='" + _BearerClass.UserCode.ToString() + @"' and F_TYpe ='EKanban'; 
+                    Delete From TB_Import_Error Where F_Update_BY='" + _BearerClass.UserCode.ToString() + @"' and F_TYpe ='EKanban'; 
 
-    ";
+                    ";
                 _KBCN.Execute(_SQL);
 
 

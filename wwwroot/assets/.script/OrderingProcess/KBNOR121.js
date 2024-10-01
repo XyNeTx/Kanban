@@ -310,8 +310,6 @@ const previewFunction = async (intRow,_command) => {
 };
 
 const addDetailToTable = async (dateSet, intRow) => {
-    //console.log("DateSet : ", dateSet);
-    //console.log("IntRow : ", intRow);
 
     //console.log("addDetailToTable : ", data);
     var _headLength = dT_Header.length;         // Length of Header to for loop
@@ -337,10 +335,12 @@ const addDetailToTable = async (dateSet, intRow) => {
         if (_header == undefined) break; //if out of index then break loop
 
         let _headerDate = dT_Header[i].F_Process_Date.slice(6, 8) + "-" + dT_Header[i].F_Process_Date.slice(4, 6) + "-" + dT_Header[i].F_Process_Date.slice(0, 4);
+        if(!dateSet.some(f => f.includes(_headerDate))) continue; //if date not in dateSet then skip loop
+
 
         //console.log($("#THeadR1").find(`th:contains('${_headerDate}')`).attr("colspan"));
         _headColSpan = $("#THeadR1").find(`th:contains('${_headerDate}')`).attr("colspan");
-
+        if(_headColSpan == undefined) continue;
         //console.log(_header);
         //console.log(dateSet[_countDateSet])
 
@@ -396,8 +396,6 @@ const addDetailToTable = async (dateSet, intRow) => {
             }
         );
 
-        //console.log(_intHeadDate);
-        //console.log(_intDeliveryDate);
 
         if (_intHeadDate == _intDeliveryDate) {
             $("#THeadR1").find(`th:contains('${dateSet[_countDateSet]}')`).addClass("bg-danger");
@@ -428,6 +426,10 @@ const addDetailToTable = async (dateSet, intRow) => {
         && x.F_Kanban_No == $("#readKanbanNo").val()
     ).forEach(function (item, i) {
         //console.log(item);
+        let F_Process_Date = item.F_Process_Date.slice(6, 8) + "-" + item.F_Process_Date.slice(4, 6) + "-" + item.F_Process_Date.slice(0, 4);
+        if (!dateSet.some(f => f.includes(F_Process_Date))) {
+            return;
+        }
 
         let date = dateSet[_countDateSet];
         // if date was change and Cycle was change then reset countT
@@ -447,23 +449,27 @@ const addDetailToTable = async (dateSet, intRow) => {
 
         for (let k = 1; k <= 20; k++) {
             let _insIdDetail = `tdR${k}T` + _countT + dateSet[_countDateSet];
-            //console.log(i);
-            //console.log(_insIdDetail);
+
             if (k == 11 || k == 12 || k == 13) { //convert qty to KB fixed by row
                 let _KB = parseInt(item[_setAccessDetail[k - 1]]) / parseInt($("#readQtyPack").val());
                 if (isNaN(_KB) || _KB == Infinity) _KB = 0;
                 $(`#${_insIdDetail}`).text(_KB);
             }
+
             else if (k == 4) {
                 $(`#${_insIdDetail}`).text();
             }
+
             else if (k == 14) {
                 item[_setAccessDetail[k - 1]] != 0 ? $(`#${_insIdDetail}`).text(item[_setAccessDetail[k - 1]]) : $(`#${_insIdDetail}`).text("");
             }
+
             else $(`#${_insIdDetail}`).text(item[_setAccessDetail[k - 1]]);
 
             if (k == 20) { _countT += 1; } //new column T
+
         }
+
     });
 
     // ------------------------------------ DT AdjustOrder_Trip -----------------------------------------
@@ -497,7 +503,7 @@ const addDetailToTable = async (dateSet, intRow) => {
 
     // ------------------------------------ DT Volume -----------------------------------------
 
-    dT_Volume.filter(x => x.F_Part_No + "-" + x.F_Ruibetsu == $("#readPartNo").val()
+    await dT_Volume.filter(x => x.F_Part_No + "-" + x.F_Ruibetsu == $("#readPartNo").val()
         && x.F_Supplier_Code == $("#inputSupplier").val().split("-")[0]
         && x.F_Supplier_Plant == $("#inputSupplier").val().split("-")[1]
         && x.F_Store_Code == $("#readStoreCode").val()
@@ -619,24 +625,26 @@ const addDetailToTable = async (dateSet, intRow) => {
         }
     );
 
-
-
-    $(`table tbody tr td:not([id*='Pcs']),table tbody tr td:not([id*='KB'])`).each(function () {
+    let _tableShift = "";
+    $(`table tbody tr td:not([id*='Pcs']):not([id*='KB'])`).each(async function () {
         let index = $(this).index();
-        let ProcessDate = _CookieProcessDate.slice(8, 10) + "-" + _CookieProcessDate.slice(5, 7) + "-" + _CookieProcessDate.slice(0, 4);
-        let shift = _CookieProcessDate.slice(10, 11);
+        let _id = $(this).attr("id"); // _id can be undefined if the element does not have an id
+        //console.log(" id : ", _id);
 
-        //console.log($(`table thead tr[id='THeadR2'] th`).eq(`${index}`).text());
-
-        if ($(`table thead tr[id='THeadR2'] th`).eq(`${index}`).text().slice(0, 1) == shift &&
-            $(this).attr("id").includes(ProcessDate)) {
+        if (_id == undefined)
+        {
             return;
         }
+
+        if ($(`table thead tr[id='THeadR2'] th`).eq(`${index}`).text().slice(0, 1) != "") {
+            _tableShift = $(`table thead tr[id='THeadR2'] th`).eq(`${index}`).text().slice(0, 1);
+        }
+
         $(this).css("background-color", "#ced4da");
     });
 
     // Set Style for Table
-    $("table tbody tr td[id*='Pcs'],table tbody tr td[id*='KB']").each(await function () {
+    $("table tbody tr td[id*='Pcs'],table tbody tr td[id*='KB']").each(async function () {
         $(this).css("background-color", "#b9b9b9");
         $(this).css("border", "1px solid #e3e6f0");
     });
@@ -705,7 +713,37 @@ const addDetailToTable = async (dateSet, intRow) => {
 
         }
     }
+
+    await periodFilter();
 };
+
+const periodFilter = async () => {
+    let DeliveryDate = $("#spanDeliveryDate").text().slice(6,10) + $("#spanDeliveryDate").text().slice(3, 5) + $("#spanDeliveryDate").text().slice(0, 2);
+    //let ProcessDate = _CookieProcessDate.slice(0, 4) + _CookieProcessDate.slice(5, 7) + _CookieProcessDate.slice(8, 10);
+    let shift = _CookieProcessDate.slice(10, 11);
+    let shiftToRowNum = shift == "D" ? "1" : "2";
+    //let ProcessDateTable = _CookieProcessDate.slice(8, 10) + "-" + _CookieProcessDate.slice(5, 7) + "-" + _CookieProcessDate.slice(0, 4);
+    let DeliveryDateTable = DeliveryDate.slice(6, 8) + "-" + DeliveryDate.slice(4, 6) + "-" + DeliveryDate.slice(0, 4);
+
+    console.log(DeliveryDateTable);
+    console.log(DeliveryDate);
+
+    let periodFiltered = dT_Period.filter(x => x.Date_Now == DeliveryDate && x.Row_Num == shiftToRowNum);
+    //console.log(periodFiltered);
+
+    if (periodFiltered.length == 0) return;
+    if (periodFiltered[0].F_Period == 0) return;
+    else {
+        for (let i = 2; i <= 20; i++) {
+            for (let j = 1; j <= periodFiltered[0].F_Period; j++) {
+                let _id = `tdR${i}T${j}${DeliveryDateTable}`;
+                //console.log(_id);
+                $(`#${_id}`).css("background-color", "#FFFFFF");
+            }
+        }
+    }
+
+}
 
 const sumKB = async (dateSet) => {
 
@@ -723,7 +761,7 @@ const sumKB = async (dateSet) => {
             if ($Id.includes(dateSet[_countDateSet]))
             {
                 sum += parseInt($(`#${$Id}`).text());
-                if (isNaN(sum) || sum == Infinity) sum = 0;
+                if (isNaN(sum) || sum === Infinity) sum = 0;
                 $(`#tdR${_Row[i]}KB${dateSet[_countDateSet]}`).text(sum);
                 //console.log(sum);
             }
@@ -731,7 +769,7 @@ const sumKB = async (dateSet) => {
             {
                 //console.log("Sum : ", sum);
                 sum = parseInt($(`#${$Id}`).text());
-                if (isNaN(sum) || sum == Infinity) sum = 0;
+                if (isNaN(sum) || sum === Infinity) sum = 0;
                 _countDateSet += 1;
             }
         });
@@ -743,29 +781,40 @@ const sumKB = async (dateSet) => {
                 //console.log($Id);
                 let $KB = parseInt($(`#${$Id}`).text());
                 let $Pcs = $KB * parseInt($("#readQtyPack").val());
-                if (isNaN($Pcs) || $Pcs == Infinity) $Pcs = 0;
-                if (isNaN($KB) || $KB == Infinity) $KB = 0;
+                if (isNaN($Pcs) || $Pcs === Infinity) $Pcs = 0;
+                if (isNaN($KB) || $KB === Infinity) $KB = 0;
 
                 //console.log("KB ", $KB, "date", dateSet[_countDateSet], "Pcs ", $Pcs);
                 //console.log(`tdR${_Row[i]}Pcs${dateSet[_countDateSet]}`);
 
                 $(`#tdR${_Row[i]}Pcs${dateSet[_countDateSet]}`).text($Pcs);
-                $Pcs == 0 ? $(`#tdR${_Row[i]}KB${dateSet[_countDateSet]}`).text($Pcs) : $(`#tdR${_Row[i]}Kb${dateSet[_countDateSet]}`).text($KB);
+                $Pcs === 0 ? $(`#tdR${_Row[i]}KB${dateSet[_countDateSet]}`).text($Pcs) : $(`#tdR${_Row[i]}Kb${dateSet[_countDateSet]}`).text($KB);
                 _countDateSet += 1;
 
             });
         }
     }
 
-    $("table tbody tr td[id*='tdR15KB']").each(function () {
-        let date = $(this).attr("id").slice(-10);
-        if ($(this).text() == "0") {
-            $("*[id*='tdR15T']").each(function () {
-                if ($(this).attr("id").includes(date)) {
-                    $(this).text("");
-                }
-            });
-        }
+    let _OldDate = moment($("table thead tr[id='THeadR1'] th").eq(1).text(), "DD-MM-YYYY").format("YYYYMMDD");
+    let _sumPattern = 0;
+
+    dT_AdjustOrder_Trip.filter(x => x.F_Part_No + "-" + x.F_Ruibetsu == $("#readPartNo").val()
+        && x.F_Supplier_Code == $("#readSupplier").val().split("-")[0]
+        && x.F_Supplier_Plant == $("#readSupplier").val().split("-")[1]
+        && x.F_Store_Code == $("#readStoreCode").val()
+        && x.F_Kanban_No == $("#readKanbanNo").val()
+        && x.F_Adj_Pattern != 0
+    ).forEach(function (item, i) {
+        console.log(item);
+        let _pattern = parseInt(item.F_Adj_Pattern / parseInt($("#readQtyPack").val()));
+        let _oldPattern = $(`#tdR15KB${item.F_Delivery_Date.slice(6, 8) + "-" + item.F_Delivery_Date.slice(4, 6) + "-" + item.F_Delivery_Date.slice(0, 4)}`).text();
+
+        let _sumPattern = _pattern + parseInt(_oldPattern);
+
+        //console.log(_sumPattern);
+        $(`#tdR15KB${item.F_Delivery_Date.slice(6, 8) + "-" + item.F_Delivery_Date.slice(4, 6) + "-" + item.F_Delivery_Date.slice(0, 4)}`).text(_sumPattern);
+        $(`#tdR15Pcs${item.F_Delivery_Date.slice(6, 8) + "-" + item.F_Delivery_Date.slice(4, 6) + "-" + item.F_Delivery_Date.slice(0, 4)}`).text(_sumPattern * parseInt($("#readQtyPack").val()));
+
     });
 
 }
