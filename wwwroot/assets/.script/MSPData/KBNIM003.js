@@ -81,11 +81,11 @@
                         xSwal.success("Success!!", "Import data Complete.");
                         console.log(result);
 
-                        xTimer.Clock.Stop({
-                            "finish": function () {
-                                getProgress();
-                            }
-                        })
+                        //xTimer.Clock.Stop({
+                        //    "finish": function () {
+                        //        getProgress();
+                        //    }
+                        //})
                     }
                 })
             }
@@ -95,20 +95,20 @@
 
 
 
-    getProgress = function () {
-        xAjax.Post({
-            url: 'KBNIM003/checkProgress',
-            data: null,
-            then: function (result) {
+    //getProgress = function () {
+    //    xAjax.Post({
+    //        url: 'KBNIM003/checkProgress',
+    //        data: null,
+    //        then: function (result) {
 
-                xItem.progress({
-                    id: 'pgsStatus',
-                    max: uploadData.count,
-                    current: result.data[0].cnt
-                })
+    //            xItem.progress({
+    //                id: 'pgsStatus',
+    //                max: uploadData.count,
+    //                current: result.data[0].cnt
+    //            })
 
-            }
-        })
-    }
+    //        }
+    //    })
+    //}
 
 });

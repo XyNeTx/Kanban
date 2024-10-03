@@ -147,15 +147,42 @@ namespace KANBAN.Controllers.API.OrderReport
                     new SqlParameter("@HostName", HostName));
 
                 var rptList = await _KB3Context.V_KBNRT_190_Rpt.Where(x => x.F_Plant == plant[0])
-                    .Where(x => x.Sup_Code.CompareTo(supFrom) >= 0 && x.Sup_Code.CompareTo(supTo) <= 0)
-                    .Where(x => x.F_Kanban_No.CompareTo(kbnFrom) >= 0 && x.F_Kanban_No.CompareTo(kbnTo) <= 0)
-                    .Where(x => x.F_Delivery_Dock.CompareTo(storeFrom) >= 0 && x.F_Delivery_Dock.CompareTo(storeTo) <= 0)
-                    .Where(x => x.Prt_no.CompareTo(partFrom) >= 0 && x.Prt_no.CompareTo(partTo) <= 0)
-                    .Where(x => x.chk_Deli_Date.CompareTo(dateFrom) >= 0 && x.chk_Deli_Date.CompareTo(dateTo) <= 0)
-                    .Where(x => x.Deli_trip >= tripFrom && x.Deli_trip <= tripTo)
+                    //.Where(x => x.Sup_Code.CompareTo(supFrom) >= 0 && x.Sup_Code.CompareTo(supTo) <= 0)
+                    //.Where(x => x.F_Kanban_No.CompareTo(kbnFrom) >= 0 && x.F_Kanban_No.CompareTo(kbnTo) <= 0)
+                    //.Where(x => x.F_Delivery_Dock.CompareTo(storeFrom) >= 0 && x.F_Delivery_Dock.CompareTo(storeTo) <= 0)
+                    //.Where(x => x.Prt_no.CompareTo(partFrom) >= 0 && x.Prt_no.CompareTo(partTo) <= 0)
+                    //.Where(x => x.chk_Deli_Date.CompareTo(dateFrom) >= 0 && x.chk_Deli_Date.CompareTo(dateTo) <= 0)
+                    //.Where(x => x.Deli_trip >= tripFrom && x.Deli_trip <= tripTo)
                     .ToListAsync();
 
-                if(rptList.Count == 0)
+                if(!string.IsNullOrWhiteSpace(supFrom) && !string.IsNullOrWhiteSpace(supTo))
+                {
+                    rptList = rptList.Where(x => x.Sup_Code.CompareTo(supFrom) >= 0 && x.Sup_Code.CompareTo(supTo) <= 0).ToList();
+                }
+                if(!string.IsNullOrWhiteSpace(kbnFrom) && !string.IsNullOrWhiteSpace(kbnTo))
+                {
+                    rptList = rptList.Where(x => x.F_Kanban_No.CompareTo(kbnFrom) >= 0 && x.F_Kanban_No.CompareTo(kbnTo) <= 0).ToList();
+                }
+                if (!string.IsNullOrWhiteSpace(storeFrom) && !string.IsNullOrWhiteSpace(storeTo))
+                {
+                    rptList = rptList.Where(x => x.F_Delivery_Dock.CompareTo(storeFrom) >= 0 && x.F_Delivery_Dock.CompareTo(storeTo) <= 0).ToList();
+                }
+                if (!string.IsNullOrWhiteSpace(partFrom) && !string.IsNullOrWhiteSpace(partTo))
+                {
+                    rptList = rptList.Where(x => x.Prt_no.CompareTo(partFrom) >= 0 && x.Prt_no.CompareTo(partTo) <= 0).ToList();
+                }
+                if (!string.IsNullOrWhiteSpace(dateFrom) && !string.IsNullOrWhiteSpace(dateTo))
+                {
+                    rptList = rptList.Where(x => x.chk_Deli_Date.CompareTo(dateFrom) >= 0 && x.chk_Deli_Date.CompareTo(dateTo) <= 0).ToList();
+                }
+                if (tripFrom > 0 && tripTo > 0)
+                {
+                    rptList = rptList.Where(x => x.Deli_trip >= tripFrom && x.Deli_trip <= tripTo).ToList();
+                }
+
+
+
+                if (rptList.Count == 0)
                 {
                     _result = @"{
                                     ""status"":""404"",

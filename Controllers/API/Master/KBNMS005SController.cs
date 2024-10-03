@@ -398,6 +398,7 @@ namespace KANBAN.Controllers.API.Master
                     if (existed != null)
                     {
                         existed = each;
+                        string KanbanNo = each.F_Sebango;
                         existed.F_Sebango = each.F_Sebango.Substring(1, 3);
                         existed.F_Update_By = _BearerClass.UserCode;
                         existed.F_Update_Date = DateTime.Now;
@@ -407,13 +408,13 @@ namespace KANBAN.Controllers.API.Master
                         if (each.F_Sup_Cd == "9999")
                         {
                             await _KB3Context.Database.ExecuteSqlRawAsync("EXEC [CKD_Inhouse].sp_setStockBalance @p0,@p1,@p2,@p3,@p4,@p5,@p6,@p7,@p8,@p9,@p10"
-                                , _BearerClass.Plant, each.F_Sup_Cd, each.F_Sup_Plant, each.F_Part_No, each.F_Ruibetsu, each.F_Sebango, each.F_Store_Cd
+                                , _BearerClass.Plant, each.F_Sup_Cd, each.F_Sup_Plant, each.F_Part_No, each.F_Ruibetsu, KanbanNo, each.F_Store_Cd
                                 , each.F_Date, each.F_Shift, each.F_BL, _BearerClass.UserCode);
                         }
                         else
                         {
                             await _KB3Context.Database.ExecuteSqlRawAsync("EXEC [dbo].sp_setStockBalance @p0,@p1,@p2,@p3,@p4,@p5,@p6,@p7,@p8,@p9,@p10"
-                                , _BearerClass.Plant, each.F_Sup_Cd, each.F_Sup_Plant, each.F_Part_No, each.F_Ruibetsu, each.F_Sebango, each.F_Store_Cd
+                                , _BearerClass.Plant, each.F_Sup_Cd, each.F_Sup_Plant, each.F_Part_No, each.F_Ruibetsu, KanbanNo, each.F_Store_Cd
                                 , each.F_Date, each.F_Shift, each.F_BL, _BearerClass.UserCode);
                         }
 

@@ -41,7 +41,12 @@
 
                                         <div class="row">
                                             <div class="col-6">
-                                                <item type="select" id="ddlPDSNo" label="PDS No. :"></item>
+                                                <div class="input-group">
+                                                    <label for="ddlPDSNo" class="input-group-text">PDS No :</label>
+                                                    <select class="form-control" id="ddlPDSNo" data-live-search="true" name="ddlPDSNo" style="width:100%">
+                                                        <option value="">-- Select PDS No --</option>
+                                                    </select>
+                                                </div>
                                             </div>
                                             <div class="col-3">
                                                 <item type="button" id="btnSearch" label="Search" style="width:100%"></item>

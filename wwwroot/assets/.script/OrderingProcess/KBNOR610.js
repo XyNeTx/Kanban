@@ -40,6 +40,8 @@
 
         //console.log(ddlPDSNo);
 
+        $("#ddlPDSNo").selectpicker();
+
         xSplash.hide();
     }
     initial();

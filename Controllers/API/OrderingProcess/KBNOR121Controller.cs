@@ -1245,10 +1245,10 @@ namespace KANBAN.Controllers.API.OrderingProcess
                             _ => "3C"
                         };
 
-                        
+                        int _loginDate = int.Parse(LoginDate.ToString("dd"));
 
-                        string _SQL = $@"SELECT CONVERT(Integer, F_workCd_D{LoginDate.ToString("dd")}) 
-                                 + CONVERT(Integer, F_workCd_N{LoginDate.ToString("dd")}) AS F_Work 
+                        string _SQL = $@"SELECT CONVERT(Integer, F_workCd_D{_loginDate}) 
+                                 + CONVERT(Integer, F_workCd_N{_loginDate}) AS F_Work 
                                 FROM TB_Calendar WHERE F_Store_cd = '{dymStore}' 
                                 AND F_YM = '{LoginDate.ToString("yyyyMM")}' ";
 

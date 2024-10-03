@@ -718,30 +718,33 @@ const addDetailToTable = async (dateSet, intRow) => {
 };
 
 const periodFilter = async () => {
+
+    if (_command == "Preview") return;
+
     let DeliveryDate = $("#spanDeliveryDate").text().slice(6,10) + $("#spanDeliveryDate").text().slice(3, 5) + $("#spanDeliveryDate").text().slice(0, 2);
-    //let ProcessDate = _CookieProcessDate.slice(0, 4) + _CookieProcessDate.slice(5, 7) + _CookieProcessDate.slice(8, 10);
     let shift = _CookieProcessDate.slice(10, 11);
     let shiftToRowNum = shift == "D" ? "1" : "2";
-    //let ProcessDateTable = _CookieProcessDate.slice(8, 10) + "-" + _CookieProcessDate.slice(5, 7) + "-" + _CookieProcessDate.slice(0, 4);
     let DeliveryDateTable = DeliveryDate.slice(6, 8) + "-" + DeliveryDate.slice(4, 6) + "-" + DeliveryDate.slice(0, 4);
 
-    console.log(DeliveryDateTable);
-    console.log(DeliveryDate);
+    //console.log(DeliveryDateTable);
+    //consol e.log(DeliveryDate);
 
-    let periodFiltered = dT_Period.filter(x => x.Date_Now == DeliveryDate && x.Row_Num == shiftToRowNum);
-    //console.log(periodFiltered);
-
-    if (periodFiltered.length == 0) return;
-    if (periodFiltered[0].F_Period == 0) return;
-    else {
-        for (let i = 2; i <= 20; i++) {
-            for (let j = 1; j <= periodFiltered[0].F_Period; j++) {
-                let _id = `tdR${i}T${j}${DeliveryDateTable}`;
-                //console.log(_id);
-                $(`#${_id}`).css("background-color", "#FFFFFF");
+    let periodFiltered = dT_Period.filter(x => x.Date_Now == DeliveryDate && (x.Row_Num == 1 || x.Row_Num == 2));
+    let j = 0;
+    periodFiltered.forEach(function (item, i) {
+        if (item.Row_Num != shiftToRowNum) {
+            j = item.F_Period
+        }
+        else {
+            for (let i = 2; i <= 20; i++) {
+                for (let k = 1+j; k <= item.F_Period + j; k++) {
+                    let _id = `tdR${i}T${k}${DeliveryDateTable}`;
+                    console.log(_id);
+                    $(`#${_id}`).css("background-color", "#FFFFFF");
+                }
             }
         }
-    }
+    });
 
 }
 

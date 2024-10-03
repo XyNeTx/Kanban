@@ -9,15 +9,20 @@ $(document).ready(function () {
     $("#txtProcessShift").val(shift);
 
     initial = async function () {
-        let _processCk = await _xLib.GetProcessCookie();
-        console.log(_processCk);
-        if (_processCk != null) {
-            _processCk.forEach(function (item) {
-                let _btnName = `btn${item}`;
-                $(`#${_btnName}`).removeClass('btn-success').css('background-color', '#faa2c1');
-                $(`#${_btnName}`).css("color", "white");
-            });
-        }
+        await _xLib.AJAX_Get('/xapi/GetCheckNormalProcess', "",
+            function (success) {
+                for (let i = 1; i <= success.data.f_Value2; i++) {
+                    let _btnName = `btnKBNOR1${i}0`;
+                    $(`#${_btnName}`).removeClass('btn-success').css('background-color', '#faa2c1');
+                    $(`#${_btnName}`).css("color", "white");
+                }
+            },
+            function (error) {
+                console.log(error);
+                xSwal.error("Error", error.responseJSON.message);
+            }
+        );
+
 
         await _xLib.AJAX_Get('/api/KBNOR100/Onload', { dateShift: _xLib.GetCookie("loginDate").replaceAll("-", "") },
             function (data) {
@@ -35,6 +40,7 @@ $(document).ready(function () {
 
         xSplash.hide();
     }
+
     initial();
 
     xAjax.onClick('btnKBNOR110', function (e) {

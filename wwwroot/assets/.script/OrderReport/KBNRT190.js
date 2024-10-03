@@ -247,30 +247,30 @@
         var partTo = $("#F_PartTo").val();
         var checked = $("input[name='radDate']:checked").val();   
 
-        if (supFrom === "" || supFrom === undefined || supTo === "" || supTo === undefined) {
-            return xSwal.error("Supplier Code is empty", "Please Select Supplier Code");
-        }
+        //if (supFrom === "" || supFrom === undefined || supTo === "" || supTo === undefined) {
+        //    return xSwal.error("Supplier Code is empty", "Please Select Supplier Code");
+        //}
         if (supFrom > supTo) {
             return xSwal.error("Invalid Input Supplier Code", "Please Select Supplier Code From less than Supplier Code To");
         }
-        if (kbnFrom === "" || kbnFrom === undefined || kbnTo === "" || kbnTo === undefined) {
-            return xSwal.error("Kanban No is empty", "Please Select Kanban No");
-        }
+        //if (kbnFrom === "" || kbnFrom === undefined || kbnTo === "" || kbnTo === undefined) {
+        //    return xSwal.error("Kanban No is empty", "Please Select Kanban No");
+        //}
         if (kbnFrom > kbnTo) {
             return xSwal.error("Invalid Input Kanban No", "Please Select Kanban No From less than Kanban No To");
         }
-        if (storeFrom === "" || storeFrom === undefined || storeTo === "" || storeTo === undefined) {
-            return xSwal.error("Store Code is empty", "Please Select Store Code");
-        }
+        //if (storeFrom === "" || storeFrom === undefined || storeTo === "" || storeTo === undefined) {
+        //    return xSwal.error("Store Code is empty", "Please Select Store Code");
+        //}
         if (storeFrom > storeTo) {
             return xSwal.error("Invalid Input Store Code", "Please Select Store Code From less than Store Code To");
         }
         if (dateFrom > dateTo) {
             return xSwal.error("Invalid Input Date", "Please Select Date From less than Date To");
         }
-        if (partFrom === "" || partFrom === undefined || partTo === "" || partTo === undefined) {
-            return xSwal.error("Part No. is empty", "Please Select Part No.");
-        }
+        //if (partFrom === "" || partFrom === undefined || partTo === "" || partTo === undefined) {
+        //    return xSwal.error("Part No. is empty", "Please Select Part No.");
+        //}
         if (partFrom > partTo) {
             return xSwal.error("Invalid Input Part No", "Please Select Part No From less than Part No To");
         }

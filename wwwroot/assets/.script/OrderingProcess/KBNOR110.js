@@ -46,22 +46,6 @@ $(document).ready(function () {
         xAjax.redirect('KBNOR100');
     });
 
-    
-    //xAjax.onClick('btnSearch', async function () {
-    //    var _dt = await xAjax.ExecuteJSON({
-    //        data: {
-    //            "Module": "[dbo].[SP_DisplayUrgent]",
-    //            "OrderType": "SRV",
-    //            "Plant": ajexHeader.Plant,
-    //            "UserCode": ajexHeader.UserCode
-    //        },
-    //    });
-
-    //    if (_dt.rows != null) xDataTable.bind('#tblMaster', _dt.rows);
-    //    if (_dt.rows == null) MsgBox("ไม่พบข้อมูล Urgent Order", MsgBoxStyle.Information, "Interface Urgent Data");
-
-    //});
-
 
     xAjax.onClick('btnInterface', async function () {
         
@@ -98,102 +82,6 @@ $(document).ready(function () {
 
                 $("#table-wrapper").css("visibility", "hidden");
 
-                //if (_dtChk.rows != null) {
-                //    for (var i = 0; i < _dtChk.rows.length; i++) {
-                //        var _dt = await xAjax.Execute({
-                //            data: {
-                //                "Module": "[exec].[spKBNOR110_INTERFACE_M2]",
-                //                "@OrderType": "N",
-                //                "@Plant": ajexHeader.Plant,
-                //                "@UserCode": ajexHeader.UserCode,
-                //                "@F_Delivery_Date": _dtChk.rows[i].F_Delivery_Date,
-                //                "@F_Store_Cd": _dtChk.rows[i].F_Store_Cd,
-                //                "@F_Supplier_Cd": _dtChk.rows[i].F_Supplier_Cd,
-                //                "@F_Supplier_Plant": _dtChk.rows[i].F_Supplier_Plant,
-                //                "@F_Country": _dtChk.rows[i].F_Country,
-                //                "@F_Plant": _dtChk.rows[i].F_Plant
-                //            },
-                //        });
-
-                //        if (_dt.rows != null) {
-                //            for (var j = 0; j < _dt.rows.length; j++) {
-                //                _remark = _remark + _dt.rows[j].F_Remark + ',';
-                //            }
-                //            _remark.substring(0, remark.length - 1);
-                //        }
-
-                //        //===Update Volume
-                //        await xAjax.Execute({
-                //            data: {
-                //                "Module": "[exec].[spKBNOR110_INTERFACE_M3]",
-                //                "@OrderType": "N",
-                //                "@Plant": ajexHeader.Plant,
-                //                "@UserCode": ajexHeader.UserCode,
-                //                "@F_Delivery_Date": _dtChk.rows[i].F_Delivery_Date,
-                //                "@F_Store_Cd": _dtChk.rows[i].F_Store_Cd,
-                //                "@F_Supplier_Cd": _dtChk.rows[i].F_Supplier_Cd,
-                //                "@F_Supplier_Plant": _dtChk.rows[i].F_Supplier_Plant,
-                //                "@F_Country": _dtChk.rows[i].F_Country,
-                //                "@F_Plant": _dtChk.rows[i].F_Plant,
-                //                "@pRemark": _remark
-                //            },
-                //        });
-                //        xItem.progress({ id: 'prgProcess', current: 30, label: 'Update Remark Again : {{##.##}} %' });
-
-                //    }
-                //}
-                ////''======= End of Remark
-
-                //await xAjax.Execute({
-                //    data: {
-                //        "Module": "[exec].[spKBNOR110_INTERFACE_M4]",
-                //        "@OrderType": "N",
-                //        "@Plant": ajexHeader.Plant,
-                //        "@UserCode": ajexHeader.UserCode
-                //    },
-                //});
-                //xItem.progress({ id: 'prgProcess', current: 40, label: 'Interface Data from Import Data : {{##.##}} %' });
-
-
-                ////''Tacoma Only
-                //await xAjax.Execute({
-                //    data: {
-                //        "Module": "[exec].[spKBNOR110_INTERFACE_TACOMA]",
-                //        "@OrderType": "N",
-                //        "@Plant": ajexHeader.Plant,
-                //        "@UserCode": ajexHeader.UserCode
-                //    },
-                //});
-                //xItem.progress({ id: 'prgProcess', current: 60, label: 'Interface Data from Import Data[Tacoma] : {{##.##}} %' });
-
-
-
-                //xItem.progress({ id: 'prgProcess', current: 80, label: 'Update F_Reg_Flg=2 : {{##.##}} %' });
-                ////''Update F_Reg_Flg=2
-                //await xAjax.Execute({
-                //    data: {
-                //        "Module": "[exec].[spKBNOR110_INTERFACE_M5]",
-                //        "@OrderType": "N",
-                //        "@Plant": ajexHeader.Plant,
-                //        "@UserCode": ajexHeader.UserCode
-                //    },
-                //});
-                //xItem.progress({ id: 'prgProcess', current: 100, label: 'Process Data Complete : {{##.##}} %' });
-
-
-
-
-            //xAjax.Post({
-            //    url: 'KBNOR110/interfaceData',
-            //    data: {
-            //        "OrderType": "N"
-            //    },
-            //    then: function (result) {
-            //        console.log(result);
-
-            //        //if (result.data != null) xDataTable.bind('#tblMaster', result.data);
-            //    }
-            //})
             })
 
 

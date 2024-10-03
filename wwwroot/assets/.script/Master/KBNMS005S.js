@@ -113,6 +113,7 @@ $("#buttonShow").click(async function () {
         function (success) {
             if (success.status == "200") {
                 success.data = JSON.parse(success.data);
+                console.log(success.data);
                 const table = $("#tableMaster").DataTable();
                 table.scrollY = "300px";
                 table.clear().rows.add(success.data).draw();
@@ -124,12 +125,15 @@ $("#buttonShow").click(async function () {
     );
 });
 
+let _oldValue = "";
+
 $(document).on("click", "#tableMaster tbody tr td", function () {
     if (_cmd == "New" || _cmd == "Upd") {
         var _columnIndex = $("#tableMaster").DataTable().cell(this).index().column;
         if ($(this).find("input").length > 0) return;
         if (_columnIndex == 5 || _columnIndex == 6) {
             let value = $("#tableMaster").DataTable().cell(this).data();
+            _oldValue = value;
             //console.log("value", value);
             $(this).empty();
             $(this).append('<input type="number" class="form-control" value="">');
@@ -137,12 +141,15 @@ $(document).on("click", "#tableMaster tbody tr td", function () {
         }
     }
 });
-$(document).on("blur", "#tableMaster tbody tr td", async function () {
+$(document).on(" blur , keypress " , "#tableMaster tbody tr td", async function (e) {
+
+    if(e.type == "keypress" && e.key != "Enter") return;
+
     let _columnIndex = $("#tableMaster").DataTable().cell(this).index().column;
     let _rowIndex = $("#tableMaster").DataTable().cell(this).index().row;
     if (_columnIndex == 5 || _columnIndex == 6) {
         let _newValue = $(this).find("input").val();
-        if (_newValue == "") _newValue = 0;
+        if (_newValue == "") _newValue = _oldValue;
         await $("#tableMaster").DataTable().cell({ row: _rowIndex, column: _columnIndex }).data(_newValue).draw();
 
         let QtyPack = $("#tableMaster").DataTable().cell({ row: _rowIndex, column: 4 }).data();

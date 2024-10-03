@@ -665,210 +665,92 @@ namespace HINOSystem.Controllers.API.Master
             }
             catch (Exception e)
             {
-                return false;
+                throw new Exception("BreakDown Error" + e.Message);
             }
         }
 
 
-
-        //    [HttpPost]
-        //    //public IActionResult Import([FromBody] string pData = null)
-        //    public async Task<IActionResult> Import(IFormFile file)
+        //[HttpPost]
+        //public IActionResult checkProgress()
+        //{
+        //    try
         //    {
-        //        dynamic _json = null;
-        //        string _SQL = "";
-        //        VBController _VB = new VBController();
-        //        try
-        //        {
-        //            _BearerClass.Authentication(Request);
-        //            if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
+        //        _BearerClass.Authentication(Request);
+        //        if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
-        //            //_json = JsonConvert.DeserializeObject(pData);
+        //        string _SQL = @"
+        //            Select isnull(count(*),0) as cnt 
+        //            from TB_Import_EKanban 
+        //            Where F_Update_BY='" + _BearerClass.UserCode.ToString() + @"' 
+        //            and F_TYpe ='EKanban' ";
+        //        string _js = _KBCN.ExecuteJSON(_SQL, skipLog: true);
 
+        //        string _result = @"{
+        //            ""status"":""200"",
+        //            ""response"":""OK"",
+        //            ""message"": ""Progress status"",
+        //            ""data"": " + _js + @"
+        //        }";
+        //        return Content(_result, "application/json");
 
-        //            string fileName = null;
-
-        //            string orgFileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Value;
-
-        //            //fileName = userid + "_" + usercode;
-        //            fileName += Path.GetFileNameWithoutExtension(orgFileName).ToString().ToUpper().Replace(" ", "") + Path.GetExtension(orgFileName);
-
-        //            string fullPath = this.StoragePath + @"\" + DateTime.Now.ToString("yyyyMMdd") + @"\" + fileName;
-
-        //            // Create the directory.
-        //            Directory.CreateDirectory(Directory.GetParent(fullPath).FullName);
-
-        //            // Save the file to the server.
-        //            await using FileStream output = System.IO.File.Create(fullPath);
-        //            await file.CopyToAsync(output);
-        //            output.Close();
-
-
-        //            //_CSVPath = Directory.GetParent(_CSVPath).FullName + "\\" + filecsv;
-
-
-
-
-
-        //            _SQL = @" 
-        //Delete From TB_Import_EKanban Where F_Update_BY='" + _BearerClass.UserCode.ToString() + @"' and F_TYpe ='EKanban'; 
-
-        //Delete From TB_Import_Error Where F_Update_BY='" + _BearerClass.UserCode.ToString() + @"' and F_TYpe ='D_EKanban'; 
-
-        //Delete From TB_Import_Error Where F_Update_BY='" + _BearerClass.UserCode.ToString() + @"' and F_TYpe ='EKanban'; 
-
-        //";
-        //            _KBCN.Execute(_SQL);
-
-
-        //            int _current = 1, _typeP = 0;
-        //            string _PO = "", _Item = "", _Delivery = "", _PartNo = "", _Ruibetsu = "";
-
-        //            using (var _stream = new StreamReader(fullPath))
-        //            {
-        //                while (!_stream.EndOfStream)
-        //                {
-        //                    var _line = _stream.ReadLine().Split(@"|");
-        //                    //string _OneLine = _stream.ReadLine();
-
-        //                    _SQL = "INSERT INTO TB_Import_EKanban (F_Type,F_ITEM_NO, F_Supplier, F_Supplier_Plant, F_Supplier_Name, F_Plant, F_Plant_Name, F_Receive_Place, F_Order_Type, F_PDS_No, F_EKBPDS_No, ";
-        //                    _SQL = _SQL + "F_Collect_Date, F_Collect_Time, F_Arrival_Date, F_Arrival_Time, F_Main_route_Grp_Code, F_Main_route_Order_Seq, F_Sub_route_Grp_Code1, ";
-        //                    _SQL = _SQL + "F_Sub_route_Order_Seq1, F_Crs1_route, F_Crs1_dock, F_Crs1_arv_Date, F_Crs1_arv_Time, F_Crs1_dpt_Date, F_Crs1_dpt_Time, F_Crs2_route, ";
-        //                    _SQL = _SQL + "F_Crs2_dock, F_Crs2_arv_Date, F_Crs2_arv_Time, F_Crs2_dpt_Date, F_Crs2_dpt_Time, F_Crs3_route, F_Crs3_dock, F_Crs3_arv_Date, ";
-        //                    _SQL = _SQL + "F_Crs3_arv_Time, F_Crs3_dpt_Date, F_Crs3_dpt_Time, F_Supplier_Type, F_No, F_Part_No, F_Part_Name, F_Kanban_No, F_Line_Addr, F_Pack_Qty, ";
-        //                    _SQL = _SQL + "F_Qty, F_Pack, F_Zero_Order, F_Sort_Lane, F_Shipping_Date, F_Shipping_Time, F_Kb_print_Date_p, F_Kb_print_Time_p, F_Kb_print_Date_i, ";
-        //                    _SQL = _SQL + "F_Kb_print_Time_i, F_Remark, F_Order_Release_Date, F_Order_Release_Time, F_Main_route_Date, F_Bill_Out_Flag, F_Shipping_Dock, F_Plant_CD, ";
-        //                    _SQL = _SQL + "F_Update_By, F_Update_Date) VALUES ('EKanban',";
-
-        //                    for (var i=0; i<_line.Length; i++) {
-
-        //                        if (i == 42 || i == 43 || i == 44)
-        //                        {
-        //                            _SQL = _SQL + "" + (_line[i] == "" ? 0 : _line[i]) + ",";
-        //                        }
-        //                        else
-        //                        {
-        //                            _SQL = _SQL + "'" + _line[i] + "',";
-        //                        }
-
-        //                        if (i == 8) _PO = _line[i];
-        //                        if (i == 0) _Item = _line[i];
-
-        //                        if (i == 10) {
-        //                            _Delivery = _line[i];
-        //                            _Delivery = _Delivery.Substring(6, 4) + _Delivery.Substring(3, 2) + _Delivery.Substring(0, 2);
-        //                        }
-        //                        if (i == 38) {
-        //                            _PartNo = _line[i];
-        //                            _Ruibetsu = _PartNo.Substring(12, 2);
-        //                            _PartNo = _PartNo.Substring(0, 5) + _PartNo.Substring(6, 5);
-        //                        }
-
-        //                    }
-        //                    _SQL = _SQL + "'" + _BearerClass.UserCode.ToString() + "', GETDATE())";
-
-        //                    _KBCN.Execute(_SQL);
-
-
-        //                    if(!Check_Parent(_PartNo, _Ruibetsu, _Delivery))
-        //                        if(!Check_Construction(_PartNo, _Ruibetsu, _Delivery))
-        //                        {
-        //                            string _SQLError = @"
-        //INSERT INTO TB_Import_Error (F_TYpe,F_PDS_CD, F_Row, F_Field, F_Remark, F_Update_By, F_Update_Date)
-        //VALUES('EKanban','" + _PO + "','" + _Item + "','" + _PartNo + "','PART NOT FOUND IN MASTER','" + _BearerClass.UserCode.ToString() + "', GETDATE()) ";
-        //                            _KBCN.Execute(_SQL);
-
-        //                        }
-
-        //                }
-        //            }
-
-
-
-        //            string _result = @"{
-        //                ""status"":""200"",
-        //                ""response"":""OK"",
-        //                ""message"": ""Data has been save""
-        //            }";
-        //            return Content(_result, "application/json");
-        //        }
-        //        catch (Exception e)
-        //        {
-        //            return Content(e.Message.ToString(), "application/json");
-        //        }
         //    }
-
-
-
-        [HttpPost]
-        public IActionResult checkProgress()
-        {
-            try
-            {
-                _BearerClass.Authentication(Request);
-                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
-
-                string _SQL = @"
-    Select isnull(count(*),0) as cnt 
-    from TB_Import_EKanban 
-    Where F_Update_BY='" + _BearerClass.UserCode.ToString() + @"' 
-    and F_TYpe ='EKanban' ";
-                string _js = _KBCN.ExecuteJSON(_SQL, skipLog: true);
-
-                string _result = @"{
-                    ""status"":""200"",
-                    ""response"":""OK"",
-                    ""message"": ""Progress status"",
-                    ""data"": " + _js + @"
-                }";
-                return Content(_result, "application/json");
-
-            }
-            catch (Exception e)
-            {
-                return Content(e.Message.ToString(), "application/json");
-            }
-        }
+        //    catch (Exception e)
+        //    {
+        //        return Content(e.Message.ToString(), "application/json");
+        //    }
+        //}
 
 
 
 
         private Boolean Check_Construction(String pPartNO = "", String pRuibetsu = "", String pDelivery = "")
         {
-            Boolean _return = false;
-            string _SQL = @"
-    SELECT * 
-    FROM T_Construction 
-    WHERE F_Part_No='" + pPartNO + @"' 
-    AND F_Ruibetsu ='" + pRuibetsu + @"' ";
-            _SQL = _SQL + " AND F_Local_Str <='" + pDelivery + "' ";
-            _SQL = _SQL + " AND F_Local_End >='" + pDelivery + "' ";
-            DataTable _dt = _PPMCN.ExecuteSQL(_SQL, skipLog: true);
+            try
+            {
+                Boolean _return = false;
+                string _SQL = @"
+                    SELECT * 
+                    FROM T_Construction 
+                    WHERE F_Part_No='" + pPartNO + @"' 
+                    AND F_Ruibetsu ='" + pRuibetsu + @"' ";
+                _SQL = _SQL + " AND F_Local_Str <='" + pDelivery + "' ";
+                _SQL = _SQL + " AND F_Local_End >='" + pDelivery + "' ";
+                DataTable _dt = _PPMCN.ExecuteSQL(_SQL, skipLog: true);
 
-            if (_dt.Rows.Count > 0) _return = true;
+                if (_dt.Rows.Count > 0) _return = true;
 
 
-            return _return;
+                return _return;
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Check_Construction Error" + e.Message);
+            }
         }
         private Boolean Check_Parent(String pPartNO = "", String pRuibetsu = "", String pDelivery = "")
         {
-            Boolean _return = false;
-            string _SQL = @"
-    SELECT * 
-    FROM T_Parent_Part 
-    WHERE F_Parent_Part='" + pPartNO + @"' 
-    AND F_Ruibetsu ='" + pRuibetsu + @"' 
-    AND F_Store_Cd in ('00')";
-            _SQL = _SQL + " AND F_TC_Str <='" + pDelivery + "' ";
-            _SQL = _SQL + " AND F_TC_End >='" + pDelivery + "' ";
-            DataTable _dt = _PPMCN.ExecuteSQL(_SQL, skipLog: true);
+            try
+            {
+                Boolean _return = false;
+                string _SQL = @"
+                SELECT * 
+                FROM T_Parent_Part 
+                WHERE F_Parent_Part='" + pPartNO + @"' 
+                AND F_Ruibetsu ='" + pRuibetsu + @"' 
+                AND F_Store_Cd in ('00')";
+                _SQL = _SQL + " AND F_TC_Str <='" + pDelivery + "' ";
+                _SQL = _SQL + " AND F_TC_End >='" + pDelivery + "' ";
+                DataTable _dt = _PPMCN.ExecuteSQL(_SQL, skipLog: true);
 
-            if (_dt.Rows.Count > 0) _return = true;
+                if (_dt.Rows.Count > 0) _return = true;
 
 
-            return _return;
+                return _return;
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Check_Parent Error" + e.Message);
+            }
         }
-
-
     }
 }

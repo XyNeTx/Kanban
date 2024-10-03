@@ -33,6 +33,33 @@ namespace KANBAN.Controllers
         }
 
         [HttpGet]
+        public IActionResult GetCheckNormalProcess()
+        {
+            try
+            {
+                string sql = $"Select * From TB_MS_Parameter WHERE F_Code = 'ST' ";
+                var data = _KB3Context.TB_MS_Parameter.FromSqlRaw(sql).FirstOrDefault();
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "OK",
+                    message = "Success",
+                    data = data
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    response = "Internal Server Error",
+                    message = ex.Message
+                });
+            }
+        }
+
+        [HttpGet]
         public IActionResult GetLoginDate()
         {
             var masterControl = _KB3Context.TB_MS_CTL.Where(x => x.F_Shift == "A")

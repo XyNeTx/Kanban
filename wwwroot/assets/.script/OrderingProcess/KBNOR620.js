@@ -39,7 +39,7 @@
         if (_dt.rows != null) xDropDownList.bind('#ddlPDSNo', _dt.rows, 'F_OrderNo', 'F_OrderNo');
 
         //console.log(ddlPDSNo);
-
+        $("#ddlPDSNo").selectpicker();
         xSplash.hide();
     }
     initial();

@@ -61,16 +61,6 @@
         console.log('onExecute');
     }
 
-    //xSwal.question('', '',
-    //    function (result) {
-    //        console.log('callback')
-    //    },
-    //    function () {
-
-    //    }
-
-    //)
-
     xAjax.onEnter('#F_PDS_No', function () {
         var pdsNo = $('#F_PDS_No').val();
         // console.log(pdsNo);
@@ -113,73 +103,93 @@
         pdsSet.clear();
     });
 
-    xAjax.onClick("#ReceiveBtn", function () {
-        $("#ReceiveBtn").prop('disabled', true)
-        var _selData = [];
-        var allPages = $('#tblMaster').DataTable().cells().nodes();
-        $("#ReceiveBtn").prop('disabled', true)
-        $(allPages).find('input[type="checkbox"]').each(function () {
-            if ($(this).prop('checked')) {
-                var _val = $($(this)).val();
-                _selData.push(JSON.parse(`{` + ReplaceAll(_val, `'`, `"`) + `}`));
-            }
-        });
-        // console.log(_selData);
-        xAjax.Post({
-            url: 'KBNCR110/ReceiveAllPart',
-            data: {
-                'F_PDS_No': _selData,
-            },
-            then: function (result) {
-                console.log(result)
-                if (result.status == "200") {
-                    xSwal.success(result.title, result.message);
-                    $('#tblMaster').DataTable().clear();
-                    $('#tblMaster').DataTable().draw();
-                    pdsSet.clear();
-                }
-                else {
-                    xSwal.error(result.title, result.message);
-                }
-            },
-            error: function (result) {
-                console.error(_Controller + '.ReceiveAllPart: ' + result.responseText);
-                xSplash.hide();
-            }
-        });
-        $("#ReceiveBtn").prop('disabled', false);
+
+});
+
+$("#ReceiveBtn").click(function () {
+
+    $("#ReceiveBtn").prop('disabled', true)
+    var _selData = [];
+    var allPages = $('#tblMaster').DataTable().cells().nodes();
+    $("#ReceiveBtn").prop('disabled', true)
+    $(allPages).find('input[type="checkbox"]').each(function () {
+        if ($(this).prop('checked')) {
+            var _val = $($(this)).val();
+            _selData.push(JSON.parse(`{` + ReplaceAll(_val, `'`, `"`) + `}`));
+        }
     });
 
-    xAjax.onClick("#uploadEpro", function () {
-        var _selData = [];
-        var allPages = $('#tblMaster').DataTable().cells().nodes();
-        $(allPages).find('input[type="checkbox"]').each(function () {
-            if ($(this).prop('checked')) {
-                var _val = $($(this)).val();
-                _selData.push(JSON.parse(`{` + ReplaceAll(_val, `'`, `"`) + `}`));
+    //// console.log(_selData);
+    //xAjax.Post({
+    //    url: 'KBNCR110/ReceiveAllPart',
+    //    data: {
+    //        'F_PDS_No': _selData,
+    //    },
+    //    then: function (result) {
+    //        console.log(result)
+    //        if (result.status == "200") {
+    //            xSwal.success(result.title, result.message);
+    //            $('#tblMaster').DataTable().clear();
+    //            $('#tblMaster').DataTable().draw();
+    //            pdsSet.clear();
+    //        }
+    //        else {
+    //            xSwal.error(result.title, result.message);
+    //        }
+    //    },
+    //    error: function (result) {
+    //        console.error(_Controller + '.ReceiveAllPart: ' + result.responseText);
+    //        xSplash.hide();
+    //    }
+    //});
+
+    _xLib.AJAX_Post("/api/KBNCR110/ReceiveAllPart", JSON.stringify(_selData),
+    function (success) {
+            console.log(success);
+            xSwal.success("Success", success.message);
+            $("#tblMaster").DataTable().clear().draw();
+            $("#ReceiveBtn").prop('disabled', false);
+        },
+        function (error) {
+            console.error(error);
+            xSwal.error(error.responseJSON.response, error.responseJSON.message);
+            $("#ReceiveBtn").prop('disabled', false);
+        }
+    );
+
+    $("#ReceiveBtn").prop('disabled', false);
+
+});
+
+$("#uploadEpro").click(function () {
+    var _selData = [];
+    var allPages = $('#tblMaster').DataTable().cells().nodes();
+    $(allPages).find('input[type="checkbox"]').each(function () {
+        if ($(this).prop('checked')) {
+            var _val = $($(this)).val();
+            _selData.push(JSON.parse(`{` + ReplaceAll(_val, `'`, `"`) + `}`));
+        }
+    });
+    xAjax.Post({
+        url: 'KBNCR110/UploadToEpro',
+        data: {
+            'F_PDS_No': _selData,
+        },
+        then: function (result) {
+            console.log(result)
+            if (result.status == "200") {
+                xSwal.success(result.title, result.message);
+                //$('#tblMaster').DataTable().clear();
+                //$('#tblMaster').DataTable().draw();
+                //pdsSet.clear();
             }
-        });
-        xAjax.Post({
-            url: 'KBNCR110/UploadToEpro',
-            data: {
-                'F_PDS_No': _selData,
-            },
-            then: function (result) {
-                console.log(result)
-                if (result.status == "200") {
-                    xSwal.success(result.title, result.message);
-                    //$('#tblMaster').DataTable().clear();
-                    //$('#tblMaster').DataTable().draw();
-                    //pdsSet.clear();
-                }
-                else {
-                    xSwal.error(result.title, result.message);
-                }
-            },
-            error: function (result) {
-                console.error(_Controller + '.ReceiveAllPart: ' + result.responseText);
-                xSplash.hide();
+            else {
+                xSwal.error(result.title, result.message);
             }
-        });
+        },
+        error: function (result) {
+            console.error(_Controller + '.ReceiveAllPart: ' + result.responseText);
+            xSplash.hide();
+        }
     });
 });
