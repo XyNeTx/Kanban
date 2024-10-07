@@ -356,18 +356,20 @@ namespace KANBAN.Controllers.API.OrderingProcess
         }
 
         [HttpPost]
-        public async Task<IActionResult> Find_StartEnd_Date(VMKBNOR121_Preview obj)
+        public async Task Find_StartEnd_Date(VMKBNOR121_Preview obj)
         {
             try
             {
                 _BearerClass.Authentication(Request);
-                if (_BearerClass.Status == 401) return Unauthorized(new
-                {
-                    status = "401",
-                    response = "Unauthorized",
-                    title = "Unauthorized",
-                    message = "Please Login First"
-                });
+                if (_BearerClass.Status == 401) throw new Exception("Unauthorized");
+
+                //return Unauthorized(new
+                //{
+                //    status = "401",
+                //    response = "Unauthorized",
+                //    title = "Unauthorized",
+                //    message = "Please Login First"
+                //});
 
                 if (obj.Action == "Preview")
                 {
@@ -387,13 +389,15 @@ namespace KANBAN.Controllers.API.OrderingProcess
 
                     if (NoDayPreview.Rows.Count == 0)
                     {
-                        return NotFound(new
-                        {
-                            status = "404",
-                            response = "Not Found",
-                            title = "Error",
-                            message = "NumberOfDayToPreview Not Found"
-                        });
+                        //return NotFound(new
+                        //{
+                        //    status = "404",
+                        //    response = "Not Found",
+                        //    title = "Error",
+                        //    message = "NumberOfDayToPreview Not Found"
+                        //});
+
+                        throw new Exception("NumberOfDayToPreview Not Found");
                     }
 
                     Start_Date = NoDayPreview.Rows[0]["Start_Date"].ToString();
@@ -413,13 +417,15 @@ namespace KANBAN.Controllers.API.OrderingProcess
 
                     if (NoDayPreview.Rows.Count == 0)
                     {
-                        return NotFound(new
-                        {
-                            status = "404",
-                            response = "Not Found",
-                            title = "Error",
-                            message = "NumberOfDayToPreview Not Found"
-                        });
+                        //return NotFound(new
+                        //{
+                        //    status = "404",
+                        //    response = "Not Found",
+                        //    title = "Error",
+                        //    message = "NumberOfDayToPreview Not Found"
+                        //});
+
+                        throw new Exception("NumberOfDayToPreview Not Found");
                     }
 
                     Start_Date = NoDayPreview.Rows[0]["Start_Date"].ToString();
@@ -435,13 +441,15 @@ namespace KANBAN.Controllers.API.OrderingProcess
 
                 if (DT_DeliveryDate.Rows.Count == 0)
                 {
-                    return NotFound(new
-                    {
-                        status = "404",
-                        response = "Not Found",
-                        title = "Error",
-                        message = "Delivery Date Not Found"
-                    });
+                    //return NotFound(new
+                    //{
+                    //    status = "404",
+                    //    response = "Not Found",
+                    //    title = "Error",
+                    //    message = "Delivery Date Not Found"
+                    //});
+
+                    throw new Exception("Delivery Date Not Found");
                 }
 
                 dateDelivery = DateTime.TryParseExact(DT_DeliveryDate.Rows[0]["F_Delivery_Date"].ToString(), "yyyyMMdd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime result) ? result : DateTime.Now;
@@ -452,13 +460,15 @@ namespace KANBAN.Controllers.API.OrderingProcess
 
                 if (DT_Date.Rows.Count == 0)
                 {
-                    return NotFound(new
-                    {
-                        status = "404",
-                        response = "Not Found",
-                        title = "Error",
-                        message = "Cycle Time Not Found"
-                    });
+                    //return NotFound(new
+                    //{
+                    //    status = "404",
+                    //    response = "Not Found",
+                    //    title = "Error",
+                    //    message = "Cycle Time Not Found"
+                    //});
+
+                    throw new Exception("Cycle Time Not Found");
                 }
 
                 if (Start_Date != DT_Date.Rows[0]["F_Date"]) Start_Date = DT_Date.Rows[0]["F_Date"].ToString();
@@ -481,26 +491,28 @@ namespace KANBAN.Controllers.API.OrderingProcess
 
                 }
 
-                return Ok(new
-                {
-                    status = "200",
-                    response = "OK",
-                    title = "Success",
-                    message = "Start and End Date Complete",
-                    data = JsonConvert.SerializeObject(DT_Period)
-                });
+                //return Ok(new
+                //{
+                //    status = "200",
+                //    response = "OK",
+                //    title = "Success",
+                //    message = "Start and End Date Complete",
+                //    data = JsonConvert.SerializeObject(DT_Period)
+                //});
 
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new
-                {
-                    status = "500",
-                    response = "Internal Server Error",
-                    title = "Error !",
-                    message = "Unexpected Error !",
-                    error = ex.Message
-                });
+                throw new Exception (ex.Message);
+
+                //return StatusCode(500, new
+                //{
+                //    status = "500",
+                //    response = "Internal Server Error",
+                //    title = "Error !",
+                //    message = "Unexpected Error !",
+                //    error = ex.Message
+                //});
             }
         }
 
@@ -518,6 +530,8 @@ namespace KANBAN.Controllers.API.OrderingProcess
                     title = "Unauthorized",
                     message = "Please Login First"
                 });
+
+                await Find_StartEnd_Date(obj);
 
                 DT_PartControl.Clear();
                 DT_Header.Clear();
@@ -1078,11 +1092,18 @@ namespace KANBAN.Controllers.API.OrderingProcess
         {
             try
             {
+                await _KB3Context.Database.ExecuteSqlRawAsync("Exec dbo.sp_autoRecalculateBL_First @p0,@p1,@p2,@p3,@p4,@p5,@p6",
+                        obj.CurrentDate.Date.AddDays(-1).ToString("yyyy-MM-dd"),
+                        obj.Supplier.Substring(0, 4), obj.Supplier.Substring(5, 1),
+                        obj.PartNo.Split("-")[0], obj.PartNo.Split("-")[1],
+                        obj.Kanban, obj.Store);
+
                 var _autoRecalBl = _FillDT.ExecuteSQL("Exec dbo.sp_autoRecalculateBL_First @p0,@p1,@p2,@p3,@p4,@p5,@p6",
                     obj.CurrentDate.Date.AddDays(-1).ToString("yyyy-MM-dd"),
                     obj.Supplier.Substring(0, 4), obj.Supplier.Substring(5, 1),
                     obj.PartNo.Split("-")[0], obj.PartNo.Split("-")[1],
                     obj.Kanban, obj.Store);
+
 
                 if (_autoRecalBl.Rows.Count == 0)
                 {
@@ -1207,36 +1228,6 @@ namespace KANBAN.Controllers.API.OrderingProcess
                 {
                     try
                     {
-                        //if (obj.Kanban.CompareTo(obj.KanbanTo) > 0)
-                        //{
-                        //    return BadRequest(new
-                        //    {
-                        //        status = "400",
-                        //        response = "Bad Request",
-                        //        title = "Error",
-                        //        message = "Kanban From > Kanban To"
-                        //    });
-                        //}
-                        //if (obj.Store.CompareTo(obj.StoreTo) > 0)
-                        //{
-                        //    return BadRequest(new
-                        //    {
-                        //        status = "400",
-                        //        response = "Bad Request",
-                        //        title = "Error",
-                        //        message = "Store From > Store To"
-                        //    });
-                        //}
-                        //if (obj.PartNo.CompareTo(obj.PartNoTo) > 0)
-                        //{
-                        //    return BadRequest(new
-                        //    {
-                        //        status = "400",
-                        //        response = "Bad Request",
-                        //        title = "Error",
-                        //        message = "Part No From > Part No To"
-                        //    });
-                        //}
                         var dymStore = Plant switch
                         {
                             "1" => "1A",
@@ -1278,13 +1269,13 @@ namespace KANBAN.Controllers.API.OrderingProcess
                                 message = "No Working Day Found"
                             });
                         }
-                        await Find_StartEnd_Date(_nObj);
+                        //await Find_StartEnd_Date(_nObj);
                         await Get_All_Data(_nObj);
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
 
-                        throw;
+                        throw new Exception(ex.Message);
                     }
 
                     finally
@@ -1297,46 +1288,15 @@ namespace KANBAN.Controllers.API.OrderingProcess
                 {
                     try
                     {
-                        
-                        //if (obj.Kanban.CompareTo(obj.KanbanTo) > 0)
-                        //{
-                        //    return BadRequest(new
-                        //    {
-                        //        status = "400",
-                        //        response = "Bad Request",
-                        //        title = "Error",
-                        //        message = "Kanban From > Kanban To"
-                        //    });
-                        //}
-                        //if (obj.Store.CompareTo(obj.StoreTo) > 0)
-                        //{
-                        //    return BadRequest(new
-                        //    {
-                        //        status = "400",
-                        //        response = "Bad Request",
-                        //        title = "Error",
-                        //        message = "Store From > Store To"
-                        //    });
-                        //}
-                        //if (obj.PartNo.CompareTo(obj.PartNoTo) > 0)
-                        //{
-                        //    return BadRequest(new
-                        //    {
-                        //        status = "400",
-                        //        response = "Bad Request",
-                        //        title = "Error",
-                        //        message = "Part No From > Part No To"
-                        //    });
-                        //}
 
-                        await Find_StartEnd_Date(_nObj);
+                        //await Find_StartEnd_Date(_nObj);
                         await Get_All_Data(_nObj);
 
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
 
-                        throw;
+                        throw new Exception(ex.Message);
                     }
 
                     finally
@@ -1370,62 +1330,76 @@ namespace KANBAN.Controllers.API.OrderingProcess
 
         private async Task get_startDate(int _intRow, string Action)
         {
-            if (Action == "Re-Calculate BL")
+            try
             {
-                for (int i = 0; i < DT_PartControl.Rows.Count; i++)
+                if (Action == "Re-Calculate BL")
                 {
-                    await set_startDate(i);
+                    for (int i = 0; i < DT_PartControl.Rows.Count; i++)
+                    {
+                        await set_startDate(i);
+                    }
+                }
+                else if (Action == "Re-Calculate")
+                {
+                    await set_startDate(_intRow);
                 }
             }
-            else if (Action == "Re-Calculate")
+            catch (Exception ex)
             {
-                await set_startDate(_intRow);
+                throw new Exception(ex.Message);
             }
         }
 
         private async Task set_startDate(int _intRow)
         {
-            string Start_Date,End_Date = "";
-            string storeCode = Plant switch
+            try
             {
-                "1" => "1A",
-                "2" => "2B",
-                "3" => "3C",
-                _ => "3C"
-            };
+                string start_Date, End_Date = "";
+                string storeCode = Plant switch
+                {
+                    "1" => "1A",
+                    "2" => "2B",
+                    "3" => "3C",
+                    _ => "3C"
+                };
 
-            var _ProcessDate = await _KB3Context.TB_Calculate_D.Where(x =>
-                x.F_Supplier_Code == DT_PartControl.Rows[_intRow]["F_Supplier_Code"].ToString().Trim() &&
-                x.F_Supplier_Plant == DT_PartControl.Rows[_intRow]["F_Supplier_Plant"].ToString().Trim() &&
-                x.F_Part_No == DT_PartControl.Rows[_intRow]["F_Part_No"].ToString().Trim() &&
-                x.F_Ruibetsu == DT_PartControl.Rows[_intRow]["F_Ruibetsu"].ToString().Trim() &&
-                x.F_Store_Code == DT_PartControl.Rows[_intRow]["F_Store_Code"].ToString().Trim() &&
-                x.F_Kanban_No == DT_PartControl.Rows[_intRow]["F_Kanban_No"].ToString().Trim() &&
-                (x.Flag_Chg_BL_Stock == true || x.Flag_Cancel_PDS == true || x.Flag_Chg_MRP == true ||
-                x.Flag_Chg_Urgent == true || x.Flag_Adjust_Order == true)
-                ).OrderBy(x => x.F_Process_Date).FirstOrDefaultAsync();
+                var _ProcessDate = await _KB3Context.TB_Calculate_D.Where(x =>
+                    x.F_Supplier_Code == DT_PartControl.Rows[_intRow]["F_Supplier_Code"].ToString().Trim() &&
+                    x.F_Supplier_Plant == DT_PartControl.Rows[_intRow]["F_Supplier_Plant"].ToString().Trim() &&
+                    x.F_Part_No == DT_PartControl.Rows[_intRow]["F_Part_No"].ToString().Trim() &&
+                    x.F_Ruibetsu == DT_PartControl.Rows[_intRow]["F_Ruibetsu"].ToString().Trim() &&
+                    x.F_Store_Code == DT_PartControl.Rows[_intRow]["F_Store_Code"].ToString().Trim() &&
+                    x.F_Kanban_No == DT_PartControl.Rows[_intRow]["F_Kanban_No"].ToString().Trim() &&
+                    (x.Flag_Chg_BL_Stock == true || x.Flag_Cancel_PDS == true || x.Flag_Chg_MRP == true ||
+                    x.Flag_Chg_Urgent == true || x.Flag_Adjust_Order == true)
+                    ).OrderBy(x => x.F_Process_Date).FirstOrDefaultAsync();
 
-            if (_ProcessDate != null)
-            {
-                Start_Date = _ProcessDate.F_Process_Date;
+                if (_ProcessDate != null)
+                {
+                    start_Date = _ProcessDate.F_Process_Date;
+                }
+                else
+                {
+                    start_Date = LoginDate.ToString("yyyyMMdd");
+                }
+
+                string _execSQL = "exec [dbo].[sp_NumberOfDayToPreview] @p0,@p1,@p2,@p3,@p4";
+                var _dt = _FillDT.ExecuteSQL(_execSQL, Plant, DT_PartControl.Rows[_intRow]["F_Supplier_Code"].ToString().Trim(),
+                    DT_PartControl.Rows[_intRow]["F_Supplier_Plant"].ToString().Trim(), storeCode, LoginDate.ToString("yyyyMMdd"));
+
+                if (start_Date == ProcessDate.ToString("yyyyMMdd"))
+                {
+                    start_Date = _dt.Rows[0]["Start_Date"].ToString();
+                }
+                End_Date = _dt.Rows[0]["End_Date"].ToString();
+
+
+                await re_Calculate_Trail(start_Date, End_Date, _intRow);
             }
-            else
+            catch (Exception ex)
             {
-                Start_Date = LoginDate.ToString("yyyyMMdd");
+                throw new Exception(ex.Message);
             }
-
-            string _execSQL = "exec [dbo].[sp_NumberOfDayToPreview] @p0,@p1,@p2,@p3,@p4";
-            var _dt = _FillDT.ExecuteSQL(_execSQL,Plant, DT_PartControl.Rows[_intRow]["F_Supplier_Code"].ToString().Trim(),
-                DT_PartControl.Rows[_intRow]["F_Supplier_Plant"].ToString().Trim(),storeCode,LoginDate.ToString("yyyyMMdd"));
-
-            if (Start_Date == LoginDate.ToString("yyyyMMdd"))
-            {
-                Start_Date = _dt.Rows[0]["Start_Date"].ToString();
-            }
-            End_Date = _dt.Rows[0]["End_Date"].ToString();
-
-
-            await re_Calculate_Trail(Start_Date,End_Date,_intRow);
         }
 
         private async Task re_Calculate_Trail(string start_date, string end_date,int _intRow)
@@ -1438,7 +1412,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
                 bool blnFromSetStock = false;
                 DataTable DT_Adjust, DT_Actual, DT_LastBL, DT = new DataTable();
 
-                dateLast_Trip = DateTime.ParseExact(end_date, "yyyyMMdd", CultureInfo.InvariantCulture);
+                dateLast_Trip = DateTime.ParseExact(start_date, "yyyyMMdd", CultureInfo.InvariantCulture);
                 DateECI dateECI = await get_ECIDate(start_date, end_date, _intRow);
 
                 string _execSQL = "exec [dbo].[sp_autoRecalculateBL_First] @p0,@p1,@p2,@p3,@p4,@p5,@p6";
@@ -1524,14 +1498,16 @@ namespace KANBAN.Controllers.API.OrderingProcess
                             }
                         }
 
-                        DR_Receive = DT_Actual.Select("F_Delivery_trip = '" + DT.Rows[_intRow]["F_Process_Round"].ToString() + "' " +
-                            "AND F_Receive_date '" + DT.Rows[_intRow]["F_Process_Date"].ToString() + "' " +
-                            "AND F_Supplier_Code '" + DT.Rows[_intRow]["F_Supplier_Code"].ToString() + "' " +
-                            "AND F_Supplier_Plant '" + DT.Rows[_intRow]["F_Supplier_Plant"].ToString() + "' " +
-                            "AND F_Part_No '" + DT.Rows[_intRow]["F_Part_No"].ToString() + "' " +
-                            "AND F_Ruibetsu '" + DT.Rows[_intRow]["F_Ruibetsu"].ToString() + "' " +
-                            "AND F_Store_CD '" + DT.Rows[_intRow]["F_Store_Code"].ToString() + "' "
-                            ).FirstOrDefault();
+                        DR_Receive = DT_Actual.Select(
+                            "F_Delivery_trip = '" + DT.Rows[_intRow]["F_Process_Round"].ToString() + "' " +
+                            "AND F_Receive_date = '" + DT.Rows[_intRow]["F_Process_Date"].ToString() + "' " +
+                            "AND F_Supplier_Code = '" + DT.Rows[_intRow]["F_Supplier_Code"].ToString() + "' " +
+                            "AND F_Supplier_Plant = '" + DT.Rows[_intRow]["F_Supplier_Plant"].ToString() + "' " +
+                            "AND F_Part_No = '" + DT.Rows[_intRow]["F_Part_No"].ToString() + "' " +
+                            "AND F_Ruibetsu = '" + DT.Rows[_intRow]["F_Ruibetsu"].ToString() + "' " +
+                            "AND F_Store_CD = '" + DT.Rows[_intRow]["F_Store_Code"].ToString() + "'"
+                        ).FirstOrDefault();
+
 
                         if (DR_Receive != null)
                         {
@@ -1552,12 +1528,12 @@ namespace KANBAN.Controllers.API.OrderingProcess
                         }
 
                         DR_Adjust = DT_Adjust.Select("F_Delivery_trip = '" + DT.Rows[_intRow]["F_Process_Round"].ToString() + "' " +
-                            "AND F_Receive_date '" + DT.Rows[_intRow]["F_Process_Date"].ToString() + "' " +
-                            "AND F_Supplier_Code '" + DT.Rows[_intRow]["F_Supplier_Code"].ToString() + "' " +
-                            "AND F_Supplier_Plant '" + DT.Rows[_intRow]["F_Supplier_Plant"].ToString() + "' " +
-                            "AND F_Part_No '" + DT.Rows[_intRow]["F_Part_No"].ToString() + "' " +
-                            "AND F_Ruibetsu '" + DT.Rows[_intRow]["F_Ruibetsu"].ToString() + "' " +
-                            "AND F_Store_CD '" + DT.Rows[_intRow]["F_Store_Code"].ToString() + "' ",
+                            "AND F_Delivery_Date = '" + DT.Rows[_intRow]["F_Process_Date"].ToString() + "' " +
+                            "AND F_Supplier_Code = '" + DT.Rows[_intRow]["F_Supplier_Code"].ToString() + "' " +
+                            "AND F_Supplier_Plant = '" + DT.Rows[_intRow]["F_Supplier_Plant"].ToString() + "' " +
+                            "AND F_Part_No = '" + DT.Rows[_intRow]["F_Part_No"].ToString() + "' " +
+                            "AND F_Ruibetsu = '" + DT.Rows[_intRow]["F_Ruibetsu"].ToString() + "' " +
+                            "AND F_Store_Code = '" + DT.Rows[_intRow]["F_Store_Code"].ToString() + "' ",
                             "F_Process_Date DESC, F_Process_Round DESC").FirstOrDefault();
 
                         if (DR_Adjust != null)
@@ -1729,7 +1705,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
                         _execSQL = $@"exec [dbo].[sp_autoRecalculateBL_UpdateBL] @p0,@p1,@p2,@p3,@p4,@p5,@p6,@p7,@p8,@p9,@p10,@p11";
 
                         int _RowAffected = _KB3Context.Database.ExecuteSqlRaw(_execSQL, DT.Rows[_intRow]["F_Process_Date"].ToString(), DT.Rows[_intRow]["F_Process_Shift"].ToString(),
-                            DT.Rows[_intRow]["Process_Round"].ToString(), DT.Rows[_intRow]["F_Supplier_Code"].ToString(), DT.Rows[_intRow]["F_Supplier_Plant"].ToString(),
+                            DT.Rows[_intRow]["F_Process_Round"].ToString(), DT.Rows[_intRow]["F_Supplier_Code"].ToString(), DT.Rows[_intRow]["F_Supplier_Plant"].ToString(),
                             DT.Rows[_intRow]["F_Part_No"].ToString(), DT.Rows[_intRow]["F_Ruibetsu"].ToString(),
                             DT.Rows[_intRow]["F_Kanban_No"].ToString(), DT.Rows[_intRow]["F_Store_Code"].ToString(),
                             BLPlan, BLActual, DT.Rows[_intRow]["F_Not_Recalculate"].ToString());
@@ -1779,10 +1755,10 @@ namespace KANBAN.Controllers.API.OrderingProcess
                     _KB3Transaction.Commit();
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 _KB3Transaction.Rollback();
-                throw;
+                throw new Exception(ex.Message);
             }
 
         }
@@ -1834,6 +1810,8 @@ namespace KANBAN.Controllers.API.OrderingProcess
                 {
                     dateECI.Begining_Calculate = dateLast_Trip.ToString("yyyyMMdd");
                 }
+
+                return dateECI;
             }
             catch (Exception ex)
             {
@@ -1841,7 +1819,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
                 throw new Exception(ex.Message);
             }
 
-            return dateECI;
+            
         }
 
         [HttpPost]
@@ -1884,28 +1862,27 @@ namespace KANBAN.Controllers.API.OrderingProcess
 
                 if(Login_Shift.ToUpper() == "DAY")
                 {
-                    _sql = "exec [dbo].[SP_CALCULATE_KBNOR120] @p0,@p1,@p2,@p3,@p4,@p5,@p6";
-                    //_dt = _FillDT.ExecuteSQL(_sql,LoginDate.ToString("yyyyMMdd"),
-                    //    obj.Supplier.Substring(0,4),obj.Supplier.Substring(5,1),
-                    //    obj.Store,obj.Kanban, obj.PartNo.Split("-")[0],
-                    //    obj.PartNo.Split("-")[1]);
+                    _sql = $"exec [dbo].[SP_CALCULATE_KBNOR120] '{ProcessDate.ToString("yyyyMMdd")}'" +
+                        $",'{obj.Supplier.Substring(0, 4)}','{obj.Supplier.Substring(5, 1)}'" +
+                        $",'{obj.Store}','{obj.Kanban}','{obj.PartNo.Split("-")[0]}','{obj.PartNo.Split("-")[1]}'";
 
-                    await _KB3Context.Database.ExecuteSqlRawAsync(_sql,LoginDate.ToString("yyyyMMdd"),
-                        obj.Supplier.Substring(0, 4), obj.Supplier.Substring(5, 1),
-                        obj.Store, obj.Kanban, obj.PartNo.Split("-")[0],
-                        obj.PartNo.Split("-")[1]);
+                    var count = await _KB3Context.Database.ExecuteSqlRawAsync(_sql);
 
-                    _Log.WriteLogMsg("message : Update TB_Calculate_D : SP_CALCULATE_KBNOR120");
+                    if (count > 0)
+                    {
+                        _Log.WriteLogMsg("message : Update TB_Calculate_D : SP_CALCULATE_KBNOR120");
+                    }
+
                 }
                 else
                 {
                     string sEndDate = "";
                     string sLastDate = "";
 
-                    sEndDate = _KB3Context.Database.SqlQueryRaw<string>($"select dbo.FN_GET14Day('{LoginDate.ToString("yyyyMMdd")}') AS VALUE").FirstOrDefault();
+                    sEndDate = _KB3Context.Database.SqlQueryRaw<string>($"select dbo.FN_GET14Day('{ProcessDate.ToString("yyyyMMdd")}') AS VALUE").FirstOrDefault();
                     _sql = "exec [dbo].[sp_Calculate_kanban] @p0,@p1,@p2,@p3,@p4,@p5,@p6,@p7";
                     _dt = _FillDT.ExecuteSQL(_sql, obj.Supplier.Split("-")[0], obj.Supplier.Split("-")[1],
-                        obj.PartNo.Split("-")[0], obj.PartNo.Split("-")[1],obj.Store,obj.Kanban, LoginDate.ToString("yyyyMMdd"), sEndDate);
+                        obj.PartNo.Split("-")[0], obj.PartNo.Split("-")[1],obj.Store,obj.Kanban, ProcessDate.ToString("yyyyMMdd"), sEndDate);
 
                     _Log.WriteLogMsg("message : Update TB_Calculate_D : sp_Calculate_kanban");
 
@@ -1915,7 +1892,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
                     $"AND D.F_Part_No = V.F_Part_No AND D.F_Ruibetsu = V.F_Ruibetsu " +
                     $"AND D.F_Store_Code = V.F_Store_Code AND D.F_Kanban_No = V.F_Kanban_No " +
                     $"AND D.F_Process_Date = V.F_Process_Date AND D.F_Process_Round = V.F_Process_Round " +
-                    $"WHERE V.F_Lock = '0' AND D.F_Process_Date >= '{LoginDate.ToString("yyyyMMdd")}' " +
+                    $"WHERE V.F_Lock = '0' AND D.F_Process_Date >= '{ProcessDate.ToString("yyyyMMdd")}' " +
                     $"AND D.F_Supplier_Code = '{obj.Supplier.Split("-")[0]}' " +
                     $"AND D.F_Supplier_Plant = '{obj.Supplier.Split("-")[1]}' " +
                     $"AND D.F_Part_No = '{obj.PartNo.Split("-")[0]}' " +
@@ -1925,7 +1902,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
 
                     await _KB3Context.Database.ExecuteSqlRawAsync(_sql);
 
-                    sLastDate = _KB3Context.Database.SqlQueryRaw<string>($"select dbo.FN_GetLastDate('{LoginDate.ToString("yyyyMMdd")}') AS VALUE").FirstOrDefault();
+                    sLastDate = _KB3Context.Database.SqlQueryRaw<string>($"select dbo.FN_GetLastDate('{ProcessDate.ToString("yyyyMMdd")}') AS VALUE").FirstOrDefault();
 
                     _sql = $"UPDATE TB_Calculate_D SET F_Urgent_Order = U.F_Unit_Amount ,Flag_Chg_Urgent = '1' " +
                         $"FROM TB_Calculate_D D INNER JOIN (Select H.F_Supplier_Code, H.F_Supplier_Plant, H.F_Delivery_Date, H.F_Delivery_Trip " +
@@ -1959,7 +1936,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
 
                     await _KB3Context.Database.ExecuteSqlRawAsync(_sql);
 
-                    _sql = $"exec [dbo].[SP_RecalBL_Night] '{LoginDate.ToString("yyyyMMdd")}'," +
+                    _sql = $"exec [dbo].[SP_RecalBL_Night] '{ProcessDate.ToString("yyyyMMdd")}'," +
                         $"'{obj.Supplier.Split("-")[0]}','{obj.Supplier.Split("-")[1]}'," +
                         $"'{obj.Store}','{obj.Kanban}'";
 
@@ -1967,11 +1944,13 @@ namespace KANBAN.Controllers.API.OrderingProcess
 
                     _Log.WriteLogMsg("message : Update TB_Calculate_D : SP_RecalBL_Night");
 
-                    _sql = $"exec [dbo].[SP_CALCULATE_OTHER_CONDITION] '{LoginDate.ToString("yyyyMMdd")}'";
+                    _sql = $"exec [dbo].[SP_CALCULATE_OTHER_CONDITION] '{ProcessDate.ToString("yyyyMMdd")}'";
                     await _KB3Context.Database.ExecuteSqlRawAsync(_sql);
                     
                     _Log.WriteLogMsg("message : Update TB_Calculate_D : SP_CALCULATE_OTHER_CONDITION");
                 }
+
+                _KB3Transaction.Commit();
 
                 return Ok(new
                 {

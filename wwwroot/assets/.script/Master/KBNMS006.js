@@ -266,7 +266,7 @@ $("#btnSearch").click(async function () {
     $("#readAddress").prop("readonly", false);
     $("#readDock").prop("readonly", false);
 
-    _xLib.AJAX_Get("/api/KBNMS006/Search", obj,
+    await _xLib.AJAX_Get("/api/KBNMS006/Search", obj,
         function (success) {
             if (success.status == 200) {
                 success = _xLib.JSONparseMixData(success);
@@ -442,6 +442,18 @@ $("#btnSearch").click(async function () {
         },
         function (error) {
             xSwal.error("Error", error.responseJSON.message);
+        }
+    );
+
+    _xLib.AJAX_Get("/api/KBNMS006/GetDeliveryTime", { F_Supplier_Code: obj.F_Supplier_Code },
+    function (success) {
+        if (success.status == 200) {
+            console.log(success.data);
+            $("#readCycle").val(success.data);
+            }
+        },
+        function (error) {
+            xSwal.error("Error", "Delivery Time Not Found");
         }
     );
 });
@@ -793,10 +805,10 @@ function Get_Kanban_Cut() {
         F_Kanban_No: $("#readKanban").val(),
         F_Part_No: $("#readPartNo").val().split("-")[0],
         F_Ruibetsu: $("#readPartNo").val().split("-")[1],
-        F_Delivery_Date: moment($("#stopDeliDate").val(), "DD/MM/YYYY").format("YYYYMMDD"),
+        F_Delivery_Date: moment($("#cutDeliDate").val(), "DD/MM/YYYY").format("YYYYMMDD"),
         F_Delivery_Trip: $("#cutTrip").val(),
-        F_Start_Date: moment($("#stopStartDate").val(), "DD/MM/YYYY").format("YYYYMMDD"),
-        F_Start_Shift: $("#stopShift").val(),
+        F_Start_Date: moment($("#cutStartDate").val(), "DD/MM/YYYY").format("YYYYMMDD"),
+        F_Start_Shift: $("#cutShift").val(),
         F_KB_Cut: $("#cutKB").val(),
         F_KB_Cut_RN: $("#cutKBCycle").val(),
     }

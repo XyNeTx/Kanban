@@ -3,12 +3,16 @@ using HINOSystem.Libs;
 using KANBAN.Context;
 using KANBAN.Libs;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using System.Data;
 
 namespace KANBAN.Services.SpecialOrdering
 {
     public interface IKBNOR210
     {
         Task Interface();
+        string Page_Load();
+        Task<bool> Check_Error();
     }
 
     public class KBNOR210 : IKBNOR210
@@ -39,18 +43,58 @@ namespace KANBAN.Services.SpecialOrdering
             _emailService = emailService;
         }
 
-        public int progressBar = 0;
+        //public int progressBar = 0;
 
-        public async Task Interface()
+        public string Page_Load()
         {
             try
             {
+                var dt = _FillDT.ExecuteSQL($"EXEC [exec].spKBNOR210_SEARCH '{_BearerClass.Plant}','{_BearerClass.UserCode}'");
+
+                if(dt.Rows.Count == 0)
+                {
+                    throw new Exception("No data found.");
+                }
+
+                return JsonConvert.SerializeObject(dt);
             }
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
+        }
 
+        public async Task Interface()
+        {
+            try
+            {
+                await _kbContext.Database.ExecuteSqlRawAsync($"EXEC [exec].spKBNOR210_INF '{_BearerClass.Plant}','{_BearerClass.UserCode}'");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<bool> Check_Error()
+        {
+            try
+            {
+
+                int count = await _kbContext.Database.ExecuteSqlRawAsync($@"SELECT * From TB_Import_Error
+                        WHERE F_Type = 'KBNOR210' and F_Update_By = '{_BearerClass.UserCode}' ");
+
+                if(count > 0)
+                {
+                    return true;
+                }
+                return false;
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
     }

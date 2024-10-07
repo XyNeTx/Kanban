@@ -194,10 +194,10 @@ const previewFunction = async (intRow,_command) => {
         kanbanTo: $("#inputKanban").val(),
     }
 
-    await _xLib.AJAX_Post('/api/KBNOR121/Find_StartEnd_Date', JSON.stringify(obj), function (result) {
-        result = _xLib.JSONparseAndTrim(result);
-        //console.log(result);
-    });
+    //await _xLib.AJAX_Post('/api/KBNOR121/Find_StartEnd_Date', JSON.stringify(obj), function (result) {
+    //    result = _xLib.JSONparseAndTrim(result);
+    //    //console.log(result);
+    //});
 
     await _xLib.AJAX_Post('/api/KBNOR121/Get_All_Data', JSON.stringify(obj), async function (result) {
         result = _xLib.JSONparseAndTrimArray(result);
@@ -466,6 +466,13 @@ const addDetailToTable = async (dateSet, intRow) => {
 
             else $(`#${_insIdDetail}`).text(item[_setAccessDetail[k - 1]]);
 
+            if (k == 18 || k == 20) {
+                console.log(item.F_Not_Recalculate);
+                if (item.F_Not_Recalculate) {
+                    $("#tdR" + k + "Pcs" + dateSet[_countDateSet]).css("font-weight", "bolder");
+                }
+            }
+
             if (k == 20) { _countT += 1; } //new column T
 
         }
@@ -709,7 +716,7 @@ const addDetailToTable = async (dateSet, intRow) => {
 
             //console.log(`#tdR${_Row[i]}Pcs${_CookieLoginDate.slice(8, 10) + "-" + _CookieLoginDate.slice(5, 7) + "-" + _CookieLoginDate.slice(0, 4)}`);
 
-            $(`#tdR${_Row[i]}Pcs${_CookieLoginDate.slice(8, 10) + "-" + _CookieLoginDate.slice(5, 7) + "-" + _CookieLoginDate.slice(0, 4)}`).css("font-weight", "900");
+            //$(`#tdR${_Row[i]}Pcs${_CookieLoginDate.slice(8, 10) + "-" + _CookieLoginDate.slice(5, 7) + "-" + _CookieLoginDate.slice(0, 4)}`).css("font-weight", "900");
 
         }
     }
@@ -754,28 +761,32 @@ const sumKB = async (dateSet) => {
 
     for (let i = 0; i < _Row.length; i++)
     {
-        var sum = 0;
-        var _countDateSet = 0;
-        $(`table tbody tr td[id*='tdR${_Row[i]}T']`).each(function ()
-        {
-            let $Id = $(this).attr("id");
-            //console.log($Id);
+        //var sum = 0;
+        var _countDateSet = -1;
 
-            if ($Id.includes(dateSet[_countDateSet]))
-            {
-                sum += parseInt($(`#${$Id}`).text());
-                if (isNaN(sum) || sum === Infinity) sum = 0;
-                $(`#tdR${_Row[i]}KB${dateSet[_countDateSet]}`).text(sum);
-                //console.log(sum);
-            }
-            else
-            {
-                //console.log("Sum : ", sum);
-                sum = parseInt($(`#${$Id}`).text());
-                if (isNaN(sum) || sum === Infinity) sum = 0;
-                _countDateSet += 1;
-            }
-        });
+        //if (i == 0 || i == 1) {
+            let $Id = "";
+            $(`table tbody tr td[id*='tdR${_Row[i]}T']`).each(function () {
+                $Id = $(this).attr("id");
+
+                if ($Id.slice(-12, -10) == "T1") _countDateSet += 1;
+                if ($Id.includes(dateSet[_countDateSet])) {
+                    let kbToSum = parseInt($(`#${$Id}`).text());
+                    //console.log(kbToSum);
+                    //if (isNaN(sum) || sum === Infinity) sum = 0;
+                    if (isNaN(kbToSum) || kbToSum === Infinity) kbToSum = 0;
+                    let _kb = (parseInt($(`#tdR${_Row[i]}KB${dateSet[_countDateSet]}`).text())) == NaN ? 0 : parseInt($(`#tdR${_Row[i]}KB${dateSet[_countDateSet]}`).text());
+                    _kb = isNaN(_kb) || _kb === Infinity ? 0 : _kb;
+
+                    let kbResult = _kb + kbToSum;
+                    //console.log($(`#tdR${_Row[i]}KB${dateSet[_countDateSet]}`).text());
+                    //console.log(kbResult);
+                    $(`#tdR${_Row[i]}KB${dateSet[_countDateSet]}`).text(kbResult);
+                }
+
+            });
+            
+        //}
 
         if (i >= 2) {
             _countDateSet = 0;

@@ -448,6 +448,8 @@ namespace KANBAN.Controllers.API.Master
                     }
                 }
 
+                await _KB3Context.Database.ExecuteSqlRawAsync($"Exec [exec].spKBNMS005S_UPD_D '{_BearerClass.Plant}','{ListObj[0].F_Date}','{ListObj[0].F_Shift}','{ListObj[0].F_Sup_Cd + "-" + ListObj[0].F_Sup_Plant}','{ListObj[0].F_Store_Cd}'");
+
 
                 _KB3Transaction.Commit();
 

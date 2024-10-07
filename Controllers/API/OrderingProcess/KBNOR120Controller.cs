@@ -148,7 +148,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
             }
         }
 
-        public async Task ProcessStartEXE()
+        private async Task ProcessStartEXE()
         {
             try
             {

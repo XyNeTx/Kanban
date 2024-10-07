@@ -13,45 +13,41 @@
                 "pType": 'PDS'
             },
         });
-        if (_dt.rows != null) xDropDownList.bind('#itmPDS', _dt.rows, 'F_OrderNo', 'F_OrderNo');
-        if (_dt.rows != null) xDropDownList.bind('#itmPDSTo', _dt.rows, 'F_OrderNo', 'F_OrderNo');
+        if (_dt.rows == null) MsgBox("Order data not found.", MsgBoxStyle.Information, "Information");
 
+        $('#itmPDS').empty();
+        $('#itmPDSTo').empty();
 
-        var _dt = await xAjax.ExecuteJSON({
-            data: {
-                "Module": "[exec].[spKBNOR700]",
-                "pUserCode": ajexHeader.UserCode,
-                "F_Plant": ajexHeader.Plant,
-                "F_orderType": (rdoOrderType.value == 'Special' ? 'S' : (rdoOrderType.value == 'Urgent' ? 'U' : 'N')),
-                "pType": 'SUPPLIER'
-            },
+        $('#itmPDS').append(`<option value="" hidden></option>`);
+        $('#itmPDSTo').append(`<option value="" hidden></option>`);
+
+        $("#itmPDS").selectpicker('refresh');
+        $("#itmPDSTo").selectpicker('refresh');
+        _dt.rows.forEach(function (item) {
+            $('#itmPDS').append(`<option value="${item.F_OrderNo}">${item.F_OrderNo}</option>`);
+            $('#itmPDSTo').append(`<option value="${item.F_OrderNo}">${item.F_OrderNo}</option>`);
         });
-        if (_dt.rows != null) xDropDownList.bind('#itmSupplier', _dt.rows, 'SupplierCode', 'SupplierCode');
-        if (_dt.rows != null) xDropDownList.bind('#itmSupplierTo', _dt.rows, 'SupplierCode', 'SupplierCode');
+
+        $("#itmPDS").selectpicker('refresh');
+        $("#itmPDSTo").selectpicker('refresh');
 
     };
+
+    $("#itmPDS").change(function () {
+        itmPDS.value = $(this).val();
+    });
 
 
     initial = async function () {
         loadOrderType();
+        $("#itmPDS").selectpicker();
+        $("#itmPDSTo").selectpicker();
 
         xSplash.hide();
     };
     initial();
 
 
-    xAjax.onChange('#rdoOrderTypeNormal', async function () {
-        rdoOrderType.check = 'Normal';
-        loadOrderType();
-    });
-    xAjax.onChange('#rdoOrderTypeSpecial', async function () {
-        rdoOrderType.check = 'Special';
-        loadOrderType();
-    });
-    xAjax.onChange('#rdoOrderTypeUrgent', async function () {
-        rdoOrderType.check = 'Urgent';
-        loadOrderType();
-    });
 
 
 
@@ -331,4 +327,18 @@
     }
 
 })
+
+
+xAjax.onChange('#rdoOrderTypeNormal', async function () {
+    rdoOrderType.check = 'Normal';
+    loadOrderType();
+});
+xAjax.onChange('#rdoOrderTypeSpecial', async function () {
+    rdoOrderType.check = 'Special';
+    loadOrderType();
+});
+xAjax.onChange('#rdoOrderTypeUrgent', async function () {
+    rdoOrderType.check = 'Urgent';
+    loadOrderType();
+});
 

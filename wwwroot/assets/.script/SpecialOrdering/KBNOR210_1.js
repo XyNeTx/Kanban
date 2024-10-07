@@ -62,24 +62,34 @@ async function Initial() {
 
             {
                 title: " ", render: function (data, type, row) {
-                    if (row.F_Delivery_DT_2.includes("/")) {
-                        if (row.F_Qty_2 == 0) {
-                            return `<input type="checkbox" id="chk${row.F_Color_2}" value="${row.F_Color_2}" disabled/>`;
+                    try {
+                        if (row.F_Delivery_DT_2.includes("/")) {
+                            if (row.F_Qty_2 == 0) {
+                                return `<input type="checkbox" id="chk${row.F_Color_2}" value="${row.F_Color_2}" disabled/>`;
+                            }
+                            else {
+                                return `<input type="checkbox" id="chk${row.F_Color_2}" value="${row.F_Color_2}" />`;
+                            }
                         }
-                        else {
-                            return `<input type="checkbox" id="chk${row.F_Color_2}" value="${row.F_Color_2}" />`;
-                        }
+                        return "";
                     }
-                    return "";
+                    catch (error) {
+                        return "";
+                    }
                 }
             },
 
             {
                 title: "Qty", render: function (data, type, row) {
-                    if (row.F_Delivery_DT_2.includes("/")) {
-                        return row.F_Qty_2;
+                    try {
+                        if (row.F_Delivery_DT_2.includes("/")) {
+                            return row.F_Qty_2;
+                        }
+                        else {
+                            return "";
+                        }
                     }
-                    else {
+                    catch (error) {
                         return "";
                     }
                 },
@@ -89,24 +99,34 @@ async function Initial() {
 
             {
                 title: " ", render: function (data, type, row) {
-                    if (row.F_Delivery_DT_3.includes("/")) {
-                        if (row.F_Qty_3 == 0) {
-                            return `<input type="checkbox" id="chk${row.F_Color_3}" value="${row.F_Color_3}" disabled/>`;
+                    try {
+                        if (row.F_Delivery_DT_3.includes("/")) {
+                            if (row.F_Qty_3 == 0) {
+                                return `<input type="checkbox" id="chk${row.F_Color_3}" value="${row.F_Color_3}" disabled/>`;
+                            }
+                            else {
+                                return `<input type="checkbox" id="chk${row.F_Color_3}" value="${row.F_Color_3}" />`;
+                            }
                         }
-                        else {
-                            return `<input type="checkbox" id="chk${row.F_Color_3}" value="${row.F_Color_3}" />`;
-                        }
+                        return "";
                     }
-                    return "";
+                    catch (error) {
+                        return "";
+                    }
                 }
             },
 
             {
                 title: "Qty", render: function (data, type, row) {
-                    if (row.F_Delivery_DT_3.includes("/")) {
-                        return row.F_Qty_3;
+                    try {
+                        if (row.F_Delivery_DT_3.includes("/")) {
+                            return row.F_Qty_3;
+                        }
+                        else {
+                            return "";
+                        }
                     }
-                    else {
+                    catch (error) {
                         return "";
                     }
                 },
@@ -116,24 +136,34 @@ async function Initial() {
 
             {
                 title: " ", render: function (data, type, row) {
-                    if (row.F_Delivery_DT_4.includes("/")) {
-                        if (row.F_Qty_4 == 0) {
-                            return `<input type="checkbox" id="chk${row.F_Color_4}" value="${row.F_Color_4}" disabled/>`;
+                    try {
+                        if (row.F_Delivery_DT_4.includes("/")) {
+                            if (row.F_Qty_4 == 0) {
+                                return `<input type="checkbox" id="chk${row.F_Color_4}" value="${row.F_Color_4}" disabled/>`;
+                            }
+                            else {
+                                return `<input type="checkbox" id="chk${row.F_Color_4}" value="${row.F_Color_4}" />`;
+                            }
                         }
-                        else {
-                            return `<input type="checkbox" id="chk${row.F_Color_4}" value="${row.F_Color_4}" />`;
-                        }
+                        return "";
                     }
-                    return "";
+                    catch (error) {
+                        return "";
+                    }
                 }
             },
 
             {
                 title: "Qty", render: function (data, type, row) {
-                    if (row.F_Delivery_DT_4.includes("/")) {
-                        return row.F_Qty_4;
+                    try {
+                        if (row.F_Delivery_DT_4.includes("/")) {
+                            return row.F_Qty_4;
+                        }
+                        else {
+                            return "";
+                        }
                     }
-                    else {
+                    catch (error) {
                         return "";
                     }
                 },
@@ -143,24 +173,34 @@ async function Initial() {
 
             {
                 title: " ", render: function (data, type, row) {
-                    if (row.F_Delivery_DT_5.includes("/")) {
-                        if (row.F_Qty_5 == 0) {
-                            return `<input type="checkbox" id="chk${row.F_Color_5}" value="${row.F_Color_5}" disabled/>`;
+                    try {
+                        if (row.F_Delivery_DT_5.includes("/")) {
+                            if (row.F_Qty_5 == 0) {
+                                return `<input type="checkbox" id="chk${row.F_Color_5}" value="${row.F_Color_5}" disabled/>`;
+                            }
+                            else {
+                                return `<input type="checkbox" id="chk${row.F_Color_5}" value="${row.F_Color_5}" />`;
+                            }
                         }
-                        else {
-                            return `<input type="checkbox" id="chk${row.F_Color_5}" value="${row.F_Color_5}" />`;
-                        }
+                        return "";
                     }
-                    return "";
+                    catch (error) {
+                        return "";
+                    }
                 }
             },
 
             {
                 title: "Qty", render: function (data, type, row) {
-                    if (row.F_Delivery_DT_5.includes("/")) {
-                        return row.F_Qty_5;
+                    try {
+                        if (row.F_Delivery_DT_5.includes("/")) {
+                            return row.F_Qty_5;
+                        }
+                        else {
+                            return "";
+                        }
                     }
-                    else {
+                    catch (error) {
                         return "";
                     }
                 },
@@ -170,24 +210,34 @@ async function Initial() {
 
             {
                 title: " ", render: function (data, type, row) {
-                    if (row.F_Delivery_DT_6.includes("/")) {
-                        if (row.F_Qty_6 == 0) {
-                            return `<input type="checkbox" id="chk${row.F_Color_6}" value="${row.F_Color_6}" disabled/>`;
+                    try {
+                        if (row.F_Delivery_DT_6.includes("/")) {
+                            if (row.F_Qty_6 == 0) {
+                                return `<input type="checkbox" id="chk${row.F_Color_6}" value="${row.F_Color_6}" disabled/>`;
+                            }
+                            else {
+                                return `<input type="checkbox" id="chk${row.F_Color_6}" value="${row.F_Color_6}" />`;
+                            }
                         }
-                        else {
-                            return `<input type="checkbox" id="chk${row.F_Color_6}" value="${row.F_Color_6}" />`;
-                        }
+                        return "";
                     }
-                    return "";
+                    catch (error) {
+                        return "";
+                    }
                 }
             },
 
             {
                 title: "Qty", render: function (data, type, row) {
-                    if (row.F_Delivery_DT_6.includes("/")) {
-                        return row.F_Qty_6;
+                    try {
+                        if (row.F_Delivery_DT_6.includes("/")) {
+                            return row.F_Qty_6;
+                        }
+                        else {
+                            return "";
+                        }
                     }
-                    else {
+                    catch (error) {
                         return "";
                     }
                 },
@@ -375,7 +425,7 @@ $("#btnSave").click(async function () {
 
 });
 
-//Modal USE COMMON PARTS (KBNOR210_1_STC_3) : Set Stock Remain
+//Modal USE COMMON PARTS (KBNOR210_1_STC_3) : Use Stock Part
 $(document).on("show.bs.modal", "#KBNOR210_1_STC_3", async function (e) {
 
     if (!$("#inpCustomerOrderNo").val())
@@ -390,7 +440,7 @@ $(document).on("show.bs.modal", "#KBNOR210_1_STC_3", async function (e) {
     xSplash.show();
 
     if ($("#tableKBNOR210_1_STC_3").find("thead").length != 0) {
-        $("#tableKBNOR210_1_STC_3").DataTable().destroy();
+        $("#tableKBNOR210_1_STC_3").DataTable().clear().destroy();
     }
 
     await $("#tableKBNOR210_1_STC_3").DataTable({
@@ -419,13 +469,15 @@ $(document).on("show.bs.modal", "#KBNOR210_1_STC_3", async function (e) {
             { title: "Customer \nOrder Qty", data: "F_Qty" },
             { title: "Use Stock\nQty", data: "F_Use_StockQty" },
             {
-                title: "RemainQty", render: function (x,y,data) {
-
+                title: "RemainQty", render: function (x, y, data) {
+                    //console.log(data);
                     if (data.F_Remain == 0) {
-                        let remain =  parseInt(data.F_Qty) - parseInt(data.F_Use_StockQty);
-                        return `<span style="color:red;">${remain}</span>`;
+                        let remain = parseInt(data.F_Qty) - parseInt(data.F_Use_StockQty);
+                        //console.log(remain);
+                        return `<td style="color:red;">${remain}</td>`;
                     }
                     else {
+                        if (data.remain == undefined) return;
                         return data.F_Remain;
                     }
 
@@ -483,7 +535,7 @@ $(document).on("dblclick", "#tableKBNOR210_1_STC_3 tbody tr td", async function 
     xSplash.show();
 
     if ($("#tableKBNOR210_1_STC_3_1").find("thead").length != 0) {
-        $("#tableKBNOR210_1_STC_3_1").DataTable().destroy();
+        $("#tableKBNOR210_1_STC_3_1").DataTable().clear().destroy();
     }
 
     await $("#tableKBNOR210_1_STC_3_1").DataTable({
@@ -624,6 +676,219 @@ $(document).on("focusout keypress", "#tableKBNOR210_1_STC_3_1 tbody tr td", func
 
 $("#btnSTC_3_1Save").click(async function () {
 
+    let listObj = $("#tableKBNOR210_1_STC_3_1").DataTable().rows().data().toArray();
+
+    let isZero = true;
+    listObj.forEach(function (item) {
+        if (parseInt(item.F_Use_Qty) != 0) {
+            isZero = false;
+        }
+    });
+
+    if (isZero) {
+        return xSwal.error("Error", "Use Stock Qty must be greater than 0");
+    
+    }
+
+    await _xLib.AJAX_Post("/api/KBNOR210_1/SaveKBNOR210_1_STC_3_1", listObj,
+        function (success) {
+            console.log(success);
+            xSwal.success(success.response, success.message);
+        },
+        function (error) {
+            console.error(error);
+            xSwal.error(error.responseJSON.response, error.responseJSON.message);
+        }
+    );
+
     $("#KBNOR210_1_STC_3_1").modal("hide");
 
 });
+$("#btnSTC_3Save").click(async function () {
+
+    let listObj = [];
+
+    if ($("#tableKBNOR210_1_STC_3 tbody tr td").find("input[type='checkbox']:checked").length == 0) {
+        return xSwal.error("Error", "Please select at least 1 row");
+    }
+
+    $("#tableKBNOR210_1_STC_3 tbody tr td").find("input[type='checkbox']:checked").each(function () {
+
+        let obj = $("#tableKBNOR210_1_STC_3").DataTable().row($(this).closest("tr")).data();
+        //console.log(obj);
+        listObj.push(obj);
+    });
+
+
+    let isZero = true;
+    listObj.forEach(function (item) {
+        if (parseInt(item.F_Use_Qty) != 0) {
+            isZero = false;
+        }
+    });
+
+    if (isZero) {
+        return xSwal.error("Error", "Use Stock Qty must be greater than 0");
+
+    }
+
+    //return console.log(listObj);
+
+    await _xLib.AJAX_Post("/api/KBNOR210_1/SaveKBNOR210_1_STC_3", listObj,
+        function (success) {
+            console.log(success);
+            xSwal.success(success.response, success.message);
+        },
+        function (error) {
+            console.error(error);
+            xSwal.error(error.responseJSON.response, error.responseJSON.message);
+        }
+    );
+
+    $("#KBNOR210_1_STC_3").modal("hide");
+
+});
+
+$(document).on("show.bs.modal", "#KBNOR210_1_STC_1", async function (e) {
+
+    xSplash.show();
+
+    if ($("#tableKBNOR210_1_STC_1").find("thead").length != 0) {
+        $("#tableKBNOR210_1_STC_1").DataTable().clear().destroy();
+    }
+
+    $('.datepicker ').datepicker({
+        uiLibrary: 'materialdesign',
+        format: 'dd/mm/yyyy',
+        autoclose: true,
+        showRightIcon: true,
+        //iconsLibrary: 'fontawesome'
+    });
+
+    await $("#tableKBNOR210_1_STC_1").DataTable({
+        width: '100%',
+        paging: false,
+        scrollCollapse: true,
+        "processing": false,
+        "serverSide": false,
+        scrollX: false,
+        scrollY: '300px',
+        searching: false,
+        info: false,
+        ordering: false,
+        autoWidth: true,  // Enable autoWidth
+        columns: [
+            { title: "Stock Date", data: "F_Stock_Date" },
+            { title: "Supplier Code", data: "F_Supplier_code" },
+            { title: "Part No", data: "F_Part_No" },
+            { title: "Kanban No", data: "F_Kanban_No" },
+            { title: "Store CD", data: "F_Store_CD" },
+            { title: "Qty/Package", data: "F_Qty_Pack" },
+            { title: "Actual KB", data: "F_Actual_KB" },
+            { title: "Actual PCS", data: "F_Actual_PCS" },
+            { title: "Check By", data: "F_Check_By" },
+            { title: "Update Date", data: "F_Update_By" },
+            { title: "Update By", data: "F_Update_Date" },
+        ],
+        order: [[1, 'asc']]
+    });
+
+
+    // Make sure the modal is fully shown before adjusting columns
+    await $('#KBNOR210_1_STC_1').on('shown.bs.modal', function (e) {
+
+        $("#tableKBNOR210_1_STC_1").DataTable().columns.adjust().draw();
+        $("#tableKBNOR210_1_STC_1 thead tr th").css("text-align", "center");
+        $("#tableKBNOR210_1_STC_1 tbody tr td").css("text-align", "center");
+        xSplash.hide();
+    });
+
+    STC_1_GetSupplierCode();
+
+    STC_1_DisabledControl(true);
+    STC_1_DisabledToolbars();
+
+    _xLib.AJAX_Get("/api/KBNOR210_1/STC_1_ListDatatogrid", {},
+        function (success) {
+            success = _xLib.JSONparseMixData(success);
+            console.log(success);
+            $("#tableKBNOR210_1_STC_1").DataTable().clear().rows.add(success.data).draw();
+        },
+        function (error) {
+            console.error(error);
+        }
+    );
+
+
+});
+
+function STC_1_DisabledControl(status)
+{
+
+    if (status == true) {
+
+
+        $("#inpKBNOR210_1_STC_1_StockDate").selectpicker("disabled", true);
+        $("#inpKBNOR210_1_STC_1_Supplier").selectpicker("disabled", true);
+        $("#inpKBNOR210_1_STC_1_PartNo").selectpicker("disabled", true);
+        $("#inpKBNOR210_1_STC_1_StoreCD").selectpicker("disabled", true);
+        $("#inpKBNOR210_1_STC_1_Kanban").prop("readonly", true);
+        $("#inpKBNOR210_1_STC_1_Actual").prop("readonly", true);
+        $("#inpKBNOR210_1_STC_1_CheckStk").selectpicker("disabled", true);
+        $("#inpKBNOR210_1_STC_1_Remark").prop("readonly", true);
+
+
+
+    }
+    else {
+
+        $("#inpKBNOR210_1_STC_1_StockDate").selectpicker("disabled", false);
+        $("#inpKBNOR210_1_STC_1_Supplier").selectpicker("disabled", false);
+        $("#inpKBNOR210_1_STC_1_PartNo").selectpicker("disabled", false);
+        $("#inpKBNOR210_1_STC_1_StoreCD").selectpicker("disabled", false);
+        $("#inpKBNOR210_1_STC_1_Kanban").prop("readonly", true);
+        $("#inpKBNOR210_1_STC_1_Actual").prop("readonly", false);
+        $("#inpKBNOR210_1_STC_1_CheckStk").selectpicker("disabled", false);
+        $("#inpKBNOR210_1_STC_1_Remark").prop("readonly", false);
+
+    }
+
+}
+
+function STC_1_DisabledToolbars() {
+
+    $("#btnKBNOR210_STC_1_Inq").prop("disabled", true);
+    $("#btnKBNOR210_STC_1_New").prop("disabled", true);
+    $("#btnKBNOR210_STC_1_Upd").prop("disabled", true);
+    $("#btnKBNOR210_STC_1_Del").prop("disabled", true);
+    $("#btnKBNOR210_STC_1_Imp").prop("disabled", true);
+
+}
+
+let isNew = false;
+
+function STC_1_GetSupplierCode() {
+
+    let obj = {
+        isNew: isNew,
+        StockDate: $("#inpKBNOR210_1_STC_1_StockDate").val(),
+    }
+
+    _xLib.AJAX_Get("/api/KBNOR210_1/STC_1_GetSupplierCode", obj,
+        function (success) {
+            success = _xLib.JSONparseMixData(success);
+            console.log(success);
+            $("#inpKBNOR210_1_STC_1_Supplier").empty();
+            $("#inpKBNOR210_1_STC_1_Supplier").append("<option value='' hidden></option>");
+            success.data.forEach(function (item) {
+                $("#inpKBNOR210_1_STC_1_Supplier").append(`<option value="${item.trim()}">${item.trim()}</option>`);
+            });
+
+            $("#inpKBNOR210_1_STC_1_Supplier").selectpicker("refresh");
+        },
+        function (error) {
+            console.error(error);
+        }
+    );
+
+}

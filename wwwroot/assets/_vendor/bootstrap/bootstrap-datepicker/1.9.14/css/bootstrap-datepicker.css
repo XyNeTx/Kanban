@@ -1906,7 +1906,8 @@ ul.gj-list-md li.disabled > [data-role=wrapper] > [data-role=expander] {
         position: absolute;
         right: 0;
         top: 0;
-        font-size: 24px
+        font-size: 24px;
+        margin-top : 4px;
     }
 
     .gj-datepicker-md.small .gj-textbox-md {

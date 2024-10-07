@@ -1537,6 +1537,65 @@ namespace HINOSystem.Controllers.API.Master
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetDeliveryTime(string F_Supplier_Code)
+        {
+            try
+            {
+
+                if (_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
+                {
+                    return StatusCode(_BearerClass.Status, new
+                    {
+                        status = _BearerClass.Status,
+                        response = _BearerClass.Response,
+                        message = _BearerClass.Message
+                    });
+                }
+
+                string now = DateTime.Now.ToString("yyyyMMdd");
+
+                var data = await _KB3Context.TB_MS_DeliveryTime.FirstOrDefaultAsync(x => x.F_Plant == plant
+                    && x.F_Supplier_Code.Trim() + "-" + x.F_Supplier_Plant.Trim() == F_Supplier_Code.Trim()
+                    && x.F_Start_Order_Date.CompareTo(now) <= 0
+                    && x.F_End_Order_Date.CompareTo(now) >= 0);
+
+                if (data == null)
+                {
+                    return NotFound(new
+                    {
+                        status = "404",
+                        response = "Not Found",
+                        title = "Error",
+                        message = "Cycle Time Not Found"
+                    });
+                }
+
+                var CycleTime = data.F_Cycle.Substring(0, 2) + "-" + data.F_Cycle.Substring(2, 2) + "-" + data.F_Cycle.Substring(4, 2);
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "OK",
+                    title = "Success",
+                    message = "Get Data Success",
+                    data = CycleTime
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    response = "Internal Server Error",
+                    title = "Error",
+                    message = "Unexpected Error",
+                    error = ex.Message
+                });
+            }
+
+        }
+
         private async Task<bool> IsProcessDatePast (string date,int trip,string supplier,string kanban)
         {
             try

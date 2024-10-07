@@ -1,0 +1,141 @@
+﻿<!-- Modal -->
+<div class="modal fade" id="KBNOR210_1_STC_1" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="KBNOR210_1_STC_1Label" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="KBNOR210_STC_1Label">KBNOR_210_STC_1 : Set Stock Remain</h1>
+            </div>
+            <div class="modal-body">
+
+                <div class="ms-4 mt-2">
+                    <div class="col-5">
+                        <div class="row">
+                            <a class="btn btn-primary text-dark col" id="btnKBNOR210_STC_1_Inq">Inquiry</a>
+                            <a class="btn btn-success text-dark col" id="btnKBNOR210_STC_1_New">New</a>
+                            <a class="btn btn-warning text-dark col" id="btnKBNOR210_STC_1_Upd">Update</a>
+                            <a class="btn btn-danger text-dark col" id="btnKBNOR210_STC_1_Del">Delete</a>
+                            <a class="btn btn-light text-dark col" id="btnKBNOR210_STC_1_Can">Cancel</a>
+                            <a class="btn btn-success text-dark col" id="btnKBNOR210_STC_1_Imp">Import</a>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row ms-4 mt-2">
+                    <table id="tableKBNOR210_1_STC_1" class="table table-bordered w-100">
+
+                    </table>
+                </div>
+
+                <div class="ms-4 mt-4">
+                    <div class="row">
+                        <div class="col-7">
+
+                            <div class="row">
+                                <div class="col">
+
+                                    <div class="input-group">
+                                        <label class="input-group-text">Stock Date :</label>
+                                        <input type="text" class="form-control datepicker" id="inpKBNOR210_1_STC_1_StockDate" name="inpKBNOR210_1_STC_1_StockDate" value="@DateTime.Now.ToString("dd/MM/yyyy")">
+                                    </div>
+
+                                    <div class="input-group">
+                                        <label class="input-group-text">Supplier Code :</label>
+                                        <select class="selectpicker ps-0  col-7" id="inpKBNOR210_1_STC_1_Supplier" name="inpKBNOR210_1_STC_1_Supplier">
+                                            <option value="" hidden></option>
+                                        </select>
+                                    </div>
+
+                                    <div class="input-group">
+                                        <label class="input-group-text">Part No :</label>
+                                        <select class="selectpicker ps-0  col-8" id="inpKBNOR210_1_STC_1_PartNo" name="inpKBNOR210_1_STC_1_PartNo">
+                                            <option value="" hidden></option>
+                                        </select>
+                                    </div>
+
+                                    <div class="input-group">
+                                        <label class="input-group-text">Store Code :</label>
+                                        <select class="selectpicker ps-0  col-8" id="inpKBNOR210_1_STC_1_Store" name="inpKBNOR210_1_STC_1_Store">
+                                            <option value="" hidden></option>
+                                        </select>
+                                    </div>
+
+                                    <div class="input-group">
+                                        <label class="input-group-text">Kanban No :</label>
+                                        <input type="text" class="form-control" id="inpKBNOR210_1_STC_1_Kanban" name="inpKBNOR210_1_STC_1_Kanban" readonly>
+                                    </div>
+
+                                    <div class="input-group">
+                                        <label class="input-group-text">Actual PCS. :</label>
+                                        <input type="text" class="form-control" id="inpKBNOR210_1_STC_1_Actual" name="inpKBNOR210_1_STC_1_Actual" readonly>
+                                    </div>
+
+                                </div>
+
+                                <div class="col">
+
+                                    <div class="input-group">
+                                        <label class="input-group-text">Check Stock By :</label>
+                                        <select class="selectpicker ps-0 col-7" id="inpKBNOR210_1_STC_1_CheckStk" name="inpKBNOR210_1_STC_1_CheckStk">
+                                            <option value="" hidden></option>
+                                        </select>
+                                    </div>
+
+                                    <div class="row mt-1">
+                                        <div class="col"> 
+                                            <input type="text" class="form-control" id="inpKBNOR210_1_STC_1_SupName" name="inpKBNOR210_1_STC_1_SupName" readonly>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mt-1">
+                                        <div class="col">
+                                            <input type="text" class="form-control" id="inpKBNOR210_1_STC_1_PartName" name="inpKBNOR210_1_STC_1_PartName" readonly>
+                                    
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <input type="hidden" class="form-control" />
+                                    </div>
+
+                                    <div class="row mt-1">
+                                        <div class="input-group">
+                                            <label class="input-group-text">Qty / Pack :</label>
+                                            <input type="text" class="form-control" id="inpKBNOR210_1_STC_1_Qty" name="inpKBNOR210_1_STC_1_Qty" readonly>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="col-5">
+
+                            <div class="row">
+                                <div class="col-3 justify-content-end">
+                                    <span class="d-flex justify-content-end" >Remark : </span>
+                                </div>
+                                <div class="col-9">
+                                    <textarea class="form-control" id="inpKBNOR210_1_STC_1_Remark" name="inpKBNOR210_1_STC_1_Remark" rows="5">
+
+                                    </textarea>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="btnSTC_3Save">Save</button>
+                <button type="button" class="btn btn-secondary" id="btnSTC_3Clear">Clear</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Exit</button>
+            </div>
+        </div>
+    </div>
+</div>

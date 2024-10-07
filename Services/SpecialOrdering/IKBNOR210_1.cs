@@ -18,8 +18,11 @@ namespace KANBAN.Services.SpecialOrdering
         Task<DataTable> GetPOMergeData(string? PDSNo, string? SuppCd, string? PartNo, bool? chkDeli, string? DeliFrom, string? DeliTo);
         Task Save(VM_Save_KBNOR210_1 obj);
         DataTable LoadGridData(string OrderNo);
+        Task SaveKBNOR210_1_STC_3(List<VM_Save_KBNOR210_1_STC_3> obj);
         Task<DataTable> GetDataKBNOR210_1_STC_3_1(string F_OrderNo, string F_Part_No, string F_Store_Cd, string F_Supplier, string? Delivery, int F_Use_StockQty);
-        Task SaveKBNOR210_1_STC_3_1(VM_Save_KBNOR210_1_STC_3_1 obj);
+        Task SaveKBNOR210_1_STC_3_1(List<VM_Save_KBNOR210_1_STC_3_1> obj);
+        string ListDatatogrid(string? SupplierCD = "", string? PartNo = "", string? StoreCode = "", string? StockDate = "", string? UpdateBy = "", string? UpdateDate = "");
+        string STC_1_GetSupplierCode(bool isNew, string StockDate);
     }
 
     public class KBNOR210_1 : IKBNOR210_1
@@ -426,7 +429,33 @@ namespace KANBAN.Services.SpecialOrdering
             }
         }
 
+        public async Task SaveKBNOR210_1_STC_3(List<VM_Save_KBNOR210_1_STC_3> listObj)
+        {
+            try
+            {
 
+                foreach (var obj in listObj)
+                {
+                    await _kbContext.Database.ExecuteSqlRawAsync("EXEC sp_updateTransactionSpcRemain @p0,@p1,@p2,@p3,@p4,@p5,@p6,@p7",
+                            new SqlParameter("@p0", obj.F_Supplier.Split("-")[0]),
+                            new SqlParameter("@p1", obj.F_Supplier.Split("-")[1]),
+                            new SqlParameter("@p2", obj.F_Part_No.Split("-")[0]),
+                            new SqlParameter("@p3", obj.F_Part_No.Split("-")[1]),
+                            new SqlParameter("@p4", obj.F_Store_Cd),
+                            new SqlParameter("@p5", obj.F_OrderNo),
+                            new SqlParameter("@p6", obj.F_Use_StockQty),
+                            new SqlParameter("@p7", _BearerClass.UserCode)
+                        );
+
+                }
+                _log.WriteLogMsg("SaveKBNOR210_1_STC_3 | " + JsonConvert.SerializeObject(listObj));
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
 
         // Modal KBNOR210_1_STC_3_1 : 
         public async Task<DataTable> GetDataKBNOR210_1_STC_3_1 (string F_OrderNo, string F_Part_No, string F_Store_Cd, string F_Supplier, string? Delivery , int F_Use_StockQty)
@@ -487,7 +516,7 @@ namespace KANBAN.Services.SpecialOrdering
 
         }
 
-        public async Task SaveKBNOR210_1_STC_3_1(VM_Save_KBNOR210_1_STC_3_1 obj)
+        public async Task SaveKBNOR210_1_STC_3_1(List<VM_Save_KBNOR210_1_STC_3_1> listObj)
         {
             using var transaction = _kbContext.Database.BeginTransaction();
             try
@@ -496,15 +525,22 @@ namespace KANBAN.Services.SpecialOrdering
                 transaction.CreateSavepoint("Start SaveKBNOR210_1_STC_3_1");
 
                 await _kbContext.Database.ExecuteSqlRawAsync
-                    ($"Delete From TB_STOCK_KB_SPC_PART_TEMP Where F_PDS_No = '{obj.F_PDS_No}' " +
-                    $"and F_Part_no = '{obj.F_Part_No}' ");
+                    ($"Delete From TB_STOCK_KB_SPC_PART_TEMP Where F_PDS_No = '{listObj[0].F_PDS_No}' " +
+                    $"and F_Part_no = '{listObj[0].F_Part_No}'");
 
-                await _kbContext.Database.ExecuteSqlRawAsync
+                foreach (var obj in listObj)
+                {
+
+                    await _kbContext.Database.ExecuteSqlRawAsync
                     ($"Insert into TB_STOCK_KB_SPC_PART_TEMP " +
                     $"(F_PDS_No, F_PO_Customer, F_Delivery_Date, F_Part_No, F_Store_Cd, " +
                     $"F_Order_Qty, F_Use_Qty, F_Update_By, F_Update_Date) " +
                     $"VALUES ('{obj.F_PDS_No}','{obj.F_PO_Customer}','{obj.F_Delivery_Date}','{obj.F_Part_No}', " +
                     $"'{obj.F_Store_Cd}',{obj.F_Order_Qty},{obj.F_Use_Qty},'{_BearerClass.UserCode}',getDate()) ");
+
+                }
+
+                _log.WriteLogMsg("SaveKBNOR210_1_STC_3_1 | " + JsonConvert.SerializeObject(listObj));
 
                 transaction.Commit();
 
@@ -512,6 +548,110 @@ namespace KANBAN.Services.SpecialOrdering
             catch (Exception ex)
             {
                 transaction.RollbackToSavepoint("Start SaveKBNOR210_1_STC_3_1");
+                throw new Exception(ex.Message);
+            }
+
+        }
+
+        public string ListDatatogrid(string? SupplierCD = "", string? PartNo = "", string? StoreCode = "", string? StockDate = "", string? UpdateBy = "", string? UpdateDate = "")
+        {
+
+            try
+            {
+
+                string sql = $@"Select F_Stock_Date ,F_Supplier_code ,F_Part_No ,F_Kanban_No 
+                            ,F_Store_CD ,F_Qty_Pack,F_Actual_KB ,F_Actual_PCS ,F_Check_By 
+                            ,F_Update_By ,F_Update_Date from FN_getStockRemainSPCData() 
+                            Where Isnull(F_Stock_Date,'') <> '' ";
+
+                if (!string.IsNullOrWhiteSpace(SupplierCD))
+                {
+                    sql += $" and F_Supplier_code = '{SupplierCD}' ";
+                }
+                if (!string.IsNullOrWhiteSpace(PartNo))
+                {
+                    sql += $" and F_Part_No = '{PartNo}' ";
+                }
+                if (!string.IsNullOrWhiteSpace(StoreCode))
+                {
+                    sql += $" and F_Store_CD = '{StoreCode}' ";
+                }
+                if (!string.IsNullOrWhiteSpace(StockDate))
+                {
+                    sql += $" and F_Stock_Date = '{StockDate}' ";
+                }
+                if (!string.IsNullOrWhiteSpace(UpdateBy))
+                {
+                    sql += $" and F_Update_By = '{UpdateBy}' ";
+                }
+                if (!string.IsNullOrWhiteSpace(UpdateDate))
+                {
+                    sql += $" and Convert(varchar(8),F_Update_Date,112) = '{UpdateDate}' ";
+                }
+
+                sql += "Order by F_Stock_Date,F_Part_No,F_Supplier_Code ";
+
+
+                var dt = _FillDT.ExecuteSQL(sql);
+
+                if (dt.Rows.Count == 0)
+                {
+                    throw new Exception("Data not found");
+                }
+
+                return JsonConvert.SerializeObject(dt);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
+        }
+
+        public string STC_1_GetSupplierCode(bool isNew, string StockDate)
+        {
+
+            try
+            {
+
+                if (isNew)
+                {
+                    string sql = $@"SELECT  F_Supplier_Cd + '-' + F_Plant AS F_Supplier 
+                                FROM VW_PPMDB_BOM Where  F_Supplier_CD <> '' and (F_CKD_Str <= @p0 
+                                and F_CKD_End >= @p1 ) GROUP BY F_Supplier_Cd, F_Plant ORDER BY F_Supplier_Cd, F_Plant ";
+
+                    var dt = _FillDT.ExecuteSQL_Param(sql, new SqlParameter("@p0", StockDate), new SqlParameter("@p1", StockDate));
+
+                    if (dt.Rows.Count == 0)
+                    {
+                        throw new Exception("Data not found");
+                    }
+
+                    return JsonConvert.SerializeObject(dt);
+
+                }
+                else
+                {
+                    string sql = $@"SELECT  F_Supplier_Code As F_Supplier 
+                                FROM FN_getStockRemainSPCData() 
+                                Where  F_STock_Date = @p0 
+                                GROUP BY  F_Supplier_Code 
+                                ORDER BY F_Supplier_Code ";
+
+                    var dt = _FillDT.ExecuteSQL_Param(sql, new SqlParameter("@p0", StockDate));
+
+                    if(dt.Rows.Count == 0)
+                    {
+                        throw new Exception("Data not found");
+                    }
+
+                    return JsonConvert.SerializeObject(dt);
+
+                }
+
+            }
+            catch (Exception ex)
+            {
                 throw new Exception(ex.Message);
             }
 

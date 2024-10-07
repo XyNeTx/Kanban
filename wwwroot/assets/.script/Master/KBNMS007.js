@@ -314,6 +314,18 @@ $("#btnSearch").click(async function () {
             xSwal.error("Error", "Data Not Found");
         }
     );
+
+    _xLib.AJAX_Get("/api/KBNMS006/GetDeliveryTime", { F_Supplier_Code: obj.F_Supplier_Code },
+        function (success) {
+            if (success.status == 200) {
+                console.log(success.data);
+                $("#readCycle").val(success.data);
+            }
+        },
+        function (error) {
+            xSwal.error("Error", "Delivery Time Not Found");
+        }
+    );
 });
 
 $("#btnEdit").click(function () {

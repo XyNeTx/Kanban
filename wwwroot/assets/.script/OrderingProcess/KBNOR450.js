@@ -25,11 +25,19 @@
     xKBNOR450.prepare();
 
     xKBNOR450.initial(function (result) {
-        //console.log(result);
-        xDropDownList.bind('#frmCondition #itmPDSFrom', result.data.PDSNo, 'F_OrderNo', 'F_OrderNo');
-        xDropDownList.bind('#frmCondition #itmPDSTo', result.data.PDSNo, 'F_OrderNo', 'F_OrderNo');
-        xDropDownList.bind('#frmCondition #itmSupplierFrom', result.data.Supplier, 'F_Supplier_Code', 'F_Supplier_Plant');
-        xDropDownList.bind('#frmCondition #itmSupplierTo', result.data.Supplier, 'F_Supplier_Code', 'F_Supplier_Plant');
+
+        $('#itmPDSFrom').empty();
+        $('#itmPDSTo').empty();
+
+        $("#itmPDSFrom").selectpicker('refresh');
+        $("#itmPDSTo").selectpicker('refresh');
+        result.data.PDSNo.forEach(function (item) {
+            $('#itmPDSFrom').append(`<option value="${item.F_OrderNo}">${item.F_OrderNo}</option>`);
+            $('#itmPDSTo').append(`<option value="${item.F_OrderNo}">${item.F_OrderNo}</option>`);
+        });
+
+        $("#itmPDSFrom").selectpicker('refresh');
+        $("#itmPDSTo").selectpicker('refresh');
 
         xAjax.onClick('#chkPDSNo', function () {
             if ($('#chkPDSNo').val() == 0) $('#fldPDSNo').prop('disabled', 'disabled');

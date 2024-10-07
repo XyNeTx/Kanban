@@ -287,7 +287,7 @@ namespace KANBAN.Controllers.API.DevelopMaintain
             }   
         }
 
-        public async Task<Int64?> addParentAuth(Int64? Menu_ID, Int64? User_ID)
+        private async Task<Int64?> addParentAuth(Int64? Menu_ID, Int64? User_ID)
         {
             var parent = await _kbContext.Database.SqlQueryRaw<Int64?>("SELECT Parent_ID AS VALUE FROM erp.MenuParent " +
                     $"WHERE Menu_ID = '{Menu_ID}' ").Select(x => x).FirstOrDefaultAsync();

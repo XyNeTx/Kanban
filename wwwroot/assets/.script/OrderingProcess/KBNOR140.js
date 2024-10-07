@@ -12,8 +12,19 @@ $(document).ready(function () {
     _xLib.AJAX_Get("/api/KBNOR140/GetPDSNo", { type: "N" },
         function (success) {
             success.data = JSON.parse(success.data);
-            xDropDownList.bind('#itmPDS', success.data, 'F_OrderNo', 'F_OrderNo');
-            xDropDownList.bind('#itmPDSTo', success.data, 'F_OrderNo', 'F_OrderNo');
+
+            $('#itmPDS').empty();
+            $('#itmPDSTo').empty();
+
+            $("#itmPDS").selectpicker('refresh');
+            $("#itmPDSTo").selectpicker('refresh');
+            success.data.forEach(function (item) {
+                $('#itmPDS').append(`<option value="${item.F_OrderNo}">${item.F_OrderNo}</option>`);
+                $('#itmPDSTo').append(`<option value="${item.F_OrderNo}">${item.F_OrderNo}</option>`);
+            });
+
+            $("#itmPDS").selectpicker('refresh');
+            $("#itmPDSTo").selectpicker('refresh');
         },
         function (error) {
             xSwal.error(error.responseJSON.response, error.responseJSON.message);

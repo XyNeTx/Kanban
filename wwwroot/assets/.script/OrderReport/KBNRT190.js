@@ -49,6 +49,9 @@
         }
         var supFrom = $("#F_SupFrom").val();
         var supTo = $("#F_SupTo").val();
+        var dateFrom = $("#F_DeliDateFrom").val().replaceAll('-', '');
+        var dateTo = $("#F_DeliDateTo").val().replaceAll('-', '');
+
         xAjax.Post({
             url: 'KBNRT160/OnSupplierChange',
             data: {
@@ -86,6 +89,30 @@
             error: function (result) {
                 console.error(result);
             },
+        });
+
+        xAjax.Post({
+            url: "KBNRT190/OnDeliDateChange",
+            data: {
+                dateFrom: dateFrom,
+                dateTo: dateTo,
+                supFrom: supFrom,
+                supTo: supTo
+            },
+            then: function (result) {
+                $("#F_TripFrom").empty();
+                $("#F_TripTo").empty();
+                $("#F_TripFrom").append($("<option id='TripFromBlank'></option>"));
+                $("#F_TripTo").append($("<option id='TripToBlank'></option>"));
+                $.each(result.data, function (i, v) {
+                    $("#F_TripFrom").append($("<option>", { value: v, text: v }, "</option>"));
+                    $("#F_TripTo").append($("<option>", { value: v, text: v }, "</option>"));
+                });
+                hideBlank();
+            },
+            error: function (result) {
+                console.error(result);
+            }
         });
     });
 

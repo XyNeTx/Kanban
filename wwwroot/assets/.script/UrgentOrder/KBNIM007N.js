@@ -78,6 +78,9 @@ $("#buttonInq").click(function () {
         },
         function (err)
         {
+            $("#buttonNew").prop("disabled", false);
+            $("#buttonUpd").prop("disabled", true);
+            $("#buttonDel").prop("disabled", true);
             return xSwal.error("Error !!", err.responseJSON.message);
         }
     )
@@ -91,6 +94,7 @@ $("#buttonUpd").click(function () {
     $("#buttonOK").prop("disabled", false);
     $("#buttonImport").prop("disabled", false);
     $("#inputQty").prop("readonly", false);
+    $("#inputPack").prop("readonly", false);
     $(".chkBoxDT").prop("checked", false);
 });
 

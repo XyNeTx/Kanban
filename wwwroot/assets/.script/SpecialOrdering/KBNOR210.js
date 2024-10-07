@@ -12,6 +12,21 @@ $(document).ready(async function () {
     $("#readProcessShift").val(loginDate.slice(10, 11) == "D" ? "1:Day Shift" : "2:Night Shift");
     $("#readPlant").val(plant);
 
+    _xLib.AJAX_Get("/api/KBNOR210/Page_Load", "",
+        function (success) {
+            success = _xLib.JSONparseMixData(success);
+            console.log(success);
+            $("#tableMain").DataTable().clear().rows.add(success.data).draw();
+            $("table thead tr th").css("text-align", "center");
+            $("table tbody tr td").css("text-align", "center");
+        },
+        function (error) {
+            console.log(error);
+            xSwal.error(error.responseJSON.response, error.responseJSON.message);
+        }
+    );
+
+
     await xSplash.hide();
 
 });
@@ -33,14 +48,14 @@ async function Initial() {
         info: false,
         ordering: false,
         columns: [
-            { title: "Customer Order No", data: "CustomerOrderNo" },
-            { title: "Supplier", data: "Supplier" },
-            { title: "Delivery Date", data: "DeliveryDate" },
-            { title: "Part No.", data: "Part No." },
-            { title: "Qty", data: "Qty" },
-            { title: "Store Code", data: "Store Code" },
-            { title: "Import Type", data: "Import Type" },
-            { title: "Cust.Order Type ", data: "Cust.Order Type " },
+            { title: "Customer Order No", data: "F_PDS_No" },
+            { title: "Supplier", data: "F_Supplier_Code" },
+            { title: "Delivery Date", data: "F_Delivery_Date" },
+            { title: "Part No.", data: "F_Part_No" },
+            { title: "Qty", data: "F_QTY" },
+            { title: "Store Code", data: "F_Store_CD" },
+            { title: "Import Type", data: "F_Type" },
+            { title: "Cust.Order Type ", data: "F_Customer_OrderType" },
         ],
         order: [[1, 'asc']]
     });
@@ -48,3 +63,19 @@ async function Initial() {
     $("table thead tr th").css("text-align", "center");
     $("table tbody tr td").css("text-align", "center");
 }
+
+$("#btnInterface").click(function () {
+
+    _xLib.AJAX_Post("/api/KBNOR210/Interface", "",
+        function (success) {
+            console.log(success);
+            xSwal.success(success.response, success.message);
+        },
+        function (error) {
+            console.log(error);
+            xSwal.error(error.responseJSON.response, error.responseJSON.message);
+        }
+    );
+
+});
+
