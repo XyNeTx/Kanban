@@ -570,7 +570,10 @@ namespace KANBAN.Controllers.API.OrderingProcess
                     var _intRow = 0;
                     for(int j = 0; j < DT_PartControl.Rows.Count; j++)
                     {
-                        if (DT_PartControl.Rows[j]["F_Kanban_No"].ToString().Trim() == obj.Kanban && DT_PartControl.Rows[j]["F_Part_No"].ToString().Trim() == obj.PartNo.Split("-")[0] && DT_PartControl.Rows[j]["F_Ruibetsu"].ToString().Trim() == obj.PartNo.Split("-")[1] && DT_PartControl.Rows[j]["F_Store_Code"].ToString().Trim() == obj.Store)
+                        if (DT_PartControl.Rows[j]["F_Kanban_No"].ToString().Trim() == obj.Kanban 
+                            && DT_PartControl.Rows[j]["F_Part_No"].ToString().Trim() == obj.PartNo.Split("-")[0] 
+                            && DT_PartControl.Rows[j]["F_Ruibetsu"].ToString().Trim() == obj.PartNo.Split("-")[1] 
+                            && DT_PartControl.Rows[j]["F_Store_Code"].ToString().Trim() == obj.Store)
                         {
                             _intRow = j;
                             break;
@@ -1270,7 +1273,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
                             });
                         }
                         //await Find_StartEnd_Date(_nObj);
-                        await Get_All_Data(_nObj);
+                        return await Get_All_Data(_nObj);
                     }
                     catch (Exception ex)
                     {
@@ -1290,7 +1293,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
                     {
 
                         //await Find_StartEnd_Date(_nObj);
-                        await Get_All_Data(_nObj);
+                        return await Get_All_Data(_nObj);
 
                     }
                     catch (Exception ex)
@@ -1301,18 +1304,18 @@ namespace KANBAN.Controllers.API.OrderingProcess
 
                     finally
                     {
-                        Chk_Status_CCR(_nObj);
+                       Chk_Status_CCR(_nObj);
                     }
 
                 }
 
-                return Ok(new
-                {
-                    status = "200",
-                    response = "OK",
-                    title = "Success",
-                    message = "Calculate Complete!",
-                });
+                //return Ok(new
+                //{
+                //    status = "200",
+                //    response = "OK",
+                //    title = "Success",
+                //    message = "Calculate Complete!",
+                //});
             }
             catch (Exception ex)
             {
@@ -1418,15 +1421,15 @@ namespace KANBAN.Controllers.API.OrderingProcess
                 string _execSQL = "exec [dbo].[sp_autoRecalculateBL_First] @p0,@p1,@p2,@p3,@p4,@p5,@p6";
 
                 DT = _FillDT.ExecuteSQL(_execSQL, dateLast_Trip.AddDays(-1).ToString("yyyyMMdd"),
-                    DT_PartControl.Rows[_intRow]["F_Supplier_Code"].ToString(), DT_PartControl.Rows[_intRow]["F_Supplier_Plant"].ToString(),
-                    DT_PartControl.Rows[_intRow]["F_Part_No"].ToString(), DT_PartControl.Rows[_intRow]["F_Ruibetsu"].ToString(),
-                    DT_PartControl.Rows[_intRow]["F_Kanban_No"].ToString(), DT_PartControl.Rows[_intRow]["F_Store_Code"].ToString());
+                    DT_PartControl.Rows[_intRow]["F_Supplier_Code"].ToString().Trim(), DT_PartControl.Rows[_intRow]["F_Supplier_Plant"].ToString().Trim(),
+                    DT_PartControl.Rows[_intRow]["F_Part_No"].ToString().Trim(), DT_PartControl.Rows[_intRow]["F_Ruibetsu"].ToString().Trim(),
+                    DT_PartControl.Rows[_intRow]["F_Kanban_No"].ToString().Trim(), DT_PartControl.Rows[_intRow]["F_Store_Code"].ToString().Trim());
 
                 if (DT.Rows.Count > 0)
                 {
-                    Last_BL_Plan = int.TryParse(DT.Rows[0]["F_BL_SET_Plan"].ToString(), out int F_BL_SET_Plan) ? F_BL_SET_Plan : 0;
-                    Last_BL_Actual = int.TryParse(DT.Rows[0]["F_BL_SET_Actual"].ToString(), out int F_BL_SET_Actual) ? F_BL_SET_Actual : 0;
-                    blnFromSetStock = DT.Rows[0]["F_Not_Recalculate"].ToString() == "1" ? true : false;
+                    Last_BL_Plan = int.TryParse(DT.Rows[0]["F_BL_SET_Plan"].ToString().Trim(), out int F_BL_SET_Plan) ? F_BL_SET_Plan : 0;
+                    Last_BL_Actual = int.TryParse(DT.Rows[0]["F_BL_SET_Actual"].ToString().Trim(), out int F_BL_SET_Actual) ? F_BL_SET_Actual : 0;
+                    blnFromSetStock = DT.Rows[0]["F_Not_Recalculate"].ToString().Trim() == "1" ? true : false;
                 }
                 else
                 {
@@ -1499,13 +1502,13 @@ namespace KANBAN.Controllers.API.OrderingProcess
                         }
 
                         DR_Receive = DT_Actual.Select(
-                            "F_Delivery_trip = '" + DT.Rows[_intRow]["F_Process_Round"].ToString() + "' " +
-                            "AND F_Receive_date = '" + DT.Rows[_intRow]["F_Process_Date"].ToString() + "' " +
-                            "AND F_Supplier_Code = '" + DT.Rows[_intRow]["F_Supplier_Code"].ToString() + "' " +
-                            "AND F_Supplier_Plant = '" + DT.Rows[_intRow]["F_Supplier_Plant"].ToString() + "' " +
-                            "AND F_Part_No = '" + DT.Rows[_intRow]["F_Part_No"].ToString() + "' " +
-                            "AND F_Ruibetsu = '" + DT.Rows[_intRow]["F_Ruibetsu"].ToString() + "' " +
-                            "AND F_Store_CD = '" + DT.Rows[_intRow]["F_Store_Code"].ToString() + "'"
+                            "F_Delivery_trip = '" + DT.Rows[i]["F_Process_Round"].ToString() + "' " +
+                            "AND F_Receive_date = '" + DT.Rows[i]["F_Process_Date"].ToString() + "' " +
+                            "AND F_Supplier_Code = '" + DT.Rows[i]["F_Supplier_Code"].ToString() + "' " +
+                            "AND F_Supplier_Plant = '" + DT.Rows[i]["F_Supplier_Plant"].ToString() + "' " +
+                            "AND F_Part_No = '" + DT.Rows[i]["F_Part_No"].ToString() + "' " +
+                            "AND F_Ruibetsu = '" + DT.Rows[i]["F_Ruibetsu"].ToString() + "' " +
+                            "AND F_Store_CD = '" + DT.Rows[i]["F_Store_Code"].ToString() + "'"
                         ).FirstOrDefault();
 
 
@@ -1518,22 +1521,22 @@ namespace KANBAN.Controllers.API.OrderingProcess
                             InActual = 0;
                         }
 
-                        if (DT.Rows[_intRow]["F_Flag_Pattern"].ToString() == "1")
+                        if (DT.Rows[i]["F_Flag_Pattern"].ToString() == "1")
                         {
-                            InRec = int.TryParse(DT.Rows[_intRow]["F_Adj_Pattern"].ToString(), out int F_Adj_Pattern) ? F_Adj_Pattern : 0;
+                            InRec = int.TryParse(DT.Rows[i]["F_Adj_Pattern"].ToString(), out int F_Adj_Pattern) ? F_Adj_Pattern : 0;
                         }
                         else
                         {
-                            InRec = int.TryParse(DT.Rows[_intRow]["IN_Plan"].ToString(), out int IN_Plan) ? IN_Plan : 0;
+                            InRec = int.TryParse(DT.Rows[i]["IN_Plan"].ToString(), out int IN_Plan) ? IN_Plan : 0;
                         }
 
-                        DR_Adjust = DT_Adjust.Select("F_Delivery_trip = '" + DT.Rows[_intRow]["F_Process_Round"].ToString() + "' " +
-                            "AND F_Delivery_Date = '" + DT.Rows[_intRow]["F_Process_Date"].ToString() + "' " +
-                            "AND F_Supplier_Code = '" + DT.Rows[_intRow]["F_Supplier_Code"].ToString() + "' " +
-                            "AND F_Supplier_Plant = '" + DT.Rows[_intRow]["F_Supplier_Plant"].ToString() + "' " +
-                            "AND F_Part_No = '" + DT.Rows[_intRow]["F_Part_No"].ToString() + "' " +
-                            "AND F_Ruibetsu = '" + DT.Rows[_intRow]["F_Ruibetsu"].ToString() + "' " +
-                            "AND F_Store_Code = '" + DT.Rows[_intRow]["F_Store_Code"].ToString() + "' ",
+                        DR_Adjust = DT_Adjust.Select("F_Delivery_trip = '" + DT.Rows[i]["F_Process_Round"].ToString() + "' " +
+                            "AND F_Delivery_Date = '" + DT.Rows[i]["F_Process_Date"].ToString() + "' " +
+                            "AND F_Supplier_Code = '" + DT.Rows[i]["F_Supplier_Code"].ToString() + "' " +
+                            "AND F_Supplier_Plant = '" + DT.Rows[i]["F_Supplier_Plant"].ToString() + "' " +
+                            "AND F_Part_No = '" + DT.Rows[i]["F_Part_No"].ToString() + "' " +
+                            "AND F_Ruibetsu = '" + DT.Rows[i]["F_Ruibetsu"].ToString() + "' " +
+                            "AND F_Store_Code = '" + DT.Rows[i]["F_Store_Code"].ToString() + "' ",
                             "F_Process_Date DESC, F_Process_Round DESC").FirstOrDefault();
 
                         if (DR_Adjust != null)
@@ -1544,51 +1547,51 @@ namespace KANBAN.Controllers.API.OrderingProcess
                             }
                             else if (DR_Adjust["F_Flag_Adj"].ToString() == "1")
                             {
-                                InRec = int.TryParse(DR_Adjust["F_Adj_Qty"].ToString(), out int IN_Plan) ? IN_Plan : 0;
+                                InRec = int.TryParse(DR_Adjust["F_Adj_Qty"].ToString(), out int IN_Plan) ? IN_Plan * int.Parse(DT.Rows[i]["F_Qty_Box"].ToString()) : 0;
                             }
                         }
 
-                        if (DT.Rows[_intRow]["F_Process_Date"].ToString().CompareTo(dateECI.Begining_Date) < 0)
+                        if (DT.Rows[i]["F_Process_Date"].ToString().CompareTo(dateECI.Begining_Date) < 0)
                         {
-                            if (DT.Rows[_intRow]["F_Process_Round"].ToString() == "1")
+                            if (DT.Rows[i]["F_Process_Round"].ToString() == "1")
                             {
                                 if (blnFromSetStock)
                                 {
                                     BLPlan_Solution = "BL = (BL + In(Rec) ) + Urgent";
-                                    BLPlan = (Last_BL_Plan + InRec) + int.Parse(DT.Rows[_intRow]["F_Urgent_Order"].ToString());
+                                    BLPlan = (Last_BL_Plan + InRec) + int.Parse(DT.Rows[i]["F_Urgent_Order"].ToString());
                                     BLPlan_Solution = BLPlan_Solution + "BLPlan : " + BLPlan + " = (" + Last_BL_Plan.ToString() + " + " +
-                                        InRec + ") + " + DT.Rows[_intRow]["F_Urgent_Order"].ToString();
+                                        InRec + ") + " + DT.Rows[i]["F_Urgent_Order"].ToString();
                                     BLActual = (Last_BL_Actual + InActual);
-                                    BLActual_Solution = "BLActual : " + BLActual + " = (" + Last_BL_Actual.ToString() + " + " + InActual + ")";
+                                    BLActual_Solution = "BLActual : " + BLActual.ToString() + " = (" + Last_BL_Actual.ToString() + " + " + InActual.ToString() + ")";
 
-                                    if (DT.Rows[_intRow]["Flag_HalfChg_BL_Stock"].ToString() == "False")
+                                    if (DT.Rows[i]["Flag_HalfChg_BL_Stock"].ToString() == "False")
                                     {
                                         BLPlan_Solution = "BL = ( BL + In(Rec) ) - MRP + Urgent";
-                                        BLPlan = (Last_BL_Plan + InRec) - int.Parse(DT.Rows[_intRow]["F_MRP"].ToString()) + int.Parse(DT.Rows[_intRow]["F_Urgent_Order"].ToString());
-                                        BLPlan_Solution = BLPlan_Solution + "BLPlan : " + BLPlan + " = (" + Last_BL_Plan.ToString() + " + " + InRec + ") - " + DT.Rows[_intRow]["F_MRP"].ToString() + " + " + DT.Rows[_intRow]["F_Urgent_Order"].ToString();
-                                        BLActual = (Last_BL_Actual + InActual) - int.Parse(DT.Rows[_intRow]["F_MRP"].ToString());
-                                        BLActual_Solution = "BLActual : " + BLActual + " = (" + Last_BL_Actual.ToString() + " + " + InActual + ") - " + DT.Rows[_intRow]["F_MRP"].ToString();
+                                        BLPlan = (Last_BL_Plan + InRec) - int.Parse(DT.Rows[i]["F_MRP"].ToString()) + int.Parse(DT.Rows[i]["F_Urgent_Order"].ToString());
+                                        BLPlan_Solution = BLPlan_Solution + "BLPlan : " + BLPlan + " = (" + Last_BL_Plan.ToString() + " + " + InRec.ToString() + ") - " + DT.Rows[i]["F_MRP"].ToString() + " + " + DT.Rows[i]["F_Urgent_Order"].ToString();
+                                        BLActual = (Last_BL_Actual + InActual) - int.Parse(DT.Rows[i]["F_MRP"].ToString());
+                                        BLActual_Solution = "BLActual : " + BLActual.ToString() + " = (" + Last_BL_Actual.ToString() + " + " + InActual.ToString() + ") - " + DT.Rows[i]["F_MRP"].ToString();
 
                                     }
-                                    else if (DT.Rows[_intRow]["Flag_HalfChg_BL_Stock"].ToString() == "True")
+                                    else if (DT.Rows[i]["Flag_HalfChg_BL_Stock"].ToString() == "True")
                                     {
-                                        if (DT.Rows[_intRow]["F_Process_Shift"].ToString() == "D")
+                                        if (DT.Rows[i]["F_Process_Shift"].ToString() == "D")
                                         {
                                             BLPlan_Solution = "BL = BF - MRP/2";
-                                            BLPlan = Last_BL_Plan - (int.Parse(DT.Rows[_intRow]["F_MRP"].ToString()) / 2);
-                                            BLPlan_Solution = BLPlan_Solution + "BLPlan : " + BLPlan + " = " + Last_BL_Plan.ToString() + " - " + DT.Rows[_intRow]["F_MRP"].ToString() + "/2";
+                                            BLPlan = Last_BL_Plan - (int.Parse(DT.Rows[i]["F_MRP"].ToString()) / 2);
+                                            BLPlan_Solution = BLPlan_Solution + "BLPlan : " + BLPlan + " = " + Last_BL_Plan.ToString() + " - " + (int.Parse(DT.Rows[i]["F_MRP"].ToString())/2).ToString() ;
 
-                                            BLActual = Last_BL_Actual - (int.Parse(DT.Rows[_intRow]["F_MRP"].ToString()) / 2);
-                                            BLActual_Solution = "BLActual : " + BLActual + " = " + Last_BL_Actual.ToString() + " - " + DT.Rows[_intRow]["F_MRP"].ToString() + "/2";
+                                            BLActual = Last_BL_Actual - (int.Parse(DT.Rows[i]["F_MRP"].ToString()) / 2);
+                                            BLActual_Solution = "BLActual : " + BLActual + " = " + Last_BL_Actual.ToString() + " - " + (int.Parse(DT.Rows[i]["F_MRP"].ToString()) / 2).ToString();
                                         }
                                         else
                                         {
                                             BLPlan_Solution = "BL = (BF + In(Rec)) - MRP/2 + Urgent";
-                                            BLPlan = (Last_BL_Plan + InRec) - (int.Parse(DT.Rows[_intRow]["F_MRP"].ToString()) / 2) + int.Parse(DT.Rows[_intRow]["F_Urgent_Order"].ToString());
-                                            BLPlan_Solution = BLPlan_Solution + "BLPlan : " + BLPlan + " = (" + Last_BL_Plan.ToString() + " + " + InRec + ") - " + DT.Rows[_intRow]["F_MRP"].ToString() + "/2 + " + DT.Rows[_intRow]["F_Urgent_Order"].ToString();
+                                            BLPlan = (Last_BL_Plan + InRec) - (int.Parse(DT.Rows[i]["F_MRP"].ToString()) / 2) + int.Parse(DT.Rows[i]["F_Urgent_Order"].ToString());
+                                            BLPlan_Solution = BLPlan_Solution + "BLPlan : " + BLPlan.ToString() + " = (" + Last_BL_Plan.ToString() + " + " + InRec.ToString() + ") - " + (int.Parse(DT.Rows[i]["F_MRP"].ToString())/2).ToString() + " + " + DT.Rows[i]["F_Urgent_Order"].ToString();
 
-                                            BLActual = (Last_BL_Actual + InRec) - (int.Parse(DT.Rows[_intRow]["F_MRP"].ToString()) / 2) + int.Parse(DT.Rows[_intRow]["F_Urgent_Order"].ToString());
-                                            BLActual_Solution = "BLActual : " + BLActual + " = (" + Last_BL_Actual.ToString() + " + " + InRec + ") - " + DT.Rows[_intRow]["F_MRP"].ToString() + "/2 + " + DT.Rows[_intRow]["F_Urgent_Order"].ToString();
+                                            BLActual = (Last_BL_Actual + InRec) - (int.Parse(DT.Rows[i]["F_MRP"].ToString()) / 2) + int.Parse(DT.Rows[i]["F_Urgent_Order"].ToString());
+                                            BLActual_Solution = "BLActual : " + BLActual.ToString() + " = (" + Last_BL_Actual.ToString() + " + " + InRec.ToString() + ") - " + (int.Parse(DT.Rows[i]["F_MRP"].ToString()) / 2).ToString() + " + " + DT.Rows[i]["F_Urgent_Order"].ToString();
                                         }
                                     }
 
@@ -1597,13 +1600,13 @@ namespace KANBAN.Controllers.API.OrderingProcess
                                 {
                                     BLPlan_Solution = "BL = (BL + In(Rec)) + Urgent - Abnormal";
                                     BLPlan = (Last_BL_Plan + InRec)
-                                        + int.Parse(DT.Rows[_intRow]["F_Urgent_Order"].ToString())
-                                        - int.Parse(DT.Rows[_intRow]["F_AbNormal_Part"].ToString());
+                                        + int.Parse(DT.Rows[i]["F_Urgent_Order"].ToString())
+                                        - int.Parse(DT.Rows[i]["F_AbNormal_Part"].ToString());
 
-                                    BLPlan_Solution = BLPlan_Solution + "BLPlan : " + BLPlan + " = (" + Last_BL_Plan.ToString() + " + " + InRec + ") + " + DT.Rows[_intRow]["F_Urgent_Order"].ToString() + " - " + DT.Rows[_intRow]["F_AbNormal_Part"].ToString();
+                                    BLPlan_Solution = BLPlan_Solution + "BLPlan : " + BLPlan.ToString() + " = (" + Last_BL_Plan.ToString() + " + " + InRec.ToString() + ") + " + DT.Rows[i]["F_Urgent_Order"].ToString() + " - " + DT.Rows[i]["F_AbNormal_Part"].ToString();
 
-                                    BLActual = (Last_BL_Actual + InActual) - int.Parse(DT.Rows[_intRow]["F_AbNormal_Part"].ToString());
-                                    BLActual_Solution = "BLActual : " + BLActual + " = (" + Last_BL_Actual.ToString() + " + " + InActual + ") - " + DT.Rows[_intRow]["F_AbNormal_Part"].ToString();
+                                    BLActual = (Last_BL_Actual + InActual) - int.Parse(DT.Rows[i]["F_AbNormal_Part"].ToString());
+                                    BLActual_Solution = "BLActual : " + BLActual.ToString() + " = (" + Last_BL_Actual.ToString() + " + " + InActual.ToString() + ") - " + DT.Rows[i]["F_AbNormal_Part"].ToString();
 
                                 }
                                 Last_BL_Actual = BLActual;
@@ -1612,11 +1615,11 @@ namespace KANBAN.Controllers.API.OrderingProcess
                             else
                             {
                                 BLPlan_Solution = "BL = (BL + In(Rec)) + Urgent";
-                                BLPlan = (Last_BL_Plan + InRec) + int.Parse(DT.Rows[_intRow]["F_Urgent_Order"].ToString());
-                                BLPlan_Solution = BLPlan_Solution + "BLPlan : " + BLPlan + " = (" + Last_BL_Plan.ToString() + " + " + InRec + ") + " + DT.Rows[_intRow]["F_Urgent_Order"].ToString();
+                                BLPlan = (Last_BL_Plan + InRec) + int.Parse(DT.Rows[i]["F_Urgent_Order"].ToString());
+                                BLPlan_Solution = BLPlan_Solution + "BLPlan : " + BLPlan.ToString() + " = (" + Last_BL_Plan.ToString() + " + " + InRec.ToString() + ") + " + DT.Rows[i]["F_Urgent_Order"].ToString();
 
                                 BLActual = (Last_BL_Actual + InActual);
-                                BLActual_Solution = "BLActual : " + BLActual + " = (" + Last_BL_Actual.ToString() + " + " + InActual + ")";
+                                BLActual_Solution = "BLActual : " + BLActual.ToString() + " = (" + Last_BL_Actual.ToString() + " + " + InActual.ToString() + ")";
 
                                 Last_BL_Actual = BLActual;
                                 Last_BL_Plan = BLPlan;
@@ -1624,43 +1627,43 @@ namespace KANBAN.Controllers.API.OrderingProcess
                         }
                         else
                         {
-                            if (DT.Rows[_intRow]["F_Process_Round"].ToString() == "1")
+                            if (DT.Rows[i]["F_Process_Round"].ToString() == "1")
                             {
                                 if (blnFromSetStock)
                                 {
-                                    if (DT.Rows[_intRow]["Flag_HalfChg_BL_Stock"].ToString() == "False")
+                                    if (DT.Rows[i]["Flag_HalfChg_BL_Stock"].ToString() == "False")
                                     {
 
                                         BLPlan_Solution = "BL = (BL + In(Rec)) - MRP + Urgent";
-                                        BLPlan = (Last_BL_Plan + InRec) - int.Parse(DT.Rows[_intRow]["F_MRP"].ToString())
-                                            + int.Parse(DT.Rows[_intRow]["F_Urgent_Order"].ToString());
-                                        BLPlan_Solution = BLPlan_Solution + "BLPlan : " + BLPlan + " = (" + Last_BL_Plan.ToString() + " + " + InRec + ") - " + DT.Rows[_intRow]["F_MRP"].ToString() + " + " + DT.Rows[_intRow]["F_Urgent_Order"].ToString();
+                                        BLPlan = (Last_BL_Plan + InRec) - int.Parse(DT.Rows[i]["F_MRP"].ToString())
+                                            + int.Parse(DT.Rows[i]["F_Urgent_Order"].ToString());
+                                        BLPlan_Solution = BLPlan_Solution + "BLPlan : " + BLPlan.ToString() + " = (" + Last_BL_Plan.ToString() + " + " + InRec.ToString() + ") - " + DT.Rows[i]["F_MRP"].ToString() + " + " + DT.Rows[i]["F_Urgent_Order"].ToString();
 
-                                        BLActual = (Last_BL_Actual + InActual) - int.Parse(DT.Rows[_intRow]["F_MRP"].ToString());
-                                        BLActual_Solution = "BLActual : " + BLActual + " = (" + Last_BL_Actual.ToString() + " + " + InActual + ") - " + DT.Rows[_intRow]["F_MRP"].ToString();
+                                        BLActual = (Last_BL_Actual + InActual) - int.Parse(DT.Rows[i]["F_MRP"].ToString());
+                                        BLActual_Solution = "BLActual : " + BLActual.ToString() + " = (" + Last_BL_Actual.ToString() + " + " + InActual.ToString() + ") - " + DT.Rows[i]["F_MRP"].ToString();
 
                                     }
-                                    else if (DT.Rows[_intRow]["Flag_HalfChg_BL_Stock"].ToString() == "True")
+                                    else if (DT.Rows[i]["Flag_HalfChg_BL_Stock"].ToString() == "True")
                                     {
-                                        if (DT.Rows[_intRow]["F_Process_Shift"].ToString() == "D")
+                                        if (DT.Rows[i]["F_Process_Shift"].ToString() == "D")
                                         {
                                             BLPlan_Solution = "BL = BF - MRP/2";
-                                            BLPlan = Last_BL_Plan - (int.Parse(DT.Rows[_intRow]["F_MRP"].ToString()) / 2);
-                                            BLPlan_Solution = BLPlan_Solution + "BLPlan : " + BLPlan + " = " + Last_BL_Plan.ToString() + " - " + DT.Rows[_intRow]["F_MRP"].ToString() + "/2";
+                                            BLPlan = Last_BL_Plan - (int.Parse(DT.Rows[i]["F_MRP"].ToString()) / 2);
+                                            BLPlan_Solution = BLPlan_Solution + "BLPlan : " + BLPlan.ToString() + " = " + Last_BL_Plan.ToString() + " - " + (int.Parse(DT.Rows[i]["F_MRP"].ToString())/2).ToString();
 
-                                            BLActual = Last_BL_Actual - (int.Parse(DT.Rows[_intRow]["F_MRP"].ToString()) / 2);
-                                            BLActual_Solution = "BLActual : " + BLActual + " = " + Last_BL_Actual.ToString() + " - " + DT.Rows[_intRow]["F_MRP"].ToString() + "/2";
+                                            BLActual = Last_BL_Actual - (int.Parse(DT.Rows[i]["F_MRP"].ToString()) / 2);
+                                            BLActual_Solution = "BLActual : " + BLActual.ToString() + " = " + Last_BL_Actual.ToString() + " - " + (int.Parse(DT.Rows[i]["F_MRP"].ToString()) / 2).ToString();
 
                                         }
                                         else
                                         {
 
                                             BLPlan_Solution = "BL = (BF + In(Rec)) - MRP/2 + Urgent";
-                                            BLPlan = (Last_BL_Plan + InRec) - (int.Parse(DT.Rows[_intRow]["F_MRP"].ToString()) / 2) + int.Parse(DT.Rows[_intRow]["F_Urgent_Order"].ToString());
-                                            BLPlan_Solution = BLPlan_Solution + "BLPlan : " + BLPlan + " = (" + Last_BL_Plan.ToString() + " + " + InRec + ") - " + DT.Rows[_intRow]["F_MRP"].ToString() + "/2 + " + DT.Rows[_intRow]["F_Urgent_Order"].ToString();
+                                            BLPlan = (Last_BL_Plan + InRec) - (int.Parse(DT.Rows[i]["F_MRP"].ToString()) / 2) + int.Parse(DT.Rows[i]["F_Urgent_Order"].ToString());
+                                            BLPlan_Solution = BLPlan_Solution + "BLPlan : " + BLPlan + " = (" + Last_BL_Plan.ToString() + " + " + InRec + ") - " + (int.Parse(DT.Rows[i]["F_MRP"].ToString()) / 2).ToString() + " + " + DT.Rows[i]["F_Urgent_Order"].ToString();
 
-                                            BLActual = (Last_BL_Actual + InRec) - (int.Parse(DT.Rows[_intRow]["F_MRP"].ToString()) / 2) + int.Parse(DT.Rows[_intRow]["F_Urgent_Order"].ToString());
-                                            BLActual_Solution = "BLActual : " + BLActual + " = (" + Last_BL_Actual.ToString() + " + " + InRec + ") - " + DT.Rows[_intRow]["F_MRP"].ToString() + "/2 + " + DT.Rows[_intRow]["F_Urgent_Order"].ToString();
+                                            BLActual = (Last_BL_Actual + InRec) - (int.Parse(DT.Rows[i]["F_MRP"].ToString()) / 2) + int.Parse(DT.Rows[i]["F_Urgent_Order"].ToString());
+                                            BLActual_Solution = "BLActual : " + BLActual + " = (" + Last_BL_Actual.ToString() + " + " + InRec + ") - " + (int.Parse(DT.Rows[i]["F_MRP"].ToString()) / 2).ToString() + " + " + DT.Rows[i]["F_Urgent_Order"].ToString();
 
                                         }
 
@@ -1671,14 +1674,14 @@ namespace KANBAN.Controllers.API.OrderingProcess
 
                                     //สูตร BL T1 = [ BL(Last Trip) + In(Rec) Pcs ] - MRP + Urgent - Abnormal
                                     BLPlan_Solution = "BL = (BL + In(Rec)) - MRP + Urgent - Abnormal";
-                                    BLPlan = (Last_BL_Plan + InRec) - int.Parse(DT.Rows[_intRow]["F_MRP"].ToString())
-                                        + int.Parse(DT.Rows[_intRow]["F_Urgent_Order"].ToString())
-                                        - int.Parse(DT.Rows[_intRow]["F_AbNormal_Part"].ToString());
-                                    BLPlan_Solution = BLPlan_Solution + "BLPlan : " + BLPlan + " = (" + Last_BL_Plan.ToString() + " + " + InRec + ") - " + DT.Rows[_intRow]["F_MRP"].ToString() + " + " + DT.Rows[_intRow]["F_Urgent_Order"].ToString() + " - " + DT.Rows[_intRow]["F_AbNormal_Part"].ToString();
+                                    BLPlan = (Last_BL_Plan + InRec) - int.Parse(DT.Rows[i]["F_MRP"].ToString())
+                                        + int.Parse(DT.Rows[i]["F_Urgent_Order"].ToString())
+                                        - int.Parse(DT.Rows[i]["F_AbNormal_Part"].ToString());
+                                    BLPlan_Solution = BLPlan_Solution + "BLPlan : " + BLPlan + " = (" + Last_BL_Plan.ToString() + " + " + InRec + ") - " + DT.Rows[i]["F_MRP"].ToString() + " + " + DT.Rows[i]["F_Urgent_Order"].ToString() + " - " + DT.Rows[i]["F_AbNormal_Part"].ToString();
 
-                                    BLActual = (Last_BL_Actual + InActual) - int.Parse(DT.Rows[_intRow]["F_MRP"].ToString())
-                                    - int.Parse(DT.Rows[_intRow]["F_AbNormal_Part"].ToString());
-                                    BLActual_Solution = "BLActual : " + BLActual + " = (" + Last_BL_Actual.ToString() + " + " + InActual + ") - " + DT.Rows[_intRow]["F_MRP"].ToString() + " - " + DT.Rows[_intRow]["F_AbNormal_Part"].ToString();
+                                    BLActual = (Last_BL_Actual + InActual) - int.Parse(DT.Rows[i]["F_MRP"].ToString())
+                                    - int.Parse(DT.Rows[i]["F_AbNormal_Part"].ToString());
+                                    BLActual_Solution = "BLActual : " + BLActual + " = (" + Last_BL_Actual.ToString() + " + " + InActual + ") - " + DT.Rows[i]["F_MRP"].ToString() + " - " + DT.Rows[i]["F_AbNormal_Part"].ToString();
 
                                 }
 
@@ -1689,12 +1692,12 @@ namespace KANBAN.Controllers.API.OrderingProcess
                             else
                             {
                                 BLPlan_Solution = "BL = (BL + In(Rec)) - MRP + Urgent";
-                                BLPlan = (Last_BL_Plan + InRec) - int.Parse(DT.Rows[_intRow]["F_MRP"].ToString())
-                                    + int.Parse(DT.Rows[_intRow]["F_Urgent_Order"].ToString());
-                                BLPlan_Solution = BLPlan_Solution + "BLPlan : " + BLPlan + " = (" + Last_BL_Plan.ToString() + " + " + InRec + ") - " + DT.Rows[_intRow]["F_MRP"].ToString() + " + " + DT.Rows[_intRow]["F_Urgent_Order"].ToString();
+                                BLPlan = (Last_BL_Plan + InRec) - int.Parse(DT.Rows[i]["F_MRP"].ToString())
+                                    + int.Parse(DT.Rows[i]["F_Urgent_Order"].ToString());
+                                BLPlan_Solution = BLPlan_Solution + "BLPlan : " + BLPlan + " = (" + Last_BL_Plan.ToString() + " + " + InRec + ") - " + DT.Rows[i]["F_MRP"].ToString() + " + " + DT.Rows[i]["F_Urgent_Order"].ToString();
 
-                                BLActual = (Last_BL_Actual + InActual) - int.Parse(DT.Rows[_intRow]["F_MRP"].ToString());
-                                BLActual_Solution = "BLActual : " + BLActual + " = (" + Last_BL_Actual.ToString() + " + " + InActual + ") - " + DT.Rows[_intRow]["F_MRP"].ToString();
+                                BLActual = (Last_BL_Actual + InActual) - int.Parse(DT.Rows[i]["F_MRP"].ToString());
+                                BLActual_Solution = "BLActual : " + BLActual + " = (" + Last_BL_Actual.ToString() + " + " + InActual + ") - " + DT.Rows[i]["F_MRP"].ToString();
 
                                 Last_BL_Actual = BLActual;
                                 Last_BL_Plan = BLPlan;
@@ -1704,24 +1707,26 @@ namespace KANBAN.Controllers.API.OrderingProcess
                         //Update BL ของวันนั้นๆ
                         _execSQL = $@"exec [dbo].[sp_autoRecalculateBL_UpdateBL] @p0,@p1,@p2,@p3,@p4,@p5,@p6,@p7,@p8,@p9,@p10,@p11";
 
-                        int _RowAffected = _KB3Context.Database.ExecuteSqlRaw(_execSQL, DT.Rows[_intRow]["F_Process_Date"].ToString(), DT.Rows[_intRow]["F_Process_Shift"].ToString(),
-                            DT.Rows[_intRow]["F_Process_Round"].ToString(), DT.Rows[_intRow]["F_Supplier_Code"].ToString(), DT.Rows[_intRow]["F_Supplier_Plant"].ToString(),
-                            DT.Rows[_intRow]["F_Part_No"].ToString(), DT.Rows[_intRow]["F_Ruibetsu"].ToString(),
-                            DT.Rows[_intRow]["F_Kanban_No"].ToString(), DT.Rows[_intRow]["F_Store_Code"].ToString(),
-                            BLPlan, BLActual, DT.Rows[_intRow]["F_Not_Recalculate"].ToString());
+                        int _RowAffected = _KB3Context.Database.ExecuteSqlRaw(_execSQL, DT.Rows[i]["F_Process_Date"].ToString(), DT.Rows[i]["F_Process_Shift"].ToString(),
+                            DT.Rows[i]["F_Process_Round"].ToString(), DT.Rows[i]["F_Supplier_Code"].ToString(), DT.Rows[i]["F_Supplier_Plant"].ToString(),
+                            DT.Rows[i]["F_Part_No"].ToString(), DT.Rows[i]["F_Ruibetsu"].ToString(),
+                            DT.Rows[i]["F_Kanban_No"].ToString(), DT.Rows[i]["F_Store_Code"].ToString(),
+                            BLPlan, BLActual, DT.Rows[i]["F_Not_Recalculate"].ToString());
 
                         if (_RowAffected > 0)
                         {
-                            _Log.WriteLogMsg($"Update TB_Calculate_D : Complete | Query : {_execSQL} | BLPlan_Solution : {BLPlan_Solution} | BLActual_Solution : {BLActual_Solution}");
+                            _Log.WriteLogMsg($"Update TB_Calculate_D : Complete | Query : {_execSQL} | BLPlan_Solution : {BLPlan_Solution} | BLActual_Solution : {BLActual_Solution} " +
+                                $"Data : {JsonConvert.SerializeObject(DT.Rows[i])}");
                         }
                         else
                         {
-                            _Log.WriteLogMsg($"Update TB_Calculate_D : Not Complete | Query : {_execSQL} | BLPlan_Solution : {BLPlan_Solution} | BLActual_Solution : {BLActual_Solution}");
+                            _Log.WriteLogMsg($"Update TB_Calculate_D : Not Complete | Query : {_execSQL} | BLPlan_Solution : {BLPlan_Solution} | BLActual_Solution : {BLActual_Solution}" +
+                                $"Data : {JsonConvert.SerializeObject(DT.Rows[i])}");
                         }
                         if (DT.Rows[_intRow]["F_Not_Recalculate"].ToString() == "True")
                         {
-                            Last_BL_Plan = int.TryParse(DT.Rows[_intRow]["F_BL_SET_Plan"].ToString(), out int F_BL_SET_Plan) ? F_BL_SET_Plan : 0;
-                            Last_BL_Actual = int.TryParse(DT.Rows[_intRow]["F_BL_SET_Actual"].ToString(), out int F_BL_SET_Actual) ? F_BL_SET_Actual : 0;
+                            Last_BL_Plan = int.TryParse(DT.Rows[i]["F_BL_SET_Plan"].ToString(), out int F_BL_SET_Plan) ? F_BL_SET_Plan : 0;
+                            Last_BL_Actual = int.TryParse(DT.Rows[i]["F_BL_SET_Actual"].ToString(), out int F_BL_SET_Actual) ? F_BL_SET_Actual : 0;
                             blnFromSetStock = true;
                         }
                         else
@@ -1729,10 +1734,10 @@ namespace KANBAN.Controllers.API.OrderingProcess
                             blnFromSetStock = false;
                         }
 
-                        if (DT.Rows[_intRow]["F_Process_Date"].ToString() == dateECI.Begining_Calculate
-                            && DT.Rows[_intRow]["F_Process_Round"].ToString() == "1")
+                        if (DT.Rows[i]["F_Process_Date"].ToString() == dateECI.Begining_Calculate
+                            && DT.Rows[i]["F_Process_Round"].ToString() == "1")
                         {
-                            dateDelivery = DateTime.TryParseExact(DT.Rows[_intRow]["F_Process_Date"].ToString(), "yyyyMMdd", CultureInfo.InvariantCulture, DateTimeStyles.None, out dateDelivery) ? dateDelivery : new DateTime();
+                            dateDelivery = DateTime.TryParseExact(DT.Rows[i]["F_Process_Date"].ToString(), "yyyyMMdd", CultureInfo.InvariantCulture, DateTimeStyles.None, out dateDelivery) ? dateDelivery : new DateTime();
 
                             _execSQL = "exec [dbo].[sp_autoRecalculateBL_First] @p0,@p1,@p2,@p3,@p4,@p5,@p6";
                             DT_LastBL = _FillDT.ExecuteSQL(_execSQL, dateDelivery.AddDays(-1).ToString("yyyyMMdd"),

@@ -61,8 +61,9 @@ $("#buttonConfirm").click(function () {
     _xLib.AJAX_Post('/api/KBNIM003C/Confirm', JSON.stringify(_arrData),
         async function (success) {
             if (success.status === "200") {
+                $("#tblMaster").DataTable().clear().draw();
                 xSwal.success("Success !!", success.message);
-                await Search();
+                //await Search();
             }
         },
         async function (error) {

@@ -469,7 +469,7 @@ const addDetailToTable = async (dateSet, intRow) => {
             if (k == 18 || k == 20) {
                 console.log(item.F_Not_Recalculate);
                 if (item.F_Not_Recalculate) {
-                    $("#tdR" + k + "Pcs" + dateSet[_countDateSet]).css("font-weight", "bolder");
+                    $("#tdR" + k + "Pcs" + dateSet[_countDateSet]).css("font-weight", "900");
                 }
             }
 
@@ -873,8 +873,22 @@ $("#btnReCal").click(function () {
     _xLib.AJAX_Post('/api/KBNOR121/Recalculate', JSON.stringify(obj),
         function (result) {
             if (result.status == 200) {
-                previewFunction($("#txtPage").val().split("/")[0] - 1, _command);
+                //previewFunction($("#txtPage").val().split("/")[0] - 1, _command);
                 xSwal.success("Success", "Recalculate Success");
+
+                _xLib.AJAX_Post('/api/KBNOR121/Bl_Recalculate', JSON.stringify(obj),
+                    function (result) {
+                        if (result.status == 200) {
+                            previewFunction($("#txtPage").val().split("/")[0] - 1, _command);
+                            xSwal.success("Success", "Recalculate BL Success");
+                        }
+                    },
+                    function (error) {
+                        xSwal.error("Error", error.responseJSON.message);
+                        console.error(error);
+                    }
+                );
+
             }
         },
         function (error) {

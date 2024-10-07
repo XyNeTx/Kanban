@@ -14,6 +14,8 @@ $(document).ready(async function () {
 
     await LoadDataChangeDelivery();
 
+    $(".selectpicker").selectpicker("refresh");
+
     xSplash.hide();
 
 });
@@ -274,6 +276,8 @@ async function LoadDataChangeDelivery() {
                 success.data.customer.forEach(function (item) {
                     $("#inpCustomerOrderNo").append(`<option value="${item.trim()}">${item.trim()}</option>`);
                 });
+
+                $("#inpCustomerOrderNo").selectpicker("refresh");
             }
 
             if (!$("#inpSupplier").val()) {
@@ -282,6 +286,8 @@ async function LoadDataChangeDelivery() {
                 success.data.supplier.forEach(function (item) {
                     $("#inpSupplier").append(`<option value="${item.trim()}">${item.trim()}</option>`);
                 });
+
+                $("#inpSupplier").selectpicker("refresh");
             }
 
             if (!$("#inpPartNo").val())
@@ -291,6 +297,8 @@ async function LoadDataChangeDelivery() {
                 success.data.partNo.forEach(function (item) {
                     $("#inpPartNo").append(`<option value="${item.trim()}">${item.trim()}</option>`);
                 });
+
+                $("#inpPartNo").selectpicker("refresh");
             }
         },
         function (error) {
@@ -803,7 +811,12 @@ $(document).on("show.bs.modal", "#KBNOR210_1_STC_1", async function (e) {
         xSplash.hide();
     });
 
-    STC_1_GetSupplierCode();
+
+
+});
+
+$('#btnKBNOR210_STC_1_Inq').click(async function () {
+    //STC_1_GetSupplierCode();
 
     STC_1_DisabledControl(true);
     STC_1_DisabledToolbars();
@@ -818,39 +831,55 @@ $(document).on("show.bs.modal", "#KBNOR210_1_STC_1", async function (e) {
             console.error(error);
         }
     );
-
-
 });
+
 
 function STC_1_DisabledControl(status)
 {
 
     if (status == true) {
 
-
-        $("#inpKBNOR210_1_STC_1_StockDate").selectpicker("disabled", true);
-        $("#inpKBNOR210_1_STC_1_Supplier").selectpicker("disabled", true);
-        $("#inpKBNOR210_1_STC_1_PartNo").selectpicker("disabled", true);
-        $("#inpKBNOR210_1_STC_1_StoreCD").selectpicker("disabled", true);
+        $("#inpKBNOR210_1_STC_1_StockDate").prop('disabled', true);
+        $("#inpKBNOR210_1_STC_1_Supplier").prop("disabled", true);
+        $("#inpKBNOR210_1_STC_1_PartNo").prop("disabled", true);
+        $("#inpKBNOR210_1_STC_1_Store").prop("disabled", true);
         $("#inpKBNOR210_1_STC_1_Kanban").prop("readonly", true);
         $("#inpKBNOR210_1_STC_1_Actual").prop("readonly", true);
         $("#inpKBNOR210_1_STC_1_CheckStk").selectpicker("disabled", true);
         $("#inpKBNOR210_1_STC_1_Remark").prop("readonly", true);
 
+        $('#inpKBNOR210_1_STC_1_StockDate').val(moment().format("DD/MM/YYYY"));
+        $("#inpKBNOR210_1_STC_1_Supplier").selectpicker("val", "");
+        $("#inpKBNOR210_1_STC_1_PartNo").selectpicker("val", "");
+        $("#inpKBNOR210_1_STC_1_Store").selectpicker("val", "");
 
+        $("#inpKBNOR210_1_STC_1_Supplier").selectpicker("refresh");
+        $("#inpKBNOR210_1_STC_1_PartNo").selectpicker("refresh");
+        $("#inpKBNOR210_1_STC_1_Store").selectpicker("refresh");
 
+        $("#inpKBNOR210_1_STC_1_StockDate").parent().find("i").prop("hidden", true);
     }
     else {
 
-        $("#inpKBNOR210_1_STC_1_StockDate").selectpicker("disabled", false);
-        $("#inpKBNOR210_1_STC_1_Supplier").selectpicker("disabled", false);
-        $("#inpKBNOR210_1_STC_1_PartNo").selectpicker("disabled", false);
-        $("#inpKBNOR210_1_STC_1_StoreCD").selectpicker("disabled", false);
+        $("#inpKBNOR210_1_STC_1_StockDate").prop("disabled", false);
+        $("#inpKBNOR210_1_STC_1_Supplier").prop("disabled", false);
+        $("#inpKBNOR210_1_STC_1_PartNo").prop("disabled", false);
+        $("#inpKBNOR210_1_STC_1_Store").prop("disabled", false);
         $("#inpKBNOR210_1_STC_1_Kanban").prop("readonly", true);
         $("#inpKBNOR210_1_STC_1_Actual").prop("readonly", false);
         $("#inpKBNOR210_1_STC_1_CheckStk").selectpicker("disabled", false);
         $("#inpKBNOR210_1_STC_1_Remark").prop("readonly", false);
 
+        $('#inpKBNOR210_1_STC_1_StockDate').val(moment().format("DD/MM/YYYY"));
+        $("#inpKBNOR210_1_STC_1_Supplier").selectpicker("val", "");
+        $("#inpKBNOR210_1_STC_1_PartNo").selectpicker("val", "");
+        $("#inpKBNOR210_1_STC_1_Store").selectpicker("val", "");
+
+        $("#inpKBNOR210_1_STC_1_Supplier").selectpicker("refresh");
+        $("#inpKBNOR210_1_STC_1_PartNo").selectpicker("refresh");
+        $("#inpKBNOR210_1_STC_1_Store").selectpicker("refresh");
+
+        $("#inpKBNOR210_1_STC_1_StockDate").parent().find("i").prop("hidden", false);
     }
 
 }
@@ -863,6 +892,8 @@ function STC_1_DisabledToolbars() {
     $("#btnKBNOR210_STC_1_Del").prop("disabled", true);
     $("#btnKBNOR210_STC_1_Imp").prop("disabled", true);
 
+
+
 }
 
 let isNew = false;
@@ -871,7 +902,7 @@ function STC_1_GetSupplierCode() {
 
     let obj = {
         isNew: isNew,
-        StockDate: $("#inpKBNOR210_1_STC_1_StockDate").val(),
+        StockDate: moment($("#inpKBNOR210_1_STC_1_StockDate").val(), "DD/MM/YYYY").format("YYYYMMDD"),
     }
 
     _xLib.AJAX_Get("/api/KBNOR210_1/STC_1_GetSupplierCode", obj,
