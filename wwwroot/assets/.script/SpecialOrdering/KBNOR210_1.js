@@ -795,8 +795,8 @@ $(document).on("show.bs.modal", "#KBNOR210_1_STC_1", async function (e) {
             { title: "Actual KB", data: "F_Actual_KB" },
             { title: "Actual PCS", data: "F_Actual_PCS" },
             { title: "Check By", data: "F_Check_By" },
-            { title: "Update Date", data: "F_Update_By" },
-            { title: "Update By", data: "F_Update_Date" },
+            { title: "Update Date", data: "F_Update_Date" },
+            { title: "Update By", data: "F_Update_By" },
         ],
         order: [[1, 'asc']]
     });
@@ -824,8 +824,10 @@ $('#btnKBNOR210_STC_1_Inq').click(async function () {
     _xLib.AJAX_Get("/api/KBNOR210_1/STC_1_ListDatatogrid", {},
         function (success) {
             success = _xLib.JSONparseMixData(success);
-            console.log(success);
+            //console.log(success);
             $("#tableKBNOR210_1_STC_1").DataTable().clear().rows.add(success.data).draw();
+            $("#tableKBNOR210_1_STC_1 thead tr th").css("text-align", "center");
+            $("#tableKBNOR210_1_STC_1 tbody tr td").css("text-align", "center");
         },
         function (error) {
             console.error(error);
@@ -845,7 +847,7 @@ function STC_1_DisabledControl(status)
         $("#inpKBNOR210_1_STC_1_Store").prop("disabled", true);
         $("#inpKBNOR210_1_STC_1_Kanban").prop("readonly", true);
         $("#inpKBNOR210_1_STC_1_Actual").prop("readonly", true);
-        $("#inpKBNOR210_1_STC_1_CheckStk").selectpicker("disabled", true);
+        $("#inpKBNOR210_1_STC_1_CheckStk").prop("disabled", true);
         $("#inpKBNOR210_1_STC_1_Remark").prop("readonly", true);
 
         $('#inpKBNOR210_1_STC_1_StockDate').val(moment().format("DD/MM/YYYY"));
@@ -856,6 +858,7 @@ function STC_1_DisabledControl(status)
         $("#inpKBNOR210_1_STC_1_Supplier").selectpicker("refresh");
         $("#inpKBNOR210_1_STC_1_PartNo").selectpicker("refresh");
         $("#inpKBNOR210_1_STC_1_Store").selectpicker("refresh");
+        $("#inpKBNOR210_1_STC_1_CheckStk").selectpicker("refresh");
 
         $("#inpKBNOR210_1_STC_1_StockDate").parent().find("i").prop("hidden", true);
     }
@@ -867,7 +870,7 @@ function STC_1_DisabledControl(status)
         $("#inpKBNOR210_1_STC_1_Store").prop("disabled", false);
         $("#inpKBNOR210_1_STC_1_Kanban").prop("readonly", true);
         $("#inpKBNOR210_1_STC_1_Actual").prop("readonly", false);
-        $("#inpKBNOR210_1_STC_1_CheckStk").selectpicker("disabled", false);
+        $("#inpKBNOR210_1_STC_1_CheckStk").prop("disabled", false);
         $("#inpKBNOR210_1_STC_1_Remark").prop("readonly", false);
 
         $('#inpKBNOR210_1_STC_1_StockDate').val(moment().format("DD/MM/YYYY"));
@@ -878,9 +881,24 @@ function STC_1_DisabledControl(status)
         $("#inpKBNOR210_1_STC_1_Supplier").selectpicker("refresh");
         $("#inpKBNOR210_1_STC_1_PartNo").selectpicker("refresh");
         $("#inpKBNOR210_1_STC_1_Store").selectpicker("refresh");
+        $("#inpKBNOR210_1_STC_1_CheckStk").selectpicker("refresh");
 
         $("#inpKBNOR210_1_STC_1_StockDate").parent().find("i").prop("hidden", false);
     }
+
+}
+
+function STC_1_ClearControl() {
+
+    $("#divForm").find("input").val("");
+    $("#divForm").find("select").val("");
+
+    $("#inpKBNOR210_1_STC_1_Supplier").selectpicker("refresh");
+    $("#inpKBNOR210_1_STC_1_PartNo").selectpicker("refresh");
+    $("#inpKBNOR210_1_STC_1_Store").selectpicker("refresh");
+    $("#inpKBNOR210_1_STC_1_CheckStk").selectpicker("refresh");
+
+    $(".selectpicker").selectpicker("refresh");
 
 }
 
@@ -892,11 +910,122 @@ function STC_1_DisabledToolbars() {
     $("#btnKBNOR210_STC_1_Del").prop("disabled", true);
     $("#btnKBNOR210_STC_1_Imp").prop("disabled", true);
 
-
-
 }
 
 let isNew = false;
+let STC_1_Action = "";
+
+$("#btnKBNOR210_STC_1_New").click(function () {
+    isNew = true;
+    STC_1_Action = "New";
+
+    STC_1_GetSupplierCode();
+    STC_1_GetPartNo();
+    STC_1_GetStore();
+
+    STC_1_DisabledControl(false);
+    STC_1_DisabledToolbars();
+
+    $("#btnSTC_1_Save").prop("disabled", false);
+    $("#btnKBNOR210_STC_1_Cancel").prop("disabled", false);
+    $("#btnKBNOR210_STC_1_New").prop("disabled", false);
+});
+
+$("#btnKBNOR210_STC_1_Upd").click(async function () {
+
+    isNew = true;
+
+    await STC_1_GetSupplierCode();
+    await STC_1_GetPartNo();
+    await STC_1_GetStore();
+
+    STC_1_Action = "Upd";
+    isNew = false;
+
+    STC_1_DisabledControl(false);
+    STC_1_DisabledToolbars();
+
+
+    $("#btnSTC_1_Save").prop("disabled", false);
+    $("#btnKBNOR210_STC_1_Cancel").prop("disabled", false);
+    $("#btnKBNOR210_STC_1_Upd").prop("disabled", false);
+
+    _xLib.AJAX_Get("/api/KBNOR210_1/STC_1_ListDatatogrid", {},
+        function (success) {
+            success = _xLib.JSONparseMixData(success);
+            //console.log(success);
+            $("#tableKBNOR210_1_STC_1").DataTable().clear().rows.add(success.data).draw();
+            $("#tableKBNOR210_1_STC_1 thead tr th").css("text-align", "center");
+            $("#tableKBNOR210_1_STC_1 tbody tr td").css("text-align", "center");
+        },
+        function (error) {
+            console.error(error);
+        }
+    );
+
+});
+
+$("#btnKBNOR210_STC_1_Del").click(async function () {
+    isNew = true;
+
+    await STC_1_GetSupplierCode();
+    await STC_1_GetPartNo();
+    await STC_1_GetStore();
+
+    STC_1_Action = "Del";
+    isNew = false;
+
+    STC_1_DisabledControl(false);
+    STC_1_DisabledToolbars();
+
+
+
+    $("#btnSTC_1_Save").prop("disabled", false);
+    $("#btnKBNOR210_STC_1_Can").prop("disabled", false);
+    $("#btnKBNOR210_STC_1_Del").prop("disabled", false);
+
+    _xLib.AJAX_Get("/api/KBNOR210_1/STC_1_ListDatatogrid", {},
+        function (success) {
+            success = _xLib.JSONparseMixData(success);
+            //console.log(success);
+            $("#tableKBNOR210_1_STC_1").DataTable().clear().rows.add(success.data).draw();
+            $("#tableKBNOR210_1_STC_1 thead tr th").css("text-align", "center");
+            $("#tableKBNOR210_1_STC_1 tbody tr td").css("text-align", "center");
+        },
+        function (error) {
+            console.error(error);
+        }
+    );
+});
+
+$("#btnKBNOR210_STC_1_Can").click(function () {
+    isNew = false;
+    STC_1_Action = "";
+
+    STC_1_DisabledControl(true);
+
+    $("#STC_1_divBtn").find("button").prop("disabled", false);
+    $("#btnSTC_1_Save").prop("disabled", true);
+
+    $("#tableKBNOR210_1_STC_1").DataTable().clear().draw();
+});
+
+
+$("#inpKBNOR210_1_STC_1_Supplier").change(function () {
+    STC_1_GetPartNo();
+    STC_1_GetStore();
+    STC_1_GetSupplierName();
+});
+
+$("#inpKBNOR210_1_STC_1_PartNo").change(function () {
+    STC_1_GetStore();
+    STC_1_GetPartName();
+});
+
+$("#inpKBNOR210_1_STC_1_Store").change(function () {
+    STC_1_GetKB_Qty();
+});
+
 
 function STC_1_GetSupplierCode() {
 
@@ -912,7 +1041,7 @@ function STC_1_GetSupplierCode() {
             $("#inpKBNOR210_1_STC_1_Supplier").empty();
             $("#inpKBNOR210_1_STC_1_Supplier").append("<option value='' hidden></option>");
             success.data.forEach(function (item) {
-                $("#inpKBNOR210_1_STC_1_Supplier").append(`<option value="${item.trim()}">${item.trim()}</option>`);
+                $("#inpKBNOR210_1_STC_1_Supplier").append(`<option value="${item.F_Supplier}">${item.F_Supplier}</option>`);
             });
 
             $("#inpKBNOR210_1_STC_1_Supplier").selectpicker("refresh");
@@ -923,3 +1052,219 @@ function STC_1_GetSupplierCode() {
     );
 
 }
+function STC_1_GetPartNo() {
+
+    let obj = {
+        isNew: isNew,
+        StockDate: moment($("#inpKBNOR210_1_STC_1_StockDate").val(), "DD/MM/YYYY").format("YYYYMMDD"),
+        Supplier_Code: $("#inpKBNOR210_1_STC_1_Supplier").val(),
+    }
+
+    _xLib.AJAX_Get("/api/KBNOR210_1/STC_1_GetPartNo", obj,
+        function (success) {
+            success = _xLib.JSONparseMixData(success);
+            console.log(success);
+            $("#inpKBNOR210_1_STC_1_PartNo").empty();
+            $("#inpKBNOR210_1_STC_1_PartNo").append("<option value='' hidden></option>");
+            success.data.forEach(function (item) {
+                $("#inpKBNOR210_1_STC_1_PartNo").append(`<option value="${item.F_Part_no}">${item.F_Part_no}</option>`);
+            });
+
+            $("#inpKBNOR210_1_STC_1_PartNo").selectpicker("refresh");
+        },
+        function (error) {
+            console.error(error);
+        }
+    );
+
+}
+function STC_1_GetStore() {
+
+    let obj = {
+        isNew: isNew,
+        StockDate: moment($("#inpKBNOR210_1_STC_1_StockDate").val(), "DD/MM/YYYY").format("YYYYMMDD"),
+        Supplier_Code: $("#inpKBNOR210_1_STC_1_Supplier").val(),
+        Part_No: $("#inpKBNOR210_1_STC_1_PartNo").val(),
+    }
+
+    _xLib.AJAX_Get("/api/KBNOR210_1/STC_1_GetStore", obj,
+        function (success) {
+            success = _xLib.JSONparseMixData(success);
+            console.log(success);
+            $("#inpKBNOR210_1_STC_1_Store").empty();
+            $("#inpKBNOR210_1_STC_1_Store").append("<option value='' hidden></option>");
+            success.data.forEach(function (item) {
+                $("#inpKBNOR210_1_STC_1_Store").append(`<option value="${item.F_Store_CD}">${item.F_Store_CD}</option>`);
+            });
+
+            $("#inpKBNOR210_1_STC_1_Store").selectpicker("refresh");
+        },
+        function (error) {
+            console.error(error);
+        }
+    );
+
+}
+function STC_1_GetSupplierName() {
+
+    let obj = {
+        Supplier_Code: $("#inpKBNOR210_1_STC_1_Supplier").val(),
+    }
+
+    _xLib.AJAX_Get("/api/KBNOR210_1/STC_1_GetSupplierName", obj,
+        function (success) {
+            $("#inpKBNOR210_1_STC_1_SupName").val(success.data);
+        },
+        function (error) {
+            console.error(error);
+        }
+    );
+
+}
+function STC_1_GetPartName() {
+
+    let obj = {
+        Supplier_Code: $("#inpKBNOR210_1_STC_1_Supplier").val(),
+        Part_No: $("#inpKBNOR210_1_STC_1_PartNo").val(),
+    }
+
+    _xLib.AJAX_Get("/api/KBNOR210_1/STC_1_GetPartName", obj,
+        function (success) {
+            $("#inpKBNOR210_1_STC_1_PartName").val(success.data);
+        },
+        function (error) {
+            console.error(error);
+        }
+    );
+
+}
+function STC_1_GetKB_Qty() {
+
+    let obj = {
+        Supplier_Code: $("#inpKBNOR210_1_STC_1_Supplier").val(),
+        Part_No: $("#inpKBNOR210_1_STC_1_PartNo").val(),
+        Store_Code: $("#inpKBNOR210_1_STC_1_Store").val(),
+        Stock_Date: moment($("#inpKBNOR210_1_STC_1_StockDate").val(), "DD/MM/YYYY").format("YYYYMMDD"),
+    }
+
+    _xLib.AJAX_Get("/api/KBNOR210_1/STC_1_GetKB_Qty", obj,
+        function (success) {
+            success = _xLib.JSONparseMixData(success);
+            //console.log(success);
+
+            $("#inpKBNOR210_1_STC_1_Kanban").val(success.data[0].F_Kanban_No);
+            $("#inpKBNOR210_1_STC_1_Qty").val(success.data[0].F_Qty_Box);
+        },
+        function (error) {
+            console.error(error);
+        }
+    );
+
+}
+
+$(document).on("dblclick", "#tableKBNOR210_1_STC_1 tbody tr td", async function () {
+    if (STC_1_Action != "Upd" && STC_1_Action != "Del") {
+        return;
+    }
+    $(this).closest("tr").addClass("selected").siblings().removeClass("selected");
+
+    let obj = $("#tableKBNOR210_1_STC_1").DataTable().row($(this).closest("tr")).data();
+
+    console.log(obj);
+
+    await $("#inpKBNOR210_1_STC_1_StockDate").val(moment(obj.F_Stock_Date, "YYYYMMDD").format("DD/MM/YYYY"));
+    await $("#inpKBNOR210_1_STC_1_Supplier").selectpicker("val", obj.F_Supplier_code);
+    await $("#inpKBNOR210_1_STC_1_PartNo").selectpicker("val", obj.F_Part_No);
+    await $("#inpKBNOR210_1_STC_1_Store").selectpicker("val", obj.F_Store_CD);
+    await $("#inpKBNOR210_1_STC_1_Kanban").val(obj.F_Kanban_No);
+    await $("#inpKBNOR210_1_STC_1_Actual").val(obj.F_Actual_PCS);
+    await $("#inpKBNOR210_1_STC_1_CheckStk").selectpicker("val", obj.F_Check_By);
+    await $("#inpKBNOR210_1_STC_1_Remark").val(obj.F_Remark);
+    await $("#inpKBNOR210_1_STC_1_Qty").val(obj.F_Qty_Pack);
+
+    $("#inpKBNOR210_1_STC_1_StockDate").prop("disabled", true);
+    $("#inpKBNOR210_1_STC_1_StockDate").parent().find("i").prop("hidden", true);
+    $("#inpKBNOR210_1_STC_1_Supplier").prop("disabled", true);
+    $("#inpKBNOR210_1_STC_1_PartNo").prop("disabled", true);
+    $("#inpKBNOR210_1_STC_1_Store").prop("disabled", true);
+
+    $(".selectpicker").selectpicker("refresh");
+
+    let GetSupplierName = {
+        Supplier_Code: obj.F_Supplier_code,
+    }
+
+    let GetPartName = {
+        Supplier_Code: obj.F_Supplier_code,
+        Part_No: obj.F_Part_No,
+    }
+
+    _xLib.AJAX_Get("/api/KBNOR210_1/STC_1_GetSupplierName", GetSupplierName,
+        function (success) {
+            $("#inpKBNOR210_1_STC_1_SupName").val(success.data);
+        },
+        function (error) {
+            console.error(error);
+        }
+    );
+
+    _xLib.AJAX_Get("/api/KBNOR210_1/STC_1_GetPartName", GetPartName,
+        function (success) {
+            $("#inpKBNOR210_1_STC_1_PartName").val(success.data);
+        },
+        function (error) {
+            console.error(error);
+        }
+    );
+
+});
+
+$("#btnSTC_1_Save").click(async function () {
+
+    let obj = {
+        Action: STC_1_Action,
+        F_Stock_Date : moment($("#inpKBNOR210_1_STC_1_StockDate").val(), "DD/MM/YYYY").format("YYYYMMDD"),
+        F_Supplier_code : $("#inpKBNOR210_1_STC_1_Supplier").val(),
+        F_Part_No: $("#inpKBNOR210_1_STC_1_PartNo").val(),
+        F_Store_CD: $("#inpKBNOR210_1_STC_1_Store").val(),
+        F_Kanban_No: $("#inpKBNOR210_1_STC_1_Kanban").val(),
+        F_Actual_PCS: $("#inpKBNOR210_1_STC_1_Actual").val(),
+        F_Check_By: $("#inpKBNOR210_1_STC_1_CheckStk").val(),
+        F_Remark: $("#inpKBNOR210_1_STC_1_Remark").val(),
+        F_Qty_Pack : $("#inpKBNOR210_1_STC_1_Qty").val(),
+
+    }
+
+    await _xLib.AJAX_Post("/api/KBNOR210_1/STC_1_Save", obj,
+        function(success) {
+            xSwal.success(success.response, success.message);
+        },
+        function(error) {
+            xSwal.error(error.responseJSON.response, error.responseJSON.message);
+        }
+    );
+
+    $("#btnKBNOR210_STC_1_Can").click();
+    $("#STC_1_divForm").find("input").val("");
+    $("#STC_1_divForm").find("select").val("");
+    $(".selectpicker").selectpicker("refresh");
+});
+let _file = "";
+$("#inpSTC_1_File").change(function (e) {
+
+    _file = e.target.files[0];
+
+});
+$("#btnSTC_1_Import").click(async function () {
+    if (_file == "") {
+        return xSwal.error("Error", "Please select file");
+    }
+
+    const arrayBuffer = await _file.arrayBuffer();
+    const read = await XLSX.read(arrayBuffer);
+
+    const data = XLSX.utils.sheet_to_json(read.Sheets[read.SheetNames[0]]);
+
+    console.log(data);
+
+});

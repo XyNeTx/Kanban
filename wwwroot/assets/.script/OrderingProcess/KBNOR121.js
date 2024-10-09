@@ -148,6 +148,7 @@ $("#inputStore , #inputStoreTo").change(function () {
 
 $("#btnPreview").click(async function () {
     _command = "Preview";
+    $("#txtPage").val("1/1");
     previewFunction(0, _command);
     window.scrollTo(0, 0);
     $("#btnBlCal").prop("disabled", false);
@@ -156,6 +157,7 @@ $("#btnPreview").click(async function () {
 
 $("#btnProcess").click(async function () {
     _command = "Process";
+    $("#txtPage").val("1/1");
     previewFunction(0, _command);
     window.scrollTo(0, 0);
     $("#btnBlCal").prop("disabled", false);
@@ -191,7 +193,7 @@ const previewFunction = async (intRow,_command) => {
         store: $("#inputStore").val(),
         storeTo: $("#inputStoreTo").val(),
         kanban : $("#inputKanban").val(),
-        kanbanTo: $("#inputKanban").val(),
+        kanbanTo: $("#inputKanbanTo").val(),
     }
 
     //await _xLib.AJAX_Post('/api/KBNOR121/Find_StartEnd_Date', JSON.stringify(obj), function (result) {
@@ -217,9 +219,9 @@ const previewFunction = async (intRow,_command) => {
         if ($("#readSupplier").val() != dT_PartControl[0].F_Supplier_Code + "-" + dT_PartControl[0].F_Supplier_Plant) {
             $("#txtPage").val("1/" + dT_PartControl.length);
         }
-
+        else { $("#txtPage").val(`${intRow + 1}/${dT_PartControl.length}`); }
         $("#readSupplier").val(dT_PartControl[intRow].F_Supplier_Code + "-" + dT_PartControl[intRow].F_Supplier_Plant);
-        $("#readPartNo").val(dT_PartControl[intRow].F_Part_No + "-" + dT_PartControl[0].F_Ruibetsu);
+        $("#readPartNo").val(dT_PartControl[intRow].F_Part_No + "-" + dT_PartControl[intRow].F_Ruibetsu);
         $("#readStoreCode").val(dT_PartControl[intRow].F_Store_Code);
         $("#readKanbanNo").val(dT_PartControl[intRow].F_Kanban_No);
         $("#readCycleTime").val(dT_Date[dT_Date.length - 1].F_Cycle.slice(0, 2) + "-" + dT_Date[dT_Date.length - 1].F_Cycle.slice(2, 4) + "-" + dT_Date[dT_Date.length - 1].F_Cycle.slice(4, 6));
@@ -467,7 +469,7 @@ const addDetailToTable = async (dateSet, intRow) => {
             else $(`#${_insIdDetail}`).text(item[_setAccessDetail[k - 1]]);
 
             if (k == 18 || k == 20) {
-                console.log(item.F_Not_Recalculate);
+                //console.log(item.F_Not_Recalculate);
                 if (item.F_Not_Recalculate) {
                     $("#tdR" + k + "Pcs" + dateSet[_countDateSet]).css("font-weight", "900");
                 }
@@ -727,31 +729,25 @@ const addDetailToTable = async (dateSet, intRow) => {
 const periodFilter = async () => {
 
     if (_command == "Preview") return;
+    let arr = [];
 
-    let DeliveryDate = $("#spanDeliveryDate").text().slice(6,10) + $("#spanDeliveryDate").text().slice(3, 5) + $("#spanDeliveryDate").text().slice(0, 2);
-    let shift = _CookieProcessDate.slice(10, 11);
-    let shiftToRowNum = shift == "D" ? "1" : "2";
-    let DeliveryDateTable = DeliveryDate.slice(6, 8) + "-" + DeliveryDate.slice(4, 6) + "-" + DeliveryDate.slice(0, 4);
+    for (let i = 0; i < dT_DeliveryDate.length; i++)
+    {
+        let deliveryDate = dT_DeliveryDate[i].F_Delivery_Date.slice(6, 8) + "-" + dT_DeliveryDate[i].F_Delivery_Date.slice(4, 6) + "-" + dT_DeliveryDate[i].F_Delivery_Date.slice(0, 4);
+        let deliveryTrip = dT_DeliveryDate[i].F_Delivery_Trip;
 
-    //console.log(DeliveryDateTable);
-    //consol e.log(DeliveryDate);
+        if (arr.some(f => f.deliveryDate == deliveryDate && f.deliveryTrip == deliveryTrip)) continue;
 
-    let periodFiltered = dT_Period.filter(x => x.Date_Now == DeliveryDate && (x.Row_Num == 1 || x.Row_Num == 2));
-    let j = 0;
-    periodFiltered.forEach(function (item, i) {
-        if (item.Row_Num != shiftToRowNum) {
-            j = item.F_Period
+        arr.push({ deliveryDate: deliveryDate, deliveryTrip: deliveryTrip });
+
+        for (let k = 2; k <= 20; k++)
+        {
+            let _id = `tdR${k}T${deliveryTrip}${deliveryDate}`;
+            $(`#${_id}`).css("background-color", "#FFFFFF");
+
         }
-        else {
-            for (let i = 2; i <= 20; i++) {
-                for (let k = 1+j; k <= item.F_Period + j; k++) {
-                    let _id = `tdR${i}T${k}${DeliveryDateTable}`;
-                    console.log(_id);
-                    $(`#${_id}`).css("background-color", "#FFFFFF");
-                }
-            }
-        }
-    });
+
+    }
 
 }
 

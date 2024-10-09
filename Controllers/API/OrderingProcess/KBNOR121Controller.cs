@@ -355,21 +355,12 @@ namespace KANBAN.Controllers.API.OrderingProcess
             }
         }
 
-        [HttpPost]
-        public async Task Find_StartEnd_Date(VMKBNOR121_Preview obj)
+        private void Find_StartEnd_Date(VMKBNOR121_Preview obj)
         {
             try
             {
                 _BearerClass.Authentication(Request);
                 if (_BearerClass.Status == 401) throw new Exception("Unauthorized");
-
-                //return Unauthorized(new
-                //{
-                //    status = "401",
-                //    response = "Unauthorized",
-                //    title = "Unauthorized",
-                //    message = "Please Login First"
-                //});
 
                 if (obj.Action == "Preview")
                 {
@@ -389,13 +380,6 @@ namespace KANBAN.Controllers.API.OrderingProcess
 
                     if (NoDayPreview.Rows.Count == 0)
                     {
-                        //return NotFound(new
-                        //{
-                        //    status = "404",
-                        //    response = "Not Found",
-                        //    title = "Error",
-                        //    message = "NumberOfDayToPreview Not Found"
-                        //});
 
                         throw new Exception("NumberOfDayToPreview Not Found");
                     }
@@ -417,13 +401,6 @@ namespace KANBAN.Controllers.API.OrderingProcess
 
                     if (NoDayPreview.Rows.Count == 0)
                     {
-                        //return NotFound(new
-                        //{
-                        //    status = "404",
-                        //    response = "Not Found",
-                        //    title = "Error",
-                        //    message = "NumberOfDayToPreview Not Found"
-                        //});
 
                         throw new Exception("NumberOfDayToPreview Not Found");
                     }
@@ -441,13 +418,6 @@ namespace KANBAN.Controllers.API.OrderingProcess
 
                 if (DT_DeliveryDate.Rows.Count == 0)
                 {
-                    //return NotFound(new
-                    //{
-                    //    status = "404",
-                    //    response = "Not Found",
-                    //    title = "Error",
-                    //    message = "Delivery Date Not Found"
-                    //});
 
                     throw new Exception("Delivery Date Not Found");
                 }
@@ -460,13 +430,6 @@ namespace KANBAN.Controllers.API.OrderingProcess
 
                 if (DT_Date.Rows.Count == 0)
                 {
-                    //return NotFound(new
-                    //{
-                    //    status = "404",
-                    //    response = "Not Found",
-                    //    title = "Error",
-                    //    message = "Cycle Time Not Found"
-                    //});
 
                     throw new Exception("Cycle Time Not Found");
                 }
@@ -490,29 +453,10 @@ namespace KANBAN.Controllers.API.OrderingProcess
                     DT_Period.Merge(dtAdd);
 
                 }
-
-                //return Ok(new
-                //{
-                //    status = "200",
-                //    response = "OK",
-                //    title = "Success",
-                //    message = "Start and End Date Complete",
-                //    data = JsonConvert.SerializeObject(DT_Period)
-                //});
-
             }
             catch (Exception ex)
             {
                 throw new Exception (ex.Message);
-
-                //return StatusCode(500, new
-                //{
-                //    status = "500",
-                //    response = "Internal Server Error",
-                //    title = "Error !",
-                //    message = "Unexpected Error !",
-                //    error = ex.Message
-                //});
             }
         }
 
@@ -531,7 +475,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
                     message = "Please Login First"
                 });
 
-                await Find_StartEnd_Date(obj);
+                Find_StartEnd_Date(obj);
 
                 DT_PartControl.Clear();
                 DT_Header.Clear();

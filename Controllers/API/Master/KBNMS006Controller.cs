@@ -1370,6 +1370,7 @@ namespace HINOSystem.Controllers.API.Master
                     dbObj.F_Delivery_Trip = obj.F_Delivery_Trip;
                     dbObj.F_KB_Cut = obj.F_KB_Cut;
                     dbObj.F_KB_Cut_RN = obj.F_KB_Cut_RN;
+                    dbObj.F_KB_Remain = obj.F_KB_Cut;
                     dbObj.F_Update_Date = DateTime.Now;
                     dbObj.F_Update_By = _BearerClass.UserCode;
                     _KB3Context.TB_Kanban_Cut.Add(dbObj);
@@ -1381,6 +1382,7 @@ namespace HINOSystem.Controllers.API.Master
                     obj.F_Create_Date = DateTime.Now;
                     obj.F_Update_By = _BearerClass.UserCode;
                     obj.F_Update_Date = DateTime.Now;
+                    obj.F_KB_Remain = obj.F_KB_Cut;
                     _KB3Context.TB_Kanban_Cut.Add(obj);
                 }
 

@@ -23,6 +23,13 @@ namespace KANBAN.Services.SpecialOrdering
         Task SaveKBNOR210_1_STC_3_1(List<VM_Save_KBNOR210_1_STC_3_1> obj);
         string ListDatatogrid(string? SupplierCD = "", string? PartNo = "", string? StoreCode = "", string? StockDate = "", string? UpdateBy = "", string? UpdateDate = "");
         string STC_1_GetSupplierCode(bool isNew, string StockDate);
+        string STC_1_GetPartNo(bool isNew, string StockDate, string Supplier_Code);
+        string STC_1_GetStore(bool isNew, string StockDate, string Supplier_Code, string Part_No);
+        string STC_1_GetSupplierName(string Supplier_Code);
+        string STC_1_GetPartName(string Supplier_Code, string Part_No);
+        string STC_1_GetKB_Qty(string Supplier_Code, string Part_No, string StockDate, string Store_CD);
+        Task STC_1_Save(VM_Post_KBNOR210_STC_1 obj);
+        Task STC_1_Import(List<VM_Import_KBNOR210_STC_1> listObj);
     }
 
     public class KBNOR210_1 : IKBNOR210_1
@@ -617,10 +624,10 @@ namespace KANBAN.Services.SpecialOrdering
                 if (isNew)
                 {
                     string sql = $@"SELECT  F_Supplier_Cd + '-' + F_Plant AS F_Supplier 
-                                FROM VW_PPMDB_BOM Where  F_Supplier_CD <> '' and (F_CKD_Str <= @p0 
-                                and F_CKD_End >= @p1 ) GROUP BY F_Supplier_Cd, F_Plant ORDER BY F_Supplier_Cd, F_Plant ";
+                                FROM VW_PPMDB_BOM Where  F_Supplier_CD <> '' and (F_CKD_Str <= '{StockDate}'
+                                and F_CKD_End >= '{StockDate}' ) GROUP BY F_Supplier_Cd, F_Plant ORDER BY F_Supplier_Cd, F_Plant ";
 
-                    var dt = _FillDT.ExecuteSQL_Param(sql, new SqlParameter("@p0", StockDate), new SqlParameter("@p1", StockDate));
+                    var dt = _FillDT.ExecuteSQL(sql);
 
                     if (dt.Rows.Count == 0)
                     {
@@ -634,11 +641,11 @@ namespace KANBAN.Services.SpecialOrdering
                 {
                     string sql = $@"SELECT  F_Supplier_Code As F_Supplier 
                                 FROM FN_getStockRemainSPCData() 
-                                Where  F_STock_Date = @p0 
+                                Where  F_STock_Date = '{StockDate}'
                                 GROUP BY  F_Supplier_Code 
                                 ORDER BY F_Supplier_Code ";
 
-                    var dt = _FillDT.ExecuteSQL_Param(sql, new SqlParameter("@p0", StockDate));
+                    var dt = _FillDT.ExecuteSQL(sql);
 
                     if(dt.Rows.Count == 0)
                     {
@@ -656,5 +663,385 @@ namespace KANBAN.Services.SpecialOrdering
             }
 
         }
+
+        public string STC_1_GetPartNo(bool isNew, string StockDate, string? Supplier_Code)
+        {
+
+            try
+            {
+
+                if (isNew)
+                {
+                    string sql = $@"SELECT RTRIM(F_Part_no) + '-' + F_Ruibetsu AS F_Part_no  
+                                FROM  VW_PPMDB_BOM 
+                                Where  (F_CKD_str <= '{StockDate}' and F_CKD_End >= '{StockDate}' )";
+
+                    if(!string.IsNullOrWhiteSpace(Supplier_Code))
+                    {
+                        sql += $" and F_Supplier_cd = '{Supplier_Code.Split('-')[0]}' and F_Plant = '{Supplier_Code.Split('-')[1]}' ";
+                    }
+
+                    sql += "Group BY F_Part_no,F_Ruibetsu ORDER BY F_Part_no,F_Ruibetsu ";
+
+                    var dt = _FillDT.ExecuteSQL(sql);
+
+                    if (dt.Rows.Count == 0)
+                    {
+                        throw new Exception("Data not found");
+                    }
+
+                    return JsonConvert.SerializeObject(dt);
+
+                }
+                else
+                {
+                    string sql = $@"SELECT     RTRIM(F_Part_no)  AS F_Part_no  
+                                FROM FN_getStockRemainSPCData() 
+                                Where  F_STock_Date = '{StockDate}'";
+
+                    if (!string.IsNullOrWhiteSpace(Supplier_Code))
+                    {
+                        sql += $" and F_Supplier_Code = '{Supplier_Code}' ";
+                    }
+
+                    sql += @" GROUP BY  F_Part_no 
+                                ORDER BY F_Part_no ";
+
+                    var dt = _FillDT.ExecuteSQL(sql);
+
+                    if (dt.Rows.Count == 0)
+                    {
+                        throw new Exception("Data not found");
+                    }
+
+                    return JsonConvert.SerializeObject(dt);
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
+        }
+
+        public string STC_1_GetStore(bool isNew, string StockDate, string? Supplier_Code,string? Part_No)
+        {
+
+            try
+            {
+
+                if (isNew)
+                {
+                    string sql = $@"SELECT F_Store_CD  
+                                FROM  VW_PPMDB_BOM 
+                                Where (F_CKD_str <= '{StockDate}' and F_CKD_End >= '{StockDate}' ) ";
+
+                    if (!string.IsNullOrWhiteSpace(Supplier_Code))
+                    {
+                        sql += $" and F_Supplier_cd = '{Supplier_Code.Split('-')[0]}' and F_Plant = '{Supplier_Code.Split('-')[1]}' ";
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(Part_No))
+                    {
+                        sql += $" and Rtrim(F_Part_no) = '{Part_No.Split('-')[0]}' and F_Ruibetsu = '{Part_No.Split('-')[1]}' ";
+                    }
+
+                    sql += "Group BY F_Store_CD ORDER BY F_Store_CD ";
+
+                    var dt = _FillDT.ExecuteSQL(sql);
+
+                    if (dt.Rows.Count == 0)
+                    {
+                        throw new Exception("Data not found");
+                    }
+
+                    return JsonConvert.SerializeObject(dt);
+
+                }
+                else
+                {
+                    string sql = $@"SELECT  F_Store_CD
+                                FROM FN_getStockRemainSPCData() 
+                                Where  F_STock_Date = '{StockDate}'";
+
+                    if (!string.IsNullOrWhiteSpace(Supplier_Code))
+                    {
+                        sql += $" and F_Supplier_Code = '{Supplier_Code}' ";
+                    }
+                    if (!string.IsNullOrWhiteSpace(Part_No))
+                    {
+                        sql += $" and Rtrim(F_Part_no) = '{Part_No.Split('-')[0]}' and F_Ruibetsu = '{Part_No.Split('-')[1]}' ";
+                    }
+
+                    sql += @"  GROUP BY  F_Store_CD 
+                                ORDER BY F_Store_CD ";
+
+                    var dt = _FillDT.ExecuteSQL(sql);
+
+                    if (dt.Rows.Count == 0)
+                    {
+                        throw new Exception("Data not found");
+                    }
+
+                    return JsonConvert.SerializeObject(dt);
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
+        }
+
+        public string STC_1_GetSupplierName (string Supplier_Code)
+        {
+            try
+            {
+                var Supplier_Name = _kbContext.Database.SqlQueryRaw<string>
+                    ("Select Top 1 Rtrim(F_name) As Value From VW_PPMDB_BOM Where F_supplier_cd + '-' + F_plant = {0}", Supplier_Code)
+                    .FirstOrDefault();
+
+                if (string.IsNullOrWhiteSpace(Supplier_Name))
+                {
+                    throw new Exception("Supplier Name not found");
+                }
+
+                return Supplier_Name;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
+        }
+
+        public string STC_1_GetPartName (string Supplier_Code,string Part_No)
+        {
+            try
+            {
+
+                var Part_Name = _kbContext.Database.SqlQueryRaw<string>
+                    ("Select F_Part_NM AS VALUE From VW_PPMDB_BOM Where  F_supplier_cd+'-'+F_plant = {0} " +
+                    " and Rtrim(F_Part_No)+'-'+Rtrim(F_Ruibetsu) = {1} ",
+                    Supplier_Code, Part_No).FirstOrDefault();
+
+                if (string.IsNullOrWhiteSpace(Part_Name))
+                {
+                    throw new Exception("Part Name not found");
+                }
+
+                return Part_Name;
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public string STC_1_GetKB_Qty(string Supplier_Code, string Part_No, string StockDate,string Store_CD)
+        {
+            try
+            {
+                string sql = $@"SELECT   F_Qty_Box, F_Kanban_No 
+                            FROM  VW_PPMDB_BOM 
+                            Where  F_Supplier_cd + '-' + F_Plant = '{Supplier_Code}' 
+                            and (F_CKD_str <= '{StockDate}' and F_CKD_End >= '{StockDate}') 
+                            and Rtrim(F_Part_no)+'-'+F_Ruibetsu = '{Part_No}' 
+                            and F_Store_Cd = '{Store_CD}' 
+                            Group BY F_Qty_Box, F_Kanban_No 
+                            ORDER BY F_Qty_Box, F_Kanban_No ";
+
+
+                var dt = _FillDT.ExecuteSQL(sql);
+
+                if(dt.Rows.Count == 0)
+                {
+                    throw new Exception("Data not found");
+                }
+
+                return JsonConvert.SerializeObject(dt);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+    
+        public async Task STC_1_Save(VM_Post_KBNOR210_STC_1 obj)
+        {
+
+            try
+            {
+
+                if(obj.Action.ToLower() == "new")
+                {
+
+                    var existData = await _kbContext.TB_STOCK_KB_SPC_PART_REMAIN
+                        .FirstOrDefaultAsync(x => x.F_Supplier_CD.Trim() 
+                        + "-" + x.F_Supplier_Plant.Trim() == obj.Supplier_Code
+                        && x.F_Part_no.Trim() + "-" + x.F_Ruibetsu.Trim() == obj.Part_No
+                        && x.F_Store_Code == obj.Store_CD);
+
+                    if (existData != null)
+                    {
+                        var prevStock = existData.F_Prev_Stock_Qty;
+                        existData.F_Stock_Qty = obj.Actual_PCS == 0 ? 0 : obj.Actual_PCS;
+                        existData.F_Stock_Date = obj.Stock_Date;
+                        existData.F_Prev_Stock_Qty = prevStock;
+                        existData.F_Update_By = _BearerClass.UserCode;
+                        existData.F_Update_Date = DateTime.Now;
+                        existData.F_Kanban_no = obj.Kanban_No;
+                        existData.F_Package = obj.Qty_Pack;
+                        existData.F_Check_By = obj.Check_Stock_By;
+                        existData.F_Remark = obj.Remark;
+
+                        _kbContext.TB_STOCK_KB_SPC_PART_REMAIN.Update(existData);
+                    }
+
+                    else
+                    {
+                        var data = new TB_STOCK_KB_SPC_PART_REMAIN
+                        {
+                            F_Supplier_CD = obj.Supplier_Code.Split("-")[0],
+                            F_Supplier_Plant = obj.Supplier_Code.Split("-")[1],
+                            F_Part_no = obj.Part_No.Split("-")[0],
+                            F_Ruibetsu = obj.Part_No.Split("-")[1],
+                            F_Store_Code = obj.Store_CD,
+                            F_Stock_Qty = obj.Actual_PCS == 0 ? 0 : obj.Actual_PCS,
+                            F_Stock_Date = obj.Stock_Date,
+                            F_Prev_Stock_Qty = 0,
+                            F_Update_By = _BearerClass.UserCode,
+                            F_Update_Date = DateTime.Now,
+                            F_Kanban_no = obj.Kanban_No,
+                            F_Package = obj.Qty_Pack,
+                            F_Check_By = obj.Check_Stock_By,
+                            F_Remark = obj.Remark
+                        };
+
+                        _kbContext.TB_STOCK_KB_SPC_PART_REMAIN.Add(data);
+                    }
+
+                }
+
+                else if (obj.Action.ToLower() == "upd")
+                {
+
+                    var existData = await _kbContext.TB_STOCK_KB_SPC_PART_REMAIN
+                        .FirstOrDefaultAsync(x => x.F_Supplier_CD.Trim()
+                        + "-" + x.F_Supplier_Plant.Trim() == obj.Supplier_Code
+                        && x.F_Part_no.Trim() + "-" + x.F_Ruibetsu.Trim() == obj.Part_No
+                        && x.F_Store_Code == obj.Store_CD);
+
+                    if (existData != null)
+                    {
+
+                        var prevStock = existData.F_Prev_Stock_Qty;
+                        existData.F_Stock_Qty = obj.Actual_PCS == 0 ? 0 : obj.Actual_PCS;
+                        existData.F_Stock_Date = obj.Stock_Date;
+                        existData.F_Prev_Stock_Qty = prevStock;
+                        existData.F_Update_By = _BearerClass.UserCode;
+                        existData.F_Update_Date = DateTime.Now;
+                        existData.F_Kanban_no = obj.Kanban_No;
+                        existData.F_Package = obj.Qty_Pack;
+                        existData.F_Check_By = obj.Check_Stock_By;
+                        existData.F_Remark = obj.Remark;
+
+                        _kbContext.TB_STOCK_KB_SPC_PART_REMAIN.Update(existData);
+
+                    }
+                    else
+                    {
+                        throw new Exception("Data not found");
+                    }
+
+                }
+
+                else
+                {
+
+                    var existData = await _kbContext.TB_STOCK_KB_SPC_PART_REMAIN
+                        .FirstOrDefaultAsync(x => x.F_Supplier_CD.Trim()
+                        + "-" + x.F_Supplier_Plant.Trim() == obj.Supplier_Code
+                        && x.F_Part_no.Trim() + "-" + x.F_Ruibetsu.Trim() == obj.Part_No
+                        && x.F_Store_Code == obj.Store_CD);
+
+                    if (existData != null)
+                    {
+                        _kbContext.TB_STOCK_KB_SPC_PART_REMAIN.Remove(existData);
+                    }
+                    else
+                    {
+                        throw new Exception("Data not found");
+                    }
+                }
+
+                await _kbContext.SaveChangesAsync();
+
+                _log.WriteLogMsg("STC_1_Save | " + JsonConvert.SerializeObject(obj));
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
+        }
+
+        public async Task STC_1_Import(List<VM_Import_KBNOR210_STC_1> listObj)
+        {
+
+            try
+            {
+
+                foreach (var obj in listObj)
+                {
+                    VM_Post_KBNOR210_STC_1 _obj = new VM_Post_KBNOR210_STC_1
+                    {
+                        Action = "New",
+                        Stock_Date = obj.StockDate,
+                        Part_No = obj.PartNo + "-" + obj.Ruibetsu,
+                        Supplier_Code = obj.Supp_CD + "-" + obj.Supp_Plant,
+                        Store_CD = obj.StoreCd,
+                        Actual_PCS = obj.StockQty,
+                        Remark = null,
+                        Check_Stock_By = null,
+                    };
+
+                    string sql = $@"SELECT (TOP 1)  F_Qty_Box, F_Kanban_No 
+                            FROM  VW_PPMDB_BOM 
+                            Where  F_Supplier_cd + '-' + F_Plant = '{_obj.Supplier_Code}' 
+                            and (F_CKD_str <= '{_obj.Stock_Date}' and F_CKD_End >= '{_obj.Stock_Date}') 
+                            and Rtrim(F_Part_no)+'-'+F_Ruibetsu = '{_obj.Part_No}' 
+                            and F_Store_Cd = '{_obj.Store_CD}' 
+                            Group BY F_Qty_Box, F_Kanban_No 
+                            ORDER BY F_Qty_Box, F_Kanban_No ";
+
+                    var getData = _FillDT.ExecuteSQL(sql);
+
+                    if (getData.Rows.Count == 0)
+                    {
+                        throw new Exception("Data not found");
+                    }
+
+                    _obj.Kanban_No = getData.Rows[0]["F_Kanban_No"].ToString();
+                    _obj.Qty_Pack = Convert.ToInt32(getData.Rows[0]["F_Qty_Box"]);
+
+                    await STC_1_Save(_obj);
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
+        }
+
     }
 }

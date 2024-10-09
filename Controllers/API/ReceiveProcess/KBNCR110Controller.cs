@@ -297,6 +297,7 @@ namespace HINOSystem.Controllers.API.Master
                                     _KB3Context.TB_REC_DETAIL.Update(singleRecDet);
                                     _Serilog.WriteLogMsg($"Update TB_REC_DETAIL {JsonConvert.SerializeObject(singleRecDet)}");
                                 }
+                                await _KB3Context.SaveChangesAsync();
                                 if (!await InsToRecLocal(PDSNo))
                                 {
                                     _result = @"{
@@ -381,11 +382,9 @@ namespace HINOSystem.Controllers.API.Master
                             F_Pds_No = "",
                             F_Pack_Code = ""
                         };
-                        _trlList.Add(_trl);
+                        _PPM3Context.T_Receive_Local.Add(_trl);
+                        _Serilog.WriteLogMsg($"Insert T_Receive_Local {JsonConvert.SerializeObject(_trl)}");
                     }
-                    _PPM3Context.T_Receive_Local.AddRange(_trlList);
-                    _Serilog.WriteLogMsg($"Insert T_Receive_Local {JsonConvert.SerializeObject(_trlList)}");
-                    await _KB3Context.SaveChangesAsync();
                     await _PPM3Context.SaveChangesAsync();
                     await UploadToEpro(user);
                 }

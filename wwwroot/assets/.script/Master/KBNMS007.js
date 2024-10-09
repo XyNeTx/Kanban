@@ -515,9 +515,13 @@ function GetKanbanAddObj() {
             let _objId = "F_Round" + i;
             obj[_objId] = parseInt($("#" + _id).val());
         }
-        for (let i = parseInt($("#readCycle").val().substring(3, 5)) + 1; i <= 30; i++) {
+        //for (let i = parseInt($("#readCycle").val().substring(3, 5)) + 1; i <= 30; i++) {
+        //    let _objId = "F_Round" + i;
+        //    obj[_objId] = 0
+        //}
+        for (let i = 1; i <= 30; i++) {
             let _objId = "F_Round" + i;
-            obj[_objId] = 0
+            obj[_objId] = obj[_objId] == "" ? 0 : obj[_objId];
         }
     }
 

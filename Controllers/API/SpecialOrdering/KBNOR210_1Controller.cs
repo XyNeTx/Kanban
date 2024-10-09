@@ -459,5 +459,226 @@ namespace KANBAN.Controllers.API.SpecialOrder
             }
 
         }
+
+        [HttpGet]
+        public IActionResult STC_1_GetPartNo(bool isNew, string StockDate , string? Supplier_Code)
+        {
+            try
+            {
+                if (_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
+                {
+                    return StatusCode(_BearerClass.Status, new
+                    {
+                        status = _BearerClass.Status,
+                        response = _BearerClass.Response,
+                        message = _BearerClass.Message
+                    });
+                }
+
+                var data = _services.IKBNOR210_1.STC_1_GetPartNo(isNew, StockDate, Supplier_Code );
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data Found",
+                    data = data
+                });
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    response = "Error",
+                    message = ex.Message
+                });
+            }
+        }
+
+        [HttpGet]
+        public IActionResult STC_1_GetStore(bool isNew, string StockDate, string? Supplier_Code, string? Part_No)
+        {
+            try
+            {
+                if (_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
+                {
+                    return StatusCode(_BearerClass.Status, new
+                    {
+                        status = _BearerClass.Status,
+                        response = _BearerClass.Response,
+                        message = _BearerClass.Message
+                    });
+                }
+
+                var data = _services.IKBNOR210_1.STC_1_GetStore(isNew, StockDate, Supplier_Code, Part_No);
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data Found",
+                    data = data
+                });
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    response = "Error",
+                    message = ex.Message
+                });
+            }
+        }
+
+        [HttpGet] 
+        public IActionResult STC_1_GetSupplierName(string Supplier_Code)
+        {
+            try
+            {
+                if (_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
+                {
+                    return StatusCode(_BearerClass.Status, new
+                    {
+                        status = _BearerClass.Status,
+                        response = _BearerClass.Response,
+                        message = _BearerClass.Message
+
+                    });
+                }
+
+                var data = _services.IKBNOR210_1.STC_1_GetSupplierName(Supplier_Code);
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data Found",
+                    data = data
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    response = "Error",
+                    message = ex.Message
+                });
+            }
+        }
+
+        [HttpGet]
+        public IActionResult STC_1_GetPartName(string Supplier_Code ,string Part_No)
+        {
+            try
+            {
+                if (_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
+                {
+                    return StatusCode(_BearerClass.Status, new { status = _BearerClass.Status, response = _BearerClass.Response, message = _BearerClass.Message });
+                }
+
+                var data = _services.IKBNOR210_1.STC_1_GetPartName(Supplier_Code, Part_No);
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data Found",
+                    data = data
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { status = "500", response = "Error", message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        public IActionResult STC_1_GetKB_Qty (string Supplier_Code, string Part_No, string Stock_Date, string Store_Code)
+        {
+            try
+            {
+                if (_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
+                {
+                    return StatusCode(_BearerClass.Status, new
+                    {
+                        status = _BearerClass.Status,
+                        response = _BearerClass.Response,
+                        message = _BearerClass.Message
+                    });
+                }
+
+                var data = _services.IKBNOR210_1.STC_1_GetKB_Qty(Supplier_Code, Part_No, Stock_Date, Store_Code);
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data Found",
+                    data = data
+                });
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { status = "500", response = "Error", message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> STC_1_Save(VM_Post_KBNOR210_STC_1 obj)
+        {
+            try
+            {
+                if (_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
+                {
+                    return StatusCode(_BearerClass.Status, new {
+                        status = _BearerClass.Status,
+                        response = _BearerClass.Response,
+                        message = _BearerClass.Message
+                    });
+                }
+
+                await _services.IKBNOR210_1.STC_1_Save(obj);
+
+                return Ok(new { status = "200", response = "Success", message = "Data saved" });
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { status = "500", response = "Error", message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> STC_1_Import(List<VM_Import_KBNOR210_STC_1> listObj)
+        {
+
+            try
+            {
+
+                if(_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
+                {
+                    return StatusCode(_BearerClass.Status, new
+                    {
+                        status = _BearerClass.Status,
+                        response = _BearerClass.Response,
+                        message = _BearerClass.Message
+                    });
+                }
+
+                await _services.IKBNOR210_1.STC_1_Import(listObj);
+
+                return Ok(new { status = "200", response = "Success", message = "Data imported" });
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { status = "500", response = "Error", message = ex.Message });
+            }
+        }
     }
 }

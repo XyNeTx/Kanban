@@ -106,7 +106,7 @@
 
 });
 
-$("#ReceiveBtn").click(function () {
+$("#ReceiveBtn").click(async function () {
 
     $("#ReceiveBtn").prop('disabled', true)
     var _selData = [];
@@ -119,46 +119,34 @@ $("#ReceiveBtn").click(function () {
         }
     });
 
-    //// console.log(_selData);
-    //xAjax.Post({
-    //    url: 'KBNCR110/ReceiveAllPart',
-    //    data: {
-    //        'F_PDS_No': _selData,
-    //    },
-    //    then: function (result) {
-    //        console.log(result)
-    //        if (result.status == "200") {
-    //            xSwal.success(result.title, result.message);
-    //            $('#tblMaster').DataTable().clear();
-    //            $('#tblMaster').DataTable().draw();
-    //            pdsSet.clear();
-    //        }
-    //        else {
-    //            xSwal.error(result.title, result.message);
-    //        }
-    //    },
-    //    error: function (result) {
-    //        console.error(_Controller + '.ReceiveAllPart: ' + result.responseText);
-    //        xSplash.hide();
-    //    }
-    //});
-
-    _xLib.AJAX_Post("/api/KBNCR110/ReceiveAllPart", JSON.stringify(_selData),
-    function (success) {
-            console.log(success);
-            xSwal.success("Success", success.message);
-            $("#tblMaster").DataTable().clear().draw();
-            $("#ReceiveBtn").prop('disabled', false);
+    // console.log(_selData);
+    xAjax.Post({
+        url: 'KBNCR110/ReceiveAllPart',
+        data: {
+            'F_PDS_No': _selData,
         },
-        function (error) {
-            console.error(error);
-            xSwal.error(error.responseJSON.response, error.responseJSON.message);
+        then: async function (result) {
+            console.log(result)
+            if (result.status == "200") {
+                $('#tblMaster').DataTable().clear();
+                $('#tblMaster').DataTable().draw();
+                pdsSet.clear();
+                $("#ReceiveBtn").prop('disabled', false);
+                xSwal.success(result.title, result.message);
+            }
+            else {
+                $("#ReceiveBtn").prop('disabled', false);
+                xSwal.error(result.title, result.message);
+            }
+        },
+        error: function (result) {
+            console.error(_Controller + '.ReceiveAllPart: ' + result.responseText);
             $("#ReceiveBtn").prop('disabled', false);
+            xSplash.hide();
         }
-    );
+    });
 
-    $("#ReceiveBtn").prop('disabled', false);
-
+    xSplash.hide();
 });
 
 $("#uploadEpro").click(function () {

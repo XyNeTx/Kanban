@@ -162,6 +162,7 @@ namespace HINOSystem.Context
         public DbSet<TB_Transaction_Spc> TB_Transaction_Spc { get; set; }
         public DbSet<UserAuthorize> UserAuthorize { get; set; }
         public DbSet<Menu> Menu { get; set; }
+        public DbSet<TB_STOCK_KB_SPC_PART_REMAIN> TB_STOCK_KB_SPC_PART_REMAIN { get; set; }
 
         //protected override void OnModelCreating(ModelBuilder modelBuilder)
         //{
