@@ -219,6 +219,8 @@
     <None Include="wwwroot\assets\.script\SpecialOrdering\KBNOR210_2.js" />
     <None Include="wwwroot\assets\.script\SpecialOrdering\KBNOR210_3.js" />
     <None Include="wwwroot\assets\.script\SpecialOrdering\KBNOR210_1.js" />
+    <None Include="wwwroot\assets\.script\specialordering\KBNOR293.js" />
+    <None Include="wwwroot\assets\.script\specialordering\KBNOR294.js" />
     <None Include="wwwroot\assets\.script\XLib\xLib.js" />
     <None Include="wwwroot\assets\.libs\display\display.ListOfValues.js" />
     <None Include="wwwroot\assets\.libs\splash\splash.bundle.js" />

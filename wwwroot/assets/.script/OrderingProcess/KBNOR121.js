@@ -736,19 +736,38 @@ const periodFilter = async () => {
         let deliveryDate = dT_DeliveryDate[i].F_Delivery_Date.slice(6, 8) + "-" + dT_DeliveryDate[i].F_Delivery_Date.slice(4, 6) + "-" + dT_DeliveryDate[i].F_Delivery_Date.slice(0, 4);
         let deliveryTrip = dT_DeliveryDate[i].F_Delivery_Trip;
 
+        let trip = parseInt(dT_Period[0]["F_Period"]);
+
+        if (_CookieLoginDate.slice(10, 11) == "N") trip = parseInt(dT_Period[0]["F_Period"]) + parseInt(dT_Period[1]["F_Period"]);
+
+
         if (arr.some(f => f.deliveryDate == deliveryDate && f.deliveryTrip == deliveryTrip)) continue;
 
         arr.push({ deliveryDate: deliveryDate, deliveryTrip: deliveryTrip });
 
-        for (let k = 2; k <= 20; k++)
+        if (_CookieLoginDate.includes("D"))
         {
-            let _id = `tdR${k}T${deliveryTrip}${deliveryDate}`;
-            $(`#${_id}`).css("background-color", "#FFFFFF");
 
+            for (trip; trip > 0; trip--)
+            {
+                for (let k = 2; k <= 20; k++)
+                {
+                    let _id = `tdR${k}T${trip}${deliveryDate}`;
+                    $(`#${_id}`).css("background-color", "#FFFFFF");
+                }
+            }
         }
-
+        else
+        {
+            for (trip; trip > parseInt(dT_Period[0]["F_Period"]); trip--)
+            {
+                for (let k = 2; k <= 20; k++) {
+                    let _id = `tdR${k}T${trip}${deliveryDate}`;
+                    $(`#${_id}`).css("background-color", "#FFFFFF");
+                }
+            }
+        }
     }
-
 }
 
 const sumKB = async (dateSet) => {

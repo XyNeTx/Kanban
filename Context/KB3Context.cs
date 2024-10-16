@@ -88,7 +88,7 @@ namespace HINOSystem.Context
         public DbSet<TB_MS_MaxArea_Stock> TB_MS_MaxArea_Stock { get; set; }
         public DbSet<TB_MS_NEW_PART> TB_MS_NEW_PART { get; set; }
         public DbSet<TB_MS_OldPart> TB_MS_OldPart { get; set; }
-        public DbSet<TB_MS_Operator> TB_MS_Operator { get; set; }
+        //public DbSet<Models.KB3.Master.TB_MS_Operator> TB_MS_Operator { get; set; }
         public DbSet<TB_MS_OrderType> TB_MS_OrderType { get; set; }
         public DbSet<TB_MS_Package> TB_MS_Package { get; set; }
         public DbSet<TB_MS_PairOrder> TB_MS_PairOrder { get; set; }
@@ -163,6 +163,7 @@ namespace HINOSystem.Context
         public DbSet<UserAuthorize> UserAuthorize { get; set; }
         public DbSet<Menu> Menu { get; set; }
         public DbSet<TB_STOCK_KB_SPC_PART_REMAIN> TB_STOCK_KB_SPC_PART_REMAIN { get; set; }
+        public DbSet<KANBAN.Models.KB3.SpecialOrdering.TB_MS_Operator> TB_MS_Operator { get; set; }
 
         //protected override void OnModelCreating(ModelBuilder modelBuilder)
         //{

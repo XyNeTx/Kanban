@@ -1,0 +1,119 @@
+$(document).ready(async function () {
+
+    $("#tableMain").DataTable({
+        width: '100%',
+        paging: false,
+        scrollCollapse: true,
+        "processing": false,
+        "serverSide": false,
+        scrollX: false,
+        scrollY: '400px',
+        searching: false,
+        info: false,
+        ordering: false,
+        columns: [
+            { title: "UserID", data: "UserID", width: "15%" },
+            { title: "UserName", data: "UserName", width: "25%" },
+            { title: "Telephone", data: "Telelphone", width: "15%" },
+            { title: "Fax", data: "Fax", width: "10%" },
+            { title: "Email", data: "Email", width: "35%" },
+        ],
+        order: [[1, 'asc']],
+    });
+
+    await LoadContactList();
+
+    xSplash.hide();
+
+});
+
+
+function LoadContactList() {
+    // Load Color Tag
+
+    let obj = {
+        UserID: "AddNew",
+        UserName: "",
+        Telelphone: "",
+        Fax: "",
+        Email: ""
+    };
+
+    _xLib.AJAX_Get("/api/KBNOR294/LoadContactList", "",
+        function (success) {
+            success = _xLib.JSONparseMixData(success);
+
+            if (success.data.length > 0) {
+                var table = $('#tableMain').DataTable();
+                table.clear();
+                table.rows.add(success.data);
+                table.row.add(obj);
+                table.draw();
+            }
+
+            $("table thead tr th").addClass("text-center");
+            $("table tbody tr td").addClass("text-center");
+
+        },
+        function (error) {
+            console.log(error);
+        }
+    );
+
+}
+
+let _oriValue = "";
+$(document).on('dblclick', '#tableMain tbody tr td', function () {
+
+    if ($(".clsEdit").length > 0) return;
+
+    _oriValue = $(this).text();
+
+    $(this).empty();
+    $(this).append('<input type="text" class="clsEdit form-control" id="txtEdit" value="' + _oriValue + '" />');
+
+    $('#txtEdit').focus();
+});
+
+$(document).on('focusout  keypress', '#tableMain tbody tr td', function (e) {
+    if ((e.type == 'keypress' && e.which == 13) || e.type == 'focusout') {
+
+        let _newValue = $(this).find('input').val();
+
+        if (_newValue == _oriValue || _newValue == "") {
+            $(this).empty();
+            $(this).text(_oriValue);
+            return;
+        };
+        $(this).empty();
+        $("#tableMain").DataTable().cell(this).data(_newValue).draw();
+    }
+    else {
+        return;
+    }
+
+});
+
+$("#btnConfirm").click(function () {
+    Confirm();
+});
+
+function Confirm() {
+
+    let listObj = $('#tableMain').DataTable().rows().data().toArray();
+
+    listObj = listObj.filter(function (el) {
+        return (el.UserID != "AddNew" || el.UserName != "" || el.Telelphone != "" || el.Email != "");
+    });
+
+    _xLib.AJAX_Post("/api/KBNOR294/Confirm", listObj,
+        function (success) {
+            xSwal.success(success.response, success.message);
+            return LoadContactList();
+        },
+        function (error) {
+            console.log(error);
+        }
+    );
+
+}

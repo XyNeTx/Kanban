@@ -13,6 +13,9 @@ namespace KANBAN.Services.SpecialOrdering
         IKBNOR210_1 IKBNOR210_1 { get; }
         IKBNOR210_2 IKBNOR210_2 { get; }
         IKBNOR210_3 IKBNOR210_3 { get; }
+        IKBNOR293 IKBNOR293 { get; }
+        IKBNOR294 IKBNOR294 { get; }
+        IKBNOR295 IKBNOR295 { get; }
     }
 
     public class SpecialOrderingServices : ISpecialOrderingServices
@@ -21,6 +24,9 @@ namespace KANBAN.Services.SpecialOrdering
         public IKBNOR210_1 IKBNOR210_1 { get; }
         public IKBNOR210_2 IKBNOR210_2 { get; }
         public IKBNOR210_3 IKBNOR210_3 { get; }
+        public IKBNOR293 IKBNOR293 { get; }
+        public IKBNOR294 IKBNOR294 { get; }
+        public IKBNOR295 IKBNOR295 { get; }
 
         public SpecialOrderingServices(KB3Context kbContext,
             BearerClass bearerClass,
@@ -57,6 +63,28 @@ namespace KANBAN.Services.SpecialOrdering
             fillDT,
             log,
             emailService);
+
+            IKBNOR293 = new KBNOR293(kbContext,
+            bearerClass,
+            ppm3Context,
+            fillDT,
+            log,
+            emailService);
+            
+            IKBNOR294 = new KBNOR294(kbContext,
+            bearerClass,
+            ppm3Context,
+            fillDT,
+            log,
+            emailService);
+            
+            IKBNOR295 = new KBNOR295(kbContext,
+            bearerClass,
+            ppm3Context,
+            fillDT,
+            log,
+            emailService);
+
         }
     }
 }
