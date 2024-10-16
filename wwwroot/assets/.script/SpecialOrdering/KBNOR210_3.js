@@ -104,14 +104,14 @@ $("#btnUnmerge").click(async function () {
     }
 
     _xLib.AJAX_Post("/api/KBNOR210_3/Unmerge", JSON.stringify(listObj),
-        function (success) {
+        async function (success) {
             await xSplash.hide();
             console.log(success);
             xSwal.success("Success", success.message);
             $("#inpNewCustomerOrderNo").val("");
             $("#tableMain").DataTable().clear().draw();
         },
-        function (error) {
+        async function (error) {
             await xSplash.hide();
             console.error(error);
             xSwal.error(error.responseJSON.response, error.responseJSON.message);

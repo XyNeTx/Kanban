@@ -1,7 +1,5 @@
 ﻿using HINOSystem.Context;
 using HINOSystem.Libs;
-using KANBAN.Context;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;

@@ -1,0 +1,93 @@
+﻿<!-- Modal -->
+<div class="modal fade" id="KBNOR210_1_STC_2" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="KBNOR210_1_STC_2Label" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="KBNOR210_STC_2Label">KBNOR_210_STC_2 : Special Stock Report</h1>
+            </div>
+            <div class="modal-body">
+
+                <div class="ms-4 mt-2">
+                    <div id="STC_2_divRadio" class="row">
+                        <label class="form-label fw-bold col">Report Type :</label>
+
+                        <div class="col">
+                            <input type="radio" class="form-check-input" name="STC_2_Radio" id="STC_2_Radio_History" value="History" checked>
+                            <label for="STC_2_Radio_History" class="form-label fw-bold col">History Use Parts</label>
+                        </div>
+
+                        <div class="col">
+                            <input type="radio" class="form-check-input" name="STC_2_Radio" id="STC_2_Radio_Remain" value="Remain">
+                            <label for="STC_2_Radio_Remain" class="form-label fw-bold col">Remain Part in Stock</label>
+                        </div>
+                        
+                    </div>
+                </div>
+
+                <div class="row ms-4 mt-4">
+                    <div class="col">
+
+                        <div class="input-group">
+                            <label class="input-group-text">Supplier Code From</label>
+                            <select class="selectpicker ps-0 col-7" data-live-search="true" id="inpSTC_2_SupplierFrom" name="inpSTC_2_SupplierFrom">
+                                <option value="" hidden></option>
+                            </select>
+                        </div>
+
+                        <div class="input-group">
+                            <input type="checkbox" id="STC_2_DeliveryDateChkBox" class="form-check-input" />
+                            <label class="input-group-text">Delivery Date From</label>
+                            <input type="text" class="form-control" id="inpSTC_2_DeliveryDateFrom" name="inpSTC_2_DeliveryDateFrom">
+                        </div>
+
+                        <div class="input-group">
+                            <input type="checkbox" id="STC_2_StockDateChkBox" class="form-check-input" />
+                            <label class="input-group-text">Stock Date From</label>
+                            <input type="text" class="form-control" id="inpSTC_2_StockDateFrom" name="inpSTC_2_StockDateFrom">
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-group-text">Part No. From</label>
+                            <select class="selectpicker ps-0 col-7" data-live-search="true" id="inpSTC_2_PartFrom" name="inpSTC_2_PartFrom">
+                                <option value="" hidden></option>
+                            </select>
+                        </div>
+
+                    </div>
+                    <div class="col">
+
+                        <div class="input-group">
+                            <label class="input-group-text">Supplier Code To</label>
+                            <select class="selectpicker ps-0 col-7" data-live-search="true" id="inpSTC_2_SupplierTo" name="inpSTC_2_SupplierTo">
+                                <option value="" hidden></option>
+                            </select>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-group-text">Delivery Date To</label>
+                            <input type="text" class="form-control" id="inpSTC_2_DeliveryDateTo" name="inpSTC_2_DeliveryDateTo">
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-group-text">Stock Date To</label>
+                            <input type="text" class="form-control" id="inpSTC_2_StockDateTo" name="inpSTC_2_StockDateTo">
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-group-text">Part No. To</label>
+                            <select class="selectpicker ps-0 col-7" data-live-search="true" id="inpSTC_2_PartTo" name="inpSTC_2_PartTo">
+                                <option value="" hidden></option>
+                            </select>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="btnSTC_2_Print">Print</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Exit</button>
+            </div>
+        </div>
+    </div>
+</div>

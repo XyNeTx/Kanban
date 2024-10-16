@@ -46,7 +46,7 @@ namespace HINOSystem.Libs
             try
             {
                 string logMessage = GetLogMessage();
-                Log.Information($"message : {logMessage} | {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
+                Log.Information($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
             }
             catch (Exception ex)
             {
@@ -61,7 +61,8 @@ namespace HINOSystem.Libs
         {
             try
             {
-                Log.Error($"message : {Message} | username : {UserName} | hostname : {HostName}");
+                string logMessage = GetLogMessage();
+                Log.Error($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
             }
             catch (Exception ex)
             {

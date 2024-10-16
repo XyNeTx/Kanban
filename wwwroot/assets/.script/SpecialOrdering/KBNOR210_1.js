@@ -12,6 +12,28 @@ $(document).ready(async function () {
     $("#readProcessShift").val(loginDate.slice(10, 11) == "D" ? "1:Day Shift" : "2:Night Shift");
     $("#readPlant").val(plant);
 
+    $("#inpDateFrom").datepicker({
+        uiLibrary: 'materialdesign',
+        format: 'dd/mm/yyyy',
+        autoclose: true,
+        showRightIcon: false,
+    });
+    $("#inpDateTo").datepicker({
+        uiLibrary: 'materialdesign',
+        format: 'dd/mm/yyyy',
+        autoclose: true,
+        showRightIcon: false,
+    });
+
+    $("#inpDel_YM").datepicker({
+        format: 'mm/yyyy',
+        autoclose: true,
+        uiLibrary: 'materialdesign',
+        value: moment().format("MM/YYYY")
+    });
+
+    $("#inpDateFrom").parent().addClass("col-5 ps-0 pe-0 me-0");   
+
     await LoadDataChangeDelivery();
 
     $(".selectpicker").selectpicker("refresh");
@@ -393,6 +415,23 @@ $("#btnUncheck").click(function () {
             $(this).prop("checked", false);
         }
     });
+});
+
+$("#btnMergeReport").click(function () {
+    let obj = {
+        SuppCD: $("#inpSupplier").val(),
+        PartNo: $("#inpPartNo").val(),
+        PDS_No: $("#inpCustomerOrderNo").val(),
+        Plant: _xLib.GetCookie("plantCode"),
+        UserName: _xLib.GetUserName(),
+    }
+
+    if (!$("#inpCustomerOrderNo").val()) {
+        return xSwal.error("Error", "Please select Customer OrderNo.");
+    }
+
+    _xLib.OpenReportObj("/KBNOR210_1", obj);
+
 });
 
 $("#btnSave").click(async function () {
@@ -1266,5 +1305,299 @@ $("#btnSTC_1_Import").click(async function () {
     const data = XLSX.utils.sheet_to_json(read.Sheets[read.SheetNames[0]]);
 
     console.log(data);
+
+});
+
+
+$(document).on('show.bs.modal', '#KBNOR210_1_STC_2', async function (e) {
+
+    await xSplash.show();
+
+    $('#inpSTC_2_DeliveryDateFrom').datepicker({
+        format: 'dd/mm/yyyy',
+        autoclose: true,
+        todayHighlight: true,
+        uiLibrary: 'materialdesign',
+        value: moment().format("DD/MM/YYYY")
+    });
+
+    $('#inpSTC_2_StockDateFrom').datepicker({
+        format: 'dd/mm/yyyy',
+        autoclose: true,
+        todayHighlight: true,
+        uiLibrary: 'materialdesign',
+        value : moment().format("DD/MM/YYYY")
+    });
+
+    $('#inpSTC_2_DeliveryDateTo').datepicker({
+        format: 'dd/mm/yyyy',
+        autoclose: true,
+        todayHighlight: true,
+        uiLibrary: 'materialdesign',
+        value: moment().format("DD/MM/YYYY")
+    });
+
+    $('#inpSTC_2_StockDateTo').datepicker({
+        format: 'dd/mm/yyyy',
+        autoclose: true,
+        todayHighlight: true,
+        uiLibrary: 'materialdesign',
+        value: moment().format("DD/MM/YYYY")
+    });
+
+    $("#inpSTC_2_DeliveryDateFrom").prop('disabled', true).parent().find("i").prop("hidden", true);
+    $("#inpSTC_2_StockDateFrom").prop('disabled', true).parent().find("i").prop("hidden", true);
+    $("#inpSTC_2_DeliveryDateTo").prop('disabled', true).parent().find("i").prop("hidden", true);
+    $("#inpSTC_2_StockDateTo").prop('disabled', true).parent().find("i").prop("hidden", true);
+
+    xSplash.hide();
+
+    await STC_2_LoadSupplier();
+
+});
+
+$(document).on('click', '#STC_2_DeliveryDateChkBox', function () {
+
+    if ($(this).prop("checked")) {
+        $("#inpSTC_2_DeliveryDateFrom").prop('disabled', false).parent().find("i").prop("hidden", false);
+        $("#inpSTC_2_DeliveryDateTo").prop('disabled', false).parent().find("i").prop("hidden", false);
+    }
+    else
+    {
+        $("#inpSTC_2_DeliveryDateFrom").prop('disabled', true).parent().find("i").prop("hidden", true);
+        $("#inpSTC_2_DeliveryDateTo").prop('disabled', true).parent().find("i").prop("hidden", true);
+    }
+
+});
+
+$(document).on('click','#STC_2_StockDateChkBox', function () {
+    if ($(this).prop("checked")) {
+        $("#inpSTC_2_StockDateFrom").prop('disabled', false).parent().find("i").prop("hidden", false);
+        $("#inpSTC_2_StockDateTo").prop('disabled', false).parent().find("i").prop("hidden", false);
+    }
+    else {
+        $("#inpSTC_2_StockDateFrom").prop('disabled', true).parent().find("i").prop("hidden", true);
+        $("#inpSTC_2_StockDateTo").prop('disabled', true).parent().find("i").prop("hidden", true);
+    }
+
+});
+
+function STC_2_LoadSupplier() {
+    let obj = {
+        Type: $("#STC_2_divRadio").find("input[name='STC_2_Radio']:checked").val(),
+        //SuppF = $("#inpSTC_2_SupplierFrom").val(),
+        //SuppT = $("#inpSTC_2_SupplierTo").val(),
+        chkFlg : $("#STC_2_DeliveryDateChkBox").prop("checked"),
+        chkFlgDT : $("#STC_2_StockDateChkBox").prop("checked"),
+    }
+
+    if (obj.chkFlg) {
+        obj.DateFrom = moment($("#inpSTC_2_DeliveryDateFrom").val(), "DD/MM/YYYY").format("YYYYMMDD");
+        obj.DateTo = moment($("#inpSTC_2_DeliveryDateTo").val(), "DD/MM/YYYY").format("YYYYMMDD");
+    }
+    else {
+        obj.DateFrom = moment($("#inpSTC_2_StockDateFrom").val(), "DD/MM/YYYY").format("YYYYMMDD");
+        obj.DateTo = moment($("#inpSTC_2_StockDateTo").val(), "DD/MM/YYYY").format("YYYYMMDD");
+    }
+
+    _xLib.AJAX_Get("/api/KBNOR210_1/STC_2_GetSupplier", obj,
+        function (success) {
+            success = _xLib.JSONparseMixData(success);
+            $('#inpSTC_2_SupplierFrom').empty();
+            $('#inpSTC_2_SupplierTo').empty();
+            $('#inpSTC_2_SupplierFrom').append("<option value='' hidden></option>");
+            $('#inpSTC_2_SupplierTo').append("<option value='' hidden></option>");
+            success.data.forEach(function (item) {
+                $('#inpSTC_2_SupplierFrom').append(`<option value="${item.F_Supplier}">${item.F_Supplier}</option>`);
+                $('#inpSTC_2_SupplierTo').append(`<option value="${item.F_Supplier}">${item.F_Supplier}</option>`);
+            });
+
+            $('#inpSTC_2_SupplierFrom').selectpicker("refresh");
+            $('#inpSTC_2_SupplierTo').selectpicker("refresh");
+        },
+        function (error) {
+            console.error(error);
+        }
+    );
+
+}
+
+function STC_2_LoadPartNo() {
+
+    let obj = {
+        Type: $("#STC_2_divRadio").find("input[name='STC_2_Radio']:checked").val(),
+        SuppF : $("#inpSTC_2_SupplierFrom").val(),
+        SuppT : $("#inpSTC_2_SupplierTo").val(),
+        chkFlg : $("#STC_2_DeliveryDateChkBox").prop("checked"),
+        chkFlgDT : $("#STC_2_StockDateChkBox").prop("checked"),
+    }
+
+    if (obj.chkFlg) {
+        obj.DateFrom = moment($("#inpSTC_2_DeliveryDateFrom").val(), "DD/MM/YYYY").format("YYYYMMDD");
+        obj.DateTo = moment($("#inpSTC_2_DeliveryDateTo").val(), "DD/MM/YYYY").format("YYYYMMDD");
+    }
+
+    else {
+        obj.DateFrom = moment($("#inpSTC_2_StockDateFrom").val(), "DD/MM/YYYY").format("YYYYMMDD");
+        obj.DateTo = moment($("#inpSTC_2_StockDateTo").val(), "DD/MM/YYYY").format("YYYYMMDD");
+    }
+
+    _xLib.AJAX_Get("/api/KBNOR210_1/STC_2_GetPartNo", obj,
+        function (success) {
+            success = _xLib.JSONparseMixData(success);
+            $('#inpSTC_2_PartFrom').empty();
+            $('#inpSTC_2_PartTo').empty();
+            $('#inpSTC_2_PartFrom').append("<option value='' hidden></option>");
+            $('#inpSTC_2_PartTo').append("<option value='' hidden></option>");
+            success.data.forEach(function (item) {
+                $('#inpSTC_2_PartFrom').append(`<option value="${item.F_Part_No}">${item.F_Part_No}</option>`);
+                $('#inpSTC_2_PartTo').append(`<option value="${item.F_Part_No}">${item.F_Part_No}</option>`);
+            });
+
+            $('#inpSTC_2_PartFrom').selectpicker("refresh");
+            $('#inpSTC_2_PartTo').selectpicker("refresh");
+        },
+        function (error) {
+            console.error(error);
+        }
+    );
+
+}
+
+
+$("#inpSTC_2_SupplierFrom").change(function () {
+    $('#inpSTC_2_SupplierTo').val($(this).val());
+    $('#inpSTC_2_SupplierTo').selectpicker("refresh");
+    $("#inpSTC_2_SupplierTo").change();
+});
+$("#inpSTC_2_SupplierTo").change(function () {
+    STC_2_LoadPartNo();
+});
+
+$('#btnSTC_2_Print').click(function () {
+    let Type = $("#STC_2_divRadio").find("input[name='STC_2_Radio']:checked").val();
+    let chkFlgDT = $("#STC_2_StockDateChkBox").prop("checked");
+    let obj = {
+        SuppF: $("#inpSTC_2_SupplierFrom").val(),
+        SuppT: $("#inpSTC_2_SupplierTo").val(),
+        chkFlg: $("#STC_2_DeliveryDateChkBox").prop("checked"),
+        PartF: $("#inpSTC_2_PartFrom").val(),
+        PartT: $("#inpSTC_2_PartTo").val(),
+        DateFrom: "",
+        DateTo: "",
+        Plant: _xLib.GetCookie("plantCode"),
+        UserName: _xLib.GetUserName(),
+    }
+
+    if (obj.chkFlg && Type == "History") {
+        obj.DateFrom = moment($("#inpSTC_2_DeliveryDateFrom").val(), "DD/MM/YYYY").format("YYYYMMDD");
+        obj.DateTo = moment($("#inpSTC_2_DeliveryDateTo").val(), "DD/MM/YYYY").format("YYYYMMDD");
+    }
+
+    else if (chkFlgDT && Type == "Remain") {
+        obj.chkFlg = true;
+        obj.DateFrom = moment($("#inpSTC_2_StockDateFrom").val(), "DD/MM/YYYY").format("YYYYMMDD");
+        obj.DateTo = moment($("#inpSTC_2_StockDateTo").val(), "DD/MM/YYYY").format("YYYYMMDD");
+    }
+
+    if (Type == "History") {
+        _xLib.OpenReportObj("/KBNOR210_STC_2_History", obj);
+    }
+    else if(Type == "Remain")
+    {
+        _xLib.OpenReportObj("/KBNOR210_STC_2_Remain", obj);
+    }
+
+});
+
+function Del_LoadSupplier() {
+    var obj = {
+        DeliYM: moment($("#inpDel_YM").val(), "MM/YYYY").format("YYYYMM")
+    }
+
+    _xLib.AJAX_Get("/api/KBNOR210_1/Del_LoadSupplier", obj,
+        function (success) {
+            success = _xLib.JSONparseMixData(success);
+            $('#inpDel_Supplier').empty();
+            $('#inpDel_Supplier').append("<option value='' hidden></option>");
+            success.data.forEach(function (item) {
+                $('#inpDel_Supplier').append(`<option value="${item.F_Supplier}">${item.F_Supplier}</option>`);
+            });
+
+            $('#inpDel_Supplier').selectpicker("refresh");
+        },
+        function (error) {
+            console.error(error);
+            //xSwal.error("Error", error.responseJSON.message);
+        }
+    );
+
+}
+
+function Del_LoadPartNo() {
+    var obj = {
+        DeliYM: moment($("#inpDel_YM").val(), "MM/YYYY").format("YYYYMM"),
+        Supplier: $("#inpDel_Supplier").val()
+    }
+
+    _xLib.AJAX_Get("/api/KBNOR210_1/Del_LoadPartNo", obj,
+        function (success) {
+            success = _xLib.JSONparseMixData(success);
+            $('#inpDel_PartFrom').empty();
+            $('#inpDel_PartFrom').append("<option value='' hidden></option>");
+            $('#inpDel_PartTo').empty();
+            $('#inpDel_PartTo').append("<option value='' hidden></option>");
+            success.data.forEach(function (item) {
+                $('#inpDel_PartFrom').append(`<option value="${item.F_Part_No}">${item.F_Part_No}</option>`);
+                $('#inpDel_PartTo').append(`<option value="${item.F_Part_No}">${item.F_Part_No}</option>`);
+            });
+
+            $('#inpDel_PartFrom').selectpicker("refresh");
+            $('#inpDel_PartTo').selectpicker("refresh");
+        },
+        function (error) {
+            console.error(error);
+            //xSwal.error("Error", error.responseJSON.message);
+        }
+    );
+
+}
+
+$(document).on('show.bs.modal', '#KBNOR210_1_Del', async function (e) {
+
+    await xSplash.show();
+
+    Del_LoadSupplier();
+
+    xSplash.hide();
+
+});
+
+$("#inpDel_Supplier").change(function () {
+    Del_LoadPartNo();
+});
+
+$("#inpDel_YM").change(function () {
+    Del_LoadSupplier();
+});
+
+$("#btnDel_Report").click(function () {
+
+    let shift = _xLib.GetCookie("loginDate").toString().slice(11, 1) == "D" ? "1 : Day Shift" : "2 : Night Shift";
+    console.log(shift);
+
+    let obj = {
+
+        DeliYM: moment($("#inpDel_YM").val(), "MM/YYYY").format("YYYYMM"),
+        SuppCD: $("#inpDel_Supplier").val(),
+        PartFrom: $("#inpDel_PartFrom").val(),
+        PartTo: $("#inpDel_PartTo").val(),
+        Plant: _xLib.GetCookie("plantCode"),
+        UserName: _xLib.GetUserName(),
+        Shift: shift
+
+    }
+
+    _xLib.OpenReportObj("/KBNOR210_1_Del", obj);
 
 });

@@ -353,6 +353,13 @@ namespace HINOSystem.Controllers.API.Master
                                         if (devQty != 0)
                                         {
                                             _isZeroRec = false;
+
+                                            string Receive_Local_Date = pdsDetailSingle.F_Receive_Date.Value.ToString("yyyyMMdd");
+                                            if (pdsDetailSingle.F_Receive_Date.Value.TimeOfDay < new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 7, 30, 0).TimeOfDay)
+                                            {
+                                                Receive_Local_Date = pdsDetailSingle.F_Receive_Date.Value.AddDays(-1).ToString("yyyyMMdd");
+                                            }
+
                                             T_Receive_Local local = new T_Receive_Local
                                             {
                                                 F_Order_No = header.F_OrderNo,
@@ -363,7 +370,7 @@ namespace HINOSystem.Controllers.API.Master
                                                 F_Plant_CD = header.F_Plant,
                                                 F_Store_CD = header.F_Delivery_Dock,
                                                 F_Receive_Qty = devQty,
-                                                F_Receive_date = pdsDetailSingle.F_Receive_Date.Value.ToString("yyyyMMdd").Trim(),
+                                                F_Receive_date = Receive_Local_Date,
                                                 F_Supplier_Code = header.F_Supplier_Code,
                                                 F_Supplier_Plant = header.F_Supplier_Plant,
                                                 F_Inventory_Flg = '0',
@@ -408,6 +415,11 @@ namespace HINOSystem.Controllers.API.Master
                                             if (devQty != 0)
                                             {
                                                 _isZeroRec = false;
+                                                string Receive_Local_Date = _singleReceiveAll.F_Receive_Date.Value.ToString("yyyyMMdd");
+                                                if (_singleReceiveAll.F_Receive_Date.Value.TimeOfDay < new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 7, 30, 0).TimeOfDay)
+                                                {
+                                                    Receive_Local_Date = _singleReceiveAll.F_Receive_Date.Value.AddDays(-1).ToString("yyyyMMdd");
+                                                }
                                                 T_Receive_Local local = new T_Receive_Local
                                                 {
                                                     F_Order_No = header.F_OrderNo,
@@ -418,7 +430,7 @@ namespace HINOSystem.Controllers.API.Master
                                                     F_Plant_CD = header.F_Plant,
                                                     F_Store_CD = header.F_Delivery_Dock,
                                                     F_Receive_Qty = devQty,
-                                                    F_Receive_date = _singleReceiveAll.F_Receive_Date.Value.ToString("yyyyMMdd").Trim(),
+                                                    F_Receive_date = Receive_Local_Date,
                                                     F_Supplier_Code = header.F_Supplier_Code,
                                                     F_Supplier_Plant = header.F_Supplier_Plant,
                                                     F_Inventory_Flg = '0',

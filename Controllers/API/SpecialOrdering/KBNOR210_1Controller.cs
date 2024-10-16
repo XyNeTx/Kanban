@@ -660,7 +660,7 @@ namespace KANBAN.Controllers.API.SpecialOrder
             try
             {
 
-                if(_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
+                if (_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
                 {
                     return StatusCode(_BearerClass.Status, new
                     {
@@ -673,6 +673,99 @@ namespace KANBAN.Controllers.API.SpecialOrder
                 await _services.IKBNOR210_1.STC_1_Import(listObj);
 
                 return Ok(new { status = "200", response = "Success", message = "Data imported" });
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { status = "500", response = "Error", message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        public IActionResult STC_2_GetSupplier(string Type, bool chkFlg,bool chkFlgDT, string DateFrom, string DateTo)
+        {
+
+            try
+            {
+
+                if (_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
+                {
+                    return StatusCode(_BearerClass.Status, new
+                    {
+                        status = _BearerClass.Status,
+                        response = _BearerClass.Response,
+                        message = _BearerClass.Message
+                    });
+                }
+
+                var data = _services.IKBNOR210_1.STC_2_LoadSupplier(Type, chkFlg,chkFlgDT, DateFrom, DateTo);
+
+                return Ok(new { status = "200", response = "Success", message = "Data Found", data = data });
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { status = "500", response = "Error", message = ex.Message });
+            }
+
+        }
+
+        [HttpGet]
+        public IActionResult STC_2_GetPartNo(string Type, bool chkFlg, bool chkFlgDT, string DateFrom, string DateTo,string SuppF,string SuppT)
+        {
+            try
+            {
+                if (_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
+                {
+                    return StatusCode(_BearerClass.Status, new { status = _BearerClass.Status, response = _BearerClass.Response, message = _BearerClass.Message });
+                }
+
+                var data = _services.IKBNOR210_1.STC_2_LoadPartNo(Type, chkFlg, chkFlgDT, DateFrom, DateTo,SuppF, SuppT);
+
+                return Ok(new { status = "200", response = "Success", message = "Data Found", data = data });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { status = "500", response = "Error", message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        public IActionResult Del_LoadSupplier(string DeliYM)
+        {
+            try
+            {
+
+                if(_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
+                {
+                    return StatusCode(_BearerClass.Status, new { status = _BearerClass.Status, response = _BearerClass.Response, message = _BearerClass.Message});
+                }
+
+                var data = _services.IKBNOR210_1.Del_LoadSupplier(DeliYM);
+
+                return Ok(new { status = "200", response = "Success", message = "Data Found", data = data });
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { status = "500", response = "Error", message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        public IActionResult Del_LoadPartNo(string DeliYM, string Supplier)
+        {
+            try
+            {
+
+                if (_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
+                {
+                    return StatusCode(_BearerClass.Status, new { status = _BearerClass.Status, response = _BearerClass.Response, message = _BearerClass.Message });
+                }
+
+                var data = _services.IKBNOR210_1.Del_LoadPartNo(DeliYM, Supplier);
+
+                return Ok(new { status = "200", response = "Success", message = "Data Found", data = data });
 
             }
             catch (Exception ex)

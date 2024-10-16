@@ -362,6 +362,12 @@ namespace HINOSystem.Controllers.API.Master
                     List<T_Receive_Local> _trlList = new List<T_Receive_Local>();
                     foreach (var receive in recDetail)
                     {
+                        string Receive_Local_Date = receive.F_Receive_Date.Value.ToString("yyyyMMdd");
+                        if (receive.F_Receive_Date.Value.TimeOfDay < new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 7, 30, 0).TimeOfDay)
+                        {
+                            Receive_Local_Date = receive.F_Receive_Date.Value.AddDays(-1).ToString("yyyyMMdd");
+                        }
+
                         T_Receive_Local _trl = new T_Receive_Local
                         {
                             F_Order_No = recHead.F_OrderNo,
@@ -372,7 +378,7 @@ namespace HINOSystem.Controllers.API.Master
                             F_Plant_CD = recHead.F_Plant,
                             F_Store_CD = recHead.F_Delivery_Dock,
                             F_Receive_Qty = (decimal)receive.F_Receive_amount,
-                            F_Receive_date = receive.F_Receive_Date?.ToString("yyyyMMdd").Trim(),
+                            F_Receive_date = Receive_Local_Date,
                             F_Supplier_Code = recHead.F_Supplier_Code,
                             F_Supplier_Plant = recHead.F_Supplier_Plant,
                             F_Inventory_Flg = '0',

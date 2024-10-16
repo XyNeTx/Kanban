@@ -52,7 +52,7 @@
                                     </div>
                                 </div>
                                 <div class="col">
-                                    <div class="input-group">
+                                    <div class="input-group me-0">
                                         <input type="checkbox" class="form-check-inline" id="chkDate" name="chkDate">
                                         <label class="input-group-text">Delivery Date From</label>
                                         <input type="text" class="form-control" id="inpDateFrom" name="inpDateFrom" value="@DateTime.Now.ToString("dd/MM/yyyy")" disabled>
@@ -83,7 +83,7 @@
                                 <div class="col">
                                     <div class="row">
                                         <a class="btn btn-outline-dark col" id="btnMergeReport">Merge Report</a>
-                                        <a class="btn btn-outline-dark col" id="btnDeletePartsReport">Delete Parts Report</a>
+                                        <a class="btn btn-outline-dark col" id="btnDeletePartsReport" data-bs-toggle="modal" data-bs-target="#KBNOR210_1_Del">Delete Parts Report</a>
                                     </div>
                                 </div>
                             </div>
@@ -114,7 +114,7 @@
 
                         <div class="col">
                             <a class="btn btn-success text-light " id="btnUseCommonParts" data-bs-toggle="modal" data-bs-target="#KBNOR210_1_STC_3" data-bs-customer="">Use Common Parts</a>
-                            <a class="btn btn-success mt-1 text-light" id="btnSpecialStockReport" >Special Stock Report</a>
+                            <a class="btn btn-success mt-1 text-light" id="btnSpecialStockReport" data-bs-toggle="modal" data-bs-target="#KBNOR210_1_STC_2">Special Stock Report</a>
                             <a class="btn btn-success mt-1 text-light" id="btnSetupStockRemain" data-bs-toggle="modal" data-bs-target="#KBNOR210_1_STC_1">Setup Stock Remain</a>
                         </div>
 
@@ -147,8 +147,10 @@
     </div>
 </div>
 
+<partial name="KBNOR210_1_Del.cshtml" />
 <partial name="KBNOR210_1_STC_1.cshtml" />
-<partial name="KBNOR220_1_STC_3.cshtml" />
+<partial name="KBNOR210_1_STC_2.cshtml" />
+<partial name="KBNOR210_1_STC_3.cshtml" />
 
 @using KANBAN.Libs
 @section Scripts {

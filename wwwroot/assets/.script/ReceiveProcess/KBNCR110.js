@@ -128,15 +128,15 @@ $("#ReceiveBtn").click(async function () {
         then: async function (result) {
             console.log(result)
             if (result.status == "200") {
+                xSwal.success(result.title, result.message);
                 $('#tblMaster').DataTable().clear();
                 $('#tblMaster').DataTable().draw();
-                pdsSet.clear();
                 $("#ReceiveBtn").prop('disabled', false);
-                xSwal.success(result.title, result.message);
+                pdsSet.clear();
             }
             else {
-                $("#ReceiveBtn").prop('disabled', false);
                 xSwal.error(result.title, result.message);
+                $("#ReceiveBtn").prop('disabled', false);
             }
         },
         error: function (result) {

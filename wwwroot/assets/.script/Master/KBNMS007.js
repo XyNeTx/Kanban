@@ -521,7 +521,9 @@ function GetKanbanAddObj() {
         //}
         for (let i = 1; i <= 30; i++) {
             let _objId = "F_Round" + i;
-            obj[_objId] = obj[_objId] == "" ? 0 : obj[_objId];
+            console.log(_objId);
+            console.log(obj[_objId]);
+            obj[_objId] = obj[_objId] == "" ? 0 : obj[_objId] == null ? 0 : isNaN(obj[_objId]) ? 0 : obj[_objId];
         }
     }
 

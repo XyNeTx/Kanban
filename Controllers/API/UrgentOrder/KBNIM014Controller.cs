@@ -6,6 +6,7 @@ using HINOSystem.Libs;
 using HINOSystem.Context;
 using KANBAN.Models.KB3.UrgentOrder;
 using KANBAN.Context;
+using Newtonsoft.Json;
 //using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HINOSystem.Controllers.API.Master
@@ -97,7 +98,7 @@ namespace HINOSystem.Controllers.API.Master
 
                 await _KB3Context.SaveChangesAsync();
                 _KB3Transaction.Commit();
-                _Log.WriteLog("KBNIM014 ImportSave ", UserID, _BearerClass.Device);
+                _Log.WriteLogMsg($" | {JsonConvert.SerializeObject(obj)}");
 
                 return Ok(new
                 {
@@ -149,6 +150,7 @@ namespace HINOSystem.Controllers.API.Master
                 var _delList = await _KB3Context.TB_Import_EKanban_Pack.Where(x => x.F_Plant_CD == Plant && x.F_Update_By == UserID).ToListAsync();
 
                 _KB3Context.RemoveRange(_delList);
+                _KB3Context.SaveChanges();
 
                 _KB3Transaction.Commit();
 

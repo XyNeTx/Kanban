@@ -57,11 +57,6 @@
             },
 
             success: function (result) {
-                //if (getCookie('debug') == '') setCookie('debug', 0);
-                //if (getCookie('debug') == '1') console.log(result);
-
-                //if (getCookie('debug') == '1') $('#txtUserName').val('DEVELOPER');
-                //if (getCookie('debug') == '1') $('#txtUserName').removeAttr('readonly');
                 if (_xLib.GetCookie("isDev") == '1') $('h4').append('<h5 class="mt-3">DEVELOPER MODE</h5>');
                 //console.log(result);
                 $("#txtProcessDate").prop('disabled', true);

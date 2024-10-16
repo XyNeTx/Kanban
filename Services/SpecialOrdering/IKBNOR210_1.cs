@@ -7,6 +7,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Data;
+using System.Text.RegularExpressions;
 
 namespace KANBAN.Services.SpecialOrdering
 {
@@ -30,6 +31,10 @@ namespace KANBAN.Services.SpecialOrdering
         string STC_1_GetKB_Qty(string Supplier_Code, string Part_No, string StockDate, string Store_CD);
         Task STC_1_Save(VM_Post_KBNOR210_STC_1 obj);
         Task STC_1_Import(List<VM_Import_KBNOR210_STC_1> listObj);
+        string STC_2_LoadSupplier(string Type, bool chkFlg, bool chkFlgDT, string DateFrom, string DateTo);
+        string STC_2_LoadPartNo(string Type, bool chkFlg, bool chkFlgDT, string DateFrom, string DateTo, string SuppF, string SuppT);
+        string Del_LoadSupplier(string DeliYM);
+        string Del_LoadPartNo(string DeliYM, string Supplier);
     }
 
     public class KBNOR210_1 : IKBNOR210_1
@@ -994,6 +999,7 @@ namespace KANBAN.Services.SpecialOrdering
 
         public async Task STC_1_Import(List<VM_Import_KBNOR210_STC_1> listObj)
         {
+            using var transaction = _kbContext.Database.BeginTransaction();
 
             try
             {
@@ -1035,13 +1041,188 @@ namespace KANBAN.Services.SpecialOrdering
 
                 }
 
+                transaction.Commit();
+                _log.WriteLogMsg("STC_1_Import | " + JsonConvert.SerializeObject(listObj));
+
             }
             catch (Exception ex)
             {
+                transaction.Rollback();
+                _log.WriteLogMsg("STC_1_Import ERROR!! | " + JsonConvert.SerializeObject(listObj));
                 throw new Exception(ex.Message);
             }
 
         }
 
+        public string STC_2_LoadSupplier(string Type, bool chkFlg,bool chkFlgDT ,string DateFrom, string DateTo)
+        {
+            try
+            {
+                string sql = "";
+
+                if (Type == "History")
+                {
+                    sql = $@"Select  Rtrim(F_Supplier_CD)+'-'+Rtrim(F_Supplier_Plant) AS F_Supplier 
+                                From  TB_STOCK_KB_SPC_PART_HISTORY 
+                                Where F_Type = 'TRN' ";
+                    if (chkFlg)
+                    {
+                        sql += $" and F_Delivery_Date between '{DateFrom}' and '{DateTo}' ";
+                    }
+
+                    sql += "Group by  F_Supplier_CD, F_Supplier_Plant " +
+                        "Order by F_Supplier_CD,F_Supplier_Plant ";
+                }
+
+                else
+                {
+
+                    sql = $@"Select  F_Supplier_Code  AS F_Supplier 
+                                From  FN_getStockRemainSPCData() 
+                                Where F_Supplier_Code <> ''";
+
+                    if (chkFlgDT)
+                    {
+                        sql += $@" and F_Stock_Date between '{DateFrom}' and '{DateTo}' ";
+                    }
+
+                    sql += "Group by  F_Supplier_Code " +
+                        "Order by F_Supplier_Code ";
+
+                }
+
+                var dt = _FillDT.ExecuteSQL(sql);
+
+                if (dt.Rows.Count == 0)
+                {
+                    throw new Exception("Data not found");
+                }
+
+                return JsonConvert.SerializeObject(dt);
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public string STC_2_LoadPartNo(string Type, bool chkFlg, bool chkFlgDT, string DateFrom, string DateTo,string SuppF, string SuppT)
+        {
+
+            try
+            {
+                string sql = "";
+
+                if (Type == "History")
+                {
+                    sql = $@"Select  Rtrim(F_Part_No)+'-'+Rtrim(F_Ruibetsu) AS F_Part_No 
+                                From  TB_STOCK_KB_SPC_PART_HISTORY 
+                                Where F_Type = 'TRN' 
+                                and Rtrim(F_Supplier_CD)+'-'+Rtrim(F_Supplier_Plant) between '{SuppF}' and '{SuppT}' ";
+
+                    if (chkFlg)
+                    {
+                        sql += $" and F_Delivery_Date between '{DateFrom}' and '{DateTo}' ";
+                    }
+
+                    sql += "Group by  F_Part_No, F_Ruibetsu " +
+                        "Order by F_Part_No, F_Ruibetsu ";
+                }
+
+                else
+                {
+
+                    sql = $@"Select  F_Part_No 
+                                From  FN_getStockRemainSPCData() 
+                                Where F_Part_no <> '' 
+                                and F_Supplier_Code between '{SuppF}' and '{SuppT}' ";
+
+                    if (chkFlgDT)
+                    {
+                        sql += $@" and F_Stock_Date between '{DateFrom}' and '{DateTo}' ";
+                    }
+
+                    sql += "Group by  F_Part_No " +
+                        "Order by F_Part_No ";
+
+                }
+
+                var dt = _FillDT.ExecuteSQL(sql);
+
+                if (dt.Rows.Count == 0)
+                {
+                    throw new Exception("Data not found");
+                }
+
+                return JsonConvert.SerializeObject(dt);
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public string Del_LoadSupplier(string DeliYM)
+        {
+            try
+            {
+
+                string _sql = $@"Select RTrim(F_Supplier_CD)+'-'+Rtrim(F_Supplier_Plant) As F_Supplier 
+                                From  TB_PO_Merge_Delete 
+                                Where F_Delivery_Date like '{DeliYM}%' 
+                                Group by F_Supplier_CD,F_Supplier_Plant 
+                                Order by F_Supplier_CD,F_Supplier_Plant ";
+
+                var _dt = _FillDT.ExecuteSQL(_sql);
+
+                if (_dt.Rows.Count == 0)
+                {
+                    throw new Exception("Data not found");
+                }
+
+                return JsonConvert.SerializeObject(_dt);
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public string Del_LoadPartNo(string DeliYM, string? Supplier)
+        {
+            try
+            {
+
+                string _sql = $@"Select RTrim(F_Part_No) As F_Part_No 
+                                From  TB_PO_Merge_Delete 
+                                Where F_Delivery_Date like '{DeliYM}%' 
+                                AND F_Customer_OrderNo <> '' ";
+
+                if (!string.IsNullOrWhiteSpace(Supplier))
+                {
+                    _sql += $" and ( F_Supplier_CD = '{Supplier.Split("-")[0]}' and F_Supplier_Plant = '{Supplier.Split("-")[1]}' ) ";
+                }
+
+                _sql += "Group by F_Part_No " +
+                    "Order by F_Part_No ";
+
+                var _dt = _FillDT.ExecuteSQL(_sql);
+
+                if (_dt.Rows.Count == 0)
+                {
+                    throw new Exception("Data not found");
+                }
+
+                return JsonConvert.SerializeObject(_dt);
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
     }
 }
