@@ -3,6 +3,7 @@ using HINOSystem.Libs;
 using KANBAN.Context;
 using KANBAN.Libs;
 using KANBAN.Models.KB3.SpecialOrdering;
+using Microsoft.AspNetCore.Http.Metadata;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
@@ -10,8 +11,9 @@ namespace KANBAN.Services.SpecialOrdering
 {
     public interface IKBNOR295
     {
-        string LoadColorTag();
-        Task Confirm(List<VM_Post_Tag_Color> listObj);
+        string LoadContactList();
+        Task Confirm(List<VM_Post_KBNOR295> listObj);
+        Task<string> UploadIMG(IFormFile formFile);
     }
 
 
@@ -44,14 +46,16 @@ namespace KANBAN.Services.SpecialOrdering
             _emailService = emailService;
         }
 
-        public string LoadColorTag()
+        public string LoadContactList()
         {
             try
             {
-                string sql = "Select   F_Color_Tag AS COLOR , F_Type As TypePart  from TB_MS_TagColor ";
+                string sql = "Select F_User_ID, F_Name, F_Surname," +
+                    " F_Email, F_Path_File  FROM  TB_MS_SpcApprover ";
+
                 var dt = _FillDT.ExecuteSQL(sql);
 
-                if(dt.Rows.Count == 0)
+                if (dt.Rows.Count == 0)
                 {
                     throw new Exception("No data found");
                 }
@@ -66,41 +70,86 @@ namespace KANBAN.Services.SpecialOrdering
             }
         }
 
-        public async Task Confirm(List<VM_Post_Tag_Color> listObj)
+        public async Task Confirm(List<VM_Post_KBNOR295> listObj)
+        {
+            using var transaction = await _kbContext.Database.BeginTransactionAsync();
+            try
+            {
+                transaction.CreateSavepoint("Start Confirm");
+                await _kbContext.Database.ExecuteSqlRawAsync("Delete from TB_MS_SpcApprover");
+
+                foreach (var obj in listObj)
+                {
+                    obj.F_RecUser = _BearerClass.UserCode;
+                    obj.F_RecDate = DateTime.Now;
+
+                    string sql = $"Select * From TB_MS_SpcApprover Where F_User_ID = '{obj.F_User_ID}'";
+                    int count = _kbContext.Database.ExecuteSqlRaw(sql);
+                    if (count <= 0)
+                    {
+                        if(obj.F_Path_File == "")
+                        {
+                            sql = $"Insert into TB_MS_SpcApprover( F_User_ID, F_Name, F_Surname, F_Email, F_RecUser, F_RecDate) " +
+                                $"Select '{obj.F_User_ID}', '{obj.F_Name}', '{obj.F_Surname}', '{obj.F_Email}', '{obj.F_RecUser}', '{obj.F_RecDate}'";
+
+                            await _kbContext.Database.ExecuteSqlRawAsync(sql);
+                        }
+                        else
+                        {
+
+                            sql = @$"Insert into TB_MS_SpcApprover( F_User_ID, F_Name, F_Surname, F_Email, F_Path_File, F_RecUser, F_RecDate, F_Sign) 
+                                    Select '{obj.F_User_ID}', '{obj.F_Name}', '{obj.F_Surname}', '{obj.F_Email}', '{obj.F_Path_File}', '{obj.F_RecUser}', '{obj.F_RecDate}', 
+                                    * From OPENROWSET(BULK N'{obj.F_Path_File}', SINGLE_BLOB) as PicTure ";
+
+                            await _kbContext.Database.ExecuteSqlRawAsync(sql);
+                        }
+                    }
+                }
+
+                await _kbContext.SaveChangesAsync();
+
+                await transaction.CommitAsync();
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                throw new Exception(ex.Message);
+            }
+
+        }
+
+        public async Task<string> UploadIMG(IFormFile formFile)
         {
             try
             {
 
-                await _kbContext.Database.BeginTransactionAsync();
+                var path = Path.Combine("\\\\hmmta-tpcap","kanban", "wwwroot","Storage", "Approver", formFile.FileName);
 
-                await _kbContext.Database.ExecuteSqlRawAsync("DELETE FROM TB_MS_TagColor");
-
-                foreach (var item in listObj)
+                if (!Directory.Exists(Path.Combine("\\\\hmmta-tpcap", "kanban", "wwwroot", "Storage", "Approver")))
                 {
-                    var IsExisted = _kbContext.Database.ExecuteSqlRaw("SELECT COUNT(*) FROM TB_MS_TagColor WHERE F_Color_Tag = {0} AND F_Type = {1}", item.F_Color_Tag, item.F_Type);
-
-                    if (IsExisted <= 0)
+                    Directory.CreateDirectory(Path.Combine("\\\\hmmta-tpcap", "kanban", "wwwroot", "Storage", "Approver"));
+                }
+                else if (Directory.Exists(Path.Combine("\\\\hmmta-tpcap", "kanban", "wwwroot", "Storage", "Approver")))
+                {
+                    if (System.IO.File.Exists(path))
                     {
-                        await _kbContext.Database.ExecuteSqlRawAsync("INSERT INTO TB_MS_TagColor (F_Color_Tag, F_Type,F_RecUser,F_RecDate) VALUES ({0},{1},{2},getDate())", item.F_Color_Tag, item.F_Type,_BearerClass.UserCode);
+                        System.IO.File.Delete(path);
                     }
-                    else
-                    {
-                        await _kbContext.Database.ExecuteSqlRawAsync("UPDATE TB_MS_TagColor SET F_Type = {1} ,F_RecUser = {2}, F_RecDate = getdate() WHERE F_color_Tag = {0}", item.F_Color_Tag, item.F_Type,_BearerClass.UserCode);
-                    }
-                    
                 }
 
-                await _kbContext.Database.CommitTransactionAsync();
+                using (var stream = new FileStream(path, FileMode.Create))
+                {
+                    await formFile.CopyToAsync(stream);
+                    stream.Close();
+                }
 
-
+                return path;
 
             }
             catch (Exception ex)
             {
-                await _kbContext.Database.RollbackTransactionAsync();
                 throw new Exception(ex.Message);
             }
-
         }
     }
 }

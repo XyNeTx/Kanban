@@ -298,7 +298,10 @@ namespace HINOSystem.Controllers.API.Master
                                     _Serilog.WriteLogMsg($"Update TB_REC_DETAIL {JsonConvert.SerializeObject(singleRecDet)}");
                                 }
                                 await _KB3Context.SaveChangesAsync();
-                                if (!await InsToRecLocal(PDSNo))
+
+                                bool IsComplete = await InsToRecLocal(PDSNo);
+
+                                if (IsComplete == false)
                                 {
                                     _result = @"{
                                     ""status"":""400"",
@@ -359,7 +362,6 @@ namespace HINOSystem.Controllers.API.Master
                     var recHead = await _KB3Context.TB_REC_HEADER.Where(x => x.F_OrderNo == PDSNo).SingleOrDefaultAsync();
                     var recDetail = await _KB3Context.TB_REC_DETAIL.Where(x => x.F_OrderNo == PDSNo).ToListAsync();
 
-                    List<T_Receive_Local> _trlList = new List<T_Receive_Local>();
                     foreach (var receive in recDetail)
                     {
                         string Receive_Local_Date = receive.F_Receive_Date.Value.ToString("yyyyMMdd");

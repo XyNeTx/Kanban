@@ -457,6 +457,76 @@ class xLib {
         });
     }
 
+    AJAX_PostFile(url, file, successFn, errorFn) {
+        if (window.location.hostname.includes("tpcap")) {
+            url = "/kanban" + url;
+        }
+        return $.ajax({
+            type: "POST",
+            url: url,
+            data: file,
+            headers: ajexHeader,
+            contentType: false,
+            processData: false,
+            timeout: 5400000,
+            success: successFn,
+            error: async function (xhr, status, error) {
+                if (xhr.status == 401) {
+                    await xSplash.hide();
+                    await xSwal.error("Error", "Session expired. Please login again.", function () {
+                        if (window.location.hostname.includes("tpcap")) {
+                            return window.open("/kanban/Login", "_self");
+                        }
+                        return window.open("/Login", "_self");
+                    });
+                }
+                else if (xhr.status == 403) {
+                    //console.log(xhr);
+                    // forbidden
+                    await xSplash.hide();
+                    await xSwal.error("Forbidden", "You are not allow to access this page.", function () {
+                        if (window.location.hostname.includes("tpcap")) {
+                            return window.open("/kanban/Home", "_self");
+                        }
+                        return window.open("/Home", "_self");
+                    }
+                    );
+                }
+                else {
+                    await console.error(xhr);
+                    xSplash.hide();
+
+                    // error was return by apicontroller
+                    if (xhr.responseJSON.errors != undefined) {
+
+                        if (xhr.responseJSON.errors.message == undefined || xhr.responseJSON.errors.message == null || !xhr.responseJSON.errors.message) {
+                            var _error = "";
+                            for (var key in xhr.responseJSON.errors) {
+                                _error += xhr.responseJSON.errors[key][0] + "<br>";
+                            }
+                            return xSwal.ErrorHTML("Error", _error)
+                        }
+
+                        return xSwal.error("Error", xhr.responseJSON.message)
+                    }
+
+                    // error was return by developer catch it
+                    else if (xhr.responseJSON.response) {
+                        xSwal.error(xhr.responseJSON.response, xhr.responseJSON.message)
+                        if (typeof errorFn == 'function') {
+                            return errorFn(xhr, status, error)
+                        }
+                    }
+
+                    else {
+                        xSwal.error("Error", xhr.responseJSON.message)
+                    }
+
+                }
+            }
+        });
+    }
+
     OpenReport(reportName,query) {
         var _url = "http://hmmt-app03/Reports/Pages/ReportViewer.aspx?/KB3"
         _url = _url + reportName + "&" + query;

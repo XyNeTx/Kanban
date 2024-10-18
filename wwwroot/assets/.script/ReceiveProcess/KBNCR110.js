@@ -106,48 +106,54 @@
 
 });
 
-$("#ReceiveBtn").click(async function () {
+$("#ReceiveBtn").one('click', function handleReceiveClick() {
 
-    $("#ReceiveBtn").prop('disabled', true)
+    $("#ReceiveBtn").prop('disabled', true);
     var _selData = [];
     var allPages = $('#tblMaster').DataTable().cells().nodes();
-    $("#ReceiveBtn").prop('disabled', true)
+    $("#ReceiveBtn").prop('disabled', true);
+
     $(allPages).find('input[type="checkbox"]').each(function () {
         if ($(this).prop('checked')) {
-            var _val = $($(this)).val();
+            var _val = $(this).val();
             _selData.push(JSON.parse(`{` + ReplaceAll(_val, `'`, `"`) + `}`));
         }
     });
 
-    // console.log(_selData);
+    // Ajax call
     xAjax.Post({
         url: 'KBNCR110/ReceiveAllPart',
         data: {
             'F_PDS_No': _selData,
         },
         then: async function (result) {
-            console.log(result)
+            console.log(result);
             if (result.status == "200") {
                 xSwal.success(result.title, result.message);
                 $('#tblMaster').DataTable().clear();
                 $('#tblMaster').DataTable().draw();
-                $("#ReceiveBtn").prop('disabled', false);
                 pdsSet.clear();
-            }
-            else {
+            } else {
                 xSwal.error(result.title, result.message);
-                $("#ReceiveBtn").prop('disabled', false);
             }
+            $("#ReceiveBtn").prop('disabled', false);
+
+            // Reattach the 'one' event handler after success/error
+            $("#ReceiveBtn").one('click', handleReceiveClick);
         },
         error: function (result) {
             console.error(_Controller + '.ReceiveAllPart: ' + result.responseText);
             $("#ReceiveBtn").prop('disabled', false);
+
+            // Reattach the 'one' event handler after error
+            $("#ReceiveBtn").one('click', handleReceiveClick);
             xSplash.hide();
         }
     });
 
     xSplash.hide();
 });
+
 
 $("#uploadEpro").click(function () {
     var _selData = [];

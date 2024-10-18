@@ -31,7 +31,7 @@ function LoadColorTag() {
 
 
     let obj = {
-        COLOR: "AddNew",
+        COLOR: "...",
         TypePart: "",
     };
 
@@ -45,6 +45,9 @@ function LoadColorTag() {
                 table.rows.add(success.data);
                 table.row.add(obj);
                 table.draw();
+            } else {
+                // If there is no data, add a new row
+                table.row.add(obj);
             }
 
             $("table thead tr th").addClass("text-center");
@@ -65,10 +68,18 @@ $(document).on('dblclick', '#tableMain tbody tr td', function () {
 
     _oriValue = $(this).text();
 
-    $(this).empty();
-    $(this).append('<input type="text" class="clsEdit form-control" id="txtEdit" value="' + _oriValue + '" />');
-
+    let row = $(this).closest('tr');
+    row.find('td').each(function () {
+        let value = $(this).text();
+        $(this).empty();
+        $(this).append('<input type="text" class="clsEdit form-control" id="txtEdit" value="' + value + '" />');
+    });
     $('#txtEdit').focus();
+});
+
+$(document).on('focusin', '#tableMain tbody tr td input[type="text"]', function () {
+    _oriValue = $(this).val();
+    console.log(_oriValue);
 });
 
 $(document).on('focusout  keypress', '#tableMain tbody tr td', function (e) {
@@ -83,6 +94,22 @@ $(document).on('focusout  keypress', '#tableMain tbody tr td', function (e) {
         };
         $(this).empty();
         $("#tableMain").DataTable().cell(this).data(_newValue).draw();
+
+        let row = $(this).closest('tr');
+        let rowIndex = $("#tableMain").DataTable().row(row).index();
+        //console.log(rowIndex);
+        let maxIndex = $("#tableMain").DataTable().rows().count() - 1;
+        //console.log(maxIndex);
+
+        if (rowIndex == maxIndex) {
+            let obj = {
+                COLOR: "...",
+                TypePart: "",
+            };
+            $("#tableMain").DataTable().row.add(obj).draw();
+            $("table tbody tr td").addClass("text-center");
+        }
+
     }
     else {
         return;
@@ -99,7 +126,7 @@ function SaveColorTag() {
     let listObj = $('#tableMain').DataTable().rows().data().toArray();
 
     listObj = listObj.filter(function (el) {
-        return (el.COLOR != "AddNew" || el.TypePart != "");
+        return (el.COLOR.trim() != "..." || el.TypePart.trim() != "");
     });
 
     _xLib.AJAX_Post("/api/KBNOR293/Confirm", listObj,
