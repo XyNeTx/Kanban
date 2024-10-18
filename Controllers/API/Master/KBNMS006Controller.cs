@@ -1694,7 +1694,7 @@ namespace HINOSystem.Controllers.API.Master
 
             if (_dt.Rows.Count > 0)
             {
-                return int.TryParse(_dt.Rows[0]["F_Cycle"].ToString().Substring(4, 2), out int result) ? result : 0;
+                return int.TryParse(_dt.Rows[0]["F_Cycle"].ToString().Substring(2, 2), out int result) ? result : 0;
             }
             return 0;
         }

@@ -80,7 +80,7 @@ $(document).on('dblclick', '#tableMain tbody tr td', function () {
     let row = $(this).closest('tr');
     row.find('td').each(function () {
         let value = $(this).text();
-        if($(this).index() >= 4) return;
+        if($(this).index() >= 5) return;
         $(this).empty();
         $(this).append('<input type="text" class="clsEdit form-control" id="txtEdit" value="'+value+'" />');
     });
@@ -94,7 +94,7 @@ $(document).on('dblclick', '#tableMain tbody tr td', function () {
 
 $(document).on('focusin', '#tableMain tbody tr td input[type="text"]', function () {
     _oriValue = $(this).val();
-    console.log(_oriValue);
+    //console.log(_oriValue);
 });
 
 $(document).on('focusout  keypress', '#tableMain tbody tr td', function (e) {
@@ -135,7 +135,7 @@ $(document).on('focusout  keypress', '#tableMain tbody tr td', function (e) {
 });
 
 $(document).on('change', 'input[type="file"]', function () {
-    console.log("Change File");
+    //console.log("Change File");
     let file = $(this)[0].files[0];
 
     let _data = new FormData();
@@ -146,9 +146,9 @@ $(document).on('change', 'input[type="file"]', function () {
 
     _xLib.AJAX_PostFile("/api/KBNOR295/UploadIMG", _data,
         function (success) {
-            console.log(success);
+            //console.log(success);
             let rowData = $("#tableMain").DataTable().row(row).data();
-            console.log(rowData);
+            //console.log(rowData);
             rowData.F_Path_File = success.data;
             $("#tableMain").DataTable().row(row).data(rowData).draw();
         },
@@ -169,12 +169,9 @@ function Confirm() {
     try {
         let listObj = $('#tableMain').DataTable().rows().data().toArray();
         //console.log(listObj);
-        listObj = listObj.filter(function (el) {
-            return (el.F_User_ID.trim() != "..." ||
-                el.F_Surname.trim() != "" ||
-                el.F_Path_File.trim() != "" ||
-                el.F_Name.trim() != "" || el.F_Email.trim() != "");
-        });
+        listObj = listObj.filter(x => x.F_User_ID.trim() != "..."
+            && x.F_Name.trim() != "" && x.F_Surname.trim() != ""
+            && x.F_Email.trim() != "" && x.F_Path_File.trim() != "");
 
         //console.log(listObj);
 

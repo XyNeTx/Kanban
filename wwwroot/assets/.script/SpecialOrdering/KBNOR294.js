@@ -135,11 +135,10 @@ function Confirm() {
 
     let listObj = $('#tableMain').DataTable().rows().data().toArray();
 
-    listObj = listObj.filter(function (el) {
-        return (el.UserID.trim() != "..." ||
-            el.UserName.trim() != "" || el.Telelphone.trim() != "" ||
-            el.Email.trim() != "");
-    });
+    listObj = listObj.filter(x => x.UserID.trim() != "..."
+        && x.UserName.trim() != "" && x.Telelphone.trim() != ""
+        && x.Email.trim() != "");
+
 
     _xLib.AJAX_Post("/api/KBNOR294/Confirm", listObj,
         function (success) {

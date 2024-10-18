@@ -125,9 +125,7 @@ function SaveColorTag() {
 
     let listObj = $('#tableMain').DataTable().rows().data().toArray();
 
-    listObj = listObj.filter(function (el) {
-        return (el.COLOR.trim() != "..." || el.TypePart.trim() != "");
-    });
+    listObj = listObj.filter(x => x.COLOR.trim() != "..." && x.TypePart.trim() != "" );
 
     _xLib.AJAX_Post("/api/KBNOR293/Confirm", listObj,
         function (success) {
