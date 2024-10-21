@@ -394,6 +394,10 @@ const addDetailToTable = async (dateSet, intRow) => {
                     //console.log(success.data);
                     $(`#tdR18Pcs${dateSet[_countDateSet]}`).text(success.data[0].F_BL_SET_Plan);
                     $(`#tdR20Pcs${dateSet[_countDateSet]}`).text(success.data[0].F_BL_SET_Actual);
+                    if(success.data[0].F_Not_Recalculate){
+                        $(`#tdR18Pcs${dateSet[_countDateSet]}`).css("font-weight", "900");
+                        $(`#tdR20Pcs${dateSet[_countDateSet]}`).css("font-weight", "900");
+                    }
                 }
             }
         );
@@ -468,12 +472,12 @@ const addDetailToTable = async (dateSet, intRow) => {
 
             else $(`#${_insIdDetail}`).text(item[_setAccessDetail[k - 1]]);
 
-            if (k == 18 || k == 20) {
-                //console.log(item.F_Not_Recalculate);
-                if (item.F_Not_Recalculate) {
-                    $("#tdR" + k + "Pcs" + dateSet[_countDateSet]).css("font-weight", "900");
-                }
-            }
+            //if (k == 18 || k == 20) {
+            //    console.log(item);
+            //    if (item.F_Not_Recalculate) {
+            //        $("#tdR" + k + "Pcs" + dateSet[_countDateSet]).css("font-weight", "900");
+            //    }
+            //}
 
             if (k == 20) { _countT += 1; } //new column T
 

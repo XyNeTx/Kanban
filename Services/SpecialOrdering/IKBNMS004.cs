@@ -1,5 +1,6 @@
 ﻿using HINOSystem.Context;
 using HINOSystem.Libs;
+using HINOSystem.Models.KB3.Master;
 using KANBAN.Context;
 using KANBAN.Libs;
 using KANBAN.Models.KB3.Receive_Process;
@@ -12,6 +13,7 @@ namespace KANBAN.Services.SpecialOrdering
         string List_Data(string? Supplier);
         string SupplierDropDown(bool isNew);
         string SupplierChanged(string Supplier);
+        Task Save(string Action, List<TB_MS_SupplierAttn> listModel);
     }
 
 
@@ -94,6 +96,8 @@ namespace KANBAN.Services.SpecialOrdering
                             F_Supplier_Code = x.F_supplier_cd + "-" + x.F_Plant_cd,
                         }).OrderBy(x => x.F_Supplier_Code).ToList();
 
+                    dbList = dbList.DistinctBy(x=>x.F_Supplier_Code).ToList();
+
                     if (dbList.Count == 0)
                     {
                         throw new Exception("No data found");
@@ -103,7 +107,7 @@ namespace KANBAN.Services.SpecialOrdering
                 }
                 else
                 {
-                    string sql = $@"SELECT RTRIM(F_Supplier_Code) + '-' + RTRIM(F_Supplier_Plant) AS F_Supplier_Code 
+                    string sql = $@"SELECT DISTINCT RTRIM(F_Supplier_Code) + '-' + RTRIM(F_Supplier_Plant) AS F_Supplier_Code 
                             FROM TB_MS_SupplierAttn 
                             ORDER BY F_Supplier_Code ";
 
@@ -148,7 +152,7 @@ namespace KANBAN.Services.SpecialOrdering
                             AND F_TC_End >= convert(char(8),getdate(),112) 
                             AND F_supplier_cd + '-' + F_Plant_cd = '{Supplier}'";
 
-                    _dt = _FillDT.ExecuteSQL(sql);
+                    _dt = _FillDT.ExecuteSQLPPMDB(sql);
 
                     if (_dt.Rows.Count > 0)
                     {
@@ -160,6 +164,62 @@ namespace KANBAN.Services.SpecialOrdering
                     }
                 }
 
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task Save(string Action, List<TB_MS_SupplierAttn> listModel)
+        {
+            try
+            {
+                foreach (var model in listModel)
+                {
+                    if (Action.ToLower() == "new")
+                    {
+                        if (_kbContext.TB_MS_SupplierAttn.Any(x => x.F_Supplier_Code == model.F_Supplier_Code
+                                               && x.F_Supplier_Plant == model.F_Supplier_Plant))
+                        {
+                            throw new Exception("Data already exists");
+                        }
+
+                        _kbContext.TB_MS_SupplierAttn.Add(model);
+                    }
+                    else if (Action.ToLower() == "update")
+                    {
+                        var _model = _kbContext.TB_MS_SupplierAttn.Where(x => x.F_Supplier_Code == model.F_Supplier_Code
+                                && x.F_Supplier_Plant == model.F_Supplier_Plant).FirstOrDefault();
+
+                        if (_model == null)
+                        {
+                            throw new Exception("Data not found");
+                        }
+
+                        _model.F_Short_Name = model.F_Short_Name;
+                        _model.F_Attention = model.F_Attention;
+                        _model.F_Telephone = model.F_Telephone;
+                        _model.F_Fax = model.F_Fax;
+
+                        _kbContext.TB_MS_SupplierAttn.Update(_model);
+
+                    }
+                    else if (Action.ToLower() == "delete")
+                    {
+                        if (!_kbContext.TB_MS_SupplierAttn.Any(x => x.F_Supplier_Code == model.F_Supplier_Code
+                                                                  && x.F_Supplier_Plant == model.F_Supplier_Plant))
+                        {
+                            throw new Exception("Data not found");
+                        }
+
+                        _kbContext.TB_MS_SupplierAttn.Remove(model);
+                    }
+
+                    _log.WriteLogMsg($"Save data to TB_MS_SupplierAttn with Action: {Action} and Data: {JsonConvert.SerializeObject(model)}");
+                }
+
+                await _kbContext.SaveChangesAsync();
             }
             catch (Exception ex)
             {

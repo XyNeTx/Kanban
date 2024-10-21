@@ -7,7 +7,7 @@
         "processing": false,
         "serverSide": false,
         scrollX: false,
-        scrollY: '400px',
+        scrollY: '300px',
         searching: false,
         info: false,
         ordering: false,
@@ -28,6 +28,9 @@
 
     $("table thead tr th").addClass("text-center");
     $("table tbody tr td").addClass("text-center");
+
+    $("#btnSave").prop("disabled", true);
+    $("#btnReport").prop("disabled", true);
 
     SupplierDropDown(false);
 
@@ -85,10 +88,48 @@ $("#inpSupplier").change(function SupplierChanged () {
         }
     );
 
-    $('#btnInq').trigger('click');
+    let activedBtn = $("#divButton").find("button:not([disabled])").attr("id");
+    console.log(activedBtn)
+    if (activedBtn == "btnNew") return;
+
+    _xLib.AJAX_Get("/api/KBNMS004/ListData", obj,
+        function (success) {
+            success = _xLib.JSONparseMixData(success);
+            //console.log(success);
+            $("#tableMain").DataTable().clear().rows.add(success.data).draw();
+            $("table tbody tr td").addClass("text-center");
+            $("table thead tr th").addClass("text-center");
+            $("#inpSupplier").prop("disabled", false);
+            $("#inpSupplier").selectpicker("refresh");
+
+        },
+        function (error) {
+            console.log(error);
+            xSwal.error(error.responseJSON.response, error.responseJSON.message);
+        }
+    );
+
+    //$('#btnInq').trigger('click');
+});
+
+$("#btnSel").click(function () {
+    $(document).find("input[name='chkFlag']").each(function () {
+        $(this).prop("checked", true);
+    });
+});
+
+$("#btnDesel").click(function () {
+    $(document).find("input[name='chkFlag']").each(function () {
+        $(this).prop("checked", false);
+    });
 });
 
 $("#btnInq").click(function List_Data() {
+
+    $('#btnNew').prop('disabled', true);
+    $('#btnUpd').prop('disabled', true);
+    $('#btnDel').prop('disabled', true);
+
     let obj = {
         Supplier: $("#inpSupplier").val(),
     }
@@ -100,6 +141,8 @@ $("#btnInq").click(function List_Data() {
             $("#tableMain").DataTable().clear().rows.add(success.data).draw();
             $("table tbody tr td").addClass("text-center");
             $("table thead tr th").addClass("text-center");
+            $("#inpSupplier").prop("disabled", false);
+            $("#inpSupplier").selectpicker("refresh");
 
         },
         function (error) {
@@ -107,7 +150,167 @@ $("#btnInq").click(function List_Data() {
             xSwal.error(error.responseJSON.response, error.responseJSON.message);
         }
     );
+
+    $("#btnSave").prop("disabled", true);
+    $("#btnReport").prop("disabled", false);
+
 });
+
+$("#btnUpd").click(function () {
+
+    $("#btnInq").prop("disabled", true);
+    $("#btnNew").prop("disabled", true);
+    $("#btnDel").prop("disabled", true);
+
+    $("#inpSupplier").prop("disabled", false);
+    $("#inpSupplierName").prop("readonly", false);
+    $("#inpAttention").prop("readonly", false);
+    $("#inpTelephone").prop("readonly", false);
+    $("#inpFax").prop("readonly", false);
+
+    $("#inpSupplier").selectpicker("refresh");
+
+    $("#btnSave").prop("disabled", false);
+    $("#btnReport").prop("disabled", true);
+});
+
+$("#btnDel").click(function () {
+
+    $("#btnInq").prop("disabled", true);
+    $("#btnNew").prop("disabled", true);
+    $("#btnUpd").prop("disabled", true);
+
+    $("#inpSupplier").prop("disabled", false);
+    $("#inpSupplierName").prop("readonly", true);
+    $("#inpAttention").prop("readonly", true);
+    $("#inpTelephone").prop("readonly", true);
+    $("#inpFax").prop("readonly", true);
+
+    $("#inpSupplier").selectpicker("refresh");
+
+    $("#btnSave").prop("disabled", false);
+    $("#btnReport").prop("disabled", true);
+});
+
+
+$("#btnCan").click(function () {
+
+    $("#btnInq").prop("disabled", false);
+    $("#btnNew").prop("disabled", false);
+    $("#btnUpd").prop("disabled", false);
+    $("#btnDel").prop("disabled", false);
+
+    $("#inpSupplier").prop("disabled", true);
+    $("#inpSupplierName").prop("readonly", true);
+    $("#inpAttention").prop("readonly", true);
+    $("#inpTelephone").prop("readonly", true);
+    $("#inpFax").prop("readonly", true);
+
+    $("#tableMain").DataTable().clear().draw();
+
+    $("#frmCondition").trigger("reset");
+
+    $("#btnSave").prop("disabled", true);
+    $("#btnReport").prop("disabled", true);
+
+    $("#inpSupplier").selectpicker("refresh");
+    //$("#inpSupplier").parent().find("div[class='filter-option-inner-inner']").empty().append("-- Select Supplier --");
+});
+
+$("#btnNew").click(function () {
+    $("#btnInq").prop("disabled", true);
+    $("#btnUpd").prop("disabled", true);
+    $("#btnDel").prop("disabled", true);
+    
+    $("#inpSupplier").prop("disabled", false);
+    $("#inpSupplierName").prop("readonly", false);
+    $("#inpAttention").prop("readonly", false);
+    $("#inpTelephone").prop("readonly", false);
+    $("#inpFax").prop("readonly", false);
+    
+    $("#inpSupplier").selectpicker("refresh");
+
+    $("#btnSave").prop("disabled", false);
+    $("#btnReport").prop("disabled", true);
+
+    SupplierDropDown(true);
+});
+
+$("#btnSave").click(async function () {
+    let activedBtn = $("#divButton").find("button:not([disabled])").attr("id");
+
+    if (activedBtn == "btnDel") {
+        obj = [];
+        $("#tableMain").find("input[name='chkFlag']:checked").each(function () {
+            let row = $(this).closest("tr");
+            let data = $("#tableMain").DataTable().row(row).data();
+            data.F_Supplier_Plant = data.F_Supplier_Code.split("-")[1];
+            data.F_Supplier_Code = data.F_Supplier_Code.split("-")[0];
+            obj.push(data);
+            console.log(data);
+
+        });
+
+        if (obj.length == 0) {
+            xSwal.error("Error", "Please select data to delete.");
+            return;
+        }
+
+        if (await xSwal.confirm("Are you sure", "This action cannot be undone.")) {
+            Save("Delete", obj);
+        }
+    }
+    else if (activedBtn == "btnNew") {
+        if ($("#inpSupplier").val() == "") {
+            xSwal.error("Error", "Please select supplier.");
+            return;
+        }
+
+        let obj = [{
+            F_Supplier_Code: $("#inpSupplier").val().split("-")[0],
+            F_Supplier_Plant: $("#inpSupplier").val().split("-")[1],
+            F_Short_Name: $("#inpSupplierName").val(),
+            F_Attention: $("#inpAttention").val(),
+            F_Telephone: $("#inpTelephone").val(),
+            F_Fax: $("#inpFax").val()
+        }]
+
+        Save("New", obj);
+    }
+    else {
+        if ($("#inpSupplier").val() == "") {
+            xSwal.error("Error", "Please select supplier.");
+            return;
+        }
+
+        let obj = [{
+            F_Supplier_Code: $("#inpSupplier").val().split("-")[0],
+            F_Supplier_Plant: $("#inpSupplier").val().split("-")[1],
+            F_Short_Name: $("#inpSupplierName").val(),
+            F_Attention: $("#inpAttention").val(),
+            F_Telephone: $("#inpTelephone").val(),
+            F_Fax: $("#inpFax").val()
+        }]
+
+        Save("Update", obj);
+    }
+
+});
+
+function Save(Action, Obj) {
+
+    _xLib.AJAX_Post("/api/KBNMS004/Save?Action=" + Action, Obj,
+        function (success) {
+            xSwal.success("Success", success.message);
+            $("#btnCan").trigger("click");
+        },
+        function (error) {
+            console.log(error);
+            xSwal.error(error.responseJSON.response, error.responseJSON.message);
+        }
+    );
+
+}
 
 $(document).on("click", "table tbody tr td", function () {
     let row = $(this).closest("tr");
@@ -122,4 +325,15 @@ $(document).on("click", "table tbody tr td", function () {
     $("#inpFax").val(data.F_Fax);
 
     $("#inpSupplier").selectpicker("refresh");
+});
+
+$("#btnReport").click(function () {
+    let obj = {
+        UserName: _xLib.GetUserName(),
+        Sup: $("#inpSupplier").val(),
+        Plant: _xLib.GetCookie("plantCode"),
+    }
+
+    _xLib.OpenReportObj("/KBNMS004", obj);
+
 });
