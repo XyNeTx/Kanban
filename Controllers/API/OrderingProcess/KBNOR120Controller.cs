@@ -154,7 +154,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
             {
                 using (Process p = new Process())
                 {
-                    p.StartInfo.FileName = "schtasks";
+                    p.StartInfo.FileName = "C:\\Windows\\System32\\schtasks.exe";
                     p.StartInfo.Arguments = "/run /tn \"KB3_BL\"";  // Name of the scheduled task
                     p.StartInfo.UseShellExecute = false;
                     p.StartInfo.CreateNoWindow = true;

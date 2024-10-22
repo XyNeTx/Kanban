@@ -1,50 +1,7 @@
-﻿using Microsoft.AspNetCore.Http.Extensions;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Net.Http.Headers;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authorization;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-using Microsoft.SqlServer.Server;
-using Microsoft.VisualBasic;
-
-using System.Data;
-using System;
-using System.Web;
-using System.IO;
-using System.Text;
-using System.Dynamic;
-using System.Globalization;
-using System.Threading.Tasks;
-using System.Security.Principal;
-using System.Reflection.PortableExecutable;
-using System.Net;
-using System.Net.Http;
-using System.DirectoryServices;
-using System.DirectoryServices.AccountManagement;
-using System.Collections.Specialized;
-using System.DirectoryServices.ActiveDirectory;
-
-
-using System.Security.Claims;
-using Org.BouncyCastle.Asn1.Ocsp;
-
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-
-
+﻿using HINOSystem.Context;
 using HINOSystem.Libs;
-using HINOSystem.Context;
-using HINOSystem.Models.KB3;
-using NPOI.SS.Formula.Functions;
-using NPOI.HPSF;
-using Humanizer;
-using NPOI.SS.Formula.Eval;
-using PdfSharp.Pdf.Filters;
-using MathNet.Numerics.LinearAlgebra.Factorization;
-using Microsoft.CodeAnalysis.Differencing;
-using static System.Net.Mime.MediaTypeNames;
-using NPOI.POIFS.Properties;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace HINOSystem.Controllers.API.Master
 {
@@ -98,14 +55,14 @@ namespace HINOSystem.Controllers.API.Master
                 
 
                 _SQL = @" EXEC [exec].[spKBNOR460EX_INI_PDS] 
-                    'N',
+                    'U',
                     '" + _BearerClass.Plant + @"',
                     '" + _BearerClass.UserCode + @"',
                     '' ";
                 string _jsPDSNo = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName: ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
 
                 _SQL = @" EXEC [exec].[spKBNOR460EX_INI_SUPPLIER] 
-                    'N',
+                    'U',
                     '" + _BearerClass.Plant + @"',
                     '" + _BearerClass.UserCode + @"',
                     '' ";

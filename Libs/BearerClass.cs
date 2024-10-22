@@ -1,4 +1,5 @@
 ﻿//using Microsoft.Office.Interop.Excel;
+using KANBAN.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -132,6 +133,15 @@ namespace HINOSystem.Libs
         public int CheckAuthen()
         {
             this.Authentication(_http.HttpContext.Request);
+            if (this.Status == 401)
+            {
+                throw new CustomHttpException("Unauthorized");
+            }
+            else if (this.Status == 403)
+            {
+                throw new CustomHttpException("Forbidden");
+            }
+
             return this.Status;
         }
 

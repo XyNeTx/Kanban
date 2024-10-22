@@ -1039,11 +1039,11 @@ namespace KANBAN.Controllers.API.OrderingProcess
         {
             try
             {
-                await _KB3Context.Database.ExecuteSqlRawAsync("Exec dbo.sp_autoRecalculateBL_First @p0,@p1,@p2,@p3,@p4,@p5,@p6",
-                        obj.CurrentDate.Date.AddDays(-1).ToString("yyyy-MM-dd"),
-                        obj.Supplier.Substring(0, 4), obj.Supplier.Substring(5, 1),
-                        obj.PartNo.Split("-")[0], obj.PartNo.Split("-")[1],
-                        obj.Kanban, obj.Store);
+                //await _KB3Context.Database.ExecuteSqlRawAsync("Exec dbo.sp_autoRecalculateBL_First @p0,@p1,@p2,@p3,@p4,@p5,@p6",
+                //        obj.CurrentDate.Date.AddDays(-1).ToString("yyyy-MM-dd"),
+                //        obj.Supplier.Substring(0, 4), obj.Supplier.Substring(5, 1),
+                //        obj.PartNo.Split("-")[0], obj.PartNo.Split("-")[1],
+                //        obj.Kanban, obj.Store);
 
                 var _autoRecalBl = _FillDT.ExecuteSQL("Exec dbo.sp_autoRecalculateBL_First @p0,@p1,@p2,@p3,@p4,@p5,@p6",
                     obj.CurrentDate.Date.AddDays(-1).ToString("yyyy-MM-dd"),

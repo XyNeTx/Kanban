@@ -27,14 +27,26 @@
 
     xKBNOR460EX.initial(function (result) {
         //console.log(result);
-        xDropDownList.bind('#frmCondition #itmPDSFrom', result.data.PDSNo, 'F_OrderNo', 'F_OrderNo');
-        xDropDownList.bind('#frmCondition #itmPDSTo', result.data.PDSNo, 'F_OrderNo', 'F_OrderNo');
+        //xDropDownList.bind('#frmCondition #itmPDSFrom', result.data.PDSNo, 'F_OrderNo', 'F_OrderNo');
+        //xDropDownList.bind('#frmCondition #itmPDSTo', result.data.PDSNo, 'F_OrderNo', 'F_OrderNo');
         xDropDownList.bind('#frmCondition #itmSupplierFrom', result.data.Supplier, 'Supplier_Code', 'Supplier_Code');
         xDropDownList.bind('#frmCondition #itmSupplierTo', result.data.Supplier, 'Supplier_Code', 'Supplier_Code');
 
+        $(result.data.PDSNo).each(function (i, item) {
+            //console.log(item.F_OrderNo);
+            $('#itmPDSFrom').append($('<option>', {
+                value: item.F_OrderNo,
+                text: item.F_OrderNo
+            }));
+            $('#itmPDSTo').append($('<option>', {
+                value: item.F_OrderNo,
+                text: item.F_OrderNo
+            }));
+        });
+
         xAjax.onClick('#chkPDSNo', function () {
-            if ($('#chkPDSNo').val() == 0) $('#fldPDSNo').prop('disabled', 'disabled');
-            if ($('#chkPDSNo').val() == 1) $('#fldPDSNo').prop('disabled', false);
+            //console.log($('#chkPDSNo').val());
+
         });
 
         xAjax.onClick('#chkSupplierCode', function () {
@@ -47,6 +59,9 @@
             if ($('#chkDeliveryDate').val() == 1) $('#fldDeliveryDate').prop('disabled', false);
         });
 
+
+        $("#itmPDSFrom").selectpicker('refresh');
+        $("#itmPDSTo").selectpicker('refresh');
 
         initial();
 
@@ -86,7 +101,7 @@
                 var _dt = await xAjax.ExecuteJSON({
                     data: {
                         "Module": "[exec].[spKBNOR460EX]",
-                        "@OrderType": "N",
+                        "@OrderType": "U",
                         "@Plant": ajexHeader.Plant,
                         "@UserCode": ajexHeader.UserCode,
                         "@itmPDSFrom": ($('#chkPDSNo').val() == 1 ? ($('#itmPDSFrom').val() != null ? $('#itmPDSFrom').val() : '') : ''),
@@ -153,18 +168,21 @@
 
                     }
 
-                    if (_result.response == 'OK') {
-                        MsgBox("Export complete, Do you want to save file? (" + _itmFileName + ")",
-                            MsgBoxStyle.OkCancel,
-                            function () {
+                    //console.log(_result.response);
+
+                    if (_result.response.trim() === "OK") {
+                        //console.log("Export complete, Do you want to save file? (" + _itmFileName + ")");
+                        //MsgBox("Export complete, Do you want to save file? (" + _itmFileName + ")",
+                        //    MsgBoxStyle.OkCancel,
+                            /*function () {*/
                                 $('#aDownloadLink').attr('href', _STORAGESERVER_ + '/' + xDate.Date('yyyyMM') + `/` + _result.data);
                                 document.getElementById('aDownloadLink').click();
 
                                 initial();
-                            }, function () {
+                            //}, function () {
 
-                                initial();
-                            });
+                            //    initial();
+                            //});
                     }
                 }
 
@@ -177,3 +195,16 @@
     });
 })
 
+$(document).on('change', '#chkPDSNo', function () {
+    console.log($('#chkPDSNo').is(':checked'));
+    if ($('#chkPDSNo').is(':checked')) {
+        $('#itmPDSFrom').prop('disabled', false);
+        $('#itmPDSTo').prop('disabled', false);
+    } else {
+        $('#itmPDSFrom').prop('disabled', true);
+        $('#itmPDSTo').prop('disabled', true);
+    }
+
+    $("#itmPDSFrom").selectpicker('refresh');
+    $("#itmPDSTo").selectpicker('refresh');
+});

@@ -3,7 +3,6 @@ using HINOSystem.Libs;
 using KANBAN.Context;
 using KANBAN.Libs;
 using KANBAN.Services;
-using KANBAN.Services.Import;
 using KANBAN.Services.Logistical;
 using KANBAN.Services.SpecialOrdering;
 using Microsoft.EntityFrameworkCore;
@@ -164,6 +163,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+app.UseMiddleware<CustomExceptionMiddleware>();
 
 app.UseRouting();
 
