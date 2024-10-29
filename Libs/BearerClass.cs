@@ -135,14 +135,30 @@ namespace HINOSystem.Libs
             this.Authentication(_http.HttpContext.Request);
             if (this.Status == 401)
             {
-                throw new CustomHttpException("Unauthorized");
+                throw new CustomHttpException(401,"Unauthorized");
             }
             else if (this.Status == 403)
             {
-                throw new CustomHttpException("Forbidden");
+                throw new CustomHttpException(403,"Forbidden");
             }
 
             return this.Status;
+        }
+
+        public async Task CheckAuthorize()
+        {
+            await Task.Run(() =>
+            {
+                this.Authentication(_http.HttpContext.Request);
+                if (this.Status == 401)
+                {
+                    throw new CustomHttpException(401, "Unauthorized");
+                }
+                else if (this.Status == 403)
+                {
+                    throw new CustomHttpException(403, "Forbidden");
+                }
+            });
         }
 
         public string StoreAccess()
@@ -154,81 +170,6 @@ namespace HINOSystem.Libs
                 "3" => "3C",
                 _ => "3C",
             };
-        }
-
-
-        public JObject Authorization(string pHeader)
-        {
-            if (pHeader == null)
-            {
-                return JObject.Parse(@"{
-                                    ""status"":""200"",
-                                    ""response"":""OK"",
-                                    ""message"": ""Header not found.""
-                                }"
-                );
-            }
-            DataTable _dt = _KBCN.ExecuteSQL("SELECT * FROM [erp].[User] WHERE Token = '" + pHeader.Replace("Bearer ", "") + "' ", skipLog: true);
-            if (_dt.Rows.Count <= 0)
-            {
-                return JObject.Parse(@"{
-                                        ""status"":""401"",
-                                        ""response"":""Unauthorized"",
-                                        ""message"": ""Unauthorized"",
-                                        ""data"": null
-                                    }"
-                );
-            }
-
-            DataRow _dr = _dt.Rows[0];
-            JObject _BearerClass = JObject.Parse(JsonConvert.SerializeObject(_dr));
-
-            return JObject.Parse(@"{
-                                    ""status"":""200"",
-                                    ""response"":""OK"",
-                                    ""message"": """",
-                                    ""user"":" + _BearerClass.GetValue("Table")[0] + @"
-                                }"
-            );
-        }
-
-
-        public dynamic AuthorizationJSON(string pHeader)
-        {
-            if (pHeader == null)
-            {
-                return JObject.Parse(@"{
-                                    ""status"":""200"",
-                                    ""response"":""OK"",
-                                    ""message"": ""Header not found.""
-                                }"
-                );
-            }
-            DataTable _dt = _KBCN.ExecuteSQL("SELECT * FROM [erp].[User] WHERE Token = '" + pHeader.Replace("Bearer ", "") + "' ", skipLog: true);
-            if (_dt.Rows.Count <= 0)
-            {
-                return JObject.Parse(@"{
-                                        ""status"":""401"",
-                                        ""response"":""Unauthorized"",
-                                        ""message"": ""Unauthorized"",
-                                        ""data"": null
-                                    }"
-                );
-            }
-
-            DataRow _dr = _dt.Rows[0];
-            JObject _BearerClass = JObject.Parse(JsonConvert.SerializeObject(_dr));
-
-            this.Status = 200;
-            //this.Bearer = _BearerClass.GetValue("Table")[0]["Bearer"].ToString();
-            this.UserCode = _BearerClass.GetValue("Table")[0]["Code"].ToString();
-            //this.Plant = _BearerClass.GetValue("Table")[0]["Code"].ToString();
-            //this.ProcessDate = _BearerClass.GetValue("Table")[0]["Code"].ToString();
-            //this.Shift = _BearerClass.GetValue("Table")[0]["Code"].ToString();
-            this.Data = JObject.Parse(JsonConvert.SerializeObject(_dr));
-
-            return this;
-
         }
 
             public string Encrypt(string clearText)
@@ -296,17 +237,4 @@ namespace HINOSystem.Libs
         }
 
     }
-
-    public class BearerTokenClass
-    {
-        public string User = "";
-
-
-        public BearerTokenClass(
-            )
-        {
-
-        }
-    }
-
 }

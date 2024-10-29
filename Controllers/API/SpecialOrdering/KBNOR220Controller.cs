@@ -3,6 +3,7 @@ using KANBAN.Services;
 using KANBAN.Services.SpecialOrdering;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace KANBAN.Controllers.API.SpecialOrdering
 {
@@ -21,76 +22,66 @@ namespace KANBAN.Controllers.API.SpecialOrdering
         }
 
         [HttpGet]
-        public IActionResult LoadColorofTag()
+        public async Task<IActionResult> LoadColorofTag()
         {
             try
             {
-                if (_bearerClass.CheckAuthen() == 401)
-                {
-                    throw new CustomHttpException("Unauthorized");
-                }
-                else if (_bearerClass.CheckAuthen() == 403)
-                {
-                    throw new CustomHttpException("Forbidden");
-                }
+                await _bearerClass.CheckAuthorize();
 
                 var data = _services.IKBNOR220.LoadColorofTag();
 
                 return Ok(new { status = "200", response = "Success", message = "Data Found", data = data });
             }
-            catch (Exception ex)
+            catch (CustomHttpException ex)
             {
-                throw new CustomHttpException(ex.Message);
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
             }
         }
 
         [HttpGet]
-        public IActionResult LoadListView()
+        public async Task<IActionResult> LoadListView()
         {
             try
             {
-                if (_bearerClass.CheckAuthen() == 401)
-                {
-                    throw new CustomHttpException("Unauthorized");
-                }
-                else if (_bearerClass.CheckAuthen() == 403)
-                {
-                    throw new CustomHttpException("Forbidden");
-                }
+                await _bearerClass.CheckAuthorize();
 
                 var data = _services.IKBNOR220.LoadListView();
 
                 return Ok(new { status = "200", response = "Success", message = "Data Found", data = data });
             }
-            catch (Exception ex)
+            catch (CustomHttpException ex)
             {
-                throw new CustomHttpException(ex.Message);
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
             }
         }
 
         [HttpGet]
-        public IActionResult InitialScreenCmb(string ProcessDT)
+        public async Task<IActionResult> InitialScreenCmb()
         {
             try
             {
 
-                if(_bearerClass.CheckAuthen() == 401)
-                {
-                    throw new CustomHttpException("Unauthorized");
-                }
-                else if (_bearerClass.CheckAuthen() == 403)
-                {
-                    throw new CustomHttpException("Forbidden");
-                }
+                await _bearerClass.CheckAuthorize();
 
-                var data = _services.IKBNOR220.InitialScreenCmb(ProcessDT);
+                var DeptMS = _services.IKBNOR220.GetDeptMS(DateTime.Now.ToString("yyyyMMdd"), "");
+                var ACCMS = _services.IKBNOR220.GetACCOUNTMS(DateTime.Now.ToString("yyyyMMdd"));
 
-                return Ok(new { status = "200", response = "Success", message = "Data Found", data = data });
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data Found",
+                    data = new
+                    {
+                        deptMS = JsonConvert.SerializeObject(DeptMS),
+                        accMS = JsonConvert.SerializeObject(ACCMS)
+                    }
+                });
 
             }
-            catch (Exception ex)
+            catch (CustomHttpException ex)
             {
-                throw new CustomHttpException(ex.Message);
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
             }
         }
 

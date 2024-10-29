@@ -394,7 +394,7 @@ namespace HINOSystem.Controllers.API.Master
                         _Serilog.WriteLogMsg($"Insert T_Receive_Local {JsonConvert.SerializeObject(_trl)}");
                     }
                     await _PPM3Context.SaveChangesAsync();
-                    await UploadToEpro(user);
+                    //await UploadToEpro(user);
                 }
                 return true;
             }

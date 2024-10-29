@@ -1,5 +1,6 @@
 ﻿using HINOSystem.Libs;
 using KANBAN.Models.KB3.SpecialOrdering;
+using KANBAN.Services;
 using KANBAN.Services.SpecialOrdering;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,19 +21,11 @@ namespace KANBAN.Controllers.API.SpecialOrder
 
 
         [HttpGet]
-        public IActionResult LoadColorTag()
+        public async Task<IActionResult> LoadColorTag()
         {
             try
             {
-                if(_bearerClass.CheckAuthen() == 401 || _bearerClass.CheckAuthen() == 403)
-                {
-                    return StatusCode(_bearerClass.Status, new
-                    {
-                        status = _bearerClass.Status,
-                        response = _bearerClass.Response,
-                        message = _bearerClass.Message
-                    });
-                }
+                await _bearerClass.CheckAuthorize();
 
                 var result = _services.IKBNOR293.LoadColorTag();
 
@@ -44,12 +37,12 @@ namespace KANBAN.Controllers.API.SpecialOrder
                     data = result
                 });
             }
-            catch (Exception ex)
+            catch (CustomHttpException ex)
             {
-                return StatusCode(500, new
+                return StatusCode(ex.StatusCode, new
                 {
-                    status = 500,
-                    response = "Error!",
+                    status = ex.StatusCode,
+                    response = "Error",
                     message = ex.Message
                 });
             }
@@ -61,15 +54,7 @@ namespace KANBAN.Controllers.API.SpecialOrder
         {
             try
             {
-                if (_bearerClass.CheckAuthen() == 401 || _bearerClass.CheckAuthen() == 403)
-                {
-                    return StatusCode(_bearerClass.Status, new
-                    {
-                        status = _bearerClass.Status,
-                        response = _bearerClass.Response,
-                        message = _bearerClass.Message
-                    });
-                }
+                await _bearerClass.CheckAuthorize();
 
                 await _services.IKBNOR293.Confirm(listObj);
 
@@ -80,12 +65,12 @@ namespace KANBAN.Controllers.API.SpecialOrder
                     message = "Data Saved",
                 });
             }
-            catch (Exception ex)
+            catch (CustomHttpException ex)
             {
-                return StatusCode(500, new
+                return StatusCode(ex.StatusCode, new
                 {
-                    status = 500,
-                    response = "Error!",
+                    status = ex.StatusCode,
+                    response = "Error",
                     message = ex.Message
                 });
             }

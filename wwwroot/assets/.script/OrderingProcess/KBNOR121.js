@@ -472,6 +472,9 @@ const addDetailToTable = async (dateSet, intRow) => {
 
             else $(`#${_insIdDetail}`).text(item[_setAccessDetail[k - 1]]);
 
+            //console.log(item[_setAccessDetail[k - 1]]);
+            //console.log(_insIdDetail);
+
             //if (k == 18 || k == 20) {
             //    console.log(item);
             //    if (item.F_Not_Recalculate) {
@@ -687,6 +690,9 @@ const addDetailToTable = async (dateSet, intRow) => {
         else {
             let index = $(this).index() - 1; // -1 because index start at 0
             let $td = $("table tbody tr").find("td").eq(index);
+            if (!$td.attr("id").includes("R1")) {
+                return;
+            }
             //console.log($td.attr("id"));
             $td.text(""); // empty it if it in same shift
 
@@ -749,8 +755,26 @@ const periodFilter = async () => {
 
         arr.push({ deliveryDate: deliveryDate, deliveryTrip: deliveryTrip });
 
-        if (_CookieLoginDate.includes("D"))
+        //console.log(arr);
+
+        //console.log(parseInt($("#readCycleTime").val().slice(3, 5)));
+        //console.log(parseInt($("#readCycleTime").val().slice(6, 8)));
+        //console.log(parseInt($("#readCycleTime").val().slice(3, 5)) / parseInt($("#readCycleTime").val().slice(6, 8)) == 2);
+
+        if ( parseInt($("#readCycleTime").val().slice(3, 5)) / parseInt($("#readCycleTime").val().slice(6, 8)) === 2 )
         {
+            for (let i = 0; i < arr.length; i++) {
+                for (let k = 2; k <= 20; k++) {
+                    let _id = `tdR${k}T${arr[i].deliveryTrip}${arr[i].deliveryDate}`;
+                    $(`#${_id}`).css("background-color", "#FFFFFF");
+                }
+
+            }
+        }
+        else if (_CookieLoginDate.includes("D"))
+        {
+            //console.log("D");
+            //console.log(trip);
 
             for (trip; trip > 0; trip--)
             {
@@ -763,6 +787,8 @@ const periodFilter = async () => {
         }
         else
         {
+            //console.log("N");
+            //console.log(trip);
             for (trip; trip > parseInt(dT_Period[0]["F_Period"]); trip--)
             {
                 for (let k = 2; k <= 20; k++) {

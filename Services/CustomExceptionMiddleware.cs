@@ -21,21 +21,13 @@ namespace KANBAN.Services
             catch (CustomHttpException ex)
             {
                 string contentType = "application/json";
-                int statusCode = ex.Message switch
-                {
-                    "Data not found" => 404,
-                    "Unauthorized" => 401,
-                    "Forbidden" => 403,
-                    "Bad Request" => 400,
-                    _ => 500,
-                };
 
                 context.Response.ContentType = contentType;
-                context.Response.StatusCode = statusCode;
+                context.Response.StatusCode = ex.StatusCode;
 
                 var result = JsonConvert.SerializeObject(new
                 {
-                    status = statusCode,
+                    status = ex.StatusCode,
                     response = "Error",
                     message = ex.Message,
                 });

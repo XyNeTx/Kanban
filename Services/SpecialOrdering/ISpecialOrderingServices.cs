@@ -42,7 +42,8 @@ namespace KANBAN.Services.SpecialOrdering
             PPM3Context ppm3Context,
             FillDataTable fillDT,
             SerilogLibs log,
-            IEmailService emailService)
+            IEmailService emailService,
+            ISpecialLibs specialLibs)
         {
 
             IKBNOR210 = new KBNOR210(kbContext,
@@ -102,6 +103,22 @@ namespace KANBAN.Services.SpecialOrdering
             emailService);
 
             IKBNOR220 = new KBNOR220(kbContext,
+            bearerClass,
+            ppm3Context,
+            fillDT,
+            log,
+            specialLibs,
+            emailService
+            );
+
+            IKBNOR220_1 = new KBNOR220_1(kbContext,
+            bearerClass,
+            ppm3Context,
+            fillDT,
+            log,
+            emailService);
+
+            IKBNOR220_2 = new KBNOR220_2(kbContext,
             bearerClass,
             ppm3Context,
             fillDT,

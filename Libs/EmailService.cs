@@ -1,5 +1,6 @@
 ﻿using HINOSystem.Context;
 using HINOSystem.Libs;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.Web.CodeGeneration.Design;
 using System.Data;
 using System.Net.Mail;
@@ -12,6 +13,7 @@ namespace KANBAN.Libs
         Task SendEmailAsync(string subject, string program, string message, string processDate, string processShift);
         Task SendEmailUnlock(string orderType, string program, string detail, string processDate, string processShift, string nSupplier);
         Task SendEmailToPA2(string ProdYM, string nRev, string nVer);
+        Task SendEmailSurvey(string? Type = "", string? sumSurvey = "", string? ProcessShift = "");
     }
 
 
@@ -20,12 +22,17 @@ namespace KANBAN.Libs
         private readonly KB3Context _KB3Context;
         private readonly FillDataTable _FillDT;
         private readonly IHttpContextAccessor _http;
+        private readonly BearerClass _bearerClass;
+        private readonly SerilogLibs _log;
 
-        public EmailService(KB3Context kB3Context, FillDataTable FillDT, IHttpContextAccessor http)
+        public EmailService(KB3Context kB3Context, FillDataTable FillDT
+            , IHttpContextAccessor http, BearerClass bearerClass, SerilogLibs log)
         {
             _KB3Context = kB3Context;
             _FillDT = FillDT;
             _http = http;
+            _bearerClass = bearerClass;
+            _log = log;
         }
 
         public async Task SendEmailAsync(string orderType, string program, string detail,string processDate, string processShift)
@@ -301,5 +308,130 @@ namespace KANBAN.Libs
 
             return toEmailList;
         }
+
+        public async Task SendEmailSurvey(string? Type = "", string? sumSurvey = "",string? ProcessShift = "")
+        {
+            string sBody = "";
+            string strSurveyDoc = "";
+            string strSupplierCD = "";
+            string strShortName = "";
+            string strSupplierName = "";
+            string strEmail = "";
+            string strTeamEmail = "";
+            string strInChargeEmail = "";
+            string sSubject = "";
+            string SupCode = "";
+            string SupName = "";
+            string PartNo = "";
+            string PartName = "";
+            string Delivery = "";
+            string sProcess = "";
+            string sPDS = "";
+
+            int i, j = 0, k = 0;
+
+            try
+            {
+                var smtpClient = new SmtpClient("156.71.5.8");
+                if (sumSurvey != "")
+                {
+                    string sumEmail = "";
+                    string _sql = $"Select F_User_name,F_Email From  TB_MS_Operator Where F_User_ID ='{_bearerClass.UserCode}'";
+
+                    var _dt = _FillDT.ExecuteSQL(_sql);
+
+                    if (_dt.Rows.Count > 0)
+                    {
+                        strInChargeEmail = _dt.Rows[0]["F_Email"].ToString();
+                    }
+
+                    string Approver = "";
+
+                    _sql = $"Select  F_Survey_Doc,Rtrim(F_Supplier_CD)+'-'+Rtrim(F_Supplier_Plant) AS F_Supplier_CD,F_Short_Name,F_Name " +
+                        $",B.F_User_Special, B.F_Email_spc As F_Email ,B.F_Team_Email_spc As  F_Team_Email " +
+                        $"From fnSURVEYNOTPRICE_SPC()  P inner join VW_supplierforbuyerprice B " +
+                        $"on Rtrim(P.F_Supplier_CD) = B.F_Supplier_code  " +
+                        $"Where F_Survey_Doc in ({sumSurvey.Substring(2, sumSurvey.Length - 2)}) " +
+                        $"Group by  F_Survey_Doc,Rtrim(F_Supplier_CD),Rtrim(F_Supplier_Plant),F_Short_Name,F_Name,B.F_User_Special, B.F_Team_Email_spc,B.F_Email_spc " +
+                        $"Order by F_Survey_Doc ";
+
+                    _dt = _FillDT.ExecuteSQL(_sql);
+
+                    if (_dt.Rows.Count > 0)
+                    {
+                        for (i = 0; i < _dt.Rows.Count; i++)
+                        {
+                            strSurveyDoc = _dt.Rows[i]["F_Survey_Doc"].ToString();
+                            strSupplierCD = _dt.Rows[i]["F_Supplier_CD"].ToString();
+                            strShortName = _dt.Rows[i]["F_Short_Name"].ToString();
+                            strSupplierName = _dt.Rows[i]["F_Name"].ToString();
+                            strEmail = _dt.Rows[i]["F_Email"].ToString();
+                            strTeamEmail = _dt.Rows[i]["F_Team_Email"].ToString();
+
+                            MailMessage mailMessage = new MailMessage
+                            {
+                                From = new MailAddress("System_Notification@hinothailand.com"),
+                                Subject = $"Price Not Found : Hino Kanban for IMV (Special Order : {ProcessShift} ) Process Date : {DateTime.Now.ToString("dd/MM/yyyy")}",
+                                To = { strEmail },
+                                CC = { strTeamEmail, strInChargeEmail },
+                                IsBodyHtml = true,
+                            };
+
+                            if (strEmail != "")
+                            {
+                                sBody = "<span style='font-family:Arial;font-size:12px;'>Dear Sirs,</span><br><br>";
+                                sBody += "<span style='font-family:Arial;font-size:12px;'>Auto Process for warning not have unit price.</span><br> ";
+                                sBody += "<span style='font-family:Arial;font-size:12px;'>System : Hino Kanban for IMV (Special Order) </span><br> ";
+                                sBody += $"<span style='font-family:Arial;font-size:12px;'>Process Date : <font color='red'>{DateTime.Now.ToString("dd/MM/yyyy")}</font></span><br>";
+                                sBody += $"<span style='font-family:Arial;font-size:12px;'>Process : {Type}</span><br>";
+                                sBody += $"<span style='font-family:Arial;font-size:12px;'>For Detail please see below </span><br><br>";
+                                sBody += $"<span style='font-family:Arial;font-size:12px;'>Survey Doc. : {strSurveyDoc}</span><br>";
+
+                                _sql = $"Select  F_Survey_Doc,Rtrim(F_Supplier_CD)+'-'+Rtrim(F_Supplier_Plant) AS F_Supplier_CD,F_Short_Name,F_Name " +
+                                    $" , Rtrim(F_Part_no)+'-'+Rtrim(F_Ruibetsu) as F_Part_No, F_Part_Name, F_Delivery_Date " +
+                                    $"From fnSURVEYNOTPRICE_SPC() " +
+                                    $"Where F_Survey_Doc in ('{strSurveyDoc}') " +
+                                    $"Group by  F_Survey_Doc,F_Supplier_CD,F_Supplier_Plant,F_Short_Name,F_Name, Rtrim(F_Part_no)+'-'+Rtrim(F_Ruibetsu), F_Part_Name, F_Delivery_Date " +
+                                    $"Order by F_Survey_Doc,F_Supplier_CD,F_Supplier_Plant ";
+
+                                var DTM = _FillDT.ExecuteSQL(_sql);
+                                if (DTM.Rows.Count > 0)
+                                {
+                                    for (i = 0; i < DTM.Rows.Count; i++)
+                                    {
+                                        j++;
+                                        SupCode = DTM.Rows[i]["F_Supplier_CD"].ToString().Trim();
+                                        SupName = DTM.Rows[i]["F_Short_Name"].ToString().Trim() + " : " + DTM.Rows[i]["F_Name"].ToString().Trim();
+                                        PartNo = DTM.Rows[i]["F_Part_No"].ToString().Trim();
+                                        PartName = DTM.Rows[i]["F_Part_Name"].ToString().Trim();
+                                        Delivery = DTM.Rows[i]["F_Delivery_Date"].ToString().Trim();
+
+                                        sBody += $"<span style='font-family:Arial;font-size:12px;'> {j}. Supplier :<font color='blue'> {SupCode} </font>, Name : <font color='blue'> {SupName}</font>, PartNo : <font color='blue'> {PartNo} </font>, Part Name :<font color='blue'> {PartName}</font>, Delivery Date :<font color='blue'>{Delivery}</font></span><br>";
+                                    }
+                                }
+                                sBody += "<br><br><span style='font-family:Arial;font-size:12px;color:red;text-decoration:italic;'>This E-Mail auto sending by Hino Kanban for IMV (Special Order).</span>";
+
+                                mailMessage.Body = sBody;
+                                mailMessage.Priority = MailPriority.High;
+                                smtpClient.Send(mailMessage);
+
+                                if(Type?.ToLower() == "generate pds")
+                                {
+                                    string sql = $"Update TB_Survey_Detail Set F_Price_Flg = 1 Where  F_Survey_Doc in ('{strSurveyDoc}') ";
+                                    await _KB3Context.Database.ExecuteSqlRawAsync(sql);
+                                    _log.WriteLogMsg("Unlock Price " + sql);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
+        }
+
     }
 }

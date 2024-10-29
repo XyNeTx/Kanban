@@ -62,15 +62,7 @@ namespace KANBAN.Controllers.API.SpecialOrder
         {
             try
             {
-                if (_bearerClass.CheckAuthen() == 401 || _bearerClass.CheckAuthen() == 403)
-                {
-                    return StatusCode(_bearerClass.Status, new
-                    {
-                        status = _bearerClass.Status,
-                        response = _bearerClass.Response,
-                        message = _bearerClass.Message
-                    });
-                }
+                await _bearerClass.CheckAuthorize();
 
                 await _services.IKBNOR294.Confirm(listObj);
 

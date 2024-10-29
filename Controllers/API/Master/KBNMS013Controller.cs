@@ -3,6 +3,7 @@ using HINOSystem.Libs;
 using HINOSystem.Models.KB3.Master;
 using KANBAN.Context;
 using KANBAN.Libs;
+using KANBAN.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -646,18 +647,8 @@ namespace HINOSystem.Controllers.API.Master
                             _log.WriteLogMsg($"TB_MS_PartOrder(Save) Delete : {JsonConvert.SerializeObject(partOrder)}");
                         }
                     }
-                    else
+                    else if (action == "new")
                     {
-                        return NotFound(new
-                        {
-                            status = "404",
-                            response = "Not Found",
-                            message = "Data Not Found!"
-                        });
-                    }
-                    if (action == "new")
-                    {
-
                         if (obj.F_Start_Date.CompareTo(DateTime.Now.ToString("yyyyMMdd")) < 0)
                         {
                             return BadRequest(new
@@ -676,6 +667,11 @@ namespace HINOSystem.Controllers.API.Master
                         _KB3Context.TB_MS_PartOrder.Add(obj);
                         _log.WriteLogMsg($"TB_MS_PartOrder(Save) Insert : {JsonConvert.SerializeObject(obj)}");
                     }
+                    else
+                    {
+                        throw new CustomHttpException(400,"Bad Request");
+                    }
+                    
                     
                     await _KB3Context.SaveChangesAsync();
                     _log.WriteLogMsg($"TB_MS_PartOrder(Save) Commit : {JsonConvert.SerializeObject(obj)}");

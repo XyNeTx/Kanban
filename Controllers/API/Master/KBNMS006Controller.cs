@@ -1615,16 +1615,16 @@ namespace HINOSystem.Controllers.API.Master
                     $"AND D.F_Kanban_No = V.F_Kanban_No AND D.F_Process_Date = V.F_Process_Date " +
                     $"AND D.F_Process_Round = V.F_Process_Round ";
 
-                if(supplier != "9999")
-                {
+                //if(supplier.Substring(0,4) != "9999")
+                //{
                     _sql += "WHERE D.F_Process_Date = (Select LEFT(F_Value3,8) From TB_MS_Parameter Where F_Code = 'LO') " +
                         "AND D.F_Process_Shift = (Select RIGHT(F_Value3,1) From TB_MS_Parameter Where F_Code = 'LO') ";
-                }
-                else
-                {
-                    _sql += "WHERE D.F_Process_Date = (Select LEFT(F_Value3,8) From TB_MS_Parameter Where F_Code = 'LO_CKD') " +
-                        "AND D.F_Process_Shift = (Select RIGHT(F_Value3,1) From TB_MS_Parameter Where F_Code = 'LO_CKD') ";
-                }
+                //}
+                //else
+                //{
+                //    _sql += "WHERE D.F_Process_Date = (Select LEFT(F_Value3,8) From TB_MS_Parameter Where F_Code = 'LO_CKD') " +
+                //        "AND D.F_Process_Shift = (Select RIGHT(F_Value3,1) From TB_MS_Parameter Where F_Code = 'LO_CKD') ";
+                //}
 
                 _sql += $"AND V.F_Supplier_Code = '{supplier.Substring(0, 4)}' AND V.F_Supplier_Plant = '{supplier[5]}' " +
                     $"AND V.F_Kanban_No = '{kanban}' AND D.F_KB_STOP  = '0'";

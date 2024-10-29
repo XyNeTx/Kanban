@@ -106,16 +106,14 @@
 
 });
 
-$("#ReceiveBtn").one('click', function handleReceiveClick() {
-
+$("#ReceiveBtn").one('click', async function handleReceiveClick() {
     $("#ReceiveBtn").prop('disabled', true);
-    var _selData = [];
-    var allPages = $('#tblMaster').DataTable().cells().nodes();
-    $("#ReceiveBtn").prop('disabled', true);
+    let _selData = [];
+    let allPages = $('#tblMaster').DataTable().cells().nodes();
 
     $(allPages).find('input[type="checkbox"]').each(function () {
         if ($(this).prop('checked')) {
-            var _val = $(this).val();
+            let _val = $(this).val();
             _selData.push(JSON.parse(`{` + ReplaceAll(_val, `'`, `"`) + `}`));
         }
     });
@@ -123,36 +121,33 @@ $("#ReceiveBtn").one('click', function handleReceiveClick() {
     // Ajax call
     xAjax.Post({
         url: 'KBNCR110/ReceiveAllPart',
-        data: {
-            'F_PDS_No': _selData,
-        },
-        then: async function (result) {
+        data: { 'F_PDS_No': _selData },
+        then: function (result) {
             console.log(result);
             if (result.status == "200") {
                 xSwal.success(result.title, result.message);
-                $('#tblMaster').DataTable().clear();
-                $('#tblMaster').DataTable().draw();
+                $('#tblMaster').DataTable().clear().draw();
                 pdsSet.clear();
             } else {
                 xSwal.error(result.title, result.message);
             }
-            $("#ReceiveBtn").prop('disabled', false);
-
-            // Reattach the 'one' event handler after success/error
-            $("#ReceiveBtn").one('click', handleReceiveClick);
+            completeRequest();
         },
         error: function (result) {
             console.error(_Controller + '.ReceiveAllPart: ' + result.responseText);
-            $("#ReceiveBtn").prop('disabled', false);
-
-            // Reattach the 'one' event handler after error
-            $("#ReceiveBtn").one('click', handleReceiveClick);
-            xSplash.hide();
+            xSwal.error("Error", "An error occurred during the request.");
+            completeRequest();
         }
     });
 
-    xSplash.hide();
+    // Common function to handle completion and reset button
+    function completeRequest() {
+        $("#ReceiveBtn").prop('disabled', false);
+        $("#ReceiveBtn").one('click', handleReceiveClick); // Reattach handler
+        xSplash.hide();
+    }
 });
+
 
 
 $("#uploadEpro").click(function () {

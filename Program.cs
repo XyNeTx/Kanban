@@ -52,12 +52,6 @@ builder.Services.AddCors(options =>
     });
 });
 
-//builder.Services.AddAuthentication(NegotiateDefaults.AuthenticationScheme)
-//   .AddNegotiate();
-
-
-//builder.Services.AddRazorPages();
-
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -93,6 +87,7 @@ builder.Services.AddScoped<FillDataTable>();
 builder.Services.AddScoped<SerilogLibs>();
 builder.Services.AddScoped<TextFileClass>();
 
+builder.Services.AddScoped<ISpecialLibs, SpecialLibs>();
 builder.Services.AddScoped<IImportService ,ImportService>();
 builder.Services.AddScoped<ILogisticService, LogisticService>();
 builder.Services.AddScoped<ISpecialOrderingServices, SpecialOrderingServices>();
@@ -106,32 +101,19 @@ builder.Services.AddSwaggerGen(c =>
         Description = "A Swagger Web Service for Testing API Endpoints in .NET 7",
     });
 
-    // Additional Swagger configurations can go here
-    // For example, adding XML comments, security definitions, etc.
 });
 
 
 builder.Services.AddSession(options =>
 {
-    options.Cookie.Name = "Operation";
-    options.IdleTimeout = TimeSpan.FromHours(20);
-    options.IOTimeout = TimeSpan.FromHours(20);
+    //options.Cookie.Name = "Operation";
+    options.IdleTimeout = TimeSpan.FromDays(2);
+    //options.IOTimeout = Timeout.InfiniteTimeSpan;
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
+    //options.Cookie.MaxAge = TimeSpan.FromHours(36);
 });
 
-//var isDevelop = builder.Environment.IsDevelopment();
-//if (isDevelop)
-//{
-//    builder.Services.AddSession(builder =>
-//    {
-//        builder.Cookie.Name = "IsDevelop";
-//        builder.IdleTimeout = TimeSpan.FromMinutes(30);
-//        builder.Cookie.HttpOnly = true;
-//        builder.Cookie.IsEssential = true;
-
-//    });
-//}
 
 
 
@@ -165,9 +147,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseMiddleware<CustomExceptionMiddleware>();
 
-app.UseRouting();
-
 app.UseSession(); 
+app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -182,11 +163,6 @@ app.MapControllerRoute(
 app.MapControllerRoute(
     name: "KBN",
     pattern: "KBN/{controller=Home}/{action=Index}/{id?}");
-
-//app.MapControllerRoute(
-//    name: "action",
-//    pattern: "action/{controller=Home}/{action=Index}/{id?}");
-
 
 app.MapControllerRoute(
     name: "api",

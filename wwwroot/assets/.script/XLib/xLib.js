@@ -1,3 +1,64 @@
+class DataTableLib {
+    constructor() {
+        this.width = '100%';
+        this.paging = false;
+        this.scrollCollapse = true;
+        this.processing = false;
+        this.serverSide = false;
+        this.scrollX = true;
+        this.scrollY = '400px';
+        this.searching = false;
+        this.info = false;
+        this.ordering = false;
+        this.columns = [];
+        this.order = [[1, 'asc']];
+    }
+
+    InitialDataTable(id, options) {
+        if (id == undefined) return console.error("id is undefined");
+        if (!id.includes('#')) id = '#' + id;
+
+        let constr = new DataTableLib();
+        constr = Object.assign(constr, options);
+
+        return $(`${id}`).DataTable({
+            width: (constr.width) ? constr.width : this.width,
+            paging: (constr.paging) ? constr.paging : this.paging,
+            scrollCollapse: (constr.scrollCollapse) ? constr.scrollCollapse : this.scrollCollapse,
+            processing: (constr.processing) ? constr.processing : this.processing,
+            serverSide: (constr.serverSide) ? constr.serverSide : this.serverSide,
+            scrollX: (constr.scrollX) ? constr.scrollX : this.scrollX,
+            scrollY: (constr.scrollY) ? constr.scrollY : this.scrollY,
+            searching: (constr.searching) ? constr.searching : this.searching,
+            info: (constr.info) ? constr.info : this.info,
+            ordering: (constr.ordering) ? constr.ordering : this.ordering,
+            columns: (constr.columns) ? constr.columns : this.columns,
+            order: (constr.order) ? constr.order : this.order
+        });
+    }
+
+    ClearAndAddDataDT(id, data) {
+        if (id == undefined) return console.error("id is undefined");
+        if (!id.includes('#')) id = '#' + id;
+
+        $(`${id}`).DataTable().clear().rows.add(data).draw();
+        $("table thead tr th").css("text-align", "center");
+        $("table tbody tr td").css("text-align", "center");
+    }
+
+    GetDataDT(id, closestRow) {
+        if (id == undefined) return console.error("id is undefined");
+        if (!id.includes('#')) id = '#' + id;
+
+        let table = $(`${id}`).DataTable();
+        let data = table.row($(closestRow).closest('tr')).data();
+
+        return data;
+    }
+}
+
+const _xDataTable = new DataTableLib();
+
 class xLib {
 
     TrimArrayJSON(jsonResult) {
@@ -539,6 +600,7 @@ class xLib {
         for (var key in obj) {
             query += key + "=" + obj[key] + "&";
         }
+        if (query.endsWith('&')) query = query.substring(0, query.length - 1);
         if (query.endsWith('&')) query = query.substring(0, query.length - 1);
 
         var _url = "http://hmmt-app03/Reports/Pages/ReportViewer.aspx?/KB3"
