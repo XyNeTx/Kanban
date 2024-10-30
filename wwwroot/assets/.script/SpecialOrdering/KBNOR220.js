@@ -21,6 +21,7 @@ $(document).ready(async function () {
             { title: "Customer Order Type", data: "F_CustomerOrder_Type" },
             { title: "Order Type", data: "F_CusOrderType_CD" },
         ],
+        order: [[1, "asc"]],
         scrollCollapse: false,
     }
 
@@ -99,14 +100,14 @@ $(document).on("click", "#tableMain tbody tr", function () {
 
     var data = _xDataTable.GetDataDT("tableMain", closestRow);
 
-    $(document).find("[disabled]").each(function () {
+    $(document).find("div[class='card-body'").find("[disabled]").each(function () {
         if ($(this).attr("id") == "inpCreditCode") {
             return;
         }
         //console.log(this);
         $(this).prop("disabled", false);
     });
-    $(document).find("[readonly]").each(function () {
+    $(document).find("div[class='card-body'").find("[readonly]").each(function () {
         if ($(this).attr("id") == "inpCreditCode") {
             return;
         }
@@ -114,7 +115,7 @@ $(document).on("click", "#tableMain tbody tr", function () {
         $(this).prop("readonly", false);
     });
 
-    $(document).find("select").each(function () {
+    $(document).find("div[class='card-body'").find("select").each(function () {
         //console.log(this);
         $(this).selectpicker("refresh");
     });
@@ -123,7 +124,7 @@ $(document).on("click", "#tableMain tbody tr", function () {
     $("#selColorofTag").selectpicker("val", data.F_Remark_KB);
     $("#selUseForSection").selectpicker("val", data.F_Dept_Use);
     $("#selDebitCode").selectpicker("val", data.F_Acc_Dr);
-    $("#inpCreditCode").val(data.F_Acc_Cr);
+    //$("#inpCreditCode").val(data.F_Acc_Cr);
     $("#inpWorkCode").val(data.F_Work_Code);
     $("#inpRemark").val(data.F_Remark);
     $("#inpRemark2").val(data.F_Remark2);
@@ -142,4 +143,100 @@ $("#btnUncheck").click(function () {
     $("#tableMain tbody tr").find("input[type='checkbox']").each(function () {
         $(this).prop("checked", false);
     });
+});
+
+$("#inpWorkCode").on("input", function () {
+    //console.log($(this).val());
+    if ($(this).val().length === 4) {
+        $(this).val($(this).val().slice(0, 4) + "-");
+    }
+    if ($(this).val().length === 7) {
+        $(this).val($(this).val().slice(0, 7) + "-");
+    }
+    if ($(this).val().length > 11) {
+        $(this).val($(this).val().slice(0, 11));
+    }
+
+});
+
+$("#btnSave").click(function () {
+    //return console.log($("input[type='radio'][name='radCustomerType']:checked").val());
+
+    let selectedObj = $("#tableMain").DataTable().row(".selected").data();
+
+    let data = {
+        F_PDS_No: $("#inpCustomerOrder").val(),
+        F_Remark_KB: $("#selColorofTag").val(),
+        F_Dept_Use: $("#selUseForSection").val(),
+        F_Acc_Dr: $("#selDebitCode").val(),
+        F_Acc_Cr: $("#inpCreditCode").val(),
+        F_Work_Code: $("#inpWorkCode").val(),
+        F_Remark: $("#inpRemark").val(),
+        F_Remark2: $("#inpRemark2").val(),
+        F_Remark3: $("#inpRemark3").val(),
+        F_CustomerOrder_Type: $("input[type='radio'][name='radCustomerType']:checked").val(),
+        F_CusOrderType_CD: $("#selOrderType").val(),
+        F_Store_CD: selectedObj.F_Store_CD,
+        F_Issued_Date : selectedObj.F_Issued_Date,
+    }
+
+    console.log(data);
+
+    _xLib.AJAX_Post("/api/KBNOR220/Save", data,
+        async function (success) {
+            await xSwal.success(success.response, success.message);
+
+            $(document).find("div[class='card-body'").find("input[type='text']").each(function () {
+                $(this).val("");
+                $(this).prop("readonly", true);
+            });
+            $(document).find("div[class='card-body'").find("input[type='radio']").each(function () {
+                $(this).prop("checked", false);
+                $(this).prop("disabled", true);
+            });
+            $(document).find("div[class='card-body'").find("select").each(function () {
+                $(this).val("");
+                $(this).prop("disabled", true);
+                $(this).selectpicker("refresh");
+            });
+
+
+            LoadListView();
+        },
+        function (error) {
+            console.log(error);
+            xSwal.error(error.responseJSON.response,error.responseJSON.message);
+        }
+    );
+
+});
+
+$("#btnGen").click(function () {
+
+    let data = [];
+
+    $("#tableMain tbody tr").find("input[type='checkbox']:checked").each(function () {
+        let row = $(this).closest("tr");
+        let obj = _xDataTable.GetDataDT("tableMain", row);
+        data.push(obj);
+    });
+
+    console.log(data);
+
+    if (data.length === 0) {
+        xSwal.error("Error", "Please select at least 1 row to generate");
+        return;
+    }
+
+    _xLib.AJAX_Post("/api/KBNOR220/Generate", data,
+        async function (success) {
+            await xSwal.success(success.response, success.message);
+            LoadListView();
+        },
+        function (error) {
+            console.log(error);
+            xSwal.error(error.responseJSON.response, error.responseJSON.message);
+        }
+    );
+
 });

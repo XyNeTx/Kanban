@@ -39,12 +39,7 @@ namespace KANBAN.Controllers.API.SpecialOrder
             }
             catch (CustomHttpException ex)
             {
-                return StatusCode(ex.StatusCode, new
-                {
-                    status = ex.StatusCode,
-                    response = "Error",
-                    message = ex.Message
-                });
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
             }
         }
 
@@ -67,12 +62,7 @@ namespace KANBAN.Controllers.API.SpecialOrder
             }
             catch (CustomHttpException ex)
             {
-                return StatusCode(ex.StatusCode, new
-                {
-                    status = ex.StatusCode,
-                    response = "Error",
-                    message = ex.Message
-                });
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
             }
         }
 

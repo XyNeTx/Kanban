@@ -147,18 +147,17 @@ namespace HINOSystem.Libs
 
         public async Task CheckAuthorize()
         {
-            await Task.Run(() =>
+            this.Authentication(_http.HttpContext.Request);
+            if (this.Status == 401)
             {
-                this.Authentication(_http.HttpContext.Request);
-                if (this.Status == 401)
-                {
-                    throw new CustomHttpException(401, "Unauthorized");
-                }
-                else if (this.Status == 403)
-                {
-                    throw new CustomHttpException(403, "Forbidden");
-                }
-            });
+                throw new CustomHttpException(401, "Unauthorized");
+            }
+            else if (this.Status == 403)
+            {
+                throw new CustomHttpException(403, "Forbidden");
+            }
+
+            await Task.CompletedTask;
         }
 
         public string StoreAccess()

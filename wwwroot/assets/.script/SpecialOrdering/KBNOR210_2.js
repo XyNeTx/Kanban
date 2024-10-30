@@ -155,12 +155,37 @@ $("#btnMerge").click(async function () {
         return;
     }
 
+    let Flag = false;
+    let OldOrderType = "";
+    listObj.forEach(function (item) {
+        if (OldOrderType == "") {
+            OldOrderType = item.f_CusOrderType_CD;
+        }
+        else {
+            if (OldOrderType != item.f_CusOrderType_CD) {
+                Flag = true;
+            }
+        }
+    });
+
+    if (Flag) {
+        await xSplash.hide();
+        xSwal.error("Please select as same as type of Customer Order ");
+        return;
+    }
+
     _xLib.AJAX_Post("/api/KBNOR210_2/Merge", JSON.stringify(listObj),
         function(success) {
             console.log(success);
             if (success.status) {
                 xSwal.success("Merge Success!");
                 $("#inpNewCustomerOrderNo").val("");
+                if ($("#chkCustomerOrderNo").is(":checked")) {
+                    $("#chkCustomerOrderNo").prop("checked", false);
+                    $("#inpCustomerOrderNo").prop("disabled", true);
+                    $("#inpCustomerOrderNo").val("");
+                }
+                
                 GetCustomerPO();
             } else {
                 xSwal.error("Merge Fail!");

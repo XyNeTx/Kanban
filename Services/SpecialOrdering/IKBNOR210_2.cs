@@ -90,23 +90,26 @@ namespace KANBAN.Services.SpecialOrdering
                 foreach (var obj in listObj)
                 {
                     obj.F_Delivery_Date = DateTime.ParseExact(obj.F_Delivery_Date, "dd/MM/yyyy", null).ToString("yyyyMMdd");
-                    
-                    var exist = await _kbContext.TB_Transaction_Spc
-                        .FirstOrDefaultAsync(x => x.F_PDS_No_New == obj.F_PDS_No
-                        && x.F_Delivery_Date == obj.F_Delivery_Date);
 
-                    if (exist == null)
+                    var existList = await _kbContext.TB_Transaction_Spc
+                        .Where(x => x.F_PDS_No_New == obj.F_PDS_No
+                        && x.F_Delivery_Date == obj.F_Delivery_Date).ToListAsync();
+
+                    if (existList.Count == 0)
                     {
                         throw new Exception($"Data Not Found | {JsonConvert.SerializeObject(obj)}");
                     }
 
-                    exist.F_Update_By = _BearerClass.UserCode;
-                    exist.F_Update_Date = DateTime.Now;
-                    exist.F_PDS_No = obj.F_PDS_No_New;
+                    foreach (var exist in existList)
+                    {
 
-                    _kbContext.TB_Transaction_Spc.Update(exist);
+                        exist.F_Update_By = _BearerClass.UserCode;
+                        exist.F_Update_Date = DateTime.Now;
+                        exist.F_PDS_No = obj.F_PDS_No_New;
 
-                    _log.WriteLogMsg($"Merge Data = {JsonConvert.SerializeObject(exist)}");
+                        _kbContext.TB_Transaction_Spc.Update(exist);
+                        _log.WriteLogMsg($"Merge Data : {JsonConvert.SerializeObject(exist)}");
+                    }
 
                 }
 

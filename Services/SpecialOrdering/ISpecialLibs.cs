@@ -55,7 +55,7 @@ namespace KANBAN.Services.SpecialOrdering
                         FROM TB_Transaction_Spc Where  F_PDS_No = '{PDSNo}' 
                         and F_Survey_Doc = '' and F_Survey_Flg = '0' ";
 
-                if(string.IsNullOrWhiteSpace(StoreCD))
+                if(!string.IsNullOrWhiteSpace(StoreCD))
                 {
                     sql += $" and F_Store_CD = '{StoreCD}' ";
                 }

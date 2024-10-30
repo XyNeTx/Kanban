@@ -91,16 +91,12 @@ namespace KANBAN.Services.SpecialOrdering
 
                 var _dt = _FillDT.ExecuteSQL(sql);
 
-                if (_dt.Rows.Count == 0)
-                {
-                    throw new CustomHttpException(404, "Data not found");
-                }
-
                 return _dt;
             }
-            catch (CustomHttpException ex)
+            catch (Exception ex)
             {
-                throw new CustomHttpException(ex.StatusCode, ex.Message);
+                if (ex is CustomHttpException) throw;
+                throw new CustomHttpException(500, ex.Message);
             }
         }
 
@@ -130,9 +126,10 @@ namespace KANBAN.Services.SpecialOrdering
                 return _dt;
 
             }
-            catch (CustomHttpException ex)
+            catch (Exception ex)
             {
-                throw new CustomHttpException(ex.StatusCode , ex.Message );
+                if (ex is CustomHttpException) throw;
+                throw new CustomHttpException(500, ex.Message);
             }
         }
 
@@ -169,9 +166,10 @@ namespace KANBAN.Services.SpecialOrdering
                 return JsonConvert.SerializeObject(data);
 
             }
-            catch (CustomHttpException ex)
+            catch (Exception ex)
             {
-                throw new CustomHttpException(ex.StatusCode, ex.Message);
+                if (ex is CustomHttpException) throw;
+                throw new CustomHttpException(500, ex.Message);
             }
         }
 
@@ -179,11 +177,18 @@ namespace KANBAN.Services.SpecialOrdering
         {
             try
             {
-                return JsonConvert.SerializeObject(GetTransactionSPCNOSurvey(_BearerClass.Plant, null, null,null));
+                var dt = GetTransactionSPCNOSurvey(_BearerClass.Plant, null, null, null);
+                if(dt.Rows.Count == 0)
+                {
+                    throw new CustomHttpException(404, "Data not found");
+                }
+
+                return JsonConvert.SerializeObject(dt);
             }
-            catch (CustomHttpException ex)
+            catch (Exception ex)
             {
-                throw new CustomHttpException(ex.StatusCode, ex.Message);
+                if (ex is CustomHttpException) throw;
+                throw new CustomHttpException(500, ex.Message);
             }
         }
 
@@ -239,14 +244,14 @@ namespace KANBAN.Services.SpecialOrdering
                     {
                         for(j = 0; j < DTSUP.Rows.Count; j++)
                         {
-                            SupCD = DTSUP.Rows[j]["F_Supplier_CD"].ToString();
-                            SupPlant = DTSUP.Rows[j]["F_Supplier_Plant"].ToString();
-                            DeliDT = DTSUP.Rows[j]["F_Delivery_Date_new"].ToString().Substring(0,6);
+                            SupCD = DTSUP.Rows[j]["F_Supplier_CD"].ToString().Trim();
+                            SupPlant = DTSUP.Rows[j]["F_Supplier_Plant"].ToString().Trim();
+                            DeliDT = DTSUP.Rows[j]["F_Delivery_Date_new"].ToString().Trim().Substring(0,6);
                             MaxID = _spcLib.getMaxSurveyID(PDSNo, _BearerClass.Plant);
                             NextID = MaxID + 1;
                             SurveyDoc = PDSNo.Trim() + "/" + _spcLib.FormatNumber(NextID);
                             DelayDate = _spcLib.GetDelayDate(now);
-                            strCusOrder = DTSUP.Rows[j]["F_CusOrderType_CD"].ToString();
+                            strCusOrder = DTSUP.Rows[j]["F_CusOrderType_CD"].ToString().Trim();
                             
                             if (SurveyDoc != "")
                             {
@@ -271,10 +276,10 @@ namespace KANBAN.Services.SpecialOrdering
                                      LTrim(F_Supplier_CD) Else LTrim(F_Supplier_CD) 
                                     End F_Supplier_CD, F_Supplier_Plant 
                                     , '' as F_Delivery_Date, F_Round, F_Cycle_Time 
-                                    , '{DTIssue.Rows[0]["F_User_Name"].ToString()}' 
-                                    , '{DTIssue.Rows[0]["F_Telephone"].ToString()}' 
-                                    , '{DTIssue.Rows[0]["F_Fax"].ToString()}' 
-                                    , '{DTIssue.Rows[0]["F_Email"].ToString()}' 
+                                    , '{DTIssue.Rows[0]["F_User_Name"].ToString().Trim()}' 
+                                    , '{DTIssue.Rows[0]["F_Telephone"].ToString().Trim()}' 
+                                    , '{DTIssue.Rows[0]["F_Fax"].ToString().Trim()}' 
+                                    , '{DTIssue.Rows[0]["F_Email"].ToString().Trim()}' 
                                     , F_Acc_Dr, F_Acc_Cr, F_Dept_Use, F_Work_Code, F_Plant 
                                     , '{DelayDate}' , RTrim(F_Remark)+'{strCusOrderDetails}' 
                                     , RTrim(F_Remark2), Rtrim(F_Remark3), RTrim(F_Remark_KB)  
@@ -300,9 +305,9 @@ namespace KANBAN.Services.SpecialOrdering
                                     for (k = 0; k < DTD.Rows.Count; k++)
                                     {
                                         M = M + 1;
-                                        string PartNo = DTD.Rows[k]["F_Part_No"].ToString();
-                                        string Ruibetsu = DTD.Rows[k]["F_Ruibetsu"].ToString();
-                                        string DeliveryDate = DTD.Rows[k]["F_Delivery_Date"].ToString();
+                                        string PartNo = DTD.Rows[k]["F_Part_No"].ToString().Trim();
+                                        string Ruibetsu = DTD.Rows[k]["F_Ruibetsu"].ToString().Trim();
+                                        string DeliveryDate = DTD.Rows[k]["F_Delivery_Date_New"].ToString().Trim();
 
                                         sql = $@"Insert TB_Survey_Detail 
                                             ( F_Survey_Doc, F_PO_Customer,F_No, F_Part_No, F_Part_Name,F_Ruibetsu, F_Kanban_No, F_Store_Code, F_Package, F_Qty,F_Adjust_Qty,F_Delivery_Date) 
@@ -326,7 +331,7 @@ namespace KANBAN.Services.SpecialOrdering
                                     ,ROW_NUMBER() OVER(PARTITION BY F_Survey_Doc Order by F_Delivery_Date,F_Part_No,F_Ruibetsu) As ROWID 
                                     From TB_Survey_Detail 
                                     Where F_PO_Customer = '{PDSNo.Trim()}' 
-                                    and F_Survey_Doc = '{SurveyDoc.Trim()} 
+                                    and F_Survey_Doc = '{SurveyDoc.Trim()}' 
                                     and F_Qty > 0 
                                     Group by F_Survey_Doc,F_Delivery_Date,F_Part_no,F_Ruibetsu,F_Status 
                                     Order by F_Delivery_Date,F_Part_no,F_Ruibetsu ";
@@ -337,21 +342,21 @@ namespace KANBAN.Services.SpecialOrdering
                                 {
                                     for (k = 0; k < DTS.Rows.Count; k++)
                                     {
-                                        sql = $@"Update TB_Survey_Detail Set F_No = '{DTS.Rows[k]["ROWID"].ToString()}' 
+                                        sql = $@"Update TB_Survey_Detail Set F_No = '{DTS.Rows[k]["ROWID"].ToString().Trim()}' 
                                             , F_Unit_Price = {CheckPriceOrder(DTS.Rows[k]["F_Part_no"].ToString(), DTS.Rows[k]["F_Ruibetsu"].ToString(), DTS.Rows[k]["F_Delivery_Date"].ToString(), StoreCD, SupCD)} 
-                                            Where F_PO_Customer = '{PDSNo.Trim()}'
-                                            and F_Survey_Doc = '{DTS.Rows[k]["F_Survey_Doc"].ToString()}'
-                                            and F_Part_no = '{DTS.Rows[k]["F_Part_no"].ToString()}'
-                                            and F_Ruibetsu = '{DTS.Rows[k]["F_Ruibetsu"].ToString()}'
-                                            and F_Delivery_Date = '{DTS.Rows[k]["F_Delivery_Date"].ToString()}' ";
+                                            Where F_PO_Customer = '{PDSNo.Trim()}' 
+                                            and F_Survey_Doc = '{DTS.Rows[k]["F_Survey_Doc"].ToString().Trim()}' 
+                                            and F_Part_no = '{DTS.Rows[k]["F_Part_no"].ToString().Trim()}' 
+                                            and F_Ruibetsu = '{DTS.Rows[k]["F_Ruibetsu"].ToString().Trim()}' 
+                                            and F_Delivery_Date = '{DTS.Rows[k]["F_Delivery_Date"].ToString().Trim()}' ";
 
                                         await _kbContext.Database.ExecuteSqlRawAsync(sql);
                                     }
                                 }
 
-                                sql = $@"Update TB_Transaction_Spc  Set F_Survey_Doc = '{SurveyDoc}' 
-                                    F_Survey_ID = '{NextID}' F_Survey_Flg = '1', 
-                                    F_Update_By = '{_BearerClass.UserCode}' 
+                                sql = $@"Update TB_Transaction_Spc  Set F_Survey_Doc = '{SurveyDoc}', 
+                                    F_Survey_ID = '{NextID}', F_Survey_Flg = '1', 
+                                    F_Update_By = '{_BearerClass.UserCode}',  
                                     F_Update_Date = getdate() 
                                     Where F_PDS_No = '{PDSNo}' 
                                     and F_Supplier_CD = '{SupCD}'
@@ -405,9 +410,10 @@ namespace KANBAN.Services.SpecialOrdering
                 await _email.SendEmailSurvey("Generate Survey Document",sumSurvey);
 
             }
-            catch (CustomHttpException ex)
+            catch (Exception ex)
             {
-                throw new CustomHttpException(ex.StatusCode, ex.Message);
+                if (ex is CustomHttpException) throw;
+                throw new CustomHttpException(500, ex.Message);
             }
         }
 
@@ -440,7 +446,7 @@ namespace KANBAN.Services.SpecialOrdering
                     F_Work_Code = '{sWKCode}', F_Remark = '{obj.F_Remark}', 
                     F_Remark2 = '{obj.F_Remark2}', F_Remark3 = '{obj.F_Remark3}', 
                     F_Remark_KB = '{obj.F_Remark_KB}', F_CustomerOrder_Type = '{obj.F_CustomerOrder_Type}', 
-                    F_CusOrderType_CD = '{obj.F_CusOrderType_CD}' 
+                    F_CusOrderType_CD = '{obj.F_CusOrderType_CD}',  
                     F_Update_By = '{_BearerClass.UserCode}', 
                     F_Update_Date = getdate() 
                     Where F_PDS_No = '{obj.F_PDS_No}' 
@@ -452,9 +458,10 @@ namespace KANBAN.Services.SpecialOrdering
                 _log.WriteLogMsg($"Update TB_Transaction_Spc : {obj.F_PDS_No} | Query : {_sql} ");
 
             }
-            catch (CustomHttpException ex)
+            catch (Exception ex)
             {
-                throw new CustomHttpException(ex.StatusCode, ex.Message);
+                if(ex is CustomHttpException) throw;
+                throw new CustomHttpException(500, ex.Message);
             }
         }
 
@@ -475,9 +482,10 @@ namespace KANBAN.Services.SpecialOrdering
                 }
                 return true;
             }
-            catch (CustomHttpException ex)
+            catch (Exception ex)
             {
-                throw new CustomHttpException(ex.StatusCode, ex.Message);
+                if (ex is CustomHttpException) throw;
+                throw new CustomHttpException(500, ex.Message);
             }
         } 
 
@@ -499,9 +507,10 @@ namespace KANBAN.Services.SpecialOrdering
                 }
                 return true;
             }
-            catch (CustomHttpException ex)
+            catch (Exception ex)
             {
-                throw new CustomHttpException(ex.StatusCode, ex.Message);
+                if (ex is CustomHttpException) throw;
+                throw new CustomHttpException(500, ex.Message);
             }
         }
 
@@ -511,9 +520,10 @@ namespace KANBAN.Services.SpecialOrdering
             {
                 return _kbContext.TB_MS_Operator.Any(x => x.F_User_ID == _BearerClass.UserCode);
             }
-            catch (CustomHttpException ex)
+            catch (Exception ex)
             {
-                throw new CustomHttpException(ex.StatusCode, ex.Message);
+                if (ex is CustomHttpException) throw;
+                throw new CustomHttpException(500, ex.Message);
             }
         }
 
@@ -536,9 +546,10 @@ namespace KANBAN.Services.SpecialOrdering
 
                 return Convert.ToDouble(_dt.Rows[0]["F_SPRICE"].ToString());
             }
-            catch (CustomHttpException ex)
+            catch (Exception ex)
             {
-                throw new CustomHttpException(ex.StatusCode, ex.Message);
+                if (ex is CustomHttpException) throw;
+                throw new CustomHttpException(500, ex.Message);
             }
         }
     }

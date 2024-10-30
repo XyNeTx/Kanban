@@ -57,6 +57,7 @@ async function LoadOrderNo() {
                 //console.log(item);
                 $("#inpNewCustomerOrderNo").append(`<option value="${item.trim()}">${item.trim()}</option>`);
             });
+            $("#inpNewCustomerOrderNo").selectpicker("refresh");
         },
         function (error) {
             console.error(error);

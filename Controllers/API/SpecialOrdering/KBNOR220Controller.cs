@@ -1,4 +1,5 @@
 ﻿using HINOSystem.Libs;
+using KANBAN.Models.KB3.SpecialOrdering;
 using KANBAN.Services;
 using KANBAN.Services.SpecialOrdering;
 using Microsoft.AspNetCore.Http;
@@ -85,5 +86,38 @@ namespace KANBAN.Controllers.API.SpecialOrdering
             }
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Save(VM_Post_KBNOR220_Gen model)
+        {
+            try
+            {
+                await _bearerClass.CheckAuthorize();
+
+                await _services.IKBNOR220.Save(model);
+
+                return Ok(new { status = "200", response = "OK", message = "Data Saved" });
+            }
+            catch (CustomHttpException ex)
+            {
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Generate(List<VM_Post_KBNOR220_Gen> listModel)
+        {
+            try
+            {
+                await _bearerClass.CheckAuthorize();
+
+                await _services.IKBNOR220.Generate(listModel);
+
+                return Ok(new { status = "200", response = "OK", message = "Generate Survey Completed !" });
+            }
+            catch (CustomHttpException ex)
+            {
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
+            }
+        }
     }
 }

@@ -28,7 +28,7 @@ namespace KANBAN.Services
                 var result = JsonConvert.SerializeObject(new
                 {
                     status = ex.StatusCode,
-                    response = "Error",
+                    response = ex.Response,
                     message = ex.Message,
                 });
 
