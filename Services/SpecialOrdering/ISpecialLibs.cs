@@ -15,6 +15,7 @@ namespace KANBAN.Services.SpecialOrdering
         string GetDelayDate(string IssDate);
         DataTable GetTransactionSPCDetail(string PDSNo, string PDSDate, string SuppCD, string SuppPlant,
                                                            string Fac, string? DeliDT = "", string? StoreCD = "");
+        DataTable GetSurveyHeader(string Fac, string? SurveyDoc, string? UploadFlg, string? Mode);
     }
 
     public class SpecialLibs : ISpecialLibs
@@ -66,7 +67,8 @@ namespace KANBAN.Services.SpecialOrdering
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                if (ex is CustomHttpException) throw;
+                throw new CustomHttpException(500, ex.Message);
             }
         }
 
@@ -82,7 +84,8 @@ namespace KANBAN.Services.SpecialOrdering
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                if (ex is CustomHttpException) throw;
+                throw new CustomHttpException(500, ex.Message);
             }
         }
 
@@ -112,7 +115,8 @@ namespace KANBAN.Services.SpecialOrdering
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                if (ex is CustomHttpException) throw;
+                throw new CustomHttpException(500, ex.Message);
             }
         }
 
@@ -165,7 +169,8 @@ namespace KANBAN.Services.SpecialOrdering
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                if (ex is CustomHttpException) throw;
+                throw new CustomHttpException(500, ex.Message);
             }
         }
 
@@ -245,7 +250,8 @@ namespace KANBAN.Services.SpecialOrdering
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                if (ex is CustomHttpException) throw;
+                throw new CustomHttpException(500, ex.Message);
             }
         }
 
@@ -280,8 +286,58 @@ namespace KANBAN.Services.SpecialOrdering
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                if (ex is CustomHttpException) throw;
+                throw new CustomHttpException(500, ex.Message);
             }
         }
+
+        public DataTable GetSurveyHeader(string Fac, string? SurveyDoc, string? UploadFlg, string? Mode)
+        {
+            try
+            {
+                string _sql = $@"Select RTrim(F_Survey_Doc) As F_Survey_Doc,F_PO_Customer,Rtrim(F_Supplier_Cd)+'-'+F_Supplier_Plant As F_Supplier_Code
+                    , (Select Top 1 F_short_name From V_Supplier_MS Where Rtrim(F_Supplier_Cd)+F_Plant_CD collate Thai_CI_AS = Rtrim(TB_Survey_Header.F_Supplier_cd)+TB_Survey_header.F_Supplier_Plant 
+                    and (F_TC_Str collate Thai_CI_AS <= TB_Survey_Header.F_Issued_Date and F_TC_End collate Thai_CI_AS >= TB_Survey_Header.F_Issued_Date)) AS F_Short_name 
+                    ,Convert(varchar(11),CAST(F_Issued_Date As datetime),103) As F_Issued_Date,F_Dept_Code,F_Acc_Dr,F_Acc_Cr,F_Wk_code,F_Remark,F_Remark2,F_Remark3,F_Remark_KB,F_CustomerOrder_Type 
+                    FROM  TB_Survey_Header 
+                    Where  F_Status <> 'D' 
+                    and F_Survey_Doc in ( Select F_Survey_Doc From TB_Survey_Detail Where F_PDS_No= '' ) ";
+
+                if (!string.IsNullOrWhiteSpace(Fac))
+                {
+                    _sql += $" and F_Factory_Code in ('{Fac}') ";
+                }
+                if (!string.IsNullOrWhiteSpace(SurveyDoc))
+                {
+                    _sql += $" and F_Survey_Doc = '{SurveyDoc}' ";
+                }
+
+                if(Mode?.ToLower() == "delete")
+                {
+                    _sql = $@"Select RTrim(TB_Survey_Header.F_Survey_Doc) As F_Survey_Doc,TB_Survey_Header.F_Revise_Rev,TB_Survey_Header.F_PO_Customer, 
+                        Rtrim(F_Supplier_Cd)+'-'+F_Supplier_Plant As F_Supplier_Code  ,(Select Top 1 F_short_name From V_Supplier_MS 
+                        Where Rtrim(F_Supplier_Cd)+F_Plant_CD collate Thai_CI_AS = Rtrim(TB_Survey_Header.F_Supplier_cd)+TB_Survey_header.F_Supplier_Plant 
+                        and (F_TC_Str collate Thai_CI_AS <= TB_Survey_Header.F_Issued_Date and F_TC_End collate Thai_CI_AS >= TB_Survey_Header.F_Issued_Date)) AS F_Short_name 
+                        ,Convert(varchar(11),CAST(F_Issued_Date As datetime),103) As F_Issued_Date,F_Dept_Code,F_Acc_Dr,F_Acc_Cr,F_Wk_code,F_Remark,F_Remark2,F_Remark3,F_Remark_KB 
+                        FROM  TB_Survey_Header  inner join TB_Survey_Detail 
+                        on TB_Survey_Header.F_Survey_Doc= TB_Survey_Detail.F_Survey_Doc 
+                        and TB_Survey_Header.F_PO_Customer= TB_Survey_Detail.F_PO_Customer 
+                        and TB_Survey_Header.F_Revise_Rev= TB_Survey_Detail.F_Revise_Rev 
+                        Where  TB_Survey_Header.F_Status <> 'D'  and TB_Survey_Detail.F_PDS_Flg = 0 
+                        and TB_Survey_Detail.F_PDS_No  = '' 
+                        and F_Factory_Code  in ('1','B') 
+                        Group by RTrim(TB_Survey_Header.F_Survey_Doc),TB_Survey_Header.F_Revise_Rev,Rtrim(F_Supplier_Cd),F_Supplier_Plant,TB_Survey_Header.F_PO_Customer, 
+                        F_Issued_Date, F_Dept_Code, F_Acc_Dr, F_Acc_Cr, F_Wk_code, F_Remark, F_Remark2, F_Remark3, F_Remark_KB ";
+                }
+
+                return _FillDT.ExecuteSQL(_sql);
+
+            }
+            catch (Exception ex)
+            {
+                if (ex is CustomHttpException) throw;
+                throw new CustomHttpException(500, ex.Message);
+            }
+        } 
     }
 }

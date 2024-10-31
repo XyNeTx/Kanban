@@ -271,7 +271,7 @@ namespace KANBAN.Services.Logistical
             }
             catch (Exception ex)
             {
-                string _sql = $"DELETE  FROM TB_Import_Delivery WHERE F_YM='{publicYM}' AND F_Rev='{publicRev}' AND F_Plant='{_BearerClass}";
+                string _sql = $"DELETE  FROM TB_Import_Delivery WHERE F_YM='{publicYM}' AND F_Rev='{publicRev}' AND F_Plant='{_BearerClass.Plant}'";
                 await _kbContext.Database.ExecuteSqlRawAsync(_sql);
                 _log.WriteLogMsg("Import Delivery Time Table Error | SQL : " + _sql);
                 processBar = 0;

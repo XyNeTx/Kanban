@@ -164,26 +164,7 @@ namespace HINOSystem.Context
         public DbSet<Menu> Menu { get; set; }
         public DbSet<TB_STOCK_KB_SPC_PART_REMAIN> TB_STOCK_KB_SPC_PART_REMAIN { get; set; }
         public DbSet<KANBAN.Models.KB3.SpecialOrdering.TB_MS_Operator> TB_MS_Operator { get; set; }
-
-        //protected override void OnModelCreating(ModelBuilder modelBuilder)
-        //{
-        //    modelBuilder.Entity<PO>().ToTable("PO", schema: "iss");
-
-        //    // Define primary key
-        //    modelBuilder.Entity<PO>().HasKey(c => c._ID);
-
-        //    // Configure other properties, relationships, etc.
-
-        //    base.OnModelCreating(modelBuilder);
-
-
-
-        //    ////// configures one-to-many relationship
-        //    //modelBuilder.Entity<issPODetail>()
-        //    //    .HasRequired<issPO>(s => s.CurrentGrade)
-        //    //    .WithMany(g => g.issPODetail)
-        //    //    .HasForeignKey<int>(s => s.CurrentGradeId);
-        //}
+        public DbSet<TB_Survey_Header> TB_Survey_Header { get; set; }
     }
 }
 

@@ -116,7 +116,9 @@ namespace KANBAN.Services.SpecialOrdering
             ppm3Context,
             fillDT,
             log,
-            emailService);
+            emailService,
+            specialLibs,
+            this);
 
             IKBNOR220_2 = new KBNOR220_2(kbContext,
             bearerClass,

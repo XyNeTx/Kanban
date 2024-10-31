@@ -20,6 +20,8 @@ namespace KANBAN.Services.SpecialOrdering
         string LoadListView();
         Task Generate(List<VM_Post_KBNOR220_Gen> dataList);
         Task Save(VM_Post_KBNOR220_Gen obj);
+        bool ChkDeptCode(string DeptCode, string ProcessDate);
+        bool ChkDebitCode(string DBCode, string ProcessDate);
     }
 
     public class KBNOR220 : IKBNOR220

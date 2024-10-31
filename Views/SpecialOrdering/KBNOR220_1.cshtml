@@ -1,5 +1,133 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@model VM_Post_KBNOR220_1;
+
+<div class="row">
+    <div class="col-xl-12 col-md-12 col-sm-12">
+        <div class="card border-left-primary shadow h-100">
+            <div class="card-body">
+                <div class="row ms-1 me-4 mt-2">
+                    <div class="col">
+                        <div class="row justify-content-start mt-2">
+                            <button type="button" id="btnInq" class="btn btn-success col-2">Inquiry</button>
+                            <button type="button" id="btnUpd" class="btn btn-success col-2">Update</button>
+                            <button type="button" id="btnDel" class="btn btn-success col-2">Delete</button>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="row justify-content-end mt-2">
+                            <button type="button" id="btnCan" class="btn btn-success col-2">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <table class="table w-100 table-bordered border-2 border-dark" id="tableMain">
+                    </table>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-5">
+                        <div class="input-group">
+                            <label for="selPlant" class="input-group-text">Plant</label>
+                            <select class="selectpicker p-0 col-7" id="selPlant" data-live-search="true" data-size="6" data-width="100%" disabled>
+                                <option value="" hidden></option>
+                                <option value="1">Plant : 1</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="selSurveyDoc" class="input-group-text">Survey Doc</label>
+                            <select class="selectpicker p-0 col-7" id="selSurveyDoc" data-live-search="true" data-size="6" data-width="100%" disabled>
+                                <option value="" hidden></option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label class="input-group-text">Use For Section</label>
+                            <select class="selectpicker p-0 col-7" id="selUseForSection" data-live-search="true" data-size="6" data-width="100%" disabled>
+                                <option value="" hidden></option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label class="input-group-text">Debit Code</label>
+                            <select class="selectpicker p-0 col-7" id="selDebitCode" data-live-search="true" data-size="6" data-width="100%" disabled>
+                                <option value="" hidden></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-5">
+                        <div class="input-group">
+                            <label class="input-group-text">Customer Order No</label>
+                            <input type="text" class="form-control" id="inpCustomerOrderNo" disabled />
+                        </div>
+                        <div class="input-group">
+                            <label class="input-group-text">Color of Tag</label>
+                            <select class="selectpicker p-0 col-7" id="selColorofTag" data-live-search="true" data-size="6" data-width="100%" disabled>
+                                <option value="" hidden></option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label class="input-group-text">Work Code</label>
+                            <input type="text" class="form-control" id="inpWorkCode" placeholder="____-__-___" disabled />
+                        </div>
+                        <div class="input-group">
+                            <label class="input-group-text">Credit Code</label>
+                            <input type="text" class="form-control" id="inpCreditCode" value="2133102" disabled />
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-2">
+                        <div class="row justify-content-center">
+                            <label class="form-label">Remark</label>
+                        </div>
+                    </div>
+                    <div class="col-9">
+                        <div class="row mt-2">
+                            <input type="text" class="form-control" id="inpRemark" disabled />
+                        </div>
+                        <div class="row mt-2">
+                            <input type="text" class="form-control" id="inpRemark2" disabled />
+                        </div>
+                        <div class="row mt-2">
+                            <input type="text" class="form-control" id="inpRemark3" disabled />
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-2" disabled>
+                    <div class="col-2">
+                        <div class="row justify-content-center">
+                            <label class="form-label">Customer Order Type</label>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <input type="radio" class="form-check-input" name="radCustomerType" id="radService" value="Service" disabled />
+                        <label class="form-check-label" for="radService">Service</label>
+                    </div>
+                    <div class="col">
+                        <input type="radio" class="form-check-input" name="radCustomerType" id="radSpecial" value="Special" disabled />
+                        <label class="form-check-label" for="radSpecial">Special</label>
+                    </div>
+                    <div class="col">
+                        <input type="radio" class="form-check-input" name="radCustomerType" id="radTrial" value="Trial" disabled />
+                        <label class="form-check-label" for="radTrial">Trial</label>
+                    </div>
+                    <div class="col">
+                        <input type="radio" class="form-check-input" name="radCustomerType" id="radPDService" value="PD Service" disabled />
+                        <label class="form-check-label" for="radPDService">PD Service</label>
+                    </div>
+                    <div class="col">
+                        <input type="radio" class="form-check-input" name="radCustomerType" id="radOther" value="Other" disabled />
+                        <label class="form-check-label" for="radOther">Other</label>
+                    </div>
+                </div>
+                <div class="row ms-1 mt-2">
+                    <div class="col-2"></div>
+                    <button type="button" class="btn btn-success col-1" id="btnSave" disabled>Save</button>
+                    <a class="btn btn-danger col-1 ms-2" asp-controller="OrderingProcess" asp-action="KBNOR200">Exit</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@using KANBAN.Libs
+@using KANBAN.Models.KB3.SpecialOrdering
+@section Scripts {
+    <script type="text/javascript" src="@FileVersionHelper.VersionedScriptPath("/assets/.script/SpecialOrdering/KBNOR220_1.js")"></script>
 }

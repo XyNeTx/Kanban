@@ -775,9 +775,13 @@ const periodFilter = async () => {
         {
             //console.log("D");
             //console.log(trip);
+            
 
             for (trip; trip > 0; trip--)
             {
+                if (deliveryTrip > parseInt(dT_Period[0]["F_Period"])) {
+                    continue;
+                }
                 for (let k = 2; k <= 20; k++)
                 {
                     let _id = `tdR${k}T${trip}${deliveryDate}`;

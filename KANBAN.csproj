@@ -220,6 +220,7 @@
     <None Include="wwwroot\assets\.script\SpecialOrdering\KBNOR210_3.js" />
     <None Include="wwwroot\assets\.script\SpecialOrdering\KBNOR210_1.js" />
     <None Include="wwwroot\assets\.script\specialordering\KBNOR220.js" />
+    <None Include="wwwroot\assets\.script\specialordering\KBNOR220_1.js" />
     <None Include="wwwroot\assets\.script\SpecialOrdering\KBNOR293.js" />
     <None Include="wwwroot\assets\.script\SpecialOrdering\KBNOR294.js" />
     <None Include="wwwroot\assets\.script\SpecialOrdering\KBNOR295.js" />

@@ -430,6 +430,19 @@ function ShowData() {
                 //console.log(success.data);
                 $("#tableMain").DataTable().clear();
                 $("#tableMain").DataTable().columns.adjust().draw();
+
+                success.data.forEach(function (data) {
+                    let sum = 0;
+                    for (let obj in data) {
+                        if (obj.includes("f_Trip")) {
+                            sum += parseInt(data[obj]);
+                        }
+                    }
+                    data["f_Total_KB"] = sum;
+                    data["f_Total_Pcs"] = sum * data.f_Qty;
+
+                    console.log(data);
+                });
                 $("#tableMain").DataTable().rows.add(success.data).draw();
 
             }
@@ -515,7 +528,21 @@ $(document).on("keydown blur", "#tableMain .inputTrip", function (e) {
         }
         var cell = $(this).parent();
         $(this).parent().empty();
-        $("#tableMain").DataTable().cell(cell).data(trip).draw();
+        var header = $("#tableMain thead tr th").eq(cell.index()).text();
+        var data = $("#tableMain").DataTable().row(cell.closest("tr")).data();
+        header = header.split(" ")[1];
+        data["f_Trip" + header] = trip;
+        let sum = 0;
+        for (let obj in data) {
+            if (obj.includes("f_Trip")) {
+                sum += parseInt(data[obj]);
+            }
+        }
+        data["f_Total_KB"] = sum;
+        data["f_Total_Pcs"] = sum * data.f_Qty;
+
+        console.log(data);
+        $("#tableMain").DataTable().row(cell.closest("tr")).data(data).draw();
     }
 
 });
@@ -624,18 +651,6 @@ $("#btnImport").click(async function () {
                 xSwal.error("Error", "Can't Get Supplier Detail");
             }
         );
-
-        //await $("#selectKanban").selectpicker("val", _json[0].f_Kanban_No);
-        //await $("#selectKanbanTo").selectpicker("val", _json[_json.length - 1].f_Kanban_No);
-        //await $("#selectStore").selectpicker("val", "");
-        //await $("#selectStoreTo").selectpicker("val", "");
-        //await $("#selectPart").selectpicker("val", _json[0].f_Part_No + "-" + _json[0].f_Ruibetsu);
-        //await $("#selectPartTo").selectpicker("val", _json[_json.length - 1].f_Part_No + "-" + _json[_json.length - 1].f_Ruibetsu);
-
-        //$("#selectDelivery").val(moment(_json[0].f_Delivery_Date, "YYYYMMDD").format("DD/MM/YYYY"));
-        //$("#selectDeliveryTo").val(moment(_json[_json.length - 1].f_Delivery_Date, "YYYYMMDD").format("DD/MM/YYYY"));
-        //$("#selectDate").val(moment(_json[0].f_Delivery_Date, "YYYYMMDD").format("DD/MM/YYYY"));
-        //console.log(_json);
 
         await _xLib.AJAX_Post("/api/KBNMS008/GetImportList", JSON.stringify(_json),
             async function (success) {

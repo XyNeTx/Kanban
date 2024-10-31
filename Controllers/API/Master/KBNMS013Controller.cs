@@ -646,6 +646,10 @@ namespace HINOSystem.Controllers.API.Master
                             _KB3Context.TB_MS_PartOrder.Remove(partOrder);
                             _log.WriteLogMsg($"TB_MS_PartOrder(Save) Delete : {JsonConvert.SerializeObject(partOrder)}");
                         }
+                        else
+                        {
+                            throw new CustomHttpException(400, "Data Already Exist! Please Select Update OR Delete Before Process Data!");
+                        }
                     }
                     else if (action == "new")
                     {

@@ -42,8 +42,12 @@ class DataTableLib {
         if (!id.includes('#')) id = '#' + id;
 
         $(`${id}`).DataTable().clear().rows.add(data).draw();
+
         $("table thead tr th").css("text-align", "center");
+        $("table thead tr th").css("vertical-align", "middle");
+
         $("table tbody tr td").css("text-align", "center");
+        $("table tbody tr td").css("vertical-align", "middle");
     }
 
     GetDataDT(id, closestRow) {
