@@ -2,6 +2,8 @@
 using HINOSystem.Libs;
 using KANBAN.Context;
 using KANBAN.Libs;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System.Data;
 
 namespace KANBAN.Services.SpecialOrdering
@@ -15,6 +17,7 @@ namespace KANBAN.Services.SpecialOrdering
         string GetDelayDate(string IssDate);
         DataTable GetTransactionSPCDetail(string PDSNo, string PDSDate, string SuppCD, string SuppPlant,                                          string Fac, string? DeliDT = "", string? StoreCD = "");
         DataTable GetSurveyHeader(string Fac, string? SurveyDoc, string? UploadFlg, string? Mode);
+        string GetPOSurvey(string? PO = "", string? Fac = "", string? Flag = "", string? DeliDate = "", string? select = "");
     }
 
     public class SpecialLibs : ISpecialLibs
@@ -338,5 +341,61 @@ namespace KANBAN.Services.SpecialOrdering
                 throw new CustomHttpException(500, ex.Message);
             }
         } 
+
+        public string GetPOSurvey (string? PO = "",string? Fac = "",string? Flag = "", string? DeliDate = "",string? select = "")
+        {
+            try
+            {
+                var data = _kbContext.TB_Survey_Header
+                        .Where(h => (h.F_Status == "M" || h.F_Status == "N" || h.F_Status == "R")).AsNoTracking()
+                        .Join(_kbContext.TB_Survey_Detail.Where(d => string.IsNullOrWhiteSpace(d.F_PDS_No)).AsNoTracking(),
+                        h => new { h.F_Survey_Doc, h.F_Revise_Rev },
+                        d => new { d.F_Survey_Doc, d.F_Revise_Rev },
+                        (h, d) => new { h, d })
+                        .AsNoTracking().ToList();
+
+                if (!string.IsNullOrWhiteSpace(PO))
+                {
+                    data = data.Where(x => x.d.F_Survey_Doc.StartsWith(PO)).ToList();
+                }
+                if (!string.IsNullOrWhiteSpace(Fac))
+                {
+                    data = data.Where(x => x.h.F_Factory_Code == Fac).ToList();
+                }
+
+                if (select.ToLower() == "survey")
+                {
+                    var selectedData = data.Select(x => new
+                    {
+                        F_Survey_Doc = x.h.F_Survey_Doc.Trim()
+                    }).Distinct().ToList();
+
+                    return JsonConvert.SerializeObject(selectedData);
+                }
+                else if(select.ToLower() == "partno")
+                {
+                    var selectedData = data.Select(x => new
+                    {
+                        F_Part_No = x.d.F_Part_No.Trim() + "-" + x.d.F_Ruibetsu.Trim()
+                    }).Distinct().ToList();
+                    return JsonConvert.SerializeObject(selectedData);
+                }
+                else if (select.ToLower() == "suppcd")
+                {
+                    var selectedData = data.Select(x => new
+                    {
+                        F_Supplier_Code = x.h.F_Supplier_CD.Trim() + "-" + x.h.F_Supplier_Plant.Trim()
+                    }).Distinct().ToList();
+                    return JsonConvert.SerializeObject(selectedData);
+                }
+
+                return JsonConvert.SerializeObject(data);
+            }
+            catch (Exception ex)
+            {
+                if (ex is CustomHttpException) throw;
+                throw new CustomHttpException(500, ex.Message);
+            }
+        }
     }
 }

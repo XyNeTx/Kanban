@@ -34,5 +34,79 @@ namespace KANBAN.Controllers.API.SpecialOrdering
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetPOList()
+        {
+            try
+            {
+                var data = await _services.IKBNOR220_2.GetPOList();
+
+                return Ok(new { status = "200", response = "Success", message = "Data Found", data = data });
+            }
+            catch (CustomHttpException ex)
+            {
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
+            }
+        }
+
+        [HttpGet]
+        public IActionResult GetSurvey(string YM)
+        {
+            try
+            {
+                var data = _services.IKBNOR220_2.GetSurvey(YM);
+
+                return Ok(new { status = "200", response = "Success", message = "Data Found", data = data });
+            }
+            catch (CustomHttpException ex)
+            {
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
+            }
+        }
+        
+        [HttpGet]
+        public IActionResult GetSuppCD(string Survey, string YM)
+        {
+            try
+            {
+                var data = _services.IKBNOR220_2.GetSuppCD(Survey, YM);
+
+                return Ok(new { status = "200", response = "Success", message = "Data Found", data = data });
+            }
+            catch (CustomHttpException ex)
+            {
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
+            }
+        }
+        
+        [HttpGet]
+        public async Task<IActionResult> GetPartNo(string Survey,string SuppCD)
+        {
+            try
+            {
+                var data = await _services.IKBNOR220_2.GetPartNo(Survey, SuppCD);
+
+                return Ok(new { status = "200", response = "Success", message = "Data Found", data = data });
+            }
+            catch (CustomHttpException ex)
+            {
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetPOQty(string Survey, string SuppCD, string PartNo)
+        {
+            try
+            {
+                var data = await _services.IKBNOR220_2.PartNoSelected(Survey, SuppCD, PartNo);
+
+                return Ok(new { status = "200", response = "Success", message = "Data Found", data = data });
+            }
+            catch (CustomHttpException ex)
+            {
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
+            }
+        }
     }
 }

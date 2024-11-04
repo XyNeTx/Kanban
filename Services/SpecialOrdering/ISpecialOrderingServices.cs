@@ -125,7 +125,9 @@ namespace KANBAN.Services.SpecialOrdering
             ppm3Context,
             fillDT,
             log,
-            emailService);
+            emailService,
+            specialLibs
+            );
 
         }
     }

@@ -165,6 +165,7 @@ namespace HINOSystem.Context
         public DbSet<TB_STOCK_KB_SPC_PART_REMAIN> TB_STOCK_KB_SPC_PART_REMAIN { get; set; }
         public DbSet<KANBAN.Models.KB3.SpecialOrdering.TB_MS_Operator> TB_MS_Operator { get; set; }
         public DbSet<TB_Survey_Header> TB_Survey_Header { get; set; }
+        public DbSet<TB_Survey_Detail> TB_Survey_Detail { get; set; }
     }
 }
 
