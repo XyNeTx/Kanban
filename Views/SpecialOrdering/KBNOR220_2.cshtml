@@ -1,5 +1,84 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿
+<div class="row">
+    <div class="col-xl-12 col-md-12 col-sm-12">
+        <div class="card border-left-primary shadow h-100">
+            <div class="card-body">
+                <div class="row ms-1 me-4 mt-2">
+                    <div class="col">
+                        <div class="row justify-content-start">
+                            <button type="button" id="btnInq" class="btn btn-success col-2">Inquiry</button>
+                            <button type="button" id="btnUpd" class="btn btn-success col-2">Update</button>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="row justify-content-end mt-2">
+                            <button type="button" id="btnCan" class="btn btn-success col-2">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="row">
+                        <div class="input-group col-4">
+                            <label class="input-group-text" for="mthDeliYM">Delivery YM</label>
+                            <input type="month" class="form-control" value="@DateTime.Now.ToString("yyyy-MM")" id="mthDeliYM" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-group col-7">
+                            <label class="input-group-text" for="selSurDoc">Survey Document</label>
+                            <select class="selectpicker" id="selSurDoc"></select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-group col-7">
+                            <label class="input-group-text" for="selSupCode">Supplier Code</label>
+                            <select class="selectpicker" id="selSupCode"></select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="input-group">
+                                <label class="input-group-text" for="selPartNo">Component Part No.</label>
+                                <select class="selectpicker" id="selPartNo"></select>
+                            </div>
+                        </div>
+                        <div class="col-5">
+                            <div class="input-group">
+                                <label class="input-group-text" for="txtPOQty">PO Qty</label>
+                                <input type="text" class="form-control" id="txtPOQty" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-1"></div>
+                    <table class="table w-100 table-bordered col" id="tableMain">
+                        <thead>
+                            <tr>
+                                <th class="bg-danger text-center">SUN</th>
+                                <th class="bg-warning text-center">MON</th>
+                                <th style="background-color:lightpink;text-align:center">TUE</th>
+                                <th class="bg-success text-center">WED</th>
+                                <th style="background-color:orange;text-align:center">THU</th>
+                                <th style="background-color:lightskyblue;text-align:center">FRI</th>
+                                <th style="background-color:mediumpurple;text-align:center">SAT</th>
+                            </tr>
+                        </thead>
+                    </table>
+                    <div class="col-1"></div>
+                </div>
+                <div class="row mt-2">
+                    <div class="row justify-content-end">
+                        <button type="button" class="btn btn-success col-1" id="btnSave" disabled>Save</button>
+                        <a class="btn btn-danger col-1 ms-2" asp-controller="OrderingProcess" asp-action="KBNOR200">Exit</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@using KANBAN.Libs
+@section Scripts {
+    <script type="text/javascript" src="@FileVersionHelper.VersionedScriptPath("/assets/.script/SpecialOrdering/KBNOR220_2.js")"></script>
 }

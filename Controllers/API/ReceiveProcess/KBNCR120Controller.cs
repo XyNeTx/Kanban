@@ -346,7 +346,7 @@ namespace HINOSystem.Controllers.API.Master
                                         header.F_MRN_Flag = "1";
                                         _KB3Context.TB_REC_HEADER.Update(header);
                                         pdsDetailSingle.F_Receive_amount = sumQty;
-                                        pdsDetailSingle.F_Receive_Date = now;
+                                        pdsDetailSingle.F_Receive_Date = await GetLoginDate();
                                         _KB3Context.TB_REC_DETAIL.Update(pdsDetailSingle);
                                         _isReceiveAll = false;
 
@@ -406,7 +406,7 @@ namespace HINOSystem.Controllers.API.Master
                                     if (_singleReceiveAll != null)
                                     {
                                         _singleReceiveAll.F_Receive_amount = sumQty;
-                                        _singleReceiveAll.F_Receive_Date = now;
+                                        _singleReceiveAll.F_Receive_Date = await GetLoginDate();
                                         _KB3Context.TB_REC_DETAIL.Update(_singleReceiveAll);
 
                                         var header = await _KB3Context.TB_REC_HEADER.SingleOrDefaultAsync(x => x.F_OrderNo == PDSNo);
@@ -519,6 +519,28 @@ namespace HINOSystem.Controllers.API.Master
             {
                 return Content(ex.Message.ToString(), "application/json");
             }
+        }
+
+        private async Task<DateTime> GetLoginDate()
+        {
+            var masterControl = await _KB3Context.TB_MS_CTL.Where(x => x.F_Shift == "A")
+                .OrderBy(x => x.F_Shift).FirstOrDefaultAsync();
+
+            DateTime now = DateTime.Now;
+            string shift = "1";
+
+            if (now.ToString("HH:mm").CompareTo(masterControl.F_Start_Time) < 0)
+            {
+                now = now.AddDays(-1);
+                shift = "2";
+            }
+            else if (now.ToString("HH:mm").CompareTo(masterControl.F_End_Time) > 0)
+            {
+                shift = "2";
+            }
+
+            return now;
+
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using HINOSystem.Libs;
+using KANBAN.Services;
 using KANBAN.Services.SpecialOrdering;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,5 +18,21 @@ namespace KANBAN.Controllers.API.SpecialOrdering
             _services = services;
             _bearer = bearer;
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetCalendar(string YM)
+        {
+            try
+            {
+                var data = await _services.IKBNOR220_2.GetCalendar(YM);
+
+                return Ok(new { status = "200", response = "Success", message = "Data Found", data = data });
+            }
+            catch (CustomHttpException ex)
+            {
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
+            }
+        }
+
     }
 }

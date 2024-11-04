@@ -348,6 +348,7 @@ namespace KANBAN.Controllers.API.ReceiveProcess
                                     header.F_MRN_Flag = "1";
                                     _KB3Context.TB_REC_HEADER.Update(header);
                                     pdsDetailSingle.F_Receive_amount = sumQty;
+                                    pdsDetailSingle.F_Receive_Date = await GetLoginDate();
                                     _KB3Context.TB_REC_DETAIL.Update(pdsDetailSingle);
                                     _isReceiveAll = false;
                                     _isZeroRec = false;
@@ -399,6 +400,11 @@ namespace KANBAN.Controllers.API.ReceiveProcess
                                         packCode = "";
                                     }
                                     var header = await _KB3Context.TB_REC_HEADER.SingleOrDefaultAsync(x => x.F_OrderNo == PDSNo);
+                                    string Receive_Local_Date = _singleReceiveAll.F_Receive_Date.Value.ToString("yyyyMMdd");
+                                    if (_singleReceiveAll.F_Receive_Date.Value.TimeOfDay < new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 7, 30, 0).TimeOfDay)
+                                    {
+                                        Receive_Local_Date = _singleReceiveAll.F_Receive_Date.Value.AddDays(-1).ToString("yyyyMMdd");
+                                    }
                                     if (devQty != 0)
                                     {
                                         _isZeroRec = false;
@@ -412,7 +418,7 @@ namespace KANBAN.Controllers.API.ReceiveProcess
                                             F_Plant_CD = header.F_Plant,
                                             F_Store_CD = header.F_Delivery_Dock,
                                             F_Receive_Qty = devQty,
-                                            F_Receive_date = _singleReceiveAll.F_Receive_Date.Value.ToString("yyyyMMdd").Trim(),
+                                            F_Receive_date = Receive_Local_Date,
                                             F_Supplier_Code = header.F_Supplier_Code,
                                             F_Supplier_Plant = header.F_Supplier_Plant,
                                             F_Inventory_Flg = dr,
@@ -497,5 +503,26 @@ namespace KANBAN.Controllers.API.ReceiveProcess
             }
         }
 
+        private async Task<DateTime> GetLoginDate()
+        {
+            var masterControl = await _KB3Context.TB_MS_CTL.Where(x => x.F_Shift == "A")
+                .OrderBy(x => x.F_Shift).FirstOrDefaultAsync();
+
+            DateTime now = DateTime.Now;
+            string shift = "1";
+
+            if (now.ToString("HH:mm").CompareTo(masterControl.F_Start_Time) < 0)
+            {
+                now = now.AddDays(-1);
+                shift = "2";
+            }
+            else if (now.ToString("HH:mm").CompareTo(masterControl.F_End_Time) > 0)
+            {
+                shift = "2";
+            }
+
+            return now;
+
+        }
     }
 }

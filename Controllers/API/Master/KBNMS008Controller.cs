@@ -32,7 +32,8 @@ namespace HINOSystem.Controllers.API.Master
             PPMInvenContext ppmInvenContext,
             KB3Context kb3Context,
             FillDataTable fillDataTable,
-            SerilogLibs log
+            SerilogLibs log,
+            IEmailService IEmail
         )
         {
             _BearerClass = bearerClass;
@@ -41,6 +42,7 @@ namespace HINOSystem.Controllers.API.Master
             _KB3Context = kb3Context;
             _FillDT = fillDataTable;
             _log = log;
+            _IEmail = IEmail;
         }
 
         private string yyyyMMdd = DateTime.Now.ToString("yyyyMMdd");
@@ -963,7 +965,7 @@ namespace HINOSystem.Controllers.API.Master
         }
 
         [HttpGet]
-        public async Task<IActionResult> Show_Data(string? supplier, string? kanban, string? kanbanTo, string? store, string? storeTo, string? partNo, string? partNoTo, string selDate)
+        public IActionResult Show_Data(string? supplier, string? kanban, string? kanbanTo, string? store, string? storeTo, string? partNo, string? partNoTo, string selDate)
         {
             try
             {
@@ -1335,17 +1337,17 @@ namespace HINOSystem.Controllers.API.Master
                                     && x.F_Delivery_Date == planObj.F_Delivery_Date
                                     && x.F_Delivery_Trip == planObj.F_Delivery_Trip).AsNoTracking().SingleOrDefault();
 
-                            if (exist == null && _lock == null)
+                            if (exist == null && (_lock == null || _lock == "0"))
                             {
                                 _KB3Context.TB_Kanban_Planning.Add(planObj);
-                                _KB3Context.SaveChanges();
+                                await _KB3Context.SaveChangesAsync();
                             }
                             else
                             {
                                 if (exist != null && (_lock == "0" || _lock == null))
                                 {
                                     _KB3Context.TB_Kanban_Planning.Update(planObj);
-                                    _KB3Context.SaveChanges();
+                                    await _KB3Context.SaveChangesAsync();
                                 }
                                 else
                                 {

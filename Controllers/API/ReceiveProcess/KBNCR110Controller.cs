@@ -293,7 +293,7 @@ namespace HINOSystem.Controllers.API.Master
                                 foreach (var singleRecDet in recDetail)
                                 {
                                     singleRecDet.F_Receive_amount = singleRecDet.F_Unit_Amount;
-                                    singleRecDet.F_Receive_Date = DateTime.Now.Date;
+                                    singleRecDet.F_Receive_Date = await GetLoginDate();
                                     _KB3Context.TB_REC_DETAIL.Update(singleRecDet);
                                     _Serilog.WriteLogMsg($"Update TB_REC_DETAIL {JsonConvert.SerializeObject(singleRecDet)}");
                                 }
@@ -461,5 +461,28 @@ namespace HINOSystem.Controllers.API.Master
                 return Content(_result);
             }
         }
+
+        private async Task<DateTime> GetLoginDate()
+        {
+            var masterControl = await _KB3Context.TB_MS_CTL.Where(x => x.F_Shift == "A")
+                .OrderBy(x => x.F_Shift).FirstOrDefaultAsync();
+
+            DateTime now = DateTime.Now;
+            string shift = "1";
+
+            if (now.ToString("HH:mm").CompareTo(masterControl.F_Start_Time) < 0)
+            {
+                now = now.AddDays(-1);
+                shift = "2";
+            }
+            else if (now.ToString("HH:mm").CompareTo(masterControl.F_End_Time) > 0)
+            {
+                shift = "2";
+            }
+
+            return now;
+
+        }
+
     }
 }

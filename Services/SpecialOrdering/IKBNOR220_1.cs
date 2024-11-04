@@ -110,6 +110,7 @@ namespace KANBAN.Services.SpecialOrdering
                         exModel.F_Remark = model.F_Remark;
                         exModel.F_Remark2 = model.F_Remark2;
                         exModel.F_Remark3 = model.F_Remark3;
+                        exModel.F_Remark_KB = model.F_Remark_KB;
                         exModel.F_CustomerOrder_Type = model.F_CustomerOrder_Type;
                         exModel.F_Update_By = _BearerClass.UserCode;
                         exModel.F_Update_Date = DateTime.Now;
@@ -160,11 +161,11 @@ namespace KANBAN.Services.SpecialOrdering
 
                 if (_dt.Rows.Count == 0)
                 {
-                    return false;
+                    return true;
                 }
                 else
                 {
-                    return true;
+                    return false;
                 }
             }
             catch (Exception ex)

@@ -140,6 +140,8 @@ $("#btnUpd").click(UpdClicked = async () => {
 
     $("#btnInq").prop("disabled", true);
     $("#btnDel").prop("disabled", true);
+    $("#btnSave").prop("disabled", false);
+
     $("#selSurveyDoc").val("");
     $("#selPlant").val("1");
 
@@ -177,6 +179,7 @@ $("#btnDel").click(DelClicked = async () => {
 
     $("#btnInq").prop("disabled", true);
     $("#btnUpd").prop("disabled", true);
+    $("#btnSave").prop("disabled", false);
 
     $("#selSurveyDoc").val("");
     $("#selPlant").val("1");
@@ -226,4 +229,34 @@ $(document).on("click", "#tableMain tbody tr", async function () {
     $("input[name='radCustomerType'][value='" + obj.F_CustomerOrder_Type + "']").prop("checked", true);
 
     $(document).find("select").selectpicker("refresh");
+});
+
+$("#btnSave").click(SaveClicked = async () => {
+
+    let isDel = mode == "delete" ? true : false;
+
+    let listObj = $("#tableMain").DataTable().rows().data().toArray();
+
+    listObj.forEach(function (item) {
+        item.F_Color_Tag = $("#selColorofTag").val();
+        item.F_Dept_Code = $("#selUseForSection").val();
+        item.F_Acc_Dr = $("#selDebitCode").val();
+        item.F_Acc_Cr = $("#inpCreditCode").val();
+        item.F_Wk_code = $("#inpWorkCode").val();
+        item.F_Issued_Date = moment(item.F_Issued_Date,"DD/MM/YYYY").format("YYYYMMDD");
+        item.F_Remark = $("#inpRemark").val();
+        item.F_Remark2 = $("#inpRemark2").val();
+        item.F_Remark3 = $("#inpRemark3").val();
+        item.F_CustomerOrder_Type = $("input[name='radCustomerType']:checked").val();
+    });
+
+    _xLib.AJAX_Post("/api/KBNOR220_1/Save?isDel=" + isDel, listObj,
+        async (success) => {
+            xSwal.success(success.response, success.message);
+        },
+        async (error) => {
+            console.log(error);
+        }
+    );
+
 });

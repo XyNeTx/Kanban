@@ -13,8 +13,7 @@ namespace KANBAN.Services.SpecialOrdering
         int getMaxSurveyID(string PDSNo, string Fac = "");
         string FormatNumber(int Number, int Digits = 3);
         string GetDelayDate(string IssDate);
-        DataTable GetTransactionSPCDetail(string PDSNo, string PDSDate, string SuppCD, string SuppPlant,
-                                                           string Fac, string? DeliDT = "", string? StoreCD = "");
+        DataTable GetTransactionSPCDetail(string PDSNo, string PDSDate, string SuppCD, string SuppPlant,                                          string Fac, string? DeliDT = "", string? StoreCD = "");
         DataTable GetSurveyHeader(string Fac, string? SurveyDoc, string? UploadFlg, string? Mode);
     }
 
