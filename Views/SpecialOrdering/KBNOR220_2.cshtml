@@ -13,7 +13,7 @@
                     <div class="col">
                         <div class="row justify-content-end mt-2">
                             <button type="button" id="btnCan" class="btn btn-warning col-2">Cancel</button>
-                            <button type="button" id="btnRpt" class="btn btn-success col-2">Report</button>
+                            <a id="btnRpt" class="btn btn-success text-light col-2" data-bs-toggle="modal" data-bs-target="#KBNOR220_2_Rpt">Report</a>
                         </div>
                     </div>
                 </div>
@@ -76,6 +76,41 @@
                         <a class="btn btn-danger col-1 ms-2" asp-controller="OrderingProcess" asp-action="KBNOR200">Exit</a>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="KBNOR220_2_Rpt" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="KBNOR220_2_Rpt_Label" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="KBNOR220_2_Rpt_Label">KBNOR_220_2_Rpt : Print Survey Document</h1>
+            </div>
+            <div class="modal-body">
+                <div class="row ms-4 mt-2">
+                    <div class="input-group mt-1">
+                        <label class="input-group-text" for="modalSelCustOrd">Customer OrderNo : </label>
+                        <select class="selectpicker" id="modalSelCustOrd" data-live-search="true" data-size="7">
+                            <option value="" hidden></option>
+                        </select>
+                    </div>
+                    <div class="input-group mt-1">
+                        <label class="input-group-text" for="modalSelSuppCd">Supplier Code : </label>
+                        <select class="selectpicker" id="modalSelSuppCd" data-live-search="true" data-size="7">
+                            <option value="" hidden></option>
+                        </select>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-1"></div>
+                        <input type="text" class="form-control col-6" value="" id="modalTxtSupName" readonly/>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="btnPrintRpt">Print</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Exit</button>
             </div>
         </div>
     </div>

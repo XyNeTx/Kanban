@@ -61,6 +61,49 @@ $("#selPartNo").change(() => {
     GetCalendarQty();
 });
 
+$("#modalSelCustOrd").change(() => {
+    let getQuery = {
+        YM: "",
+        Survey: $("#modalSelCustOrd").val()
+    }
+    _xLib.AJAX_Get("/api/KBNOR220_2/GetSuppCD", getQuery,
+        async (success) => {
+            success = _xLib.JSONparseMixData(success);
+            //console.log(success);
+            $("#modalSelSuppCd").empty();
+            $("#modalSelSuppCd").append("<option value='' hidden></option>");
+            success.data.forEach(function (item) {
+                $("#modalSelSuppCd").append("<option value='" + item.F_Supplier_Code + "'>" + item.F_Supplier_Code + "</option>");
+            });
+            $("#modalSelSuppCd").selectpicker("refresh");
+
+        },
+        async (error) => {
+            console.log(error);
+        }
+    );
+});
+
+$("#modalSelSuppCd").change(() => {
+    let getQuery = {
+        SuppCD: $("#modalSelSuppCd").val().split("-")[0] ?? "",
+        SuppPlant: $("#modalSelSuppCd").val().split("-")[1] ?? ""
+    }
+
+    _xLib.AJAX_Get("/api/KBNOR220_2/GetSupplierName", getQuery,
+        async (success) => {
+            //console.log(success);
+            $("#modalTxtSupName").val(success.data);
+        },
+        async (error) => {
+            console.log(error);
+        }
+    );
+
+});
+
+
+
 $("#btnCan").click(() => {
     $("#btnInq").prop("disabled", false);
     $("#btnUpd").prop("disabled", false);
@@ -116,6 +159,24 @@ $("#btnSave").click(() => {
         }
     );
 
+});
+
+$("#btnPrintRpt").click(() => {
+    let obj = {
+        F_PO_Customer: $("#modalSelCustOrd").val(),
+        F_Supplier_CD: $("#modalSelSuppCd").val().split("-")[0] ?? "",
+        F_Supplier_Plant: $("#modalSelSuppCd").val().split("-")[1] ?? "",
+    }
+
+    _xLib.OpenReportObj("/KBNOR220_2_Rpt", obj);
+});
+
+$(document).on("shown.bs.modal", "#KBNOR220_2_Rpt", async () => {
+    await GetPOList();
+
+    $("#modalSelCustOrd").resetSelectPicker();
+    $("#modalSelSuppCd").resetSelectPicker();
+    $("#modalTxtSupName").val("");
 });
 
 let _command = "inquiry";
@@ -304,20 +365,19 @@ GetCalendarQty = async () => {
     );
 }
 
-
-//GetPOList = async () => {
-//    _xLib.AJAX_Get("/api/KBNOR220_2/GetPOList", {},
-//        async (success) => {
-//            console.log(success);
-//            $("#selSurDoc").empty();
-//            $("#selSurDoc").append("<option value='' hidden></option>");
-//            success.data.forEach(function (item) {
-//                $("#selSurDoc").append("<option value='" + item.f_PO_Customer + "'>" + item.f_PO_Customer + "</option>");
-//            });
-//            $("#selSurDoc").selectpicker("refresh");
-//        },
-//        async (error) => {
-//            console.log(error);
-//        }
-//    );
-//}
+GetPOList = async () => {
+    _xLib.AJAX_Get("/api/KBNOR220_2/GetPOList", {},
+        async (success) => {
+            console.log(success);
+            $("#modalSelCustOrd").empty();
+            $("#modalSelCustOrd").append("<option value='' hidden></option>");
+            success.data.forEach(function (item) {
+                $("#modalSelCustOrd").append("<option value='" + item.f_PO_Customer + "'>" + item.f_PO_Customer + "</option>");
+            });
+            $("#modalSelCustOrd").selectpicker("refresh");
+        },
+        async (error) => {
+            console.log(error);
+        }
+    );
+}

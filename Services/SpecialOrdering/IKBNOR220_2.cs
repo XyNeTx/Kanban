@@ -16,11 +16,12 @@ namespace KANBAN.Services.SpecialOrdering
         Task<TB_Calendar> GetCalendar(string YM);
         Task<List<TB_Survey_Detail>> GetPOList();
         string GetSurvey(string YM);
-        string GetSuppCD(string PO, string YM);
+        string GetSuppCD(string PO, string? YM);
         Task<List<TB_Survey_Detail>> GetPartNo(string PO, string SuppCD);
         Task<int> PartNoSelected(string surveyDoc, string suppCD, string partNo);
         Task<string> GetCalendarQty(string SurveyDoc, string suppCD, string YM, string partNo);
         Task Save(List<VM_Post_KBNOR220_2> listObj);
+        Task<string> GetSupplierName(string SuppCD, string SuppPlant);
     }
 
     public class KBNOR220_2 : IKBNOR220_2
@@ -139,7 +140,7 @@ namespace KANBAN.Services.SpecialOrdering
             }
         }
 
-        public string GetSuppCD(string PO,string YM)
+        public string GetSuppCD(string PO,string? YM)
         {
             try
             {
@@ -524,6 +525,19 @@ namespace KANBAN.Services.SpecialOrdering
                 }
 
                 return data.Rows[0]["F_PO_Customer"].ToString() + "/" + data.Rows[0]["F_Survey_Running"].ToString().PadRight(3, '0');
+            }
+            catch (Exception ex)
+            {
+                if (ex is CustomHttpException) throw;
+                else throw new CustomHttpException(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        public async Task<string> GetSupplierName(string SuppCD, string SuppPlant)
+        {
+            try
+            {
+                return await _specialLibs.GetSupplierName(SuppCD, SuppPlant);
             }
             catch (Exception ex)
             {

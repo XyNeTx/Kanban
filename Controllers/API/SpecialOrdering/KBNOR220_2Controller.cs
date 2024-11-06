@@ -66,7 +66,7 @@ namespace KANBAN.Controllers.API.SpecialOrdering
         }
         
         [HttpGet]
-        public IActionResult GetSuppCD(string Survey, string YM)
+        public IActionResult GetSuppCD(string Survey, string? YM)
         {
             try
             {
@@ -133,6 +133,21 @@ namespace KANBAN.Controllers.API.SpecialOrdering
                 await _services.IKBNOR220_2.Save(listObj);
 
                 return Ok(new { status = "200", response = "Success", message = "Data Saved" });
+            }
+            catch (CustomHttpException ex)
+            {
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetSupplierName(string SuppCD, string SuppPlant)
+        {
+            try
+            {
+                var data = await _services.IKBNOR220_2.GetSupplierName(SuppCD, SuppPlant);
+
+                return Ok(new { status = "200", response = "Success", message = "Data Found", data = data });
             }
             catch (CustomHttpException ex)
             {

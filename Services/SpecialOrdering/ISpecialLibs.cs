@@ -18,6 +18,7 @@ namespace KANBAN.Services.SpecialOrdering
         DataTable GetTransactionSPCDetail(string PDSNo, string PDSDate, string SuppCD, string SuppPlant,                                          string Fac, string? DeliDT = "", string? StoreCD = "");
         DataTable GetSurveyHeader(string Fac, string? SurveyDoc, string? UploadFlg, string? Mode);
         string GetPOSurvey(string? PO = "", string? Fac = "", string? Flag = "", string? DeliDate = "", string? select = "");
+        Task<string> GetSupplierName(string SuppCD, string SuppPlant);
     }
 
     public class SpecialLibs : ISpecialLibs
@@ -390,6 +391,35 @@ namespace KANBAN.Services.SpecialOrdering
                 }
 
                 return JsonConvert.SerializeObject(data);
+            }
+            catch (Exception ex)
+            {
+                if (ex is CustomHttpException) throw;
+                throw new CustomHttpException(500, ex.Message);
+            }
+        }
+
+        public async Task<string> GetSupplierName(string SuppCD, string SuppPlant)
+        {
+            try
+            {
+                var data = await _PPM3Context.T_Supplier_MS
+                    .Where(x => x.F_supplier_cd == SuppCD && x.F_Plant_cd == SuppPlant[0])
+                    .Select(x => new
+                    {
+                        x.F_supplier_cd,
+                        x.F_Plant_cd,
+                        x.F_name
+                    }).FirstOrDefaultAsync();
+
+                if (data != null)
+                {
+                    return data.F_name;
+                }
+                else
+                {
+                    return "";
+                }
             }
             catch (Exception ex)
             {
