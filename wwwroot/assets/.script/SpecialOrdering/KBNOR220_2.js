@@ -54,6 +54,9 @@ $("#selSupCode").change(() => {
 });
 
 $("#selPartNo").change(() => {
+    $("#tableMain").find("tbody").remove();
+    ShowCalendar();
+
     GetPOQty();
     GetCalendarQty();
 });
@@ -106,6 +109,7 @@ $("#btnSave").click(() => {
         async (success) => {
             console.log(success);
             xSwal.success(success.response, success.message);
+            $("#selPartNo").trigger("change");
         },
         async (error) => {
             console.log(error);
