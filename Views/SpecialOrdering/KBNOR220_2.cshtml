@@ -7,12 +7,13 @@
                     <div class="col">
                         <div class="row justify-content-start">
                             <button type="button" id="btnInq" class="btn btn-success col-2">Inquiry</button>
-                            <button type="button" id="btnUpd" class="btn btn-success col-2">Update</button>
+                            <button type="button" id="btnUpd" class="btn btn-primary col-2">Update</button>
                         </div>
                     </div>
                     <div class="col">
                         <div class="row justify-content-end mt-2">
-                            <button type="button" id="btnCan" class="btn btn-success col-2">Cancel</button>
+                            <button type="button" id="btnCan" class="btn btn-warning col-2">Cancel</button>
+                            <button type="button" id="btnRpt" class="btn btn-success col-2">Report</button>
                         </div>
                     </div>
                 </div>
@@ -20,13 +21,13 @@
                     <div class="row">
                         <div class="input-group col-4">
                             <label class="input-group-text" for="mthDeliYM">Delivery YM</label>
-                            <input type="month" class="form-control" value="@DateTime.Now.ToString("yyyy-MM")" id="mthDeliYM" />
+                            <input type="month" class="form-control" value="@DateTime.Now.ToString("yyyy-MM")" id="mthDeliYM" disabled />
                         </div>
                     </div>
                     <div class="row">
                         <div class="input-group col-7">
                             <label class="input-group-text" for="selSurDoc">Survey Document</label>
-                            <select class="selectpicker" id="selSurDoc" data-live-search="true" data-size="7">
+                            <select class="selectpicker" id="selSurDoc" data-live-search="true" data-size="7" disabled>
 
                             </select>
                         </div>
@@ -34,14 +35,14 @@
                     <div class="row">
                         <div class="input-group col-7">
                             <label class="input-group-text" for="selSupCode">Supplier Code</label>
-                            <select class="selectpicker" id="selSupCode" data-live-search="true" data-size="7"></select>
+                            <select class="selectpicker" id="selSupCode" data-live-search="true" data-size="7" disabled></select>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col">
                             <div class="input-group">
                                 <label class="input-group-text" for="selPartNo">Component Part No.</label>
-                                <select class="selectpicker" id="selPartNo" data-live-search="true" data-size="7"></select>
+                                <select class="selectpicker" id="selPartNo" data-live-search="true" data-size="7" disabled></select>
                             </div>
                         </div>
                         <div class="col-5">

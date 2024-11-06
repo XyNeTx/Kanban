@@ -1,4 +1,5 @@
 ﻿using HINOSystem.Libs;
+using KANBAN.Models.KB3.SpecialOrdering;
 using KANBAN.Services;
 using KANBAN.Services.SpecialOrdering;
 using Microsoft.AspNetCore.Http;
@@ -108,5 +109,36 @@ namespace KANBAN.Controllers.API.SpecialOrdering
                 throw new CustomHttpException(ex.StatusCode, ex.Message);
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetCalendarQty(string YM, string Survey, string SuppCD, string PartNo)
+        {
+            try
+            {
+                var data = await _services.IKBNOR220_2.GetCalendarQty(Survey, SuppCD, YM, PartNo);
+
+                return Ok(new { status = "200", response = "Success", message = "Data Found", data = data });
+            }
+            catch (CustomHttpException ex)
+            {
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Save(List<VM_Post_KBNOR220_2> listObj)
+        {
+            try
+            {
+                await _services.IKBNOR220_2.Save(listObj);
+
+                return Ok(new { status = "200", response = "Success", message = "Data Saved" });
+            }
+            catch (CustomHttpException ex)
+            {
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
+            }
+        }
+
     }
 }

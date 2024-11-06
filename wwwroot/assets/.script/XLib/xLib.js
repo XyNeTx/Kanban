@@ -233,6 +233,15 @@ class xLib {
         return $(".pcoded-navigatio-lavel").text().trim();
     }
 
+    ResetSelectPicker(id) {
+        if (id == undefined) return console.error("id is undefined");
+        if (!id.includes('#')) id = '#' + id;
+
+        $(`${id}`).val('');
+        $(`${id}`).selectpicker('refresh');
+        $(`${id}`).parent().find("div[class='filter-option-inner-inner']").text("Nothing Selected");
+    }
+
 
     AJAX_GetNoHeader(url, data, successFn, errorFn) {
         if (window.location.hostname.includes("tpcap")) {
@@ -614,3 +623,14 @@ class xLib {
 }
 
 const _xLib = new xLib();
+
+(($) => {
+    $.fn.resetSelectPicker = async function () {
+        //console.log(this);
+        await $(this).val('');
+        await $(this).selectpicker('refresh');
+        $(this).parent().find("div[class='filter-option-inner-inner']").text("Nothing Selected");
+    };
+
+
+})(jQuery);
