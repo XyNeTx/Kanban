@@ -199,7 +199,7 @@ namespace HINOSystem.Libs
 
             try
             {
-                using (SqlConnection con = new SqlConnection(_configuration.GetConnectionString("ProcWebConnection")))
+                using (SqlConnection con = new SqlConnection(_ProcDB.Database.GetConnectionString()))
                 {
                     using (SqlCommand cmd = new SqlCommand(sql, con))
                     {
@@ -248,6 +248,26 @@ namespace HINOSystem.Libs
             };
 
             return ppmConnect;
+        }
+
+        public string procDBConnect()
+        {
+            string isDev = _IHttp.HttpContext.Request.Cookies.FirstOrDefault(x => x.Key == "isDev").Value == "1" ? "Dev" : "";
+            string plant = _IHttp.HttpContext.Request.Cookies.FirstOrDefault(x => x.Key == "plantCode").Value;
+            string cPlantDev = plant + isDev;
+
+            string procDBConnect = cPlantDev switch
+            {
+                "1" => "[HMMT-APP03].[Proc_DB]",
+                "2" => "[HMMT-APP03].[Proc_DB]",
+                "3" => "[HMMT-APP03].[Proc_DB]",
+                "1Dev" => "[Proc_DB]",
+                "2Dev" => "[Proc_DB]",
+                "3Dev" => "[Proc_DB]",
+                _ => "[Proc_DB]",
+            };
+
+            return procDBConnect;
         }
     }
 }

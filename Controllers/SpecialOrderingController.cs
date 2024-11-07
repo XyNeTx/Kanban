@@ -61,6 +61,31 @@ namespace KANBAN.Controllers
             _authenGuard.ComponentToolbar = false;
             return _authenGuard.guard(ControllerContext);
         }
+        public IActionResult KBNOR230()
+        {
+            _authenGuard.ComponentToolbar = false;
+            return _authenGuard.guard(ControllerContext);
+        }
+        public IActionResult KBNOR240()
+        {
+            _authenGuard.ComponentToolbar = false;
+            return _authenGuard.guard(ControllerContext);
+        }
+        public IActionResult KBNOR250()
+        {
+            _authenGuard.ComponentToolbar = false;
+            return _authenGuard.guard(ControllerContext);
+        }
+        public IActionResult KBNOR280()
+        {
+            _authenGuard.ComponentToolbar = false;
+            return _authenGuard.guard(ControllerContext);
+        }
+        public IActionResult KBNOR290()
+        {
+            _authenGuard.ComponentToolbar = false;
+            return _authenGuard.guard(ControllerContext);
+        }
         public IActionResult KBNOR220_1()
         {
             _authenGuard.ComponentToolbar = false;

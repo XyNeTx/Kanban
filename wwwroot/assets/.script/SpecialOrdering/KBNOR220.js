@@ -3,8 +3,7 @@ $(document).ready(async function () {
     let option = {
         columns: [
             {
-                title: "", render: function (data, type, row, meta)
-                {
+                title: "", render: function (data, type, row, meta) {
                     return "<input type='checkbox' class='chkSelect' value='" + row.F_PDS_No + "'>";
                 }
             },
@@ -177,7 +176,7 @@ $("#btnSave").click(function () {
         F_CustomerOrder_Type: $("input[type='radio'][name='radCustomerType']:checked").val(),
         F_CusOrderType_CD: $("#selOrderType").val(),
         F_Store_CD: selectedObj.F_Store_CD,
-        F_Issued_Date : selectedObj.F_Issued_Date,
+        F_Issued_Date: selectedObj.F_Issued_Date,
     }
 
     console.log(data);
@@ -205,7 +204,7 @@ $("#btnSave").click(function () {
         },
         function (error) {
             console.log(error);
-            xSwal.error(error.responseJSON.response,error.responseJSON.message);
+            xSwal.error(error.responseJSON.response, error.responseJSON.message);
         }
     );
 

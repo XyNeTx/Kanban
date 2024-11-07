@@ -219,6 +219,11 @@
     <None Include="wwwroot\assets\.script\SpecialOrdering\KBNOR210_2.js" />
     <None Include="wwwroot\assets\.script\SpecialOrdering\KBNOR210_3.js" />
     <None Include="wwwroot\assets\.script\SpecialOrdering\KBNOR210_1.js" />
+    <None Include="wwwroot\assets\.script\SpecialOrdering\KBNOR290.js" />
+    <None Include="wwwroot\assets\.script\SpecialOrdering\KBNOR280.js" />
+    <None Include="wwwroot\assets\.script\SpecialOrdering\KBNOR250.js" />
+    <None Include="wwwroot\assets\.script\SpecialOrdering\KBNOR240.js" />
+    <None Include="wwwroot\assets\.script\SpecialOrdering\KBNOR230.js" />
     <None Include="wwwroot\assets\.script\specialordering\KBNOR220.js" />
     <None Include="wwwroot\assets\.script\specialordering\KBNOR220_1.js" />
     <None Include="wwwroot\assets\.script\specialordering\KBNOR220_2.js" />

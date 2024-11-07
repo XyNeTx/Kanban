@@ -41,16 +41,16 @@ Log.Logger = new LoggerConfiguration()
 
 
 
-builder.Services.AddCors(options =>
-{
-    options.AddDefaultPolicy(builder =>
-    {
-        // Allow requests from any origin, method, and header
-        builder.AllowAnyOrigin()
-               .AllowAnyMethod()
-               .AllowAnyHeader();
-    });
-});
+//builder.Services.AddCors(options =>
+//{
+//    options.AddDefaultPolicy(builder =>
+//    {
+//        // Allow requests from any origin, method, and header
+//        builder.AllowAnyOrigin()
+//               .AllowAnyMethod()
+//               .AllowAnyHeader();
+//    });
+//});
 
 
 // Add services to the container.
@@ -106,12 +106,9 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddSession(options =>
 {
-    //options.Cookie.Name = "Operation";
-    options.IdleTimeout = TimeSpan.FromDays(2);
-    //options.IOTimeout = Timeout.InfiniteTimeSpan;
+    options.IdleTimeout = TimeSpan.FromHours(12);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
-    //options.Cookie.MaxAge = TimeSpan.FromHours(36);
 });
 
 

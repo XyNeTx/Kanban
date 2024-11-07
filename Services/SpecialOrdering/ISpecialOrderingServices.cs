@@ -20,6 +20,11 @@ namespace KANBAN.Services.SpecialOrdering
         IKBNOR220 IKBNOR220 { get; }
         IKBNOR220_1 IKBNOR220_1 { get; }
         IKBNOR220_2 IKBNOR220_2 { get; }
+        IKBNOR230 IKBNOR230 { get; }
+        IKBNOR240 IKBNOR240 { get; }
+        IKBNOR250 IKBNOR250 { get; }
+        IKBNOR280 IKBNOR280 { get; }
+        IKBNOR290 IKBNOR290 { get; }
 
     }
 
@@ -36,6 +41,11 @@ namespace KANBAN.Services.SpecialOrdering
         public IKBNOR220 IKBNOR220 { get; }
         public IKBNOR220_1 IKBNOR220_1 { get; }
         public IKBNOR220_2 IKBNOR220_2 { get; }
+        public IKBNOR230 IKBNOR230 { get; }
+        public IKBNOR240 IKBNOR240 { get; }
+        public IKBNOR250 IKBNOR250 { get; }
+        public IKBNOR280 IKBNOR280 { get; }
+        public IKBNOR290 IKBNOR290 { get; }
 
         public SpecialOrderingServices(KB3Context kbContext,
             BearerClass bearerClass,
@@ -43,7 +53,8 @@ namespace KANBAN.Services.SpecialOrdering
             FillDataTable fillDT,
             SerilogLibs log,
             IEmailService emailService,
-            ISpecialLibs specialLibs)
+            ISpecialLibs specialLibs,
+            ProcDBContext procDBContext)
         {
 
             IKBNOR210 = new KBNOR210(kbContext,
@@ -121,6 +132,52 @@ namespace KANBAN.Services.SpecialOrdering
             this);
 
             IKBNOR220_2 = new KBNOR220_2(kbContext,
+            bearerClass,
+            ppm3Context,
+            fillDT,
+            log,
+            emailService,
+            specialLibs
+            );
+            
+            IKBNOR230 = new KBNOR230(kbContext,
+            bearerClass,
+            ppm3Context,
+            fillDT,
+            log,
+            emailService,
+            specialLibs,
+            procDBContext
+            );
+            
+            IKBNOR240 = new KBNOR240(kbContext,
+            bearerClass,
+            ppm3Context,
+            fillDT,
+            log,
+            emailService,
+            specialLibs
+            );
+            
+            IKBNOR250 = new KBNOR250(kbContext,
+            bearerClass,
+            ppm3Context,
+            fillDT,
+            log,
+            emailService,
+            specialLibs
+            );
+            
+            IKBNOR280 = new KBNOR280(kbContext,
+            bearerClass,
+            ppm3Context,
+            fillDT,
+            log,
+            emailService,
+            specialLibs
+            );
+            
+            IKBNOR290 = new KBNOR290(kbContext,
             bearerClass,
             ppm3Context,
             fillDT,

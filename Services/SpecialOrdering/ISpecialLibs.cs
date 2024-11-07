@@ -19,6 +19,9 @@ namespace KANBAN.Services.SpecialOrdering
         DataTable GetSurveyHeader(string Fac, string? SurveyDoc, string? UploadFlg, string? Mode);
         string GetPOSurvey(string? PO = "", string? Fac = "", string? Flag = "", string? DeliDate = "", string? select = "");
         Task<string> GetSupplierName(string SuppCD, string SuppPlant);
+        DataTable GetSurveyHeaderUpload(string? Status = "", string? Fac = "", string? SurveyDoc = "", string? UploadFlg = "");
+        string CheckPriceFlag(string SurveyDoc);
+        DataTable GetStatusSurveyHeader(string? SurveyDoc = "");
     }
 
     public class SpecialLibs : ISpecialLibs
@@ -341,7 +344,48 @@ namespace KANBAN.Services.SpecialOrdering
                 if (ex is CustomHttpException) throw;
                 throw new CustomHttpException(500, ex.Message);
             }
-        } 
+        }
+
+        public DataTable GetSurveyHeaderUpload(string? Status = "", string? Fac = "", string? SurveyDoc = "", string? UploadFlg = "")
+        {
+            try
+            {
+                string _sql = $@"Select Left(D.F_Delivery_Date,6) As F_Prod_YM,RTrim(H.F_Survey_Doc) As F_Survey_Doc, 
+                    Rtrim(H.F_Supplier_CD)+'-'+LTrim(H.F_Supplier_Plant) As F_Supplier_CD, 
+                    (Select Top 1 F_Short_name From [HMMT-PPM].[PPMDB].dbo.[T_Supplier_MS] Where F_Supplier_CD collate Thai_CI_AS = Substring(H.F_Supplier_CD,2,4) and 
+                    F_Plant_CD collate Thai_CI_AS  = H.F_Supplier_Plant order by F_Short_name DESC ) As F_Short_Name, 
+                    (Select Top 1 F_Name From [HMMT-PPM].[PPMDB].dbo.[T_Supplier_MS] Where F_Supplier_CD collate Thai_CI_AS = Substring(H.F_Supplier_CD,1,4) and 
+                    F_Plant_CD collate Thai_CI_AS  = H.F_Supplier_Plant order by F_Name DESC ) As F_Name 
+                    FROM  TB_Survey_Header H Inner join TB_Survey_Detail D on H.F_Survey_Doc = D.F_Survey_Doc and H.F_Revise_Rev = D.F_Revise_Rev 
+                    Where  H.F_Status <> 'D' ";
+
+                if (!string.IsNullOrWhiteSpace(Fac))
+                {
+                    _sql += $" and H.F_Factory_Code in ('{Fac}') ";
+                }
+                if (!string.IsNullOrWhiteSpace(SurveyDoc))
+                {
+                    _sql += $" and H.F_Survey_Doc = '{SurveyDoc}' ";
+                }
+                if (!string.IsNullOrWhiteSpace(UploadFlg))
+                {
+                    _sql += $" and H.F_Upload_Flg = '{UploadFlg}' ";
+                }
+
+                _sql += "Group by H.F_Survey_Doc,H.F_Supplier_CD,H.F_Supplier_Plant,Left(D.F_Delivery_Date,6)";
+
+                var _dt = _FillDT.ExecuteSQL(_sql);
+
+                if(_dt.Rows.Count == 0) throw new CustomHttpException(404, "No data found");
+
+                return _dt;
+            }
+            catch (Exception ex)
+            {
+                if (ex is CustomHttpException) throw;
+                throw new CustomHttpException(500, ex.Message);
+            }
+        }
 
         public string GetPOSurvey (string? PO = "",string? Fac = "",string? Flag = "", string? DeliDate = "",string? select = "")
         {
@@ -420,6 +464,52 @@ namespace KANBAN.Services.SpecialOrdering
                 {
                     return "";
                 }
+            }
+            catch (Exception ex)
+            {
+                if (ex is CustomHttpException) throw;
+                throw new CustomHttpException(500, ex.Message);
+            }
+        }
+
+        public string CheckPriceFlag(string SurveyDoc)
+        {
+            try
+            {
+                var data = _kbContext.TB_Survey_Detail
+                    .Where(x => x.F_Survey_Doc == SurveyDoc
+                    && x.F_Price_Flg == "0")
+                    .Select(x => new
+                    {
+                        x.F_Price_Flg
+                    }).FirstOrDefault();
+
+                if (data != null)
+                {
+                    return data.F_Price_Flg;
+                }
+                else
+                {
+                    return "1";
+                }
+            }
+            catch (Exception ex)
+            {
+                if (ex is CustomHttpException) throw;
+                throw new CustomHttpException(500, ex.Message);
+            }
+        }
+
+        public DataTable GetStatusSurveyHeader(string? SurveyDoc = "")
+        {
+            try
+            {
+                string _sql = $@"Select  F_Status, F_Revise_Rev 
+                    FROM  TB_Survey_Header 
+                    Where  F_Survey_Doc = '{SurveyDoc}' 
+                    AND  F_Status <> 'D' ";
+
+                return _FillDT.ExecuteSQL(_sql);
             }
             catch (Exception ex)
             {

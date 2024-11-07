@@ -127,6 +127,9 @@ namespace HINOSystem.Libs
 
                 return this.Result;
             }
+
+            _http.HttpContext.Response.Headers["Authorization"] = "Bearer " + this.Token;
+            _http.HttpContext.Session.SetString("TOKEN", this.Token);
             return this;
         }
 
@@ -141,6 +144,8 @@ namespace HINOSystem.Libs
             {
                 throw new CustomHttpException(403,"Forbidden");
             }
+            _http.HttpContext.Response.Headers["Authorization"] = "Bearer " + this.Token;
+            _http.HttpContext.Session.SetString("TOKEN", this.Token);
 
             return this.Status;
         }
@@ -156,6 +161,9 @@ namespace HINOSystem.Libs
             {
                 throw new CustomHttpException(403, "Forbidden");
             }
+
+            _http.HttpContext.Response.Headers["Authorization"] = "Bearer " + this.Token;
+            _http.HttpContext.Session.SetString("TOKEN", this.Token);
 
             await Task.CompletedTask;
         }

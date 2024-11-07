@@ -59,6 +59,21 @@ class DataTableLib {
 
         return data;
     }
+
+    GetSelectedDataDT(id) {
+        if (id == undefined) return console.error("id is undefined");
+        if (!id.includes('#')) id = '#' + id;
+
+        let table = $(`${id}`).DataTable();
+        let data = [];
+
+        $(`${id} tbody`).find('input[type="checkbox"]:checked').each(function () {
+            data.push(table.row($(this).closest('tr')).data());
+        });
+
+        return data;
+    
+    }
 }
 
 const _xDataTable = new DataTableLib();
