@@ -3,7 +3,44 @@
     <div class="col-xl-12 col-md-12 col-sm-12">
         <div class="card border-left-primary shadow h-100">
             <div class="card-body">
-            </div>
+                <div class="row mt-2">
+                    <h4>Search Survey Doc.</h4>
+                </div>
+                <div class="row mt-2">
+                    <div class="row">
+                        <div class="col-8">
+                            <div class="input-group">
+                                <label for="mthSurIssDate" class="input-group-text">Survey Issued Date</label>
+                                <input type="month" class="form-control col-4" id="mthSurIssDate" value="@DateTime.Now.ToString("yyyy-MM")"/>
+                            </div>
+                            <div class="input-group">
+                                <label for="selCustOrder" class="input-group-text">Customer OrderNo</label>
+                                <select class="selectpicker form-control col-6" id="selCustOrder" data-live-search="true" data-size="8">
+                                    <option value="" hidden></option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label for="selSuppCD" class="input-group-text">Supplier Code</label>
+                                <select class="selectpicker form-control col-6" id="selSuppCD" data-live-search="true" data-size="8">
+                                    <option value="" hidden></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="row">
+                                <button type="button" class="btn btn-primary col-6" id="btnParts">ใบจัด Parts</button>
+                            </div>
+                            <div class="row mt-1">
+                                <button type="button" class="btn btn-success col-3" id="btnPrint">Print</button>
+                                <a asp-controller="OrderingProcess" asp-action="KBNOR200" class="btn btn-danger col-3">Exit</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <table class="table table-bordered w-100" id="tableMain">
+                    </table>
+                </div>
         </div>
     </div>
 </div>
