@@ -28,6 +28,7 @@ namespace KANBAN.Controllers.API.SpecialOrdering
         {
             try
             {
+                await _bearer.CheckAuthorize();
                 var data = await _services.IKBNOR230.LoadSurvey();
 
                 return Ok(new 
@@ -45,12 +46,12 @@ namespace KANBAN.Controllers.API.SpecialOrdering
         }
 
         [HttpGet]
-        public IActionResult CheckPriceFlag(string SurveyDoc)
+        public async Task<IActionResult> CheckPriceFlag(string SurveyDoc)
         {
             try
             {
+                await _bearer.CheckAuthorize();
                 var data = _specialLibs.CheckPriceFlag(SurveyDoc);
-
                 return Ok(new
                 {
                     status = "200",
@@ -70,6 +71,7 @@ namespace KANBAN.Controllers.API.SpecialOrdering
         {
             try
             {
+                await _bearer.CheckAuthorize();
                 await _services.IKBNOR230.Upload(listObj);
 
                 return Ok(new

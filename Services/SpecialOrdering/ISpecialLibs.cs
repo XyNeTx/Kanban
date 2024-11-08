@@ -22,6 +22,7 @@ namespace KANBAN.Services.SpecialOrdering
         DataTable GetSurveyHeaderUpload(string? Status = "", string? Fac = "", string? SurveyDoc = "", string? UploadFlg = "");
         string CheckPriceFlag(string SurveyDoc);
         DataTable GetStatusSurveyHeader(string? SurveyDoc = "");
+        DataTable GetSurveyHeaderDownload();
     }
 
     public class SpecialLibs : ISpecialLibs
@@ -508,6 +509,26 @@ namespace KANBAN.Services.SpecialOrdering
                     FROM  TB_Survey_Header 
                     Where  F_Survey_Doc = '{SurveyDoc}' 
                     AND  F_Status <> 'D' ";
+
+                return _FillDT.ExecuteSQL(_sql);
+            }
+            catch (Exception ex)
+            {
+                if (ex is CustomHttpException) throw;
+                throw new CustomHttpException(500, ex.Message);
+            }
+        }
+
+        public DataTable GetSurveyHeaderDownload()
+        {
+            try
+            {
+                string procDBConnect = _FillDT.procDBConnect();
+                string _sql = $@"Select RTrim(H.F_Survey_Doc) As F_Survey_Doc,Rtrim(F_Supplier_CD)+'-'+LTrim(F_Supplier_Plant) As F_Supplier_CD, 
+                    (Select Top 1 F_Name From [HMMT-PPM].[PPMDB].dbo.[T_Supplier_MS] Where F_Supplier_CD collate Thai_CI_AS = Substring(H.F_Supplier_CD,2,4) and 
+                    F_Plant_CD collate Thai_CI_AS  = H.F_Supplier_Plant order by F_Name DESC ) As F_Name 
+                    FROM {procDBConnect}.dbo.TB_Survey_Header H 
+                    Where H.F_Download_Flg = '1' and H.F_Factory_Code  in ('{_BearerClass.Plant}')";
 
                 return _FillDT.ExecuteSQL(_sql);
             }
