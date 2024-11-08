@@ -64,5 +64,26 @@ namespace KANBAN.Controllers.API.SpecialOrdering
                 throw new CustomHttpException(ex.StatusCode, ex.Message);
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetData(string PO, string Supplier)
+        {
+            try
+            {
+                var data = await _services.IKBNOR290.GetData(PO, Supplier);
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data Found",
+                    data = data
+                });
+            }
+            catch (CustomHttpException ex)
+            {
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
+            }
+        }
     }
 }

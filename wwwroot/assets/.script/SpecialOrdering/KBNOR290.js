@@ -2,13 +2,13 @@ $(document).ready(async () => {
     await _xDataTable.InitialDataTable("#tableMain",
         {
             columns: [
-                { title: "Survey Doc. No.", data: "F_Supplier_CD" },
-                { title: "Supplier CD.", data: "F_Name" },
-                { title: "Part No.", data: "F_Survey_Doc" },
-                { title: "Qty", data: "F_Survey_Doc" },
-                { title: "Delivery Date", data: "F_Survey_Doc" },
-                { title: "Status", data: "F_Survey_Doc" },
-                { title: "Comment", data: "F_Survey_Doc" },
+                { title: "Survey Doc. No.", data: "F_Survey_Doc" },
+                { title: "Supplier CD.", data: "F_Supplier" },
+                { title: "Part No.", data: "F_Part_No" },
+                { title: "Qty", data: "F_Qty" },
+                { title: "Delivery Date", data: "F_Deli_DT" },
+                { title: "Status", data: "F_Status_D" },
+                { title: "Comment", data: "F_Remark_Delivery" },
             ],
             order: [[1, "asc"]],
             scrollCollapse: false,
@@ -29,6 +29,10 @@ $("#mthSurIssDate").change(async () => {
 
 $("#selCustOrder").change(async () => {
     await CustOrderChange();
+});
+
+$("#selSuppCD").change(async () => {
+    await SuppCDChange();
 });
 
 YMChange = async () => {
@@ -77,3 +81,37 @@ CustOrderChange = async () => {
         }
     );
 };
+
+SuppCDChange = async () => {
+    let getQuery = {
+        PO: $("#selCustOrder").val(),
+        Supplier: $("#selSuppCD").val(),
+    }
+    
+    _xLib.AJAX_Get("/api/KBNOR290/GetData", getQuery,
+        async (success) => {
+            success = _xLib.JSONparseMixData(success);
+            //console.log(success);
+            await _xDataTable.ClearAndAddDataDT("#tableMain", success.data);
+        },
+        async (error) => {
+            console.error(error);
+        }
+    );
+};
+
+$("#btnPrint").click(() => {
+    let obj = {
+        F_PO_Customer: $("#selCustOrder").val(),
+        F_Supplier_CD: $("#selSuppCD").val().split("-")[0],
+        F_Supplier_Plant: $("#selSuppCD").val().split("-")[1]
+    }
+
+    for(let key in obj) {
+        if(obj[key] === "") {
+            return xSwal.error("Error!!",'Please select all fields.');
+        }
+    };
+
+    _xLib.OpenReportObj("/KBNOR220_2_Rpt", obj);
+});
