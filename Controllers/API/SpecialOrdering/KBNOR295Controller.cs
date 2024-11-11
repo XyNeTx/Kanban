@@ -101,7 +101,7 @@ namespace KANBAN.Controllers.API.SpecialOrder
         }
 
         [HttpPost]
-        public async Task<IActionResult> UploadIMG([FromForm] IFormFile file)
+        public async Task<IActionResult> UploadIMG([FromForm] VM_PostFile obj)
         {
             try
             {
@@ -110,7 +110,7 @@ namespace KANBAN.Controllers.API.SpecialOrder
                     return StatusCode(_bearerClass.Status, new { status = _bearerClass.Status, response = _bearerClass.Response, message = _bearerClass.Message });
                 }
 
-                var path = await _services.IKBNOR295.UploadIMG(file);
+                var path = await _services.IKBNOR295.UploadIMG(obj.File);
 
                 return Ok(new { status = 200, response = "Success", message = "File Uploaded", data = path });
 

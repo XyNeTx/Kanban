@@ -219,6 +219,7 @@
     <None Include="wwwroot\assets\.script\SpecialOrdering\KBNOR210_2.js" />
     <None Include="wwwroot\assets\.script\SpecialOrdering\KBNOR210_3.js" />
     <None Include="wwwroot\assets\.script\SpecialOrdering\KBNOR210_1.js" />
+    <None Include="wwwroot\assets\.script\SpecialOrdering\KBNOR297.js" />
     <None Include="wwwroot\assets\.script\SpecialOrdering\KBNOR290.js" />
     <None Include="wwwroot\assets\.script\SpecialOrdering\KBNOR280.js" />
     <None Include="wwwroot\assets\.script\SpecialOrdering\KBNOR250.js" />
@@ -2259,6 +2260,7 @@
 
   <ItemGroup>
     <PackageReference Include="BarcodeLib" Version="3.0.3" />
+    <PackageReference Include="ClosedXML" Version="0.104.1" />
     <PackageReference Include="EASendMail" Version="7.9.1.1" />
     <PackageReference Include="FreeSpire.Barcode" Version="6.6.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Negotiate" Version="6.0.13" />

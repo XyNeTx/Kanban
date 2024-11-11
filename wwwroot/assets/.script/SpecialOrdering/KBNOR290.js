@@ -87,7 +87,7 @@ SuppCDChange = async () => {
         PO: $("#selCustOrder").val(),
         Supplier: $("#selSuppCD").val(),
     }
-    
+
     _xLib.AJAX_Get("/api/KBNOR290/GetData", getQuery,
         async (success) => {
             success = _xLib.JSONparseMixData(success);
@@ -107,9 +107,9 @@ $("#btnPrint").click(() => {
         F_Supplier_Plant: $("#selSuppCD").val().split("-")[1]
     }
 
-    for(let key in obj) {
-        if(obj[key] === "") {
-            return xSwal.error("Error!!",'Please select all fields.');
+    for (let key in obj) {
+        if (obj[key] === "") {
+            return xSwal.error("Error!!", 'Please select all fields.');
         }
     };
 
