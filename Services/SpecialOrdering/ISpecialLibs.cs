@@ -23,6 +23,23 @@ namespace KANBAN.Services.SpecialOrdering
         string CheckPriceFlag(string SurveyDoc);
         DataTable GetStatusSurveyHeader(string? SurveyDoc = "");
         DataTable GetSurveyHeaderDownload();
+        string GetPDSNo(string PlantType, string Fac, string DeliDate, string Running,
+                                string DeliTrip, string StoreCD, string FormatPDS);
+        int GetMaxRegRunning(string PlantType, string SuppCD, string SuppPlant,
+            string Fac, string? DeliYM = "", string? DeliTrip = "", string? StoreCD = "",
+            string? FormatPDS = "");
+
+        bool ChkPDSData(string PlantType, string Fac, string DeliYM, string DeliTrip, string StoreCD, string? FormatPDS = "");
+        
+        int GetMaxPDSRunning(string PlantType, string SuppCD, string SuppPlant,
+                            string Fac, string? DeliYM = "", string? DeliTrip = "", string? StoreCD = "",
+                            string? FormatPDS = "");
+
+        string getCycleTime(string Fac, string SuppCD, string SuppPlant, string DeliDT, string DeliTrip);
+        string GetDockCode(string Supp_CD, string Supp_Plant, string DeliDate, string Trip);
+
+        string GetDeliveryTime(string SuppCD, string SuppPlant, string Cycle, string DeliDT, string DeliTrip);
+        string getVat(string Fac);
     }
 
     public class SpecialLibs : ISpecialLibs
@@ -52,6 +69,10 @@ namespace KANBAN.Services.SpecialOrdering
             _log = log;
             _emailService = emailService;
         }
+
+        public string FormatPDSWHNo = "FZYYMMW######";
+        public string FormatPDSNoNormal = "FZYYMMDDTT###";
+        public string FormatPDSNormal = "FZYYMM#######";
 
         public DataTable GetSupCodeSPC(string PDSNo,string PDSDate,string StoreCD)
         {
@@ -538,5 +559,306 @@ namespace KANBAN.Services.SpecialOrdering
                 throw new CustomHttpException(500, ex.Message);
             }
         }
+
+        public string GetPDSNo(string PlantType, string Fac, string DeliDate, string Running,
+                                string DeliTrip,string StoreCD, string FormatPDS)
+        {
+            try
+            {
+                string PDSNo = "";
+                string FacCD = Fac switch
+                {
+                    "1" => "9Z",
+                    "2" => "8Z",
+                    _ => "7Z",
+                };
+
+                if (PlantType == "B" || StoreCD == "1M" || StoreCD == "1N")
+                {
+                    PDSNo = FormatPDSWHNo;
+                    PDSNo = PDSNo.Replace("FZ", FacCD);
+                    PDSNo = PDSNo.Replace("YYMM", DeliDate.Substring(0, 4));
+                    PDSNo = PDSNo.Replace("######", FormatNumber(int.Parse(Running), 6));
+                }
+                else
+                {
+                    if (FormatPDS == "1")
+                    {
+                        PDSNo = FormatPDSNormal;
+                        PDSNo = PDSNo.Replace("FZ", FacCD);
+                        PDSNo = PDSNo.Replace("YYMM", DeliDate.Substring(DeliDate.Length - 4, 4));
+                        PDSNo = PDSNo.Replace("#######", FormatNumber(int.Parse(Running), 7));
+                    }
+                    else
+                    {
+                        PDSNo = FormatPDSNoNormal;
+                        PDSNo = PDSNo.Replace("FZ", FacCD);
+                        PDSNo = PDSNo.Replace("YYMMDD", DeliDate.Substring(0, 6));
+                        PDSNo = PDSNo.Replace("TT", FormatNumber(int.Parse(DeliTrip), 2));
+                        PDSNo = PDSNo.Replace("###", FormatNumber(int.Parse(Running), 3));
+                    }
+                }
+
+                return PDSNo;
+            }
+            catch (Exception ex)
+            {
+                if (ex is CustomHttpException) throw;
+                throw new CustomHttpException(500, ex.Message);
+            }
+        }
+
+
+        public int GetMaxRegRunning(string PlantType,string SuppCD,string SuppPlant,
+                            string Fac, string? DeliYM = "", string? DeliTrip = "", string? StoreCD = "",
+                            string? FormatPDS = "")
+        {
+            try
+            {
+                int Digit = 0;
+                if (PlantType == "B" || StoreCD == "1M" || StoreCD == "1N")
+                {
+                    Digit = 6;
+                }
+                else
+                {
+                    if (FormatPDS == "1")
+                    {
+                        Digit = 7;
+                    }
+                    else
+                    {
+                        Digit = 3;
+                    }
+                }
+
+                string sql = $@"Select Isnull(Cast(Right(Max(F_OrderNo),{Digit}) As integer),0) As F_Running 
+                        From TB_Rec_Header Where F_OrderType = 'S' ";
+
+                if (!string.IsNullOrWhiteSpace(DeliYM))
+                {
+                    if (PlantType == "B" || StoreCD == "1M" || StoreCD == "1N")
+                    {
+                        sql += $" and Substring(F_OrderNO,3,4) = '{DeliYM.Substring(DeliYM.Length - 4, 4)}' and F_OrderNo like '%W%' ";
+                    }
+                    else
+                    {
+                        if(FormatPDS == "1") sql += $" and Substring(F_OrderNO,3,4) = '{DeliYM.Substring(DeliYM.Length - 4, 4)}' and F_OrderNo not like '%W%' ";
+                        else sql += $"  and Substring(F_OrderNO,3,6) = '{DeliYM}' ";
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(DeliTrip))
+                {
+                    sql += $" and F_Delivery_Trip = '{DeliTrip}' ";
+                }
+
+                DataTable dt = _FillDT.ExecuteSQL(sql);
+
+                if (dt.Rows.Count > 0)
+                {
+                    return int.Parse(dt.Rows[0]["F_Running"].ToString());
+                }
+                else
+                {
+                    return 0;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                if (ex is CustomHttpException) throw;
+                throw new CustomHttpException(500, ex.Message);
+            }
+        }
+
+        public int GetMaxPDSRunning(string PlantType, string SuppCD, string SuppPlant,
+                            string Fac, string? DeliYM = "", string? DeliTrip = "", string? StoreCD = "",
+                            string? FormatPDS = "")
+        {
+            try
+            {
+                int Digit = 0;
+                if (PlantType == "B" || StoreCD == "1M" || StoreCD == "1N")
+                {
+                    Digit = 6;
+                }
+                else
+                {
+                    if (DeliYM.CompareTo("201501") >= 0)
+                    {
+                        Digit = 7;
+                    }
+                    else
+                    {
+                        Digit = 3;
+                    }
+                }
+
+                string sql = $@"Select Isnull(Cast(Right(Max(F_OrderNo),{Digit}) As integer),0) As F_Running 
+                        From TB_PDS_Header Where F_OrderNo like '9Z%' ";
+
+                if (!string.IsNullOrWhiteSpace(DeliYM))
+                {
+                    if(PlantType == "B" || StoreCD == "1M" || StoreCD == "1N")
+                    {
+                        sql += $" and Substring(F_OrderNO,3,4) = '{DeliYM.Substring(0, 4)}' and F_OrderNo like '%W%' ";
+                    }
+                    else
+                    {
+                        if (FormatPDS == "1") sql += $" and Substring(F_OrderNO,3,4) = '{DeliYM.Substring(DeliYM.Length - 4, 4)}' and F_OrderNo not like '%W%' ";
+                        else sql += $"  and Substring(F_OrderNO,3,6) = '{DeliYM}' ";
+                    }
+                }
+                if (!string.IsNullOrWhiteSpace(DeliTrip))
+                {
+                    sql += $" and F_Delivery_Trip = '{DeliTrip}' ";
+                }
+
+                DataTable dt = _FillDT.ExecuteSQL(sql);
+
+                if (dt.Rows.Count > 0)
+                {
+                    return int.Parse(dt.Rows[0]["F_Running"].ToString());
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                if (ex is CustomHttpException) throw;
+                throw new CustomHttpException(500, ex.Message);
+            }
+        }
+
+        public bool ChkPDSData (string PlantType,string Fac,string DeliYM,string DeliTrip,string StoreCD,string? FormatPDS = "")
+        {
+            try
+            {
+                string FacCD = Fac switch
+                {
+                    "1" => "9Z",
+                    "2" => "8Z",
+                    _ => "7Z",
+                };
+
+                string sql = $@"Select * From TB_PDS_Header 
+                    Where F_OrderNo like '{FacCD}%' ";
+
+                if (!string.IsNullOrWhiteSpace(DeliYM))
+                {
+                    if(PlantType == "B" || StoreCD == "1M" || StoreCD == "1N")
+                    {
+                        sql += $" and Substring(F_OrderNO,3,4) = '{DeliYM.Substring(0, 4)}' and F_OrderNo like '%W%' ";
+                    }
+                    else
+                    {
+                        if (FormatPDS == "1") sql += $" and Substring(F_OrderNO,3,4) = '{DeliYM.Substring(DeliYM.Length - 4, 4)}' and F_OrderNo not like '%W%' ";
+                        else sql += $"  and Substring(F_OrderNO,3,6) = '{DeliYM}' ";
+                    }
+                }
+                if (!string.IsNullOrWhiteSpace(DeliTrip))
+                {
+                    sql += $" and F_Delivery_Trip = '{DeliTrip}' ";
+                }
+
+                int count = _FillDT.ExecuteSQL(sql).Rows.Count;
+
+                if (count > 0) return true;
+                else return false;
+            }
+            catch (Exception ex)
+            {
+                if (ex is CustomHttpException) throw;
+                throw new CustomHttpException(500, ex.Message);
+            }
+        }
+
+        public string getCycleTime (string Fac,string SuppCD,string SuppPlant,string DeliDT,string DeliTrip)
+        {
+            try
+            {
+                string cycle = _kbContext.TB_MS_DeliveryTime
+                    .Where(x => x.F_Supplier_Code == SuppCD && x.F_Supplier_Plant == SuppPlant
+                    && x.F_Start_Date.CompareTo(DeliDT) <= 0 && x.F_End_Date.CompareTo(DeliDT) >= 0
+                    && x.F_Plant == Fac).FirstOrDefault().F_Cycle;
+
+                if (cycle == null) return "";
+                else return cycle;
+            }
+            catch (Exception ex)
+            {
+                if (ex is CustomHttpException) throw;
+                throw new CustomHttpException(500, ex.Message);
+            }
+        }
+
+        public string GetDockCode(string Supp_CD,string Supp_Plant,string DeliDate, string Trip)
+        {
+            try
+            {
+                var data = _kbContext.TB_Import_Delivery
+                    .Where(x=>x.F_Supplier_Code.Trim() == Supp_CD
+                    && x.F_Supplier_Plant.Trim() == Supp_Plant
+                    && x.F_Delivery_Trip == int.Parse(Trip)
+                    && x.F_YM.CompareTo(DeliDate) <= 0)
+                    .OrderByDescending(x=>x.F_Import_Date).FirstOrDefault();
+
+                if (data != null)
+                {
+                    return data.F_Dock_Cd.Trim();
+                }
+                else
+                {
+                    return "";
+                }
+            }
+            catch (Exception ex)
+            {
+                if (ex is CustomHttpException) throw;
+                throw new CustomHttpException(500, ex.Message);
+            }
+        }
+
+        public string GetDeliveryTime(string SuppCD,string SuppPlant,string Cycle,string DeliDT,string DeliTrip)
+        {
+            try
+            {
+                var deliveryTime = _kbContext.TB_MS_DeliveryTime
+                    .Where(x => x.F_Supplier_Code == SuppCD && x.F_Supplier_Plant == SuppPlant
+                    && x.F_Cycle == Cycle && x.F_Start_Date.CompareTo(DeliDT) <= 0 && x.F_End_Date.CompareTo(DeliDT) >= 0
+                    && x.F_Delivery_Trip == int.Parse(DeliTrip)).FirstOrDefault().F_Delivery_Time;
+
+                if (deliveryTime == null) return "";
+
+                return deliveryTime;
+            }
+            catch (Exception ex)
+            {
+                if (ex is CustomHttpException) throw;
+                throw new CustomHttpException(500, ex.Message);
+            }
+        }
+
+        public string getVat(string Fac)
+        {
+            try
+            {
+                var vat = _kbContext.TB_MS_Parameter
+                    .Where(x => x.F_Code == "F" + Fac.Trim())
+                    .FirstOrDefault().F_Value2;
+
+                if (vat == null) return "";
+                else return vat.ToString();
+            }
+            catch (Exception ex)
+            {
+                if (ex is CustomHttpException) throw;
+                throw new CustomHttpException(500, ex.Message);
+            }
+        }
+
     }
 }

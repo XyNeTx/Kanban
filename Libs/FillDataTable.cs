@@ -269,5 +269,18 @@ namespace HINOSystem.Libs
 
             return procDBConnect;
         }
+
+        public async Task<string> GetUserName(string UserCode)
+        {
+            var User = await _KB3Context.User
+                .FirstOrDefaultAsync(x => x.Code == UserCode);
+
+            string userName = User.Name + " " + User.Surname;
+
+            //userName = User.Title_ID == 1 ? "Ms. " + userName : User.Title_ID == 3 ? "Mr. " + userName : "Mrs. " + userName;
+
+            return userName;
+        }
+
     }
 }

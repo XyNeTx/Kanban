@@ -3,6 +3,31 @@
     <div class="col-xl-12 col-md-12 col-sm-12">
         <div class="card border-left-primary shadow h-100">
             <div class="card-body">
+                <div class="row mt-2">
+                    <div class="col-3">
+                        <button type="button" class="btn btn-rounded btn-outline-dark col-5" id="btnChkAll">Check All</button>
+                        <button type="button" class="btn btn-rounded btn-outline-dark col-5" id="btnUnChkAll">UnCheck All</button>
+                    </div>
+                    <div class="col-6">
+                        <div class="row">
+                            <div class="input-group col-6 p-0">
+                                <label for="mthDeliYM" class="input-group-text">Delivery YM</label>
+                                <input type="month" class="form-control col-8" id="mthDeliYM" value="@DateTime.Now.ToString("yyyy-MM")" />
+                            </div>
+                            <button type="button" class="btn btn-outline-primary ms-1 col-2" id="btnRefresh">Refresh</button>
+                            <button type="button" class="btn btn-outline-danger col-2" id="btnUnlock">Unlock</button>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <button type="button" class="btn btn-rounded btn-primary col-5" id="btnGenerate">Generate</button>
+                        <a asp-controller="OrderingProcess" asp-action="KBNOR200" class="btn btn-danger btn-rounded col-5">Exit</a>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <table class="table table-bordered text-center w-100" id="tableMain">
+
+                    </table>
+                </div>
             </div>
         </div>
     </div>
