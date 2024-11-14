@@ -2,6 +2,6 @@
 {
     public interface IAutoMapService
     {
-        IPDS_Header_Map_Rec_Header _IPDS_Header_Map_Rec_Header { get; }
+        IAutoMapRepo<T1,T2> GetAutoMapRepo<T1, T2>() where T1 : class where T2 : class;
     }
 }

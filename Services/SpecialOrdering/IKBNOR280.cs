@@ -129,7 +129,8 @@ namespace KANBAN.Services.SpecialOrdering
                     foreach(var ins in listIns)
                     {
                         //var objRecHead = JsonConvert.DeserializeObject<TB_REC_HEADER>(JsonConvert.SerializeObject(ins));
-                        var objRecHead = _automapService._IPDS_Header_Map_Rec_Header.MapTo(ins);
+                        var mappingService = _automapService.GetAutoMapRepo<TB_PDS_Header,TB_REC_HEADER>();
+                        var objRecHead = mappingService.MapTo(ins);
                         if (objRecHead.F_Transportor == null)
                         {
                             objRecHead.F_Transportor = "";
@@ -141,8 +142,7 @@ namespace KANBAN.Services.SpecialOrdering
                         _kbContext.TB_REC_HEADER.Add(objRecHead);
                     }
 
-                    var li
-
+                    //var listInsDetail
                 }
             }
             catch (Exception ex)

@@ -96,8 +96,8 @@ builder.Services.AddScoped<ILogisticService, LogisticService>();
 builder.Services.AddScoped<ISpecialOrderingServices, SpecialOrderingServices>();
 
 builder.Services.AddAutoMapper(typeof(PDS_Header_To_REC_Header_Profile));
+builder.Services.AddTransient(typeof(IAutoMapRepo<,>), typeof(AutoMapRepo<,>));
 builder.Services.AddTransient<IAutoMapService, AutoMapService>();
-builder.Services.AddTransient<IPDS_Header_Map_Rec_Header,PDS_Header_Map_Rec_Header>();
 
 
 builder.Services.AddSwaggerGen(c =>

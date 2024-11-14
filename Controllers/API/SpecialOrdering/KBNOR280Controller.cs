@@ -26,7 +26,7 @@ namespace KANBAN.Controllers.API.SpecialOrdering
         {
             try
             {
-                //await _bearer.CheckAuthorize();
+                await _bearer.CheckAuthorize();
 
                 string FacCD = _bearer.Plant switch
                 {
@@ -51,7 +51,7 @@ namespace KANBAN.Controllers.API.SpecialOrdering
         {
             try
             {
-                //await _bearer.CheckAuthorize();
+                await _bearer.CheckAuthorize();
                 await _services.IKBNOR280.Register(listObj);
 
                 return Ok(new { status = "200", response = "Success", message = "Registration PDS No. Complete." });
