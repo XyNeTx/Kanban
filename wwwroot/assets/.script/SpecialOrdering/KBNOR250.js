@@ -35,6 +35,15 @@ $(document).ready(async () => {
 
 });
 
+
+$("#btnChkAll").click(() => {
+    $(".chkFlag").prop("checked", true);
+});
+
+$("#btnUnChkAll").click(() => {
+    $(".chkFlag").prop("checked", false);
+});
+
 $("#mthDeliYM").change(async () => {
     await GetSurveyNoPDS()
 });

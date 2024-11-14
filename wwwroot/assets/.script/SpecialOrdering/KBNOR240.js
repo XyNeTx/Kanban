@@ -25,6 +25,14 @@ $(document).ready(async () => {
     xSplash.hide();
 });
 
+$("#chkAll").click(() => {
+    $(".chkSelect").prop("checked", true);
+});
+
+$("#unChkAll").click(() => {
+    $(".chkSelect").prop("checked", false);
+});
+
 $("#btnGetStatus").click(async () => {
     let data = _xDataTable.GetSelectedDataDT("#tableMain");
     if (data.length === 0) {

@@ -21,10 +21,11 @@ namespace KANBAN.Controllers.API.SpecialOrdering
         }
 
         [HttpGet]
-        public IActionResult GenReportExcel(string CustOrderNo)
+        public async Task<IActionResult> GenReportExcel(string CustOrderNo)
         {
             try
             {
+                await _bearer.CheckAuthorize();
                 var result = _services.IKBNOR297.GenReportExcel(CustOrderNo);
                 return Ok(new { status = "200", response = "Success", message = "Data Found", data = result });
             }
@@ -35,10 +36,12 @@ namespace KANBAN.Controllers.API.SpecialOrdering
         }
 
         [HttpGet]
-        public IActionResult GetCustomerPO(string? DeliYM)
+        public async Task<IActionResult> GetCustomerPO(string? DeliYM)
         {
             try
             {
+
+                await _bearer.CheckAuthorize();
                 var data = _services.IKBNOR297.GetCustomerPO(DeliYM);
 
                 return Ok(new { status = "200", response = "Success", message = "Data Found", data = data });
@@ -50,10 +53,11 @@ namespace KANBAN.Controllers.API.SpecialOrdering
         }
 
         [HttpGet]
-        public IActionResult GetAllCustomerPODetail(string CustOrderNo)
+        public async Task<IActionResult> GetAllCustomerPODetail(string CustOrderNo)
         {
             try
             {
+                await _bearer.CheckAuthorize();
                 var result = _services.IKBNOR297.GetListAllPDSDetail(CustOrderNo);
                 var data = JsonConvert.SerializeObject(result);
 

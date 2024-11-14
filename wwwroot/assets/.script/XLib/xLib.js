@@ -12,6 +12,10 @@ class DataTableLib {
         this.ordering = false;
         this.columns = [];
         this.order = [[1, 'asc']];
+        this.buttons = [];
+        this.layout = {
+            topStart: 'buttons',
+        };
     }
 
     InitialDataTable(id, options) {
@@ -33,7 +37,9 @@ class DataTableLib {
             info: (constr.info) ? constr.info : this.info,
             ordering: (constr.ordering) ? constr.ordering : this.ordering,
             columns: (constr.columns) ? constr.columns : this.columns,
-            order: (constr.order) ? constr.order : this.order
+            order: (constr.order) ? constr.order : this.order,
+            buttons: (constr.buttons) ? constr.buttons : this.buttons,
+            layout: (constr.layout) ? constr.layout : this.layout
         });
     }
 

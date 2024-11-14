@@ -38,6 +38,14 @@ $(document).ready(async () => {
     xSplash.hide();
 });
 
+$("#chkAll").click(() => {
+    $(".chkSelect").prop("checked", true);
+});
+
+$("#unChkAll").click(() => {
+    $(".chkSelect").prop("checked", false);
+});
+
 $("#btnUpload").click(async () => {
     await Upload();
 });

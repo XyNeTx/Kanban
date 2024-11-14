@@ -3,6 +3,9 @@ using HINOSystem.Libs;
 using KANBAN.Context;
 using KANBAN.Libs;
 using KANBAN.Services;
+using KANBAN.Services.Automapper;
+using KANBAN.Services.Automapper.Interface;
+using KANBAN.Services.Automapper.Repo;
 using KANBAN.Services.Logistical;
 using KANBAN.Services.SpecialOrdering;
 using Microsoft.EntityFrameworkCore;
@@ -91,6 +94,11 @@ builder.Services.AddScoped<ISpecialLibs, SpecialLibs>();
 builder.Services.AddScoped<IImportService ,ImportService>();
 builder.Services.AddScoped<ILogisticService, LogisticService>();
 builder.Services.AddScoped<ISpecialOrderingServices, SpecialOrderingServices>();
+
+builder.Services.AddAutoMapper(typeof(PDS_Header_To_REC_Header_Profile));
+builder.Services.AddTransient<IAutoMapService, AutoMapService>();
+builder.Services.AddTransient<IPDS_Header_Map_Rec_Header,PDS_Header_Map_Rec_Header>();
+
 
 builder.Services.AddSwaggerGen(c =>
 {

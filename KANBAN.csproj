@@ -2259,6 +2259,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="BarcodeLib" Version="3.0.3" />
     <PackageReference Include="ClosedXML" Version="0.104.1" />
     <PackageReference Include="EASendMail" Version="7.9.1.1" />

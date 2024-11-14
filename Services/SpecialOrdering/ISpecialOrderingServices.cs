@@ -2,6 +2,7 @@
 using HINOSystem.Libs;
 using KANBAN.Context;
 using KANBAN.Libs;
+using KANBAN.Services.Automapper.Interface;
 using KANBAN.Services.Import;
 
 namespace KANBAN.Services.SpecialOrdering
@@ -56,7 +57,8 @@ namespace KANBAN.Services.SpecialOrdering
             SerilogLibs log,
             IEmailService emailService,
             ISpecialLibs specialLibs,
-            ProcDBContext procDBContext)
+            ProcDBContext procDBContext,
+            IAutoMapService autoMapService)
         {
 
             IKBNOR210 = new KBNOR210(kbContext,
@@ -176,7 +178,8 @@ namespace KANBAN.Services.SpecialOrdering
             fillDT,
             log,
             emailService,
-            specialLibs
+            specialLibs,
+            autoMapService
             );
             
             IKBNOR290 = new KBNOR290(kbContext,
