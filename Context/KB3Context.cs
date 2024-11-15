@@ -167,6 +167,7 @@ namespace HINOSystem.Context
         public DbSet<TB_Survey_Header> TB_Survey_Header { get; set; }
         public DbSet<TB_Survey_Detail> TB_Survey_Detail { get; set; }
         public DbSet<TB_PDS_Header> TB_PDS_Header { get; set; }
+        public DbSet<TB_PDS_Detail> TB_PDS_Detail { get; set; }
     }
 }
 

@@ -3,8 +3,8 @@ using HINOSystem.Libs;
 using KANBAN.Context;
 using KANBAN.Libs;
 using KANBAN.Services;
-using KANBAN.Services.Automapper;
 using KANBAN.Services.Automapper.Interface;
+using KANBAN.Services.Automapper.MapProfile;
 using KANBAN.Services.Automapper.Repo;
 using KANBAN.Services.Logistical;
 using KANBAN.Services.SpecialOrdering;
@@ -95,7 +95,7 @@ builder.Services.AddScoped<IImportService ,ImportService>();
 builder.Services.AddScoped<ILogisticService, LogisticService>();
 builder.Services.AddScoped<ISpecialOrderingServices, SpecialOrderingServices>();
 
-builder.Services.AddAutoMapper(typeof(PDS_Header_To_REC_Header_Profile));
+builder.Services.AddAutoMapper(typeof(PDS_Header_To_REC_Header_Profile), typeof(PDS_Detail_To_Rec_Detail_Profile));
 builder.Services.AddTransient(typeof(IAutoMapRepo<,>), typeof(AutoMapRepo<,>));
 builder.Services.AddTransient<IAutoMapService, AutoMapService>();
 

@@ -5,8 +5,10 @@ using KANBAN.Libs;
 using KANBAN.Models.KB3.Receive_Process;
 using KANBAN.Models.KB3.SpecialOrdering;
 using KANBAN.Services.Automapper.Interface;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Data;
+using System.Data.SqlTypes;
 using System.Globalization;
 
 namespace KANBAN.Services.SpecialOrdering
@@ -104,8 +106,10 @@ namespace KANBAN.Services.SpecialOrdering
 
         public async Task Register(List<VM_Register_KBNOR280> listObj)
         {
+            using var transaction = _kbContext.Database.BeginTransaction();
             try
             {
+                await transaction.CreateSavepointAsync("Savepoint_Register");
                 foreach (var obj in listObj)
                 {
                     string PDSNO = obj.F_OrderNo;
@@ -138,15 +142,59 @@ namespace KANBAN.Services.SpecialOrdering
                         objRecHead.F_Plant = _BearerClass.Plant[0];
                         objRecHead.F_Flg_Epro = '9';
                         objRecHead.F_Status = 'C';
+                        objRecHead.F_Approver = " ";
+                        objRecHead.F_Cancel_By = " ";
+                        objRecHead.F_Cancel_Date = DateTime.Now;
+                        objRecHead.F_Delay_Invoice_Date = " ";
+                        objRecHead.F_Type_Version = " ";
+                        objRecHead.F_Flag_Gen_WDS = false;
+                        objRecHead.F_Flag_Transfer = true;
 
                         _kbContext.TB_REC_HEADER.Add(objRecHead);
+                        _log.WriteLogMsg("Insert to TB_REC_Header  : " + JsonConvert.SerializeObject(objRecHead));
                     }
 
-                    //var listInsDetail
+
+                    var listInsDetail = _kbContext.TB_PDS_Detail
+                        .Where(x => x.F_OrderNo == PDSNO).ToList();
+
+                    foreach (var insDetail in listInsDetail)
+                    {
+                        var mappingService = _automapService.GetAutoMapRepo<TB_PDS_Detail, TB_REC_DETAIL>();
+                        var objRecDetail = mappingService.MapTo(insDetail);
+                        objRecDetail.F_Receive_Date = DateTime.Now;
+
+                        _kbContext.TB_REC_DETAIL.Add(objRecDetail);
+                        _log.WriteLogMsg("Insert to TB_REC_Detail  : " + JsonConvert.SerializeObject(objRecDetail));
+                    }
+
+                    await _kbContext.TB_Survey_Detail
+                        .Where(x => x.F_PDS_No == PDSNO && 
+                        x.F_Delivery_Date == DateTime.ParseExact(DeliDate, "dd/MM/yyyy", CultureInfo.InvariantCulture).ToString("yyyyMMdd"))
+                        .ExecuteUpdateAsync(setter=>setter.SetProperty(x=>x.F_PDS_Flg , 2));
+
+                    await _kbContext.TB_PDS_Detail.Where(x => x.F_OrderNo == PDSNO).ExecuteDeleteAsync();
+                    _log.WriteLogMsg("Delete from TB_Survey_Detail  : " + PDSNO);
+
+                    await _kbContext.TB_PDS_Header.Where(x => x.F_OrderNo == PDSNO
+                        && x.F_Delivery_Date == DateTime.ParseExact(DeliDate, "dd/MM/yyyy", CultureInfo.InvariantCulture).ToString("yyyyMMdd")
+                        && x.F_Supplier_Code == Supp_CD && x.F_Supplier_Plant == Supp_Plant
+                        && x.F_Delivery_Trip == int.Parse(trip)).ExecuteDeleteAsync();
+
+                    _log.WriteLogMsg("Delete from TB_Survey_Header  : " + PDSNO);
+
                 }
+
+                await _kbContext.SaveChangesAsync();
+                //await _kbContext.Database.ExecuteSqlRawAsync($"Update TB_REC_HEADER Set F_Cancel_Date = '' Where F_Cancel_Date = '{DateTime.Today}'");
+                //await _kbContext.Database.ExecuteSqlRawAsync($"Update TB_REC_DETAIL Set F_Receive_Date = '' Where F_Receive_Date = '{DateTime.Today}'");
+
+                await transaction.CommitAsync();
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.InnerException.Message);
+                await transaction.RollbackToSavepointAsync("Savepoint_Register");
                 if (ex is CustomHttpException) throw;
                 throw new CustomHttpException(StatusCodes.Status500InternalServerError, ex.Message);
             }

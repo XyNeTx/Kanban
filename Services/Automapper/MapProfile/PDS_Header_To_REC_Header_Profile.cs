@@ -2,7 +2,7 @@
 using KANBAN.Models.KB3.Receive_Process;
 using KANBAN.Models.KB3.SpecialOrdering;
 
-namespace KANBAN.Services.Automapper
+namespace KANBAN.Services.Automapper.MapProfile
 {
     public class PDS_Header_To_REC_Header_Profile : Profile
     {
