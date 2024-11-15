@@ -19,7 +19,9 @@
                     <div class="col-4">
                         <div class="row justify-content-end">
                             <button type="button" class="btn btn-rounded btn-success col-3" id="btnRegister">Register</button>
-                            <button type="button" class="btn btn-rounded btn-primary col-4 ms-1" id="btnExport">Export Data</button>
+                            <button type="button" class="btn btn-rounded btn-primary col-4 ms-1" id="btnExport" data-bs-toggle="modal" data-bs-target="#KBNOR280_EX">
+                                Export Data
+                            </button>
                             <a asp-controller="OrderingProcess" asp-action="KBNOR200" class="btn btn-danger btn-rounded col-3 ms-1">Exit</a>
                         </div>
                     </div>
@@ -28,6 +30,121 @@
                     <table class="table table-bordered text-center w-100" id="tableMain">
                     </table>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="KBNOR280_EX" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="KBNOR280_EXLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="KBNOR280_EXLabel">KBNOR280_EX : Export Data Special Order to CSV File</h1>
+            </div>
+            <div class="modal-body">
+                <div class="row ms-4 mt-2">
+
+                    <div class="row">
+                        <input type="checkbox" class="form-check-input" id="chkboxExCustOrder" checked />
+                        <label for="chkboxExCustOrder" class="form-check-label col-4">Select Customer Order No.</label>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col">
+                            <div class="input-group">
+                                <label for="inpExIssuedYM" class="input-group-text">Issued YM:</label>
+                                <input type="month" class="form-control col-6" id="inpExIssuedYM" value="@DateTime.Now.ToString("yyyy-MM")" />
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="row">
+                                <div class="input-group">
+                                    <label for="inpExPONoFrom" class="input-group-text">PO No. From:</label>
+                                    <select class="selectpicker ps-0 col-8" data-live-search="true" id="inpExPONoFrom" name="inpExPONoFrom">
+                                        <option value="" hidden></option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="input-group">
+                                    <label for="inpExPONoTo" class="input-group-text">To:</label>
+                                    <select class="selectpicker ps-0 col-8" data-live-search="true" id="inpExPONoTo" name="inpExPONoTo">
+                                        <option value="" hidden></option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <input type="checkbox" class="form-check-input" id="chkboxExPDSNo" />
+                        <label for="chkboxExPDSNo" class="form-check-label col-3">Select PDS No.</label>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="row">
+                            <div class="input-group">
+                                <label for="inpExPDSNoFrom" class="input-group-text">PDS No. From:</label>
+                                <select class="selectpicker ps-0 col-4" data-live-search="true" id="inpExPDSNoFrom" name="inpExPDSNoFrom" disabled>
+                                    <option value="" hidden></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-group">
+                                <label for="inpExPDSNoTo" class="input-group-text">To:</label>
+                                <select class="selectpicker ps-0 col-4" data-live-search="true" id="inpExPDSNoTo" name="inpExPDSNoTo" disabled>
+                                    <option value="" hidden></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-4">
+                        <input type="checkbox" class="form-check-input" id="chkboxExSupplier" />
+                        <label for="chkboxExSupplier" class="form-check-label col-3">Select Supplier Code</label>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="row">
+                            <div class="input-group">
+                                <label for="inpExSupplierFrom" class="input-group-text">Supplier From:</label>
+                                <select class="selectpicker ps-0 col-4" data-live-search="true" id="inpExSupplierFrom" name="inpExSupplierFrom" disabled>
+                                    <option value="" hidden></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-group">
+                                <label for="inpExSupplierTo" class="input-group-text">To:</label>
+                                <select class="selectpicker ps-0 col-4" data-live-search="true" id="inpExSupplierTo" name="inpExSupplierTo" disabled>
+                                    <option value="" hidden></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <input type="checkbox" class="form-check-input" id="chkboxExDelivery" />
+                        <label for="chkboxExDelivery" class="form-check-label col-3">Select Delivery Date</label>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="row">
+                            <div class="input-group">
+                                <label for="inpExDeliveryFrom" class="input-group-text">Delivery Date From:</label>
+                                <input type="text" class="form-control" id="inpExDeliveryFrom" disabled/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-group">
+                                <label for="inpExDeliveryTo" class="input-group-text">To:</label>
+                                <input type="text" class="form-control" id="inpExDeliveryTo" disabled />
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="btnExExport">Export Data</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Exit</button>
             </div>
         </div>
     </div>

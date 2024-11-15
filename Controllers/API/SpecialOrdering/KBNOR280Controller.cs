@@ -61,5 +61,103 @@ namespace KANBAN.Controllers.API.SpecialOrdering
                 throw new CustomHttpException(ex.StatusCode, ex.Message);
             }
         }
+
+
+        //------------------------------------- Modal --------------------------------
+
+        [HttpGet]
+        public async Task<IActionResult> GetSupplier()
+        {
+            try
+            {
+                await _bearer.CheckAuthorize();
+
+                var data = await _services.IKBNOR280.GetSupplier();
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data Found",
+                    data = data.Select(x => new
+                    {
+                        F_Supplier_Code = x.F_Supplier_Code + "-" + x.F_Supplier_Plant,
+                    }).OrderBy(x => x.F_Supplier_Code)
+                });
+            }
+            catch (CustomHttpException ex)
+            {
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetPO(string IssuedYM)
+        {
+            try
+            {
+                await _bearer.CheckAuthorize();
+
+                var data = await _services.IKBNOR280.GetPO(IssuedYM);
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data Found",
+                    data = data.Select(x => new
+                    {
+                        F_PO_Customer = x.F_PO_Customer,
+                    }).OrderBy(x => x.F_PO_Customer)
+                });
+            }
+            catch (CustomHttpException ex)
+            {
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetPDS(string? POFrom, string? POTo)
+        {
+            try
+            {
+                await _bearer.CheckAuthorize();
+
+                var data = await _services.IKBNOR280.GetPDS(POFrom, POTo);
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data Found",
+                    data = data.Select(x => new
+                    {
+                        F_PDS_No = x.F_OrderNo,
+                    }).OrderBy(x => x.F_PDS_No)
+                });
+            }
+            catch (CustomHttpException ex)
+            {
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ExportData(string? PONoFrom, string? PONoTo, string? PDSNoFrom, string? PDSNoTo, string? SupplierFrom, string? SupplierTo,
+                                                    string? DeliveryFrom, string? DeliveryTo)
+        {
+            try
+            {
+                await _bearer.CheckAuthorize();
+                var data = _services.IKBNOR280.ExportData(PONoFrom, PONoTo, PDSNoFrom, PDSNoTo, SupplierFrom, SupplierTo, DeliveryFrom, DeliveryTo);
+
+                return Ok(new { status = "200", response = "Success", message = "Data Found", data = data });
+            }
+            catch (CustomHttpException ex)
+            {
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
+            }
+        }
     }
 }

@@ -653,5 +653,14 @@ const _xLib = new xLib();
         $(this).parent().find("div[class='filter-option-inner-inner']").text("Nothing Selected");
     };
 
+    $.fn.initDatepicker = function (date) {
+        $(this).datepicker({
+            uiLibrary: 'materialdesign',
+            format: 'dd/mm/yyyy',
+            autoclose: true,
+            showRightIcon: false,
+            value: date ?? moment().format('DD/MM/YYYY')
+        });
+    };
 
 })(jQuery);
