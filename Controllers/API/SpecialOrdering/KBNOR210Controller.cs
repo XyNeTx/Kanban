@@ -1,5 +1,5 @@
 ﻿using HINOSystem.Libs;
-using KANBAN.Services.SpecialOrdering;
+using KANBAN.Services.SpecialOrdering.Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 

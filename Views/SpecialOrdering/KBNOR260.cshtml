@@ -1,0 +1,43 @@
+﻿
+<div class="row">
+    <div class="col-xl-12 col-md-12 col-sm-12">
+        <div class="card border-left-primary shadow h-100">
+            <div class="card-body">
+                <div class="row mt-2">
+                    <div class="col-4">
+                        <button type="button" class="btn btn-rounded btn-outline-dark col-5" id="btnChkAll">Check All</button>
+                        <button type="button" class="btn btn-rounded btn-outline-dark col-5" id="btnUnChkAll">UnCheck All</button>
+                    </div>
+                    <div class="col-4">
+                        <div class="row justify-content-center">
+                            <div class="input-group col-12 p-0">
+                                <label for="selApprove" class="input-group-text">Approve By</label>
+                                <select class="selectpicker col-8" data-live-search="true" id="selApprove" data-limit="8">
+                                    <option value="" hidden>-- Select --</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="row justify-content-end">
+                            <button type="button" class="btn btn-rounded btn-success col-3" id="btnResend">Re-Send</button>
+                            <button type="button" class="btn btn-rounded btn-primary col-4 ms-1" id="btnSendApprove">
+                                Send Approve
+                            </button>
+                            <a asp-controller="OrderingProcess" asp-action="KBNOR200" class="btn btn-danger btn-rounded col-3 ms-1">Exit</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <table class="table table-bordered text-center w-100" id="tableMain">
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@using KANBAN.Libs
+@section Scripts {
+    <script type="text/javascript" src="@FileVersionHelper.VersionedScriptPath("/assets/.script/SpecialOrdering/KBNOR260.js")"></script>
+}

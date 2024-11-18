@@ -1,7 +1,7 @@
 ﻿using HINOSystem.Libs;
 using KANBAN.Models.KB3.SpecialOrdering;
 using KANBAN.Services;
-using KANBAN.Services.SpecialOrdering;
+using KANBAN.Services.SpecialOrdering.Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;

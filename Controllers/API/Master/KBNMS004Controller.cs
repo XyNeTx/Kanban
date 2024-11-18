@@ -1,6 +1,6 @@
 ﻿using HINOSystem.Libs;
 using HINOSystem.Models.KB3.Master;
-using KANBAN.Services.SpecialOrdering;
+using KANBAN.Services.SpecialOrdering.Interface;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HINOSystem.Controllers.API.Master

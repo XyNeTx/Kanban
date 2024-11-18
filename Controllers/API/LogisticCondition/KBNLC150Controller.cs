@@ -1,7 +1,7 @@
 ﻿using HINOSystem.Context;
 using HINOSystem.Libs;
 using KANBAN.Models.KB3.LogisticCondition;
-using KANBAN.Services.Logistical;
+using KANBAN.Services.Logistical.Interface;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Data;

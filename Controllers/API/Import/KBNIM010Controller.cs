@@ -1,6 +1,6 @@
 ﻿using HINOSystem.Libs;
 using KANBAN.Models.KB3;
-using KANBAN.Services;
+using KANBAN.Services.Import.Interface;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KANBAN.Controllers.API.Import
