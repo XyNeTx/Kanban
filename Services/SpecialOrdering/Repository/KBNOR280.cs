@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 using System.Data;
 using System.Globalization;
 
-namespace KANBAN.Services.SpecialOrdering.Repo
+namespace KANBAN.Services.SpecialOrdering.Repository
 {
     public class KBNOR280 : IKBNOR280
     {

@@ -2,7 +2,7 @@
 using KANBAN.Services.Automapper;
 using KANBAN.Services.Automapper.Interface;
 
-namespace KANBAN.Services.Automapper.Repo
+namespace KANBAN.Services.Automapper.Repository
 {
     public class AutoMapService : IAutoMapService
     {

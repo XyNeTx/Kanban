@@ -3,9 +3,10 @@ using HINOSystem.Libs;
 using HINOSystem.Models.KB3.Master;
 using KANBAN.Context;
 using KANBAN.Libs;
+using KANBAN.Services.SpecialOrdering.Interface;
 using Newtonsoft.Json;
 
-namespace KANBAN.Services.SpecialOrdering.Interface
+namespace KANBAN.Services.SpecialOrdering.Repository
 {
     public class KBNMS004 : IKBNMS004
     {

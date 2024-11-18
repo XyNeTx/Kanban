@@ -2,7 +2,7 @@
 using AutoMapper;
 using KANBAN.Services.Automapper.Interface;
 
-namespace KANBAN.Services.Automapper.Repo
+namespace KANBAN.Services.Automapper.Repository
 {
     public class AutoMapRepo<T1,T2> : IAutoMapRepo<T1,T2> where T1 : class where T2 : class
     {

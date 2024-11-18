@@ -1,5 +1,6 @@
 ﻿using HINOSystem.Context;
 using HINOSystem.Libs;
+using KANBAN.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.Web.CodeGeneration.Design;
 using System.Data;
@@ -14,6 +15,7 @@ namespace KANBAN.Libs
         Task SendEmailUnlock(string orderType, string program, string detail, string processDate, string processShift, string nSupplier);
         Task SendEmailToPA2(string ProdYM, string nRev, string nVer);
         Task SendEmailSurvey(string? Type = "", string? sumSurvey = "", string? ProcessShift = "");
+        Task SendEmailApprover(string sPDS, string approver);
     }
 
 
@@ -433,5 +435,58 @@ namespace KANBAN.Libs
 
         }
 
+        public async Task SendEmailApprover(string sPDS,string approver)
+        {
+            try 
+            {
+                string sBody = "";
+                string MailTo = "";
+                string UserName = _KB3Context.User.Where(x => x.Code.Trim() == _bearerClass.UserCode).Select(x => new
+                {
+                    Name = (x.Title_ID == 1 ? "Ms. " : x.Title_ID == 3 ? "Mr. " : "Mrs. ") + x.Name + " " + x.Surname,
+                }).FirstOrDefault().Name;
+                MailMessage myMail = new MailMessage();
+                var dt = _FillDT.ExecuteSQL($"Select F_User_name,F_Email From  TB_MS_Operator Where F_User_ID ='{_bearerClass.UserCode}'");
+
+                if (dt.Rows.Count > 0)
+                {
+                    myMail.From = new MailAddress(dt.Rows[0]["F_Email"].ToString().Trim());
+                }
+
+                dt = _FillDT.ExecuteSQL($"Select F_Email From  TB_MS_SpcApprover Where F_User_ID ='{approver}'");
+
+                if (dt.Rows.Count > 0)
+                {
+                    MailTo = dt.Rows[0]["F_Email"].ToString().Trim();
+                    myMail.To.Add(MailTo);
+                }
+
+                if(MailTo != "")
+                {
+                    myMail.Subject = "Please approve pds data";
+                    sBody = "Dear All Concern, <br/><br/>";
+                    sBody += "Auto generate please approve pds data :- <br/>";
+                    sBody += $"{sPDS}<br/>";
+                    sBody += "Best Regards, <br/>";
+                    sBody += UserName + "<br/>";
+                    myMail.Body = sBody;
+                    myMail.IsBodyHtml = true;
+                    myMail.Priority = MailPriority.High;
+
+                    SmtpClient smtp = new SmtpClient("156.71.5.8");
+
+                    await smtp.SendMailAsync(myMail);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                if(ex is CustomHttpException)
+                {
+                    throw;
+                }
+                throw new CustomHttpException(500, ex.Message);
+            }
+        }
     }
 }

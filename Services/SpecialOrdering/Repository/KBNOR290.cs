@@ -7,7 +7,7 @@ using KANBAN.Services.SpecialOrdering.Interface;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
-namespace KANBAN.Services.SpecialOrdering.Repo
+namespace KANBAN.Services.SpecialOrdering.Repository
 {
     public class KBNOR290 : IKBNOR290
     {

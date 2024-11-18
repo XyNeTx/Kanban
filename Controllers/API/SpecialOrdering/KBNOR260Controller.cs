@@ -5,6 +5,8 @@ using KANBAN.Services.SpecialOrdering.Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Globalization;
 
 namespace KANBAN.Controllers.API.SpecialOrdering
 {
@@ -21,7 +23,107 @@ namespace KANBAN.Controllers.API.SpecialOrdering
             _bearer = bearer;
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetPDSDataNoApprove(string fac)
+        {
+            try
+            {
+                await _bearer.CheckAuthorize();
+                var data = await _services.IKBNOR260.GetPDSDataNoApprove(fac);
 
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data Found",
+                    data = data.Select(x => new
+                    {
+                        x.F_OrderNo,
+                        x.F_PO_Customer,
+                        F_Delivery_Date = DateTime.ParseExact(x.F_Delivery_Date,"yyyyMMdd", CultureInfo.CurrentCulture).ToString("dd/MM/yyyy"),
+                        F_Supp_CD = x.F_Supplier_Code.Trim() + "-" + x.F_Supplier_Plant,
+                        F_Status = x.F_Status == 'W' ? "Send Approve" : ""
+                    })
+                });
+               
+            }
+            catch (CustomHttpException ex)
+            {
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
+            }
+        }
 
+        [HttpGet]
+        public async Task<IActionResult> GetApproverList()
+        {
+            try
+            {
+                await _bearer.CheckAuthorize();
+                var data = _services.IKBNOR260.GetApproverList();
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data Found",
+                    data = data
+                });
+            }
+            catch (CustomHttpException ex)
+            {
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SendApprove(List<VM_TB_Rec_Header> listObj)
+        {
+            try
+            {
+                await _bearer.CheckAuthorize();
+                await _services.IKBNOR260.SendApprove(listObj);
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Send Approve PDS No. Special Complete.",
+                });
+            }
+            catch (CustomHttpException ex)
+            {
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetPDSWaitApprove(string? fac)
+        {
+            try
+            {
+                await _bearer.CheckAuthorize();
+                var data = await _services.IKBNOR260.GetPDSWaitApprove(fac);
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data Found",
+                    data = data.Select(x => new
+                    {
+                        x.F_OrderNo,
+                        x.F_PO_Customer,
+                        F_Delivery_Date = DateTime.ParseExact(x.F_Delivery_Date, "yyyyMMdd", CultureInfo.CurrentCulture).ToString("dd/MM/yyyy"),
+                        F_Supp_CD = x.F_Supplier_Code.Trim() + "-" + x.F_Supplier_Plant,
+                        F_Status = "Wait Approve",
+                        x.F_Approver
+                    })
+                });
+            }
+            catch (CustomHttpException ex)
+            {
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
+            }
+        }
     }
 }

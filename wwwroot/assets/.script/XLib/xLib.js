@@ -653,6 +653,16 @@ const _xLib = new xLib();
         $(this).parent().find("div[class='filter-option-inner-inner']").text("Nothing Selected");
     };
 
+    $.fn.addListSelectPicker = async function (arrData, objKey) {
+        await $(this).empty();
+        await $(this).append(`<option value='' hidden></option >`);
+        let thisElement = $(this);
+        arrData.forEach(function (each) {
+            thisElement.append(`<option value='${each[objKey]}' >${each[objKey]}</option>`);
+        });
+        await $(this).selectpicker('refresh');
+    }
+
     $.fn.initDatepicker = function (date) {
         $(this).datepicker({
             uiLibrary: 'materialdesign',

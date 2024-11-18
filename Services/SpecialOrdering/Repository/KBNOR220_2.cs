@@ -4,11 +4,12 @@ using KANBAN.Context;
 using KANBAN.Libs;
 using KANBAN.Models.KB3.Master;
 using KANBAN.Models.KB3.SpecialOrdering;
+using KANBAN.Services.SpecialOrdering.Interface;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Data;
 
-namespace KANBAN.Services.SpecialOrdering.Interface
+namespace KANBAN.Services.SpecialOrdering.Repository
 {
     public class KBNOR220_2 : IKBNOR220_2
     {
