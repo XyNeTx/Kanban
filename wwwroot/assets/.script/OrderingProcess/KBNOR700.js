@@ -165,7 +165,7 @@
                 then: function (result) {
                     //console.log(result);
                     window.open(
-                        _REPORTINGSERVER_ + '%2fKB3%2fKBNOR700PDS&rs:Command=Render'
+                        _REPORTINGSERVER_ + '%2fKB3%2fKBNOR700PDS_X2&rs:Command=Render'
                         + '&pUserCode=' + ajexHeader.UserCode
                         + '&OrderNo=' + ($('#chkPDSNo').val() == 1 ? itmPDS.value : '')
                         + '&OrderNoTo=' + ($('#chkPDSNo').val() == 1 ? itmPDSTo.value : '')

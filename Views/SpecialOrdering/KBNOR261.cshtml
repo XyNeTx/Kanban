@@ -10,18 +10,11 @@
                     </div>
                     <div class="col-4">
                         <div class="row justify-content-center">
-                            <div class="input-group col-12 p-0">
-                                <label for="mthDeliYM" class="input-group-text">Delivery YM</label>
-                                <input type="month" class="form-control col-8" id="mthDeliYM" value="@DateTime.Now.ToString("yyyy-MM")" />
-                            </div>
                         </div>
                     </div>
                     <div class="col-4">
                         <div class="row justify-content-end">
-                            <button type="button" class="btn btn-rounded btn-success col-3" id="btnRegister">Register</button>
-                            <button type="button" class="btn btn-rounded btn-primary col-4 ms-1" id="btnExport" data-bs-toggle="modal" data-bs-target="#KBNOR280_EX">
-                                Export Data
-                            </button>
+                            <button type="button" class="btn btn-rounded btn-success col-3" id="btnApprove">Approve</button>
                             <a asp-controller="OrderingProcess" asp-action="KBNOR200" class="btn btn-danger btn-rounded col-3 ms-1">Exit</a>
                         </div>
                     </div>

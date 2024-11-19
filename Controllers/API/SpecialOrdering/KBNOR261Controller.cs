@@ -21,7 +21,71 @@ namespace KANBAN.Controllers.API.SpecialOrdering
             _bearer = bearer;
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetPDSWaitApprove()
+        {
+            try
+            {
+                await _bearer.CheckAuthorize();
 
+                var data = _services.IKBNOR261.GetPDSWaitApprove();
 
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data Found",
+                    data = data
+                });
+            }
+            catch (CustomHttpException ex)
+            {
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Preview(VM_Post_KBNOR261 obj)
+        {
+            try
+            {
+                await _bearer.CheckAuthorize();
+
+                await _services.IKBNOR261.Preview(obj);
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Redirecting to Preview",
+                });
+            }
+            catch (CustomHttpException ex)
+            {
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Approve([FromBody] List<VM_Post_KBNOR261> listObj)
+        {
+            try
+            {
+                await _bearer.CheckAuthorize();
+
+                await _services.IKBNOR261.Approve(listObj);
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data Approved",
+                });
+            }
+            catch (CustomHttpException ex)
+            {
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
+            }
+        }
     }
 }

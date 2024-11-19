@@ -1,11 +1,4 @@
-﻿using HINOSystem.Context;
-using HINOSystem.Libs;
-using KANBAN.Context;
-using KANBAN.Libs;
-using KANBAN.Services.Automapper.Interface;
-using KANBAN.Services.Import;
-
-namespace KANBAN.Services.SpecialOrdering.Interface
+﻿namespace KANBAN.Services.SpecialOrdering.Interface
 {
 
     public interface ISpecialOrderingServices
@@ -25,6 +18,7 @@ namespace KANBAN.Services.SpecialOrdering.Interface
         IKBNOR240 IKBNOR240 { get; }
         IKBNOR250 IKBNOR250 { get; }
         IKBNOR260 IKBNOR260 { get; }
+        IKBNOR261 IKBNOR261 { get; }
         IKBNOR280 IKBNOR280 { get; }
         IKBNOR290 IKBNOR290 { get; }
         IKBNOR297 IKBNOR297 { get; }
