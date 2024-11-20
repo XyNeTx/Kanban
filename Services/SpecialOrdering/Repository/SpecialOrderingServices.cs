@@ -25,6 +25,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
         public IKBNOR250 IKBNOR250 { get; }
         public IKBNOR260 IKBNOR260 { get; }
         public IKBNOR261 IKBNOR261 { get; }
+        public IKBNOR270 IKBNOR270 { get; }
         public IKBNOR280 IKBNOR280 { get; }
         public IKBNOR290 IKBNOR290 { get; }
         public IKBNOR297 IKBNOR297 { get; }
@@ -162,6 +163,16 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             );
             
             IKBNOR261 = new KBNOR261(kbContext,
+            bearerClass,
+            ppm3Context,
+            fillDT,
+            log,
+            emailService,
+            specialLibs,
+            autoMapService
+            );
+            
+            IKBNOR270 = new KBNOR270(kbContext,
             bearerClass,
             ppm3Context,
             fillDT,

@@ -21,6 +21,49 @@ namespace KANBAN.Controllers.API.SpecialOrdering
             _bearer = bearer;
         }
 
-        
+        [HttpPost]
+        public async Task<IActionResult> Preview([FromBody] List<VM_Post_KBNOR261> listObj)
+        {
+            try
+            {
+                await _bearer.CheckAuthorize();
+
+                await _services.IKBNOR270.Preview(listObj);
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Redirecting to Preview",
+                });
+            }
+            catch (CustomHttpException ex)
+            {
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> PreviewKB()
+        {
+            try
+            {
+                await _bearer.CheckAuthorize();
+
+                await _services.IKBNOR270.PreviewKB();
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Redirecting to Preview",
+                });
+            }
+            catch (CustomHttpException ex)
+            {
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
+            }
+        }
+
     }
 }

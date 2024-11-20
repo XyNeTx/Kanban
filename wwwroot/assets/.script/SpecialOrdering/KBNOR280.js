@@ -322,7 +322,7 @@ ExXLSXjsonToCSV = async (data) => {
     let url = window.URL.createObjectURL(newBlob);
     let a = document.createElement("a");
     a.href = url;
-    a.download = "export.csv";
+    a.download = "KBNOR280_"+moment().format("DDMMYYYY_HHmmss")+".csv";
     a.click();
     window.URL.revokeObjectURL(url);
     document.body.removeChild(a);

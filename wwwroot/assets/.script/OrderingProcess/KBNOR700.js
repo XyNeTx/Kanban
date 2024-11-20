@@ -164,15 +164,28 @@
                 },
                 then: function (result) {
                     //console.log(result);
-                    window.open(
-                        _REPORTINGSERVER_ + '%2fKB3%2fKBNOR700PDS_X2&rs:Command=Render'
-                        + '&pUserCode=' + ajexHeader.UserCode
-                        + '&OrderNo=' + ($('#chkPDSNo').val() == 1 ? itmPDS.value : '')
-                        + '&OrderNoTo=' + ($('#chkPDSNo').val() == 1 ? itmPDSTo.value : '')
-                        + '&DeliveryDate=' + ($('#chkDeliveryDate').val() == 1 ? ReplaceAll(itmDelivery.value, '-', '') : '')
-                        + '&DeliveryDateTo=' + ($('#chkDeliveryDate').val() == 1 ? ReplaceAll(itmDeliveryTo.value, '-', '') : '')
-                        ,'_blank'
-                    );
+                    if (_xLib.GetCookie('isDev') == "1") {
+                        window.open(
+                            _REPORTINGSERVER_ + '%2fKB3%2fKBNOR700PDS_X2&rs:Command=Render'
+                            + '&pUserCode=' + ajexHeader.UserCode
+                            + '&OrderNo=' + ($('#chkPDSNo').val() == 1 ? itmPDS.value : '')
+                            + '&OrderNoTo=' + ($('#chkPDSNo').val() == 1 ? itmPDSTo.value : '')
+                            + '&DeliveryDate=' + ($('#chkDeliveryDate').val() == 1 ? ReplaceAll(itmDelivery.value, '-', '') : '')
+                            + '&DeliveryDateTo=' + ($('#chkDeliveryDate').val() == 1 ? ReplaceAll(itmDeliveryTo.value, '-', '') : '')
+                            , '_blank'
+                        );
+                    }
+                    else {
+                        window.open(
+                            _REPORTINGSERVER_ + '%2fKB3%2fKBNOR700PDS&rs:Command=Render'
+                            + '&pUserCode=' + ajexHeader.UserCode
+                            + '&OrderNo=' + ($('#chkPDSNo').val() == 1 ? itmPDS.value : '')
+                            + '&OrderNoTo=' + ($('#chkPDSNo').val() == 1 ? itmPDSTo.value : '')
+                            + '&DeliveryDate=' + ($('#chkDeliveryDate').val() == 1 ? ReplaceAll(itmDelivery.value, '-', '') : '')
+                            + '&DeliveryDateTo=' + ($('#chkDeliveryDate').val() == 1 ? ReplaceAll(itmDeliveryTo.value, '-', '') : '')
+                            , '_blank'
+                        );
+                    }
 
                 }
             })
@@ -307,17 +320,22 @@
                 },
                 then: function (result) {
                     //console.log(result);
+                    if (_xLib.GetCookie('isDev') == "1") {
+                        return _xLib.OpenReport("/KBNOR700KANBAN_X2", `pUserCode=${ajexHeader.UserCode}` +
+                            `&OrderNo=${itmPDS.value}&OrderNoTo=${itmPDSTo.value}&DeliveryDate=${itmDelivery.value}&DeliveryDateTo=${itmDeliveryTo.value}`);
+                    }
+                    else {
 
-                    window.open(
-                        _REPORTINGSERVER_ + '%2fKB3%2f' + pRPTNAME + '&rs:Command=Render'
-                        + '&pUserCode=' + ajexHeader.UserCode
-                        + '&OrderNo=' + itmPDS.value
-                        + '&OrderNoTo=' + itmPDSTo.value
-                        + '&DeliveryDate=' + ($('#chkDeliveryDate').val() == 1 ? ReplaceAll(itmDelivery.value, '-', '') : '')
-                        + '&DeliveryDateTo=' + ($('#chkDeliveryDate').val() == 1 ? ReplaceAll(itmDeliveryTo.value, '-', '') : '')
-                        , '_blank'
-                    );
-
+                        window.open(
+                            _REPORTINGSERVER_ + '%2fKB3%2f' + pRPTNAME + '&rs:Command=Render'
+                            + '&pUserCode=' + ajexHeader.UserCode
+                            + '&OrderNo=' + itmPDS.value
+                            + '&OrderNoTo=' + itmPDSTo.value
+                            + '&DeliveryDate=' + ($('#chkDeliveryDate').val() == 1 ? ReplaceAll(itmDelivery.value, '-', '') : '')
+                            + '&DeliveryDateTo=' + ($('#chkDeliveryDate').val() == 1 ? ReplaceAll(itmDeliveryTo.value, '-', '') : '')
+                            , '_blank'
+                        );
+                    }
                 }
             });
 

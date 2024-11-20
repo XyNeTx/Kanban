@@ -19,6 +19,7 @@
         IKBNOR250 IKBNOR250 { get; }
         IKBNOR260 IKBNOR260 { get; }
         IKBNOR261 IKBNOR261 { get; }
+        IKBNOR270 IKBNOR270 { get; }
         IKBNOR280 IKBNOR280 { get; }
         IKBNOR290 IKBNOR290 { get; }
         IKBNOR297 IKBNOR297 { get; }
