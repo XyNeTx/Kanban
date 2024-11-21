@@ -1,110 +1,39 @@
 $(document).ready(async () => {
-    await _xDataTable.InitialDataTable("#tableMain",
-        {
-            columns: [
-                { title: "Survey Doc. No.", data: "F_Survey_Doc" },
-                { title: "Supplier CD.", data: "F_Supplier" },
-                { title: "Part No.", data: "F_Part_No" },
-                { title: "Qty", data: "F_Qty" },
-                { title: "Delivery Date", data: "F_Deli_DT" },
-                { title: "Status", data: "F_Status_D" },
-                { title: "Comment", data: "F_Remark_Delivery" },
-            ],
-            order: [[1, "asc"]],
-            scrollCollapse: false,
-        }
-    );
-
-    $("table thead tr th").css("text-align", "center");
-    $("table tbody tr td").css("text-align", "center");
-
-    YMChange();
+    await GetSupplierSurvey();
 
     xSplash.hide();
 });
-
-$("#mthSurIssDate").change(async () => {
-    await YMChange();
-});
-
-$("#selCustOrder").change(async () => {
-    await CustOrderChange();
+$("#mthSurveyIssued").change(async () => {
+    await GetSupplierSurvey();
 });
 
 $("#selSuppCD").change(async () => {
-    await SuppCDChange();
+    await GetSupplierSurvey();
 });
-
-YMChange = async () => {
+GetSupplierSurvey = async () => {
     let getQuery = {
-        YM: $("#mthSurIssDate").val().replace("-", "")
+        IssueDate: $("#mthSurveyIssued").val().replace(/-/g, ""),
+        SupplierCD: $("#selSuppCD").val()
     }
-
-    _xLib.AJAX_Get("/api/KBNOR290/ProdYMChanged", getQuery,
-        async (success) => {
-            success = _xLib.JSONparseMixData(success);
-            // console.log(success);
-            $("#selCustOrder").empty();
-            $("#selCustOrder").append("<option value='' hidden></option>");
-            $.each(success.data, function (index, value) {
-                //console.log(value);
-                $("#selCustOrder").append(new Option(value.f_PO_Customer, value.f_PO_Customer));
-            });
-            $("#selCustOrder").selectpicker("refresh");
-        },
-        async (error) => {
-            console.error(error);
+    _xLib.AJAX_Get("/api/KBNOR292/GetSupplierSurvey", getQuery,
+        async (result) => {
+            result = _xLib.JSONparseMixData(result);
+            if (getQuery.SupplierCD) {
+                $("#spanSuppName").html(result.data[0].F_Supplier_INT + ":" + result.data[0].F_Supplier_Name);
+            }
+            else {
+                $("#selSuppCD").addListSelectPicker(result.data, "F_Supplier_CD");
+            }
         }
     );
-};
+}
 
-CustOrderChange = async () => {
-
-    let getQuery = {
-        PO: $("#selCustOrder").val(),
-    }
-
-    _xLib.AJAX_Get("/api/KBNOR290/GetSuppCD", getQuery,
-        async (success) => {
-            success = _xLib.JSONparseMixData(success);
-            //console.log(success);
-            $("#selSuppCD").empty();
-            $("#selSuppCD").append("<option value='' hidden></option>");
-            $.each(success.data, function (index, value) {
-                //console.log(value);
-                $("#selSuppCD").append(new Option(value.f_Supplier_CD, value.f_Supplier_CD));
-            });
-            $("#selSuppCD").selectpicker("refresh");
-        },
-        async (error) => {
-            console.error(error);
-        }
-    );
-};
-
-SuppCDChange = async () => {
-    let getQuery = {
-        PO: $("#selCustOrder").val(),
-        Supplier: $("#selSuppCD").val(),
-    }
-
-    _xLib.AJAX_Get("/api/KBNOR290/GetData", getQuery,
-        async (success) => {
-            success = _xLib.JSONparseMixData(success);
-            //console.log(success);
-            await _xDataTable.ClearAndAddDataDT("#tableMain", success.data);
-        },
-        async (error) => {
-            console.error(error);
-        }
-    );
-};
-
-$("#btnPrint").click(() => {
+$("#btnReport").click(() => {
     let obj = {
-        F_PO_Customer: $("#selCustOrder").val(),
-        F_Supplier_CD: $("#selSuppCD").val().split("-")[0],
-        F_Supplier_Plant: $("#selSuppCD").val().split("-")[1]
+        Plant: _xLib.GetCookie("plantCode"),
+        UserName: _xLib.GetUserName(),
+        F_Issued_YM: $("#mthSurveyIssued").val().replace(/-/g, ""),
+        F_Supplier_CD: $("#selSuppCD").val()
     }
 
     for (let key in obj) {
@@ -113,5 +42,5 @@ $("#btnPrint").click(() => {
         }
     };
 
-    _xLib.OpenReportObj("/KBNOR220_2_Rpt", obj);
+    _xLib.OpenReportObj("/KBNOR292", obj);
 });

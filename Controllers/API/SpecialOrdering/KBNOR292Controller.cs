@@ -21,6 +21,27 @@ namespace KANBAN.Controllers.API.SpecialOrdering
             _bearer = bearer;
         }
 
-        
+        [HttpGet]
+        public async Task<IActionResult> GetSupplierSurvey(string IssueDate, string? SupplierCD = "")
+        {
+            try
+            {
+                await _bearer.CheckAuthorize();
+                string data = _services.IKBNOR292.GetSupplierSurvey(IssueDate, SupplierCD);
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data Found",
+                    data = data
+                });
+
+            }
+            catch (CustomHttpException ex)
+            {
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
+            }
+        }
     }
 }
