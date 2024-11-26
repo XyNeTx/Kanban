@@ -658,6 +658,8 @@ const _xLib = new xLib();
         await $(this).append(`<option value='' hidden></option >`);
         let thisElement = $(this);
         arrData.forEach(function (each) {
+            //console.log(each[objKey]);
+            //console.log(thisElement);
             thisElement.append(`<option value='${each[objKey]}' >${each[objKey]}</option>`);
         });
         await $(this).selectpicker('refresh');

@@ -1,111 +1,142 @@
 ﻿using HINOSystem.Context;
 using HINOSystem.Libs;
+using KANBAN.Services;
+using KANBAN.Services.Import.Interface;
+using KANBAN.Services.SpecialOrdering.Interface;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 //using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HINOSystem.Controllers.API.Master
 {
-    public class KBNIM007Controller : Controller
+    [Route("api/[controller]/[action]")]
+    [ApiController]
+    public class KBNIM007Controller : ControllerBase
     {
-        private readonly IConfiguration _configuration;
-        private readonly BearerClass _BearerClass;
-        private readonly ActionResultClass _ActionResult;        
-        private readonly KanbanConnection _KBCN;
-        private readonly PPMConnect _PPMConnect;
+        private readonly IImportService _services;
+        private readonly BearerClass _bearer;
 
-        private readonly KB3Context _KB3Context;
-
-
-        private readonly string StoragePath = @"wwwroot\Storage\Uploads";
-
-        public KBNIM007Controller(
-            IConfiguration configuration,
-            BearerClass bearerClass,
-            ActionResultClass actionResultClass,
-            KanbanConnection kanbanConnection,
-            PPMConnect ppmConnect,
-            KB3Context kB3Context
-            )
+        public KBNIM007Controller(IImportService services, BearerClass bearer)
         {
-            _configuration = configuration;
-            _BearerClass = bearerClass;
-            _ActionResult = actionResultClass;
-            _KB3Context = kB3Context;
-            _KBCN = kanbanConnection;
-            _PPMConnect = ppmConnect;
-
+            _services = services;
+            _bearer = bearer;
         }
 
-
-
-        [HttpPost]
-        public IActionResult initial([FromBody] string pData = null)
+        [HttpGet]
+        public async Task<IActionResult> GetPO(string YM)
         {
-            dynamic _json = null;
-            string _SQL = "";
             try
             {
-                _BearerClass.Authentication(Request);
-                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
+                await _bearer.CheckAuthorize();
 
-                if (pData != null) _json = JsonConvert.DeserializeObject(pData);
+                var result = await _services.KBNIM007.GetPO(YM);
 
-                _SQL = @" EXEC [exec].[spTB_MS_FACTORY] ";
-                string _jsTB_MS_Factory = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data Found",
+                    data = result.Select(x => x.F_PDS_No).Distinct().ToList()
+                });
 
-                string _result = @"{
-                    ""status"":""200"",
-                    ""response"":""OK"",
-                    ""message"": ""Data Found"",
-                    ""data"":
-                            {
-                                ""TB_MS_Factory"" : " + _jsTB_MS_Factory + @"
-                            }
-                }";
-                return Content(_result, "application/json");
             }
-            catch (Exception e)
+            catch (CustomHttpException ex)
             {
-                return Content(e.Message.ToString(), "application/json");
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
             }
         }
 
-
-
-        [HttpPost]
-        public IActionResult search([FromBody] string pData = null)
+        [HttpGet]
+        public async Task<IActionResult> SetCalendar(string YM, string StoreCD)
         {
-            dynamic _json = null;
-            string _SQL = "";
             try
             {
-                _BearerClass.Authentication(Request);
-                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
+                await _bearer.CheckAuthorize();
 
-                _json = JsonConvert.DeserializeObject(pData);
+                var result = _services.KBNIM007.SetCalendar(YM, StoreCD);
 
-
-                _SQL = @" EXEC [exec].[spKBNMS001_SEARCH] '" + _json.F_Plant + "' ";
-                
-                string _jsonData = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
-
-
-
-                string _result = @"{
-                    ""status"":""200"",
-                    ""response"":""OK"",
-                    ""message"": ""Data Found"",
-                    ""data"": " + _jsonData + @"
-                }";
-                return Content(_result, "application/json");
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data Found",
+                    data = result
+                });
             }
-            catch (Exception e)
+            catch (CustomHttpException ex)
             {
-                return Content(e.Message.ToString(), "application/json");
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetStoreCD(string YM, string? PO, bool isNew)
+        {
+            try
+            {
+                await _bearer.CheckAuthorize();
+
+                var result = _services.KBNIM007.GetStoreCD(YM, PO, isNew);
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data Found",
+                    data = result
+                });
+            }
+            catch (CustomHttpException ex)
+            {
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetPartNo(string YM, string? PO, string? StoreCD, bool isNew)
+        {
+            try
+            {
+                await _bearer.CheckAuthorize();
+
+                var result = _services.KBNIM007.GetPartNo(YM, PO, StoreCD, isNew);
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data Found",
+                    data = result
+                });
+            }
+            catch (CustomHttpException ex)
+            {
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> PartNoSelected(string YM, string PO, string StoreCD, string PartNo, bool isNew)
+        {
+            try
+            {
+                await _bearer.CheckAuthorize();
+
+                var result = _services.KBNIM007.PartNoSelected(YM, PO, StoreCD, PartNo, isNew);
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data Found",
+                    data = result
+                });
+            }
+            catch (CustomHttpException ex)
+            {
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
+            }
+        }
 
     }
 }

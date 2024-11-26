@@ -2,12 +2,15 @@
 using HINOSystem.Libs;
 using KANBAN.Context;
 using KANBAN.Libs;
+using KANBAN.Services.Automapper.Interface;
 using KANBAN.Services.Import.Interface;
+using KANBAN.Services.SpecialOrdering.Interface;
 
 namespace KANBAN.Services.Import.Repository
 {
     public class ImportService : IImportService
     {
+        public IKBNIM007 KBNIM007 { get; }
         public IKBNIM010 KBNIM010 { get; }
         public IKBNIM011 KBNIM011 { get; }
 
@@ -16,8 +19,19 @@ namespace KANBAN.Services.Import.Repository
             PPM3Context ppm3Context,
             FillDataTable fillDT,
             SerilogLibs log,
-            IEmailService emailService)
+            IEmailService emailService,
+            ProcDBContext procDBContext,
+            IAutoMapService autoMapService)
         {
+
+            KBNIM007 = new KBNIM007(kbContext,
+                bearerClass,
+                ppm3Context,
+                fillDT,
+                log,
+                emailService,
+                autoMapService);
+
 
             KBNIM010 = new KBNIM010(kbContext,
             bearerClass,
