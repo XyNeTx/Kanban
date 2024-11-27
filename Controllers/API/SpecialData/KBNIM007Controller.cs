@@ -1,5 +1,6 @@
 ﻿using HINOSystem.Context;
 using HINOSystem.Libs;
+using KANBAN.Models.KB3.SpecialData.ViewModel;
 using KANBAN.Services;
 using KANBAN.Services.Import.Interface;
 using KANBAN.Services.SpecialOrdering.Interface;
@@ -130,6 +131,84 @@ namespace HINOSystem.Controllers.API.Master
                     response = "Success",
                     message = "Data Found",
                     data = result
+                });
+            }
+            catch (CustomHttpException ex)
+            {
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ListDataTable(string? PO, string? PartNo)
+        {
+            try
+            {
+                await _bearer.CheckAuthorize();
+
+                var result = _services.KBNIM007.ListDataTable(PO, PartNo);
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data Found",
+                    data = result
+                });
+            }
+            catch (CustomHttpException ex)
+            {
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ListCalendar(string YM, string PO, string StoreCD, string PartNo)
+        {
+            try
+            {
+                await _bearer.CheckAuthorize();
+
+                var result = await _services.KBNIM007.ListCalendar(YM, PO, StoreCD, PartNo);
+
+                var data = result.Select(x => new
+                {
+                    F_PDS_No = x.F_PDS_No,
+                    F_Part_No = x.F_Part_Order + "-" + x.F_Ruibetsu_Order,
+                    F_Delivery_Date = x.F_Delivery_Date.Substring(6,2) + "/" + x.F_Delivery_Date.Substring(4, 2) + "/" + x.F_Delivery_Date.Substring(0, 4),
+                    F_Qty = x.F_Qty_Level1,
+                    x.F_Remark,
+                    x.F_Store_Order,
+                    F_PDS_Issued_Date = x.F_PDS_Issued_Date.Substring(6, 2) + "/" + x.F_PDS_Issued_Date.Substring(4, 2) + "/" + x.F_PDS_Issued_Date.Substring(0, 4),
+                }).Distinct().ToList();
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data Found",
+                    data = data
+                });
+            }
+            catch (CustomHttpException ex)
+            {
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Save(List<VM_Save_IM007> listObj, [FromQuery] string action)
+        {
+            try
+            {
+                await _bearer.CheckAuthorize();
+                await _services.KBNIM007.Save(listObj, action);
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data was saved successfully",
                 });
             }
             catch (CustomHttpException ex)

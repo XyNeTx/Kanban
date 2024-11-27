@@ -250,6 +250,19 @@ namespace HINOSystem.Libs
             return ppmConnect;
         }
 
+        public string QueryStoreCode()
+        {
+            string QueryStoreCode = _IHttp.HttpContext.Request.Cookies.FirstOrDefault(x => x.Key == "plantCode").Value switch
+            {
+                "1" => "1A",
+                "2" => "2B",
+                "3" => "3C",
+                _ => "3C"
+            };
+
+            return QueryStoreCode;
+        }
+
         public string procDBConnect()
         {
             string isDev = _IHttp.HttpContext.Request.Cookies.FirstOrDefault(x => x.Key == "isDev").Value == "1" ? "Dev" : "";

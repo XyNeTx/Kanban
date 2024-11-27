@@ -415,6 +415,7 @@ $("#buttonOK").click(async function () {
 
 
 async function OkClicked(_arrObj) {
+    //return console.log(_arrObj);
 
     for (const item in _arrObj) {
         if (await _arrObj[item].hasOwnProperty("F_Delivery_Date")) {
@@ -426,6 +427,11 @@ async function OkClicked(_arrObj) {
             _arrObj[item].Kanban_No = _arrObj[item].F_Kanban_No;
             _arrObj[item].Pack = _arrObj[item].F_Pack;
 
+            if (_arrObj[item].F_Remark) {
+                _arrObj[item].Remark = _arrObj[item].F_Remark;
+                delete _arrObj[item].F_Remark;
+            }
+
             delete _arrObj[item].F_Delivery_Date;
             delete _arrObj[item].F_Delivery_Trip;
             delete _arrObj[item].F_Part_No;
@@ -433,6 +439,7 @@ async function OkClicked(_arrObj) {
             delete _arrObj[item].F_Qty;
             delete _arrObj[item].F_Kanban_No;
             delete _arrObj[item].F_Pack;
+            
         }
         _arrObj[item].Delivery_Date = _arrObj[item].Delivery_Date.toString();
         var _json = JSON.stringify(_arrObj[item]);

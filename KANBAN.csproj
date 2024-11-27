@@ -9730,6 +9730,7 @@
 
   <ItemGroup>
     <Folder Include="Models\KB3\DevelopMaintain\" />
+    <Folder Include="Models\KB3\SpecialData\Model\" />
     <Folder Include="wwwroot\assets\.script\DevelopMaintain\" />
     <Folder Include="wwwroot\assets\.script\Home\" />
     <Folder Include="wwwroot\assets\.script\Import\" />

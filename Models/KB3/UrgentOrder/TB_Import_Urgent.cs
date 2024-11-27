@@ -22,6 +22,8 @@ namespace KANBAN.Models.KB3.UrgentOrder
         public string F_Delivery_Date { get; set; }
         [Required]
         public int F_Delivery_Trip { get; set; }
+        [StringLength(150,ErrorMessage = ("Remark must be less than 150 characters"))]
+        public string? F_Remark { get; set; }
         [StringLength(25)]
         [Required]
         public string F_Update_By { get; set; }

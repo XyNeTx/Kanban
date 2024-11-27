@@ -24,7 +24,7 @@ class DataTableLib {
 
         let constr = new DataTableLib();
         constr = Object.assign(constr, options);
-
+        //console.log(constr);
         return $(`${id}`).DataTable({
             width: (constr.width) ? constr.width : this.width,
             paging: (constr.paging) ? constr.paging : this.paging,

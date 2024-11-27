@@ -2,10 +2,12 @@
 using HINOSystem.Libs;
 using KANBAN.Context;
 using KANBAN.Libs;
+using KANBAN.Models.KB3.SpecialData.ViewModel;
 using KANBAN.Models.KB3.UrgentOrder;
 using KANBAN.Services.Automapper.Interface;
 using KANBAN.Services.Import.Interface;
 using KANBAN.Services.SpecialOrdering.Interface;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Data;
@@ -47,10 +49,12 @@ namespace KANBAN.Services.Import.Repository
         {
             try
             {
+                string queryStoreCD = _FillDT.QueryStoreCode();
+
                 string sql = $@"Select C.*,isnull(V.F_Date,'') as F_Date From TB_Calendar C 
                     CROSS JOIN (select F_YM + F_Day collate THAI_CI_AS as F_Date,F_YM,row_number() Over(Order by F_YM,F_Day) as F_NO from VW_Calendar 
                     Where F_WorkCd ='1' and F_YM + F_Day collate THAI_CI_AS >= convert(Char(8),getdate(),112))V  
-                    Where C.F_Store_Cd='1A' and C.F_YM='{YM}'";
+                    Where C.F_Store_Cd='{queryStoreCD}' and C.F_YM='{YM}'";
 
                 if(StoreCD.Substring(0,1) == "0")
                 {
@@ -231,6 +235,188 @@ namespace KANBAN.Services.Import.Repository
 
                 return JsonConvert.SerializeObject(dt);
 
+            }
+            catch (Exception ex)
+            {
+                if (ex is CustomHttpException) throw;
+                throw new CustomHttpException(500, ex.Message);
+            }
+        }
+
+        public string ListDataTable(string? PO, string? PartNo)
+        {
+            try
+            {
+                string _sql = $@"Select Distinct F_PDS_No,F_Part_order+'-'+F_Ruibetsu_Order as F_Part_No,F_Part_No+'-'+F_Ruibetsu as F_Child_Part,substring(F_Delivery_Date,7,2)+'/'+substring(F_Delivery_Date,5,2)+'/'+substring(F_Delivery_Date,1,4) as F_Delivery_Date,F_Qty as F_Qty,F_ROund,F_Remark,F_Store_Order as F_Store_CD,F_Store_CD as F_Store_Child, 
+                    substring(F_PDS_Issued_Date,5,2)+'/'+substring(F_PDS_Issued_Date,1,4) as F_PDS_Issued_Date,F_Part_name as f_Child_Name, 
+                    F_Supplier_CD +'-'+F_Supplier_Plant as F_SUpplier,F_Supplier_CD,F_Supplier_Plant 
+                    ,case when F_OrderType='C' then 'CKD' else case when F_orderTYpe='S' then 'SPECIAL' else 'NORMAL' end end F_OrderType,F_Update_Date 
+                    From TB_TRANSACTION_TMP WHERE F_Type ='Special' ";
+
+                if (!string.IsNullOrWhiteSpace(PO))
+                {
+                    _sql += $@"and F_PDS_No ='{PO}' ";
+                }
+                if (!string.IsNullOrWhiteSpace(PartNo))
+                {
+                    _sql += $@"and F_Part_order+'-'+F_Ruibetsu_Order ='{PartNo}' ";
+                }
+                _sql += "Order by F_Update_Date,F_ORderTYPE desc,F_Delivery_Date,F_PDS_NO,F_Supplier_CD,F_Supplier_Plant,F_Part_order+'-'+F_Ruibetsu_Order,F_Part_No+'-'+F_Ruibetsu";
+
+                DataTable dt = _FillDT.ExecuteSQL(_sql);
+
+                return JsonConvert.SerializeObject(dt);
+
+            }
+            catch (Exception ex)
+            {
+                if (ex is CustomHttpException) throw;
+                throw new CustomHttpException(500, ex.Message);
+            }
+        }
+
+        public async Task<List<TB_Transaction_TMP>> ListCalendar(string YM, string PO, string StoreCD, string PartNo)
+        {
+            try
+            {
+                var data = await _kbContext.TB_Transaction_TMP
+                    .Where(x=> x.F_Type == "Special" && x.F_Type_Spc == "Special" && x.F_Delivery_Date.Substring(0, 6) == YM
+                    && x.F_PDS_No == PO && x.F_Part_Order + "-" + x.F_Ruibetsu_Order == PartNo && x.F_Store_Order == StoreCD)
+                    .OrderBy(x => x.F_Delivery_Date)
+                    .ThenBy(x=>x.F_PDS_No)
+                    .ThenBy(x=>x.F_Part_Order + "-" + x.F_Ruibetsu_Order)
+                    .ToListAsync();
+
+                return data;
+
+            }
+            catch (Exception ex)
+            {
+                if (ex is CustomHttpException) throw;
+                throw new CustomHttpException(500, ex.Message);
+            }
+        }
+
+        public async Task Save(List<VM_Save_IM007> listObj, string action)
+        {
+            try
+            {
+                string sql = "";
+
+                await _kbContext.Database.ExecuteSqlRawAsync("EXEC dbo.SP_IM007_FilterData '{0}'", _BearerClass.UserCode);
+                
+                if (action.ToUpper() == "NEW")
+                {
+                    if (string.IsNullOrWhiteSpace(listObj[0].PDS))
+                    {
+                        throw new CustomHttpException(400, "Please input Customer Order No.");
+                    }
+                    if (string.IsNullOrWhiteSpace(listObj[0].PartNo))
+                    {
+                        throw new CustomHttpException(400, "Please input Part No.");
+                    }
+                    if (string.IsNullOrWhiteSpace(listObj[0].StoreCD))
+                    {
+                        throw new CustomHttpException(400, "Please input Store Code.");
+                    }
+
+
+                    sql = $@"Select distinct F_PDS_NO From TB_TRANSACTION_TMP  
+                        Where F_Type='Special' and F_TYpe_Spc ='Special' 
+                        and F_PDS_NO ='{listObj[0].PDS}' 
+                        and F_Part_Order+'-'+F_RUibetsu_Order='{listObj[0].PartNo}' 
+                        and F_Store_Order='{listObj[0].StoreCD}' 
+                        and Substring(F_Delivery_Date,1,6) ='{listObj[0].DeliveryDate.Substring(0,6)}' ";
+                    
+                    int check = await _kbContext.TB_Transaction_TMP.FromSqlRaw(sql).CountAsync();
+                    if (check > 0)
+                    {
+                        throw new CustomHttpException(400, "Can not Insert Data because found data in database!");
+                    }
+                    else
+                    {
+                        foreach(var obj in listObj)
+                        {
+                            await _kbContext.Database.ExecuteSqlRawAsync($@"Exec dbo.SP_IMPORT_SPECIAL 
+                                '{obj.PDS}','Special','{obj.IssuedDate}','{obj.PartNo}','{obj.StoreCD}',
+                                '{obj.DeliveryDate}','{obj.Qty}','{obj.Trip}','{_BearerClass.UserCode}' ");
+
+                            _log.WriteLogMsg("Insert to TMP : Special Order | Obj : "+ JsonConvert.SerializeObject(obj));
+                        }
+                    }
+                }
+
+                else if (action.ToUpper() == "DEL")
+                {
+                    var data = _kbContext.TB_Transaction_TMP.Where(x => x.F_Type == "Special" && x.F_Type_Spc == "Special"
+                        && x.F_PDS_No == listObj[0].PDS
+                        && x.F_Delivery_Date.Substring(0, 6) == listObj[0].DeliveryDate.Substring(0, 6))
+                        .ToList();
+
+                    if (!string.IsNullOrWhiteSpace(listObj[0].PartNo))
+                    {
+                        data = data.Where(x => x.F_Part_Order + "-" + x.F_Ruibetsu_Order == listObj[0].PartNo).ToList();
+                    }
+                    if (!string.IsNullOrWhiteSpace(listObj[0].StoreCD))
+                    {
+                        data = data.Where(x => x.F_Store_Order == listObj[0].StoreCD).ToList();
+                    }
+
+                    if(data.Count == 0)
+                    {
+                        throw new CustomHttpException(400, "Can not Delete Data because not found data in database!");
+                    }
+
+                    _kbContext.TB_Transaction_TMP.RemoveRange(data);
+                    _log.WriteLogMsg("Delete to TMP : Special Order | Obj : " + JsonConvert.SerializeObject(listObj));
+
+                    await _kbContext.SaveChangesAsync();
+
+                }
+
+                else //Update action
+                {
+                    if (string.IsNullOrWhiteSpace(listObj[0].PDS))
+                    {
+                        throw new CustomHttpException(400, "Please input Customer Order No.");
+                    }
+                    if (string.IsNullOrWhiteSpace(listObj[0].PartNo))
+                    {
+                        throw new CustomHttpException(400, "Please input Part No.");
+                    }
+                    if (string.IsNullOrWhiteSpace(listObj[0].StoreCD))
+                    {
+                        throw new CustomHttpException(400, "Please input Store Code.");
+                    }
+
+                    var data = _kbContext.TB_Transaction_TMP.Where(x => x.F_Type == "Special" && x.F_Type_Spc == "Special"
+                        && x.F_PDS_No == listObj[0].PDS
+                        && x.F_Delivery_Date.Substring(0, 6) == listObj[0].DeliveryDate.Substring(0, 6)
+                        && x.F_Part_Order + "-" + x.F_Ruibetsu_Order == listObj[0].PartNo
+                        && x.F_Store_Order == listObj[0].StoreCD)
+                        .ToList();
+
+                    if (data.Count == 0)
+                    {
+                        throw new CustomHttpException(400, "Can not Update Data because not found data in database!");
+                    }
+
+                    _kbContext.TB_Transaction_TMP.RemoveRange(data);
+                    await _kbContext.SaveChangesAsync();
+
+                    foreach (var obj in listObj)
+                    {
+                        if(obj.Qty == 0)
+                        {
+                            continue;
+                        }
+                        await _kbContext.Database.ExecuteSqlRawAsync($@"Exec dbo.SP_IMPORT_SPECIAL 
+                                '{obj.PDS}','Special','{obj.IssuedDate}','{obj.PartNo}','{obj.StoreCD}',
+                                '{obj.DeliveryDate}','{obj.Qty}','{obj.Trip}','{_BearerClass.UserCode}' ");
+
+                        _log.WriteLogMsg("Update to TMP : Special Order | Obj : " + JsonConvert.SerializeObject(obj));
+                    }
+                }
             }
             catch (Exception ex)
             {

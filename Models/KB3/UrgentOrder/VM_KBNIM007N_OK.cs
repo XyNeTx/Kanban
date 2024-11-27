@@ -23,5 +23,7 @@ namespace KANBAN.Models.KB3.UrgentOrder
         public string F_Delivery_Date { get; set; }
         [JsonPropertyName("Delivery_Trip")]
         public int F_Delivery_Trip { get; set; }
+        [JsonPropertyName("Remark")]
+        public string? F_Remark { get; set; }
     }
 }
