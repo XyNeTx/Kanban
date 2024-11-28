@@ -112,13 +112,45 @@ $("#mthDeliYM").change(async () => {
 //    await GetStoreCD();
 //});
 
+$("#fileIMP").change(async (e) => {
+    //console.log(e);
+    let inputFile = e.target.files;
+    if (inputFile.length == 0) return;
+    //console.log(inputFile);
+    let file = inputFile[0];
+    if (await xSwal.confirm("Are you sure?", "This action can't be undone")) await Import(file);
+
+});
+
+$("#fileSCP").change(async (e) => {
+    let inputFile = e.target.files;
+    if (inputFile.length == 0) return;
+
+    let file = inputFile[0];
+    let result = await xSwal.text("Importing File", "Please input advanced date.");
+    if (result.isConfirmed) {
+        await ImportSCP(file, result.value);
+    }
+});
+
+$("#fileIPMS").change(async (e) => {
+    let inputFile = e.target.files;
+    if (inputFile.length == 0) return;
+
+    let file = inputFile[0];
+    let result = await xSwal.text("Importing File", "Please input advanced date.");
+    if (result.isConfirmed) {
+        await ImportIPMS(file, result.value);
+    }
+});
+
 $("#btnRptPar").click(async () => {
     let obj = {
         Plant: _xLib.GetCookie("plantCode"),
         UserName: _xLib.GetUserName(),
         F_PDS_No: $("#selCustomerOrder").val().trim(),
-        F_Part_Order: $("#selPartNo").val().split("-")[0],
-        F_Ruibetsu_Order: $("#selPartNo").val().split("-")[1],
+        F_Part_Order: $("#selPartNo").val() ? $("#selPartNo").val().split("-")[0] : "",
+        F_Ruibetsu_Order: $("#selPartNo").val() ? $("#selPartNo").val().split("-")[1] : "",
         F_Store_CD: $("#selStoreCode").val(),   
         F_Delivery_Date: $("#mthDeliYM").val().replaceAll("-", ""),
     }
@@ -132,8 +164,8 @@ $("#btnRpt").click(async () => {
         Plant: _xLib.GetCookie("plantCode"),
         UserName: _xLib.GetUserName(),
         F_PDS_No: $("#selCustomerOrder").val().trim(),
-        F_Part_Order: $("#selPartNo").val().split("-")[0],
-        F_Ruibetsu_Order: $("#selPartNo").val().split("-")[1],
+        F_Part_Order: $("#selPartNo").val() ? $("#selPartNo").val().split("-")[0] : "",
+        F_Ruibetsu_Order: $("#selPartNo").val() ? $("#selPartNo").val().split("-")[1] : "",
     }
 
     _xLib.OpenReportObj("/KBNIM007", obj);
@@ -387,6 +419,48 @@ Save = async () => {
             xSwal.success(success.response, success.message);
             $("#selCustomerOrder").trigger("change");
             $("#selPartNo").trigger("change");
+        }
+    );
+}
+
+Import = async (inputFile) => {
+    let obj = new FormData();
+    let file = new Blob([inputFile], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+    obj.append("file", file, inputFile.name);
+
+
+    _xLib.AJAX_PostFile("/api/KBNIM007/Import", obj,
+        async (success) => {
+            //console.log(success);
+            xSwal.success(success.response, success.message);
+        }
+    );
+}
+
+ImportIPMS = async (inputFile,advanceDate) => {
+    let formData = new FormData();
+    //console.log(inputFile);
+    let file = new Blob([inputFile], { type: "text/csv" });
+    formData.append("file", file, inputFile.name);
+
+    _xLib.AJAX_PostFile("/api/KBNIM007/ImportIPMS?BackDate=" + advanceDate, formData,
+        async (success) => {
+            //console.log(success);
+            xSwal.success(success.response, success.message);
+        }
+    );
+}
+
+ImportSCP = async (inputFile,advanceDate) => {
+    let formData = new FormData();
+    console.log(inputFile);
+    let file = new Blob([inputFile], { type: "text/txt" });
+    formData.append("file", file, inputFile.name);
+
+    _xLib.AJAX_PostFile("/api/KBNIM007/ImportSCP?BackDate=" + advanceDate, formData,
+        async (success) => {
+            //console.log(success);
+            xSwal.success(success.response, success.message);
         }
     );
 }

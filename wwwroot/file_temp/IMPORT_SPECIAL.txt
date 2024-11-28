@@ -1,0 +1,2 @@
+Customer Order	Part No	Store Code	Delivery Date	Qty	
+TEST IMPORT	411100KB6000	00	20210605	10	

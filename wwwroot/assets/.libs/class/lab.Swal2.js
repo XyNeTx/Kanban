@@ -226,6 +226,28 @@ class libSwal {
         });
     }
 
+    text(pTitle, PMessage) {
+        return Swal.fire({
+            icon: 'question',
+            title: pTitle,
+            text: PMessage,
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: i18nLayout.modal.swal.question.confirm,
+            cancelButtonText: i18nLayout.modal.swal.question.cancel,
+            input: 'text',
+            inputAttributes: {
+                autocapitalize: 'off'
+            },
+        }).then((result) => {
+            console.log(result);
+            if (result.isConfirmed) {
+                return result
+            }
+        });
+    }
+
     success(pTitle = "", pMessage = "", pCallback = null) {
         Swal.fire({
             icon: 'success',

@@ -6,11 +6,11 @@ using KANBAN.Models.KB3.SpecialData.ViewModel;
 using KANBAN.Models.KB3.UrgentOrder;
 using KANBAN.Services.Automapper.Interface;
 using KANBAN.Services.Import.Interface;
-using KANBAN.Services.SpecialOrdering.Interface;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Data;
+using KANBAN.Models.KB3.SpecialOrdering;
+using ClosedXML.Excel;
 
 namespace KANBAN.Services.Import.Repository
 {
@@ -421,6 +421,181 @@ namespace KANBAN.Services.Import.Repository
             catch (Exception ex)
             {
                 if (ex is CustomHttpException) throw;
+                throw new CustomHttpException(500, ex.Message);
+            }
+        }
+
+        public async Task Import(VM_PostFile obj)
+        {
+            try
+            {
+                string path = Directory.GetCurrentDirectory() + "\\wwwroot\\file_temp\\IMPORT_SPECIAL.xlsx";
+
+                if (!Directory.Exists(Directory.GetCurrentDirectory() + "\\wwwroot\\file_temp"))
+                {
+                    Directory.CreateDirectory(Directory.GetCurrentDirectory() + "\\wwwroot\\file_temp");
+                }
+                if (File.Exists(path))
+                {
+                    File.Delete(path);
+                }
+
+                using (var stream = new FileStream(path, FileMode.Create))
+                {
+                    await obj.File.CopyToAsync(stream);
+                    stream.Close();
+                }
+
+                ConvertExcelToText();
+
+                await _kbContext.Database.ExecuteSqlRawAsync("EXEC dbo.SP_IM007_IMPORT '{0}'", _BearerClass.UserCode);
+
+                DataTable dt = _FillDT.ExecuteSQL($"EXEC dbo.SP_IM007_IMPORT '{_BearerClass.UserCode}'");
+
+                if (dt.Rows.Count > 0)
+                {
+                    if (dt.Rows[0].ItemArray[0].ToString() == "CAL ERROR")
+                    {
+                        throw new CustomHttpException(400, $"การทำงานผิดพลาด กรุณานำเข้าไฟล์ใหม่อีกครั้ง. Error Because : {dt.Rows[0].ItemArray[2].ToString()}");
+                    }
+                    else
+                    {
+                        throw new CustomHttpException(400, $"Opening Report ERROR");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                if (ex is CustomHttpException) throw;
+                throw new CustomHttpException(500, ex.Message);
+            }
+        }
+
+        public async Task ImportSCP(VM_PostFile obj,string BackDate)
+        {
+            try
+            {
+                string path = Directory.GetCurrentDirectory() + "\\wwwroot\\file_temp\\IMPORT_SPECIAL_SPC.txt";
+
+                if (!Directory.Exists(Directory.GetCurrentDirectory() + "\\wwwroot\\file_temp"))
+                {
+                    Directory.CreateDirectory(Directory.GetCurrentDirectory() + "\\wwwroot\\file_temp");
+                }
+                if (File.Exists(path))
+                {
+                    File.Delete(path);
+                }
+
+                using (var stream = new FileStream(path, FileMode.Create))
+                {
+                    await obj.File.CopyToAsync(stream);
+                    stream.Close();
+                }
+
+                await _kbContext.Database.ExecuteSqlRawAsync("EXEC dbo.SP_IM007_IMPORT_SCP '{0}', {1} ", _BearerClass.UserCode, int.Parse(BackDate));
+
+                DataTable dt = _FillDT.ExecuteSQL($"EXEC dbo.SP_IM007_IMPORT_SCP '{_BearerClass.UserCode}', '{BackDate}'");
+
+                if (dt.Rows.Count > 0)
+                {
+                    if (dt.Rows[0].ItemArray[0].ToString() == "CAL ERROR")
+                    {
+                        throw new CustomHttpException(400, $"การทำงานผิดพลาด กรุณานำเข้าไฟล์ใหม่อีกครั้ง. Error Because : {dt.Rows[0].ItemArray[2].ToString()}");
+                    }
+                    else
+                    {
+                        throw new CustomHttpException(400, $"Opening Report ERROR + {JsonConvert.SerializeObject(dt)}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                if (ex is CustomHttpException) throw;
+                throw new CustomHttpException(500, ex.Message);
+            }
+        }
+
+        public async Task ImportIPMS(VM_PostFile obj, string BackDate)
+        {
+            try
+            {
+                string path = Directory.GetCurrentDirectory() + "\\wwwroot\\file_temp\\IMPORT_SPECIAL_IPMS.CSV";
+
+                if (!Directory.Exists(Directory.GetCurrentDirectory() + "\\wwwroot\\file_temp"))
+                {
+                    Directory.CreateDirectory(Directory.GetCurrentDirectory() + "\\wwwroot\\file_temp");
+                }
+                if (File.Exists(path))
+                {
+                    File.Delete(path);
+                }
+
+                using (var stream = new FileStream(path, FileMode.Create))
+                {
+                    await obj.File.CopyToAsync(stream);
+                    stream.Close();
+                }
+
+                await _kbContext.Database.ExecuteSqlRawAsync("EXEC dbo.SP_IM007_IMPORT_IPMS '{0}', {1} ", _BearerClass.UserCode, int.Parse(BackDate));
+
+                DataTable dt = _FillDT.ExecuteSQL($"EXEC dbo.SP_IM007_IMPORT_IPMS '{_BearerClass.UserCode}', '{BackDate}'");
+
+                if (dt.Rows.Count > 0)
+                {
+                    if (dt.Rows[0].ItemArray[0].ToString() == "CAL ERROR")
+                    {
+                        throw new CustomHttpException(400, $"การทำงานผิดพลาด กรุณานำเข้าไฟล์ใหม่อีกครั้ง. Error Because : {dt.Rows[0].ItemArray[2].ToString()}");
+                    }
+                    else
+                    {
+                        throw new CustomHttpException(400, $"Opening Report ERROR");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                if (ex is CustomHttpException) throw;
+                throw new CustomHttpException(500, ex.Message);
+            }
+        }
+
+        public void ConvertExcelToText()
+        {
+            try
+            {
+                // Construct file paths
+                string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "file_temp", "IMPORT_SPECIAL.xlsx");
+                if (!File.Exists(path))
+                {
+                    throw new CustomHttpException(400, "File not found!");
+                }
+                string nNewFile = path.Replace(".xlsx", ".txt");
+
+                using (var workbook = new XLWorkbook(path))
+                {
+                    var worksheet = workbook.Worksheets.First(); // Get the first worksheet
+
+                    using (var writer = new StreamWriter(nNewFile))
+                    {
+                        // Iterate through rows and columns
+                        foreach (var row in worksheet.RowsUsed())
+                        {
+                            foreach (var cell in row.CellsUsed())
+                            {
+                                writer.Write(cell.GetValue<string>() + "\t"); // Write cell value with a tab separator
+                            }
+                            writer.WriteLine(); // New line after each row
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Re-throw custom exceptions
+                if (ex is CustomHttpException)
+                    throw;
+
+                // Wrap other exceptions in a custom exception
                 throw new CustomHttpException(500, ex.Message);
             }
         }

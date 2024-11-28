@@ -1,6 +1,7 @@
 ﻿using HINOSystem.Context;
 using HINOSystem.Libs;
 using KANBAN.Models.KB3.SpecialData.ViewModel;
+using KANBAN.Models.KB3.SpecialOrdering;
 using KANBAN.Services;
 using KANBAN.Services.Import.Interface;
 using KANBAN.Services.SpecialOrdering.Interface;
@@ -209,6 +210,69 @@ namespace HINOSystem.Controllers.API.Master
                     status = "200",
                     response = "Success",
                     message = "Data was saved successfully",
+                });
+            }
+            catch (CustomHttpException ex)
+            {
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Import([FromForm] VM_PostFile obj)
+        {
+            try
+            {
+                await _bearer.CheckAuthorize();
+                await _services.KBNIM007.Import(obj);
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data was imported successfully",
+                });
+            }
+            catch (CustomHttpException ex)
+            {
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ImportSCP([FromForm] VM_PostFile obj, [FromQuery] string BackDate)
+        {
+            try
+            {
+                await _bearer.CheckAuthorize();
+                await _services.KBNIM007.ImportSCP(obj, BackDate);
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data was imported successfully",
+                });
+            }
+            catch (CustomHttpException ex)
+            {
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ImportIPMS([FromForm] VM_PostFile obj, [FromQuery] string BackDate)
+        {
+            try
+            {
+                await _bearer.CheckAuthorize();
+                await _services.KBNIM007.ImportIPMS(obj, BackDate);
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data was imported successfully",
                 });
             }
             catch (CustomHttpException ex)
