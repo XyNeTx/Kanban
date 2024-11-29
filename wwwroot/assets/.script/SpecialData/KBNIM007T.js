@@ -1,124 +1,404 @@
-﻿$(document).ready(function () {
+﻿$(document).ready(async function () {
 
-    const xKBNIM007T = new ActionTemplate({
-        Controller: _PAGE_,
-        Form: 'frmCondition'
-    });
-
-    xKBNIM007T.prepare(function () {
-
-        var tblMaster = xDataTable.Initial({
-            name: 'tblMaster',
-            checking: 0,
-            dom: '<"clear">',
-            scrollX: true,
-            columnTitle: {
-                "EN": ['Order No.', 'Parent Part', 'Store Cd.', 'Supplier', 'Deli Date', 'Trip', 'Qty', 'Child Part', 'ST. Child', 'Child Name', 'Order Type'],
-                "TH": ['Order No.', 'Parent Part', 'Store Cd.', 'Supplier', 'Deli Date', 'Trip', 'Qty', 'Child Part', 'ST. Child', 'Child Name', 'Order Type'],
-                "JP": ['Order No.', 'Parent Part', 'Store Cd.', 'Supplier', 'Deli Date', 'Trip', 'Qty', 'Child Part', 'ST. Child', 'Child Name', 'Order Type'],
-            },
-            column: [
-                { "data": "F_Plant" },
-                { "data": "F_Plant" },
-                { "data": "F_Plant" },
-                { "data": "F_Plant" },
-                { "data": "F_Plant" },
-                { "data": "F_Plant" },
-                { "data": "F_Plant" },
-                { "data": "F_Plant" },
-                { "data": "F_Plant" },
-                { "data": "F_Plant" },
-                { "data": "F_OrderType" }
+    await _xDataTable.InitialDataTable("#tableSub",
+        {
+            columns: [
+                { title: "Order No.", data: "F_PDS_No" },
+                { title: "Parent Part", data: "F_Part_No" },
+                { title: "Store Cd.", data: "F_Store_CD" },
+                { title: "Supplier", data: "F_SUpplier" },
+                { title: "Deli Date", data: "F_Delivery_Date" },
+                { title: "Trip", data: "F_ROund" },
+                { title: "Qty", data: "F_Qty" },
+                { title: "Child Part", data: "F_Child_Part" },
+                { title: "ST. Child", data: "F_Store_Child" },
+                { title: "Child Name", data: "f_Child_Name" },
+                { title: "Order Type", data: "F_OrderType" },
             ],
-            addnew: false,
-            rowclick: (row) => {
-            }
-        });
-
-    });
-
-
-    xKBNIM007T.initial(function () {
-
-        xAjax.onClick('#chkDeliveryDate', function () {
-            if ($('#chkDeliveryDate').val() == 0) $('#fldDeliveryDate').prop('disabled', 'disabled');
-            if ($('#chkDeliveryDate').val() == 1) $('#fldDeliveryDate').prop('disabled', false);
-        });
-
-        xSplash.hide();
-    })
-
-    onExecute = function () {
-        xKBNIM007T.execute(function () {
-            console.log('onExecute');
-        })
-    }
-
-    onDeleteAll = function () {
-        xKBNIM007T.delete(function () {
-            console.log('onDelete');
-        })
-    }
-
-
-
-    _setDayInMonth = function () {
-        let _sDate = xDate.Now('yyyy-MM-01');
-        if ($('#txtOrderNo').val() != '') _sDate = $('#txtOrderNo').val() + '-01';
-
-        let _date = new Date(_sDate);
-        //console.log(_date);
-
-        let _sd = new Date(_date.setMonth(_date.getMonth()));
-        //console.log(_sd);
-
-        let _e = new Date(_date.setMonth(_date.getMonth() + 1));
-        //console.log(_e);
-
-        let _ed = new Date(_e.getFullYear(), _e.getMonth(), 0);
-        //console.log(_ed);
-
-        let _holiday = [3, 4, 5, 10, 16, 17, 24, 27, 28, 29, 30, 31];
-
-        //console.log(Number(xDate.Date('dd'))+2);
-
-        let _n, _row6 = 0;
-        for (var i = 0; i <= 41; i++) {
-            $('#txtDay' + i + '').attr('class', 'col clear');
-            $('#txtDay' + i + '').attr('style', 'visibility:visible;display:block;');
-            $('#txtDay' + i + '').prop('disabled', 'disabled');
-
-            if (i >= _sd.getDay() && i < (_sd.getDay() + _ed.getDate())) {
-                _n = ((_sd.getDay() - i) * -1) + 1;
-
-                $('#day' + i + '').text(_n);
-
-                if (_n <= Number(xDate.Date('dd')) + 3) {
-                    $('#txtDay' + i + '').attr('class', 'col workday');
-                } else {
-                    $('#txtDay' + i + '').prop('disabled', false);
-                }
-
-                if (_holiday.indexOf(_n) != -1) {
-                    $('#txtDay' + i + '').attr('class', 'col holiday');
-                    $('#txtDay' + i + '').prop('disabled', 'disabled');
-                }
-                //console.log('i>>' + i + ' n>>' + _n);
-                if (i >= 35) _row6 = 1;
-            } else {
-                $('#day' + i + '').text('');
-                $('#txtDay' + i + '').attr('style', 'visibility:hidden;display:none;');
-            }
+            scrollX: false,
+            order: [[1, "asc"]],
+            scrollCollapse: true,
+            scrollY: 500,
         }
-        $('#row6').attr('style', 'visibility:visible;display:block;');
-        if (_row6 == 0) $('#row6').attr('style', 'visibility:hidden;display:none;');
-        //console.log(_row6);
-    }
-    _setDayInMonth();
+    );
 
-    xAjax.onChange('#txtOrderNo', function () {
-        _setDayInMonth();
-    })
+    await $("#inpDate").initDatepicker();
+   
+
+    await GetPO();
+
+    xSplash.hide();
+
+    await ShowCalendar();
+    $("#inpDate").parent().parent().find("div").remove();
+});
+
+var _command = "";
+
+$("#btnNew").click(async () => {
+    await GetStoreCD();
+    //await GetPartNo();
+
+    $("#selCustomerOrder").parent().remove();
+    $("label[for='selCustomerOrder']").parent().append("<input type='text' class='form-control col-5' id='selCustomerOrder' name='selCustomerOrder' />");
+    $("#selCustomerOrder").val("");
+    $("#divInput").find("input").prop("disabled", false);
+    $("#divInput").find("select").prop("disabled", false);
+    $(".selectpicker").selectpicker("refresh");
+    $("#divBtn").find("button").prop("disabled", true);
+
+    $("#btnNew").prop("disabled", false);
+    $("#btnCan").prop("disabled", false);
+    $("#btnSave").prop("disabled", false);
+
+    _command = "NEW";
 
 });
 
+$("#btnDel").click(async () => {
+    $("#divInput").find("input").prop("disabled", false);
+    $("#divInput").find("select").prop("disabled", false);
+    $("#divInput").find("select").each(function () {
+        $(this).selectpicker("refresh");
+    });
+
+    $("#divBtn").find("button").prop("disabled", true);
+    $("#btnDel").prop("disabled", false);
+    $("#btnCan").prop("disabled", false);
+    $("#btnSave").prop("disabled", false);
+
+    await ShowCalendar();
+    await GetPO();
+
+    _command = "DEL";
+});
+
+$("#btnUpd").click(async () => {
+    $("#divInput").find("input").prop("disabled", false);
+    $("#divInput").find("select").prop("disabled", false);
+    $("#divInput").find("select").each(function () {
+        $(this).selectpicker("refresh");
+    });
+    $("#divBtn").find("button").prop("disabled", true);
+    $("#btnUpd").prop("disabled", false);
+    $("#btnCan").prop("disabled", false);
+    await ShowCalendar();
+    await GetPO();
+    _command = "UPD";
+});
+
+$("#btnInq").click(async () => {
+    $("#divInput").find("input").prop("disabled", false);
+    $("#divInput").find("select").prop("disabled", false);
+    $("#divInput").find("select").each(function () {
+        $(this).selectpicker("refresh");
+    });
+    $("#divBtn").find("button").prop("disabled", true);
+    $("#btnInq").prop("disabled", false);
+    $("#btnCan").prop("disabled", false);
+    $("#btnRptPar").prop("disabled", false);
+    $("#btnRpt").prop("disabled", false);
+    await ShowCalendar();
+    await GetPO();
+
+    _command = "INQ";
+
+});
+
+$("#mthDeliYM").change(async () => {
+    await ShowCalendar();
+    await GetPO();
+});
+
+$("#btnRptPar").click(async () => {
+    let obj = {
+        Plant: _xLib.GetCookie("plantCode"),
+        UserName: _xLib.GetUserName(),
+        F_PDS_No: $("#selCustomerOrder").val().trim(),
+        F_Part_Order: $("#selPartNo").val() ? $("#selPartNo").val().split("-")[0] : "",
+        F_Ruibetsu_Order: $("#selPartNo").val() ? $("#selPartNo").val().split("-")[1] : "",
+        F_Store_CD: $("#selStoreCode").val(),
+        F_Delivery_Date: $("#mthDeliYM").val().replaceAll("-", ""),
+    }
+
+    _xLib.OpenReportObj("/KBNIM007_Parent", obj);
+
+});
+
+$("#btnRpt").click(async () => {
+    let obj = {
+        Plant: _xLib.GetCookie("plantCode"),
+        UserName: _xLib.GetUserName(),
+        F_PDS_No: $("#selCustomerOrder").val().trim(),
+        F_Part_Order: $("#selPartNo").val() ? $("#selPartNo").val().split("-")[0] : "",
+        F_Ruibetsu_Order: $("#selPartNo").val() ? $("#selPartNo").val().split("-")[1] : "",
+    }
+
+    _xLib.OpenReportObj("/KBNIM007", obj);
+});
+
+$(document).on("change", "#selCustomerOrder", async () => {
+    await GetStoreCD();
+    await ListDataTable();
+});
+
+$("#selStoreCode").change(async () => {
+    await GetPartNo();
+});
+
+$("#selPartNo").change(async () => {
+    await PartNoSelected();
+    await ListCalendar();
+    await SetCalendar();
+});
+
+$("#btnCan").click(async () => {
+    if ($("#selCustomerOrder").prop("tagName") == "INPUT") {
+        $("#selCustomerOrder").remove();
+        $("label[for='selCustomerOrder']").parent().append("<select class='selectpicker col-5 p-0' id='selCustomerOrder' name='selCustomerOrder' disabled></select>");
+        $("#selCustomerOrder").append("<option value='' hidden></option>");
+        $("#selCustomerOrder").selectpicker("refresh");
+    }
+    $("#divInput").find("select").each(function () {
+        $(this).empty();
+        $(this).prop("disabled", true);
+        $(this).resetSelectPicker();
+    });
+
+    $("#divBtn").find("button").prop("disabled", false);
+    $("#btnCan").prop("disabled", true);
+    $("#btnSave").prop("disabled", true);
+});
+
+$("#btnSave").click(async () => {
+    let isConfirm = await xSwal.confirm("Are you sure?", "This action can't be undone");
+    if (!isConfirm) return;
+    await Save();
+});
+
+ShowCalendar = async () => {
+    $("#tableMain").find("tbody").remove();
+    let YM = $("#mthDeliYM").val();
+
+    let Table = $("#tableMain");
+    Table.append("<tbody></tbody>");
+
+    let day = 1;
+    const startDate = new Date(YM + "-01");
+    const endDate = new Date(startDate.getFullYear(), startDate.getMonth() + 1, 0);
+
+    for (let mockDay = 1; mockDay <= 42; mockDay++) {
+        //let readonly = "readonly";
+
+        if (mockDay % 7 == 1) {
+            Table.find("tbody").append("<tr>");
+        }
+
+        if (mockDay > startDate.getDay() && mockDay <= endDate.getDate() + startDate.getDay()) {
+            Table.find("tbody").find("tr:last").append(
+                `<td class='text-center'>
+                            <span class='fs-6'>${day}</span></br>
+                            <div class='row justify-content-center mt-1'>
+                                <input type='number' class='form-control fw-bolder' min='0' max='9999' style='width: 85%;'
+                                    id='QTY_${YM.replaceAll("-", "")}${day.toString().length == 1 ? "0" + day : day}'
+                                    name='QTY_${YM.replaceAll("-", "")}${day.toString().length == 1 ? "0" + day : day}' />
+                            </div>    
+                        </td >`
+            );
+            day++;
+        } else {
+            Table.find("tbody").find("tr:last").append("<td></td>");
+        }
+
+        if (mockDay % 7 == 0) {
+            Table.find("tbody").append("</tr>");
+        }
+    }
+
+    $("#tableMain").find("tbody tr:last").find("td").each(function () {
+        if ($(this).text() == "") {
+            $(this).remove();
+        }
+    });
+
+}
+
+GetPO = async () => {
+    let obj = await getQueryObj();
+
+    _xLib.AJAX_Get("/api/KBNIM007/GetPO", obj,
+        async (success) => {
+            //console.log(success);
+            $("#selCustomerOrder").empty();
+            $("#selCustomerOrder").append("<option value='' hidden></option>");
+            success.data.forEach((item) => {
+                $("#selCustomerOrder").append(`<option value='${item}'>${item}</option>`);
+            });
+            $("#selCustomerOrder").selectpicker("refresh");
+        }
+    );
+}
+
+GetStoreCD = async () => {
+    let obj = await getQueryObj();
+
+    _xLib.AJAX_Get("/api/KBNIM007/GetStoreCD", obj,
+        async (success) => {
+            success = _xLib.JSONparseMixData(success);
+            //console.log(success);
+            $("#selStoreCode").addListSelectPicker(success.data, "F_Store_CD");
+        }
+    );
+}
+
+ListCalendar = async () => {
+    let obj = await getQueryObj();
+
+    _xLib.AJAX_Get("/api/KBNIM007/ListCalendar", obj,
+        async (success) => {
+            //success = _xLib.JSONparseMixData(success);
+            //console.log(success);
+            $("#tableMain").find("input").val("");
+            $(success.data).each(function () {
+                let date = moment(this.f_Delivery_Date, "DD/MM/YYYY").format("YYYYMMDD");
+                $(`#QTY_${date}`).val(this.f_Qty);
+            });
+        }
+    );
+}
+
+SetCalendar = async () => {
+    let obj = await getQueryObj();
+
+    _xLib.AJAX_Get("/api/KBNIM007/SetCalendar", obj,
+        async (success) => {
+            success = _xLib.JSONparseMixData(success);
+            //console.log(success);
+            $("#tableMain").find("input").prop("readonly", false);
+            $("#tableMain").find("input").removeClass("bg-warning");
+            $("#tableMain").find("input").removeClass("bg-danger");
+            Object.keys(success.data[0]).forEach((key) => {
+                //console.log(key);
+                if (key.includes("F_workCd_D")) {
+                    let date = key.split("F_workCd_D")[1];
+                    //console.log(date);
+                    if (date.length == 1) date = "0" + date;
+                    if (success.data[0][key] == "1") {
+                        //console.log(obj.F_Date);
+                        if (success.data[0].F_Date <= obj.YM + date) {
+                            $(`#QTY_${obj.YM}${date}`).prop("readonly", false);
+                        }
+                        else {
+                            $(`#QTY_${obj.YM}${date}`).prop("readonly", true);
+                            $(`#QTY_${obj.YM}${date}`).addClass("bg-warning");
+                        }
+                    }
+                    else {
+                        $(`#QTY_${obj.YM}${date}`).prop("readonly", true);
+                        $(`#QTY_${obj.YM}${date}`).addClass("bg-danger");
+                    }
+                }
+            });
+        }
+    );
+}
+
+GetPartNo = async () => {
+    let obj = await getQueryObj();
+
+    _xLib.AJAX_Get("/api/KBNIM007/GetPartNo", obj,
+        async (success) => {
+            success = _xLib.JSONparseMixData(success);
+            //console.log(success);
+            $("#selPartNo").addListSelectPicker(success.data, "F_Part_No");
+        }
+    );
+}
+
+PartNoSelected = async () => {
+    let obj = await getQueryObj();
+
+    _xLib.AJAX_Get("/api/KBNIM007/PartNoSelected", obj,
+        async (success) => {
+            success = _xLib.JSONparseMixData(success);
+            //console.log(success);
+            $("#spanPartName").text("");
+            if (success.data.length > 0) {
+                $("#spanPartName").text(success.data[0].F_Part_NM);
+            }
+        }
+    );
+}
+
+
+getQueryObj = async () => {
+    let obj = {
+        YM: $("#mthDeliYM").val().replaceAll("-", ""),
+        PO: $("#selCustomerOrder").val(),
+        StoreCD: $("#selStoreCode").val(),
+        PartNo: $("#selPartNo").val(),
+        isNew: !($("#btnNew").prop("disabled"))
+    }
+
+    return obj;
+}
+
+getSaveObj = async () => {
+    let list = [];
+    $("#tableMain").find("input").each(function () {
+
+        let obj = {
+            PDS: $("#selCustomerOrder").val(),
+            IssuedDate: moment($("#inpDate").val(), "DD/MM/YYYY").format("YYYYMMDD"),
+            PartNo: $("#selPartNo").val(),
+            StoreCD: $("#selStoreCode").val(),
+            DeliveryDate: $("#mthDeliYM").val().replaceAll("-", ""),
+            Qty: 0,
+            Trip: 1,
+        }
+
+
+        if ($(this).val() != "") {
+            obj.Qty = $(this).val();
+            let date = $(this).attr("id").split("_")[1];
+            obj.DeliveryDate = date;
+            list.push(obj);
+        }
+
+        //for Delete Command and Update Command
+        if (_command == "DEL") {
+            list.push(obj);
+        }
+
+
+    });
+
+    return list;
+}
+
+Save = async () => {
+    let listObj = await getSaveObj();
+
+    _xLib.AJAX_Post("/api/KBNIM007/Save?action=" + _command, listObj,
+        async (success) => {
+            //console.log(success);
+            xSwal.success(success.response, success.message);
+            $("#selCustomerOrder").trigger("change");
+            $("#selPartNo").trigger("change");
+        }
+    );
+}
+
+ListDataTable = async () => {
+    let obj = await getQueryObj();
+
+    _xLib.AJAX_Get("/api/KBNIM007/ListDataTable", obj,
+        async (success) => {
+            success = _xLib.JSONparseMixData(success);
+            //console.log(success);
+            _xDataTable.ClearAndAddDataDT("#tableSub", success.data);
+            //$("#tableSub").DataTable().clear().draw();
+            //$("#tableSub").DataTable().rows.add(success.data).draw();
+        }
+    );
+}

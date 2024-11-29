@@ -1540,7 +1540,7 @@ namespace HINOSystem.Controllers.API.Master
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetDeliveryTime(string F_Supplier_Code)
+        public async Task<IActionResult> GetDeliveryTime(string F_Supplier_Code, string? date)
         {
             try
             {
@@ -1561,6 +1561,14 @@ namespace HINOSystem.Controllers.API.Master
                     && x.F_Supplier_Code.Trim() + "-" + x.F_Supplier_Plant.Trim() == F_Supplier_Code.Trim()
                     && x.F_Start_Order_Date.CompareTo(now) <= 0
                     && x.F_End_Order_Date.CompareTo(now) >= 0);
+
+                if (!string.IsNullOrWhiteSpace(date))
+                {
+                    data = await _KB3Context.TB_MS_DeliveryTime.FirstOrDefaultAsync(x => x.F_Plant == plant
+                        && x.F_Supplier_Code.Trim() + "-" + x.F_Supplier_Plant.Trim() == F_Supplier_Code.Trim()
+                        && x.F_Start_Order_Date.CompareTo(date) <= 0
+                        && x.F_End_Order_Date.CompareTo(date) >= 0);
+                }
 
                 if (data == null)
                 {

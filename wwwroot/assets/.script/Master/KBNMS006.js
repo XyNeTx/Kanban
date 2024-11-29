@@ -20,18 +20,22 @@ function prependDateLabel() {
     $('#stopDeliDate').datepicker({
         uiLibrary: 'bootstrap5',
         format: 'dd/mm/yyyy',
+        showRightIcon: false,
     });
     $('#stopStartDate').datepicker({
         uiLibrary: 'bootstrap5',
         format: 'dd/mm/yyyy',
+        showRightIcon: false,
     });
     $('#stopUpdateDate').datepicker({
         uiLibrary: 'bootstrap5',
         format: 'dd/mm/yyyy',
+        showRightIcon: false,
     });
     $('#stopProcessDate ').datepicker({
         uiLibrary: 'bootstrap5',
         format: 'dd/mm/yyyy',
+        showRightIcon: false,
     });
 
     $("#stopDeliDate").parent().prepend(`<label class="input-group-text col-5" for="boxDeliDate">Delivery Date</label>`);
@@ -49,18 +53,25 @@ function prependDateLabel() {
     $('#cutDeliDate').datepicker({
         uiLibrary: 'bootstrap5',
         format: 'dd/mm/yyyy',
+        showRightIcon: false,
     });
     $('#cutStartDate').datepicker({
         uiLibrary: 'bootstrap5',
         format: 'dd/mm/yyyy',
+        showRightIcon: false,
+
     });
     $('#cutUpdateDate').datepicker({
         uiLibrary: 'bootstrap5',
         format: 'dd/mm/yyyy',
+        showRightIcon: false,
+
     });
     $('#cutProcessDate ').datepicker({
         uiLibrary: 'bootstrap5',
         format: 'dd/mm/yyyy',
+        showRightIcon: false,
+
     });
 
     $("#cutDeliDate").parent().prepend(`<label class="input-group-text col-5" for="boxDeliDate">Delivery Date</label>`);
@@ -73,18 +84,25 @@ function prependDateLabel() {
     $('#boxDeliDate').datepicker({
         uiLibrary: 'bootstrap5',
         format: 'dd/mm/yyyy',
+        showRightIcon: false,
     });
     $('#boxStartDate').datepicker({
         uiLibrary: 'bootstrap5',
         format: 'dd/mm/yyyy',
+        showRightIcon: false,
+
     });
     $('#boxUpdateDate').datepicker({
         uiLibrary: 'bootstrap5',
         format: 'dd/mm/yyyy',
+        showRightIcon: false,
+
     });
     $('#boxProcessDate ').datepicker({
         uiLibrary: 'bootstrap5',
         format: 'dd/mm/yyyy',
+        showRightIcon: false,
+
     });
 
     $("#boxDeliDate").parent().prepend(`<label class="input-group-text col-5" for="boxDeliDate">Delivery Date</label>`);
@@ -471,11 +489,30 @@ $("#boxBtnEdit").click(function () {
 
     $("#boxTrip").prop("readonly", false);
     $("#boxQty").prop("readonly", false);
-    $("#boxDeliDate").parent().find("button").prop("disabled", false);
+    $("#boxDeliDate").prop("readonly", false);
 
     $("#boxBtnCanc").parent().find("button").prop("disabled", true);
     $("#boxBtnCanc").prop("disabled", false);
     $("#boxBtnSave").prop("disabled", false);
+});
+
+$("#boxDeliDate").change(function () {
+
+    _xLib.AJAX_Get("/api/KBNMS006/GetDeliveryTime",
+        {
+            F_Supplier_Code: $("#selectSupplier").val(),
+            date: moment($("#stopDeliDate").val(), "DD/MM/YYYY").format("YYYYMMDD")
+        },
+        function (success) {
+            if (success.status == 200) {
+                console.log(success.data);
+                $("#readCycle").val(success.data);
+            }
+        },
+        function (error) {
+            xSwal.error("Error", "Delivery Time Not Found");
+        }
+    );
 });
 
 $("#cutBtnEdit").click(function () {
@@ -483,21 +520,59 @@ $("#cutBtnEdit").click(function () {
     $("#cutTrip").prop("readonly", false);
     $("#cutKB").prop("readonly", false);
     $("#cutKBCycle").prop("readonly", false);
-    $("#cutDeliDate").parent().find("button").prop("disabled", false);
+    $("#cutDeliDate").prop("readonly", false);
 
 
     $("#cutBtnCanc").parent().find("button").prop("disabled", true);
     $("#cutBtnCanc").prop("disabled", false);
     $("#cutBtnSave").prop("disabled", false);
 });
+
+$("#cutDeliDate").change(function () {
+    _xLib.AJAX_Get("/api/KBNMS006/GetDeliveryTime",
+        {
+            F_Supplier_Code: $("#selectSupplier").val(),
+            date: moment($("#stopDeliDate").val(), "DD/MM/YYYY").format("YYYYMMDD")
+        },
+        function (success) {
+            if (success.status == 200) {
+                console.log(success.data);
+                $("#readCycle").val(success.data);
+            }
+        },
+        function (error) {
+            xSwal.error("Error", "Delivery Time Not Found");
+        }
+    );
+});
+
+
 $("#stopBtnEdit").click(function () {
 
     $("#stopTrip").prop("readonly", false);
-    $("#stopDeliDate").parent().find("button").prop("disabled", false);
+    $("#stopDeliDate").prop("readonly", false);
 
     $("#stopBtnCanc").parent().find("button").prop("disabled", true);
     $("#stopBtnCanc").prop("disabled", false);
     $("#stopBtnSave").prop("disabled", false);
+});
+
+$("#stopDeliDate").change(function () {
+    _xLib.AJAX_Get("/api/KBNMS006/GetDeliveryTime",
+        {
+            F_Supplier_Code: $("#selectSupplier").val(),
+            date: moment($("#stopDeliDate").val(), "DD/MM/YYYY").format("YYYYMMDD")
+        },
+        function (success) {
+            if (success.status == 200) {
+                console.log(success.data);
+                $("#readCycle").val(success.data);
+            }
+        },
+        function (error) {
+            xSwal.error("Error", "Delivery Time Not Found");
+        }
+    );
 });
 
 
