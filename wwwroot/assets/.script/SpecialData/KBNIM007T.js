@@ -30,18 +30,23 @@
     xSplash.hide();
 
     await ShowCalendar();
-    $("#inpDate").parent().parent().find("div").remove();
+    //$("#inpDate").parent().parent().find("div").remove();
 });
 
 var _command = "";
 
 $("#btnNew").click(async () => {
-    await GetStoreCD();
-    //await GetPartNo();
+    await GetParentStoreCD();
+    await GetCompStoreCD();
 
-    $("#selCustomerOrder").parent().remove();
-    $("label[for='selCustomerOrder']").parent().append("<input type='text' class='form-control col-5' id='selCustomerOrder' name='selCustomerOrder' />");
-    $("#selCustomerOrder").val("");
+    if ($("#selCustomerOrder").prop("tagName") == "SELECT") {
+
+        $("#selCustomerOrder").parent().remove();
+        $("label[for='selCustomerOrder']").parent().append("<input type='text' class='form-control col-5' id='selCustomerOrder' name='selCustomerOrder' />");
+        $("#selCustomerOrder").val("");
+    }
+
+
     $("#divInput").find("input").prop("disabled", false);
     $("#divInput").find("select").prop("disabled", false);
     $(".selectpicker").selectpicker("refresh");
@@ -138,17 +143,30 @@ $("#btnRpt").click(async () => {
 });
 
 $(document).on("change", "#selCustomerOrder", async () => {
-    await GetStoreCD();
-    await ListDataTable();
+    await GetParentStoreCD();
+
+    //await ListDataTable();
 });
 
 $("#selStoreCode").change(async () => {
-    await GetPartNo();
+    await GetParentPartNo();
 });
 
 $("#selPartNo").change(async () => {
-    await PartNoSelected();
-    await ListCalendar();
+    //await PartNoSelected();
+    //await ListCalendar();
+    await GetCompStoreCD();
+    await SetCalendar();
+    await GetParentPartDetail();
+});
+
+$("#selCompStoreCode").change(async () => {
+    await GetCompPartNo();
+});
+
+$("#selCompPartNo").change(async () => {
+    await ComponentStoreSelected();
+    await ComponentPartSelected();
     await SetCalendar();
 });
 
@@ -226,7 +244,7 @@ ShowCalendar = async () => {
 GetPO = async () => {
     let obj = await getQueryObj();
 
-    _xLib.AJAX_Get("/api/KBNIM007/GetPO", obj,
+    _xLib.AJAX_Get("/api/KBNIM007T/GetPO", obj,
         async (success) => {
             //console.log(success);
             $("#selCustomerOrder").empty();
@@ -239,38 +257,138 @@ GetPO = async () => {
     );
 }
 
-GetStoreCD = async () => {
+GetParentStoreCD = async () => {
     let obj = await getQueryObj();
 
-    _xLib.AJAX_Get("/api/KBNIM007/GetStoreCD", obj,
+    _xLib.AJAX_Get("/api/KBNIM007T/GetParentStore", obj,
         async (success) => {
             success = _xLib.JSONparseMixData(success);
             //console.log(success);
-            $("#selStoreCode").addListSelectPicker(success.data, "F_Store_CD");
+            $("#selStoreCode").empty();
+            $("#selStoreCode").append("<option value='' hidden></option>");
+            success.data.forEach((item) => {
+                $("#selStoreCode").append(`<option value='${item.F_Store_Cd}'>${item.F_Store_Cd}</option>`);
+            });
+            $("#selStoreCode").selectpicker("refresh");
         }
     );
 }
 
-ListCalendar = async () => {
+GetParentPartNo = async () => {
     let obj = await getQueryObj();
 
-    _xLib.AJAX_Get("/api/KBNIM007/ListCalendar", obj,
+    _xLib.AJAX_Get("/api/KBNIM007T/GetParentPart", obj,
         async (success) => {
-            //success = _xLib.JSONparseMixData(success);
+            success = _xLib.JSONparseMixData(success);
             //console.log(success);
-            $("#tableMain").find("input").val("");
-            $(success.data).each(function () {
-                let date = moment(this.f_Delivery_Date, "DD/MM/YYYY").format("YYYYMMDD");
-                $(`#QTY_${date}`).val(this.f_Qty);
+            $("#selPartNo").empty();
+            $("#selPartNo").append("<option value='' hidden></option>");
+            success.data.forEach((item) => {
+                $("#selPartNo").append(`<option value='${item.F_Part_No}'>${item.F_Part_No}</option>`);
             });
+            $("#selPartNo").selectpicker("refresh");
         }
     );
 }
+
+GetCompStoreCD = async () => {
+    let obj = await getQueryObj();
+
+    _xLib.AJAX_Get("/api/KBNIM007T/GetComponentStore", obj,
+        async (success) => {
+            success = _xLib.JSONparseMixData(success);
+            //console.log(success);
+            $("#selCompStoreCode").empty();
+            $("#selCompStoreCode").append("<option value='' hidden></option>");
+            success.data.forEach((item) => {
+                $("#selCompStoreCode").append(`<option value='${item.F_Store_Cd}'>${item.F_Store_Cd}</option>`);
+            });
+            $("#selCompStoreCode").selectpicker("refresh");
+        }
+    );
+}
+
+GetCompPartNo = async () => {
+    let obj = await getQueryObj();
+
+    _xLib.AJAX_Get("/api/KBNIM007T/GetComponentPartNo", obj,
+        async (success) => {
+            success = _xLib.JSONparseMixData(success);
+            //console.log(success);
+            $("#selCompPartNo").empty();
+            $("#selCompPartNo").append("<option value='' hidden></option>");
+            success.data.forEach((item) => {
+                $("#selCompPartNo").append(`<option value='${item.F_Part_No}'>${item.F_Part_No}</option>`);
+            });
+            $("#selCompPartNo").selectpicker("refresh");
+        }
+    );
+}
+
+GetParentPartDetail = async () => {
+    let obj = await getQueryObj();
+
+    _xLib.AJAX_Get("/api/KBNIM007T/GetParentPartDetail", obj,
+        async (success) => {
+            success = _xLib.JSONparseMixData(success);
+            console.log(success);
+            $("#spanPartName").text(success.data[0].F_Part_NM);
+            $("#spanPartName").removeClass("invisible");
+        }
+    );
+}
+ComponentStoreSelected = async () => {
+    let obj = await getQueryObj();
+
+    _xLib.AJAX_Get("/api/KBNIM007T/ComponentStoreSelected", obj,
+        async (success) => {
+            success = _xLib.JSONparseMixData(success);
+            //console.log(success);
+            //console.log($("#selCompSupplier"));
+            //$("#selCompSupplier").addListSelectPicker(success.data[1], "F_Supplier_Cd");
+            $("#selCompSupplier").empty();
+            $("#selCompSupplier").append(`<option value=${success.data[1][0].F_Supplier_Cd}>${success.data[1][0].F_Supplier_Cd}</option>`);
+            $("#selCompSupplier").selectpicker("val", success.data[1][0].F_Supplier_Cd);
+            $("#selCompSupplier").selectpicker("refresh");
+        }
+    );
+}
+ComponentPartSelected = async () => {
+    let obj = await getQueryObj();
+
+    _xLib.AJAX_Get("/api/KBNIM007T/ComponentPartSelected", obj,
+        async (success) => {
+            success = _xLib.JSONparseMixData(success);
+            //console.log(success);
+            $("#spanCompPartName").text(success.data[0].F_Part_NM);
+            $("#spanCompPartName").removeClass("invisible");
+            $('#spanCompSupplierName').text(success.data[0].F_Sup_name);
+            $('#spanCompSupplierName').removeClass("invisible");
+        }
+    );
+}
+
+
+//ListCalendar = async () => {
+//    let obj = await getQueryObj();
+
+//    _xLib.AJAX_Get("/api/KBNIM007/ListCalendar", obj,
+//        async (success) => {
+//            //success = _xLib.JSONparseMixData(success);
+//            //console.log(success);
+//            $("#tableMain").find("input").val("");
+//            $(success.data).each(function () {
+//                let date = moment(this.f_Delivery_Date, "DD/MM/YYYY").format("YYYYMMDD");
+//                $(`#QTY_${date}`).val(this.f_Qty);
+//            });
+//        }
+//    );
+//}
 
 SetCalendar = async () => {
     let obj = await getQueryObj();
 
-    _xLib.AJAX_Get("/api/KBNIM007/SetCalendar", obj,
+    _xLib.AJAX_Get("/api/KBNIM007T/SetCalendar", obj,
         async (success) => {
             success = _xLib.JSONparseMixData(success);
             //console.log(success);
@@ -284,7 +402,7 @@ SetCalendar = async () => {
                     //console.log(date);
                     if (date.length == 1) date = "0" + date;
                     if (success.data[0][key] == "1") {
-                        //console.log(obj.F_Date);
+                        //console.log(success.data[0].F_Date);
                         if (success.data[0].F_Date <= obj.YM + date) {
                             $(`#QTY_${obj.YM}${date}`).prop("readonly", false);
                         }
@@ -303,43 +421,18 @@ SetCalendar = async () => {
     );
 }
 
-GetPartNo = async () => {
-    let obj = await getQueryObj();
-
-    _xLib.AJAX_Get("/api/KBNIM007/GetPartNo", obj,
-        async (success) => {
-            success = _xLib.JSONparseMixData(success);
-            //console.log(success);
-            $("#selPartNo").addListSelectPicker(success.data, "F_Part_No");
-        }
-    );
-}
-
-PartNoSelected = async () => {
-    let obj = await getQueryObj();
-
-    _xLib.AJAX_Get("/api/KBNIM007/PartNoSelected", obj,
-        async (success) => {
-            success = _xLib.JSONparseMixData(success);
-            //console.log(success);
-            $("#spanPartName").text("");
-            if (success.data.length > 0) {
-                $("#spanPartName").text(success.data[0].F_Part_NM);
-            }
-        }
-    );
-}
-
-
 getQueryObj = async () => {
     let obj = {
         YM: $("#mthDeliYM").val().replaceAll("-", ""),
         PO: $("#selCustomerOrder").val(),
-        StoreCD: $("#selStoreCode").val(),
-        PartNo: $("#selPartNo").val(),
-        isNew: !($("#btnNew").prop("disabled"))
+        IssuedDate : moment($("#inpDate").val(), "DD/MM/YYYY").format("YYYYMMDD"),
+        ParentStoreCD: $("#selStoreCode").val(),
+        ParentPartNo: $("#selPartNo").val(),
+        CompStoreCD: $("#selCompStoreCode").val(),
+        CompPartNo: $("#selCompPartNo").val(),
+        isNew: !($("#btnNew").prop("disabled")),
+        TypeSpc: $("input[name='rdoType']:checked").val(),
     }
-
     return obj;
 }
 
@@ -376,29 +469,29 @@ getSaveObj = async () => {
     return list;
 }
 
-Save = async () => {
-    let listObj = await getSaveObj();
+//Save = async () => {
+//    let listObj = await getSaveObj();
 
-    _xLib.AJAX_Post("/api/KBNIM007/Save?action=" + _command, listObj,
-        async (success) => {
-            //console.log(success);
-            xSwal.success(success.response, success.message);
-            $("#selCustomerOrder").trigger("change");
-            $("#selPartNo").trigger("change");
-        }
-    );
-}
+//    _xLib.AJAX_Post("/api/KBNIM007/Save?action=" + _command, listObj,
+//        async (success) => {
+//            //console.log(success);
+//            xSwal.success(success.response, success.message);
+//            $("#selCustomerOrder").trigger("change");
+//            $("#selPartNo").trigger("change");
+//        }
+//    );
+//}
 
-ListDataTable = async () => {
-    let obj = await getQueryObj();
+//ListDataTable = async () => {
+//    let obj = await getQueryObj();
 
-    _xLib.AJAX_Get("/api/KBNIM007/ListDataTable", obj,
-        async (success) => {
-            success = _xLib.JSONparseMixData(success);
-            //console.log(success);
-            _xDataTable.ClearAndAddDataDT("#tableSub", success.data);
-            //$("#tableSub").DataTable().clear().draw();
-            //$("#tableSub").DataTable().rows.add(success.data).draw();
-        }
-    );
-}
+//    _xLib.AJAX_Get("/api/KBNIM007/ListDataTable", obj,
+//        async (success) => {
+//            success = _xLib.JSONparseMixData(success);
+//            //console.log(success);
+//            _xDataTable.ClearAndAddDataDT("#tableSub", success.data);
+//            //$("#tableSub").DataTable().clear().draw();
+//            //$("#tableSub").DataTable().rows.add(success.data).draw();
+//        }
+//    );
+//}

@@ -1,147 +1,222 @@
-﻿using Microsoft.AspNetCore.Http.Extensions;
-using Microsoft.AspNetCore.Mvc;
-using System.Data;
-using System;
-using System.Web;
-using System.Security.Principal;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-
-using System.Reflection.PortableExecutable;
-using System.DirectoryServices;
-using System.DirectoryServices.AccountManagement;
-using Microsoft.Net.Http.Headers;
-using System.Collections.Specialized;
-using System.Net;
-using System.DirectoryServices.ActiveDirectory;
-using System.Net.Http;
-using Microsoft.AspNetCore.Authorization;
-
-using System.Security.Claims;
-using Org.BouncyCastle.Asn1.Ocsp;
-
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-
-using System.Threading.Tasks;
-
+﻿using HINOSystem.Context;
 using HINOSystem.Libs;
-using HINOSystem.Context;
-using HINOSystem.Models.KB3;
-using NPOI.HPSF;
-using Humanizer;
-using NPOI.SS.Formula.Functions;
-using NPOI.SS.Formula.Eval;
-using PdfSharp.Pdf.Filters;
-using MathNet.Numerics.LinearAlgebra.Factorization;
-using Microsoft.CodeAnalysis.Differencing;
-using Microsoft.VisualBasic;
-using static System.Net.Mime.MediaTypeNames;
-using NPOI.POIFS.Properties;
+using KANBAN.Services;
+using KANBAN.Services.Import.Interface;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 //using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HINOSystem.Controllers.API.Master
 {
-    public class KBNIM007TController : Controller
+    [Route("api/[controller]/[action]")]
+    [ApiController]
+    public class KBNIM007TController : ControllerBase
     {
-        private readonly IConfiguration _configuration;
-        private readonly BearerClass _BearerClass;
-        private readonly ActionResultClass _ActionResult;        
-        private readonly KanbanConnection _KBCN;
-        private readonly PPMConnect _PPMConnect;
+        private readonly IImportService _services;
+        private readonly BearerClass _bearer;
 
-        private readonly KB3Context _KB3Context;
-
-
-        private readonly string StoragePath = @"wwwroot\Storage\Uploads";
-
-        public KBNIM007TController(
-            IConfiguration configuration,
-            BearerClass bearerClass,
-            ActionResultClass actionResultClass,
-            KanbanConnection kanbanConnection,
-            PPMConnect ppmConnect,
-            KB3Context kB3Context
-            )
+        public KBNIM007TController(IImportService services, BearerClass bearer)
         {
-            _configuration = configuration;
-            _BearerClass = bearerClass;
-            _ActionResult = actionResultClass;
-            _KB3Context = kB3Context;
-            _KBCN = kanbanConnection;
-            _PPMConnect = ppmConnect;
-
+            _services = services;
+            _bearer = bearer;
         }
 
-
-
-        [HttpPost]
-        public IActionResult initial([FromBody] string pData = null)
+        public async Task<IActionResult> SetCalendar(string YM, string? ParentStoreCD, string TypeSpc)
         {
-            dynamic _json = null;
-            string _SQL = "";
             try
             {
-                _BearerClass.Authentication(Request);
-                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
+                await _bearer.CheckAuthorize();
 
-                if (pData != null) _json = JsonConvert.DeserializeObject(pData);
+                var result = _services.KBNIM007T.SetCalendar(YM, ParentStoreCD, TypeSpc);
 
-                _SQL = @" EXEC [exec].[spTB_MS_FACTORY] ";
-                string _jsTB_MS_Factory = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
-
-                string _result = @"{
-                    ""status"":""200"",
-                    ""response"":""OK"",
-                    ""message"": ""Data Found"",
-                    ""data"":
-                            {
-                                ""TB_MS_Factory"" : " + _jsTB_MS_Factory + @"
-                            }
-                }";
-                return Content(_result, "application/json");
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data Found",
+                    data = result
+                });
             }
-            catch (Exception e)
+            catch (CustomHttpException ex)
             {
-                return Content(e.Message.ToString(), "application/json");
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
             }
         }
 
-
-
-        [HttpPost]
-        public IActionResult search([FromBody] string pData = null)
+        public async Task<IActionResult> GetPO(string YM, string TypeSpc)
         {
-            dynamic _json = null;
-            string _SQL = "";
             try
             {
-                _BearerClass.Authentication(Request);
-                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
+                await _bearer.CheckAuthorize();
 
-                _json = JsonConvert.DeserializeObject(pData);
+                var result = await _services.KBNIM007T.GetPO(YM, TypeSpc);
 
-
-                _SQL = @" EXEC [exec].[spKBNMS001_SEARCH] '" + _json.F_Plant + "' ";
-                string _jsonData = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
-
-
-
-                string _result = @"{
-                    ""status"":""200"",
-                    ""response"":""OK"",
-                    ""message"": ""Data Found"",
-                    ""data"": " + _jsonData + @"
-                }";
-                return Content(_result, "application/json");
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data Found",
+                    data = result.Select(x => x.F_PDS_No).Distinct().ToList()
+                });
             }
-            catch (Exception e)
+            catch (CustomHttpException ex)
             {
-                return Content(e.Message.ToString(), "application/json");
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
             }
         }
 
+        public async Task<IActionResult> GetParentStore(string YM, string? PO, bool isNew)
+        {
+            try
+            {
+                await _bearer.CheckAuthorize();
 
+                var result = await _services.KBNIM007T.GetParentStore(YM, PO, isNew);
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data Found",
+                    data = result
+                });
+            }
+            catch (CustomHttpException ex)
+            {
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
+            }
+        }
+
+        public async Task<IActionResult> GetParentPart(string YM, string PO, string ParentStoreCD, bool isNew)
+        {
+            try
+            {
+                await _bearer.CheckAuthorize();
+
+                var result = await _services.KBNIM007T.GetParentPart(YM, PO, ParentStoreCD, isNew);
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data Found",
+                    data = result
+                });
+            }
+            catch (CustomHttpException ex)
+            {
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
+            }
+        }
+
+        public async Task<IActionResult> GetParentPartDetail(string YM, string ParentStoreCD, string ParentPartNo, bool isNew)
+        {
+            try
+            {
+                await _bearer.CheckAuthorize();
+
+                var result = await _services.KBNIM007T.GetParentPartDetail(YM, ParentStoreCD, ParentPartNo, isNew);
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data Found",
+                    data = result
+                });
+            }
+            catch (CustomHttpException ex)
+            {
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
+            }
+        }
+
+        public async Task<IActionResult> GetComponentStore(string YM, string? PO, string? ParentPartNo, bool isNew)
+        {
+            try
+            {
+                await _bearer.CheckAuthorize();
+
+                var result = await _services.KBNIM007T.GetComponentStore(YM, PO, ParentPartNo, isNew);
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data Found",
+                    data = result
+                });
+            }
+            catch (CustomHttpException ex)
+            {
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
+            }
+        }
+
+        public async Task<IActionResult> GetComponentPartNo(string YM, string PO, string? CompStoreCD, string? ParentPartNo, bool isNew)
+        {
+            try
+            {
+                await _bearer.CheckAuthorize();
+
+                var result = await _services.KBNIM007T.GetComponentPartNo(YM, PO, CompStoreCD, ParentPartNo, isNew);
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data Found",
+                    data = result
+                });
+            }
+            catch (CustomHttpException ex)
+            {
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
+            }
+        }
+
+        public async Task<IActionResult> ComponentStoreSelected(string YM, string? PO, string? CompStoreCD, string? CompPartNo, string IssuedDate, bool isNew)
+        {
+            try
+            {
+                await _bearer.CheckAuthorize();
+
+                var result = await _services.KBNIM007T.ComponentStoreSelected(YM, PO, CompStoreCD, CompPartNo, IssuedDate, isNew);
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data Found",
+                    data = result
+                });
+            }
+            catch (CustomHttpException ex)
+            {
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
+            }
+        }
+
+        public async Task<IActionResult> ComponentPartSelected(string YM, string? CompStoreCD, string? CompPartNo, string? ParentPartNo, bool isNew)
+        {
+            try
+            {
+                await _bearer.CheckAuthorize();
+
+                var result = await _services.KBNIM007T.ComponentPartSelected(YM, CompStoreCD, CompPartNo, ParentPartNo, isNew);
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data Found",
+                    data = result
+                });
+            }
+            catch (CustomHttpException ex)
+            {
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
+            }
+        }
     }
 }
