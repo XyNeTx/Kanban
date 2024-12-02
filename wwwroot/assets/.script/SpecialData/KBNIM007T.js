@@ -6,13 +6,13 @@
                 { title: "Order No.", data: "F_PDS_No" },
                 { title: "Parent Part", data: "F_Part_No" },
                 { title: "Store Cd.", data: "F_Store_CD" },
-                { title: "Supplier", data: "F_SUpplier" },
+                { title: "Supplier", data: "F_Supplier" },
                 { title: "Deli Date", data: "F_Delivery_Date" },
-                { title: "Trip", data: "F_ROund" },
+                { title: "Trip", data: "F_Round" },
                 { title: "Qty", data: "F_Qty" },
                 { title: "Child Part", data: "F_Child_Part" },
                 { title: "ST. Child", data: "F_Store_Child" },
-                { title: "Child Name", data: "f_Child_Name" },
+                { title: "Child Name", data: "F_Part_Name" },
                 { title: "Order Type", data: "F_OrderType" },
             ],
             scrollX: false,
@@ -154,10 +154,11 @@ $("#selStoreCode").change(async () => {
 
 $("#selPartNo").change(async () => {
     //await PartNoSelected();
-    //await ListCalendar();
     await GetCompStoreCD();
     await SetCalendar();
     await GetParentPartDetail();
+    await ListCalendar();
+    await ListDataTable();
 });
 
 $("#selCompStoreCode").change(async () => {
@@ -168,6 +169,8 @@ $("#selCompPartNo").change(async () => {
     await ComponentStoreSelected();
     await ComponentPartSelected();
     await SetCalendar();
+    await ListCalendar();
+    await ListDataTable();
 });
 
 $("#btnCan").click(async () => {
@@ -331,7 +334,7 @@ GetParentPartDetail = async () => {
     _xLib.AJAX_Get("/api/KBNIM007T/GetParentPartDetail", obj,
         async (success) => {
             success = _xLib.JSONparseMixData(success);
-            console.log(success);
+            //console.log(success);
             $("#spanPartName").text(success.data[0].F_Part_NM);
             $("#spanPartName").removeClass("invisible");
         }
@@ -369,21 +372,21 @@ ComponentPartSelected = async () => {
 }
 
 
-//ListCalendar = async () => {
-//    let obj = await getQueryObj();
+ListCalendar = async () => {
+    let obj = await getQueryObj();
 
-//    _xLib.AJAX_Get("/api/KBNIM007/ListCalendar", obj,
-//        async (success) => {
-//            //success = _xLib.JSONparseMixData(success);
-//            //console.log(success);
-//            $("#tableMain").find("input").val("");
-//            $(success.data).each(function () {
-//                let date = moment(this.f_Delivery_Date, "DD/MM/YYYY").format("YYYYMMDD");
-//                $(`#QTY_${date}`).val(this.f_Qty);
-//            });
-//        }
-//    );
-//}
+    _xLib.AJAX_Get("/api/KBNIM007T/ListCalendar", obj,
+        async (success) => {
+            success = _xLib.JSONparseMixData(success);
+            //console.log(success);
+            $("#tableMain").find("input").val("");
+            $(success.data).each(function () {
+                let date = moment(this.F_Delivery_Date, "DD/MM/YYYY").format("YYYYMMDD");
+                $(`#QTY_${date}`).val(this.F_Qty);
+            });
+        }
+    );
+}
 
 SetCalendar = async () => {
     let obj = await getQueryObj();
@@ -482,16 +485,16 @@ getSaveObj = async () => {
 //    );
 //}
 
-//ListDataTable = async () => {
-//    let obj = await getQueryObj();
+ListDataTable = async () => {
+    let obj = await getQueryObj();
 
-//    _xLib.AJAX_Get("/api/KBNIM007/ListDataTable", obj,
-//        async (success) => {
-//            success = _xLib.JSONparseMixData(success);
-//            //console.log(success);
-//            _xDataTable.ClearAndAddDataDT("#tableSub", success.data);
-//            //$("#tableSub").DataTable().clear().draw();
-//            //$("#tableSub").DataTable().rows.add(success.data).draw();
-//        }
-//    );
-//}
+    _xLib.AJAX_Get("/api/KBNIM007T/ListDatatable", obj,
+        async (success) => {
+            success = _xLib.JSONparseMixData(success);
+            console.log(success);
+            _xDataTable.ClearAndAddDataDT("#tableSub", success.data);
+            //$("#tableSub").DataTable().clear().draw();
+            //$("#tableSub").DataTable().rows.add(success.data).draw();
+        }
+    );
+}

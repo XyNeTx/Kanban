@@ -78,7 +78,7 @@ namespace KANBAN.Services.Import.Repository
             try
             {
                 var data = await _kbContext.TB_Transaction_TMP
-                    .Where(x=>x.F_Type == "Special"
+                    .Where(x=>x.F_Type == "Trial"
                     && x.F_Delivery_Date.Substring(0,6) == YM
                     && x.F_Type_Spc.ToUpper() == TypeSpc)
                     .OrderBy(x=>x.F_PDS_No).ToListAsync();
@@ -113,11 +113,11 @@ namespace KANBAN.Services.Import.Repository
 
                 var data = await _kbContext.TB_Transaction_TMP
                     .Where(x => x.F_PDS_No == PO
-                    && x.F_Type == "Special"
+                    && x.F_Type == "Trial"
                     && x.F_Delivery_Date.Substring(0, 6) == YM)
                    .Select(x => new
                    {
-                       F_Store_CD = x.F_Store_Order
+                       F_Store_Cd = x.F_Store_Order
                    }).Distinct().ToListAsync();
 
                 return JsonConvert.SerializeObject(data);
@@ -152,7 +152,7 @@ namespace KANBAN.Services.Import.Repository
                 var data = await _kbContext.TB_Transaction_TMP
                     .Where(x => x.F_PDS_No == PO
                     && x.F_Store_Order == StoreCD
-                    && x.F_Type == "Special")
+                    && x.F_Type == "Trial")
                    .Select(x => new
                    {
                        F_Part_No = x.F_Part_Order.Trim() + "-" + x.F_Ruibetsu_Order.Trim()
@@ -189,7 +189,7 @@ namespace KANBAN.Services.Import.Repository
                 else
                 {
                     var data = await _kbContext.TB_Transaction_TMP
-                        .Where(x=> x.F_Type == "Special"
+                        .Where(x=> x.F_Type == "Trial"
                         && x.F_Delivery_Date.Substring(0, 6) == YM
                         && x.F_Part_Order.Trim() + "-" + x.F_Ruibetsu_Order.Trim() == PartNo
                         ).Select(x => new
@@ -236,7 +236,7 @@ namespace KANBAN.Services.Import.Repository
 
                 var data = await _kbContext.TB_Transaction_TMP
                     .Where(x => x.F_PDS_No == PO
-                    && x.F_Type == "Special"
+                    && x.F_Type == "Trial"
                     && x.F_Delivery_Date.Substring(0, 6) == YM)
                     .ToListAsync();
 
@@ -311,7 +311,7 @@ namespace KANBAN.Services.Import.Repository
                 List<string> result = new List<string>();
                 if (isNew)
                 {
-                    query = $@"Select distinct F_PDS_NO From TB_Transaction_TMP Where F_Type ='Special' 
+                    query = $@"Select distinct F_PDS_NO From TB_Transaction_TMP Where F_Type ='Trial' 
                         and F_PDS_NO ='{PO}' and F_Part_No+'-'+F_Ruibetsu ='{CompPartNo}' 
                         and substring(F_DeliverY_Date,1,6) ='{YM}' and F_Store_Cd='{CompStoreCD}' ";
 
@@ -380,7 +380,7 @@ namespace KANBAN.Services.Import.Repository
                     sql = $@"Select distinct T.F_Part_No,T.F_Part_name as F_Part_NM,T.F_Store_CD,T.F_Supplier_Cd +'-'+ F_Supplier_Plant as F_Supplier,S.F_Name as F_Sup_name,T.F_Remark,T.F_Kanban_No as F_Sebango,F_PDS_Issued_Date,F_QTY_Pack as F_QTY_BOX
                         From dbo.TB_Transaction_Tmp  T INNER JOIN {ppmCon}.dbo.T_Supplier_MS S ON T.F_Supplier_CD = s.F_SUpplier_CD collate Thai_CI_AS
                         and T.F_Supplier_Plant = S.F_Plant_CD collate Thai_CI_AS and T.F_Store_Cd = S.f_Store_Cd collate Thai_CI_AS
-                        Where F_TYpe='Special' and substring(F_Delivery_Date,1,6) ='{YM}' 
+                        Where F_TYpe='Trial' and substring(F_Delivery_Date,1,6) ='{YM}' 
                         and F_Part_NO +'-'+F_Ruibetsu ='{CompPartNo}' ";
 
                     if(!string.IsNullOrWhiteSpace(CompStoreCD))
@@ -405,5 +405,105 @@ namespace KANBAN.Services.Import.Repository
                 throw new CustomHttpException(500, ex.Message);
             }
         }
+
+        public async Task<string> ListCalendar(string YM,string? PO,string? ParentPartNo,string? ParentStoreCD,string? CompPartNo,string? CompStoreCD)
+        {
+            try
+            {
+                var data = await _kbContext.TB_Transaction_TMP
+                    .Where(x=>x.F_Type == "Trial"
+                    && x.F_Delivery_Date.Substring(0, 6) == YM)
+                    .ToListAsync();
+
+                if(!string.IsNullOrWhiteSpace(PO))
+                {
+                    data = data.Where(x => x.F_PDS_No == PO).ToList();
+                }
+                if (!string.IsNullOrWhiteSpace(ParentPartNo))
+                {
+                    data = data.Where(x => x.F_Part_Order.Trim() + "-" + x.F_Ruibetsu_Order.Trim() == ParentPartNo).ToList();
+                }
+                if (!string.IsNullOrWhiteSpace(ParentStoreCD))
+                {
+                    data = data.Where(x => x.F_Store_Order == ParentStoreCD).ToList();
+                }
+                if(!string.IsNullOrWhiteSpace(CompPartNo))
+                {
+                    data = data.Where(x => x.F_Part_No.Trim() + "-" + x.F_Ruibetsu.Trim() == CompPartNo).ToList();
+                }
+                if (!string.IsNullOrWhiteSpace(CompStoreCD))
+                {
+                    data = data.Where(x => x.F_Store_CD == CompStoreCD).ToList();
+                }
+
+                var data2 = data.Select(x => new
+                {
+                    x.F_PDS_No,
+                    F_Part_No = x.F_Part_Order + "-" + x.F_Ruibetsu_Order,
+                    F_Delivery_Date = x.F_Delivery_Date.Substring(6, 2) + "/" + x.F_Delivery_Date.Substring(4, 2) + "/" + x.F_Delivery_Date.Substring(0, 4),
+                    x.F_Qty_Level1,
+                    x.F_Qty,
+                    x.F_Remark,
+                    x.F_Store_Order,
+                    F_PDS_Issued_Date = x.F_PDS_Issued_Date.Substring(6, 2) + "/" + x.F_PDS_Issued_Date.Substring(4, 2) + "/" + x.F_PDS_Issued_Date.Substring(0, 4),
+                }).Distinct().ToList();
+
+                return JsonConvert.SerializeObject(data2);
+            }
+            catch (Exception ex)
+            {
+                if (ex is CustomHttpException) throw;
+                throw new CustomHttpException(500, ex.Message);
+            }
+        }
+
+        public async Task<string> ListDatatable (string YM,string? PO,string? ParentPartNo, string? CompPartNo)
+        {
+            try
+            {
+                var data = await _kbContext.TB_Transaction_TMP
+                    .Where(x => x.F_Type == "Trial"
+                    && x.F_Delivery_Date.StartsWith(YM)).ToListAsync();
+
+                if (!string.IsNullOrWhiteSpace(PO))
+                {
+                    data = data.Where(x => x.F_PDS_No == PO).ToList();
+                }
+                if (!string.IsNullOrWhiteSpace(ParentPartNo))
+                {
+                    data = data.Where(x => x.F_Part_Order.Trim() + "-" + x.F_Ruibetsu_Order.Trim() == ParentPartNo).ToList();
+                }
+                if (!string.IsNullOrWhiteSpace(CompPartNo))
+                {
+                    data = data.Where(x => x.F_Part_No.Trim() + "-" + x.F_Ruibetsu.Trim() == CompPartNo).ToList();
+                }
+
+                var data2 = data.Select(x => new
+                {
+                    x.F_PDS_No,
+                    F_Part_No = x.F_Part_Order + "-" + x.F_Ruibetsu_Order,
+                    F_Child_Part = x.F_Part_No + "-" + x.F_Ruibetsu,
+                    F_Delivery_Date = x.F_Delivery_Date.Substring(6, 2) + "/" + x.F_Delivery_Date.Substring(4, 2) + "/" + x.F_Delivery_Date.Substring(0, 4),
+                    x.F_Qty_Level1,
+                    x.F_Qty,
+                    x.F_Remark,
+                    F_Store_CD = x.F_Store_Order,
+                    F_Store_Child = x.F_Store_CD,
+                    F_PDS_Issued_Date = x.F_PDS_Issued_Date.Substring(6, 2) + "/" + x.F_PDS_Issued_Date.Substring(4, 2) + "/" + x.F_PDS_Issued_Date.Substring(0, 4),
+                    F_Supplier = x.F_Supplier_CD + "-" + x.F_Supplier_Plant,
+                    F_OrderType = x.F_OrderType == 'C' ? "CKD" : x.F_OrderType == 'S' ? "SPECIAL" : "NORMAL",
+                    x.F_Round,
+                    x.F_Part_Name
+                }).Distinct().ToList();
+
+                return JsonConvert.SerializeObject(data2);
+            }
+            catch (Exception ex)
+            {
+                if (ex is CustomHttpException) throw;
+                throw new CustomHttpException(500, ex.Message);
+            }
+        }
+
     }
 }

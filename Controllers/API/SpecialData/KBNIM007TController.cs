@@ -21,6 +21,7 @@ namespace HINOSystem.Controllers.API.Master
             _bearer = bearer;
         }
 
+        [HttpGet]
         public async Task<IActionResult> SetCalendar(string YM, string? ParentStoreCD, string TypeSpc)
         {
             try
@@ -43,6 +44,7 @@ namespace HINOSystem.Controllers.API.Master
             }
         }
 
+        [HttpGet]
         public async Task<IActionResult> GetPO(string YM, string TypeSpc)
         {
             try
@@ -65,6 +67,7 @@ namespace HINOSystem.Controllers.API.Master
             }
         }
 
+        [HttpGet]
         public async Task<IActionResult> GetParentStore(string YM, string? PO, bool isNew)
         {
             try
@@ -87,6 +90,7 @@ namespace HINOSystem.Controllers.API.Master
             }
         }
 
+        [HttpGet]
         public async Task<IActionResult> GetParentPart(string YM, string PO, string ParentStoreCD, bool isNew)
         {
             try
@@ -109,6 +113,7 @@ namespace HINOSystem.Controllers.API.Master
             }
         }
 
+        [HttpGet]
         public async Task<IActionResult> GetParentPartDetail(string YM, string ParentStoreCD, string ParentPartNo, bool isNew)
         {
             try
@@ -131,6 +136,7 @@ namespace HINOSystem.Controllers.API.Master
             }
         }
 
+        [HttpGet]
         public async Task<IActionResult> GetComponentStore(string YM, string? PO, string? ParentPartNo, bool isNew)
         {
             try
@@ -153,6 +159,7 @@ namespace HINOSystem.Controllers.API.Master
             }
         }
 
+        [HttpGet]
         public async Task<IActionResult> GetComponentPartNo(string YM, string PO, string? CompStoreCD, string? ParentPartNo, bool isNew)
         {
             try
@@ -174,7 +181,8 @@ namespace HINOSystem.Controllers.API.Master
                 throw new CustomHttpException(ex.StatusCode, ex.Message);
             }
         }
-
+        
+        [HttpGet]
         public async Task<IActionResult> ComponentStoreSelected(string YM, string? PO, string? CompStoreCD, string? CompPartNo, string IssuedDate, bool isNew)
         {
             try
@@ -197,6 +205,7 @@ namespace HINOSystem.Controllers.API.Master
             }
         }
 
+        [HttpGet]
         public async Task<IActionResult> ComponentPartSelected(string YM, string? CompStoreCD, string? CompPartNo, string? ParentPartNo, bool isNew)
         {
             try
@@ -204,6 +213,52 @@ namespace HINOSystem.Controllers.API.Master
                 await _bearer.CheckAuthorize();
 
                 var result = await _services.KBNIM007T.ComponentPartSelected(YM, CompStoreCD, CompPartNo, ParentPartNo, isNew);
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data Found",
+                    data = result
+                });
+            }
+            catch (CustomHttpException ex)
+            {
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ListCalendar(string YM, string? PO, string? ParentPartNo, string? ParentStoreCD, string? CompPartNo, string? CompStoreCD)
+        {
+            try
+            {
+                await _bearer.CheckAuthorize();
+
+                var result = await _services.KBNIM007T.ListCalendar(YM, PO, ParentPartNo, ParentStoreCD, CompPartNo, CompStoreCD);
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data Found",
+                    data = result
+                });
+            }
+            catch (CustomHttpException ex)
+            {
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ListDatatable (string YM, string? PO, string? ParentPartNo, string? CompPartNo)
+        {
+            try
+            {
+                await _bearer.CheckAuthorize();
+
+                var result = await _services.KBNIM007T.ListDatatable(YM, PO, ParentPartNo, CompPartNo);
 
                 return Ok(new
                 {

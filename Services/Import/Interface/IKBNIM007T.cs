@@ -13,6 +13,8 @@ namespace KANBAN.Services.Import.Interface
         Task<string> GetComponentPartNo(string YM, string? PO, string? CompStoreCD, string? ParentPartNo, bool isNew);
         Task<List<string>> ComponentStoreSelected(string YM, string? PO, string? CompStoreCD, string? CompPartNo, string IssuedDate, bool isNew);
         Task<string> ComponentPartSelected(string YM, string? CompStoreCD, string? CompPartNo, string? ParentPartNo, bool isNew);
+        Task<string> ListCalendar(string YM, string? PO, string? ParentPartNo, string? ParentStoreCD, string? CompPartNo, string? CompStoreCD);
+        Task<string> ListDatatable(string YM, string? PO, string? ParentPartNo, string? CompPartNo);
 
     }
 }
