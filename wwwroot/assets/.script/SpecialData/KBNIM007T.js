@@ -189,6 +189,11 @@ $("#btnCan").click(async () => {
     $("#divBtn").find("button").prop("disabled", false);
     $("#btnCan").prop("disabled", true);
     $("#btnSave").prop("disabled", true);
+
+    $("#spanPartName").text("");
+    $("#spanPartName").addClass("invisible");
+    $("#spanCompPartName").text("");
+    $("#spanCompPartName").addClass("invisible");
 });
 
 $("#btnSave").click(async () => {
@@ -227,6 +232,10 @@ ShowCalendar = async () => {
                         </td >`
             );
             day++;
+            console.log(_command);
+            if (_command == "INQ") {
+                Table.find("tbody").find("tr:last").find("input").prop("readonly", true);
+            }
         } else {
             Table.find("tbody").find("tr:last").append("<td></td>");
         }
@@ -395,7 +404,12 @@ SetCalendar = async () => {
         async (success) => {
             success = _xLib.JSONparseMixData(success);
             //console.log(success);
-            $("#tableMain").find("input").prop("readonly", false);
+            if (_command == "INQ") {
+                $("#tableMain").find("input").prop("readonly", true);
+            }
+            else {
+                $("#tableMain").find("input").prop("readonly", false);
+            }
             $("#tableMain").find("input").removeClass("bg-warning");
             $("#tableMain").find("input").removeClass("bg-danger");
             Object.keys(success.data[0]).forEach((key) => {
@@ -407,7 +421,9 @@ SetCalendar = async () => {
                     if (success.data[0][key] == "1") {
                         //console.log(success.data[0].F_Date);
                         if (success.data[0].F_Date <= obj.YM + date) {
-                            $(`#QTY_${obj.YM}${date}`).prop("readonly", false);
+                            if (_command != "INQ") {
+                                $(`#QTY_${obj.YM}${date}`).prop("readonly", false);
+                            }
                         }
                         else {
                             $(`#QTY_${obj.YM}${date}`).prop("readonly", true);
