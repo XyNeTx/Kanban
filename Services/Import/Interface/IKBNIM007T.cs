@@ -1,4 +1,5 @@
-﻿using KANBAN.Models.KB3.UrgentOrder;
+﻿using KANBAN.Models.KB3.SpecialData.ViewModel;
+using KANBAN.Models.KB3.UrgentOrder;
 
 namespace KANBAN.Services.Import.Interface
 {
@@ -15,6 +16,7 @@ namespace KANBAN.Services.Import.Interface
         Task<string> ComponentPartSelected(string YM, string? CompStoreCD, string? CompPartNo, string? ParentPartNo, bool isNew);
         Task<string> ListCalendar(string YM, string? PO, string? ParentPartNo, string? ParentStoreCD, string? CompPartNo, string? CompStoreCD);
         Task<string> ListDatatable(string YM, string? PO, string? ParentPartNo, string? CompPartNo);
+        Task Save(List<VM_Save_KBNIM007T> listObj, string _command);
 
     }
 }

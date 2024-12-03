@@ -2,6 +2,7 @@
 using HINOSystem.Libs;
 using KANBAN.Context;
 using KANBAN.Libs;
+using KANBAN.Models.KB3.SpecialData.ViewModel;
 using KANBAN.Models.KB3.UrgentOrder;
 using KANBAN.Services.Automapper.Interface;
 using KANBAN.Services.Import.Interface;
@@ -98,7 +99,8 @@ namespace KANBAN.Services.Import.Repository
             {
                 if (isNew)
                 {
-                    string ppm = _FillDT.ppmConnect();
+                    //string ppm = _FillDT.ppmConnect();
+                    string ppm = "[HMMTA-PPM].[PPMDB]";
                     string query = $@"Select distinct F_Store_Cd From 
                         {ppm}.dbo.T_Parent_part 
                         Where substring(F_TC_Str,1,6) <='{YM}' 
@@ -136,7 +138,8 @@ namespace KANBAN.Services.Import.Repository
             {
                 if(isNew)
                 {
-                    string ppm = _FillDT.ppmConnect();
+                    //string ppm = _FillDT.ppmConnect();
+                    string ppm = "[HMMTA-PPM].[PPMDB]";
                     string query = $@"Select distinct rtrim(F_Parent_part) +'-'+ rtrim(F_Ruibetsu) as F_Part_No 
                         From {ppm}.dbo.T_Parent_part 
                         Where substring(F_TC_Str,1,6) <='{YM}' 
@@ -173,16 +176,17 @@ namespace KANBAN.Services.Import.Repository
             {
                 if (isNew)
                 {
-                    string ppm = _FillDT.ppmConnect();
+                    //string ppm = _FillDT.ppmConnect();
+                    string ppm = "[HMMTA-PPM].[PPMDB]";
                     string query = $@"Select distinct  C.F_Parent_Part as F_Part_No,C.F_Name as F_Part_NM,C.F_Store_Cd as F_Store_Order,'' as F_Supplier,'' as F_Sup_name,'' as F_Remark,'' as F_Sebango,'' as F_PDS_Issued_Date 
-                        From T_Parent_part C
+                        From {ppm}.dbo.T_Parent_part C
                         Where (substring(C.F_TC_Str,1,6) <='{YM}' 
                         and substring(C.F_TC_End,1,6) >='{YM}' ) 
                         and C.F_Store_Cd = '{StoreCD}' 
                         and rtrim(F_Parent_Part)+'-'+rtrim(F_RUibetsu)  ='{PartNo}' 
                         order by C.F_Parent_Part,C.F_Store_Cd ";
 
-                    DataTable dt = _FillDT.ExecuteSQLPPMDB(query);
+                    DataTable dt = _FillDT.ExecuteSQL(query);
 
                     return JsonConvert.SerializeObject(dt);
                 }
@@ -221,7 +225,8 @@ namespace KANBAN.Services.Import.Repository
             {
                 if (isNew)
                 {
-                    string ppm = _FillDT.ppmConnect();
+                    //string ppm = _FillDT.ppmConnect();
+                    string ppm = "[HMMTA-PPM].[PPMDB]";
                     string query = $@"Select distinct F_Store_Cd From 
                         {ppm}.dbo.T_Construction
                         Where substring(F_CKD_STR,1,6) <='{YM}' 
@@ -245,7 +250,7 @@ namespace KANBAN.Services.Import.Repository
                     data = data.Where(x => x.F_Part_Order.Trim() + "-" + x.F_Ruibetsu_Order.Trim() == ParentPartNo).ToList();
                 }
 
-                return JsonConvert.SerializeObject(data.Select(x => x.F_Store_CD).Distinct().ToList());
+                return JsonConvert.SerializeObject(data.Select(x => new { F_Store_Cd = x.F_Store_CD }).Distinct().ToList());
 
             }
             catch (Exception ex)
@@ -261,7 +266,8 @@ namespace KANBAN.Services.Import.Repository
             {
                 if (isNew)
                 {
-                    string ppm = _FillDT.ppmConnect();
+                    //string ppm = _FillDT.ppmConnect();
+                    string ppm = "[HMMTA-PPM].[PPMDB]";
                     string query = $@"Select distinct rtrim(F_Part_No) +'-'+ rtrim(F_Ruibetsu) as F_Part_No
                         From {ppm}.dbo.T_Construction 
                         Where substring(F_CKD_STR,1,6) <='{YM}' 
@@ -275,7 +281,9 @@ namespace KANBAN.Services.Import.Repository
                 }
                 else
                 {
-                    var data = await _kbContext.TB_Transaction_TMP.ToListAsync();
+                    var data = await _kbContext.TB_Transaction_TMP
+                        .Where(x => x.F_Type == "Trial")
+                        .ToListAsync();
 
                     if(!string.IsNullOrWhiteSpace(ParentPartNo))
                     {
@@ -293,7 +301,7 @@ namespace KANBAN.Services.Import.Repository
                     return JsonConvert.SerializeObject(data.Select(x => new
                     {
                         F_Part_No = x.F_Part_No.Trim() + "-" + x.F_Ruibetsu.Trim()
-                    }).Distinct().ToList());
+                    }).Distinct().OrderBy(x=>x.F_Part_No).ToList());
                 }
             }
             catch (Exception ex)
@@ -359,7 +367,8 @@ namespace KANBAN.Services.Import.Repository
             try
             {
                 string sql = "";
-                string ppmCon = _FillDT.ppmConnect();
+                //string ppmCon = _FillDT.ppmConnect();
+                string ppmCon = "[HMMTA-PPM].[PPMDB]";
                 if (isNew)
                 {
                     sql = $@"Select distinct  C.F_Part_No,C.F_Part_NM,C.F_Store_Cd,C.F_Supplier_Cd+'-'+C.F_Plant as F_Supplier,S.F_Name as F_Sup_name,'' as F_Remark,'0' + rtrim(F_Sebango) as F_Sebango,'' as F_PDS_Issued_Date,C.F_QTY_BOX 
@@ -497,6 +506,275 @@ namespace KANBAN.Services.Import.Repository
                 }).Distinct().ToList();
 
                 return JsonConvert.SerializeObject(data2);
+            }
+            catch (Exception ex)
+            {
+                if (ex is CustomHttpException) throw;
+                throw new CustomHttpException(500, ex.Message);
+            }
+        }
+
+        public async Task Save(List<VM_Save_KBNIM007T> listObj,string _command)
+        {
+            try
+            {
+                List<TB_Transaction_TMP> data = new List<TB_Transaction_TMP>();
+
+                if (_command.ToUpper() == "NEW")
+                {
+                    if (!string.IsNullOrWhiteSpace(listObj[0].ParentPartNo) && !string.IsNullOrWhiteSpace(listObj[0].CompPartNo))
+                    {
+                        throw new CustomHttpException(400, "Please Select Parent Part Or Component Part Only!");
+                    }
+
+                    if (string.IsNullOrWhiteSpace(listObj[0].ParentPartNo) && string.IsNullOrWhiteSpace(listObj[0].CompPartNo))
+                    {
+                        throw new CustomHttpException(400, "Please Select Parent Part Or Component Part!");
+                    }
+
+                    if (string.IsNullOrWhiteSpace(listObj[0].ParentStore) && string.IsNullOrWhiteSpace(listObj[0].CompStoreCD))
+                    {
+                        throw new CustomHttpException(400, "Please Select Parent Store Or Component Store!");
+                    }
+
+                    data = await _kbContext.TB_Transaction_TMP
+                        .Where(x => x.F_Type == "Trial"
+                        && x.F_Delivery_Date.Substring(0,6) == listObj[0].IssuedDate.Substring(0, 6)
+                        && x.F_PDS_No == listObj[0].PO
+                        && x.F_Part_Order.Trim() + "-" + x.F_Ruibetsu_Order.Trim() == listObj[0].ParentPartNo
+                        && x.F_Store_Order == listObj[0].ParentStore).ToListAsync();
+
+                    if (data.Count > 0)
+                    {
+                        throw new CustomHttpException(400, "Can not Insert Data because found data in database!");
+                    }
+
+                    foreach(var obj in listObj)
+                    {
+                        if (!string.IsNullOrWhiteSpace(obj.CompPartNo))
+                        {
+                            TB_Transaction_TMP compOrderInsert = new TB_Transaction_TMP
+                            {
+                                F_Type = "Trial",
+                                F_Type_Spc = obj.TypeSpc,
+                                F_Plant = _BearerClass.Plant[0],
+                                F_PDS_No = obj.PO,
+                                F_PDS_Issued_Date = obj.IssuedDate,
+                                F_Store_CD = obj.CompStoreCD,
+                                F_Part_No = obj.CompPartNo.Split("-")[0],
+                                F_Ruibetsu = obj.CompPartNo.Split("-")[1],
+                                F_Kanban_No = obj.CompSebango,
+                                F_Part_Name = obj.CompPartName,
+                                F_Qty_Pack = (short)obj.QtyBox,
+                                F_Part_Code = string.Empty,
+                                F_Part_Order = obj.CompPartNo.Split("-")[0],
+                                F_Ruibetsu_Order = obj.CompPartNo.Split("-")[1],
+                                F_Store_Order = obj.CompStoreCD,
+                                F_Name_Order = obj.CompPartName,
+                                F_Qty = obj.Qty,
+                                F_Qty_Level1 = obj.Qty,
+                                F_Seq_No = string.Empty,
+                                F_Seq_Type = string.Empty,
+                                F_Cut_Flag = ' ',
+                                F_Delivery_Date = obj.DeliveryDate,
+                                F_Adv_Deli_Date = string.Empty,
+                                F_OrderType = 'S',
+                                F_Country = string.Empty,
+                                F_Reg_Flg = '0',
+                                F_Inventory_Flg = '0',
+                                F_Supplier_CD = obj.SupplierCD.Split("-")[0],
+                                F_Supplier_Plant = obj.SupplierCD.Split("-")[1][0],
+                                F_Cycle_Time = string.Empty,
+                                F_Safty_Stock = 0,
+                                F_Part_Refer = string.Empty,
+                                F_Ruibetsu_Refer = string.Empty,
+                                F_Update_By = _BearerClass.UserCode,
+                                F_Update_Date = DateTime.Now,
+                                F_Remark = string.Empty,
+                                F_Parent_Level2 = string.Empty,
+                                F_Qty_Level2 = 0,
+                                F_Parent_Level3 = string.Empty,
+                                F_Qty_Level3 = 0,
+                                F_Parent_Level4 = string.Empty,
+                                F_Qty_Level4 = 0,
+                                F_Round = (short)obj.Trip,
+                                F_Org_Store_CD = string.Empty,
+                                F_Ratio = "100",
+                                F_Customer_OrderType = ' ',
+                                F_Survey_DOC = string.Empty,
+                            };
+
+                            await _kbContext.TB_Transaction_TMP.AddAsync(compOrderInsert);
+                        }
+                        else
+                        {
+                            await _kbContext.Database.ExecuteSqlRawAsync("Exec dbo.SP_IM007_FilterData '{0}'", _BearerClass.UserCode);
+
+                            await _kbContext.Database.ExecuteSqlRawAsync($@"Exec dbo.SP_IM005_TRIAL 
+                                '{obj.PO}','TRIAL','{obj.IssuedDate}','{obj.ParentPartNo}','{obj.ParentStore}',
+                                '{obj.DeliveryDate}','{obj.Qty}','{obj.Trip}','{obj.TypeSpc[0]}','{_BearerClass.UserCode}' ");
+
+                            var checkData = await _kbContext.TB_Transaction_TMP
+                                .Where(x => x.F_Type == "Trial"
+                                && x.F_Delivery_Date.Substring(0, 6) == obj.IssuedDate.Substring(0, 6)
+                                && x.F_PDS_No == obj.PO
+                                && x.F_Part_Order.Trim() + "-" + x.F_Ruibetsu_Order.Trim() == obj.ParentPartNo
+                                && x.F_Store_Order == obj.ParentStore).ToListAsync();
+
+                            if (checkData.Count == 0)
+                            {
+                                throw new CustomHttpException(400, "Can not Insert Data Please Check Data then Try Again");
+                            }
+                        }
+                    }
+                    await _kbContext.SaveChangesAsync();
+                }
+                else if (_command.ToUpper() == "UPD")
+                {
+                    if (string.IsNullOrWhiteSpace(listObj[0].ParentPartNo) && string.IsNullOrWhiteSpace(listObj[0].CompPartNo))
+                    {
+                        throw new CustomHttpException(400, "Please Select Parent Part Or Component Part!");
+                    }
+
+                    if (string.IsNullOrWhiteSpace(listObj[0].ParentStore) && string.IsNullOrWhiteSpace(listObj[0].CompStoreCD))
+                    {
+                        throw new CustomHttpException(400, "Please Select Parent Store Or Component Store!");
+                    }
+
+                    data = await _kbContext.TB_Transaction_TMP
+                        .Where(x => x.F_Type == "Trial"
+                        && x.F_Delivery_Date.Substring(0, 6) == listObj[0].IssuedDate.Substring(0, 6)
+                        && x.F_PDS_No == listObj[0].PO)
+                        .ToListAsync();
+
+                    if (!string.IsNullOrWhiteSpace(listObj[0].ParentStore))
+                    {
+                        data = data.Where(x => x.F_Part_Order.Trim() + "-" + x.F_Ruibetsu_Order.Trim() == listObj[0].ParentPartNo
+                        && x.F_Store_Order == listObj[0].ParentStore).ToList();
+                    }
+                    else
+                    {
+                        data = data.Where(x => x.F_Part_No.Trim() + "-" + x.F_Ruibetsu.Trim() == listObj[0].CompPartNo
+                        && x.F_Store_CD == listObj[0].CompStoreCD).ToList();
+                    }
+
+                    if (data.Count == 0)
+                    {
+                        throw new CustomHttpException(400, "Can not Update Data because not found data in database!");
+                    }
+
+                    _kbContext.TB_Transaction_TMP.RemoveRange(data);
+
+                    await _kbContext.SaveChangesAsync();
+
+                    foreach (var obj in listObj)
+                    {
+                        if (!string.IsNullOrWhiteSpace(obj.CompPartNo))
+                        {
+                            TB_Transaction_TMP compOrderInsert = new TB_Transaction_TMP
+                            {
+                                F_Type = "Trial",
+                                F_Type_Spc = obj.TypeSpc,
+                                F_Plant = _BearerClass.Plant[0],
+                                F_PDS_No = obj.PO,
+                                F_PDS_Issued_Date = obj.IssuedDate,
+                                F_Store_CD = obj.CompStoreCD,
+                                F_Part_No = obj.CompPartNo.Split("-")[0],
+                                F_Ruibetsu = obj.CompPartNo.Split("-")[1],
+                                F_Kanban_No = obj.CompSebango,
+                                F_Part_Name = obj.CompPartName,
+                                F_Qty_Pack = (short)obj.QtyBox,
+                                F_Part_Code = string.Empty,
+                                F_Part_Order = obj.CompPartNo.Split("-")[0],
+                                F_Ruibetsu_Order = obj.CompPartNo.Split("-")[1],
+                                F_Store_Order = obj.CompStoreCD,
+                                F_Name_Order = obj.CompPartName,
+                                F_Qty = obj.Qty,
+                                F_Qty_Level1 = obj.Qty,
+                                F_Seq_No = string.Empty,
+                                F_Seq_Type = string.Empty,
+                                F_Cut_Flag = ' ',
+                                F_Delivery_Date = obj.DeliveryDate,
+                                F_Adv_Deli_Date = string.Empty,
+                                F_OrderType = 'S',
+                                F_Country = string.Empty,
+                                F_Reg_Flg = '0',
+                                F_Inventory_Flg = '0',
+                                F_Supplier_CD = obj.SupplierCD.Split("-")[0],
+                                F_Supplier_Plant = obj.SupplierCD.Split("-")[1][0],
+                                F_Cycle_Time = string.Empty,
+                                F_Safty_Stock = 0,
+                                F_Part_Refer = string.Empty,
+                                F_Ruibetsu_Refer = string.Empty,
+                                F_Update_By = _BearerClass.UserCode,
+                                F_Update_Date = DateTime.Now,
+                                F_Remark = string.Empty,
+                                F_Parent_Level2 = string.Empty,
+                                F_Qty_Level2 = 0,
+                                F_Parent_Level3 = string.Empty,
+                                F_Qty_Level3 = 0,
+                                F_Parent_Level4 = string.Empty,
+                                F_Qty_Level4 = 0,
+                                F_Round = (short)obj.Trip,
+                                F_Org_Store_CD = string.Empty,
+                                F_Ratio = "100",
+                                F_Customer_OrderType = ' ',
+                                F_Survey_DOC = string.Empty,
+                            };
+
+                            await _kbContext.TB_Transaction_TMP.AddAsync(compOrderInsert);
+
+                        }
+                        else
+                        {
+                            await _kbContext.Database.ExecuteSqlRawAsync("Exec dbo.SP_IM007_FilterData '{0}'", _BearerClass.UserCode);
+
+                            await _kbContext.Database.ExecuteSqlRawAsync($@"Exec dbo.SP_IM005_TRIAL 
+                                '{obj.PO}','TRIAL','{obj.IssuedDate}','{obj.ParentPartNo}','{obj.ParentStore}',
+                                '{obj.DeliveryDate}','{obj.Qty}','{obj.Trip}','{obj.TypeSpc[0]}','{_BearerClass.UserCode}' ");
+
+                            var checkData = await _kbContext.TB_Transaction_TMP
+                                .Where(x => x.F_Type == "Trial"
+                                && x.F_Delivery_Date.Substring(0, 6) == obj.IssuedDate.Substring(0, 6)
+                                && x.F_PDS_No == obj.PO
+                                && x.F_Part_Order.Trim() + "-" + x.F_Ruibetsu_Order.Trim() == obj.ParentPartNo
+                                && x.F_Store_Order == obj.ParentStore).ToListAsync();
+                        }
+                    }
+
+                    await _kbContext.SaveChangesAsync();
+
+                }
+                else
+                {
+                    data = await _kbContext.TB_Transaction_TMP
+                        .Where(x => x.F_Type == "Trial"
+                        && x.F_Delivery_Date.Substring(0, 6) == listObj[0].IssuedDate.Substring(0, 6)
+                        && x.F_PDS_No == listObj[0].PO)
+                        .ToListAsync();
+
+                    if (!string.IsNullOrWhiteSpace(listObj[0].ParentStore))
+                    {
+                        data = data.Where(x => x.F_Part_Order.Trim() + "-" + x.F_Ruibetsu_Order.Trim() == listObj[0].ParentPartNo
+                            && x.F_Store_Order == listObj[0].ParentStore).ToList();
+                    }
+                    else
+                    {
+                        data = data.Where(x => x.F_Part_No.Trim() + "-" + x.F_Ruibetsu.Trim() == listObj[0].CompPartNo
+                            && x.F_Store_CD == listObj[0].CompStoreCD).ToList();
+                    }
+
+                    if(data.Count == 0)
+                    {
+                        throw new CustomHttpException(400, "Can not Delete Data because not found data in database!");
+                    }
+
+                    _kbContext.TB_Transaction_TMP.RemoveRange(data);
+
+                    await _kbContext.SaveChangesAsync();
+
+                }
+
             }
             catch (Exception ex)
             {

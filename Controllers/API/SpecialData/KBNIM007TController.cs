@@ -1,5 +1,6 @@
 ﻿using HINOSystem.Context;
 using HINOSystem.Libs;
+using KANBAN.Models.KB3.SpecialData.ViewModel;
 using KANBAN.Services;
 using KANBAN.Services.Import.Interface;
 using Microsoft.AspNetCore.Mvc;
@@ -266,6 +267,29 @@ namespace HINOSystem.Controllers.API.Master
                     response = "Success",
                     message = "Data Found",
                     data = result
+                });
+            }
+            catch (CustomHttpException ex)
+            {
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Save(List<VM_Save_KBNIM007T> listObj,[FromQuery] string action)
+        {
+            try
+            {
+                await _bearer.CheckAuthorize();
+
+                await _services.KBNIM007T.Save(listObj, action);
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data Saved",
+                    data = listObj
                 });
             }
             catch (CustomHttpException ex)

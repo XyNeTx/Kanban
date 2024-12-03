@@ -17,6 +17,5 @@ namespace KANBAN.Services.Import.Interface
         Task Import(VM_PostFile obj);
         Task ImportSCP(VM_PostFile obj, string BackDate);
         Task ImportIPMS(VM_PostFile obj, string BackDate);
-
     }
 }

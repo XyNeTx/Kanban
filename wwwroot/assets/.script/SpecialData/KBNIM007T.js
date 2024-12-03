@@ -17,8 +17,8 @@
             ],
             scrollX: false,
             order: [[1, "asc"]],
-            scrollCollapse: true,
-            scrollY: 500,
+            scrollCollapse: false,
+            scrollY: 1000,
         }
     );
 
@@ -90,6 +90,8 @@ $("#btnUpd").click(async () => {
     await ShowCalendar();
     await GetPO();
     _command = "UPD";
+
+    $("#btnSave").prop("disabled", false);
 });
 
 $("#btnInq").click(async () => {
@@ -144,7 +146,7 @@ $("#btnRpt").click(async () => {
 
 $(document).on("change", "#selCustomerOrder", async () => {
     await GetParentStoreCD();
-
+    await GetCompStoreCD()
     //await ListDataTable();
 });
 
@@ -194,6 +196,12 @@ $("#btnCan").click(async () => {
     $("#spanPartName").addClass("invisible");
     $("#spanCompPartName").text("");
     $("#spanCompPartName").addClass("invisible");
+
+    $("#tableSub").DataTable().clear().draw();
+    $("#tableMain").find("input").val("");
+    _command = "";
+
+    await ShowCalendar();
 });
 
 $("#btnSave").click(async () => {
@@ -232,7 +240,7 @@ ShowCalendar = async () => {
                         </td >`
             );
             day++;
-            console.log(_command);
+            //console.log(_command);
             if (_command == "INQ") {
                 Table.find("tbody").find("tr:last").find("input").prop("readonly", true);
             }
@@ -355,16 +363,27 @@ ComponentStoreSelected = async () => {
     _xLib.AJAX_Get("/api/KBNIM007T/ComponentStoreSelected", obj,
         async (success) => {
             success = _xLib.JSONparseMixData(success);
-            //console.log(success);
+            console.log(success);
             //console.log($("#selCompSupplier"));
             //$("#selCompSupplier").addListSelectPicker(success.data[1], "F_Supplier_Cd");
             $("#selCompSupplier").empty();
-            $("#selCompSupplier").append(`<option value=${success.data[1][0].F_Supplier_Cd}>${success.data[1][0].F_Supplier_Cd}</option>`);
-            $("#selCompSupplier").selectpicker("val", success.data[1][0].F_Supplier_Cd);
+            console.log(success.data[1]);
+            console.log((success.data[1]));
+            if ((success.data[1]) != undefined) {
+                $("#selCompSupplier").append(`<option value=${success.data[1][0].F_Supplier_Cd}>${success.data[1][0].F_Supplier_Cd}</option>`);
+                $("#selCompSupplier").selectpicker("val", success.data[1][0].F_Supplier_Cd);
+            }
+            else {
+                $("#selCompSupplier").append(`<option value=${success.data[0][0].F_Supplier_Cd}>${success.data[0][0].F_Supplier_Cd}</option>`);
+                $("#selCompSupplier").selectpicker("val", success.data[0][0].F_Supplier_Cd);
+            }
             $("#selCompSupplier").selectpicker("refresh");
         }
     );
 }
+
+var QtyBox = 0;
+var Sebango = "";
 ComponentPartSelected = async () => {
     let obj = await getQueryObj();
 
@@ -376,6 +395,8 @@ ComponentPartSelected = async () => {
             $("#spanCompPartName").removeClass("invisible");
             $('#spanCompSupplierName').text(success.data[0].F_Sup_name);
             $('#spanCompSupplierName').removeClass("invisible");
+            QtyBox = success.data[0].F_QTY_BOX;
+            Sebango = success.data[0].F_Sebango;
         }
     );
 }
@@ -460,13 +481,20 @@ getSaveObj = async () => {
     $("#tableMain").find("input").each(function () {
 
         let obj = {
-            PDS: $("#selCustomerOrder").val(),
+            PO: $("#selCustomerOrder").val(),
             IssuedDate: moment($("#inpDate").val(), "DD/MM/YYYY").format("YYYYMMDD"),
-            PartNo: $("#selPartNo").val(),
-            StoreCD: $("#selStoreCode").val(),
+            ParentPartNo: $("#selPartNo").val(),
+            ParentStore: $("#selStoreCode").val(),
             DeliveryDate: $("#mthDeliYM").val().replaceAll("-", ""),
             Qty: 0,
             Trip: 1,
+            CompPartNo: $("#selCompPartNo").val(),
+            CompStoreCD: $("#selCompStoreCode").val(),
+            CompSebango: Sebango,
+            SupplierCD: $("#selCompSupplier").val(),
+            TypeSpc: $("input[name='rdoType']:checked").val(),
+            CompPartName: $("#spanCompPartName").text(),
+            QtyBox: QtyBox,
         }
 
 
@@ -488,18 +516,17 @@ getSaveObj = async () => {
     return list;
 }
 
-//Save = async () => {
-//    let listObj = await getSaveObj();
+Save = async () => {
+    let listObj = await getSaveObj();
 
-//    _xLib.AJAX_Post("/api/KBNIM007/Save?action=" + _command, listObj,
-//        async (success) => {
-//            //console.log(success);
-//            xSwal.success(success.response, success.message);
-//            $("#selCustomerOrder").trigger("change");
-//            $("#selPartNo").trigger("change");
-//        }
-//    );
-//}
+    _xLib.AJAX_Post("/api/KBNIM007T/Save?action=" + _command, listObj,
+        async (success) => {
+            //console.log(success);
+            xSwal.success(success.response, success.message);
+            $("#btnCan").click();
+        }
+    );
+}
 
 ListDataTable = async () => {
     let obj = await getQueryObj();
