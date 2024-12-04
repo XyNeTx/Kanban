@@ -153,6 +153,7 @@ $("#btnRptPar").click(async () => {
         F_Ruibetsu_Order: $("#selPartNo").val() ? $("#selPartNo").val().split("-")[1] : "",
         F_Store_CD: $("#selStoreCode").val(),   
         F_Delivery_Date: $("#mthDeliYM").val().replaceAll("-", ""),
+        Type: "Special"
     }
 
     _xLib.OpenReportObj("/KBNIM007_Parent", obj);
@@ -166,6 +167,8 @@ $("#btnRpt").click(async () => {
         F_PDS_No: $("#selCustomerOrder").val().trim(),
         F_Part_Order: $("#selPartNo").val() ? $("#selPartNo").val().split("-")[0] : "",
         F_Ruibetsu_Order: $("#selPartNo").val() ? $("#selPartNo").val().split("-")[1] : "",
+        Type: "Special",
+        TypeSPC: "Special"
     }
 
     _xLib.OpenReportObj("/KBNIM007", obj);

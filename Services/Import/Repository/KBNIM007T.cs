@@ -1,8 +1,10 @@
-﻿using HINOSystem.Context;
+﻿using ClosedXML.Excel;
+using HINOSystem.Context;
 using HINOSystem.Libs;
 using KANBAN.Context;
 using KANBAN.Libs;
 using KANBAN.Models.KB3.SpecialData.ViewModel;
+using KANBAN.Models.KB3.SpecialOrdering;
 using KANBAN.Models.KB3.UrgentOrder;
 using KANBAN.Services.Automapper.Interface;
 using KANBAN.Services.Import.Interface;
@@ -783,5 +785,77 @@ namespace KANBAN.Services.Import.Repository
             }
         }
 
+        public async Task Import(VM_PostFile obj, string TypeSpc)
+        {
+            try
+            {
+                string directory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "file_temp");
+                if(!Directory.Exists(directory))
+                {
+                    Directory.CreateDirectory(directory);
+                }
+                string path = Path.Combine(directory, "IMPORT_TRIAL.xlsx");
+
+                if(File.Exists(path))
+                {
+                    File.Delete(path);
+                }
+
+                using (var stream = new FileStream(path,FileMode.CreateNew))
+                {
+                    await obj.File.CopyToAsync(stream);
+                    stream.Close();
+                }
+                string newFilePath = path.Replace(".xlsx", ".txt");
+
+                using (var workbook = new XLWorkbook(path))
+                {
+                    var worksheet = workbook.Worksheets.First(); // Get the first worksheet
+
+                    using (var writer = new StreamWriter(newFilePath))
+                    {
+                        // Iterate through rows and columns
+                        foreach (var row in worksheet.RowsUsed())
+                        {
+                            foreach (var cell in row.CellsUsed())
+                            {
+                                writer.Write(cell.GetValue<string>() + "\t"); // Write cell value with a tab separator
+                            }
+                            writer.WriteLine(); // New line after each row
+                        }
+                    }
+                }
+
+                await _kbContext.Database.ExecuteSqlRawAsync($"Delete From TB_Import_Trial Where F_Update_BY='{_BearerClass.UserCode}'");
+
+                await _kbContext.Database.ExecuteSqlRawAsync($"Delete From TB_Import_Error Where F_Update_BY='{_BearerClass.UserCode}' and F_Type='TRIAL'");
+
+                await _kbContext.Database.ExecuteSqlRawAsync($"EXEC dbo.SP_IM005_IMPORT '{_BearerClass.UserCode}' , '{TypeSpc}'");
+
+                DataTable dt = _FillDT.ExecuteSQL($"EXEC dbo.SP_IM005_IMPORT '{_BearerClass.UserCode}' , '{TypeSpc}'");
+
+                if(dt.Rows.Count > 0)
+                {
+                    if (dt.Rows[0].ItemArray[0].ToString() == "CAL ERROR")
+                    {
+                        throw new CustomHttpException(400, $"การทำงานผิดพลาด กรุณานำเข้าไฟล์ใหม่อีกครั้ง. Error Because : {dt.Rows[0].ItemArray[2].ToString()}");
+                    }
+                    else
+                    {
+                        throw new CustomHttpException(400, $"พบข้อมูลบางอย่างผิดปรกติ กรุณาตรวจสอบข้อมูลที่รายงานค่ะ");
+                    }
+                }
+
+                await _kbContext.Database.ExecuteSqlRawAsync($"exec dbo.SP_IM007_FilterData '{_BearerClass.UserCode}'");
+
+                await _kbContext.Database.ExecuteSqlRawAsync($"Exec dbo.SP_IM005_IMPORT_TRIAL '{_BearerClass.UserCode}'");
+
+            }
+            catch (Exception ex)
+            {
+                if (ex is CustomHttpException) throw;
+                throw new CustomHttpException(500, ex.Message);
+            }
+        }
     }
 }

@@ -126,6 +126,7 @@ $("#btnRptPar").click(async () => {
         F_Ruibetsu_Order: $("#selPartNo").val() ? $("#selPartNo").val().split("-")[1] : "",
         F_Store_CD: $("#selStoreCode").val(),
         F_Delivery_Date: $("#mthDeliYM").val().replaceAll("-", ""),
+        Type: "Trial"
     }
 
     _xLib.OpenReportObj("/KBNIM007_Parent", obj);
@@ -139,6 +140,8 @@ $("#btnRpt").click(async () => {
         F_PDS_No: $("#selCustomerOrder").val().trim(),
         F_Part_Order: $("#selPartNo").val() ? $("#selPartNo").val().split("-")[0] : "",
         F_Ruibetsu_Order: $("#selPartNo").val() ? $("#selPartNo").val().split("-")[1] : "",
+        Type: "Trial",
+        TypeSPC: $("input[name='rdoType']:checked").val(),
     }
 
     _xLib.OpenReportObj("/KBNIM007", obj);
@@ -152,6 +155,24 @@ $(document).on("change", "#selCustomerOrder", async () => {
 
 $("#selStoreCode").change(async () => {
     await GetParentPartNo();
+});
+
+$("input[name='rdoType']").change(async () => {
+    if (_command == "INQ") {
+        $("#btnInq").click();
+    }
+    else if (_command == "UPD") {
+        $("#btnUpd").click();
+    }
+    else if (_command == "DEL") {
+        $("#btnDel").click();
+    }
+    else if (_command == "NEW") {
+        $("#btnNew").click();
+    }
+    else {
+        return;
+    }
 });
 
 $("#selPartNo").change(async () => {
@@ -541,3 +562,27 @@ ListDataTable = async () => {
         }
     );
 }
+
+$("#impFile").change(async (e) => {
+    let inputFile = e.target.files;
+    if (inputFile.length == 0) return;
+
+    if (await xSwal.confirm("Importing Data?", "Import Order Type "+ $("input[name='rdoType']:checked").val() + " ?")) {
+        let formData = new FormData();
+        console.log(inputFile[0]);
+        let file = new Blob([inputFile[0]], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+        formData.append("file", file, inputFile.name);
+
+        _xLib.AJAX_PostFile("/api/KBNIM007T/Import?TypeSpc=" + $("input[name='rdoType']:checked").val(), formData,
+            async (success) => {
+                //console.log(success);
+                xSwal.success(success.response, success.message);
+            },
+            async (error) => {
+                xSwal.error(error.responseJSON.response, error.responseJSON.message);
+            }
+        );
+    }
+
+
+});

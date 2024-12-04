@@ -1,6 +1,7 @@
 ﻿using HINOSystem.Context;
 using HINOSystem.Libs;
 using KANBAN.Models.KB3.SpecialData.ViewModel;
+using KANBAN.Models.KB3.SpecialOrdering;
 using KANBAN.Services;
 using KANBAN.Services.Import.Interface;
 using Microsoft.AspNetCore.Mvc;
@@ -290,6 +291,28 @@ namespace HINOSystem.Controllers.API.Master
                     response = "Success",
                     message = "Data Saved",
                     data = listObj
+                });
+            }
+            catch (CustomHttpException ex)
+            {
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Import([FromForm] VM_PostFile obj, [FromQuery] string TypeSpc)
+        {
+            try
+            {
+                await _bearer.CheckAuthorize();
+
+                await _services.KBNIM007T.Import(obj, TypeSpc);
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data Imported",
                 });
             }
             catch (CustomHttpException ex)
