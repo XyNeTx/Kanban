@@ -1,111 +1,68 @@
 ﻿using HINOSystem.Context;
 using HINOSystem.Libs;
+using KANBAN.Services;
+using KANBAN.Services.Import.Interface;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 //using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HINOSystem.Controllers.API.Master
 {
-    public class KBNIM007CController : Controller
+    [Route("api/[controller]/[action]")]
+    [ApiController]
+    public class KBNIM007CController : ControllerBase
     {
-        private readonly IConfiguration _configuration;
-        private readonly BearerClass _BearerClass;
-        private readonly ActionResultClass _ActionResult;        
-        private readonly KanbanConnection _KBCN;
-        private readonly PPMConnect _PPMConnect;
+        private readonly IImportService _services;
+        private readonly BearerClass _bearer;
 
-        private readonly KB3Context _KB3Context;
-
-
-        private readonly string StoragePath = @"wwwroot\Storage\Uploads";
-
-        public KBNIM007CController(
-            IConfiguration configuration,
-            BearerClass bearerClass,
-            ActionResultClass actionResultClass,
-            KanbanConnection kanbanConnection,
-            PPMConnect ppmConnect,
-            KB3Context kB3Context
-            )
+        public KBNIM007CController(IImportService services, BearerClass bearer)
         {
-            _configuration = configuration;
-            _BearerClass = bearerClass;
-            _ActionResult = actionResultClass;
-            _KB3Context = kB3Context;
-            _KBCN = kanbanConnection;
-            _PPMConnect = ppmConnect;
-
+            _services = services;
+            _bearer = bearer;
         }
 
-
-
-        [HttpPost]
-        public IActionResult initial([FromBody] string pData = null)
+        [HttpGet]
+        public async Task<IActionResult> GetPDS(string? DeliDateFrom, string? DeliDateTo)
         {
-            dynamic _json = null;
-            string _SQL = "";
             try
             {
-                _BearerClass.Authentication(Request);
-                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
+                await _bearer.CheckAuthorize();
 
-                if (pData != null) _json = JsonConvert.DeserializeObject(pData);
-
-                _SQL = @" EXEC [exec].[spTB_MS_FACTORY] ";
-                string _jsTB_MS_Factory = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
-
-                string _result = @"{
-                    ""status"":""200"",
-                    ""response"":""OK"",
-                    ""message"": ""Data Found"",
-                    ""data"":
-                            {
-                                ""TB_MS_Factory"" : " + _jsTB_MS_Factory + @"
-                            }
-                }";
-                return Content(_result, "application/json");
+                var result = _services.KBNIM007C.GetPDS(DeliDateFrom, DeliDateTo);
+                return Ok(new
+                {
+                    status = "200",
+                    message = "Success",
+                    response = "Data Found",
+                    data = result
+                });
             }
-            catch (Exception e)
+            catch (CustomHttpException ex)
             {
-                return Content(e.Message.ToString(), "application/json");
+                throw;
             }
         }
 
-
-
-        [HttpPost]
-        public IActionResult search([FromBody] string pData = null)
+        [HttpGet]
+        public async Task<IActionResult> GetUser(string? DeliDateFrom, string? DeliDateTo)
         {
-            dynamic _json = null;
-            string _SQL = "";
             try
             {
-                _BearerClass.Authentication(Request);
-                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
+                await _bearer.CheckAuthorize();
 
-                _json = JsonConvert.DeserializeObject(pData);
-
-
-                _SQL = @" EXEC [exec].[spKBNMS001_SEARCH] '" + _json.F_Plant + "' ";
-                
-                string _jsonData = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
-
-
-
-                string _result = @"{
-                    ""status"":""200"",
-                    ""response"":""OK"",
-                    ""message"": ""Data Found"",
-                    ""data"": " + _jsonData + @"
-                }";
-                return Content(_result, "application/json");
+                var result = _services.KBNIM007C.GetUser(DeliDateFrom, DeliDateTo);
+                return Ok(new
+                {
+                    status = "200",
+                    message = "Success",
+                    response = "Data Found",
+                    data = result
+                });
             }
-            catch (Exception e)
+            catch (CustomHttpException ex)
             {
-                return Content(e.Message.ToString(), "application/json");
+                throw;
             }
         }
-
-
     }
 }

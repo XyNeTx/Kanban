@@ -18,7 +18,7 @@
             scrollX: false,
             order: [[1, "asc"]],
             scrollCollapse: false,
-            scrollY: 1000,
+            scrollY: 500,
         }
     );
 

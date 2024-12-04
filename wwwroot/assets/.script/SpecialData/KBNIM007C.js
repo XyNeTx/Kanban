@@ -1,63 +1,65 @@
-﻿$(document).ready(function () {
+﻿$(document).ready(async function () {
 
-    const xKBNIM007C = new MasterTemplate({
-        Controller: _PAGE_,
-        Table: 'tblMaster',
-        ColumnTitle: {
-            "EN": ['Order No.', 'Order Issued Date', 'Delivery Date'],
-            "TH": ['Order No.', 'Order Issued Date', 'Delivery Date'],
-            "JP": ['Order No.', 'Order Issued Date', 'Delivery Date'],
-        },
-        ColumnValue: [
-            { "data": "F_OrderType" },
-            { "data": "F_Effect_Date" },
-            { "data": "F_End_Date" }
-        ],
-        Modal: 'modalMaster',
-        Form: 'frmMaster',
-        PostData: [
-            { name: 'F_Plant', value: _PLANT_ }
-        ],
-    });
+    await _xDataTable.InitialDataTable("#tableMain",
+        {
+            columns: [
+                {
+                    title: "Flag", render(data, type, row) {
+                        return `<input type="checkbox" class="form-check-input" class="chkbox" checked />`;
+                    }
+                },
 
+                { title: "Order No.", data: "F_Part_No" },
+                { title: "Order Issued Date", data: "F_Store_CD" },
+                { title: "Delivery Date", data: "F_Supplier" },
+            ],
+            scrollX: false,
+            order: [[1, "asc"]],
+            scrollCollapse: false,
+            scrollY: 200,
+        }
+    );
 
-    xKBNIM007C.prepare();
+    $("table thead th").addClass("text-center");
+    $("table tbody td").addClass("text-center");
 
-    xKBNIM007C.initial(function (result) {
+    $("#txtDateFrom").initDatepicker();
+    $("#txtDateTo").initDatepicker();
 
-        xAjax.onCheck('#chkDeliveryDate', function () {
-            if ($('#chkDeliveryDate').val() == 0) $('#fldDeliveryDate').prop('disabled', 'disabled');
-            if ($('#chkDeliveryDate').val() == 1) $('#fldDeliveryDate').prop('disabled', false);
-        });
+    await GetPDS();
+    await GetUser();
 
-        xKBNIM007C.search();
-    });
+    xSplash.hide();
+});
 
-    onSave = function () {
-        xKBNIM007C.save(function () {
-            xKBNIM007C.search();
-        });
-    }
-
-    onDelete = function () {
-        xKBNIM007C.delete(function () {
-            xKBNIM007C.search();
-        });
-    }
-
-    onDeleteAll = function () {
-        xKBNIM007C.deleteall(function () {
-            xKBNIM007C.search();
-        });
-    }
-
-    onPrint = function () {
-        xDataTableExport.setConfigPDF({
-            title: 'OLD TYPE SERVICE CHECK LIST'
-        });
-    }
-
-    onExecute = function () {
-        console.log('onExecute');
+$("#chkboxDeliDate").change(function () {
+    if (this.checked) {
+        $("#txtDateFrom").prop("disabled", false);
+        $("#txtDateTo").prop("disabled", false);
+    } else {
+        $("#txtDateFrom").prop("disabled", true);
+        $("#txtDateTo").prop("disabled", true);
     }
 });
+
+async function GetPDS()
+{
+    _xLib.AJAX_Get("/api/KBNIM007C/GetPDS", null,
+        async function (success) {
+            success = _xLib.JSONparseMixData(success);
+            console.log(success);
+            $("#selOrder").addListSelectPicker(success.data, "F_PDS_No");
+        },
+    );
+}
+
+async function GetUser()
+{
+    _xLib.AJAX_Get("/api/KBNIM007C/GetUser", null,
+        async function (success) {
+            success = _xLib.JSONparseMixData(success);
+            console.log(success);
+            $("#selCreate").addListSelectPicker(success.data, "F_Update_By");
+        },
+    );
+}

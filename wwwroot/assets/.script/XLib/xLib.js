@@ -6,7 +6,7 @@ class DataTableLib {
         this.processing = false;
         this.serverSide = false;
         this.scrollX = true;
-        this.scrollY = '400px';
+        this.scrollY = '350px';
         this.searching = false;
         this.info = false;
         this.ordering = false;
@@ -25,22 +25,26 @@ class DataTableLib {
         let constr = new DataTableLib();
         constr = Object.assign(constr, options);
         //console.log(constr);
+        //console.log(constr.scrollCollapse, "scrollCollapse");
+        //console.log(this.scrollCollapse, "this.scrollCollapse");
+
         return $(`${id}`).DataTable({
-            width: (constr.width) ? constr.width : this.width,
-            paging: (constr.paging) ? constr.paging : this.paging,
-            scrollCollapse: (constr.scrollCollapse) ? constr.scrollCollapse : this.scrollCollapse,
-            processing: (constr.processing) ? constr.processing : this.processing,
-            serverSide: (constr.serverSide) ? constr.serverSide : this.serverSide,
-            scrollX: (constr.scrollX) ? constr.scrollX : this.scrollX,
-            scrollY: (constr.scrollY) ? constr.scrollY : this.scrollY,
-            searching: (constr.searching) ? constr.searching : this.searching,
-            info: (constr.info) ? constr.info : this.info,
-            ordering: (constr.ordering) ? constr.ordering : this.ordering,
-            columns: (constr.columns) ? constr.columns : this.columns,
-            order: (constr.order) ? constr.order : this.order,
-            buttons: (constr.buttons) ? constr.buttons : this.buttons,
-            layout: (constr.layout) ? constr.layout : this.layout
+            width: (constr.width) ?? this.width,
+            paging: (constr.paging) ?? this.paging,
+            scrollCollapse: (constr.scrollCollapse) ?? this.scrollCollapse,
+            processing: (constr.processing) ?? this.processing,
+            serverSide: (constr.serverSide) ?? this.serverSide,
+            scrollX: (constr.scrollX) ?? this.scrollX,
+            scrollY: (constr.scrollY) ?? this.scrollY,
+            searching: (constr.searching) ?? this.searching,
+            info: (constr.info) ?? this.info,
+            ordering: (constr.ordering) ?? this.ordering,
+            columns: (constr.columns) ?? this.columns,
+            order: (constr.order) ?? this.order,
+            buttons: (constr.buttons) ?? this.buttons,
+            layout: (constr.layout) ?? this.layout
         });
+
     }
 
     ClearAndAddDataDT(id, data) {
@@ -673,6 +677,50 @@ const _xLib = new xLib();
             autoclose: true,
             showRightIcon: false,
             value: date ?? moment().format('DD/MM/YYYY')
+        });
+    };
+
+    $.fn.initialDataTable = function (options) {
+        if (this.length === 0) return console.error("Element not found");
+
+        let defaultSettings = {
+            width: null,
+            paging: true,
+            scrollCollapse: false,
+            processing: false,
+            serverSide: false,
+            scrollX: false,
+            scrollY: null,
+            searching: true,
+            info: true,
+            ordering: true,
+            columns: [],
+            order: [],
+            buttons: [],
+            layout: {}
+        };
+
+        // Combine default settings with user-provided options
+        let settings = $.extend({}, defaultSettings, options);
+
+        // Initialize DataTable for each element in the jQuery object
+        return this.each(function () {
+            $(this).DataTable({
+                width: settings.width,
+                paging: settings.paging,
+                scrollCollapse: settings.scrollCollapse,
+                processing: settings.processing,
+                serverSide: settings.serverSide,
+                scrollX: settings.scrollX,
+                scrollY: settings.scrollY,
+                searching: settings.searching,
+                info: settings.info,
+                ordering: settings.ordering,
+                columns: settings.columns,
+                order: settings.order,
+                buttons: settings.buttons,
+                layout: settings.layout
+            });
         });
     };
 

@@ -12,6 +12,7 @@ namespace KANBAN.Services.Import.Repository
     {
         public IKBNIM007 KBNIM007 { get; }
         public IKBNIM007T KBNIM007T { get; }
+        public IKBNIM007C KBNIM007C { get; }
         public IKBNIM010 KBNIM010 { get; }
         public IKBNIM011 KBNIM011 { get; }
 
@@ -49,6 +50,14 @@ namespace KANBAN.Services.Import.Repository
             emailService);
 
             KBNIM007T = new KBNIM007T(kbContext,
+                bearerClass,
+                ppm3Context,
+                fillDT,
+                log,
+                emailService,
+                autoMapService);
+            
+            KBNIM007C = new KBNIM007C(kbContext,
                 bearerClass,
                 ppm3Context,
                 fillDT,
