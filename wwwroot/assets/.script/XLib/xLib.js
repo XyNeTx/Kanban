@@ -676,7 +676,8 @@ const _xLib = new xLib();
             format: 'dd/mm/yyyy',
             autoclose: true,
             showRightIcon: false,
-            value: date ?? moment().format('DD/MM/YYYY')
+            value: date ?? moment().format('DD/MM/YYYY'),
+            showOtherMonths: false,
         });
     };
 

@@ -29,7 +29,11 @@ $(document).ready(async function () {
         format: 'mm/yyyy',
         autoclose: true,
         uiLibrary: 'materialdesign',
-        value: moment().format("MM/YYYY")
+        value: moment().format("MM/YYYY"),
+        showRightIcon: false,
+        //select: function (e) {
+        //    console.log(e);
+        //}
     });
 
     $("#inpDateFrom").parent().addClass("col-5 ps-0 pe-0 me-0");   
@@ -1577,9 +1581,19 @@ $("#inpDel_Supplier").change(function () {
     Del_LoadPartNo();
 });
 
-$("#inpDel_YM").change(function () {
+let inpDel_YM = "";
+$(document).on('change', '#inpDel_YM', function () {
+    if (inpDel_YM == $("#inpDel_YM").val()) {
+        return;
+    }
+
     Del_LoadSupplier();
+
 });
+
+//$("#inpDel_YM").change(function () {
+//    Del_LoadSupplier();
+//});
 
 $("#btnDel_Report").click(function () {
 

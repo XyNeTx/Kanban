@@ -4,8 +4,8 @@ $(document).ready(async function () {
 
     let loginDate = _xLib.GetCookie("loginDate");
     let plant = _xLib.GetCookie("plantCode");
-    console.log(loginDate);
-    console.log(plant);
+    //console.log(loginDate);
+    //console.log(plant);
 
 
     $("#readProcessDate").val(moment(loginDate.slice(0, 10), "YYYY-MM-DD").format("DD/MM/YYYY"));
@@ -70,6 +70,26 @@ $("#btnInterface").click(function () {
         function (success) {
             console.log(success);
             xSwal.success(success.response, success.message);
+            $("#tableMain").DataTable().clear().draw();
+
+            setTimeout(() => {
+                _xLib.AJAX_Get("/api/KBNOR210/Page_Load", "",
+                    function (success) {
+                        success = _xLib.JSONparseMixData(success);
+                        console.log(success);
+                        $("#tableMain").DataTable().clear().rows.add(success.data).draw();
+                        $("table thead tr th").css("text-align", "center");
+                        $("table tbody tr td").css("text-align", "center");
+                    },
+                    function (error) {
+                        console.log(error);
+                        xSwal.error(error.responseJSON.response, error.responseJSON.message);
+                    }
+                );
+            }, 100);
+
+            clearTimeout();
+
         },
         function (error) {
             console.log(error);

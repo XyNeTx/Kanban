@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using Microsoft.EntityFrameworkCore;
-
 using HINOSystem.Libs;
 using HINOSystem.Context;
 using KANBAN.Models.KB3.UrgentOrder;
@@ -23,6 +22,7 @@ namespace HINOSystem.Controllers.API.Master
         private readonly PPM3Context _PPM3Context;
         private readonly KB3Context _KB3Context;
         private readonly SerilogLibs _Log;
+        private readonly FillDataTable _FillDT;
 
 
         private readonly string StoragePath = @"wwwroot\Storage\Uploads";
@@ -35,7 +35,8 @@ namespace HINOSystem.Controllers.API.Master
             PPMConnect ppmConnect,
             KB3Context kB3Context,
             PPM3Context pPM3Context,
-            SerilogLibs serilogLibs
+            SerilogLibs serilogLibs,
+            FillDataTable fillDataTable
             )
         {
             _configuration = configuration;
@@ -46,6 +47,7 @@ namespace HINOSystem.Controllers.API.Master
             _PPMConnect = ppmConnect;
             _PPM3Context = pPM3Context;
             _Log = serilogLibs;
+            _FillDT = fillDataTable;
         }
 
 
@@ -54,14 +56,6 @@ namespace HINOSystem.Controllers.API.Master
         {
             
             _BearerClass.Authentication(Request);
-
-            //string UserID = HttpContext.Session.GetString("USER_CODE");
-            //string Plant = HttpContext.Session.GetString("USER_PLANT");
-
-            //var _delList = await _KB3Context.TB_Import_EKanban_Pack.Where(x => x.F_Plant_CD == Plant && x.F_Update_By == UserID).ToListAsync();
-
-            //_KB3Context.RemoveRange(_delList);
-
             if (_BearerClass.Status == 401) return Unauthorized(new
             {
                 status = "401",
@@ -69,10 +63,9 @@ namespace HINOSystem.Controllers.API.Master
                 title = "Unauthorized",
                 message = "Please Login First"
             });
-            using var _KB3Transaction = _KB3Context.Database.BeginTransaction();
+            
             try
             {
-                _KB3Transaction.CreateSavepoint("Start_ImportSave");
 
                 string UserID = HttpContext.Session.GetString("USER_CODE");
                 string Plant = HttpContext.Session.GetString("USER_PLANT");
@@ -81,23 +74,8 @@ namespace HINOSystem.Controllers.API.Master
                 obj.F_Update_By = UserID; 
                 obj.F_Update_Date = DateTime.Now;
 
-                if (ModelState.IsValid)
-                {
-                    _KB3Context.TB_Import_EKanban_Pack.Add(obj);
-                }
-                else
-                {
-                    return BadRequest(new
-                    {
-                        status = "400",
-                        response = "Bad Request",
-                        title = "Bad Request",
-                        message = "Data Not Valid!"
-                    });
-                }
-
+                await _KB3Context.TB_Import_EKanban_Pack.AddAsync(obj);
                 await _KB3Context.SaveChangesAsync();
-                _KB3Transaction.Commit();
                 _Log.WriteLogMsg($" | {JsonConvert.SerializeObject(obj)}");
 
                 return Ok(new
@@ -110,7 +88,6 @@ namespace HINOSystem.Controllers.API.Master
             }
             catch (Exception ex)
             {
-                _KB3Transaction.Rollback();
                 return StatusCode(500,new
                 {
                     status = "500",
@@ -144,8 +121,14 @@ namespace HINOSystem.Controllers.API.Master
 
                 await _KB3Context.Database.ExecuteSqlRawAsync($"DELETE From TB_Import_error Where F_Update_By = @p0 AND F_Type = 'KBNIM014' ",UserID);
 
+                //var intRow = 
                 await _KB3Context.Database.ExecuteSqlRawAsync($"EXEC [exec].[spKBNIM014] @p0,@p1",Plant,UserID);
 
+                //if(intRow > 0)
+                //{
+                //    await _KB3Context.Database.ExecuteSqlRawAsync($"DELETE FROM TB_Import_EKanban_Pack Where F_Plant_CD = @p0 AND F_Update_By = @p1", Plant, UserID);
+                //    throw new Exception("Data Imported but Have Some Error Please Try Again");
+                //}
 
                 var _delList = await _KB3Context.TB_Import_EKanban_Pack.Where(x => x.F_Plant_CD == Plant && x.F_Update_By == UserID).ToListAsync();
 
@@ -183,12 +166,13 @@ namespace HINOSystem.Controllers.API.Master
             }
             catch (Exception ex)
             {
+                _KB3Transaction.RollbackToSavepoint("Start_AfterImported");
                 return StatusCode(500, new
                 {
                     status = "500",
                     response = "Internal Server Error",
                     title = "Internal Server Error",
-                    message = "Data Didn't Import!",
+                    message = ex.Message,
                     err = ex.Message.ToString()
                 });
             }
