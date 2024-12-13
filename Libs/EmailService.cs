@@ -441,10 +441,13 @@ namespace KANBAN.Libs
             {
                 string sBody = "";
                 string MailTo = "";
-                string UserName = _KB3Context.User.Where(x => x.Code.Trim() == _bearerClass.UserCode).Select(x => new
+                var ObjUserName = await _KB3Context.User.Where(x => x.Code.Trim() == _bearerClass.UserCode).Select(x => new
                 {
                     Name = (x.Title_ID == 1 ? "Ms. " : x.Title_ID == 3 ? "Mr. " : "Mrs. ") + x.Name + " " + x.Surname,
-                }).FirstOrDefault().Name;
+                }).FirstOrDefaultAsync();
+
+                string UserName = ObjUserName!.Name;
+
                 MailMessage myMail = new MailMessage();
                 var dt = _FillDT.ExecuteSQL($"Select F_User_name,F_Email From  TB_MS_Operator Where F_User_ID ='{_bearerClass.UserCode}'");
 
@@ -461,7 +464,9 @@ namespace KANBAN.Libs
                     myMail.To.Add(MailTo);
                 }
 
-                if(MailTo != "")
+                var smtpClient = new SmtpClient("156.71.5.8");
+
+                if (MailTo != "")
                 {
                     myMail.Subject = "Please approve pds data";
                     sBody = "Dear All Concern, <br/><br/>";
@@ -473,9 +478,7 @@ namespace KANBAN.Libs
                     myMail.IsBodyHtml = true;
                     myMail.Priority = MailPriority.High;
 
-                    SmtpClient smtp = new SmtpClient("156.71.5.8");
-
-                    await smtp.SendMailAsync(myMail);
+                    smtpClient.Send(myMail);
                 }
 
             }

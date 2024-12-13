@@ -16,7 +16,7 @@ $(document).ready(async () => {
                 { title: "Price Status", data: "F_Price_Status" },
             ],
             order: [[1, "asc"]],
-            scrollCollapse: false,
+            scrollCollapse: true,
         }
     );
 

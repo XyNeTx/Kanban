@@ -610,7 +610,7 @@ namespace KANBAN.Services.Import.Repository
                         }
                         else
                         {
-                            await _kbContext.Database.ExecuteSqlRawAsync("Exec dbo.SP_IM007_FilterData '{0}'", _BearerClass.UserCode);
+                            await _kbContext.Database.ExecuteSqlRawAsync("Exec dbo.SP_IM007_FilterData {0}", _BearerClass.UserCode);
 
                             await _kbContext.Database.ExecuteSqlRawAsync($@"Exec dbo.SP_IM005_TRIAL 
                                 '{obj.PO}','TRIAL','{obj.IssuedDate}','{obj.ParentPartNo}','{obj.ParentStore}',
@@ -729,7 +729,7 @@ namespace KANBAN.Services.Import.Repository
                         }
                         else
                         {
-                            await _kbContext.Database.ExecuteSqlRawAsync("Exec dbo.SP_IM007_FilterData '{0}'", _BearerClass.UserCode);
+                            await _kbContext.Database.ExecuteSqlRawAsync("Exec dbo.SP_IM007_FilterData {0}", _BearerClass.UserCode);
 
                             await _kbContext.Database.ExecuteSqlRawAsync($@"Exec dbo.SP_IM005_TRIAL 
                                 '{obj.PO}','TRIAL','{obj.IssuedDate}','{obj.ParentPartNo}','{obj.ParentStore}',

@@ -303,8 +303,8 @@ namespace KANBAN.Services.Import.Repository
             {
                 string sql = "";
 
-                await _kbContext.Database.ExecuteSqlRawAsync("EXEC dbo.SP_IM007_FilterData '{0}'", _BearerClass.UserCode);
-                
+                await _kbContext.Database.ExecuteSqlRawAsync("EXEC dbo.SP_IM007_FilterData {0}", _BearerClass.UserCode);
+
                 if (action.ToUpper() == "NEW")
                 {
                     if (string.IsNullOrWhiteSpace(listObj[0].PDS))
@@ -448,7 +448,7 @@ namespace KANBAN.Services.Import.Repository
 
                 ConvertExcelToText();
 
-                await _kbContext.Database.ExecuteSqlRawAsync("EXEC dbo.SP_IM007_IMPORT '{0}'", _BearerClass.UserCode);
+                await _kbContext.Database.ExecuteSqlRawAsync("EXEC dbo.SP_IM007_IMPORT {0}", _BearerClass.UserCode);
 
                 DataTable dt = _FillDT.ExecuteSQL($"EXEC dbo.SP_IM007_IMPORT '{_BearerClass.UserCode}'");
 
@@ -492,7 +492,7 @@ namespace KANBAN.Services.Import.Repository
                     stream.Close();
                 }
 
-                await _kbContext.Database.ExecuteSqlRawAsync("EXEC dbo.SP_IM007_IMPORT_SCP '{0}', {1} ", _BearerClass.UserCode, int.Parse(BackDate));
+                await _kbContext.Database.ExecuteSqlRawAsync("EXEC dbo.SP_IM007_IMPORT_SCP {0}, {1} ", _BearerClass.UserCode, int.Parse(BackDate));
 
                 DataTable dt = _FillDT.ExecuteSQL($"EXEC dbo.SP_IM007_IMPORT_SCP '{_BearerClass.UserCode}', '{BackDate}'");
 
@@ -536,7 +536,7 @@ namespace KANBAN.Services.Import.Repository
                     stream.Close();
                 }
 
-                await _kbContext.Database.ExecuteSqlRawAsync("EXEC dbo.SP_IM007_IMPORT_IPMS '{0}', {1} ", _BearerClass.UserCode, int.Parse(BackDate));
+                await _kbContext.Database.ExecuteSqlRawAsync("EXEC dbo.SP_IM007_IMPORT_IPMS {0}, {1} ", _BearerClass.UserCode, int.Parse(BackDate));
 
                 DataTable dt = _FillDT.ExecuteSQL($"EXEC dbo.SP_IM007_IMPORT_IPMS '{_BearerClass.UserCode}', '{BackDate}'");
 

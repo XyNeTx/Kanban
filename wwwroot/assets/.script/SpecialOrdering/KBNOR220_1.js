@@ -23,7 +23,7 @@ $(document).ready(async function () {
             { title: "Customer Order Tag", data: "F_CustomerOrder_Type" },
         ],
         order: [[1, "asc"]],
-        scrollCollapse: false,
+        scrollCollapse: true,
         selectable : true,
     }
 

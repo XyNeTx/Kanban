@@ -1,118 +1,177 @@
 ﻿<div class="row">
-
     <div class="col-xl-12 col-md-12 col-sm-12">
         <div class="card border-left-primary shadow h-100">
             <div class="card-body">
 
-                <form id="frmCondition">
-@*
-                    <div class="row">
-                        <div class="col-6">
-                            <item type="select" id="F_Plant" label="Plant" value="3" readonly></item>
+                <div class="row">
+                        
+                    <div class="col-1 invisible">
+
+                    </div>
+
+                    <div class="col-7" id="divBtn">
+
+                        <button type="button" class="btn btn-success col-2" id="btnInq">Inquiry</button>
+                        <button type="button" class="btn btn-primary col-2" id="btnNew">New</button>
+                        <button type="button" class="btn btn-warning col-2" id="btnUpd">Update</button>
+                        <button type="button" class="btn btn-danger col-2" id="btnDel">Delete</button>
+                        
+                    </div>
+
+                    <div class="col-3">
+                        <div class="row justify-content-end">
+                            <button type="button" class="btn btn-warning col-4" id="btnCan">Cancel</button>
+                            <a class="btn btn-danger col-4" asp-controller="Home" asp-action="Index">Exit</a>
                         </div>
                     </div>
-*@
-                </form>
+
+                    <div class="col-1 invisible">
+
+                    </div>
+
+                </div>
+
+                <div class="row mt-4">
+
+                    <div class="row justify-content-center">
+
+                            <div class="col-5">
+                                <div class="input-group">
+                                    <label class="input-group-text col-3" for="inpLine">Line</label>
+                                    <select class="selectpicker col-6 ps-0" id="inpLine" data-live-search="true" data-size="6">
+                                        <option value="" hidden></option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-5">
+                                <div class="input-group">
+                                    <label class="input-group-text col-3" for="readLine">Line :</label>
+                                    <input type="text" class="form-control col-6" id="readLine" readonly>
+                                </div>
+                            </div>
+
+                    </div>
+
+                    <div class="row justify-content-center">
+
+                            <div class="col-5">
+                                <div class="input-group">
+                                    <label class="input-group-text col-3" for="inpPartCode">Part Code :</label>
+                                    <select class="selectpicker col-6 ps-0" id="inpPartCode" data-live-search="true" data-size="6">
+                                        <option value="" hidden></option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-5">
+                                <div class="input-group">
+                                    <label class="input-group-text col-3" for="readPartCode">Part Code :</label>
+                                    <input type="text" class="form-control col-6" id="readPartCode" readonly>
+                                </div>
+                            </div>
+
+                    </div>
+                    
+                    <div class="row justify-content-center">
+
+                            <div class="col-5">
+                                <div class="input-group">
+                                    <label class="input-group-text col-3" for="inpPartNo">Part No :</label>
+                                    <select class="selectpicker col-6 ps-0" id="inpPartNo" data-live-search="true" data-size="6">
+                                        <option value="" hidden></option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-5">
+                                <div class="input-group">
+                                    <label class="input-group-text col-3" for="readPartNo">Part No :</label>
+                                    <input type="text" class="form-control col-6" id="readPartNo" readonly>
+                                </div>
+                            </div>
+
+                    </div>
+                    
+                    <div class="row justify-content-center">
+
+                            <div class="col-5">
+                                <div class="input-group invisible">
+                                    <label class="input-group-text col-3" for="inpInvis">Part No :</label>
+                                    <select class="selectpicker col-6 ps-0" id="inpInvis" data-live-search="true" data-limit="6">
+                                        <option value="" hidden></option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-5">
+                                <div class="input-group">
+                                    <label class="input-group-text col-3" for="readPartName">Part Name :</label>
+                                    <input type="text" class="form-control col-6" id="readPartName" readonly>
+                                </div>
+                            </div>
+
+                    </div>
+                    
+                    
+                    <div class="row justify-content-center">
+
+                            <div class="col-10">
+                                <div class="input-group">
+                                    <label class="input-group-text col-2" for="readDetail">Detail :</label>
+                                    <input type="text" class="form-control col-9" id="readDetail" readonly>
+                                </div>
+                            </div>
+
+                    </div>
+
+                </div>
 
                 <div class="row">
                     <div class="col mt-4">
-                        <item type="table" id="tblMaster"></item>
+                        <table class="table table-bordered w-100" id="tableMain">
+
+                        </table>
                     </div>
                 </div>
 
-            </div>
-        </div>
-    </div>
+                <div class="row mt-4">
 
-</div>
+                    <div class="col-1 invisible">
 
+                    </div>
 
-<!-- Modal Master -->
-<div class="modal fade" id="modalMaster" tabindex="-1" aria-labelledby="modalMasterLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalMasterLabel"> @ViewData["AppName"] <span></span></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form id="frmMaster" class="needs-validation" autocomplete="off" novalidate>
-                <div class="modal-body" style="padding-left:10px;padding-top:5px;padding-right:10px;">
-
-                    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar">
-                        <div class="btn-group btn-group-sm me-2" role="group" aria-label="Toolbar">
-
-                            <button type="button" class="btn btn-success" id="btnSave" name="btnSave" onclick="onSave();" title="Save data" @(ViewData["ComponentToolbarSave"].ToString() == "true" ? "" : "disabled")>
-                                <i class="ti-save"></i>
+                    <div class="col">
+                        <div class="row justify-content-start">
+                            <button type="button" class="btn btn-primary col-3" id="btnSelAll">Select All</button>
+                            <button type="button" class="btn btn-warning col-3" id="btnDeselAll">Deselect All</button>
+                        </div>
+                    </div>
+                    
+                    <div class="col">
+                        <div class="row justify-content-end">
+                            <button type="button" class="btn btn-primary col-3" id="btnSave">
+                                <i class="fas fa-save"></i>
+                                Save
                             </button>
-                            <button type="button" class="btn btn-success" id="btnPrint" name="btnPrint" onclick="onPrint();" title="Print" @(ViewData["ComponentToolbarPrint"].ToString() == "true" ? "" : "disabled")>
-                                <i class="ti-printer"></i>
+                            <button type="button" class="btn btn-success col-3" id="btnReport">
+                                <i class="fa-solid fa-book"></i>
+                                Report
                             </button>
-                            <button type="button" class="btn btn-success" id="btnExecute" name="btnExecute" onclick="onExecute()" title="Execute/Run" @(ViewData["ComponentToolbarExecute"].ToString() == "true" ? "" : "disabled")>
-                                <i class="fas fa-bolt"></i>
-                            </button>
-                            <button type="button" class="btn btn-success" id="btnDelete" name="btnDelete" onclick="onDelete();" title="Delete" @(ViewData["ComponentToolbarDelete"].ToString() == "true" ? "" : "disabled")>
-                                <i class="far fa-trash-alt"></i>
-                            </button>
-
                         </div>
                     </div>
 
-                    <input type="hidden" class="form-control" id="_Action" name="_Action" value="POST">
-                    <input type="hidden" class="form-control" id="F_Plant" name="F_Plant">
-                    <div class="bg-white border rounded-3">
-                        <section class="w-100 p-2">
-                            <div class="row g-2">
-                                <div class="col-md-6">
-                                    <item type="list" id="F_Line" label="Line" data-controller="LOVKB3.PartList" data-value="F_Line:Code"></item>
-                                </div>
-                            </div>
+                    <div class="col-1 invisible">
 
-                            <div class="row g-2">
-                                <div class="col-md-6">
-                                    <item type="list" id="F_Code" label="Part Code" data-controller="LOVKB3.PartList" data-value="F_Code:Code"></item>
-                                </div>
-                            </div>
-
-                            <div class="row g-2">
-                                <div class="col-md">
-                                    <item type="lov" id="F_Part" label="Part No" data-controller="LOVKB3.PartList" data-value="F_Part:Code" data-description="F_Part_Name"></item>
-                                </div>
-                            </div>
-
-                            <div class="row g-2">
-                                <div class="col">
-                                    <item type="text" id="F_Detail" label="Detail"></item>
-                                </div>
-                            </div>
-
-                            <div class="row g-2">
-                                <div class="col-md-5">
-                                    <item type="date" id="F_Start_Date" label="Start Date" format="yyyy-mm-dd" default="now" required></item>
-                                </div>
-                                <div class="col-md-5">
-                                    <item type="date" id="F_Effect_Date" label="Effective Date" format="yyyy-mm-dd" default="now" noedit required></item>
-                                </div>
-                            </div>
-                        </section>
                     </div>
 
                 </div>
-            </form>
 
-            <div class="modal-footer" style="padding-left:20px; padding-right:20px;">
-                <i class="modal-reference mr-auto">Reference Code : <i id="_REFERCODE_"></i></i>
-                @if (ViewData["UserGroupID"].ToString() == "1" || ViewData["UserGroupID"].ToString() == "2")
-                {
-                    <a href="#" data-bs-toggle="modal" data-bs-target="#ModalHistory" data-bs-remote="UserMaintenance">
-                        <i class="fas fa-scroll" title="History Log"></i>
-                    </a>
-                }
             </div>
-
         </div>
     </div>
-</div>
 
+</div
 
 @using KANBAN.Libs
 @section Scripts {

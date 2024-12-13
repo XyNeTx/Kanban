@@ -1,68 +1,414 @@
-﻿$(document).ready(function () {
+﻿$(document).ready(async function () {
 
-    const xKBNMS021 = new MasterTemplate({
-        Controller: _PAGE_,
-        Table: 'tblMaster',
-        ColumnTitle: {
-            "EN": ['Line', 'Part Code', 'Part No', 'Part Name', 'Bridge', 'Detail'],
-            "TH": ['Line', 'Part Code', 'Part No', 'Part Name', 'Bridge', 'Detail'],
-            "JP": ['Line', 'Part Code', 'Part No', 'Part Name', 'Bridge', 'Detail'],
-        },
-        ColumnValue: [
-            { "data": "F_Line" },
-            { "data": "F_Code" },
-            { "data": "F_Part" },
-            { "data": "F_Part_Name" },
-            { "data": "F_Bridge" },
-            { "data": "F_Detail" }
-        ],
-        Modal: 'modalMaster',
-        Form: 'frmMaster',
-        PostData: [
-            { name: 'F_Plant', value: _PLANT_ }
-        ],
+
+    _xDataTable.InitialDataTable("#tableMain",
+    {
+        columns:
+            [
+                {
+                    title: "Flag", render: function (data, type, row, meta) {
+                        return `<input type="checkbox" class="chkbox">`;
+                    }, width : "8%"
+                },
+                { title: "Line", data: "f_Line", width: "12%" },
+                { title: "Part Code", data: "f_Code", width: "15%" },
+                { title: "Part No.", data: "f_Part_No", width: "15%" },
+                { title: "Part Name", data: "f_name", width: "25%" },
+                {
+                    title: "Bridge", render: function (data, type, row, meta) {
+                        if (row.f_Bridge.toUpperCase() == "TRUE") {
+                            return `<input type="checkbox" class="chkbox" checked>`;
+                        }
+                        return `<input type="checkbox" class="chkbox">`;
+                    }, width: "10%"
+                },
+                { title: "Detail", data: "f_Detail", width: "15%" },
+            ],
+        scrollX: true,
+        scrollY: "250px",
+        scrollCollapse: false,
+        paging: false,
+        ordering: false,
+        width: "100%"
     });
 
-    xKBNMS021.prepare();
+    $("table thead tr th").addClass("text-center");
+    $("table tbody tr td").addClass("text-center");
 
-    xKBNMS021.initial(function (result) {
-        xDropDownList.bind('#frmCondition #F_Plant', result.data.TB_MS_Factory, 'F_Plant', 'F_Plant_Name');
-        xDropDownList.bind('#frmMaster #F_Plant', result.data.TB_MS_Factory, 'F_Plant', 'F_Plant_Name');
 
-        xKBNMS021.search();
+    $(".selectpicker").each(function () {
+        $(this).prop("disabled", true);
+        $(this).selectpicker("refresh");
     });
 
-    onSave = function () {
-        xKBNMS021.save(function () {
-            xKBNMS021.search();
-        });
-    }
-
-    onDelete = function () {
-        xKBNMS021.delete(function () {
-            xKBNMS021.search();
-        });
-    }
-
-    onDeleteAll = function () {
-        xKBNMS021.deleteall(function () {
-            xKBNMS021.search();
-        });
-    }
-
-    onPrint = function () { }
-
-    onExecute = function () { }
-
-    xAjax.onChange('#frmCondition #F_Plant', function () {
-        $('#frmMaster #F_Plant').val($('#frmCondition #F_Plant').val());
-
-        xKBNMS021.search();
-    });
-
-
-
-
+    await xSplash.hide();
 
 })
+$(document).on("click", "#tableMain tbody tr td", function () {
 
+    if ($("#btnUpd").prop("disabled") == true) {
+        return;
+    }
+
+    //console.log($(this).index());
+
+    if ($(this).index() == 6) {
+        if ($(this).find("input").length == 0) {
+            let value = $(this).text();
+            $(this).empty();
+            $(this).append(`<input type="text" class="form-control" id="f_Detail" name="f_Detail" value="${value}">`);
+
+            $("input[name='f_Detail']").focus();
+        }
+    }
+
+});
+
+$(document).on("focusout , keydown", "#f_Detail", function (e) {
+    //console.log(e);
+    if (e.type == "focusout" || e.keyCode == 13) {
+        let value = $(this).val();
+        //console.log(value);
+        let row = $(this).closest("tr");
+        let data = $("#tableMain").DataTable().row(row).data();
+        data.f_Detail = value;
+        $("#tableMain").DataTable().row(row).data(data).draw();
+        //$(this).find("input").remove();
+    }
+});
+
+
+$("#btnCan").click(async function () {
+
+
+    $(".selectpicker").each(function () {
+        let id = $(this).attr("id");
+        //console.log(id);
+        $(`#${id}`).resetSelectPicker();
+        $(this).prop("disabled", true);
+        $(this).selectpicker("refresh");
+    });
+
+    $(document).find("input").each(function () {
+        $(this).val("");
+    });
+
+    DisableButton(false);
+
+    $("#readDetail").prop("readonly", true);
+    $("#readPartName").prop("readonly", true);
+
+
+    if ($("#inpPartCode").prop("tagName") == "INPUT" || $("#inpPartNo").prop("tagName") == "INPUT") {
+
+        $("#inpPartCode").remove();
+        $("#inpPartNo").remove();
+
+        $("label[for='inpPartCode']").parent().append(`<select class="selectpicker col-6 ps-0" id="inpPartCode" data-live-search="true" data-size="6" disabled></select>`);
+        $("label[for='inpPartNo']").parent().append(`<select class="selectpicker col-6 ps-0" id="inpPartNo" data-live-search="true" data-size="6" disabled></select>`);
+
+        $("#inpPartCode").selectpicker("refresh");
+        $("#inpPartNo").selectpicker("refresh");
+    }
+    else {
+        $("#tableMain").DataTable().clear().draw();
+        return;
+    }
+
+
+    //await GetLine();
+    //await GetPartCode();
+    //await GetPartNo();
+
+});
+
+$("#btnInq").click(async function () {
+    $(".selectpicker").each(function () {
+        $(this).prop("disabled", false);
+        $(this).selectpicker("refresh");
+        $("#inpLine").resetSelectPicker();
+    });
+
+    DisableButton(true);
+
+    $("#btnInq").prop("disabled", false);
+
+    await GetLine();
+    await GetPartCode();
+    await GetPartNo();
+
+});
+
+async function DisableButton(bool) {
+    $("#btnInq").prop("disabled", bool);
+    $("#btnNew").prop("disabled", bool);
+    $("#btnDel").prop("disabled", bool);
+    $("#btnUpd").prop("disabled", bool);
+    $("#btnSave").prop("disabled", !bool);
+
+    $("#readDetail").prop("readonly", bool);
+    $("#readPartName").prop("readonly", bool);
+}
+
+$("#btnNew").click(async function () {
+
+    let listLine = [
+        { f_Line: "Frame" },
+        { f_Line: "Rear Axle" },
+        { f_Line: "Side Panel" },
+        { f_Line: "Tail Gate" }
+    ]
+
+    DisableButton(true);
+
+    $("#btnNew").prop("disabled", false);
+
+    $("#inpLine").prop("disabled", false);
+    $("#inpLine").addListSelectPicker(listLine, "f_Line");
+
+    $("#inpLine").selectpicker("refresh");
+    $("#inpLine").resetSelectPicker();
+
+    if ($("#inpPartCode").prop("tagName") == "SELECT") {
+        $("#inpPartNo").parent().remove();
+        $("label[for='inpPartNo']").parent().append("<input type='text' class='form-control col-6' id='inpPartNo' required>");
+        $("#inpPartCode").parent().remove();
+        $("label[for='inpPartCode']").parent().append("<input type='text' class='form-control col-6' id='inpPartCode' required>");
+    }
+
+    $("#readDetail").val("");
+    $("#readPartName").val("");
+    $("#readDetail").prop("readonly", false);
+    $("#readPartName").prop("readonly", false);
+
+});
+
+$("#btnDel").click(async function () {
+
+    DisableButton(true);
+
+    $("#btnDel").prop("disabled", false);
+    $(".selectpicker").each(function () {
+        $(this).prop("disabled", false);
+        $(this).selectpicker("refresh");
+        $(this).resetSelectPicker();
+    });
+
+    await GetLine();
+    await GetPartCode();
+    await GetPartNo();
+
+});
+
+$("#btnUpd").click(async function () {
+    $(".selectpicker").each(function () {
+        $(this).prop("disabled", false);
+        $(this).selectpicker("refresh");
+        $(this).resetSelectPicker();
+    });
+
+    DisableButton(true);
+
+
+    await GetLine();
+    await GetPartCode();
+    await GetPartNo();
+
+    $("#btnUpd").prop("disabled", false);
+    //$("#readDetail").prop("readonly", false);
+
+});
+
+$("#btnSave").click(async function () {
+    await Save();
+
+});
+
+async function GetObj()
+{
+    let obj = {
+        Line: $("#inpLine").val().substring(0, 1),
+        PartCode: $("#inpPartCode").val(),
+        PartNo: $("#inpPartNo").val(),
+    }
+
+    return obj;
+}
+
+async function GetListDataTables(chgFrom) {
+    let obj = await GetObj();
+
+    _xLib.AJAX_Get("/api/KBNMS021/GetListDataTables", obj,
+        function (success)
+        {
+            _xDataTable.ClearAndAddDataDT("#tableMain", success.data);
+            if (chgFrom == "inpPartNo") {
+                $("#readPartName").val(success.data[0].f_name);
+                $("#readDetail").val(success.data[0].f_Detail);
+            }
+        }
+    );
+}
+
+async function GetLine()
+{
+    let obj = await GetObj();
+    _xLib.AJAX_Get("/api/KBNMS021/GetLine", obj,
+        function (success)
+        {
+            $("#inpLine").addListSelectPicker(success.data, "f_Line");
+            $("#inpLine").resetSelectPicker();
+        }
+    );
+}
+
+async function GetPartCode()
+{
+    let obj = await GetObj();
+    _xLib.AJAX_Get("/api/KBNMS021/GetPartCode", obj,
+        function (success)
+        {
+            $("#inpPartCode").addListSelectPicker(success.data, "f_Code");
+            $("#inpPartCode").resetSelectPicker();
+        }
+    );
+}
+
+async function GetPartNo()
+{
+    let obj = await GetObj();
+    _xLib.AJAX_Get("/api/KBNMS021/GetPartNo", obj,
+        function (success)
+        {
+            $("#inpPartNo").addListSelectPicker(success.data, "f_Part_No");
+            $("#inpPartNo").resetSelectPicker();
+        }
+    );
+}
+
+async function Save()
+{
+    let listObj = _xDataTable.GetSelectedDataDT("#tableMain");
+
+    if ($("#btnNew").prop("disabled") == false) {
+        listObj = [];
+        //console.log($("#inpPartNo").val());
+        //var ruibetsu = $("#inpPartNo").val().split("-")[1];
+        //console.log(ruibetsu);
+
+        let obj = {
+            f_Line: $("#inpLine").val().toString().substring(0, 1),
+            f_Code: $("#inpPartCode").val(),
+            f_Ruibetsu: $("#inpPartNo").val().split("-")[1],
+            f_Part_No: $("#inpPartNo").val().split("-")[0],
+            f_Name: $("#readPartName").val(),
+            f_Bridge: "N",
+            f_Detail: $("#readDetail").val(),
+            f_Create_By: "edit in back",
+            f_Update_By: "edit in back",
+            f_Create_Date: new Date().toISOString(),
+            f_Update_Date: new Date().toISOString()
+        }
+        //console.log(obj);
+        listObj.push(obj);
+    }
+
+    else {
+        if (listObj == null) {
+            return;
+        }
+        else {
+            listObj.forEach(function (item) {
+                //console.log(item);
+                item.f_Bridge = $(`#tableMain tbody tr td:contains('${item.f_Part_No}')`).parent().find("td:eq(5) input").prop("checked") == true ? "Y" : "N";
+                item.f_Ruibetsu = item.f_Part_No.split("-")[1];
+                item.f_Part_No = item.f_Part_No.split("-")[0];
+                item.f_Line = item.f_Line.substring(0, 1);
+                item.f_Create_Date = new Date().toISOString();
+                item.f_Update_Date = new Date().toISOString();
+                item.f_Create_By = "edit in back";
+                item.f_Update_By = "edit in back";
+            });
+        }
+    }
+
+    //console.log($("#divBtn").find("button:not(:disabled)").attr("id"));
+    let action = $("#divBtn").find("button:not(:disabled)").attr("id").split("btn")[1];
+
+    _xLib.AJAX_Post("/api/KBNMS021/Save?action=" + action, listObj,
+        async function (success) {
+            xSwal.success(success.response, success.message);
+            if (listObj.some(x => x.f_Line == "S")) {
+                if (success.data.length > 0) {
+                    //await $("#btnCan").trigger("click");
+                    xSwal.error("Error", "Please Input Pair Part Together");
+                    await $("#btnNew").trigger("click");
+                    $("#inpLine").resetSelectPicker();
+                }
+                else {
+                    $("#btnCan").trigger("click");
+                }
+            }
+            else {
+                $("#btnCan").trigger("click");
+            }
+        },
+        function (error) {
+            xSwal.error(error.responseJSON.response, error.responseJSON.message);
+        }
+    );
+}
+
+$(document).on("change", "#inpLine", async function () {
+    $("#readLine").val($("#inpLine").val());
+
+    if ($("#divBtn").find("button:not(:disabled)").attr("id") == "btnNew") 
+    {
+        return;
+    }
+
+    if ($("#inpPartCode").val() == "") {
+        await GetPartCode();
+    }
+    if ($("#inpPartNo").val() == "") {
+        await GetPartNo();
+    }
+
+    await GetListDataTables();
+
+});
+
+$(document).on("change", "#inpPartCode", async function () {
+    $("#readPartCode").val($("#inpPartCode").val());
+
+    if ($("#divBtn").find("button:not(:disabled)").attr("id") == "btnNew") {
+        return;
+    }
+
+    if ($("#inpLine").val() == "") {
+        await GetLine();
+    }
+    if ($("#inpPartNo").val() == "") {
+        await GetPartNo();
+    }
+
+    await GetListDataTables();
+});
+
+$(document).on("change", "#inpPartNo", async function () {
+    $("#readPartNo").val($("#inpPartNo").val());
+
+    if ($("#divBtn").find("button:not(:disabled)").attr("id") == "btnNew") {
+        return;
+    }
+
+    if ($("#inpLine").val() == "") {
+        await GetLine();
+    }
+    if ($("#inpPartCode").val() == "") {
+        await GetPartCode();
+    }
+
+    await GetListDataTables("inpPartNo");
+
+});

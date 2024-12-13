@@ -192,16 +192,18 @@ $("#selPartNo").change(async () => {
 $("#btnCan").click(async () => {
     if ($("#selCustomerOrder").prop("tagName") == "INPUT") {
         $("#selCustomerOrder").remove();
-        $("label[for='selCustomerOrder']").parent().append("<select class='selectpicker col-5 p-0' id='selCustomerOrder' name='selCustomerOrder' disabled></select>");
-        $("#selCustomerOrder").append("<option value='' hidden></option>");
-        $("#selCustomerOrder").selectpicker("refresh");
+        await $("label[for='selCustomerOrder']").parent().append("<select class='selectpicker col-5 p-0' id='selCustomerOrder' name='selCustomerOrder' data-live-search='true' data-size='7' disabled></select>");
+        await $("#selCustomerOrder").append("<option value='' hidden></option>");
+        await $("#selCustomerOrder").selectpicker("destroy");
+        await $("#selCustomerOrder").selectpicker("refresh");
+        await $("#selCustomerOrder").selectpicker("render");
     }
     $("#divInput").find("select").each(function () {
         $(this).empty();
         $(this).prop("disabled", true);
         $(this).resetSelectPicker();
     });
-
+    $("#spanPartName").text("");
     $("#divBtn").find("button").prop("disabled", false);
     $("#btnCan").prop("disabled", true);
     $("#btnSave").prop("disabled", true);
@@ -354,12 +356,12 @@ GetPartNo = async () => {
 
 PartNoSelected = async () => {
     let obj = await getQueryObj();
+    $("#spanPartName").text("");
 
     _xLib.AJAX_Get("/api/KBNIM007/PartNoSelected", obj,
         async (success) => {
             success = _xLib.JSONparseMixData(success);
             //console.log(success);
-            $("#spanPartName").text("");
             if (success.data.length > 0) {
                 $("#spanPartName").text(success.data[0].F_Part_NM);
             }

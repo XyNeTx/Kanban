@@ -1,5 +1,5 @@
-﻿$(document).ready(function () {
-    var pdsSet = new Set();
+﻿var pdsSet = new Set();
+$(document).ready(function () {
 
     const table = $('#tblMaster').DataTable({
         columns: [
@@ -114,59 +114,73 @@
     });
 
     xAjax.onClick("#ReceiveBtn", function () {
-        $("#ReceiveBtn").prop("disabled", true);
-        if (isEditing) {
-            return alert("Please Save Edit Dev.Qty Before Receive Part!");
-        }
-        var _selData = [];
+        try {
+            xSplash.show();
+            $("#ReceiveBtn").prop("disabled", true);
+            if (isEditing) {
+                return alert("Please Save Edit Dev.Qty Before Receive Part!");
+            }
+            var _selData = [];
 
-        // Get the column names from the DataTable
-        var columnNames = $('#tblMaster').DataTable().columns().header().toArray().map(function (th) {
-            return $(th).text().trim();
-        });
-
-        //console.log(columnNames);
-
-        // Iterate over the rows of the DataTable
-        $('#tblMaster').DataTable().rows().nodes().each(function (row, index) {
-            var rowData = {};
-
-            // Iterate over each cell in the row
-            $(row).find('td').each(function (cellIndex) {
-                // Add the data to the rowData object using the corresponding column name
-                rowData[columnNames[cellIndex]] = $(this).text().trim();
+            // Get the column names from the DataTable
+            var columnNames = $('#tblMaster').DataTable().columns().header().toArray().map(function (th) {
+                return $(th).text().trim();
             });
 
-            // Push the rowData object to the _selData array
-            _selData.push(rowData);
-        });
-        _selData.push({ "PDSNo": pdsSet.values().next().value });
+            //console.log(columnNames);
 
-        // console.log(_selData);
+            // Iterate over the rows of the DataTable
+            $('#tblMaster').DataTable().rows().nodes().each(function (row, index) {
+                var rowData = {};
 
-        xAjax.Post({
-            url: 'KBNCR210/Receive',
-            data: {
-                'JsonData': _selData,
-            },
-            then: function (result) {
-                // console.log(result)
-                if (result.status == "200") {
-                    xSwal.success(result.title, result.message);
-                    $('#tblMaster').DataTable().clear();
-                    $('#tblMaster').DataTable().draw();
-                    pdsSet.clear();
+                // Iterate over each cell in the row
+                $(row).find('td').each(function (cellIndex) {
+                    // Add the data to the rowData object using the corresponding column name
+                    rowData[columnNames[cellIndex]] = $(this).text().trim();
+                });
+
+                // Push the rowData object to the _selData array
+                _selData.push(rowData);
+            });
+            _selData.push({ "PDSNo": pdsSet.values().next().value });
+
+            // console.log(_selData);
+
+            $("#tblMaster").DataTable().clear().draw();
+            pdsSet.clear();
+
+            xAjax.Post({
+                url: 'KBNCR210/Receive',
+                data: {
+                    'JsonData': _selData,
+                },
+                then: function (result) {
+                    // console.log(result)
+                    if (result.status == "200") {
+                        xSwal.success(result.title, result.message);
+                        $('#tblMaster').DataTable().clear();
+                        $('#tblMaster').DataTable().draw();
+                        pdsSet.clear();
+                    }
+                    else {
+                        xSwal.error(result.title, result.message);
+                    }
+                },
+                error: function (result) {
+                    xSplash.hide();
+                    xSwal.error("Error", "An error occurred during the request.");
+                    console.error(_Controller + '.ReceiveSeparate: ' + result.responseText);
                 }
-                else {
-                    xSwal.error(result.title, result.message);
-                }
-            },
-            error: function (result) {
-                console.error(_Controller + '.ReceiveSeparate: ' + result.responseText);
-                xSplash.hide();
-            }
-        });
-
-        $("#ReceiveBtn").prop("disabled", false);
+            });
+        }
+        catch (e) {
+            console.error(e);
+            xSplash.hide();
+            xSwal.error("Error", "An error occurred during the request.");
+        }
+        finally {
+            xSplash.hide();
+            $("#ReceiveBtn").prop("disabled", false);
+        }
     });
 });

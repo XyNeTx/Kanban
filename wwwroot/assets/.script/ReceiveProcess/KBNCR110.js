@@ -1,5 +1,5 @@
-﻿$(document).ready(function () {
-    var pdsSet = new Set();
+﻿var pdsSet = new Set();
+$(document).ready(function () {
     const KBNCR110 = new MasterTemplate({
         Controller: _PAGE_,
         Table: 'tblMaster',
@@ -29,37 +29,9 @@
             if ($('#chkDeliveryDate').val() == 0) $('#fldDeliveryDate').prop('disabled', 'disabled');
             if ($('#chkDeliveryDate').val() == 1) $('#fldDeliveryDate').prop('disabled', false);
         });
-        xSplash.hide();
+
         //KBNCR110.search();
     });
-
-    onSave = function () {
-        KBNCR110.save(function () {
-            KBNCR110.search();
-        });
-    }
-
-    onDelete = function () {
-        KBNCR110.delete(function () {
-            KBNCR110.search();
-        });
-    }
-
-    onDeleteAll = function () {
-        KBNCR110.deleteall(function () {
-            KBNCR110.search();
-        });
-    }
-
-    onPrint = function () {
-        xDataTableExport.setConfigPDF({
-            title: 'OLD TYPE SERVICE CHECK LIST'
-        });
-    }
-
-    onExecute = function () {
-        console.log('onExecute');
-    }
 
     xAjax.onEnter('#F_PDS_No', function () {
         var pdsNo = $('#F_PDS_No').val();
@@ -106,46 +78,65 @@
 
 });
 
-$("#ReceiveBtn").one('click', async function handleReceiveClick() {
-    $("#ReceiveBtn").prop('disabled', true);
-    let _selData = [];
-    let allPages = $('#tblMaster').DataTable().cells().nodes();
+$("#ReceiveBtn").on('click', async function () {
+    try {
+        xSplash.show();
+        $("#ReceiveBtn").prop('disabled', true);
+        let _selData = [];
+        let allPages = $('#tblMaster').DataTable().cells().nodes();
 
-    $(allPages).find('input[type="checkbox"]').each(function () {
-        if ($(this).prop('checked')) {
-            let _val = $(this).val();
-            _selData.push(JSON.parse(`{` + ReplaceAll(_val, `'`, `"`) + `}`));
-        }
-    });
-
-    // Ajax call
-    xAjax.Post({
-        url: 'KBNCR110/ReceiveAllPart',
-        data: { 'F_PDS_No': _selData },
-        then: function (result) {
-            console.log(result);
-            if (result.status == "200") {
-                xSwal.success(result.title, result.message);
-                $('#tblMaster').DataTable().clear().draw();
-                pdsSet.clear();
-            } else {
-                xSwal.error(result.title, result.message);
+        $(allPages).find('input[type="checkbox"]').each(function () {
+            if ($(this).prop('checked')) {
+                let _val = $(this).val();
+                _selData.push(JSON.parse(`{` + ReplaceAll(_val, `'`, `"`) + `}`));
             }
-            completeRequest();
-        },
-        error: function (result) {
-            console.error(_Controller + '.ReceiveAllPart: ' + result.responseText);
-            xSwal.error("Error", "An error occurred during the request.");
-            completeRequest();
-        }
-    });
+        });
 
-    // Common function to handle completion and reset button
-    function completeRequest() {
-        $("#ReceiveBtn").prop('disabled', false);
-        $("#ReceiveBtn").one('click', handleReceiveClick); // Reattach handler
-        xSplash.hide();
+        if (_selData.length == 0) {
+            xSwal.error("Error", "Please enter at least one PDS No.");
+        }
+
+        $('#tblMaster').DataTable().clear().draw();
+        pdsSet.clear();
+
+        // Ajax call
+        xAjax.Post({
+            url: 'KBNCR110/ReceiveAllPart',
+            data: { 'F_PDS_No': _selData },
+            then: function (result) {
+                //console.log(result);
+                if (result.status == "200") {
+                    xSwal.success(result.title, result.message);
+                    $('#tblMaster').DataTable().clear().draw();
+                    pdsSet.clear();
+                } else {
+                    xSwal.error(result.title, result.message);
+                }
+            },
+            error: function (result) {
+                console.error(_Controller + '.ReceiveAllPart: ' + result.responseText);
+                xSwal.error("Error", "An error occurred during the request.");
+            }
+        });
     }
+    catch (e) {
+        console.error(e);
+        xSplash.hide();
+        xSwal.error("Error", "An error occurred during the request.");
+    }
+    finally {
+        xSplash.hide();
+        $("#ReceiveBtn").prop('disabled', false);
+    }
+
+
+
+    //// Common function to handle completion and reset button
+    //function completeRequest() {
+    //    $("#ReceiveBtn").prop('disabled', false);
+    //    $("#ReceiveBtn").one('click', handleReceiveClick); // Reattach handler
+    //    xSplash.hide();
+    //}
 });
 
 

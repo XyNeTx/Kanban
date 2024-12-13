@@ -20,7 +20,10 @@ $(document).ready(async function () {
 });
 
 $("#btnExit").click(function () {
-    window.location.replace("/OrderingProcess/KBNOR200");
+    if (window.location.hostname.includes("tpcap")) {
+        return window.location.replace("/kanban/OrderingProcess/KBNOR200");
+    }
+    return window.location.replace("/OrderingProcess/KBNOR200");
 });
 
 $("#btnCheckAll").click(function () {

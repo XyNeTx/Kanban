@@ -1,14 +1,8 @@
-﻿namespace HINOSystem.Models.KB3.Master
-{
-    using Microsoft.EntityFrameworkCore;
-    using Newtonsoft.Json;
-    using Newtonsoft.Json.Converters;
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
 
-    [Table("TB_MS_PartCode")]
-    [PrimaryKey(nameof(F_Line),nameof(F_Code), nameof(F_Part_No), nameof(F_Ruibetsu))]
-    public class TB_MS_PartCode
+namespace KANBAN.Models.KB3.Master.ViewModel
+{
+    public class VM_Save_KBNMS021
     {
         [StringLength(1)]
         public string F_Line { get; set; }
@@ -26,14 +20,18 @@
         public string F_Detail { get; set; }
         [StringLength(25)]
         public string F_Create_By { get; set; }
-        [JsonConverter(typeof(JavaScriptDateTimeConverter))]
         public DateTime F_Create_Date { get; set; }
-        [JsonConverter(typeof(JavaScriptDateTimeConverter))]
         public DateTime F_Update_Date { get; set; }
         [StringLength(40)]
         public string F_Update_By { get; set; }
+        [StringLength(1)]
+        public string? InpLine { get; set; }
+        [StringLength(4)]
+        public string? InpPartCode { get; set; }
+        [StringLength(13)]
+        public string? InpPartNo { get; set; }
+        [StringLength(25)]
+        public string? InpDetail { get; set; }
 
     }
 }
-
-

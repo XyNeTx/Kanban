@@ -12,7 +12,10 @@ $("button").click(function (e) {
     if(e.target.id == "btnKBNMS004") return;
     var _redirect = e.target.id.replace('btn', '');
     _xLib.SetProcessCookie(_redirect);
-    if (window.location.pathname.includes("tpcap")) {
+    //return console.log(window.location.href);
+    //console.log(_redirect);
+    if (window.location.href.includes("tpcap")) {
+        //return console.log(`/kanban/SpecialOrdering/${_redirect}`);
         return window.location.replace(`/kanban/SpecialOrdering/${_redirect}`);
     }
     return window.location.replace(`/SpecialOrdering/${_redirect}`);

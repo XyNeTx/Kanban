@@ -59,6 +59,15 @@ function LoadContactList() {
 
         },
         function (error) {
+            let obj = {
+                UserID: "...",
+                UserName: "",
+                Telelphone: "",
+                Fax: "",
+                Email: ""
+            };
+            $("#tableMain").DataTable().row.add(obj).draw();
+            $("table tbody tr td").addClass("text-center");
             console.log(error);
         }
     );
