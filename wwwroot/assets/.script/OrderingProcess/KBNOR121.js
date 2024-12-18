@@ -618,6 +618,7 @@ const addDetailToTable = async (dateSet, intRow) => {
 
                 for (let i = 0; i < accessCheck.length; i++) {
                     if (success.data[accessValue[i]] != 0) {
+                        console.log(accessCheck[i]);
                         $(`#${accessCheck[i]}`).prop("checked", true);
                         $(`#${accessLabel[i]}`).removeClass("text-primary").addClass("text-danger");
                     }

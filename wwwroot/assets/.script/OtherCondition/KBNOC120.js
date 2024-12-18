@@ -268,9 +268,19 @@ $("#inpFile").change(function () {
     inpFile = this.files[0];
 });
 
+$("#btnRpt").click(async function () {
+
+    var obj = {
+        UserName: _xLib.GetUserName(),
+    }
+
+    return _xLib.OpenReportObj("/KBNOC120", obj);
+
+});
+
 $("#btnImport").click(async function () {
 
-    console.log('Files:', inpFile);
+    //console.log('Files:', inpFile);
     const arrayBuffer = await inpFile.arrayBuffer();
     const read = await XLSX.read(arrayBuffer);
 
@@ -282,39 +292,30 @@ $("#btnImport").click(async function () {
 
     const data = XLSX.utils.sheet_to_json(newRead.Sheets[newRead.SheetNames[0]]);
 
-    let listObj = [];
-
-    listObj = data.map(function (data) {
-        return {
-            Supplier: data.SupplierCode,
-            StoreCD: data["Store Code"],
-            DeliveryDate: moment(data.DeliveryDate, "DD/MM/YYYY").format("YYYYMMDD"),
-            Trip: data.DeliveryTrip,
-            IsSlideOrder: data.KeepOrder == "Y" ? true : false,
-            SlideDateTo: moment(data["Slide to Date"], "DD/MM/YYYY").format("YYYYMMDD"),
-            TripNext: data["Slide to Trip"]
-        }
-    });
-
-    for (let i = 0 ; i < listObj.length ; i++)
+    for (let i = 0; i < data.length ; i++)
     {
         try {
             let mockObj = {
-                Supplier: listObj[i].Supplier,
-                StoreCD: listObj[i].StoreCD,
-                DeliveryDate: listObj[i].DeliveryDate,
-                Trip: listObj[i].Trip,
-                IsSlideOrder: listObj[i].IsSlideOrder,
-                SlideDateTo: listObj[i].SlideDateTo,
-                TripNext: listObj[i].TripNext
+                Supplier: data[i].SupplierCode,
+                StoreCD: data[i]["Store Code"],
+                DeliveryDate: moment(data[i].DeliveryDate, "DD/MM/YYYY").format("YYYYMMDD"),
+                Trip: data[i].DeliveryTrip,
+                IsSlideOrder: data[i].KeepOrder == "Y" ? true : false,
+                SlideDateTo: moment(data[i]["Slide to Date"], "DD/MM/YYYY").format("YYYYMMDD"),
+                TripNext: data[i]["Slide to Trip"]
             }
 
             let postObj = [];
 
             postObj.push(mockObj);
 
+            //console.log(postObj);
+
+            //continue;
+
             _xLib.AJAX_Post("/api/KBNOC120/Save?action=New", postObj,
                 function (success) {
+                    console.log(postObj[i]);
                     console.log("Success");
                 },
                 function (error) {
@@ -323,7 +324,7 @@ $("#btnImport").click(async function () {
             );
         }
         catch (e) {
-            xSwal.error("Error", postObj[i].Supplier + " " + postObj[i].StoreCD + " " + e.message);
+            xSwal.error("Error", `Row ${i + 1} : ${e.message}`);
         }
     }
 

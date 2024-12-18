@@ -923,7 +923,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
                 var dtDeliveryTime = _FillDT.ExecuteSQL(_SQL);
                 string ChgCycleCheck = "0";
 
-                if (dtDeliveryTime != null)
+                if (dtDeliveryTime.Rows.Count > 0)
                 {
                     ChgCycleCheck = "1";
                 }
