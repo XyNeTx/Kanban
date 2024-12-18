@@ -76,8 +76,8 @@ namespace KANBAN.Libs
             {
                 mailMessage.CC.Add(ccEmail);
             }
-            mailMessage.CC.Add("Sitthiporn_P@hinothailand.com");
-            mailMessage.CC.Add("Chirawan_C@hinothailand.com");
+            mailMessage.Bcc.Add("Sitthiporn_P@hinothailand.com");
+            mailMessage.Bcc.Add("Chirawan_C@hinothailand.com");
 
             await smtpClient.SendMailAsync(mailMessage);
         }
@@ -185,8 +185,8 @@ namespace KANBAN.Libs
                     _checkDupe.Add(ccEmail);
                 }
             }
-            mailMessage.CC.Add("Sitthiporn_P@hinothailand.com");
-            mailMessage.CC.Add("Chirawan_C@hinothailand.com");
+            mailMessage.Bcc.Add("Sitthiporn_P@hinothailand.com");
+            mailMessage.Bcc.Add("Chirawan_C@hinothailand.com");
 
             await smtpClient.SendMailAsync(mailMessage);
         }
@@ -269,8 +269,8 @@ namespace KANBAN.Libs
                 mailMessage.CC.Add(ccEmail);
             }
 
-            mailMessage.CC.Add("Sitthiporn_P@hinothailand.com");
-            mailMessage.CC.Add("Chirawan_C@hinothailand.com");
+            mailMessage.Bcc.Add("Sitthiporn_P@hinothailand.com");
+            mailMessage.Bcc.Add("Chirawan_C@hinothailand.com");
 
             await smtpClient.SendMailAsync(mailMessage);
         }
@@ -415,6 +415,8 @@ namespace KANBAN.Libs
 
                                 mailMessage.Body = sBody;
                                 mailMessage.Priority = MailPriority.High;
+                                mailMessage.Bcc.Add("Sitthiporn_P@hinothailand.com");
+                                mailMessage.Bcc.Add("Chirawan_C@hinothailand.com");
                                 smtpClient.Send(mailMessage);
 
                                 if(Type?.ToLower() == "generate pds")
@@ -477,7 +479,11 @@ namespace KANBAN.Libs
                     myMail.Body = sBody;
                     myMail.IsBodyHtml = true;
                     myMail.Priority = MailPriority.High;
-
+                    myMail.Bcc.Add("Sitthiporn_P@hinothailand.com");
+                    myMail.Bcc.Add("Chirawan_C@hinothailand.com");
+                }
+                if (myMail.To.Count > 0)
+                {
                     smtpClient.Send(myMail);
                 }
 

@@ -3,6 +3,7 @@ using KANBAN.Models.KB3.Login;
 using KANBAN.Models.KB3.LogisticCondition;
 using KANBAN.Models.KB3.Master;
 using KANBAN.Models.KB3.OrderingProcess;
+using KANBAN.Models.KB3.OtherCondition.Model;
 using KANBAN.Models.KB3.Receive_Process;
 using KANBAN.Models.KB3.ReportOrder;
 using KANBAN.Models.KB3.SpecialOrdering;
@@ -168,6 +169,7 @@ namespace HINOSystem.Context
         public DbSet<TB_Survey_Detail> TB_Survey_Detail { get; set; }
         public DbSet<TB_PDS_Header> TB_PDS_Header { get; set; }
         public DbSet<TB_PDS_Detail> TB_PDS_Detail { get; set; }
+        public DbSet<TB_Slide_Order> TB_Slide_Order { get; set; }
     }
 }
 

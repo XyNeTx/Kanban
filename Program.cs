@@ -12,6 +12,8 @@ using KANBAN.Services.Logistical.Interface;
 using KANBAN.Services.Logistical.Repository;
 using KANBAN.Services.Master.IRepository;
 using KANBAN.Services.Master.Repository;
+using KANBAN.Services.OtherCondition.IRepository;
+using KANBAN.Services.OtherCondition.Repository;
 using KANBAN.Services.SpecialOrdering.Interface;
 using KANBAN.Services.SpecialOrdering.Repository;
 using Microsoft.EntityFrameworkCore;
@@ -101,6 +103,7 @@ builder.Services.AddScoped<IImportService ,ImportService>();
 builder.Services.AddScoped<ILogisticService, LogisticService>();
 builder.Services.AddScoped<ISpecialOrderingServices, SpecialOrderingServices>();
 builder.Services.AddScoped<IMasterRepo, MasterRepo>();
+builder.Services.AddScoped<IOtherConditionRepo, OtherConditionRepo>();
 
 builder.Services.AddAutoMapper(typeof(PDS_Header_To_REC_Header_Profile), typeof(PDS_Detail_To_Rec_Detail_Profile));
 builder.Services.AddTransient(typeof(IAutoMapRepo<,>), typeof(AutoMapRepo<,>));

@@ -189,7 +189,10 @@ $("#btnMerge").click(async function () {
                     $("#inpCustomerOrderNo").val("");
                 }
                 
-                GetCustomerPO();
+                $("#tableMain input[type='checkbox']:checked").each(function () {
+                    $("#tableMain").DataTable().row($(this).closest("tr")).remove().draw(false);
+                });
+
             } else {
                 xSwal.error("Merge Fail!");
             }

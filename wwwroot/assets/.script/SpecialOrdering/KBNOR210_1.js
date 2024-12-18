@@ -36,6 +36,13 @@ $(document).ready(async function () {
         //}
     });
 
+    $("#inpNewDeliveryDate").datepicker({
+        format: 'dd/mm/yyyy',
+        autoclose: true,
+        uiLibrary: 'materialdesign',
+        showRightIcon: false,
+    });
+
     $("#inpDateFrom").parent().addClass("col-5 ps-0 pe-0 me-0");   
 
     await LoadDataChangeDelivery();

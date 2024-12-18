@@ -1,5 +1,4 @@
 ﻿using HINOSystem.Models.KB3.Master;
-using KANBAN.Models.KB3.Master.ViewModel;
 
 namespace KANBAN.Services.Master.IRepository
 {

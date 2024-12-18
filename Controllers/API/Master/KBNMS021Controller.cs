@@ -57,7 +57,7 @@ namespace HINOSystem.Controllers.API.Master
             }
             catch (CustomHttpException ex)
             {
-                throw new CustomHttpException(ex.StatusCode,ex.InnerException.Message ?? ex.Message);
+                throw new CustomHttpException(ex.StatusCode,ex.Message);
             }
         }
 
@@ -88,7 +88,7 @@ namespace HINOSystem.Controllers.API.Master
             }
             catch (CustomHttpException ex)
             {
-                throw new CustomHttpException(ex.StatusCode, ex.InnerException.Message ?? ex.Message);
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
             }
         }
 
@@ -119,7 +119,7 @@ namespace HINOSystem.Controllers.API.Master
             }
             catch (CustomHttpException ex)
             {
-                throw new CustomHttpException(ex.StatusCode, ex.InnerException.Message ?? ex.Message);
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
             }
         }
 
@@ -150,7 +150,7 @@ namespace HINOSystem.Controllers.API.Master
             }
             catch (CustomHttpException ex)
             {
-                throw new CustomHttpException(ex.StatusCode, ex.InnerException.Message ?? ex.Message);
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
             }
         }
 
@@ -187,7 +187,7 @@ namespace HINOSystem.Controllers.API.Master
             }
             catch (CustomHttpException ex)
             {
-                throw new CustomHttpException(ex.StatusCode, ex.InnerException.Message ?? ex.Message);
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
             }
         }
 

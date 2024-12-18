@@ -83,6 +83,9 @@ Upload = async () => {
     await _xLib.AJAX_Post("/api/KBNOR230/Upload", data,
         async (success) => {
             xSplash.hide();
+            $("#tableMain input[type='checkbox']:checked").each(function () {
+                $("#tableMain").DataTable().row($(this).closest("tr")).remove().draw(false);
+            });
             xSwal.success(success.response, success.message);
         },
         async (error) => {

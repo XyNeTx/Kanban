@@ -230,7 +230,9 @@ $("#btnGen").click(function () {
     _xLib.AJAX_Post("/api/KBNOR220/Generate", data,
         async function (success) {
             await xSwal.success(success.response, success.message);
-            LoadListView();
+            $("#tableMain input[type='checkbox']:checked").each(function () {
+                $("#tableMain").DataTable().row($(this).closest("tr")).remove().draw(false);
+            });
         },
         function (error) {
             console.log(error);

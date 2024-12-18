@@ -182,9 +182,13 @@ $("#btnNextPage").click(async function () {
 
 const previewFunction = async (intRow,_command) => {
     //console.log("IntRow : ", intRow);
+
+
     $("#divSpinner").css("visibility", "visible");
     $("#divRead").css("visibility", "hidden");
     $("#tableMaster").css("visibility", "hidden");
+
+
     var obj = {
         action: _command,
         supplier: $("#inputSupplier").val(),
@@ -870,7 +874,9 @@ const sumKB = async (dateSet) => {
     ).forEach(function (item, i) {
         console.log(item);
         let _pattern = parseInt(item.F_Adj_Pattern / parseInt($("#readQtyPack").val()));
-        let _oldPattern = $(`#tdR15KB${item.F_Delivery_Date.slice(6, 8) + "-" + item.F_Delivery_Date.slice(4, 6) + "-" + item.F_Delivery_Date.slice(0, 4)}`).text();
+        //let _oldPattern = $(`#tdR15KB${item.F_Delivery_Date.slice(6, 8) + "-" + item.F_Delivery_Date.slice(4, 6) + "-" + item.F_Delivery_Date.slice(0, 4)}`).text();
+
+        let _oldPattern = 0;
 
         let _sumPattern = _pattern + parseInt(_oldPattern);
 

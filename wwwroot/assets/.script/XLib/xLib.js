@@ -660,7 +660,7 @@ const _xLib = new xLib();
     $.fn.addListSelectPicker = async function (arrData, objKey) {
         //console.log($(this));
         await $(this).empty();
-        await $(this).append(`<option value='' hidden></option >`);
+        await $(this).append(`<option value=''></option >`);
         let thisElement = $(this);
         arrData.forEach(function (each) {
             //console.log(each[objKey]);

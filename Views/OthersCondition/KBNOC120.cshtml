@@ -1,12 +1,122 @@
 ﻿<div class="row">
+    <div class="col-xl-12 col-md-12 col-sm-12">
+        <div class="card border-left-primary shadow h-100">
+            <div class="card-body">
+
+                <div class="row">
+
+                    <div class="col-7" id="divBtn">
+
+                        <button type="button" class="btn btn-success col-2" id="btnInq">Inquiry</button>
+                        <button type="button" class="btn btn-primary col-2" id="btnNew">New</button>
+                        <button type="button" class="btn btn-warning col-2" id="btnUpd">Update</button>
+                        <button type="button" class="btn btn-danger col-2" id="btnDel">Delete</button>
+
+                    </div>
+
+                    <div class="col-5">
+                        <div class="row justify-content-end">
+                            <button type="button" class="btn btn-warning col-2" id="btnCan">Cancel</button>
+                            <button type="button" class="btn btn-success col-2" id="btnRpt">Report</button>
+                            <a class="btn btn-danger col-2" asp-controller="Home" asp-action="Index">Exit</a>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row">
+                    <table class="table table-bordered w-100" id="tableMain">
+
+                    </table>
+                </div>
+
+                <div class="row justify-content-start mt-2">
+                    <div class="col-4">
+                        <a class="btn btn-rounded btn-primary text-light col-4" id="btnSelectAll">Select All</a>
+                        <a class="btn btn-rounded btn-warning text-light col-4" id="btnDeselectAll">Deselect All</a>
+                    </div>
+                </div>
+
+
+                <form id="formMain">
+
+                    <div class="row mt-4">
+                        <div class="col">
+
+                            <div class="input-group">
+                                <span class="input-group-text">Supplier</span>
+                                <select class="selectpicker" id="inpSupplier" data-live-search="true" data-size="6" disabled>
+                                    <option value="" hidden></option>
+                                </select>
+                            </div>
+
+                            <div class="input-group">
+                                <span class="input-group-text">Store Cd</span>
+                                <select class="selectpicker" id="inpStoreCd" data-live-search="true" data-size="6" disabled>
+                                    <option value="" hidden></option>
+                                </select>
+                            </div>
+                        
+                            <div class="input-group">
+                                <span class="input-group-text">Delivery Date</span>
+                                <input type="text" class="datepicker form-control" id="inpDeliveryDate" disabled />
+                            </div>
+                        
+                            <div class="input-group">
+                                <span class="input-group-text">Trip</span>
+                                <input type="number" class="form-control col-7" min="0" id="inpTrip" disabled />
+                            </div>
+
+
+
+                        </div>
+
+                        <div class="col">
+
+                            <div class="ms-4">
+                                <input type="checkbox" class="form-check-input" id="chkSlideOrder" />
+                                <label class="form-check-label" for="chkSlideOrder">Slide Order</label>
+                            </div>
+
+                            <div class="invisible mt-4">
+                                <div class="input-group">
+                                    <span class="input-group-text">invis:</span>
+                                    <input type="text" class="datepicker form-control" />
+                                </div>
+                            </div>
+
+                            <div class="input-group">
+                                <span class="input-group-text">Slide Date To:</span>
+                                <input type="text" class="datepicker form-control" id="inpSlideDate" disabled/>
+                            </div>
+                        
+                            <div class="input-group">
+                                <span class="input-group-text">Trip Next</span>
+                                <input type="number" class="form-control col-7" min="0" id="inpTripNext" disabled />
+                            </div>
+
+                        </div>
+
+                        <div class="col">
+                            <button type="button" class="btn btn-success col-4" id="btnSave">Save</button>
+                        </div>
+
+                    </div>
+                </form>
+
+                <div class="row mt-3">
+                    <input type="file" class="form-control col-6" id="inpFile" accept=".xlsx , .xls" />
+                    <button type="button" class="btn btn-primary col-1 ms-1" id="btnImport">Import</button>
+                    <a href="~/TemplateFiles/import_kbnoc120_pattern.xlsx" class="btn btn-success col-2">Download Pattern File</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
 </div>
 
-
-<script type="text/javascript">
-    $(document).ready(function () {
-
-        xSplash.hide();
-
-    });
-
-</script>
+@using KANBAN.Libs
+@section Scripts {
+    <script type="text/javascript" src="@FileVersionHelper.VersionedScriptPath("/assets/.script/OtherCondition/KBNOC120.js")"></script>
+}

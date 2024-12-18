@@ -75,6 +75,9 @@ Register = async () => {
         async (success) => {
             await xSplash.hide();
             await xSwal.success(success.response, success.message);
+            $("#tableMain input[type='checkbox']:checked").each(function () {
+                $("#tableMain").DataTable().row($(this).closest("tr")).remove().draw(false);
+            });
         },
         async (error) => {
             console.error(error);

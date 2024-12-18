@@ -279,6 +279,7 @@
     <Content Include="wwwroot\assets\.script\ReceiveProcess\KBNCR210.js" />
     <Content Include="wwwroot\assets\.script\ReceiveProcess\KBNCR220.js" />
     <Content Include="wwwroot\assets\.script\urgentorder\KBNIM014SRV.js" />
+	<Content Include="wwwroot\assets\.script\othercondition\KBNOC120.js" />
     <None Include="wwwroot\assets\adminty\bower_components\bootstrap-datepicker\bootstrap-datepicker.js" />
     <None Include="wwwroot\assets\adminty\bower_components\bootstrap-daterangepicker\daterangepicker.js" />
     <None Include="wwwroot\assets\adminty\bower_components\bootstrap\dist\css\bootstrap.min.css.map" />
@@ -9730,11 +9731,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\KB3\DevelopMaintain\" />
     <Folder Include="Models\KB3\SpecialData\Model\" />
     <Folder Include="wwwroot\assets\.script\DevelopMaintain\" />
     <Folder Include="wwwroot\assets\.script\Home\" />
     <Folder Include="wwwroot\assets\.script\Import\" />
+    <Folder Include="wwwroot\assets\.script\OtherCondition\" />
     <Folder Include="wwwroot\assets\i18n\JP\KB3\LogisticCondition\" />
     <Folder Include="wwwroot\assets\i18n\TH\KB3\LogisticCondition\" />
     <Folder Include="wwwroot\Storage\DownloadFile\" />

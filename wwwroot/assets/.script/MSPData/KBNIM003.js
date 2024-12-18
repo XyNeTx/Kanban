@@ -66,7 +66,7 @@
                     {
                         "start": 100,
                         "counting": function () {
-                            getProgress();
+                            //getProgress();
 
                         }
                     })
@@ -78,9 +78,14 @@
                     url: 'KBNIM003/Import',
                     data: formData,
                     then: function (result) {
-                        xSwal.success("Success!!", "Import data Complete.");
-                        console.log(result);
+                        if (result.response == "OK") {
 
+                            xSwal.success("Success!!", "Import data Complete.");
+                            console.log(result);
+                        }
+                        else {
+                            xSwal.error(result.response, result.message);
+                        }
                         //xTimer.Clock.Stop({
                         //    "finish": function () {
                         //        getProgress();

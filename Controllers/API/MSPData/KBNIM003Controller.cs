@@ -293,6 +293,28 @@ namespace HINOSystem.Controllers.API.Master
                 _KBCN.Execute(_SQL);
 
 
+                string sql = $@"SELECT * FROM TB_Import_EKanban E 
+                                WHERE E.F_Update_By = '{_BearerClass.UserCode.ToString()}' AND E.F_TYpe = 'EKanban' ";
+
+                DataTable dt = _KBCN.ExecuteSQL(sql);
+
+                if(dt.Rows.Count == 0)
+                {
+                    //_result = @"{
+                    //    ""status"":""200"",
+                    //    ""response"":""OK"",
+                    //    ""message"": ""Data has been save""
+                    //}";
+
+                    return Ok(new
+                    {
+                        status = "200",
+                        response = "Error",
+                        message = "Data Already Exist"
+                    });
+
+                }
+
 
                 //''Change to Data Filter : Store Procedure
                 _SQL = "EXEC dbo.SP_IM003_FilterData '" + _BearerClass.UserCode.ToString() + "' ";

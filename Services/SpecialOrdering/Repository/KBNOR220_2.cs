@@ -47,7 +47,15 @@ namespace KANBAN.Services.SpecialOrdering.Repository
         {
             try
             {
-                var data = await _kbContext.TB_Calendar.Where(x => x.F_Store_cd == "1F"
+                string storeCD = _BearerClass.Plant switch
+                {
+                    "1" => "1F",
+                    "2" => "2B",
+                    "3" => "3C",
+                    _ => "3C",
+                };
+
+                var data = await _kbContext.TB_Calendar.Where(x => x.F_Store_cd == storeCD
                     && x.F_YM == YM).FirstOrDefaultAsync();
 
                 if (data == null)

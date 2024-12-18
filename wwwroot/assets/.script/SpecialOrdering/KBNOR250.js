@@ -148,8 +148,10 @@ Unlock = async () => {
             console.log(success);
             xSplash.hide();
             xSwal.success(success.response, success.message);
-
-            await $("#mthDeliYM").trigger("change");
+            $("#tableMain input[type='checkbox']:checked").each(function () {
+                $("#tableMain").DataTable().row($(this).closest("tr")).remove().draw(false);
+            });
+            //await $("#mthDeliYM").trigger("change");
         }
     );
 }
@@ -175,7 +177,10 @@ Generate = async () => {
             xSplash.hide();
             xSwal.success(success.response, success.message);
 
-            await $("#mthDeliYM").trigger("change");
+            $("#tableMain input[type='checkbox']:checked").each(function () {
+                $("#tableMain").DataTable().row($(this).closest("tr")).remove().draw(false);
+            });
+            //await $("#mthDeliYM").trigger("change");
         }
     );
 }
