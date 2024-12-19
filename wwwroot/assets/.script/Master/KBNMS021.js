@@ -153,6 +153,7 @@ async function DisableButton(bool) {
 $("#btnNew").click(async function () {
 
     let listLine = [
+        { f_Line: "Dedion" },
         { f_Line: "Frame" },
         { f_Line: "Rear Axle" },
         { f_Line: "Side Panel" },

@@ -86,10 +86,22 @@ $(document).ready(function () {
         await window.open(`http://hmmta-tpcap/E-Report/Report.aspx?Register=PDS&PDSNoFrom=${$('#itmPDS').val()}&PDSNoTo=${$('#itmPDSTo').val()}&DateFrom=${dateFrom}&DateTo=${dateTo}`)
         
         if (_xLib.GetCookie('isDev') == "1") {
-            await _xLib.OpenReport("/KBNOR700PDS_X2", `pUserCode=${ajexHeader.UserCode}&OrderNo=${$('#itmPDS').val()}&OrderNoTo=${$('#itmPDSTo').val()}&DeliveryDate=${dateFrom}&DeliveryDateTo=${dateTo}`)
+            await _xLib.OpenReport("/KBNOR700PDS_X2",
+                `pUserCode=${ajexHeader.UserCode}
+                &OrderNo=${$('#itmPDS').val()}
+                &OrderNoTo=${$('#itmPDSTo').val()}
+                &DeliveryDate=${dateFrom}
+                &DeliveryDateTo=${dateTo}
+                &F_Plant=${ajexHeader.Plant}`)
         }
         else {
-            await _xLib.OpenReport("/KBNOR700PDS", `pUserCode=${ajexHeader.UserCode}&OrderNo=${$('#itmPDS').val()}&OrderNoTo=${$('#itmPDSTo').val()}&DeliveryDate=${dateFrom}&DeliveryDateTo=${dateTo}`)
+            await _xLib.OpenReport("/KBNOR700PDS",
+                `pUserCode=${ajexHeader.UserCode}
+                &OrderNo=${$('#itmPDS').val()}
+                &OrderNoTo=${$('#itmPDSTo').val()}
+                &DeliveryDate=${dateFrom}
+                &DeliveryDateTo=${dateTo}
+                &F_Plant=${ajexHeader.Plant}`);
         }
     });
 

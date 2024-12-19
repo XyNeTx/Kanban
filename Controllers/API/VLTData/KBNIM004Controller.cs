@@ -55,11 +55,13 @@ namespace HINOSystem.Controllers.API.Master
                     title = "Unauthorized",
                     message = "Please Login First"
                 });
-                _KB3Transaction.CreateSavepoint("BeforeImport");
+                // _KB3Transaction.CreateSavepoint("BeforeImport");
                 string Plant = HttpContext.Session.GetString("USER_PLANT")!;
                 string UserID = HttpContext.Session.GetString("USER_CODE")!;
 
                 await _KB3Context.Database.ExecuteSqlRawAsync("DELETE FROM TB_Import_VLT WHERE F_Update_By = @p0",UserID!);
+
+                await _KB3Context.Database.ExecuteSqlRawAsync("DELETE FROM TB_Import_Error WHERE F_Type = 'KBNIM004' AND F_Update_By = @p0", UserID!);
 
                 foreach (var obj in listObj)
                 {
@@ -78,7 +80,24 @@ namespace HINOSystem.Controllers.API.Master
 
                 await _KB3Context.Database.ExecuteSqlRawAsync("EXEC [exec].[SPKBNIM004_Import_MRP] @p0,@p1", Plant, UserID);
 
-                await _KB3Transaction.CommitAsync();
+                string ql = "SELECT * FROM TB_Import_Error WHERE (F_Type = 'KBNIM004') AND (F_Update_By = '" + UserID + "')";
+
+                int count = await _KB3Context.Database.ExecuteSqlRawAsync(ql);
+
+                if (count > 0)
+                {
+                    //_KB3Transaction.RollbackToSavepoint("BeforeImport");
+                    return Ok(new
+                    {
+                        status = "400",
+                        response = "Bad Request",
+                        message = "Have Some Error Please Check Report",
+                        type = "KBNIM004",
+                        userid = UserID
+                    });
+                }
+
+                //await _KB3Transaction.CommitAsync();
 
                 return Ok(new
                 {

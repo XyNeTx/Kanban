@@ -172,6 +172,7 @@
                             + '&OrderNoTo=' + ($('#chkPDSNo').val() == 1 ? itmPDSTo.value : '')
                             + '&DeliveryDate=' + ($('#chkDeliveryDate').val() == 1 ? ReplaceAll(itmDelivery.value, '-', '') : '')
                             + '&DeliveryDateTo=' + ($('#chkDeliveryDate').val() == 1 ? ReplaceAll(itmDeliveryTo.value, '-', '') : '')
+                            + '&F_Plant=' + ajexHeader.Plant
                             , '_blank'
                         );
                     }
@@ -183,6 +184,7 @@
                             + '&OrderNoTo=' + ($('#chkPDSNo').val() == 1 ? itmPDSTo.value : '')
                             + '&DeliveryDate=' + ($('#chkDeliveryDate').val() == 1 ? ReplaceAll(itmDelivery.value, '-', '') : '')
                             + '&DeliveryDateTo=' + ($('#chkDeliveryDate').val() == 1 ? ReplaceAll(itmDeliveryTo.value, '-', '') : '')
+                            + '&F_Plant=' + ajexHeader.Plant
                             , '_blank'
                         );
                     }

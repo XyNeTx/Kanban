@@ -14,7 +14,7 @@ using TB_MS_PartOrder = HINOSystem.Models.KB3.Master.TB_MS_PartOrder;
 
 namespace KANBAN.Services.OtherCondition.Repository
 {
-    public class KBNOC120 : IKBNOC120
+    public class KBNOC121 : IKBNOC121
     {
         private readonly KB3Context _kbContext;
         private readonly BearerClass _BearerClass;
@@ -25,7 +25,7 @@ namespace KANBAN.Services.OtherCondition.Repository
         private readonly IAutoMapService _automapService;
 
 
-        public KBNOC120
+        public KBNOC121
             (
             KB3Context kbContext,
             BearerClass BearerClass,
@@ -45,66 +45,96 @@ namespace KANBAN.Services.OtherCondition.Repository
             _automapService = autoMapService;
         }
 
-        public async Task<List<TB_MS_PartOrder>> GetSupplier(string? StoreCD)
+        public async Task<List<TB_MS_PartOrder>> GetSupplier()
         {
             try
             {
                 string strDate = DateTime.Now.ToString("yyyyMMdd");
 
-                var data = await _kbContext.TB_MS_PartOrder.Where(x=>x.F_Store_Code.StartsWith(_BearerClass.Plant)
-                    && x.F_Start_Date.CompareTo(strDate) <= 0 && x.F_End_Date.CompareTo(strDate) >= 0)
-                    .OrderBy(x=>x.F_Supplier_Cd.Trim() + "-" + x.F_Supplier_Plant.Trim()).ToListAsync();
+                var data = await _kbContext.TB_MS_PartOrder
+                    .Where(x => x.F_Start_Date.CompareTo(strDate) <= 0 && x.F_End_Date.CompareTo(strDate) >= 0
+                    && x.F_Store_Code.StartsWith(_BearerClass.Plant)).ToListAsync();
+                 
+                data = data.OrderBy(x=>x.F_Supplier_Cd).ThenBy(x=>x.F_Supplier_Plant).ToList();
 
-                if(!string.IsNullOrEmpty(StoreCD))
+                return data;
+            }
+            catch (Exception ex)
+            {
+                if (ex is CustomHttpException) throw;
+                else if(ex.InnerException != null) throw new CustomHttpException(500, ex.InnerException.Message);
+                throw new CustomHttpException(500, ex.Message);
+            }
+        }
+        
+        public async Task<List<TB_MS_PartOrder>> GetStore(string? SupplierCD)
+        {
+            try
+            {
+                string strDate = DateTime.Now.ToString("yyyyMMdd");
+
+                var data = await _kbContext.TB_MS_PartOrder
+                    .Where(x => x.F_Start_Date.CompareTo(strDate) <= 0 && x.F_End_Date.CompareTo(strDate) >= 0
+                    && x.F_Store_Code.StartsWith(_BearerClass.Plant)).ToListAsync();
+
+                if(!string.IsNullOrWhiteSpace(SupplierCD))
+                {
+                    data = data.Where(x => x.F_Supplier_Cd + "-" + x.F_Supplier_Plant == SupplierCD).ToList();
+                }
+                 
+                data = data.OrderBy(x=>x.F_Store_Code).ToList();
+
+                return data;
+            }
+            catch (Exception ex)
+            {
+                if (ex is CustomHttpException) throw;
+                else if(ex.InnerException != null) throw new CustomHttpException(500, ex.InnerException.Message);
+                throw new CustomHttpException(500, ex.Message);
+            }
+        }
+
+        public async Task<List<TB_MS_PartOrder>> GetPartNo(string? SupplierCD,string? StoreCD)
+        {
+            try
+            {
+                string strDate = DateTime.Now.ToString("yyyyMMdd");
+
+                var data = await _kbContext.TB_MS_PartOrder
+                    .Where(x => x.F_Start_Date.CompareTo(strDate) <= 0 && x.F_End_Date.CompareTo(strDate) >= 0
+                    && x.F_Store_Code.StartsWith(_BearerClass.Plant)).ToListAsync();
+
+                if(!string.IsNullOrWhiteSpace(SupplierCD))
+                {
+                    data = data.Where(x => x.F_Supplier_Cd + "-" + x.F_Supplier_Plant == SupplierCD).ToList();
+                }
+                if(!string.IsNullOrWhiteSpace(StoreCD))
                 {
                     data = data.Where(x => x.F_Store_Code == StoreCD).ToList();
                 }
 
-                return data;
+                data = data.OrderBy(x=>x.F_Part_No).ThenBy(x=>x.F_Ruibetsu).ToList();
 
+                return data;
             }
             catch (Exception ex)
             {
                 if (ex is CustomHttpException) throw;
-                else if (ex.InnerException != null) throw new CustomHttpException(500, ex.InnerException.Message);
+                else if(ex.InnerException != null) throw new CustomHttpException(500, ex.InnerException.Message);
                 throw new CustomHttpException(500, ex.Message);
             }
         }
 
-        public async Task<List<T_Supplier_MS>> GetStore(string? SupplierCD)
-        {
-            try
-            {
-                string strDate = DateTime.Now.ToString("yyyyMMdd");
-
-                var data = await _PPM3Context.T_Supplier_MS.Where(x => x.F_TC_Str.CompareTo(strDate) <= 0
-                    && x.F_TC_End.CompareTo(strDate) >= 0)
-                    .OrderBy(x => x.F_Store_cd).ToListAsync();
-
-                if (!string.IsNullOrEmpty(SupplierCD))
-                {
-                    data = data.Where(x => x.F_supplier_cd + "-" + x.F_Plant_cd == SupplierCD).ToList();
-                }
-
-                return data;
-
-            }
-            catch (Exception ex)
-            {
-                if (ex is CustomHttpException) throw;
-                else if (ex.InnerException != null) throw new CustomHttpException(500, ex.InnerException.Message);
-                throw new CustomHttpException(500, ex.Message);
-            }
-        }
-
-        public async Task Save(List<VM_SAVE_KBNOC120> ListVMObj, string action)
+        public async Task Save(List<VM_SAVE_KBNOC121> ListVMObj, string action)
         {
             try
             {
 
                 var VMObj = ListVMObj.FirstOrDefault();
 
-                TB_Slide_Order Obj = new TB_Slide_Order
+                //VMObj.GetType().GetProperties().Any(x => x.GetValue(VMObj) == null);
+
+                TB_Slide_Order_Part Obj = new TB_Slide_Order_Part
                 {
                     F_Delivery_Trip = byte.Parse(VMObj.Trip),
                     F_Delivery_Date = VMObj.DeliveryDate,
@@ -117,6 +147,9 @@ namespace KANBAN.Services.OtherCondition.Repository
                     F_Update_By = _BearerClass.UserCode,
                     F_Update_Date = DateTime.Now,
                     F_Keep_Order = VMObj.IsSlideOrder ? "1" : "0",
+                    F_Part_No = VMObj.PartNo.Split("-")[0],
+                    F_Ruibetsu = VMObj.PartNo.Split("-")[1],
+                    F_Slide_Qty = 0
                 };
 
                 string strDate = DateTime.Now.ToString("yyyyMMdd");
@@ -139,11 +172,11 @@ namespace KANBAN.Services.OtherCondition.Repository
 
                 if (VMObj.IsSlideOrder)
                 {
-                    if (VMObj.SlideDateTo!.CompareTo(VMObj.DeliveryDate) < 0)
+                    if(VMObj.SlideDateTo!.CompareTo(VMObj.DeliveryDate) < 0)
                     {
                         throw new CustomHttpException(400, "Slide Date Not Less than Delivery Date!!!");
                     }
-                    if ((VMObj.SlideDateTo!.CompareTo(VMObj.DeliveryDate) == 0) && (VMObj.TripNext.CompareTo(VMObj.Trip) == 0))
+                    if((VMObj.SlideDateTo!.CompareTo(VMObj.DeliveryDate) == 0) && (VMObj.TripNext.CompareTo(VMObj.Trip) ==  0))
                     {
                         throw new CustomHttpException(400, "Slide Date = Delivery Date and Trip Next = Trip!!!");
                     }
@@ -185,6 +218,7 @@ namespace KANBAN.Services.OtherCondition.Repository
                         && x.F_Delivery_Date == VMObj.DeliveryDate
                         && x.F_Supplier_CD.Trim() + "-" + x.F_Supplier_Plant.Trim() == VMObj.Supplier
                         && x.F_Store_CD == VMObj.StoreCD
+                        && x.F_Part_No.Trim() + "-" + x.F_Ruibetsu.Trim() == VMObj.PartNo
                         && x.F_Delivery_Trip == int.Parse(VMObj.Trip)
                         );
 
@@ -193,17 +227,18 @@ namespace KANBAN.Services.OtherCondition.Repository
                         throw new CustomHttpException(400, "Data Already Exist!!!");
                     }
 
-                    await _kbContext.TB_Slide_Order.AddAsync(Obj);
-                    _log.WriteLogMsg("Insert TB_Slice_Order | Obj : " + JsonConvert.SerializeObject(Obj));
+                    await _kbContext.TB_Slide_Order_Part.AddAsync(Obj);
+                    _log.WriteLogMsg("Insert TB_Slide_Order_Part | Obj : " + JsonConvert.SerializeObject(Obj));
 
                 }
 
                 else if (action.ToLower() == "upd")
                 {
-                    var dbObj = await _kbContext.TB_Slide_Order.FirstOrDefaultAsync(x => x.F_Plant == _BearerClass.Plant
+                    var dbObj = await _kbContext.TB_Slide_Order_Part.FirstOrDefaultAsync(x => x.F_Plant == _BearerClass.Plant
                         && x.F_Delivery_Date == VMObj.DeliveryDate
                         && x.F_Supplier_CD.Trim() + "-" + x.F_Supplier_Plant.Trim() == VMObj.Supplier
                         && x.F_Store_CD == VMObj.StoreCD
+                        && x.F_Part_No.Trim() + "-" + x.F_Ruibetsu.Trim() == VMObj.PartNo
                         && x.F_Delivery_Trip == int.Parse(VMObj.Trip));
 
                     if (dbObj == null)
@@ -217,9 +252,9 @@ namespace KANBAN.Services.OtherCondition.Repository
                     dbObj.F_Update_By = _BearerClass.UserCode;
                     dbObj.F_Update_Date = DateTime.Now;
 
-                    _kbContext.TB_Slide_Order.Update(dbObj);
+                    _kbContext.TB_Slide_Order_Part.Update(dbObj);
 
-                    _log.WriteLogMsg("Update TB_Slice_Order | Obj : " + JsonConvert.SerializeObject(dbObj));
+                    _log.WriteLogMsg("Update TB_Slide_Order_Part | Obj : " + JsonConvert.SerializeObject(dbObj));
 
 
                 }
@@ -228,10 +263,11 @@ namespace KANBAN.Services.OtherCondition.Repository
                 {
                     foreach(var each in ListVMObj)
                     {
-                        var DelData = await _kbContext.TB_Slide_Order.FirstOrDefaultAsync(x => x.F_Plant == _BearerClass.Plant
+                        var DelData = await _kbContext.TB_Slide_Order_Part.FirstOrDefaultAsync(x => x.F_Plant == _BearerClass.Plant
                             && x.F_Delivery_Date == each.DeliveryDate
                             && x.F_Supplier_CD.Trim() + "-" + x.F_Supplier_Plant.Trim() == each.Supplier
                             && x.F_Store_CD == each.StoreCD
+                            && x.F_Part_No.Trim() + "-" + x.F_Ruibetsu.Trim() == each.PartNo
                             && x.F_Delivery_Trip == int.Parse(each.Trip));
 
                         if (DelData == null)
@@ -239,9 +275,9 @@ namespace KANBAN.Services.OtherCondition.Repository
                             throw new CustomHttpException(404, "Data to Delete Not Found!!!");
                         }
 
-                        _kbContext.TB_Slide_Order.Remove(DelData);
+                        _kbContext.TB_Slide_Order_Part.Remove(DelData);
                         //await _kbContext.SaveChangesAsync();
-                        _log.WriteLogMsg("Delete TB_Slice_Order | Obj : " + JsonConvert.SerializeObject(DelData));
+                        _log.WriteLogMsg("Delete TB_Slide_Order_Part | Obj : " + JsonConvert.SerializeObject(DelData));
 
                     }
 
@@ -258,18 +294,18 @@ namespace KANBAN.Services.OtherCondition.Repository
             }
         }
 
-        public async Task<List<TB_Slide_Order>> GetListData(string? SupplierCD,string? StoreCD)
+        public async Task<List<TB_Slide_Order_Part>> GetListData(string? SupplierCD,string? StoreCD,string? PartNo)
         {
             try
             {
-                var data = await _kbContext.TB_Slide_Order.Where(x=>x.F_Plant == _BearerClass.Plant)
-                    .OrderBy(x=>x.F_Plant)
-                    .ThenBy(x=>x.F_Supplier_CD)
-                    .ThenBy(x=>x.F_Supplier_Plant)
-                    .ThenBy(x=>x.F_Store_CD)
-                    .ThenBy(x=>x.F_Delivery_Date)
-                    .ThenBy(x=>x.F_Delivery_Trip)
-                    .ThenBy(x=>x.F_Keep_Order)
+                var data = await _kbContext.TB_Slide_Order_Part.Where(x=>x.F_Plant == _BearerClass.Plant)
+                    .OrderBy(x => x.F_Plant)
+                    .ThenBy(x => x.F_Supplier_CD)
+                    .ThenBy(x => x.F_Supplier_Plant)
+                    .ThenBy(x => x.F_Store_CD)
+                    .ThenBy(x => x.F_Delivery_Date)
+                    .ThenBy(x => x.F_Delivery_Trip)
+                    .ThenBy(x => x.F_Keep_Order)
                     .ToListAsync();
 
                 if(!string.IsNullOrWhiteSpace(SupplierCD))
@@ -279,6 +315,10 @@ namespace KANBAN.Services.OtherCondition.Repository
                 if (!string.IsNullOrWhiteSpace(StoreCD))
                 {
                     data = data.Where(x => x.F_Store_CD == StoreCD).ToList();
+                }
+                if (!string.IsNullOrWhiteSpace(PartNo))
+                {
+                    data = data.Where(x => x.F_Part_No + "-" + x.F_Ruibetsu == PartNo).ToList();
                 }
 
                 return data;

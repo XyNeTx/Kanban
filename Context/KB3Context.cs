@@ -157,7 +157,6 @@ namespace HINOSystem.Context
         public DbSet<TB_Kanban_Cut> TB_Kanban_Cut { get; set; }
         public DbSet<TB_Kanban_Add> TB_Kanban_Add { get; set; }
         public DbSet<TMP_Planning_Order> TMP_Planning_Order { get; set; }
-
         public DbSet<TB_Kanban_Planning> TB_Kanban_Planning { get; set; }
         public DbSet<KBNLC_150> KBNLC_150 { get; set; }
         public DbSet<TB_Transaction_Spc> TB_Transaction_Spc { get; set; }
@@ -170,6 +169,7 @@ namespace HINOSystem.Context
         public DbSet<TB_PDS_Header> TB_PDS_Header { get; set; }
         public DbSet<TB_PDS_Detail> TB_PDS_Detail { get; set; }
         public DbSet<TB_Slide_Order> TB_Slide_Order { get; set; }
+        public DbSet<TB_Slide_Order_Part> TB_Slide_Order_Part { get; set; }
     }
 }
 

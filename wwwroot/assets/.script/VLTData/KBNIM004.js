@@ -116,6 +116,10 @@ $("#btnImport").on("click", async function () {
                     }
                 },
                 async function (error) {
+                    if (error.responseJSON.message.includes("Have Some Error")) {
+                        xSwal.error("Error !!", error.responseJSON.message);
+                        return _xLib.OpenReport("/KBNIMERR", `UserID=${error.responseJSON.userid}&Type=${error.responseJSON.type}`);
+                    }
                     return xSwal.error("Error", error.responseJSON.message);
                 }
             );

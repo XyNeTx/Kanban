@@ -44,5 +44,13 @@ namespace KANBAN.Services.OtherCondition.Repository
             }
         }
 
+        public IKBNOC121 IKBNOC121
+        {
+            get
+            {
+                return new KBNOC121(_kbContext, _BearerClass, _PPM3Context, _FillDT, _log, _emailService, _automapService);
+            }
+        }
+
     }
 }

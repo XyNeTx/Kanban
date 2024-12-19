@@ -8,10 +8,11 @@ $(document).ready(async function () {
                         return '<input type="checkbox" class="chkboxTable" id="chkFlag" name="chkFlag">';
                     }
                 },
-                { title: "Supplier Code", data: "f_Supplier_Code" },
+                { title: "Supplier Code", data: "f_Supplier_Code" ,width:"10%"},
                 { title: "StoreCD", data: "f_Store_cd"},
                 { title: "Delivery Date", data: "f_Delivery_Date" },
                 { title: "Trip", data: "f_Delivery_Trip" },
+                { title: "PartNo", data: "f_Part_No" ,width:"15%"},
                 { title: "Keep Order", data: "f_Keep_Order" },
                 { title: "SlideDateTo", data: "f_Slide_Date" },
                 { title: "TripNext", data: "f_Slide_Trip" },
@@ -29,6 +30,7 @@ $(document).ready(async function () {
 
     await GetSupplier();
     await GetStoreCD();
+    await GetPartNo();
 
     xSplash.hide();
 
@@ -36,9 +38,7 @@ $(document).ready(async function () {
 
 async function GetSupplier()
 {
-    var getQuery = await GetQuery();
-
-    _xLib.AJAX_Get("/api/KBNOC120/GetSupplier", getQuery,
+    _xLib.AJAX_Get("/api/KBNOC121/GetSupplier", "",
         async function (success)
         {
             await $("#inpSupplier").addListSelectPicker(success.data, "f_Supplier_Code");
@@ -53,9 +53,11 @@ async function GetSupplier()
 
 async function GetStoreCD() {
 
-    var getQuery = await GetQuery();
+    var getQuery = {
+        SupplierCD: $("#inpSupplier").val(),
+    }
 
-    _xLib.AJAX_Get("/api/KBNOC120/GetStore", getQuery,
+    _xLib.AJAX_Get("/api/KBNOC121/GetStore", getQuery,
         async function (success) {
             await $("#inpStoreCd").addListSelectPicker(success.data, "f_Store_cd");
             $("#inpStoreCd").resetSelectPicker();
@@ -67,11 +69,32 @@ async function GetStoreCD() {
 
 }
 
-async function GetListData() {
-    var getQuery = await GetQuery();
+async function GetPartNo() {
 
-    _xLib.AJAX_Get("/api/KBNOC120/GetListData", getQuery,
-        function (success) {
+    var getQuery = {
+        SupplierCD: $("#inpSupplier").val(),
+        StoreCD: $("#inpStoreCd").val(),
+    }
+
+    _xLib.AJAX_Get("/api/KBNOC121/GetPartNo", getQuery,
+        async function (success) {
+            await $("#inpPartNo").addListSelectPicker(success.data, "f_Part_No");
+            $("#inpPartNo").resetSelectPicker();
+        },
+        function (error) {
+            xSwal.error(error.responseJSON.response, error.responseJSON.message);
+        }
+    );
+}
+async function GetListData() {
+    var getQuery = {
+        SupplierCD: $("#inpSupplier").val(),
+        StoreCD: $("#inpStoreCd").val(),
+        PartNo: $("#inpPartNo").val(),
+    }
+
+    _xLib.AJAX_Get("/api/KBNOC121/GetListData", getQuery,
+        async function (success) {
             return _xDataTable.ClearAndAddDataDT("#tableMain", success.data);
         },
         function (error) {
@@ -81,17 +104,13 @@ async function GetListData() {
 }
 
 $("#inpSupplier").on("change", async function () {
-    if ($("#inpStoreCd").val() == "") {
-        await GetStoreCD();
-    }
+    await GetStoreCD();
+    await GetPartNo();
     await GetListData();
 });
 
 $("#inpStoreCd").on("change", async function () {
-    if ($("#inpSupplier").val() == "") {
-        await GetSupplier();
-    }
-    //await GetSupplier();
+    await GetPartNo();
     await GetListData();
 });
 
@@ -110,8 +129,10 @@ $("#divBtn").on("click", "button[type='button']", async function () {
 
     $("#inpSupplier").prop("disabled", false);
     $("#inpStoreCd").prop("disabled", false);
+    $("#inpPartNo").prop("disabled", false);
     $("#inpSupplier").resetSelectPicker();
     $("#inpStoreCd").resetSelectPicker();
+    $("#inpPartNo").resetSelectPicker();
 
 
     if ($(this).attr("id") != "btnNew") {
@@ -142,19 +163,23 @@ $(document).on("dblclick", "#tableMain tbody tr", function () {
     $("#chkSlideOrder").prop("checked", data.f_Keep_Order == "Cancel" ? false : true);
     $("#inpSlideDate").val(data.f_Slide_Date);
     $("#inpTripNext").val(data.f_Slide_Trip);
+    $("#inpPartNo").val(data.f_Part_No);
 
     $("#inpSupplier").selectpicker("refresh");
     $("#inpStoreCd").selectpicker("refresh");
+    $("#inpPartNo").selectpicker("refresh");
 
-
-    if ($("#divBtn #btnUpd").prop("disabled") === false) {
+    if ($("#divBtn #btnUpd").prop("disabled") === false)
+    {
         $("#inpSupplier").prop("disabled", true);
         $("#inpStoreCd").prop("disabled", true);
+        $("#inpPartNo").prop("disabled", true);
         $("#inpDeliveryDate").prop("disabled", true);
         $("#inpTrip").prop("disabled", true);
 
         $("#inpSupplier").selectpicker("refresh");
         $("#inpStoreCd").selectpicker("refresh");
+        $("#inpPartNo").selectpicker("refresh");
     }
 
 });
@@ -163,8 +188,6 @@ $("#btnCan").on("click", async function () {
     $("#divBtn").find("button").prop("disabled", false);
     $("#tableMain").DataTable().clear().draw();
 
-    //await $("#inpSupplier").resetSelectPicker();
-    //await $("#inpStoreCd").resetSelectPicker();
     $("#inpDeliveryDate").val(moment().format("DD/MM/YYYY"));
     $("#inpTrip").val("1");
     $("#chkSlideOrder").prop("checked", false);
@@ -173,14 +196,22 @@ $("#btnCan").on("click", async function () {
 
     $("#inpSupplier").prop("disabled", true);
     $("#inpStoreCd").prop("disabled", true);
+    $("#inpPartNo").prop("disabled", true);
     $("#inpDeliveryDate").prop("disabled", true);
     $("#inpTrip").prop("disabled", true);
     $("#chkSlideOrder").prop("disabled", true);
     $("#inpSlideDate").prop("disabled", true);
     $("#inpTripNext").prop("disabled", true);
 
+    //$("#inpSupplier").val("");
+    //$("#inpStoreCd").val("");
+
     await $("#inpSupplier").resetSelectPicker();
     await $("#inpStoreCd").resetSelectPicker();
+    await $("#inpPartNo").resetSelectPicker();
+
+    //$("#formMain").trigger("reset");
+
 });
 
 $("#chkSlideOrder").change(function () {
@@ -197,7 +228,7 @@ $("#btnSave").on("click", async function () {
     var postObj = await PostObj();
     let action = $("#divBtn").find("button[type='button']:not([disabled])").attr("id").split("btn")[1];
 
-    _xLib.AJAX_Post("/api/KBNOC120/Save?action=" + action, postObj,
+    _xLib.AJAX_Post("/api/KBNOC121/Save?action=" + action, postObj,
         function (success) {
             xSwal.success("Success", "Data has been saved.");
             GetListData();
@@ -208,15 +239,6 @@ $("#btnSave").on("click", async function () {
     );
 });
 
-async function GetQuery()
-{
-    var getQuery = {
-        SupplierCD: $("#inpSupplier").val(),
-        StoreCD: $("#inpStoreCd").val(),
-    }
-
-    return getQuery;
-}
 
 async function PostObj() {
 
@@ -233,7 +255,8 @@ async function PostObj() {
         Trip: $("#inpTrip").val(),
         IsSlideOrder: $("#chkSlideOrder").prop("checked"),
         SlideDateTo: moment($("#inpSlideDate").val(), "DD/MM/YYYY").format("YYYYMMDD"),
-        TripNext: $("#inpTripNext").val()
+        TripNext: $("#inpTripNext").val(),
+        PartNo: $("#inpPartNo").val(),
     }
 
     if (action == "Del")
@@ -247,7 +270,7 @@ async function PostObj() {
         }
 
         listObj = listObj.map(function (data) {
-            console.log(data.f_Keep_Order);
+            //console.log(data.f_Keep_Order);
             return {
                 Supplier: data.f_Supplier_Code,
                 StoreCD: data.f_Store_cd,
@@ -255,7 +278,8 @@ async function PostObj() {
                 Trip: data.f_Delivery_Trip.toString(),
                 IsSlideOrder: data.f_Keep_Order == "Cancel" ? false : true,
                 SlideDateTo: moment(data.f_Slide_Date, "DD/MM/YYYY").format("YYYYMMDD"),
-                TripNext: data.f_Slide_Trip.toString()
+                TripNext: data.f_Slide_Trip.toString(),
+                PartNo: data.f_Part_No,
             }
         });
 
@@ -279,7 +303,7 @@ $("#btnRpt").click(async function () {
         UserName: _xLib.GetUserName(),
     }
 
-    return _xLib.OpenReportObj("/KBNOC120", obj);
+    return _xLib.OpenReportObj("/KBNOC121", obj);
 
 });
 
@@ -307,24 +331,22 @@ $("#btnImport").click(async function () {
                 Trip: data[i].DeliveryTrip,
                 IsSlideOrder: data[i].KeepOrder == "Y" ? true : false,
                 SlideDateTo: moment(data[i]["Slide to Date"], "DD/MM/YYYY").format("YYYYMMDD"),
-                TripNext: data[i]["Slide to Trip"]
+                TripNext: data[i]["Slide to Trip"],
+                PartNo: data[i].PartNo.slice(0,10) + "-" + data[i].PartNo.slice(10,12),
             }
 
             let postObj = [];
 
             postObj.push(mockObj);
 
-            //console.log(postObj);
-
-            //continue;
-
-            _xLib.AJAX_Post("/api/KBNOC120/Save?action=New", postObj,
+            _xLib.AJAX_Post("/api/KBNOC121/Save?action=New", postObj,
                 function (success) {
-                    console.log(postObj[i]);
+                    console.log(postObj[0]);
                     console.log("Success");
                 },
                 function (error) {
                     console.log("Error");
+                    throw new Error(error.responseJSON.message);
                 }
             );
         }
