@@ -4,12 +4,12 @@ $(document).ready(function () {
 
 });
 
-$("#btnKBNMS004").click(function () {
-    window.location.replace("/Master/KBNMS004");
-});
+//$("#btnKBNMS004").click(function () {
+//    window.location.replace("/Master/KBNMS004");
+//});
 
 $("button").click(function (e) {
-    if(e.target.id == "btnKBNMS004") return;
+    //if(e.target.id == "btnKBNMS004") return;
     var _redirect = e.target.id.replace('btn', '');
     _xLib.SetProcessCookie(_redirect);
     //return console.log(window.location.href);

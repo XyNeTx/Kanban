@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 
 namespace KANBAN.Services.SpecialOrdering.Repository
 {
-    public class KBNMS004 : IKBNMS004
+    public class KBNOR296 : IKBNOR296
     {
 
         private readonly KB3Context _kbContext;
@@ -19,7 +19,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
         private readonly IEmailService _emailService;
 
 
-        public KBNMS004
+        public KBNOR296
             (
             KB3Context kbContext,
             BearerClass BearerClass,

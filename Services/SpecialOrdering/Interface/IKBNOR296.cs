@@ -3,7 +3,7 @@ using KANBAN.Models.KB3.Receive_Process;
 
 namespace KANBAN.Services.SpecialOrdering.Interface
 {
-    public interface IKBNMS004
+    public interface IKBNOR296
     {
         string List_Data(string? Supplier);
         string SupplierDropDown(bool isNew);

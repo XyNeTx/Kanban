@@ -672,7 +672,7 @@ const _xLib = new xLib();
 
     $.fn.initDatepicker = function (date) {
         $(this).datepicker({
-            uiLibrary: 'materialdesign',
+            uiLibrary: 'bootstrap5',
             format: 'dd/mm/yyyy',
             autoclose: true,
             showRightIcon: false,

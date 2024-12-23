@@ -10,7 +10,7 @@
         IKBNOR293 IKBNOR293 { get; }
         IKBNOR294 IKBNOR294 { get; }
         IKBNOR295 IKBNOR295 { get; }
-        IKBNMS004 IKBNMS004 { get; }
+        IKBNOR296 IKBNOR296 { get; }
         IKBNOR220 IKBNOR220 { get; }
         IKBNOR220_1 IKBNOR220_1 { get; }
         IKBNOR220_2 IKBNOR220_2 { get; }

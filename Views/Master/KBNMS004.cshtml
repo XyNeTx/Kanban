@@ -1,95 +1,127 @@
 ﻿<div class="row">
-
     <div class="col-xl-12 col-md-12 col-sm-12">
         <div class="card border-left-primary shadow h-100">
             <div class="card-body">
 
-
-                <div class="row mt-3 ps-2 pe-2" id="divButton">
-                    <div class="col">
-                        <div class="row justify-content-start">
-                            <button type="button" class="btn btn-primary col-2" id="btnInq">Inquiry</button>
-                            <button type="button" class="btn btn-dark col-2" id="btnNew">New</button>
-                            <button type="button" class="btn btn-warning col-2" id="btnUpd">Update</button>
-                            <button type="button" class="btn btn-danger col-2" id="btnDel">Delete</button>
-                        </div>
+                <div class="row">
+                    <div class="col-8" id="divButton">
+                        <button type="button" id="btnInquiry" class="btn btn-outline-dark">Inquiry</button>
+                        <button type="button" id="btnNew" class="btn btn-outline-dark">New</button>
+                        <button type="button" id="btnUpdate" class="btn btn-outline-dark">Update</button>
+                        <button type="button" id="btnDelete" class="btn btn-outline-dark">Delete</button>
                     </div>
-                    <div class="col">
+                    <div class="col-4">
                         <div class="row justify-content-end">
-                            <button type="button" class="btn btn-warning col-2" id="btnCan">Cancel</button>
-                            <button type="button" class="btn btn-danger col-2" id="btnExt">Exit</button>
+                            <button type="button" id="btnCancel" class="btn btn-outline-dark col-2">Cancel</button>
+                            <a asp-controller="Home" asp-action="Index" id="btnExit" class="btn btn-outline-danger col-2">Exit</a>
                         </div>
                     </div>
                 </div>
-
-
-
-                <div class="row mt-3">
-                    <table class="table table-bordered w-100" id="tableMain">
-
-                    </table>
+                <div class="row ">
+                    <div class="mt-4">
+                        <table id="tableMain" class="table w-100">
+                        </table>
+                    </div>
                 </div>
-
-                <form id="frmCondition">
-                
-                    <div class="row mt-3">
-                        <div class="col-5">
-                            <div class="input-group">
-                                <label class="input-group-text">Supplier Code : </label>
-                                    <select class="selectpicker col-8 p-0" id="inpSupplier" data-live-search="true" data-width="100%" disabled>
-                                        <option value="" hidden>-- Select Supplier --</option>
-                                    </select>
+                <div class="row mt-4">
+                    <div class="col-1"></div>
+                    <div class="col-10" id="divDetail">
+                        <h5>Detail Data</h5>
+                        <div class="row">
+                            <div class="input-group col-4">
+                                <label class="input-group-text col-5">Supplier Code :</label>
+                                <select id="inpSupplierCode" class="selectpicker form-control col-7" data-dropup-auto="false" data-size="8" data-live-search="true" data-width="100%">
+                                    <option value="" hidden></option>
+                                </select>
+                            </div>
+                            <div class="input-group col-5">
+                                <label class="input-group-text col-4">Supplier Name :</label>
+                                <input id="inpSupplierName" type="text" class="form-control col-8" readonly>
+                            </div>
+                            <div class="input-group col-3">
+                                <label class="input-group-text col-4">Cycle :&nbsp;&nbsp;</label>
+                                <input id="inpCycle" type="text" class="form-control col-6" readonly>
                             </div>
                         </div>
-                        <div class="col-6">
-                            <input type="text" class="form-control" id="inpSupplierName" placeholder="Supplier Name" readonly>
+                        <div class="row">
+                            <div class="input-group col-4">
+                                <label class="input-group-text col-5">Kanban No. :</label>
+                                <select id="inpKanban" class="selectpicker form-control col-7" data-dropup-auto="false" data-size="8" data-live-search="true" data-width="100%">
+                                    <option value="" hidden></option>
+                                </select>
+                            </div>
+                            <div class="input-group col-4">
+                                <label class="input-group-text col-5">Kanban No :</label>
+                                <input id="inpKanbanRead" type="text" class="form-control col-6" readonly>
+                            </div>
                         </div>
-                    </div>
-
-                    <div class="row mt-3">
-                        <div class="col-11">
-                            <div class="input-group">
-                                <label class="input-group-text">Attention : </label>
-                                <input type="text" class="form-control" id="inpAttention" readonly>
+                        <div class="row">
+                            <div class="input-group col-4">
+                                <label class="input-group-text col-5">Store Code :</label>
+                                <select id="inpStore" class="selectpicker form-control col-7" data-dropup-auto="false" data-size="8" data-live-search="true" data-width="100%">
+                                    <option value="" hidden></option>
+                                </select>
+                            </div>
+                            <div class="input-group col-4">
+                                <label class="input-group-text col-5">Store Code</label>
+                                <input id="inpStoreRead" type="text" class="form-control col-6" readonly>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-group col-4">
+                                <label class="input-group-text col-5">Part No :</label>
+                                <select id="inpPartNo" class="selectpicker form-control col-7" data-dropup-auto="false" data-size="8" data-live-search="true" data-width="100%">
+                                    <option value="" hidden></option>
+                                </select>
+                            </div>
+                            <div class="input-group col-5">
+                                <label class="input-group-text col-4">Part No :</label>
+                                <input id="inpPartNoRead" type="text" class="form-control col-8" readonly>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-group col-4" style="visibility:hidden">
+                            </div>
+                            <div class="input-group col-5">
+                                <label class="input-group-text col-4">Part Name :</label>
+                                <input id="inpPartNameRead" type="text" class="form-control col-8" readonly>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-group col-4">
+                                <label class="input-group-text col-5">Start Date :</label>
+                                <input id="inpStartDate" type="text" class="datepicker form-control col-12">
+                            </div>
+                            <div class="input-group col-4">
+                                <label class="input-group-text col-4">End Date :</label>
+                                <input id="inpEndDate" type="text" class="datepicker form-control col-12">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-group col-4">
+                                <label class="input-group-text col-5">Type Order :</label>
+                                <select id="inpTypeOrder" class="selectpicker form-control col-7" data-dropup-auto="false" data-size="8" data-live-search="true" data-width="100%">
+                                    <option value="" hidden></option>
+                                    <option value="IMV Part">IMV Part</option>
+                                    <option value="Passenger Car">Passenger Car</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="input-group col-6">
+                                @* <label class="input-group-text col-3">Part No :</label>
+                                <input id="inpPartNoRead" type="text" class="form-control col-8" readonly> *@
+                                <span class="fw-bold pt-1">Remark : Type Special have IMV Part , Passenger Car , Other</span>
                             </div>
                         </div>
                     </div>
-
-                    <div class="row mt-3">
-                        <div class="col-7">
-                            <div class="input-group">
-                                <label class="input-group-text">Telephone : </label>
-                                <input type="text" class="form-control" id="inpTelephone" readonly>
-                            </div>
-                        </div>
-                        <div class="col-5">
-                            <div class="input-group">
-                                <label class="input-group-text">Fax : </label>
-                                <input type="text" class="form-control" id="inpFax" readonly>
-                            </div>
-                        </div>
-                    </div>
-
-                </form>
-
-                <div class="row ps-2 pe-2 mt-3">
-
-                    <div class="col">
-                        <div class="row justify-content-start">
-                            <button type="button" class="btn btn-outline-dark col-2" id="btnSel">Select All</button>
-                            <button type="button" class="btn btn-outline-danger col-3" id="btnDesel">Deselect All</button>
-                        </div>
-                    </div>
-
-                    <div class="col">
-                        <div class="row justify-content-end">
-                            <button type="button" class="btn btn-success col-2" id="btnSave">Save</button>
-                            <button type="button" class="btn btn-primary col-2" id="btnReport">Report</button>
-                        </div>
-                    </div>
-
+                    <div class="col-1"></div>
                 </div>
-
+                <div class="row mt-4">
+                    <div class="row justify-content-end">
+                        <button type="button" id="btnSave" class="btn btn-success col-1 me-2">Save</button>
+                        <button type="button" id="btnReport" class="btn btn-info col-1">Report</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

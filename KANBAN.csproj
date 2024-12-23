@@ -125,6 +125,7 @@
     <Content Include="wwwroot\assets\.script\SpecialData\KBNIM007TSR.js" />
     <Content Include="wwwroot\assets\.script\SpecialData\KBNIM007T.js" />
     <Content Include="wwwroot\assets\.script\SpecialData\KBNIM007.js" />
+    <Content Include="wwwroot\assets\.script\SpecialOrdering\KBNOR296.js" />
     <Content Include="wwwroot\assets\.script\TacomaOrder\KBNIM015C.js" />
     <Content Include="wwwroot\assets\.script\TacomaOrder\KBNIM015M.js" />
     <Content Include="wwwroot\assets\.script\TacomaOrder\KBNIM015.js" />

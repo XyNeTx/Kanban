@@ -33,6 +33,7 @@ namespace KANBAN.Controllers
             _wrtConnect = wrtConnect;
         }
 
+  
         public IActionResult KBNOR210()
         {
             _authenGuard.ComponentToolbar = false;
@@ -141,6 +142,13 @@ namespace KANBAN.Controllers
             _authenGuard.ComponentToolbar = false;
             return _authenGuard.guard(ControllerContext);
         }
+
+        public IActionResult KBNOR296()
+        {
+            _authenGuard.ComponentToolbar = false;
+            return _authenGuard.guard(ControllerContext);
+        }
+
 
         public IActionResult KBNOR297()
         {

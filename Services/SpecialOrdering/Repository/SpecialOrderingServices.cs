@@ -16,7 +16,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
         public IKBNOR293 IKBNOR293 { get; }
         public IKBNOR294 IKBNOR294 { get; }
         public IKBNOR295 IKBNOR295 { get; }
-        public IKBNMS004 IKBNMS004 { get; }
+        public IKBNOR296 IKBNOR296 { get; }
         public IKBNOR220 IKBNOR220 { get; }
         public IKBNOR220_1 IKBNOR220_1 { get; }
         public IKBNOR220_2 IKBNOR220_2 { get; }
@@ -91,7 +91,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             log,
             emailService);
 
-            IKBNMS004 = new KBNMS004(kbContext,
+            IKBNOR296 = new KBNOR296(kbContext,
             bearerClass,
             ppm3Context,
             fillDT,
