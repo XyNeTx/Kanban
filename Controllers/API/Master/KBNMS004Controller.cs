@@ -1,5 +1,6 @@
 ﻿using HINOSystem.Libs;
 using HINOSystem.Models.KB3.Master;
+using KANBAN.Models.KB3.Master.ViewModel;
 using KANBAN.Services;
 using KANBAN.Services.Master.IRepository;
 using KANBAN.Services.SpecialOrdering.Interface;
@@ -104,6 +105,28 @@ namespace HINOSystem.Controllers.API.Master
                     response = "Success",
                     message = "Data has been retrieved successfully",
                     data = result
+                });
+            }
+            catch (CustomHttpException ex)
+            {
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Save(List<VM_SAVE_KBNMS004> listObj)
+        {
+            try
+            {
+                await _bearerClass.CheckAuthorize();
+
+                await _masterRepo.IKBNMS004.Save(listObj);
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data has been saved successfully"
                 });
             }
             catch (CustomHttpException ex)

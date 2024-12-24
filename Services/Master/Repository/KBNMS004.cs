@@ -1,7 +1,9 @@
 ﻿using HINOSystem.Context;
 using HINOSystem.Libs;
+using HINOSystem.Models.KB3.Master;
 using KANBAN.Context;
 using KANBAN.Libs;
+using KANBAN.Models.KB3.Master.ViewModel;
 using KANBAN.Models.KB3.Receive_Process;
 using KANBAN.Models.PPM3;
 using KANBAN.Services.Automapper.Interface;
@@ -44,11 +46,14 @@ namespace KANBAN.Services.Master.Repository
 
         public string strDate = DateTime.Now.ToString("yyyyMMdd");
 
-        public async Task<string> GetSelectList(string? kanban,string? storecd,string? partno,string? supplier,bool isNew)
+        public async Task<List<string>> GetSelectList(string? kanban,string? storecd,string? partno,string? supplier,bool isNew)
         {
             try
             {
                 string stringDate = DateTime.Now.ToString("yyyyMMdd");
+
+                List<string> listResult = new List<string>();
+
                 if (isNew)
                 {
                     var data = await _PPM3Context.T_Construction.AsNoTracking()
@@ -76,7 +81,32 @@ namespace KANBAN.Services.Master.Repository
                         data = data.Where(x => x.F_supplier_cd + "-" + x.F_plant == supplier).ToList();
                     }
 
-                    return JsonConvert.SerializeObject(data);
+                    var supplierList = data.Select(x => new
+                    {
+                        F_Supplier = x.F_supplier_cd + "-" + x.F_plant,
+                    }).Distinct().OrderBy(x=>x.F_Supplier).ToList();
+
+                    var partList = data.Select(x => new
+                    {
+                        F_PartNo = x.F_Part_no.Trim() + "-" + x.F_Ruibetsu,
+                    }).Distinct().OrderBy(x=>x.F_PartNo).ToList();
+
+                    var storeList = data.Select(x => new
+                    {
+                        F_StoreCD = x.F_Store_cd,
+                    }).Distinct().OrderBy(x=>x.F_StoreCD).ToList();
+
+                    var kanbanList = data.Select(x => new
+                    {
+                        F_KanbanNo = "0" + x.F_Sebango,
+                    }).Distinct().OrderBy(x=>x.F_KanbanNo).ToList();
+
+                    listResult.Add(JsonConvert.SerializeObject(supplierList));
+                    listResult.Add(JsonConvert.SerializeObject(partList));
+                    listResult.Add(JsonConvert.SerializeObject(storeList));
+                    listResult.Add(JsonConvert.SerializeObject(kanbanList));
+
+                    //return JsonConvert.SerializeObject(data);
                 }
                 else
                 {
@@ -106,15 +136,39 @@ namespace KANBAN.Services.Master.Repository
                         MsPartSpecial = MsPartSpecial.Where(x => x.F_Supplier_Cd + "-" + x.F_Supplier_Plant == supplier).ToList();
                     }
 
-                    return JsonConvert.SerializeObject(MsPartSpecial);
+                    var supplierList = MsPartSpecial.Select(x => new
+                    {
+                        F_Supplier = x.F_Supplier_Cd + "-" + x.F_Supplier_Plant,
+                    }).Distinct().OrderBy(x=>x.F_Supplier).ToList();
 
+                    var partList = MsPartSpecial.Select(x => new
+                    {
+                        F_PartNo = x.F_Part_No.Trim() + "-" + x.F_Ruibetsu,
+                    }).Distinct().OrderBy(x=>x.F_PartNo).ToList();
+
+                    var storeList = MsPartSpecial.Select(x => new
+                    {
+                        F_StoreCD = x.F_Store_Code,
+                    }).Distinct().OrderBy(x=>x.F_StoreCD).ToList();
+
+                    var kanbanList = MsPartSpecial.Select(x => new
+                    {
+                        F_KanbanNo = x.F_Kanban_No,
+                    }).Distinct().OrderBy(x=>x.F_KanbanNo).ToList();
+
+                    listResult.Add(JsonConvert.SerializeObject(supplierList));
+                    listResult.Add(JsonConvert.SerializeObject(partList));
+                    listResult.Add(JsonConvert.SerializeObject(storeList));
+                    listResult.Add(JsonConvert.SerializeObject(kanbanList));
                 }
+
+                return listResult;
 
             }
             catch (Exception ex)
             {
                 if (ex is CustomHttpException) throw;
-                else if (ex.InnerException.Message != null) throw new CustomHttpException(500, ex.InnerException.Message);
+                else if (ex.InnerException != null) throw new CustomHttpException(500, ex.InnerException.Message);
                 else throw new CustomHttpException(500, ex.Message);
             }
         }
@@ -188,13 +242,15 @@ namespace KANBAN.Services.Master.Repository
 
                 var data = _FillDT.ExecuteSQL(sqlQuery);
 
+                Console.WriteLine(sqlQuery);
+
                 return JsonConvert.SerializeObject(data);
 
             }
             catch (Exception ex)
             {
                 if (ex is CustomHttpException) throw;
-                else if (ex.InnerException.Message != null) throw new CustomHttpException(500, ex.InnerException.Message);
+                else if (ex.InnerException != null) throw new CustomHttpException(500, ex.InnerException.Message);
                 else throw new CustomHttpException(500, ex.Message);
             }
         }
@@ -225,7 +281,7 @@ namespace KANBAN.Services.Master.Repository
             catch (Exception ex)
             {
                 if (ex is CustomHttpException) throw;
-                else if (ex.InnerException.Message != null) throw new CustomHttpException(500, ex.InnerException.Message);
+                else if (ex.InnerException != null) throw new CustomHttpException(500, ex.InnerException.Message);
                 else throw new CustomHttpException(500, ex.Message);
             }
         }
@@ -265,7 +321,108 @@ namespace KANBAN.Services.Master.Repository
             catch (Exception ex)
             {
                 if (ex is CustomHttpException) throw;
-                else if (ex.InnerException.Message != null) throw new CustomHttpException(500, ex.InnerException.Message);
+                else if (ex.InnerException != null) throw new CustomHttpException(500, ex.InnerException.Message);
+                else throw new CustomHttpException(500, ex.Message);
+            }
+        }
+        
+        public async Task Save(List<VM_SAVE_KBNMS004> listObj)
+        {
+            try
+            {
+                var obj = listObj.FirstOrDefault();
+
+                if (obj.Action.ToLower().Contains("new"))
+                {
+                    if (obj.StartDate.CompareTo(obj.EndDate) > 0)
+                    {
+                        throw new CustomHttpException(400, "Please Select Start Date Less than End Date Before Process Data");
+                    }
+                    if (strDate.CompareTo(obj.StartDate) < 0)
+                    {
+                        throw new CustomHttpException(400, "Please Select Start Date From Present OR More Before Process Data");
+                    }
+
+                    var existData = await _kbContext.TB_MS_PartSpecial.AsNoTracking()
+                        .Where(x => x.F_Kanban_No == obj.Kanban
+                        && x.F_Store_Code == obj.StoreCD
+                        && x.F_Part_No + "-" + x.F_Ruibetsu == obj.PartNo
+                        && x.F_Supplier_Cd + "-" + x.F_Supplier_Plant == obj.Supplier
+                        && x.F_Start_Date.CompareTo(strDate) <= 0
+                        && x.F_End_Date.CompareTo(strDate) >= 0)
+                        .AnyAsync();
+
+                    if (existData)
+                    {
+                        throw new CustomHttpException(400, "Data Already Exist");
+                    }
+
+                    await _kbContext.TB_MS_PartSpecial.AddAsync(new TB_MS_PartSpecial
+                    {
+                        F_Kanban_No = obj.Kanban,
+                        F_Store_Code = obj.StoreCD,
+                        F_Part_No = obj.PartNo.Split("-")[0],
+                        F_Ruibetsu = obj.PartNo.Split("-")[1],
+                        F_Supplier_Cd = obj.Supplier.Split("-")[0],
+                        F_Supplier_Plant = obj.Supplier.Split("-")[1],
+                        F_Type_Special = obj.TypeOrder,
+                        F_Start_Date = obj.StartDate,
+                        F_End_Date = obj.EndDate,
+                        F_Plant = _BearerClass.Plant,
+                        F_Create_By = _BearerClass.UserCode,
+                        F_Create_Date = DateTime.Now,
+                        F_Update_By = _BearerClass.UserCode,
+                        F_Update_Date = DateTime.Now,
+                        F_Cycle = obj.Cycle.Replace("-", string.Empty),
+                    });
+
+                    _log.WriteLogMsg("Insert TB_MS_PartSpecial Data : " + JsonConvert.SerializeObject(obj));
+
+                }
+                else if (obj.Action.ToLower().Contains("upd"))
+                {
+                    await _kbContext.TB_MS_PartSpecial.Where(x => x.F_Kanban_No == obj.Kanban
+                        && x.F_Store_Code == obj.StoreCD
+                        && x.F_Part_No + "-" + x.F_Ruibetsu == obj.PartNo
+                        && x.F_Supplier_Cd + "-" + x.F_Supplier_Plant == obj.Supplier
+                        && x.F_Start_Date == obj.StartDate
+                        && x.F_Plant == _BearerClass.Plant)
+                        .ExecuteUpdateAsync(x => x.SetProperty(x => x.F_Cycle, obj.Cycle.Replace("-", string.Empty))
+                        .SetProperty(x => x.F_Type_Special, obj.TypeOrder)
+                        .SetProperty(x => x.F_End_Date, obj.EndDate)
+                        .SetProperty(x => x.F_Update_By, _BearerClass.UserCode)
+                        .SetProperty(x => x.F_Update_Date, DateTime.Now));
+
+                    _log.WriteLogMsg("Update TB_MS_PartSpecial Data : " + JsonConvert.SerializeObject(obj));
+                }
+                else if (obj.Action.ToLower().Contains("del"))
+                {
+                    foreach (var each in listObj)
+                    {
+                        await _kbContext.TB_MS_PartSpecial.Where(x => x.F_Kanban_No == each.Kanban
+                            && x.F_Store_Code == each.StoreCD
+                            && x.F_Part_No + "-" + x.F_Ruibetsu == each.PartNo
+                            && x.F_Supplier_Cd + "-" + x.F_Supplier_Plant == each.Supplier
+                            && x.F_Start_Date == each.StartDate
+                            && x.F_Plant == _BearerClass.Plant)
+                            .ExecuteDeleteAsync();
+
+                        _log.WriteLogMsg("Delete TB_MS_PartSpecial Data : " + JsonConvert.SerializeObject(each));
+                    }
+                }
+                else
+                {
+                    throw new CustomHttpException(400, "Please Select Action Before Process Data");
+                }
+
+
+                await _kbContext.SaveChangesAsync();
+
+            }
+            catch (Exception ex)
+            {
+                if (ex is CustomHttpException) throw;
+                else if (ex.InnerException != null) throw new CustomHttpException(500, ex.InnerException.Message);
                 else throw new CustomHttpException(500, ex.Message);
             }
         }

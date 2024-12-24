@@ -52,6 +52,7 @@ class DataTableLib {
         if (!id.includes('#')) id = '#' + id;
 
         $(`${id}`).DataTable().clear().rows.add(data).draw();
+        $(`${id}`).DataTable().columns.adjust().draw();
 
         $("table thead tr th").css("text-align", "center");
         $("table thead tr th").css("vertical-align", "middle");
@@ -654,7 +655,14 @@ const _xLib = new xLib();
         //console.log(this);
         await $(this).val('');
         await $(this).selectpicker('refresh');
+
+        $(this).parent().find("div[class='filter-option-inner-inner']").text("");
         $(this).parent().find("div[class='filter-option-inner-inner']").text("Nothing Selected");
+        //console.log($(this).parent().find("div[class='filter-option-inner-inner']").text());
+    };
+
+    $.fn.resetAllSelectPicker = async function () {
+        $(".selectpicker").resetSelectPicker();
     };
 
     $.fn.addListSelectPicker = async function (arrData, objKey) {
