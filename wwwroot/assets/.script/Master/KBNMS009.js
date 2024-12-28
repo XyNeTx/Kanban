@@ -1,225 +1,118 @@
-﻿$(document).ready(function () {
+﻿$(document).ready(async function () {
 
-    const tblMaster = xDataTable.Initial({
-        name: 'tblMaster',
-        scrollbar: "300px",
-        dom:'<"top"f>t<"clear">',
-        columnTitle: {
-            "EN": ['Supplier Code'],
-            "TH": ['Supplier Code'],
-            "JP": ['Supplier Code'],
+    _xDataTable.InitialDataTable("tableSup",
+    {
+        "processing": false,
+        "serverSide": false,
+        width: '100%',
+        paging: false,
+        sorting: false,
+        searching: false,
+        scrollX: false,
+        scrollY: "250px",
+        scrollCollapse: true,
+        "columns": [
+        {
+                title: "Supplier Code", data: "f_supplier_cd"
         },
-        column: [
-            { "data": "F_Supplier" }
         ],
-        addnew: false,
-        then: function (config) {
-        },
-        rowclick: function (data) {
-            //console.log(data);
-            //xSplash.show();
-
-            xAjax.Post({
-                url: 'KBNMS009/search',
-                data: {
-                    "F_Plant": $('#frmCondition #F_Plant').val(),
-                    "SupplierCode": data.F_Supplier,
-                    "UID": _UID_
-                },
-                then: function (result) {
-                    //console.log(result);
-                    xDataTable.Bind('tblDetail', result.data);
-
-                    //xSplash.hide();
-                }
-            })        
-        }
+        select: true,
+        order: [[0, "asc"]]
     });
 
-    const tblDetail = xDataTable.Initial({
-        name: 'tblDetail',
-        scrollbar: "300px",
-        dom: '<"top"f>t<"clear">',
-        //checking: 0,
-        //running: 0,
-        columnTitle: {
-            "EN": ['Supplier Code', 'Supplier Plant', 'Kanban No', 'Dock', 'Number'],
-            "TH": ['Supplier Code', 'Supplier Plant', 'Kanban No', 'Dock', 'Number'],
-            "JP": ['Supplier Code', 'Supplier Plant', 'Kanban No', 'Dock', 'Number'],
-        },
-        column: [
-            { "data": "F_Supplier_Code" },
-            { "data": "F_Supplier_Plant" },
-            { "data": "F_Kanban_No" },
-            { "data": "F_Supply_Code" },
-            { "data": "F_Number" }
-        ],
-        //order: 0,
-        addnew: false, 
-        then: function (config) {
-        },
-        rowclick: function (data, r) {
-            //console.log(row);
-            xSwal.input('Please enter number'
-                , function (result) {
-                    data.F_Number = (result.value == '' ? '0' : result.value);
-
-                    xDataTable.Cell('tblDetail', r, 4, data.F_Number);
-                }
-                , (data.F_Number == '0' ? '' : data.F_Number)
-            );
-
-        }
-    });
-
-
-    initial = function () {
-        xAjax.Post({
-            url: 'KBNMS009/initial',
-            callback: function (result) {
-                //console.log(result);
-                xDropDownList.Bind('#frmCondition #F_Plant', result.data.TB_MS_Factory, 'F_Plant', 'F_Plant_Name');
-
-                xDataTable.Bind('tblMaster', result.data.PPM_T_Construction);
-
-                xSplash.hide();
-            }
-        })        
-    }
-    initial();
-
-
-
-    xAjax.onClick('#btnClearData', async function () {
-        var _dt = await xAjax.ExecuteJSON({
-            data: {
-                "Module": "[exec].[spKBNMS009_ClearData]",
-                "pPlant": ajexHeader.Plant,
-                "F_Update_By": ajexHeader.UserCode
+    _xDataTable.InitialDataTable("tableMain",
+    {
+        "processing": false,
+        "serverSide": false,
+        width: '100%',
+        paging: false,
+        sorting: false,
+        searching: false,
+        scrollX: false,
+        scrollY: true,
+        scrollCollapse: true,
+        "columns": [
+            {
+                title: "Supplier Code", data: "f_Supplier_Code"
             },
-        });
+            {
+                title: "Supplier Plant", data: "f_Supplier_Plant"
+            },
+            {
+                title: "Kanban No", data: "f_Kanban_No"
+            },
+            {
+                title: "Dock", data: "f_Supply_Code"
+            },
+            {
+                title: "Number", data: "f_Number"
+            },
+        ],
+        select: false,
+        order: [[0, "asc"]]
+    });
 
-        xDataTable.Bind('tblDetail', []);
-        xSplash.hide();
-    })
+    $("table tbody tr td , table thead tr th").addClass("text-center");
+
+    await GetSupplier();
+
+    xSplash.hide();
+});
 
 
-
-    xAjax.onClick('#btnSave', async function () {
-        try {
-
-
-            if (tblDetail.property.rows == 0) {
-                MsgBox("Please Select Supplier Code Before Process Data", MsgBoxStyle.Critical, "DATA ERROR");
-                return false;
-            }
-
-            for (var i = 0; i < tblDetail.property.rows; i++) {
-
-                var _dt = await xAjax.ExecuteJSON({
-                    data: {
-                        "Module": "[exec].[spKBNMS009_SAVE]",
-                        "pPlant": ajexHeader.Plant,
-                        "F_Update_By": ajexHeader.UserCode,
-                        "F_Supplier_Code": tblDetail.property.data[i].F_Supplier_Code,
-                        "F_Supplier_Plant": tblDetail.property.data[i].F_Supplier_Plant,
-                        "F_Store_Code": tblDetail.property.data[i].F_Store_Code,
-                        "F_Kanban_No": tblDetail.property.data[i].F_Kanban_No,
-                        "F_Supply_Code": tblDetail.property.data[i].F_Supply_Code,
-                        "F_Number": tblDetail.property.data[i].F_Number
-                    },
-                });
-
-                //console.log(_dt);
-            }
-
-            Process_Data();
-
-        } catch (error) {
-            // Code to handle the error
-            MsgBox("Error Sub : Btn_Save_Click.", MsgBoxStyle.Critical, "Error");
+async function GetSupplier() {
+    xSplash.show();
+    await _xLib.AJAX_Get("/api/KBNMS009/GetSupplier", null,
+        async function (success) {
+            await _xDataTable.ClearAndAddDataDT("tableSup", success);
         }
-    })
+    );
+    xSplash.hide();
+}
 
-
-
-    Process_Data = async function () {
-        try {
-
-            var _DT1 = await xAjax.ExecuteJSON({
-                data: {
-                    "Module": "[exec].[spKBNMS009_P1]",
-                    "pPlant": ajexHeader.Plant,
-                    "F_Update_By": ajexHeader.UserCode
-                },
-            });
-
-            if (_DT1.rows != null) {
-
-                for (var i = 0; i < _DT1.rows.length; i++) {
-                    intNum1 = _DT1.rows[i].F_Number;
-
-                    var _DT2 = await xAjax.ExecuteJSON({
-                        data: {
-                            "Module": "[exec].[spKBNMS009_P2]",
-                            "pPlant": ajexHeader.Plant,
-                            "F_Update_By": ajexHeader.UserCode,
-                            "F_Supplier_Code": tblDetail.property.data[i].F_Supplier_Code,
-                            "F_Supplier_Plant": tblDetail.property.data[i].F_Supplier_Plant,
-                            "F_Store_Code": tblDetail.property.data[i].F_Store_Code,
-                            "F_Kanban_No": tblDetail.property.data[i].F_Kanban_No,
-                            "F_Supply_Code": tblDetail.property.data[i].F_Supply_Code,
-                            "F_Part_No": tblDetail.property.data[i].F_Part_No,
-                            "F_Ruibetsu": tblDetail.property.data[i].F_Ruibetsu
-                        },
-                    });
-
-
-                    if (_DT2.rows != null) {
-                        intNum2 = _DT2.rows[0].F_Number;
-
-
-                        if (intNum1 > intNum2) {
-
-                        }
-
-
-                    }
-
-
-                }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            }
-
-
-
-
-
-
-            MsgBox("Save Data..Process Complete", MsgBoxStyle.Information);
-        } catch (error) {
-            // Code to handle the error
-            MsgBox("Error Sub : Btn_Save_Click.", MsgBoxStyle.Critical, "Error");
+$(document).on("click", "#tableSup tbody tr", async function () {
+    xSplash.show();
+    var data = _xDataTable.GetDataDT("tableSup", this);
+    await _xLib.AJAX_Get("/api/KBNMS009/SupplierClicked", { Supplier: data.f_supplier_cd },
+        async function (success) {
+            await _xDataTable.ClearAndAddDataDT("tableMain", success);
         }
+    );
+    xSplash.hide();
+});
+
+$(document).on("click", "#tableMain tbody tr td", async function () {
+    console.log($(this).index());
+    if ($(this).index() == 4) {
+        var value = $(this).text();
+        console.log(value);
+        $(this).empty();
+        $(this).append("<input type='text' class='form-control' value='" + value + "' />");
+        $(this).find("input").focus();
     }
+});
+
+$(document).on("focusout", "#tableMain tbody tr td", async function () {
+    var value = $(this).find("input").val();
+    console.log(value);
+    $("#tableMain").DataTable().cell(this).data(value).draw();
+
+    var data = _xDataTable.GetDataDT("tableMain", this);
+    console.log(data);
+});
 
 
+$("#btnSave").click(async function () {
+    await Save();
+});
 
-
-
-
-})
-
+async function Save() {
+    xSplash.show();
+    var data = $("#tableMain").DataTable().rows().data().toArray();
+    await _xLib.AJAX_Post("/api/KBNMS009/Save", data,
+        async function (success) {
+            xSwal.success("Success", "Data has been saved successfully");
+            xSplash.hide();
+        }
+    );
+}

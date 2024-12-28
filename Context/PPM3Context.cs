@@ -42,7 +42,7 @@ namespace KANBAN.Context
                     "2Dev" => _config.GetConnectionString("DevPPMConnection"),
                     "1Dev" => _config.GetConnectionString("DevPPMConnection"),
                     "Dev" => _config.GetConnectionString("DevPPM3Connection"),
-                    _ => _config.GetConnectionString("DevPPM3Connection")
+                    _ => _config.GetConnectionString("PPM3Connection")
                 };
 
                 optionsBuilder.UseSqlServer(connectionString, option =>

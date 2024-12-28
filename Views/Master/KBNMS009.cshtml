@@ -4,90 +4,35 @@
         <div class="card border-left-primary shadow h-100">
             <div class="card-body">
 
-                <form id="frmCondition">
-@*
-                    <div class="row">
-                        <div class="col-6">
-                            <item type="select" id="F_Plant" label="Plant" value="3" readonly></item>
-                        </div>
-                    </div>
-*@
-                </form>
-
-
                 <div class="row">
-                    <div class="col mt-2">
-                        <div class="bg-white border rounded-3">
-                            <section class="w-100 p-2">
-                                <div class="row">
-                                    <div class="col-2">
-                                        <div class="bg-white border rounded-3">
-                                            <section class="w-100 p-2">
-                                                <table id="tblMaster" class="display" style="width:100%"></table>
-                                            </section>
-                                        </div>
-                                    </div>
-                                    <div class="col-9">
-                                        <div class="bg-white border rounded-3">
-                                            <section class="w-100 p-2">
-                                                <table id="tblDetail" class="display w-100" style="width:100%"></table>
-                                            </section>
-                                        </div>
-                                    </div>
-                                    <div class="col-1">
-                                        <div class="row">
-                                            <div class="col">
-                                                <item type="button" id="btnClearData" label="Clear Data" style="width:100%"></item>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col mt-5"></div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col mt-5">
-                                                <item type="button" id="btnSave" label="Save" style="width:100%"></item>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col mt-2">
-                                                <item type="button" id="btnCancel" label="Cancel" style="width:100%"></item>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col mt-2">
-                                                <item type="button" id="btnCheckList" label="Check List" style="width:100%"></item>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col mt-2">
-                                                <item type="button" id="btnPrint" label="Print" style="width:100%"></item>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </section>
-                        </div>
-                    </div>
-                </div>
 
-                <div class="row">
-                    <div class="col mt-2">
-                        <div class="bg-white border rounded-3">
-                            <section class="w-100 p-2">
-                                <div class="row">
-                                    <div class="col-8">
-                                        <item type="file" id="fileUpload"></item>
-                                    </div>
-                                </div>
-                            </section>
-                        </div>
+                    <div class="col-3">
+                        <table id="tableSup" class="table table-bordered border-2 border-dark w-100">
+                        </table>
                     </div>
+
+                    <div class="col-7">
+                        <table id="tableMain" class="table table-bordered border-2 border-dark w-100">
+                        </table>
+                    </div>
+
+                    <div class="col-2">
+
+                        <div class="row">
+                            <button type="button" id="btnClearData" class="btn btn-outline-danger">Clear Data</button>
+                        </div>
+
+                        <div class="row mt-2">
+                            <button type="button" id="btnSave" class="btn btn-outline-success">Save</button>
+                        </div>
+
+                    </div>
+
                 </div>
 
             </div>
         </div>
     </div>
-
 </div>
 
 

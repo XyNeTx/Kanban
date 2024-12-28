@@ -709,12 +709,25 @@ namespace KANBAN.Controllers.API.OrderingProcess
                 string strCycle = DT_Date.Select("F_Date = '" + dateDelivery.ToString("yyyyMMdd") + "'")[0]["F_Cycle"].ToString().Trim();
                 int CycleB = int.Parse(strCycle.Substring(2, 2));
 
-                dr = DT_Header.Select($@"F_Process_Date = '{dateDelivery.ToString("yyyyMMdd")}' 
+                var VM_dt = DT_Header.Select($@"F_Process_Date = '{dateDelivery.ToString("yyyyMMdd")}' 
                         AND F_Store_Code = '{DT_PartControl.Rows[intRow]["F_Store_Code"].ToString().Trim()}' 
                         AND F_Kanban_No = '{DT_PartControl.Rows[intRow]["F_Kanban_No"].ToString().Trim()}' 
                         AND F_Part_No = '{DT_PartControl.Rows[intRow]["F_Part_No"].ToString().Trim()}' 
                         AND F_Ruibetsu = '{DT_PartControl.Rows[intRow]["F_Ruibetsu"].ToString().Trim()}' 
-                        ")[0];
+                        ");
+
+                if(VM_dt.Length == 0)
+                {
+                    return NotFound(new
+                    {
+                        status = "404",
+                        response = "Not Found",
+                        title = "Error",
+                        message = "Data not found Please Select Other Data"
+                    });
+                }
+
+                dr = VM_dt[0];
 
                 int QtyPack = int.Parse(dr["F_Qty_Box"].ToString().Trim()) == 0 ? 1 : int.Parse(dr["F_Qty_Box"].ToString().Trim());
                 
