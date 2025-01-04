@@ -200,3 +200,17 @@ async function Save() {
         });
 
 }
+
+$("#btnRpt").click(function () {
+    //console.log(ajexHeader);
+    //console.log($("#Name").val());
+    let reportParam = {
+        Plant: ajexHeader.Plant,
+        UserName: _xLib.GetUserName(),
+        F_Supplier_Code: $("#inpSupplierCode").val(),
+        F_Supplier_Plant: $("#inpSupplierPlant").val()
+    };
+
+    _xLib.OpenReportObj("/KBNMS014", reportParam);
+
+});
