@@ -106,6 +106,27 @@ $("#btnSave").click(async function () {
     await Save();
 });
 
+$("#btnCancel").click(async function () {
+    await GetSupplier();
+    $("#tableMain").DataTable().clear().draw();
+});
+
+$("#btnPrint").click(async function () {
+    let obj = $("#tableMain").DataTable().rows().data().toArray()[0];
+
+    let reportObj = {
+        F_Update_By: obj.f_Update_By,
+    }
+
+    if (obj == null) {
+        xSwal.error("Warning", "No data to print");
+        return;
+    }
+
+    _xLib.OpenReportObj("/KBNMS009", reportObj);
+
+});
+
 async function Save() {
     xSplash.show();
     var data = $("#tableMain").DataTable().rows().data().toArray();

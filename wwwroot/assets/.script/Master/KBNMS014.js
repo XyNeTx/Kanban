@@ -1,70 +1,202 @@
-﻿$(document).ready(function () {
+﻿$(document).ready(async function () {
 
-    const xKBNMS014 = new MasterTemplate({
-        Controller: _PAGE_,
-        Table: 'tblMaster',
-        ColumnTitle: {
-            "EN": ['Print', 'Supplier Code', 'Supplier Plant', 'Short Name'],
-            "TH": ['Print', 'Supplier Code', 'Supplier Plant', 'Short Name'],
-            "JP": ['Print', 'Supplier Code', 'Supplier Plant', 'Short Name'],
+    _xDataTable.InitialDataTable("#tableMain",
+        {
+            "processing": false,
+            "serverSide": false,
+            width: '100%',
+            paging: false,
+            sorting: false,
+            searching: false,
+            scrollX: false,
+            scrollY: "200px",
+            scrollCollapse: true,
+            "columns": [
+                {
+                    title: "Flag", render(data, type, row) {
+                        return `<input type="checkbox" class="chkbox" id="chkbox" name="chkbox" value="${row.f_Supplier_Plant}">`;
+                    }
+                },
+                {
+                    title: "Print", data: "f_Flag_Print"
+                },
+                {
+                    title: "Supplier CD", data: "f_Supplier_Code"
+                },
+                {
+                    title: "Supplier Plant", data: "f_Supplier_Plant"
+                },
+                {
+                    title: "Short Name", data: "f_Short_Name"
+                },
+            ],
+            select: false,
+            order: [[0, "asc"]]
+        });
+
+    $("table tbody tr td").addClass("text-center");
+    $("table thead tr th").addClass("text-center");
+
+    xSplash.hide();
+
+});
+
+$("#divBtn button").on("click", async function () {
+
+    $("#divBtn").find("button").each(function () {
+        $(this).prop("disabled", true);
+    });
+
+    $(this).prop("disabled", false);
+
+    $(document).find("input:disabled , select:disabled").each(function () {
+        $(this).prop("disabled", false);
+        $(this).selectpicker("refresh");
+    });
+
+    await GetSupplierCode();
+
+
+});
+
+$("#btnCan").on("click", function () {
+
+    $("#divBtn").find("button").each(function () {
+        $(this).prop("disabled", false);
+    });
+
+    $(document).find("input:enabled , select:enabled").each(function () {
+        $(this).prop("disabled", true);
+        $(this).resetSelectPicker("refresh");
+    });
+
+    $("#inpShortName").val("");
+
+    $("#tableMain").DataTable().clear().draw();
+    $("#tableMain").DataTable().columns.adjust().draw();
+
+
+});
+
+async function GetSupplierCode() {
+
+    let getBody = {
+        isNew : !$("#btnNew").prop("disabled")
+    };
+
+    _xLib.AJAX_Get("/api/KBNMS014/GetSupplierCode", getBody,
+        function (success) {
+            success = _xLib.JSONparseMixData(success);
+            $("#inpSupplierCode").addListSelectPicker(success.data, "F_Supplier_Code");
         },
-        ColumnValue: [
-            { "data": "F_Flag_Print" },
-            { "data": "F_Supplier_Code" },
-            { "data": "F_Supplier_Plant" },
-            { "data": "F_Short_Name" }
-        ],
-        Modal: 'modalMaster',
-        Form: 'frmMaster',
-        PostData: [
-            { name: 'F_Plant', value: _PLANT_ }
-        ],
-    });
-
-    xKBNMS014.prepare();
-
-    xKBNMS014.initial(function (result) {
-        //xDropDownList.bind('frmCondition #F_Plant', result.data.TB_Factory, 'F_Plant', 'F_Plant_Name');
-        //xDropDownList.bind('frmCondition #F_Supplier', result.data.TB_Supplier, 'F_Supplier_Code', 'F_Supplier_Code');
-
-        //xDropDownList.bind('frmMaster #F_Plant', result.data.TB_Factory, 'F_Plant', 'F_Plant_Name');
-
-        xKBNMS014.search();
-    });
-
-    onSave = function () {
-        xKBNMS014.save(function () {
-            xKBNMS014.search();
+        function (error) {
+            console.log(error);
         });
-    }
+}
 
-    onDelete = function () {
-        xKBNMS014.delete(function () {
-            xKBNMS014.search();
+async function GetSupplierPlant() {
+
+    let getBody = {
+        isNew: !$("#btnNew").prop("disabled"),
+        SupplierCode: $("#inpSupplierCode").val()
+    };
+
+    _xLib.AJAX_Get("/api/KBNMS014/GetSupplierPlant", getBody,
+        function (success) {
+            success = _xLib.JSONparseMixData(success);
+            $("#inpSupplierPlant").addListSelectPicker(success.data, "F_Supplier_Plant");
+
+        },
+        function (error) {
+            console.log(error);
         });
-    }
+}
 
-    onDeleteAll = function () {
-        xKBNMS014.deleteall(function () {
-            xKBNMS014.search();
+async function GetShortName() {
+
+    let getBody = {
+        SupplierCode: $("#inpSupplierCode").val(),
+        SupplierPlant: $("#inpSupplierPlant").val(),
+        isNew: !$("#btnNew").prop("disabled")
+    };
+
+    //console.log(getBody);
+
+    _xLib.AJAX_Get("/api/KBNMS014/GetShortName", getBody,
+        function (success) {
+            success = _xLib.JSONparseMixData(success);
+            //console.log(success);
+            $("#inpSupplierName").val(success.data.F_Short_Name);
+        },
+        function (error) {
+            console.log(error);
         });
+}
+
+async function GetListData() {
+    let getData = {
+        SupplierCode: $("#inpSupplierCode").val(),
+        SupplierPlant: $("#inpSupplierPlant").val()
+    };
+
+    _xLib.AJAX_Get("/api/KBNMS014/GetListData", getData,
+        function (success) {
+            _xDataTable.ClearAndAddDataDT("#tableMain", success.data);
+        },
+        function (error) {
+            console.log(error);
+        });
+
+}
+
+$("#inpSupplierCode").change(function () {
+    GetSupplierPlant();
+    GetListData();
+});
+
+$("#inpSupplierPlant").change(async function () {
+    await GetShortName();
+    GetListData();
+});
+
+$("#btnSave").on("click", function () {
+    Save();
+});
+
+async function Save() {
+    let listObj = [];
+
+    let obj = {
+        SupplierCode: $("#inpSupplierCode").val(),
+        SupplierPlant: $("#inpSupplierPlant").val(),
+        SupplierName: $("#inpSupplierName").val(),
+        FlagPrint: $("#inpPrint").val()
     }
 
-    onPrint = function () {
-        //_DATATABLE_EXPORT.PDF.title = 'ABC';
+    listObj.push(obj);
+
+    if (!$("#btnDel").prop("disabled")) {
+        listObj = _xDataTable.GetSelectedDataDT("#tableMain");
+        listObj.forEach(function (item) {
+            item.SupplierCode = item.f_Supplier_Code;
+            item.SupplierPlant = item.f_Supplier_Plant;
+            item.SupplierName = item.f_Short_Name;
+            item.FlagPrint = item.f_Flag_Print;
+        });
+
+
     }
 
-    onExecute = function () { }
+    let action = $("#divBtn").find("button:not(:disabled)").attr("id").split("btn")[1];
 
-    xAjax.onChange('frmCondition #F_Supplier', function () {
-        $('#frmMaster #F_Plant').val($('#frmCondition #F_Plant').val());
+    _xLib.AJAX_Post("/api/KBNMS014/Save?action=" + action, listObj,
+        function (success) {
+            GetListData();
+            xSwal.success(success.response, success.message);
+        },
+        function (error) {
+            xSwal.error(error.responseJSON.response, error.responseJSON.message);
+            console.log(error);
+        });
 
-        xKBNMS014.search();
-    });
-
-
-
-
-
-})
-
+}
