@@ -1,5 +1,4 @@
-﻿using KANBAN.Models;
-using Serilog;
+﻿using Serilog;
 
 namespace HINOSystem.Libs
 {
@@ -34,7 +33,7 @@ namespace HINOSystem.Libs
             }
             catch (Exception ex)
             {
-                Log.Error($"message: {ex.Message}");
+                this.WriteErrorLogMsg($"message: {ex.Message}");
                 Console.WriteLine(ex.StackTrace);
                 Console.WriteLine(ex.Message);
                 throw;
@@ -50,7 +49,23 @@ namespace HINOSystem.Libs
             }
             catch (Exception ex)
             {
-                Log.Error($"message: {ex.Message}");
+                this.WriteErrorLogMsg($"message: {ex.Message}");
+                Console.WriteLine(ex.StackTrace);
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+        }
+
+        public void WriteErrorLogMsg(string Message)
+        {
+            try
+            {
+                string logMessage = GetLogMessage();
+                Log.Error($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
+            }
+            catch (Exception ex)
+            {
+                this.WriteErrorLogMsg($"message: {ex.Message}");
                 Console.WriteLine(ex.StackTrace);
                 Console.WriteLine(ex.Message);
                 throw;
@@ -66,7 +81,7 @@ namespace HINOSystem.Libs
             }
             catch (Exception ex)
             {
-                Log.Error($"message: {ex.Message}");
+                this.WriteErrorLogMsg($"message: {ex.Message}");
                 Console.WriteLine(ex.StackTrace);
                 Console.WriteLine(ex.Message);
                 throw;

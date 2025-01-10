@@ -36,19 +36,6 @@ namespace KANBAN.Services.Master.Repository
             _automapService = autoMapService;
         }
 
-        public IKBNMS021 IKBNMS021
-        {
-            get
-            {
-                return new KBNMS021(_kbContext,
-                    _BearerClass,
-                    _PPM3Context,
-                    _FillDT, _log,
-                    _emailService,
-                    _automapService);
-            }
-        }
-
         public IKBNMS004 IKBNMS004
         {
             get
@@ -80,6 +67,32 @@ namespace KANBAN.Services.Master.Repository
             get
             {
                 return new KBNMS014(_kbContext,
+                                    _BearerClass,
+                                    _PPM3Context,
+                                    _FillDT, _log,
+                                    _emailService,
+                                    _automapService);
+            }
+        }
+
+        public IKBNMS021 IKBNMS021
+        {
+            get
+            {
+                return new KBNMS021(_kbContext,
+                    _BearerClass,
+                    _PPM3Context,
+                    _FillDT, _log,
+                    _emailService,
+                    _automapService);
+            }
+        }
+
+        public IKBNMS025 IKBNMS025
+        {
+            get
+            {
+                return new KBNMS025(_kbContext,
                                     _BearerClass,
                                     _PPM3Context,
                                     _FillDT, _log,

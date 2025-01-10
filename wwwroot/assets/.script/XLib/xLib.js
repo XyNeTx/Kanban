@@ -643,7 +643,12 @@ class xLib {
         if (query.endsWith('&')) query = query.substring(0, query.length - 1);
 
         var _url = "http://hmmt-app03/Reports/Pages/ReportViewer.aspx?/KB3"
+
+        //const endcodeQuery = encodeURIComponent(query);
+        //_url = _url + reportName + "&" + endcodeQuery;
+
         _url = _url + reportName + "&" + query;
+
         window.open(_url, '_blank');
     }
 }
@@ -678,8 +683,8 @@ const _xLib = new xLib();
         await $(this).selectpicker('refresh');
     }
 
-    $.fn.initDatepicker = function (date) {
-        $(this).datepicker({
+    $.fn.initDatepicker = async function (date) {
+        await $(this).datepicker({
             uiLibrary: 'bootstrap5',
             format: 'dd/mm/yyyy',
             autoclose: true,
@@ -687,6 +692,9 @@ const _xLib = new xLib();
             value: date ?? moment().format('DD/MM/YYYY'),
             showOtherMonths: false,
         });
+
+        $(this).closest("div[class*='input-group']").removeClass("input-group");
+
     };
 
     $.fn.initialDataTable = function (options) {

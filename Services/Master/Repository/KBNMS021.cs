@@ -3,7 +3,6 @@ using HINOSystem.Libs;
 using HINOSystem.Models.KB3.Master;
 using KANBAN.Context;
 using KANBAN.Libs;
-using KANBAN.Models.KB3.Master.ViewModel;
 using KANBAN.Services.Automapper.Interface;
 using KANBAN.Services.Master.IRepository;
 using Microsoft.EntityFrameworkCore;
@@ -42,7 +41,7 @@ namespace KANBAN.Services.Master.Repository
             _automapService = autoMapService;
         }
 
-        public async Task<List<TB_MS_PartCode>> GetListDataTables(string? Line,string? PartCode,string? PartNo)
+        public async Task<List<TB_MS_PartCode>> GetListDataTables(string? Line, string? PartCode, string? PartNo)
         {
             try
             {
@@ -53,7 +52,7 @@ namespace KANBAN.Services.Master.Repository
                     !string.IsNullOrEmpty(x.F_Line))
                     .ToListAsync();
 
-                if(data.Count == 0)
+                if (data.Count == 0)
                 {
                     throw new CustomHttpException(404, "Data Not Found");
                 }
@@ -125,7 +124,7 @@ namespace KANBAN.Services.Master.Repository
             }
         }
 
-        public async Task Save(List<TB_MS_PartCode> listObj,string action)
+        public async Task Save(List<TB_MS_PartCode> listObj, string action)
         {
             try
             {
@@ -149,6 +148,7 @@ namespace KANBAN.Services.Master.Repository
                         listObj[0].F_Update_By = _BearerClass.UserCode;
 
                         await _kbContext.TB_MS_PartCode.AddAsync(listObj[0]);
+                        _log.WriteLogMsg($"Insert TB_MS_PartCode : {JsonConvert.SerializeObject(listObj[0])}");
                     }
                     else
                     {
@@ -165,6 +165,7 @@ namespace KANBAN.Services.Master.Repository
                         .ToListAsync();
 
                     _kbContext.TB_MS_PartCode.RemoveRange(removeList);
+                    _log.WriteLogMsg($"Delete TB_MS_PartCode : {JsonConvert.SerializeObject(removeList)}");
                 }
                 else
                 {
@@ -184,6 +185,7 @@ namespace KANBAN.Services.Master.Repository
                             obj.F_Update_Date = DateTime.Now;
 
                             _kbContext.TB_MS_PartCode.Update(obj);
+                            _log.WriteLogMsg($"Update TB_MS_PartCode : {JsonConvert.SerializeObject(obj)}");
                         }
                         else
                         {

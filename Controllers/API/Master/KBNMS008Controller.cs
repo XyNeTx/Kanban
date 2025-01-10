@@ -2,7 +2,6 @@
 using HINOSystem.Libs;
 using KANBAN.Context;
 using KANBAN.Libs;
-using KANBAN.Models.KB3;
 using KANBAN.Models.KB3.Master;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -544,7 +543,8 @@ namespace HINOSystem.Controllers.API.Master
                     });
                 }
 
-                var storecode = _BearerClass.Plant switch {
+                var storecode = _BearerClass.Plant switch
+                {
                     "1" => "1A",
                     "2" => "2B",
                     "3" => "3C",
@@ -570,8 +570,8 @@ namespace HINOSystem.Controllers.API.Master
                         message = "Not Working",
                     });
                 };
-                
-                var isInsert = await Insert_TMP(obj,isImport);
+
+                var isInsert = await Insert_TMP(obj, isImport);
                 var isDetail = await Detail_Data(obj);
 
                 if (!isInsert || !isDetail)
@@ -592,9 +592,9 @@ namespace HINOSystem.Controllers.API.Master
                         string _cycleB = cycle.Select(x => x.F_Cycle).FirstOrDefault().Substring(2, 2);
                         sql = "exec [dbo].[sp_findPeriod] @p0,@p1,@p2,@p3,@p4,@p5";
                         var periodData = _FillDT.ExecuteSQL(sql,
-                            _BearerClass.Plant,obj.F_Supplier_Code,
-                            obj.F_Supplier_Plant,obj.F_Delivery_Date,
-                            _BearerClass.UserCode,_cycleB);
+                            _BearerClass.Plant, obj.F_Supplier_Code,
+                            obj.F_Supplier_Plant, obj.F_Delivery_Date,
+                            _BearerClass.UserCode, _cycleB);
 
                         periodDay = JsonConvert.SerializeObject(periodData.Rows[0]["F_Period"]);
                     }
@@ -639,7 +639,7 @@ namespace HINOSystem.Controllers.API.Master
             }
         }
 
-        private async Task<bool> Insert_TMP(TMP_Planning_Order obj,bool isImport)
+        private async Task<bool> Insert_TMP(TMP_Planning_Order obj, bool isImport)
         {
             try
             {
@@ -853,7 +853,8 @@ namespace HINOSystem.Controllers.API.Master
                 DataTable dt = new DataTable();
                 int Last_Order, Forcasst3Shift, TotalPcs, DiffLast = 0;
 
-                for (int i = 0; i < DT_PartControl.Rows.Count; i++) {
+                for (int i = 0; i < DT_PartControl.Rows.Count; i++)
+                {
                     do
                     {
                         last_Date = last_Date.AddDays(-1);
@@ -1096,7 +1097,7 @@ namespace HINOSystem.Controllers.API.Master
                         if (prop.Name.StartsWith("F_Trip"))
                         {
                             string _deliveryTrip = prop.Name.Substring(6);
-                            if(int.Parse(_deliveryTrip) > cycle)
+                            if (int.Parse(_deliveryTrip) > cycle)
                             {
                                 break;
                             }
@@ -1125,7 +1126,24 @@ namespace HINOSystem.Controllers.API.Master
                                 F_Cycle = obj.F_Cycle,
                             };
 
-                            _KB3Context.TB_Kanban_Planning.Add(planObj);
+                            var exist = await _KB3Context.TB_Kanban_Planning.Where(x => x.F_Plant == planObj.F_Plant
+                                && x.F_Supplier_Code == planObj.F_Supplier_Code
+                                && x.F_Supplier_Plant == planObj.F_Supplier_Plant
+                                && x.F_Store_Code == planObj.F_Store_Code
+                                && x.F_Kanban_No == planObj.F_Kanban_No
+                                && x.F_Part_No == planObj.F_Part_No
+                                && x.F_Ruibetsu == planObj.F_Ruibetsu
+                                && x.F_Delivery_Date == planObj.F_Delivery_Date
+                                && x.F_Delivery_Trip == planObj.F_Delivery_Trip).FirstOrDefaultAsync();
+
+                            if (exist == null)
+                            {
+                                _KB3Context.TB_Kanban_Planning.Add(planObj);
+                            }
+                            else
+                            {
+                                _KB3Context.TB_Kanban_Planning.Update(planObj);
+                            }
                         }
                     }
 
@@ -1154,7 +1172,7 @@ namespace HINOSystem.Controllers.API.Master
         }
 
         [HttpPost]
-        public async Task<IActionResult> GetImportList (List<TMP_Planning_Order> listObj)
+        public async Task<IActionResult> GetImportList(List<TMP_Planning_Order> listObj)
         {
             try
             {

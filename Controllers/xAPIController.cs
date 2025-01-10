@@ -12,18 +12,21 @@ namespace KANBAN.Controllers
     {
         private readonly KB3Context _KB3Context;
         private readonly FillDataTable _FillDT;
+        private readonly BearerClass _BearerClass;
 
         public xAPIController(
                         KB3Context kB3Context,
-                        FillDataTable fillDT
+                        FillDataTable fillDT,
+                        BearerClass bearerClass
                        )
         {
             _KB3Context = kB3Context;
             _FillDT = fillDT;
+            _BearerClass = bearerClass;
         }
 
         [HttpGet]
-        public IActionResult GetProcessDate(string dateShift)
+        public async Task<IActionResult> GetProcessDate(string dateShift)
         {
             string sql = $"Select dbo.FN_GetProcess('{dateShift}',2)";
             var dt = _FillDT.ExecuteSQL(sql);

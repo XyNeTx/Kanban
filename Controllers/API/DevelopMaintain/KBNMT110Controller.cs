@@ -3,10 +3,8 @@ using HINOSystem.Libs;
 using KANBAN.Context;
 using KANBAN.Libs;
 using KANBAN.Models.KB3.Login;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 
 namespace KANBAN.Controllers.API.DevelopMaintain
 {
@@ -48,7 +46,7 @@ namespace KANBAN.Controllers.API.DevelopMaintain
         public async Task<IActionResult> GetMenu()
         {
 
-            if(_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
+            if (_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
             {
                 return StatusCode(_BearerClass.Status, new
                 {
@@ -61,12 +59,23 @@ namespace KANBAN.Controllers.API.DevelopMaintain
             try
             {
 
-                var data = await _kbContext.Menu.OrderBy(x=>x.Code)
+                var data = await _kbContext.Menu
+                    .OrderBy(x => x.Code)
                     .Select(x => new
                     {
-                        remark = x.Code + " : " + x.Name,
+                        remark = $"{x.i18n.Trim()} : {x.Name.Substring(x.Name.IndexOf('.') + 1).Trim()}",
                         menu_ID = x._ID,
-                    }).ToListAsync();
+                    })
+                    .ToListAsync();
+
+                if (_BearerClass.UserCode != "20234111")
+                {
+                    data = data.Where(x => !x.remark.ToLower().StartsWith("erp")
+                        && !x.remark.Contains(": Configuration")
+                        && !x.remark.ToLower().StartsWith("kbntl")
+                        && !x.remark.ToLower().StartsWith("kbnmt"))
+                        .ToList();
+                }
 
                 return Ok(new
                 {
@@ -92,7 +101,7 @@ namespace KANBAN.Controllers.API.DevelopMaintain
         public async Task<IActionResult> GetUser()
         {
 
-            if(_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
+            if (_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
             {
                 return StatusCode(_BearerClass.Status, new
                 {
@@ -115,7 +124,7 @@ namespace KANBAN.Controllers.API.DevelopMaintain
                     status = "200",
                     response = "Success",
                     message = "Data found",
-                    data = data.Distinct().ToList().OrderBy(x=>x.Code)
+                    data = data.Distinct().ToList().OrderBy(x => x.Code)
                 });
 
             }
@@ -134,7 +143,7 @@ namespace KANBAN.Controllers.API.DevelopMaintain
         public async Task<IActionResult> GetUserDetailAndAuth(string User_Code)
         {
 
-            if(_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
+            if (_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
             {
                 return StatusCode(_BearerClass.Status, new
                 {
@@ -147,7 +156,7 @@ namespace KANBAN.Controllers.API.DevelopMaintain
             try
             {
 
-                var data = await _kbContext.User.Where(x=>x.Code == User_Code)
+                var data = await _kbContext.User.Where(x => x.Code == User_Code)
                     .SelectMany(user => _kbContext.UserAuthorize
                     .Where(auth => auth.User_ID == user._ID),
                     (user, auth) => new
@@ -160,7 +169,7 @@ namespace KANBAN.Controllers.API.DevelopMaintain
                         auth.Remark,
                     }).ToListAsync();
 
-                if(data.Count == 0)
+                if (data.Count == 0)
                 {
                     var user = await _kbContext.User.Where(x => x.Code.Trim() == User_Code).ToListAsync();
                     if (user == null)
@@ -254,10 +263,10 @@ namespace KANBAN.Controllers.API.DevelopMaintain
 
                     Int64? parent = item.Menu_ID;
 
-                    do 
+                    do
                     {
-                        parent = await addParentAuth(parent,item.User_ID);
-                    } 
+                        parent = await addParentAuth(parent, item.User_ID);
+                    }
 
                     while (parent != null);
 
@@ -284,14 +293,14 @@ namespace KANBAN.Controllers.API.DevelopMaintain
                     response = "Internal Server Error",
                     message = ex.Message
                 });
-            }   
+            }
         }
 
         private async Task<Int64?> addParentAuth(Int64? Menu_ID, Int64? User_ID)
         {
             var parent = await _kbContext.Database.SqlQueryRaw<Int64?>("SELECT Parent_ID AS VALUE FROM erp.MenuParent " +
                     $"WHERE Menu_ID = '{Menu_ID}' ").Select(x => x).FirstOrDefaultAsync();
-            
+
             if (parent == null)
             {
                 return null;

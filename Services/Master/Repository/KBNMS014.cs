@@ -225,6 +225,7 @@ namespace KANBAN.Services.Master.Repository
                     };
 
                     _kbContext.TB_MS_PrintKanban.Add(addObj);
+                    _log.WriteLogMsg($"Insert TB_MS_PrintKanban : {JsonConvert.SerializeObject(addObj)}");
 
                 }
                 else if (action.ToLower() == "upd")
@@ -245,6 +246,7 @@ namespace KANBAN.Services.Master.Repository
                     data.F_Update_By = _BearerClass.UserCode;
 
                     _kbContext.TB_MS_PrintKanban.Update(data);
+                    _log.WriteLogMsg($"Update TB_MS_PrintKanban : {JsonConvert.SerializeObject(data)}");
                 }
                 else
                 {
@@ -263,6 +265,7 @@ namespace KANBAN.Services.Master.Repository
                         }
 
                         _kbContext.TB_MS_PrintKanban.Remove(data);
+                        _log.WriteLogMsg($"Delete TB_MS_PrintKanban : {JsonConvert.SerializeObject(data)}");
 
                     }
 

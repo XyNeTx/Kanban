@@ -45,7 +45,7 @@ namespace KANBAN.Services.Import.Repository
             _automapService = autoMapService;
         }
 
-        public string SetCalendar(string YM, string? StoreCD,string TypeSpc)
+        public string SetCalendar(string YM, string? StoreCD, string TypeSpc)
         {
             try
             {
@@ -76,15 +76,15 @@ namespace KANBAN.Services.Import.Repository
             }
         }
 
-        public async Task<List<TB_Transaction_TMP>> GetPO(string YM,string TypeSpc)
+        public async Task<List<TB_Transaction_TMP>> GetPO(string YM, string TypeSpc)
         {
             try
             {
                 var data = await _kbContext.TB_Transaction_TMP
-                    .Where(x=>x.F_Type == "Trial"
-                    && x.F_Delivery_Date.Substring(0,6) == YM
+                    .Where(x => x.F_Type == "Trial"
+                    && x.F_Delivery_Date.Substring(0, 6) == YM
                     && x.F_Type_Spc.ToUpper() == TypeSpc)
-                    .OrderBy(x=>x.F_PDS_No).ToListAsync();
+                    .OrderBy(x => x.F_PDS_No).ToListAsync();
 
                 return data;
             }
@@ -95,7 +95,7 @@ namespace KANBAN.Services.Import.Repository
             }
         }
 
-        public async Task<string> GetParentStore(string YM,string? PO,bool isNew)
+        public async Task<string> GetParentStore(string YM, string? PO, bool isNew)
         {
             try
             {
@@ -138,7 +138,7 @@ namespace KANBAN.Services.Import.Repository
         {
             try
             {
-                if(isNew)
+                if (isNew)
                 {
                     //string ppm = _FillDT.ppmConnect();
                     string ppm = "[HMMTA-PPM].[PPMDB]";
@@ -172,7 +172,7 @@ namespace KANBAN.Services.Import.Repository
             }
         }
 
-        public async Task<string> GetParentPartDetail(string YM, string? StoreCD,string PartNo, bool isNew)
+        public async Task<string> GetParentPartDetail(string YM, string? StoreCD, string PartNo, bool isNew)
         {
             try
             {
@@ -195,7 +195,7 @@ namespace KANBAN.Services.Import.Repository
                 else
                 {
                     var data = await _kbContext.TB_Transaction_TMP
-                        .Where(x=> x.F_Type == "Trial"
+                        .Where(x => x.F_Type == "Trial"
                         && x.F_Delivery_Date.Substring(0, 6) == YM
                         && x.F_Part_Order.Trim() + "-" + x.F_Ruibetsu_Order.Trim() == PartNo
                         ).Select(x => new
@@ -221,7 +221,7 @@ namespace KANBAN.Services.Import.Repository
             }
         }
 
-        public async Task<string> GetComponentStore(string YM,string? PO,string? ParentPartNo, bool isNew)
+        public async Task<string> GetComponentStore(string YM, string? PO, string? ParentPartNo, bool isNew)
         {
             try
             {
@@ -247,7 +247,7 @@ namespace KANBAN.Services.Import.Repository
                     && x.F_Delivery_Date.Substring(0, 6) == YM)
                     .ToListAsync();
 
-                if(!string.IsNullOrWhiteSpace(ParentPartNo))
+                if (!string.IsNullOrWhiteSpace(ParentPartNo))
                 {
                     data = data.Where(x => x.F_Part_Order.Trim() + "-" + x.F_Ruibetsu_Order.Trim() == ParentPartNo).ToList();
                 }
@@ -287,15 +287,15 @@ namespace KANBAN.Services.Import.Repository
                         .Where(x => x.F_Type == "Trial")
                         .ToListAsync();
 
-                    if(!string.IsNullOrWhiteSpace(ParentPartNo))
+                    if (!string.IsNullOrWhiteSpace(ParentPartNo))
                     {
                         data = data.Where(x => x.F_Part_Order.Trim() + "-" + x.F_Ruibetsu.Trim() == ParentPartNo).ToList();
                     }
-                    if(!string.IsNullOrWhiteSpace(CompStoreCD))
+                    if (!string.IsNullOrWhiteSpace(CompStoreCD))
                     {
                         data = data.Where(x => x.F_Store_CD == CompStoreCD).ToList();
                     }
-                    if(!string.IsNullOrWhiteSpace(PO))
+                    if (!string.IsNullOrWhiteSpace(PO))
                     {
                         data = data.Where(x => x.F_PDS_No == PO).ToList();
                     }
@@ -303,7 +303,7 @@ namespace KANBAN.Services.Import.Repository
                     return JsonConvert.SerializeObject(data.Select(x => new
                     {
                         F_Part_No = x.F_Part_No.Trim() + "-" + x.F_Ruibetsu.Trim()
-                    }).Distinct().OrderBy(x=>x.F_Part_No).ToList());
+                    }).Distinct().OrderBy(x => x.F_Part_No).ToList());
                 }
             }
             catch (Exception ex)
@@ -313,7 +313,7 @@ namespace KANBAN.Services.Import.Repository
             }
         }
 
-        public async Task<List<string>> ComponentStoreSelected(string YM, string? PO, string? CompStoreCD, string? CompPartNo,string IssuedDate, bool isNew)
+        public async Task<List<string>> ComponentStoreSelected(string YM, string? PO, string? CompStoreCD, string? CompPartNo, string IssuedDate, bool isNew)
         {
             try
             {
@@ -364,7 +364,7 @@ namespace KANBAN.Services.Import.Repository
             }
         }
 
-        public async Task<string> ComponentPartSelected(string YM, string? CompStoreCD,string? CompPartNo,string? ParentPartNo,bool isNew)
+        public async Task<string> ComponentPartSelected(string YM, string? CompStoreCD, string? CompPartNo, string? ParentPartNo, bool isNew)
         {
             try
             {
@@ -394,11 +394,11 @@ namespace KANBAN.Services.Import.Repository
                         Where F_TYpe='Trial' and substring(F_Delivery_Date,1,6) ='{YM}' 
                         and F_Part_NO +'-'+F_Ruibetsu ='{CompPartNo}' ";
 
-                    if(!string.IsNullOrWhiteSpace(CompStoreCD))
+                    if (!string.IsNullOrWhiteSpace(CompStoreCD))
                     {
                         sql += $" and T.F_Store_Cd = '{CompStoreCD}' ";
                     }
-                    if(!string.IsNullOrWhiteSpace(ParentPartNo))
+                    if (!string.IsNullOrWhiteSpace(ParentPartNo))
                     {
                         sql += $" and rtrim(F_Part_Order)+'-'+rtrim(F_Ruibetsu_order) ='{ParentPartNo}' ";
                     }
@@ -417,16 +417,16 @@ namespace KANBAN.Services.Import.Repository
             }
         }
 
-        public async Task<string> ListCalendar(string YM,string? PO,string? ParentPartNo,string? ParentStoreCD,string? CompPartNo,string? CompStoreCD)
+        public async Task<string> ListCalendar(string YM, string? PO, string? ParentPartNo, string? ParentStoreCD, string? CompPartNo, string? CompStoreCD)
         {
             try
             {
                 var data = await _kbContext.TB_Transaction_TMP
-                    .Where(x=>x.F_Type == "Trial"
+                    .Where(x => x.F_Type == "Trial"
                     && x.F_Delivery_Date.Substring(0, 6) == YM)
                     .ToListAsync();
 
-                if(!string.IsNullOrWhiteSpace(PO))
+                if (!string.IsNullOrWhiteSpace(PO))
                 {
                     data = data.Where(x => x.F_PDS_No == PO).ToList();
                 }
@@ -438,7 +438,7 @@ namespace KANBAN.Services.Import.Repository
                 {
                     data = data.Where(x => x.F_Store_Order == ParentStoreCD).ToList();
                 }
-                if(!string.IsNullOrWhiteSpace(CompPartNo))
+                if (!string.IsNullOrWhiteSpace(CompPartNo))
                 {
                     data = data.Where(x => x.F_Part_No.Trim() + "-" + x.F_Ruibetsu.Trim() == CompPartNo).ToList();
                 }
@@ -468,7 +468,7 @@ namespace KANBAN.Services.Import.Repository
             }
         }
 
-        public async Task<string> ListDatatable (string YM,string? PO,string? ParentPartNo, string? CompPartNo)
+        public async Task<string> ListDatatable(string YM, string? PO, string? ParentPartNo, string? CompPartNo)
         {
             try
             {
@@ -516,7 +516,7 @@ namespace KANBAN.Services.Import.Repository
             }
         }
 
-        public async Task Save(List<VM_Save_KBNIM007T> listObj,string _command)
+        public async Task Save(List<VM_Save_KBNIM007T> listObj, string _command)
         {
             try
             {
@@ -541,7 +541,7 @@ namespace KANBAN.Services.Import.Repository
 
                     data = await _kbContext.TB_Transaction_TMP
                         .Where(x => x.F_Type == "Trial"
-                        && x.F_Delivery_Date.Substring(0,6) == listObj[0].IssuedDate.Substring(0, 6)
+                        && x.F_Delivery_Date.Substring(0, 6) == listObj[0].IssuedDate.Substring(0, 6)
                         && x.F_PDS_No == listObj[0].PO
                         && x.F_Part_Order.Trim() + "-" + x.F_Ruibetsu_Order.Trim() == listObj[0].ParentPartNo
                         && x.F_Store_Order == listObj[0].ParentStore).ToListAsync();
@@ -551,7 +551,7 @@ namespace KANBAN.Services.Import.Repository
                         throw new CustomHttpException(400, "Can not Insert Data because found data in database!");
                     }
 
-                    foreach(var obj in listObj)
+                    foreach (var obj in listObj)
                     {
                         if (!string.IsNullOrWhiteSpace(obj.CompPartNo))
                         {
@@ -607,6 +607,7 @@ namespace KANBAN.Services.Import.Repository
                             };
 
                             await _kbContext.TB_Transaction_TMP.AddAsync(compOrderInsert);
+                            _log.WriteLogMsg("Insert TB_Transaction_TMP " + JsonConvert.SerializeObject(compOrderInsert));
                         }
                         else
                         {
@@ -726,6 +727,8 @@ namespace KANBAN.Services.Import.Repository
 
                             await _kbContext.TB_Transaction_TMP.AddAsync(compOrderInsert);
 
+                            _log.WriteLogMsg("Update TB_Transaction_TMP " + JsonConvert.SerializeObject(compOrderInsert));
+
                         }
                         else
                         {
@@ -766,7 +769,7 @@ namespace KANBAN.Services.Import.Repository
                             && x.F_Store_CD == listObj[0].CompStoreCD).ToList();
                     }
 
-                    if(data.Count == 0)
+                    if (data.Count == 0)
                     {
                         throw new CustomHttpException(400, "Can not Delete Data because not found data in database!");
                     }
@@ -774,6 +777,8 @@ namespace KANBAN.Services.Import.Repository
                     _kbContext.TB_Transaction_TMP.RemoveRange(data);
 
                     await _kbContext.SaveChangesAsync();
+
+                    _log.WriteLogMsg("Delete TB_Transaction_TMP " + JsonConvert.SerializeObject(data));
 
                 }
 
@@ -790,18 +795,18 @@ namespace KANBAN.Services.Import.Repository
             try
             {
                 string directory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "file_temp");
-                if(!Directory.Exists(directory))
+                if (!Directory.Exists(directory))
                 {
                     Directory.CreateDirectory(directory);
                 }
                 string path = Path.Combine(directory, "IMPORT_TRIAL.xlsx");
 
-                if(File.Exists(path))
+                if (File.Exists(path))
                 {
                     File.Delete(path);
                 }
 
-                using (var stream = new FileStream(path,FileMode.CreateNew))
+                using (var stream = new FileStream(path, FileMode.CreateNew))
                 {
                     await obj.File.CopyToAsync(stream);
                     stream.Close();
@@ -834,7 +839,7 @@ namespace KANBAN.Services.Import.Repository
 
                 DataTable dt = _FillDT.ExecuteSQL($"EXEC dbo.SP_IM005_IMPORT '{_BearerClass.UserCode}' , '{TypeSpc}'");
 
-                if(dt.Rows.Count > 0)
+                if (dt.Rows.Count > 0)
                 {
                     if (dt.Rows[0].ItemArray[0].ToString() == "CAL ERROR")
                     {

@@ -7,16 +7,17 @@
     public class TB_MS_TruckType
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-
+        [StringLength(10)]
         public string F_Truck_Type { get; set; }
-        public int? F_Weight { get; set; }
-        public float? F_Width { get; set; }
-        public float? F_High { get; set; }
-        public float? F_Long { get; set; }
-        public float? F_Value { get; set; }
+        public int F_Weight { get; set; }
+        [Column(TypeName = "numeric(4,2)")]
+        public float F_Width { get; set; }
+        [Column(TypeName = "numeric(4,2)")]
+        public float F_High { get; set; }
+        [Column(TypeName = "numeric(4,2)")]
+        public float F_Long { get; set; }
+        [Column(TypeName = "numeric(4,2)")]
+        public float F_Value { get; set; }
 
     }
 }
-
-

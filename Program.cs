@@ -99,7 +99,7 @@ builder.Services.AddScoped<SerilogLibs>();
 builder.Services.AddScoped<TextFileClass>();
 
 builder.Services.AddScoped<ISpecialLibs, SpecialLibs>();
-builder.Services.AddScoped<IImportService ,ImportService>();
+builder.Services.AddScoped<IImportService, ImportService>();
 builder.Services.AddScoped<ILogisticService, LogisticService>();
 builder.Services.AddScoped<ISpecialOrderingServices, SpecialOrderingServices>();
 builder.Services.AddScoped<IMasterRepo, MasterRepo>();
@@ -162,7 +162,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseMiddleware<CustomExceptionMiddleware>();
 
-app.UseSession(); 
+app.UseSession();
 app.UseRouting();
 
 app.UseAuthentication();

@@ -8,6 +8,7 @@ using KANBAN.Models.PPM3;
 using KANBAN.Services.Automapper.Interface;
 using KANBAN.Services.Master.IRepository;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using QRCoder;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -115,6 +116,9 @@ namespace KANBAN.Services.Master.Repository
 
                 // Step 4: Add the filtered data to _kbContext and save changes
                 _kbContext.TB_MS_Print_Replace_KB.AddRange(data);
+
+                _log.WriteLogMsg($"Insert TB_MS_Print_Replace_KB {JsonConvert.SerializeObject(data)}");
+
                 await _kbContext.SaveChangesAsync();
 
                 return data;
@@ -149,6 +153,7 @@ namespace KANBAN.Services.Master.Repository
                         updateObj.F_Number = obj.F_Number;
 
                         _kbContext.TB_MS_Print_Replace_KB.Update(updateObj);
+                        _log.WriteLogMsg($"Update TB_MS_Print_Replace_KB {JsonConvert.SerializeObject(updateObj)}");
                     }
                 }
 
@@ -293,6 +298,18 @@ namespace KANBAN.Services.Master.Repository
                             && x.F_Supply_Code == obj.F_Supply_Code)
                             .ExecuteDeleteAsync();
 
+                        _log.WriteLogMsg($@"Delete TB_MS_Print_Replace_KB_TMP 
+                            _kbContext.TB_MS_Print_Replace_KB_TMP
+                            .Where(x => x.F_Update_By == _BearerClass.UserCode
+                            && x.F_Running > intNum1
+                            && x.F_Supplier_Code == obj.F_Supplier_Code
+                            && x.F_Supplier_Plant == obj.F_Supplier_Plant
+                            && x.F_Store_Code == obj.F_Store_Code
+                            && x.F_Kanban_No == obj.F_Kanban_No
+                            && x.F_Part_No == obj.F_Part_No
+                            && x.F_Ruibetsu == obj.F_Ruibetsu
+                            && x.F_Supply_Code == obj.F_Supply_Code");
+
                         await _kbContext.TB_MS_Print_Replace_KB_TMP
                             .Where(x => x.F_Update_By == _BearerClass.UserCode
                             && x.F_Running <= intNum1
@@ -304,6 +321,18 @@ namespace KANBAN.Services.Master.Repository
                             && x.F_Ruibetsu == obj.F_Ruibetsu
                             && x.F_Supply_Code == obj.F_Supply_Code)
                             .ExecuteUpdateAsync(x => x.SetProperty(y => y.F_Page_Total, intNum1));
+
+                        _log.WriteLogMsg($@"Update TB_MS_Print_Replace_KB_TMP
+                            _kbContext.TB_MS_Print_Replace_KB_TMP
+                            .Where(x => x.F_Update_By == _BearerClass.UserCode
+                            && x.F_Running <= intNum1
+                            && x.F_Supplier_Code == obj.F_Supplier_Code
+                            && x.F_Supplier_Plant == obj.F_Supplier_Plant
+                            && x.F_Store_Code == obj.F_Store_Code
+                            && x.F_Kanban_No == obj.F_Kanban_No
+                            && x.F_Part_No == obj.F_Part_No
+                            && x.F_Ruibetsu == obj.F_Ruibetsu
+                            && x.F_Supply_Code == obj.F_Supply_Code");
                     }
                     else
                     {
@@ -368,6 +397,7 @@ namespace KANBAN.Services.Master.Repository
                                     F_Update_By = _BearerClass.UserCode
                                 };
                                 _kbContext.TB_MS_Print_Replace_KB_TMP.Add(objTmp);
+                                _log.WriteLogMsg($"Insert TB_MS_Print_Replace_KB_TMP {JsonConvert.SerializeObject(objTmp)}");
                             }
 
                             await _kbContext.SaveChangesAsync();
@@ -385,6 +415,7 @@ namespace KANBAN.Services.Master.Repository
                     From TB_MS_Print_Replace_KB WHERE F_Update_By = '{_BearerClass.UserCode}' AND F_Number = 0 ) ";
 
                 await _kbContext.Database.ExecuteSqlRawAsync(sql);
+                _log.WriteLogMsg($"Delete TB_MS_Print_Replace_KB_TMP {sql}");
 
             }
             catch (Exception ex)
