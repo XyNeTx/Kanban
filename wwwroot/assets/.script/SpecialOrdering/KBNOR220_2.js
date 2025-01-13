@@ -53,11 +53,11 @@ $("#selSupCode").change(() => {
     GetPartNo();
 });
 
-$("#selPartNo").change(() => {
+$("#selPartNo").change(async () => {
     $("#tableMain").find("tbody").remove();
-    ShowCalendar();
+    await ShowCalendar();
+    await GetPOQty();
 
-    GetPOQty();
     GetCalendarQty();
 });
 

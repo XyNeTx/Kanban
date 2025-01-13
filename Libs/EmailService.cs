@@ -2,7 +2,6 @@
 using HINOSystem.Libs;
 using KANBAN.Services;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualStudio.Web.CodeGeneration.Design;
 using System.Data;
 using System.Net.Mail;
 
@@ -37,7 +36,7 @@ namespace KANBAN.Libs
             _log = log;
         }
 
-        public async Task SendEmailAsync(string orderType, string program, string detail,string processDate, string processShift)
+        public async Task SendEmailAsync(string orderType, string program, string detail, string processDate, string processShift)
         {
             var smtpClient = new SmtpClient("156.71.5.8");
             string plantCode = _http.HttpContext.Request.Cookies["plantCode"];
@@ -94,7 +93,7 @@ namespace KANBAN.Libs
 
             if (_dt.Rows.Count > 0)
             {
-                foreach(DataRow dr in _dt.Rows)
+                foreach (DataRow dr in _dt.Rows)
                 {
                     toEmailList.Add(dr["F_Email"].ToString().Trim());
                 }
@@ -109,7 +108,7 @@ namespace KANBAN.Libs
                 $" from TB_REC_HEADER H INNER JOIN [HMMT-APP07].[Price_Approval_Part].dbo.TB_MS_Supplier_Buyer B ON " +
                 $" H.F_SUpplier_Code = B.F_Supplier_Code INNER JOIN [HMMT-APP07].[Price_Approval_Part].dbo.TB_CTL_USER U ON " +
                 $" B.F_User_Normal = U.F_User_ID INNER JOIN [HMMT-APP07].[Price_Approval_Part].dbo.TB_CTL_USER U1 ON " +
-                $" U.F_Team_ID = U1.F_User_ID Where H.F_OrderTYpe = '{orderType.Substring(0,1)}' and F_Status='P' " +
+                $" U.F_Team_ID = U1.F_User_ID Where H.F_OrderTYpe = '{orderType.Substring(0, 1)}' and F_Status='P' " +
                 $" Union all Select distinct F_User_ID,F_User_name,F_EMAIL from [New_Kanban].dbo.TB_USER Where Isnull(F_Email,'') <>'' ";
 
             var _dt = _FillDT.ExecuteSQL(_sql);
@@ -128,7 +127,7 @@ namespace KANBAN.Libs
 
 
 
-        public async Task SendEmailUnlock(string orderType, string program, string detail, string processDate, string processShift,string nSupplier)
+        public async Task SendEmailUnlock(string orderType, string program, string detail, string processDate, string processShift, string nSupplier)
         {
             var smtpClient = new SmtpClient("156.71.5.8");
             string plantCode = _http.HttpContext.Request.Cookies["plantCode"];
@@ -235,7 +234,7 @@ namespace KANBAN.Libs
             return toEmailList;
         }
 
-        public async Task SendEmailToPA2 (string ProdYM,string nRev,string nVer)
+        public async Task SendEmailToPA2(string ProdYM, string nRev, string nVer)
         {
             var smtpClient = new SmtpClient("156.71.5.8");
             string plantCode = _http.HttpContext.Request.Cookies["plantCode"];
@@ -311,7 +310,7 @@ namespace KANBAN.Libs
             return toEmailList;
         }
 
-        public async Task SendEmailSurvey(string? Type = "", string? sumSurvey = "",string? ProcessShift = "")
+        public async Task SendEmailSurvey(string? Type = "", string? sumSurvey = "", string? ProcessShift = "")
         {
             string sBody = "";
             string strSurveyDoc = "";
@@ -373,7 +372,7 @@ namespace KANBAN.Libs
                             MailMessage mailMessage = new MailMessage
                             {
                                 From = new MailAddress("System_Notification@hinothailand.com"),
-                                Subject = $"Price Not Found : Hino Kanban for IMV (Special Order : {ProcessShift} ) Process Date : {DateTime.Now.ToString("dd/MM/yyyy")}",
+                                Subject = $"Price Not Found : Hino Kanban for Fac 3 (Special Order : {ProcessShift} ) Process Date : {DateTime.Now.ToString("dd/MM/yyyy")}",
                                 To = { strEmail },
                                 CC = { strTeamEmail, strInChargeEmail },
                                 IsBodyHtml = true,
@@ -419,7 +418,7 @@ namespace KANBAN.Libs
                                 mailMessage.Bcc.Add("Chirawan_C@hinothailand.com");
                                 smtpClient.Send(mailMessage);
 
-                                if(Type?.ToLower() == "generate pds")
+                                if (Type?.ToLower() == "generate pds")
                                 {
                                     string sql = $"Update TB_Survey_Detail Set F_Price_Flg = 1 Where  F_Survey_Doc in ('{strSurveyDoc}') ";
                                     await _KB3Context.Database.ExecuteSqlRawAsync(sql);
@@ -437,9 +436,9 @@ namespace KANBAN.Libs
 
         }
 
-        public async Task SendEmailApprover(string sPDS,string approver)
+        public async Task SendEmailApprover(string sPDS, string approver)
         {
-            try 
+            try
             {
                 string sBody = "";
                 string MailTo = "";
@@ -453,44 +452,66 @@ namespace KANBAN.Libs
                 MailMessage myMail = new MailMessage();
                 var dt = _FillDT.ExecuteSQL($"Select F_User_name,F_Email From  TB_MS_Operator Where F_User_ID ='{_bearerClass.UserCode}'");
 
-                if (dt.Rows.Count > 0)
-                {
-                    myMail.From = new MailAddress(dt.Rows[0]["F_Email"].ToString().Trim());
-                }
+                //if (dt.Rows.Count > 0)
+                //{
+                //    myMail.From = new MailAddress(dt.Rows[0]["F_Email"].ToString().Trim());
+                //}
 
-                dt = _FillDT.ExecuteSQL($"Select F_Email From  TB_MS_SpcApprover Where F_User_ID ='{approver}'");
+                var dtSpcApp = _FillDT.ExecuteSQL($"Select F_Email From  TB_MS_SpcApprover Where F_User_ID ='{approver}'");
 
-                if (dt.Rows.Count > 0)
-                {
-                    MailTo = dt.Rows[0]["F_Email"].ToString().Trim();
-                    myMail.To.Add(MailTo);
-                }
+                //if (dt.Rows.Count > 0)
+                //{
+                //    MailTo = dt.Rows[0]["F_Email"].ToString().Trim();
+                //    myMail.To.Add(MailTo);
+                //}
+
+                //var smtpClient = new SmtpClient("156.71.5.8")
+                //{
+                //    EnableSsl = true,
+                //};
+
+                //if (MailTo != "")
+                //{
+                //    myMail.Subject = "Please approve pds data";
+                //    sBody = "Dear All Concern, <br/><br/>";
+                //    sBody += "Auto generate please approve pds data :- <br/>";
+                //    sBody += $"{sPDS}<br/>";
+                //    sBody += "Best Regards, <br/>";
+                //    sBody += UserName + "<br/>";
+                //    myMail.Body = sBody;
+                //    myMail.IsBodyHtml = true;
+                //    myMail.Priority = MailPriority.High;
+                //    myMail.Bcc.Add("Sitthiporn_P@hinothailand.com");
+                //    myMail.Bcc.Add("Chirawan_C@hinothailand.com");
+                //}
+                //if (myMail.To.Count > 0)
+                //{
+                //    smtpClient.Send(myMail);
+                //}
 
                 var smtpClient = new SmtpClient("156.71.5.8");
 
-                if (MailTo != "")
+                var mailMessage = new MailMessage
                 {
-                    myMail.Subject = "Please approve pds data";
-                    sBody = "Dear All Concern, <br/><br/>";
-                    sBody += "Auto generate please approve pds data :- <br/>";
-                    sBody += $"{sPDS}<br/>";
-                    sBody += "Best Regards, <br/>";
-                    sBody += UserName + "<br/>";
-                    myMail.Body = sBody;
-                    myMail.IsBodyHtml = true;
-                    myMail.Priority = MailPriority.High;
-                    myMail.Bcc.Add("Sitthiporn_P@hinothailand.com");
-                    myMail.Bcc.Add("Chirawan_C@hinothailand.com");
-                }
-                if (myMail.To.Count > 0)
-                {
-                    smtpClient.Send(myMail);
-                }
+                    From = new MailAddress(dt.Rows[0]["F_Email"].ToString().Trim()),
+                    To = { dtSpcApp.Rows[0]["F_Email"].ToString().Trim() },
+                    Subject = "Please approve pds data",
+                    Body = @$"Dear All Concern, <br/><br/>
+                        Auto generate please approve pds data :- <br/>
+                        {sPDS}<br/>
+                        Best Regards, <br/>
+                        {UserName}<br/>",
+                    IsBodyHtml = true,
+                    Priority = MailPriority.High,
+                    Bcc = { "Sitthiporn_P@hinothailand.com", "Chirawan_C@hinothailand.com" }
+                };
+
+                await smtpClient.SendMailAsync(mailMessage);
 
             }
             catch (Exception ex)
             {
-                if(ex is CustomHttpException)
+                if (ex is CustomHttpException)
                 {
                     throw;
                 }

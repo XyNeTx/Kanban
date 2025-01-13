@@ -338,7 +338,7 @@ namespace KANBAN.Services.Master.Repository
                     _log.WriteLogMsg("UPDATE TB_MS_LPSupplier " + JsonConvert.SerializeObject(obj));
 
                 }
-                else
+                else if (action.ToLower() == "del")
                 {
                     foreach (var each in listObj)
                     {
@@ -353,6 +353,7 @@ namespace KANBAN.Services.Master.Repository
                         _log.WriteLogMsg("DELETE TB_MS_LPSupplier " + JsonConvert.SerializeObject(each));
                     }
                 }
+                else throw new CustomHttpException(400, "Action Not Found");
 
                 await _kbContext.SaveChangesAsync();
 

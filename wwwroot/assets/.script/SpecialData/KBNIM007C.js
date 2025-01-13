@@ -58,11 +58,11 @@ $("#btnConfirm").click(async function () {
     await Confirm();
     $("#tableMain").DataTable().clear().draw();
 
-    setTimeout(() => {
-        Search();
-    }, 100);
+    //setTimeout(() => {
+    //    Search();
+    //}, 100);
 
-    clearTimeout();
+    //clearTimeout();
 });
 
 $("#btnSelectAll").click(function () {

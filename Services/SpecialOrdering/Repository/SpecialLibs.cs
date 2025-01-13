@@ -512,8 +512,9 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             try
             {
                 string procDBConnect = _FillDT.procDBConnect();
+                string ppmDBConnect = _FillDT.ppmConnect();
                 string _sql = $@"Select RTrim(H.F_Survey_Doc) As F_Survey_Doc,Rtrim(F_Supplier_CD)+'-'+LTrim(F_Supplier_Plant) As F_Supplier_CD, 
-                    (Select Top 1 F_Name From [HMMT-PPM].[PPMDB].dbo.[T_Supplier_MS] Where F_Supplier_CD collate Thai_CI_AS = Substring(H.F_Supplier_CD,2,4) and 
+                    (Select Top 1 F_Name From {ppmDBConnect}.dbo.[T_Supplier_MS] Where F_Supplier_CD collate Thai_CI_AS = Substring(H.F_Supplier_CD,2,4) and 
                     F_Plant_CD collate Thai_CI_AS  = H.F_Supplier_Plant order by F_Name DESC ) As F_Name 
                     FROM {procDBConnect}.dbo.TB_Survey_Header H 
                     Where H.F_Download_Flg = '1' and H.F_Factory_Code  in ('{_BearerClass.Plant}')";
@@ -793,10 +794,14 @@ namespace KANBAN.Services.SpecialOrdering.Repository
         {
             try
             {
-                var deliveryTime = _kbContext.TB_MS_DeliveryTime
+                var getObjDeliveryTime = _kbContext.TB_MS_DeliveryTime
                     .Where(x => x.F_Supplier_Code == SuppCD && x.F_Supplier_Plant == SuppPlant
-                    && x.F_Cycle == Cycle && x.F_Start_Date.CompareTo(DeliDT) <= 0 && x.F_End_Date.CompareTo(DeliDT) >= 0
-                    && x.F_Delivery_Trip == int.Parse(DeliTrip)).FirstOrDefault().F_Delivery_Time;
+                    && x.F_Cycle == Cycle && x.F_Start_Date.Substring(0, 6).CompareTo(DeliDT) <= 0 && x.F_End_Date.Substring(0, 6).CompareTo(DeliDT) >= 0
+                    && x.F_Delivery_Trip == int.Parse(DeliTrip)).FirstOrDefault();
+
+                if (getObjDeliveryTime == null) throw new CustomHttpException(404, "Data not found in TB_MS_DeliveryTime");
+
+                var deliveryTime = getObjDeliveryTime.F_Delivery_Time;
 
                 if (deliveryTime == null) return "";
 

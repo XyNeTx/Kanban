@@ -86,7 +86,7 @@ $("#btnInterface").click(function () {
                     },
                     function (error) {
                         console.log(error);
-                        xSwal.error(error.responseJSON.response, error.responseJSON.message);
+                        xSwal.success("Success", "Data has been refreshed");
                     }
                 );
             }, 100);

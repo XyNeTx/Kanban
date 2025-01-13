@@ -54,7 +54,8 @@ Approve = async () => {
     _xLib.AJAX_Post(`/api/KBNOR261/Approve`, data,
         async (success) => {
             xSwal.success(success.response, success.message);
-            GetPDSWaitApprove();
+            $("#tableMain").DataTable().clear().draw();
+            //GetPDSWaitApprove();
         }
     );
 

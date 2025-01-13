@@ -1,66 +1,46 @@
 ﻿$(document).ready(function () {
 
-    const xKBNMS027 = new MasterTemplate({
-        Controller: _PAGE_,
-        Table: 'tblMaster',
-        ColumnTitle: {
-            "EN": ['Supplier Logistic', 'Supplier Order', 'Supplier Code', 'Supplier Name'],
-            "TH": ['Supplier Logistic', 'Supplier Order', 'Supplier Code', 'Supplier Name'],
-            "JP": ['Supplier Logistic', 'Supplier Order', 'Supplier Code', 'Supplier Name'],
-        },
-        ColumnValue: [
-            { "data": "F_short_Logistic" },
-            { "data": "F_short_name" },
-            { "data": "F_Supplier_Code" },
-            { "data": "F_name" }
-        ],
-        Modal: 'modalMaster',
-        Form: 'frmMaster',
-        PostData: [
-            { name: 'F_Plant', value: _PLANT_ }
-        ],
-    });
 
-    xKBNMS027.prepare();
-
-    xKBNMS027.initial(function (result) {
-        xDropDownList.bind('#frmCondition #F_Plant', result.data.TB_MS_Factory, 'F_Plant', 'F_Plant_Name');
-        xDropDownList.bind('#frmMaster #F_Plant', result.data.TB_MS_Factory, 'F_Plant', 'F_Plant_Name');
-
-        xKBNMS027.search();
-    });
-
-    onSave = function () {
-        xKBNMS027.save(function () {
-            xKBNMS027.search();
+    _xDataTable.InitialDataTable("#tableMain",
+        {
+            "processing": false,
+            "serverSide": false,
+            width: '100%',
+            paging: false,
+            sorting: false,
+            searching: false,
+            scrollX: false,
+            scrollY: "200px",
+            scrollCollapse: true,
+            "columns": [
+                {
+                    title: "Flag", render(data, type, row) {
+                        return `<input type="checkbox" class="chkbox" id="chkbox" name="chkbox" value="${row.f_Supplier_Plant}">`;
+                    }
+                },
+                {
+                    title: "SupplierLogistic", data: "F_Logistic"
+                },
+                {
+                    title: "SupplierOrder", data: "F_Start_Date"
+                },
+                {
+                    title: "SupplierCode", data: "F_End_Date"
+                },
+                {
+                    title: "SupplierName", data: "F_Truck_Type"
+                },
+            ],
+            select: false,
+            order: [[0, "asc"]]
         });
-    }
 
-    onDelete = function () {
-        xKBNMS027.delete(function () {
-            xKBNMS027.search();
-        });
-    }
-
-    onDeleteAll = function () {
-        xKBNMS027.deleteall(function () {
-            xKBNMS027.search();
-        });
-    }
-
-    onPrint = function () { }
-
-    onExecute = function () { }
-
-    xAjax.onChange('#frmCondition #F_Plant', function () {
-        $('#frmMaster #F_Plant').val($('#frmCondition #F_Plant').val());
-
-        xKBNMS027.search();
-    });
+    $("table tbody tr td").addClass("text-center");
+    $("table thead tr th").addClass("text-center");
 
 
+    xSplash.hide();
 
 
-
-})
+});
 

@@ -39,7 +39,8 @@ $("#mthDeliYM").change(async () => {
 
 $("#btnRegister").click(async () => {
     await Register();
-    await GetPDSData();
+    $("#tableMain").DataTable().clear().draw();
+    //await GetPDSData();
 });
 
 GetPDSData = async () => {
