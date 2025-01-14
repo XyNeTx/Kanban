@@ -52,9 +52,10 @@ namespace KANBAN.Services.Master.Repository
             {
                 var data = await _kbContext.TB_MS_Matching_Supplier
                     .AsNoTracking()
-                    .DistinctBy(x => x.F_short_Logistic.Trim())
-                    .OrderBy(x => x.F_short_Logistic)
                     .ToListAsync();
+
+                data = data.DistinctBy(x => x.F_short_Logistic.Trim())
+                    .OrderBy(x => x.F_short_Logistic).ToList();
 
                 return data;
             }
@@ -74,9 +75,10 @@ namespace KANBAN.Services.Master.Repository
                     .AsNoTracking()
                     .Where(x => x.F_TC_Str.CompareTo(strDateNow) <= 0
                     && x.F_TC_End.CompareTo(strDateNow) >= 0)
-                    .DistinctBy(x => x.F_short_name.Trim())
-                    .OrderBy(x => x.F_short_name)
                     .ToListAsync();
+
+                data = data.DistinctBy(x => x.F_short_name.Trim())
+                    .OrderBy(x => x.F_short_name).ToList();
 
                 return data;
 
@@ -99,7 +101,7 @@ namespace KANBAN.Services.Master.Repository
 
                 if (!string.IsNullOrEmpty(F_Short_Logistic))
                 {
-                    data = data.Where(x => x.F_short_Logistic == F_Short_Logistic).ToList();
+                    data = data.Where(x => x.F_short_Logistic.Trim() == F_Short_Logistic).ToList();
                 }
 
                 data = data.DistinctBy(x => new
@@ -133,12 +135,20 @@ namespace KANBAN.Services.Master.Repository
             {
                 var data = await _PPM3Context.T_Supplier_MS
                     .AsNoTracking()
-                    .Where(x => x.F_short_name == F_Short_Name
+                    .Where(x => x.F_short_name.Trim() == F_Short_Name
                     && x.F_TC_Str.CompareTo(strDateNow) <= 0
                     && x.F_TC_End.CompareTo(strDateNow) >= 0)
                     .OrderBy(x => x.F_supplier_cd)
                     .ThenBy(x => x.F_Plant_cd)
                     .ToListAsync();
+
+                data = data.DistinctBy(x => new
+                {
+                    x.F_supplier_cd,
+                    x.F_Plant_cd,
+                    x.F_short_name,
+                    //x.F_name
+                }).ToList();
 
                 return data == null ? throw new CustomHttpException(404, "Data not found") : data;
             }
@@ -159,7 +169,7 @@ namespace KANBAN.Services.Master.Repository
                 if (action.ToLower() == "new")
                 {
                     var existed = _kbContext.TB_MS_Matching_Supplier
-                        .Where(x => x.F_Supplier_CD + "-" + x.F_Supplier_Plant == obj.F_Supplier_CD)
+                        .Where(x => x.F_Supplier_CD.Trim() + "-" + x.F_Supplier_Plant.Trim() == obj.F_Supplier_CD)
                         .ToList();
 
                     if (existed.Count > 0)
@@ -185,7 +195,7 @@ namespace KANBAN.Services.Master.Repository
                 else if (action.ToLower() == "upd")
                 {
                     var data = await _kbContext.TB_MS_Matching_Supplier
-                        .Where(x => x.F_Supplier_CD + "-" + x.F_Supplier_Plant == obj.F_Supplier_CD)
+                        .Where(x => x.F_Supplier_CD.Trim() + "-" + x.F_Supplier_Plant.Trim() == obj.F_Supplier_CD)
                         .ExecuteUpdateAsync(set => set.SetProperty(x => x.F_short_Logistic, obj.F_Short_Logistic)
                         .SetProperty(x => x.F_Update_By, _BearerClass.UserCode)
                         .SetProperty(x => x.F_Update_Date, DateTime.Now));
@@ -200,18 +210,23 @@ namespace KANBAN.Services.Master.Repository
                 }
                 else
                 {
-                    var data = await _kbContext.TB_MS_Matching_Supplier
-                        .Where(x => x.F_Supplier_CD + "-" + x.F_Supplier_Plant == obj.F_Supplier_CD
-                        && x.F_short_Logistic == obj.F_Short_Logistic
-                        && x.F_short_name == obj.F_Short_Name)
-                        .ExecuteDeleteAsync();
+                    foreach (var delObj in listObj)
+                    {
 
-                    _log.WriteLogMsg($@"DELETE TB_MS_Matching_Supplier
+                        var data = await _kbContext.TB_MS_Matching_Supplier
+                            .Where(x => x.F_Supplier_CD.Trim() + "-" + x.F_Supplier_Plant.Trim() == delObj.F_Supplier_CD
+                            && x.F_short_Logistic.Trim() == delObj.F_Short_Logistic
+                            && x.F_short_name.Trim() == delObj.F_Short_Name)
+                            .ExecuteDeleteAsync();
+
+                        _log.WriteLogMsg($@"DELETE TB_MS_Matching_Supplier
                         _kbContext.TB_MS_Matching_Supplier
-                        .Where(x => x.F_Supplier_CD + ""-"" + x.F_Supplier_Plant == {obj.F_Supplier_CD}
-                        && x.F_short_Logistic == {obj.F_Short_Logistic}
-                        && x.F_short_name == {obj.F_Short_Name})
+                        .Where(x => x.F_Supplier_CD + ""-"" + x.F_Supplier_Plant == {delObj.F_Supplier_CD}
+                        && x.F_short_Logistic == {delObj.F_Short_Logistic}
+                        && x.F_short_name == {delObj.F_Short_Name})
                         .ExecuteDeleteAsync()");
+
+                    }
 
                 }
 
