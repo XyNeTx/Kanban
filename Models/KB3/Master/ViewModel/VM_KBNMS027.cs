@@ -18,9 +18,9 @@ namespace KANBAN.Models.KB3.Master.ViewModel
         [StringLength(6)]
         public string F_Supplier_CD { get; set; }
         [DisplayName("Supplier Plant")]
-        [Required]
+        //[Required]
         [StringLength(2)]
-        public string F_Supplier_Plant { get; set; }
+        public string? F_Supplier_Plant { get; set; }
         //[DisplayName("Supplier Plant")]
         //[Required]
         //public string F_Supplier_Plant { get; set; }

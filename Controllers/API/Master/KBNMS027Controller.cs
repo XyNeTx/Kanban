@@ -27,6 +27,8 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
+                await _BearerClass.CheckAuthorize();
+
                 var data = await _masterRepo.IKBNMS027.GetShortLogistic();
 
                 var selData = data.Select(x => new
@@ -53,6 +55,8 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
+                await _BearerClass.CheckAuthorize();
+
                 var data = await _masterRepo.IKBNMS027.GetShortName();
 
                 var selData = data.Select(x => new
@@ -79,6 +83,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
+                await _BearerClass.CheckAuthorize();
                 var data = await _masterRepo.IKBNMS027.GetListData(F_Short_Logistic);
                 return Ok(new
                 {
@@ -99,6 +104,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
+                await _BearerClass.CheckAuthorize();
                 var data = await _masterRepo.IKBNMS027.SupOrderSelected(F_Short_Name);
 
                 return Ok(new
@@ -124,6 +130,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
+                await _BearerClass.CheckAuthorize();
                 await _masterRepo.IKBNMS027.Save(listObj, action);
                 return Ok(new
                 {

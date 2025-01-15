@@ -110,6 +110,10 @@ $("#btnSave").click(function () {
     Save();
 });
 
+$("#btnRpt").click(function () {
+    OpenReport();
+});
+
 async function GetShortLogistic() {
     _xLib.AJAX_Get('/api/KBNMS027/GetShortLogistic', null,
         function (success) {
@@ -187,14 +191,27 @@ async function Save() {
     console.log(listData);
     console.log($("#divBtn").find("button:not(:disabled)").attr("id"));
 
+    let action = $("#divBtn").find("button:not(:disabled)").attr("id").split("btn")[1];
 
-    _xLib.AJAX_Post('/api/KBNMS027/Save', listData,
+    _xLib.AJAX_Post('/api/KBNMS027/Save?action=' + action, listData,
         function (success) {
             console.log(success);
+            success.data = _xLib.TrimArrayJSON(success.data);
+            xSwal.success(success.response, success.message);
             GetListData();
         },
         function (error) {
         }
     );
+
+}
+
+async function OpenReport() {
+    let data = {
+        Plant: ajexHeader.Plant,
+        UserName: _xLib.GetUserName(),
+    }
+
+    _xLib.OpenReportObj("/KBNMS027", data);
 
 }

@@ -181,8 +181,8 @@ namespace KANBAN.Services.Master.Repository
                     {
                         F_short_Logistic = obj.F_Short_Logistic,
                         F_short_name = obj.F_Short_Name,
-                        F_Supplier_CD = obj.F_Supplier_CD,
-                        F_Supplier_Plant = obj.F_Supplier_CD.Substring(6),
+                        F_Supplier_CD = obj.F_Supplier_CD.Split("-")[0],
+                        F_Supplier_Plant = obj.F_Supplier_CD.Split("-")[1],
                         F_name = obj.F_name,
                         F_Update_By = _BearerClass.UserCode,
                         F_Update_Date = DateTime.Now
@@ -195,7 +195,7 @@ namespace KANBAN.Services.Master.Repository
                 else if (action.ToLower() == "upd")
                 {
                     var data = await _kbContext.TB_MS_Matching_Supplier
-                        .Where(x => x.F_Supplier_CD.Trim() + "-" + x.F_Supplier_Plant.Trim() == obj.F_Supplier_CD)
+                        .Where(x => x.F_Supplier_CD.Trim() + "-" + x.F_Supplier_Plant.Trim() == obj.F_Supplier_CD + "-" + obj.F_Supplier_Plant)
                         .ExecuteUpdateAsync(set => set.SetProperty(x => x.F_short_Logistic, obj.F_Short_Logistic)
                         .SetProperty(x => x.F_Update_By, _BearerClass.UserCode)
                         .SetProperty(x => x.F_Update_Date, DateTime.Now));
@@ -208,13 +208,13 @@ namespace KANBAN.Services.Master.Repository
                         .SetProperty(x => x.F_Update_Date, {DateTime.Now}))
                         ");
                 }
-                else
+                else if (action.ToLower() == "del")
                 {
                     foreach (var delObj in listObj)
                     {
 
                         var data = await _kbContext.TB_MS_Matching_Supplier
-                            .Where(x => x.F_Supplier_CD.Trim() + "-" + x.F_Supplier_Plant.Trim() == delObj.F_Supplier_CD
+                            .Where(x => x.F_Supplier_CD.Trim() + "-" + x.F_Supplier_Plant.Trim() == delObj.F_Supplier_CD + "-" + delObj.F_Supplier_Plant
                             && x.F_short_Logistic.Trim() == delObj.F_Short_Logistic
                             && x.F_short_name.Trim() == delObj.F_Short_Name)
                             .ExecuteDeleteAsync();
@@ -228,6 +228,10 @@ namespace KANBAN.Services.Master.Repository
 
                     }
 
+                }
+                else
+                {
+                    throw new CustomHttpException(400, "Invalid action");
                 }
 
                 await _kbContext.SaveChangesAsync();
