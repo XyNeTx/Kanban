@@ -11,7 +11,7 @@ using System.Data;
 
 namespace HINOSystem.Controllers.API.Master
 {
-    public class KBNCR110Controller : Controller
+    public class KBNRC110Controller : Controller
     {
         private readonly IConfiguration _configuration;
         private readonly BearerClass _BearerClass;
@@ -26,7 +26,7 @@ namespace HINOSystem.Controllers.API.Master
 
         private readonly string StoragePath = @"wwwroot\Storage\Uploads";
 
-        public KBNCR110Controller(
+        public KBNRC110Controller(
             IConfiguration configuration,
             BearerClass bearerClass,
             ActionResultClass actionResultClass,
@@ -88,7 +88,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                
+
                 if (data != null)
                 {
                     dynamic _json = JsonConvert.DeserializeObject(data);
@@ -172,7 +172,7 @@ namespace HINOSystem.Controllers.API.Master
 
         public async Task<IActionResult> SearchDataFromPDS(string PDSNo)
         {
-            
+
             string _result = "";
             try
             {
@@ -265,7 +265,7 @@ namespace HINOSystem.Controllers.API.Master
             string _result = "";
             try
             {
-                
+
                 if (data != null)
                 {
                     dynamic _json = JsonConvert.DeserializeObject(data);
@@ -352,7 +352,7 @@ namespace HINOSystem.Controllers.API.Master
 
         public async Task<bool> InsToRecLocal(string PDSNo)
         {
-            
+
             _BearerClass.Authentication(Request);
             var user = _BearerClass.UserCode.ToString();
             try
@@ -408,7 +408,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                
+
                 string UserName = HttpContext.Session.GetString("USER_ID");
                 string HostName = HttpContext.Session.GetString("USER_DEVICENAME");
                 _BearerClass.Authentication(Request);

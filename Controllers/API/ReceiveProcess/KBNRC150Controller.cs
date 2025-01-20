@@ -2,12 +2,15 @@
 using HINOSystem.Libs;
 using KANBAN.Context;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.ComponentModel;
+using System.Configuration;
 
 namespace KANBAN.Controllers.API.ReceiveProcess
 {
-    public class KBNCR160Controller : Controller
+    public class KBNRC150Controller : Controller
     {
         private readonly IConfiguration _configuration;
         private readonly BearerClass _BearerClass;
@@ -21,7 +24,7 @@ namespace KANBAN.Controllers.API.ReceiveProcess
 
         private readonly string StoragePath = @"wwwroot\Storage\Uploads";
 
-        public KBNCR160Controller(
+        public KBNRC150Controller(
             IConfiguration configuration,
             BearerClass bearerClass,
             ActionResultClass actionResultClass,
@@ -46,8 +49,8 @@ namespace KANBAN.Controllers.API.ReceiveProcess
         {
             try
             {
-                
                 string _result = "";
+                
                 var supList = await _KB3Context.TB_MS_PartOrder.Select(x => new
                 {
                     F_Part_No = x.F_Part_No + '-' + x.F_Ruibetsu
@@ -59,7 +62,6 @@ namespace KANBAN.Controllers.API.ReceiveProcess
                                 ""response"":""OK"",
                                 ""message"": ""Data Found"",
                                 ""data"": " + _jsonData + @"}";
-
                 return Ok(_result);
             }
             catch (Exception ex)

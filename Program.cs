@@ -19,6 +19,7 @@ using KANBAN.Services.SpecialOrdering.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Serilog;
+using Serilog.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -48,7 +49,23 @@ builder.Services.AddDbContext<ProcDBContext>(options =>
 
 //Add Support to logging with SERILOG
 Log.Logger = new LoggerConfiguration()
-    .ReadFrom.Configuration(builder.Configuration).CreateLogger();
+    .WriteTo.Logger(log => log
+        .Filter.ByIncludingOnly(Matching.FromSource("BL"))
+        .WriteTo.File("\\\\hmmta-ppm\\Event_Log\\New_KanbanF3\\New_Kanban_F3_Cal_BL_.json.json",
+        outputTemplate: "{Timestamp:dd-MM-yyyy HH:mm:ss.fff zzz} [{Level}] {Message:lj}{NewLine}{NewLine}{Exception}",
+        rollingInterval: RollingInterval.Month))
+    .WriteTo.Logger(log => log
+        .Filter.ByIncludingOnly(Matching.FromSource("Master"))
+        .WriteTo.File("\\\\hmmta-ppm\\Event_Log\\New_KanbanF3\\New_Kanban_F3_Master_.json.json",
+        outputTemplate: "{Timestamp:dd-MM-yyyy HH:mm:ss.fff zzz} [{Level}] {Message:lj}{NewLine}{NewLine}{Exception}",
+        rollingInterval: RollingInterval.Month))
+    .WriteTo.Logger(log => log
+        .Filter.ByIncludingOnly(Matching.FromSource("Order"))
+        .WriteTo.File("\\\\hmmta-ppm\\Event_Log\\New_KanbanF3\\New_Kanban_F3_Order_.json.json",
+        outputTemplate: "{Timestamp:dd-MM-yyyy HH:mm:ss.fff zzz} [{Level}] {Message:lj}{NewLine}{NewLine}{Exception}",
+        rollingInterval: RollingInterval.Month))
+    .ReadFrom.Configuration(builder.Configuration)
+    .CreateLogger();
 
 
 

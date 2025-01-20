@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace KANBAN.Controllers.API.ReceiveProcess
 {
-    public class KBNCR140Controller : Controller
+    public class KBNRC160Controller : Controller
     {
         private readonly IConfiguration _configuration;
         private readonly BearerClass _BearerClass;
@@ -17,12 +17,11 @@ namespace KANBAN.Controllers.API.ReceiveProcess
         private readonly PPM3Context _PPM3Context;
         private readonly PPMInvenContext _PPMInvenContext;
         private readonly KB3Context _KB3Context;
-        private readonly SerilogLibs _Log;
 
 
         private readonly string StoragePath = @"wwwroot\Storage\Uploads";
 
-        public KBNCR140Controller(
+        public KBNRC160Controller(
             IConfiguration configuration,
             BearerClass bearerClass,
             ActionResultClass actionResultClass,
@@ -30,8 +29,7 @@ namespace KANBAN.Controllers.API.ReceiveProcess
             PPMConnect ppmConnect,
             PPMInvenContext pPMInvenContext,
             PPM3Context pPM3Context,
-            KB3Context kB3Context,
-            SerilogLibs log
+            KB3Context kB3Context
             )
         {
             _configuration = configuration;
@@ -42,20 +40,18 @@ namespace KANBAN.Controllers.API.ReceiveProcess
             _PPMConnect = ppmConnect;
             _PPM3Context = pPM3Context;
             _PPMInvenContext = pPMInvenContext;
-            _Log = log;
         }
-
 
         public async Task<IActionResult> Initial()
         {
             try
             {
+
                 string _result = "";
-                
                 var supList = await _KB3Context.TB_MS_PartOrder.Select(x => new
                 {
-                    F_Supplier_Code = x.F_Supplier_Cd + '-' + x.F_Supplier_Plant
-                }).OrderBy(x => x.F_Supplier_Code).Distinct().ToListAsync();
+                    F_Part_No = x.F_Part_No + '-' + x.F_Ruibetsu
+                }).OrderBy(x => x.F_Part_No).Distinct().ToListAsync();
 
                 string _jsonData = JsonConvert.SerializeObject(supList);
                 _result = @"{
@@ -63,6 +59,7 @@ namespace KANBAN.Controllers.API.ReceiveProcess
                                 ""response"":""OK"",
                                 ""message"": ""Data Found"",
                                 ""data"": " + _jsonData + @"}";
+
                 return Ok(_result);
             }
             catch (Exception ex)
@@ -70,6 +67,5 @@ namespace KANBAN.Controllers.API.ReceiveProcess
                 return Content(ex.ToString());
             }
         }
-
     }
 }

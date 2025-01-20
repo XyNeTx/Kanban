@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace KANBAN.Controllers.API.ReceiveProcess
 {
-    public class KBNCR130Controller : Controller
+    public class KBNRC130Controller : Controller
     {
         private readonly IConfiguration _configuration;
         private readonly BearerClass _BearerClass;
@@ -21,7 +21,7 @@ namespace KANBAN.Controllers.API.ReceiveProcess
 
         private readonly string StoragePath = @"wwwroot\Storage\Uploads";
 
-        public KBNCR130Controller(
+        public KBNRC130Controller(
             IConfiguration configuration,
             BearerClass bearerClass,
             ActionResultClass actionResultClass,

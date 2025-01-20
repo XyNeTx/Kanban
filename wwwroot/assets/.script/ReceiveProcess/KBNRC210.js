@@ -74,7 +74,7 @@ $(document).ready(function () {
         var pdsNo = $('#F_PDS_No').val();
         // console.log(pdsNo);
         xAjax.Post({
-            url: 'KBNCR210/CheckPDSNo',
+            url: 'KBNRC210/CheckPDSNo',
             data: {
                 'F_PDS_No': pdsNo
             },
@@ -150,7 +150,7 @@ $(document).ready(function () {
             pdsSet.clear();
 
             xAjax.Post({
-                url: 'KBNCR210/Receive',
+                url: 'KBNRC210/Receive',
                 data: {
                     'JsonData': _selData,
                 },

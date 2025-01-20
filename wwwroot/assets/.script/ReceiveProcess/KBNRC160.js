@@ -1,6 +1,6 @@
 ﻿$(document).ready(function () {
     xAjax.Post({
-        url: 'KBNCR160/Initial',
+        url: 'KBNRC160/Initial',
         then: function (result) {
             // console.log(result);
             $.each(result.data, function (e, t) {
@@ -46,11 +46,11 @@
 
         var reportUrl = "http://hmmt-app03/Reportserver/report/KB3/";
 
-        //window.location.href = reportUrl + 'KBNCR160' + '?DateFrom=' + devDate + '&DateTo=' + toDate +
+        //window.location.href = reportUrl + 'KBNRC160' + '?DateFrom=' + devDate + '&DateTo=' + toDate +
         //    '&PartFrom=' + partFrom + '&PartTo=' + partTo + '&UserName=' + userName;
 
         window.open(
-            _REPORTINGSERVER_ + '%2fKB3%2f' + 'KBNCR160' + '&rs:Command=Render'
+            _REPORTINGSERVER_ + '%2fKB3%2f' + 'KBNRC160' + '&rs:Command=Render'
             + '&DateFrom=' + devDate
             + '&DateTo=' + toDate
             + '&PartFrom=' + partFrom

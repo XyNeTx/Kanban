@@ -1,4 +1,5 @@
 ﻿using Serilog;
+using ILogger = Serilog.ILogger;
 
 namespace HINOSystem.Libs
 {
@@ -6,19 +7,61 @@ namespace HINOSystem.Libs
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly BearerClass _bearerClass;
+
         public SerilogLibs(IHttpContextAccessor httpContextAccessor, BearerClass bearerClass)
         {
             _httpContextAccessor = httpContextAccessor;
             _bearerClass = bearerClass;
         }
 
+        private static readonly ILogger LogBL;
+        private static readonly ILogger LogMaster;
+        private static readonly ILogger LogSpecial;
+        private static readonly ILogger LogImport;
+
+        static SerilogLibs()
+        {
+            LogBL = new LoggerConfiguration()
+            .WriteTo.Logger(log => log
+                .WriteTo.File(
+                    @"\\hmmta-ppm\Event_Log\New_KanbanF3\New_Kanban_F3_Cal_BL.json",
+                    outputTemplate: "{Timestamp:dd-MM-yyyy HH:mm:ss.fff zzz} [{Level}] {Message:lj}{NewLine}{NewLine}{Exception}",
+                    rollingInterval: RollingInterval.Month))
+            .CreateLogger();
+
+            LogMaster = new LoggerConfiguration()
+                .WriteTo.Logger(log => log
+                .WriteTo.File(
+                @"\\hmmta-ppm\Event_Log\New_KanbanF3\New_Kanban_F3_Master.json",
+                outputTemplate: "{Timestamp:dd-MM-yyyy HH:mm:ss.fff zzz} [{Level}] {Message:lj}{NewLine}{NewLine}{Exception}",
+                rollingInterval: RollingInterval.Month))
+                .CreateLogger();
+
+            LogSpecial = new LoggerConfiguration()
+                .WriteTo.Logger(log => log
+                .WriteTo.File(
+                @"\\hmmta-ppm\Event_Log\New_KanbanF3\New_Kanban_F3_Special.json",
+                outputTemplate: "{Timestamp:dd-MM-yyyy HH:mm:ss.fff zzz} [{Level}] {Message:lj}{NewLine}{NewLine}{Exception}",
+                rollingInterval: RollingInterval.Month))
+                .CreateLogger();
+
+            LogImport = new LoggerConfiguration()
+                .WriteTo.Logger(log => log
+                .WriteTo.File(
+                @"\\hmmta-ppm\Event_Log\New_KanbanF3\New_Kanban_F3_Import.json",
+                outputTemplate: "{Timestamp:dd-MM-yyyy HH:mm:ss.fff zzz} [{Level}] {Message:lj}{NewLine}{NewLine}{Exception}",
+                rollingInterval: RollingInterval.Month))
+                .CreateLogger();
+
+        }
+
+        public string Controller => _httpContextAccessor.HttpContext.Request.RouteValues["controller"].ToString();
+        public string Action => _httpContextAccessor.HttpContext.Request.RouteValues["action"].ToString();
+
         public string GetLogMessage()
         {
-            _bearerClass.Authentication(_httpContextAccessor.HttpContext.Request);
             string Controller = _httpContextAccessor.HttpContext.Request.RouteValues["controller"].ToString();
             string Action = _httpContextAccessor.HttpContext.Request.RouteValues["action"].ToString();
-            string UserName = _bearerClass.UserCode;
-            string HostName = _bearerClass.Device.ToString();
 
             return $"Controller : {Controller} | Action : {Action}";
         }
@@ -45,7 +88,27 @@ namespace HINOSystem.Libs
             try
             {
                 string logMessage = GetLogMessage();
-                Log.Information($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
+
+                if (this.Controller.ToUpper().Contains("KBNMS"))
+                {
+                    LogMaster.Information($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
+                }
+                else if (this.Action.ToUpper().Contains("CAL") && this.Controller.ToLower().Contains("kbnor121"))
+                {
+                    LogBL.Information($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
+                }
+                else if (this.Controller.ToUpper().Contains("KBNOR2"))
+                {
+                    LogSpecial.Information($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
+                }
+                else if (this.Controller.ToUpper().Contains("KBNIM"))
+                {
+                    LogSpecial.Information($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
+                }
+                else
+                {
+                    Log.Information($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
+                }
             }
             catch (Exception ex)
             {
@@ -87,5 +150,40 @@ namespace HINOSystem.Libs
                 throw;
             }
         }
+
+
+
+        //public void WriteLogBL(string Message)
+        //{
+        //    try
+        //    {
+        //        string logMessage = GetLogMessage();
+        //        LogBL.Information($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        this.WriteErrorLogMsg($"message: {ex.Message}");
+        //        Console.WriteLine(ex.StackTrace);
+        //        Console.WriteLine(ex.Message);
+        //        throw;
+        //    }
+        //}
+
+        //public void WriteLogMaster(string Message)
+        //{
+        //    try
+        //    {
+        //        string logMessage = GetLogMessage();
+        //        LogMaster.Information($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        this.WriteErrorLogMsg($"message: {ex.Message}");
+        //        Console.WriteLine(ex.StackTrace);
+        //        Console.WriteLine(ex.Message);
+        //        throw;
+        //    }
+        //}
+
     }
 }

@@ -3,15 +3,11 @@ using HINOSystem.Libs;
 using KANBAN.Context;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Newtonsoft.Json;
-using NPOI.SS.Formula.Functions;
-using Org.BouncyCastle.Math.EC.Multiplier;
-using System.Globalization;
 
 namespace KANBAN.Controllers.API.ReceiveProcess
 {
-    public class KBNCR220Controller : Controller
+    public class KBNRC220Controller : Controller
     {
         private readonly IConfiguration _configuration;
         private readonly BearerClass _BearerClass;
@@ -25,7 +21,7 @@ namespace KANBAN.Controllers.API.ReceiveProcess
 
         private readonly string StoragePath = @"wwwroot\Storage\Uploads";
 
-        public KBNCR220Controller(
+        public KBNRC220Controller(
             IConfiguration configuration,
             BearerClass bearerClass,
             ActionResultClass actionResultClass,
@@ -50,7 +46,7 @@ namespace KANBAN.Controllers.API.ReceiveProcess
         {
             try
             {
-                
+
                 //first load page
                 if (data == null)
                 {
@@ -98,7 +94,7 @@ namespace KANBAN.Controllers.API.ReceiveProcess
         {
             try
             {
-                
+
                 string _result = "";
                 Int32 now = Int32.Parse(DateTime.Now.ToString("yyyyMMdd"));
 
@@ -162,7 +158,7 @@ namespace KANBAN.Controllers.API.ReceiveProcess
         {
             try
             {
-                
+
                 dynamic _json = JsonConvert.DeserializeObject(data);
                 string strDateFrom = _json["devDate"];
                 string strDateTo = _json["toDate"];

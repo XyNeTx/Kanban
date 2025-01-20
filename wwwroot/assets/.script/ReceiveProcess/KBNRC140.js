@@ -1,12 +1,12 @@
 ﻿$(document).ready(function () {
     xAjax.Post({
-        url: 'KBNCR150/Initial',
+        url: 'KBNRC140/Initial',
         then: function (result) {
             // console.log(result);
             $.each(result.data, function (e, t) {
                 // console.log(e + " eeeeeeeeeeeee ", t.F_Supplier_Code + " tttttttttttt ")
-                $("#F_PartFrom").append($("<option>", { value: t.F_Part_No, text: t.F_Part_No }, "</option>"));
-                $("#F_PartTo").append($("<option>", { value: t.F_Part_No, text: t.F_Part_No }, "</option>"));
+                $("#F_SupplierFrom").append($("<option>", { value: t.F_Supplier_Code, text: t.F_Supplier_Code }, "</option>"));
+                $("#F_SupplierTo").append($("<option>", { value: t.F_Supplier_Code, text: t.F_Supplier_Code }, "</option>"));
             });
             $('#supFromBlank').hide();
             $('#supToBlank').hide();
@@ -17,44 +17,43 @@
             xSplash.hide();
         },
     });
-
     xAjax.onClick("#ReportBtn", function () {
         var devDate = $("#F_DeliveryFrom").val().replaceAll('-', '');
         var toDate = $("#F_DeliveryTo").val().replaceAll('-', '');
+        var type = $('input[name="radioType"]').filter(":checked").val();
         var userName = $("#profile-avatar").prop("title");
 
         if (devDate > toDate) {
             return alert("Please Don't select Delivery date to less than Delivery date from");
         }
 
-        var partFrom = $("#F_PartFrom").val();
-        var partTo = $("#F_PartTo").val();
+        var supFrom = $("#F_SupplierFrom").val();
+        var supTo = $("#F_SupplierTo").val();
 
-        if (partFrom > partTo) {
+        if (supFrom > supTo) {
             return alert("Please Don't select Supplier To less than Supplier From");
         }
-        if (partFrom == "") {
-            partFrom = "1215710010-00";
+        if (supFrom == "") {
+            supFrom = "0000-Z";
         }
-        if (partTo == "") {
-            partTo = "C92290K010-00";
+        if (supTo == "") {
+            supTo = "9999-Z";
         }
-
-        //console.log(partTo + " ", partFrom + " ");
 
         // console.log(devDate + " devDate ", toDate + " toDate ", type + " type ", supFrom + " supfrom ", supTo + " supto ");
 
         var reportUrl = "http://hmmt-app03/Reportserver/report/KB3/";
 
-        //window.location.href = reportUrl + 'KBNCR150' + '?DateFrom=' + devDate + '&DateTo=' + toDate +
-        //    '&PartFrom=' + partFrom + '&PartTo=' + partTo + '&UserName=' + userName;
+        //window.location.href = reportUrl + 'KBNRC140' + '?DateFrom=' + devDate + '&DateTo=' + toDate +
+        //    '&SupFrom=' + supFrom + '&SupTo=' + supTo + '&Type=' + type + '&UserName=' + userName;
 
         window.open(
-            _REPORTINGSERVER_ + '%2fKB3%2f' + 'KBNCR150' + '&rs:Command=Render'
+            _REPORTINGSERVER_ + '%2fKB3%2f' + 'KBNRC140' + '&rs:Command=Render'
             + '&DateFrom=' + devDate
             + '&DateTo=' + toDate
-            + '&PartFrom=' + partFrom
-            + '&PartTo=' + partTo
+            + '&SupFrom=' + supFrom
+            + '&SupTo=' + supTo
+            + '&Type=' + type
             + '&UserName=' + userName
             , '_blank'
         );

@@ -1,6 +1,6 @@
 ﻿$(document).ready(function () {
     xAjax.Post({
-        url: 'KBNCR140/Initial',
+        url: 'KBNRC130/Initial',
         then: function (result) {
             // console.log(result);
             $.each(result.data, function (e, t) {
@@ -17,10 +17,10 @@
             xSplash.hide();
         },
     });
+
     xAjax.onClick("#ReportBtn", function () {
         var devDate = $("#F_DeliveryFrom").val().replaceAll('-', '');
         var toDate = $("#F_DeliveryTo").val().replaceAll('-', '');
-        var type = $('input[name="radioType"]').filter(":checked").val();
         var userName = $("#profile-avatar").prop("title");
 
         if (devDate > toDate) {
@@ -40,22 +40,20 @@
             supTo = "9999-Z";
         }
 
-        // console.log(devDate + " devDate ", toDate + " toDate ", type + " type ", supFrom + " supfrom ", supTo + " supto ");
-
         var reportUrl = "http://hmmt-app03/Reportserver/report/KB3/";
 
-        //window.location.href = reportUrl + 'KBNCR140' + '?DateFrom=' + devDate + '&DateTo=' + toDate +
-        //    '&SupFrom=' + supFrom + '&SupTo=' + supTo + '&Type=' + type + '&UserName=' + userName;
+        //window.location.href = reportUrl + 'KBNRC130' + '?DateFrom=' + devDate + '&DateTo=' + toDate +
+        //    '&SupFrom=' + supFrom + '&SupTo=' + supTo + '&UserName=' + userName;
 
         window.open(
-            _REPORTINGSERVER_ + '%2fKB3%2f' + 'KBNCR140' + '&rs:Command=Render'
+            _REPORTINGSERVER_ + '%2fKB3%2f' + 'KBNRC130' + '&rs:Command=Render'
             + '&DateFrom=' + devDate
             + '&DateTo=' + toDate
             + '&SupFrom=' + supFrom
             + '&SupTo=' + supTo
-            + '&Type=' + type
             + '&UserName=' + userName
             , '_blank'
         );
     });
+
 });

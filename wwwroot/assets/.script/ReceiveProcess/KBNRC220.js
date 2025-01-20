@@ -30,7 +30,7 @@
     }
 
     xAjax.Post({
-        url: 'KBNCR220/Initial',
+        url: 'KBNRC220/Initial',
         then: function (result) {
             //console.log(result);
             $.each(result.data, function (e, t) {
@@ -54,7 +54,7 @@
         var toDate = $("#F_DeliveryTo").val();
         //console.log(type);
         xAjax.Post({
-            url: 'KBNCR220/Initial',
+            url: 'KBNRC220/Initial',
             data: {
                 devDate: devDate,
                 toDate: toDate,
@@ -87,7 +87,7 @@
         var toDate = $("#F_DeliveryTo").val();
         var type = $('input[name="radio"]').filter(":checked").val();
         xAjax.Post({
-            url: 'KBNCR220/Initial',
+            url: 'KBNRC220/Initial',
             data: {
                 devDate: devDate,
                 toDate: toDate,
@@ -124,7 +124,7 @@
 
         var type = $('input[name="radio"]').filter(":checked").val();
         xAjax.Post({
-            url: 'KBNCR220/Search',
+            url: 'KBNRC220/Search',
             data: {
                 devDate: devDate,
                 toDate: toDate,
@@ -187,12 +187,12 @@
 
         var reportUrl = "http://hmmt-app03/Reportserver/report/KB3/";
 
-        //window.location.href = reportUrl + 'KBNCR220' + '?DateFrom=' + devDate + '&DateTo=' + toDate +
+        //window.location.href = reportUrl + 'KBNRC220' + '?DateFrom=' + devDate + '&DateTo=' + toDate +
         //    '&SupFrom=' + supFrom + '&SupTo=' + supTo + '&Type=' + type +
         //    '&Start1=' + start1 + '&Start2=' + start2;
 
         window.open(
-            _REPORTINGSERVER_ + '%2fKB3%2f' + 'KBNCR220' + '&rs:Command=Render'
+            _REPORTINGSERVER_ + '%2fKB3%2f' + 'KBNRC220' + '&rs:Command=Render'
             + '&DateFrom=' + devDate
             + '&DateTo=' + toDate
             + '&SupFrom=' + supFrom

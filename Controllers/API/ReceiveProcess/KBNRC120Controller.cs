@@ -10,7 +10,7 @@ using System.Data;
 
 namespace HINOSystem.Controllers.API.Master
 {
-    public class KBNCR120Controller : Controller
+    public class KBNRC120Controller : Controller
     {
         private readonly IConfiguration _configuration;
         private readonly BearerClass _BearerClass;
@@ -24,7 +24,7 @@ namespace HINOSystem.Controllers.API.Master
 
         private readonly string StoragePath = @"wwwroot\Storage\Uploads";
 
-        public KBNCR120Controller(
+        public KBNRC120Controller(
             IConfiguration configuration,
             BearerClass bearerClass,
             ActionResultClass actionResultClass,
@@ -83,7 +83,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                
+
                 if (data != null)
                 {
                     dynamic _json = JsonConvert.DeserializeObject(data);
@@ -183,7 +183,7 @@ namespace HINOSystem.Controllers.API.Master
             string _result = "";
             try
             {
-                
+
                 var queryData = await _KB3Context.TB_REC_HEADER.Where(x => x.F_OrderNo == PDSNo)
                 .Select(x => new
                 {
@@ -289,7 +289,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                
+
                 string _result = "";
                 _BearerClass.Authentication(Request);
                 string UserName = HttpContext.Session.GetString("USER_ID");

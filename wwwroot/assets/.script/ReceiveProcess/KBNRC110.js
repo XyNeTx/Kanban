@@ -1,6 +1,6 @@
 ﻿var pdsSet = new Set();
 $(document).ready(function () {
-    const KBNCR110 = new MasterTemplate({
+    const KBNRC110 = new MasterTemplate({
         Controller: _PAGE_,
         Table: 'tblMaster',
         ColumnTitle: {
@@ -20,9 +20,9 @@ $(document).ready(function () {
         ],
     });
 
-    KBNCR110.prepare();
+    KBNRC110.prepare();
 
-    KBNCR110.initial(function (result) {
+    KBNRC110.initial(function (result) {
         console.log(result);
 
         xAjax.onCheck('#chkDeliveryDate', function () {
@@ -30,14 +30,14 @@ $(document).ready(function () {
             if ($('#chkDeliveryDate').val() == 1) $('#fldDeliveryDate').prop('disabled', false);
         });
 
-        //KBNCR110.search();
+        //KBNRC110.search();
     });
 
     xAjax.onEnter('#F_PDS_No', function () {
         var pdsNo = $('#F_PDS_No').val();
         // console.log(pdsNo);
         xAjax.Post({
-            url: 'KBNCR110/CheckPDSNo',
+            url: 'KBNRC110/CheckPDSNo',
             data: {
                 'F_PDS_No': pdsNo
             },
@@ -75,6 +75,7 @@ $(document).ready(function () {
         pdsSet.clear();
     });
 
+    xSplash.hide();
 
 });
 
@@ -101,7 +102,7 @@ $("#ReceiveBtn").on('click', async function () {
 
         // Ajax call
         xAjax.Post({
-            url: 'KBNCR110/ReceiveAllPart',
+            url: 'KBNRC110/ReceiveAllPart',
             data: { 'F_PDS_No': _selData },
             then: function (result) {
                 //console.log(result);
@@ -151,7 +152,7 @@ $("#uploadEpro").click(function () {
         }
     });
     xAjax.Post({
-        url: 'KBNCR110/UploadToEpro',
+        url: 'KBNRC110/UploadToEpro',
         data: {
             'F_PDS_No': _selData,
         },

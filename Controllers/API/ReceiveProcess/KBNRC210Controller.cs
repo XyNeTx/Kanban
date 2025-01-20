@@ -6,11 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using NPOI.SS.Formula.Functions;
+using System.Globalization;
 
 namespace KANBAN.Controllers.API.ReceiveProcess
 {
-    public class KBNCR210Controller : Controller
+    public class KBNRC210Controller : Controller
     {
         private readonly IConfiguration _configuration;
         private readonly BearerClass _BearerClass;
@@ -25,7 +25,7 @@ namespace KANBAN.Controllers.API.ReceiveProcess
 
         private readonly string StoragePath = @"wwwroot\Storage\Uploads";
 
-        public KBNCR210Controller(
+        public KBNRC210Controller(
             IConfiguration configuration,
             BearerClass bearerClass,
             ActionResultClass actionResultClass,
@@ -89,7 +89,7 @@ namespace KANBAN.Controllers.API.ReceiveProcess
         {
             try
             {
-                
+
                 {
                     if (data != null)
                     {
@@ -188,7 +188,7 @@ namespace KANBAN.Controllers.API.ReceiveProcess
             string _result = "";
             try
             {
-                
+
                 var recHeader = await _KB3Context.TB_REC_HEADER.SingleOrDefaultAsync(x => x.F_OrderNo == PDSNo);
                 if (recHeader != null)
                 {
@@ -231,7 +231,8 @@ namespace KANBAN.Controllers.API.ReceiveProcess
                             x.F_OrderNo,
                             x.F_Part_No,
                             x.F_Part_Name,
-                            F_Receive_Date = x.F_Receive_Date.Value.ToString("dd/MM/yyyy"), // เอาแค่วันเดือนปี
+                            // F_Receive_Date = x.F_Receive_Date.Value.ToString("dd/MM/yyyy"), // เอาแค่วันเดือนปี
+                            F_Receive_Date = recHeader.F_Delivery_Date.Substring(6, 2) + "/" + recHeader.F_Delivery_Date.Substring(4, 2) + "/" + recHeader.F_Delivery_Date.Substring(0, 4),
                             x.F_Unit_Amount,
                             x.F_Receive_amount,
                             F_Dev_Qty = x.F_Unit_Amount - x.F_Receive_amount
@@ -256,7 +257,7 @@ namespace KANBAN.Controllers.API.ReceiveProcess
         {
             try
             {
-                
+
                 string _result = "";
                 string UserName = HttpContext.Session.GetString("USER_ID");
                 string HostName = HttpContext.Session.GetString("USER_DEVICENAME");
@@ -306,7 +307,7 @@ namespace KANBAN.Controllers.API.ReceiveProcess
                         if (PDSNo.StartsWith("7Z"))
                         {
                             var recHead = await _KB3Context.TB_REC_HEADER.SingleOrDefaultAsync(x => x.F_OrderNo == PDSNo);
-                            if (recHead.F_DR == "1144001" || recHead.F_DR == "1144002" || recHead.F_DR == "1145007")
+                            if (recHead.F_DR.Trim() == "1144001" || recHead.F_DR.Trim() == "1144002" || recHead.F_DR.Trim() == "1145007")
                             {
                                 dr = '0';
                             }
@@ -348,7 +349,7 @@ namespace KANBAN.Controllers.API.ReceiveProcess
                                     header.F_MRN_Flag = "1";
                                     _KB3Context.TB_REC_HEADER.Update(header);
                                     pdsDetailSingle.F_Receive_amount = sumQty;
-                                    pdsDetailSingle.F_Receive_Date = await GetLoginDate();
+                                    pdsDetailSingle.F_Receive_Date = DateTime.ParseExact(header.F_Delivery_Date, "yyyyMMdd", CultureInfo.InvariantCulture);
                                     _KB3Context.TB_REC_DETAIL.Update(pdsDetailSingle);
                                     _isReceiveAll = false;
                                     _isZeroRec = false;
@@ -400,11 +401,11 @@ namespace KANBAN.Controllers.API.ReceiveProcess
                                         packCode = "";
                                     }
                                     var header = await _KB3Context.TB_REC_HEADER.SingleOrDefaultAsync(x => x.F_OrderNo == PDSNo);
-                                    string Receive_Local_Date = _singleReceiveAll.F_Receive_Date.Value.ToString("yyyyMMdd");
-                                    if (_singleReceiveAll.F_Receive_Date.Value.TimeOfDay < new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 7, 30, 0).TimeOfDay)
-                                    {
-                                        Receive_Local_Date = _singleReceiveAll.F_Receive_Date.Value.AddDays(-1).ToString("yyyyMMdd");
-                                    }
+                                    string Receive_Local_Date = header.F_Delivery_Date;
+                                    //if (_singleReceiveAll.F_Receive_Date.Value.TimeOfDay < new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 7, 30, 0).TimeOfDay)
+                                    //{
+                                    //    Receive_Local_Date = _singleReceiveAll.F_Receive_Date.Value.AddDays(-1).ToString("yyyyMMdd");
+                                    //}
                                     if (devQty != 0)
                                     {
                                         _isZeroRec = false;
