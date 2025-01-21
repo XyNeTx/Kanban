@@ -189,20 +189,21 @@ namespace KANBAN.Services.Master.Repository
         {
             try
             {
-                var con = _PPM3Context.T_Construction.AsNoTracking().ToList();
+                var con = await _PPM3Context.T_Construction.AsNoTracking()
+                    .Where(x => x.F_Part_no.Trim() + "-" + x.F_Ruibetsu == PartNo)
+                    .ToListAsync();
 
-                var data = await _kbContext.TB_MS_Label.AsNoTracking()
-                    .Where(x => x.F_Part_No.Trim() + "-" + x.F_Ruibetsu == PartNo
-                        && x.F_Plant == _BearerClass.Plant)
-                    .SelectMany(label => con
-                        .Where(con => con.F_Part_no.Trim() == label.F_Part_No.Trim()
-                            && con.F_Ruibetsu.Trim() == label.F_Ruibetsu.Trim()
-                            && con.F_Store_cd.Trim() == label.F_Store_Code.Trim()
-                            && !string.IsNullOrEmpty(label.F_Kanban_No) && label.F_Kanban_No.Length >= 4 &&
-                            con.F_Sebango!.Trim() == label.F_Kanban_No.Trim().Substring(1, 3)
-                        ),
-                        (label, con) => new { label, con }
-                    ).ToListAsync();
+                var label = await _kbContext.TB_MS_Label.AsNoTracking()
+                    .Where(x => x.F_Part_No.Trim() + "-" + x.F_Ruibetsu == PartNo)
+                    .ToListAsync();
+
+                var data = con.SelectMany(con => label
+                    .Where(label => label.F_Part_No.Trim() == con.F_Part_no.Trim()
+                    && label.F_Ruibetsu.Trim() == con.F_Ruibetsu.Trim()
+                    && label.F_Store_Code.Trim() == con.F_Store_cd.Trim()
+                    && !string.IsNullOrEmpty(label.F_Kanban_No) && label.F_Kanban_No.Length >= 4 &&
+                    con.F_Sebango!.Trim() == label.F_Kanban_No.Trim().Substring(1, 3)),
+                    (con, label) => new { con, label }).ToList();
 
                 if (!string.IsNullOrWhiteSpace(SupplierCode))
                 {
@@ -249,7 +250,7 @@ namespace KANBAN.Services.Master.Repository
                 var existObj = await _kbContext.TB_MS_Label
                     .Where(x => x.F_Supplier_Cd + "-" + x.F_Supplier_Plant == obj.F_Supplier_Code
                     && x.F_Kanban_No == obj.F_Kanban_No && x.F_Store_Code == obj.F_Store_Code
-                    && x.F_Part_No + "-" + x.F_Ruibetsu == obj.F_Part_No).ToListAsync();
+                    && x.F_Part_No.Trim() + "-" + x.F_Ruibetsu == obj.F_Part_No).ToListAsync();
 
                 if (action.ToLower() == "new")
                 {
@@ -314,7 +315,7 @@ namespace KANBAN.Services.Master.Repository
                         var delObj = await _kbContext.TB_MS_Label
                            .Where(x => x.F_Supplier_Cd + "-" + x.F_Supplier_Plant == each.F_Supplier_Code
                            && x.F_Kanban_No == obj.F_Kanban_No && x.F_Store_Code == each.F_Store_Code
-                           && x.F_Part_No + "-" + x.F_Ruibetsu == each.F_Part_No
+                           && x.F_Part_No.Trim() + "-" + x.F_Ruibetsu == each.F_Part_No
                            && x.F_Plant == _BearerClass.Plant
                            && x.F_Start_Date == obj.F_Start_Date
                            && x.F_End_Date == obj.F_End_Date
@@ -337,5 +338,84 @@ namespace KANBAN.Services.Master.Repository
             }
         }
 
+        public async Task<string> GetListData(string? PartNo, string? SupplierCode, string? Kanban, string? StoreCode)
+        {
+            try
+            {
+                return await Task.Run(() =>
+                {
+
+                    string ppmConnect = _FillDT.ppmConnect();
+
+                    string query = $@"SELECT RTRIM(K.F_Supplier_Cd)+'-'+RTRIM(K.F_Supplier_Plant) AS F_Supplier_Code 
+                    ,RTRIM(S.F_name) AS F_name 
+                    ,RIGHT('00000'+ CONVERT(VARCHAR,S.F_Cycle_A),2) 
+                    +'-'+RIGHT('00000'+ CONVERT(VARCHAR,S.F_cycle_B),2) 
+                    +'-'+RIGHT('00000'+ CONVERT(VARCHAR,S.F_cycle_C),2) AS F_Cycle 
+                    ,RTRIM(K.F_Part_No)+'-'+RTRIM(K.F_Ruibetsu) AS F_Part_No 
+                    ,RTRIM(C.F_Part_nm) AS F_Part_nm 
+                    ,RTRIM(K.F_Kanban_No) AS F_Kanban_No 
+                    ,RTRIM(K.F_Store_Code) AS F_Store_Code 
+                    ,SUBSTRING(K.F_Start_Date,7,2)+'/'+SUBSTRING(K.F_Start_Date,5,2)+'/'+SUBSTRING(K.F_Start_Date,1,4) AS F_Start_Date 
+                    ,SUBSTRING(K.F_End_Date,7,2)+'/'+SUBSTRING(K.F_End_Date,5,2)+'/'+SUBSTRING(K.F_End_Date,1,4) AS F_End_Date 
+                    ,RTRIM(K.F_Type_Order) AS F_Type_Order 
+                    ,ISNULL(RTRIM(K.F_Color),0) AS F_Color 
+                    ,RTRIM(K.F_Text) AS F_Text 
+                    FROM  TB_MS_Label K INNER JOIN {ppmConnect}.[dbo].[T_Construction] C 
+                    ON K.F_Part_No = C.F_Part_no collate Thai_CI_AS 
+                    AND K.F_Ruibetsu = C. F_Ruibetsu collate Thai_CI_AS 
+                    AND K.F_Store_Code = C.F_Store_cd collate Thai_CI_AS 
+                    AND SUBSTRING(K.F_Kanban_No,2,3) = C.F_Sebango collate Thai_CI_AS 
+                    INNER JOIN {ppmConnect}.[dbo].[T_Supplier_ms] S 
+                    ON K.F_Supplier_Cd = S.F_supplier_cd COLLATE SQL_Latin1_General_CP1_CI_AI 
+                    AND K.F_Supplier_Plant = S.F_Plant_cd COLLATE SQL_Latin1_General_CP1_CI_AI 
+                    AND K.F_Store_Code = S.F_Store_cd collate Thai_CI_AS 
+                    WHERE K.F_Plant = '{_BearerClass.Plant}' 
+                    AND S.F_TC_Str <= convert(char(8),getdate(),112) 
+                    AND S.F_TC_End >= convert(char(8),getdate(),112) 
+                    AND S.F_store_cd LIKE '{_BearerClass.Plant}%' ";
+
+                    if (!string.IsNullOrWhiteSpace(PartNo))
+                    {
+                        query += $" AND K.F_Part_No + '-' + K.F_Ruibetsu = '{PartNo}' ";
+                    }
+                    if (!string.IsNullOrWhiteSpace(SupplierCode))
+                    {
+                        query += $" AND K.F_Supplier_Cd + '-' + K.F_Supplier_Plant = '{SupplierCode}' ";
+                    }
+                    if (!string.IsNullOrWhiteSpace(Kanban))
+                    {
+                        query += $" AND K.F_Kanban_No = '{Kanban}' ";
+                    }
+                    if (!string.IsNullOrWhiteSpace(StoreCode))
+                    {
+                        query += $" AND K.F_Store_Code = '{StoreCode}' ";
+                    }
+
+                    query += @"GROUP BY RTRIM(K.F_Supplier_Cd)+'-'+RTRIM(K.F_Supplier_Plant)  ,RTRIM(K.F_Store_Code) 
+                    ,RTRIM(K.F_Kanban_No),RTRIM(K.F_Part_No)+'-'+RTRIM(K.F_Ruibetsu) 
+                    ,RTRIM(S.F_name),RIGHT('00000'+ CONVERT(VARCHAR,S.F_Cycle_A),2) +'-'+RIGHT('00000'+ CONVERT(VARCHAR,S.F_cycle_B),2) +'-'+RIGHT('00000'+ CONVERT(VARCHAR,S.F_cycle_C),2) 
+                    ,RTRIM(C.F_Part_nm) ,SUBSTRING(K.F_Start_Date,7,2)+'/'+SUBSTRING(K.F_Start_Date,5,2)+'/'+SUBSTRING(K.F_Start_Date,1,4) 
+                    ,SUBSTRING(K.F_End_Date,7,2)+'/'+SUBSTRING(K.F_End_Date,5,2)+'/'+SUBSTRING(K.F_End_Date,1,4) 
+                    ,RTRIM(K.F_Type_Order) ,RTRIM(K.F_Color) ,RTRIM(K.F_Text) 
+                    ORDER BY F_Supplier_Code,F_Store_Code,F_Kanban_No,F_Part_No,F_Type_Order,F_name 
+                    ,F_Cycle,F_Part_nm ,F_Start_Date,F_End_Date ";
+
+                    var data = _FillDT.ExecuteSQL(query);
+
+
+                    return JsonConvert.SerializeObject(data);
+
+                });
+
+
+            }
+            catch (Exception ex)
+            {
+                if (ex is CustomHttpException) throw;
+                else if (ex.InnerException != null) throw new CustomHttpException(500, ex.InnerException.Message);
+                else throw new CustomHttpException(500, ex.Message);
+            }
+        }
     }
 }

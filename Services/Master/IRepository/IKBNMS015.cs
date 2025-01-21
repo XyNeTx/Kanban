@@ -1,4 +1,5 @@
 ﻿using HINOSystem.Models.KB3.Master;
+using KANBAN.Models.KB3.Master.ViewModel;
 using KANBAN.Models.KB3.Receive_Process;
 using KANBAN.Models.PPM3;
 
@@ -13,6 +14,11 @@ namespace KANBAN.Services.Master.IRepository
         Task<T_Supplier_MS> SupplierChanged(string SupplierCode, string? StoreCode);
 
         Task<string> PartNoSelectedInq(string PartNo, string? SupplierCode, string? Kanban, string? StoreCode);
+
         Task<string> PartNoSelectedNew(string PartNo, string? SupplierCode, string? Kanban, string? StoreCode);
+
+        Task Save(List<VM_KBNMS015> listObj, string action);
+
+        Task<string> GetListData(string? PartNo, string? SupplierCode, string? Kanban, string? StoreCode);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using HINOSystem.Libs;
+using KANBAN.Models.KB3.Master.ViewModel;
 using KANBAN.Services;
 using KANBAN.Services.Master.IRepository;
 using Microsoft.AspNetCore.Mvc;
@@ -88,8 +89,8 @@ namespace HINOSystem.Controllers.API.Master
 
                         JsonConvert.SerializeObject(data.Select(x => new
                         {
-                            x.F_Store_Code
-                        }).Distinct().OrderBy(x=>x.F_Store_Code).ToList()),
+                            F_Store_cd = x.F_Store_Code
+                        }).Distinct().OrderBy(x=>x.F_Store_cd).ToList()),
                     };
 
                     return Ok(new
@@ -165,5 +166,47 @@ namespace HINOSystem.Controllers.API.Master
                 throw new CustomHttpException(ex.StatusCode, ex.Message);
             }
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Save([FromBody] List<VM_KBNMS015> listObj, [FromQuery] string action)
+        {
+            try
+            {
+                await _BearerClass.CheckAuthorize();
+                await _masterRepo.IKBNMS015.Save(listObj, action);
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data Saved"
+                });
+            }
+            catch (CustomHttpException ex)
+            {
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetListData(string? PartNo, string? SupplierCode, string? Kanban, string? StoreCode)
+        {
+            try
+            {
+                await _BearerClass.CheckAuthorize();
+                var data = await _masterRepo.IKBNMS015.GetListData(PartNo, SupplierCode, Kanban, StoreCode);
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data Found",
+                    data = data
+                });
+            }
+            catch (CustomHttpException ex)
+            {
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
+            }
+        }
+
     }
 }

@@ -22,7 +22,7 @@ namespace HINOSystem.Libs
         static SerilogLibs()
         {
             LogBL = new LoggerConfiguration()
-            .WriteTo.Logger(log => log
+                .WriteTo.Logger(log => log
                 .WriteTo.File(
                     @"\\hmmta-ppm\Event_Log\New_KanbanF3\New_Kanban_F3_Cal_BL.json",
                     outputTemplate: "{Timestamp:dd-MM-yyyy HH:mm:ss.fff zzz} [{Level}] {Message:lj}{NewLine}{NewLine}{Exception}",
@@ -70,7 +70,7 @@ namespace HINOSystem.Libs
         {
             try
             {
-                string logMessage = GetLogMessage();
+                //string logMessage = GetLogMessage();
                 //Log.Information($"message : {logMessage} | {Message} | username : {UserName} | hostname : {HostName}");
                 WriteLogMsg(Message);
             }
@@ -103,7 +103,7 @@ namespace HINOSystem.Libs
                 }
                 else if (this.Controller.ToUpper().Contains("KBNIM"))
                 {
-                    LogSpecial.Information($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
+                    LogImport.Information($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
                 }
                 else
                 {
@@ -124,7 +124,27 @@ namespace HINOSystem.Libs
             try
             {
                 string logMessage = GetLogMessage();
-                Log.Error($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
+
+                if (this.Controller.ToUpper().Contains("KBNMS"))
+                {
+                    LogMaster.Error($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
+                }
+                else if (this.Action.ToUpper().Contains("CAL") && this.Controller.ToLower().Contains("kbnor121"))
+                {
+                    LogBL.Error($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
+                }
+                else if (this.Controller.ToUpper().Contains("KBNOR2"))
+                {
+                    LogSpecial.Error($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
+                }
+                else if (this.Controller.ToUpper().Contains("KBNIM"))
+                {
+                    LogImport.Error($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
+                }
+                else
+                {
+                    Log.Error($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
+                }
             }
             catch (Exception ex)
             {
@@ -140,7 +160,27 @@ namespace HINOSystem.Libs
             try
             {
                 string logMessage = GetLogMessage();
-                Log.Error($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
+
+                if (this.Controller.ToUpper().Contains("KBNMS"))
+                {
+                    LogMaster.Error($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
+                }
+                else if (this.Action.ToUpper().Contains("CAL") && this.Controller.ToLower().Contains("kbnor121"))
+                {
+                    LogBL.Error($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
+                }
+                else if (this.Controller.ToUpper().Contains("KBNOR2"))
+                {
+                    LogSpecial.Error($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
+                }
+                else if (this.Controller.ToUpper().Contains("KBNIM"))
+                {
+                    LogImport.Error($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
+                }
+                else
+                {
+                    Log.Error($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
+                }
             }
             catch (Exception ex)
             {
