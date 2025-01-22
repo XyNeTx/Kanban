@@ -89,7 +89,12 @@ class DataTableLib {
 
 const _xDataTable = new DataTableLib();
 
+
 class xLib {
+
+    //constructor() {
+    //    this.ajexHeader = ajexHeader;
+    //}
 
     TrimArrayJSON(jsonResult) {
         for (let each in jsonResult) {
@@ -273,6 +278,11 @@ class xLib {
         if (window.location.hostname.includes("tpcap")) {
             url = "/kanban" + url;
         }
+        let title = $(document).find("title").text();
+        title = title.split(" - ")[0];
+        title = title.split(" : ")[1];
+        ajexHeader.title = title;
+        console.log(ajexHeader);
         return $.ajax({
             type: "GET",
             url: url,
@@ -349,6 +359,11 @@ class xLib {
         if (window.location.hostname.includes("tpcap")) {
             url = "/kanban" + url;
         }
+        let title = $(document).find("title").text();
+        title = title.split(" - ")[0];
+        title = title.split(" : ")[1];
+        ajexHeader.title = title;
+        console.log(ajexHeader);
         return $.ajax({
             type: "GET",
             url: url,
@@ -425,6 +440,11 @@ class xLib {
         if (window.location.hostname.includes("tpcap")) {
             url = "/kanban" + url;
         }
+        let title = $(document).find("title").text();
+        title = title.split(" - ")[0];
+        title = title.split(" : ")[1];
+        ajexHeader.title = title;
+        console.log(ajexHeader);
         return $.ajax({
             type: "POST",
             url: url,
@@ -495,6 +515,11 @@ class xLib {
         if (window.location.hostname.includes("tpcap")) {
             url = "/kanban" + url;
         }
+        let title = $(document).find("title").text();
+        title = title.split(" - ")[0];
+        title = title.split(" : ")[1];
+        ajexHeader.title = title;
+        console.log(ajexHeader);
         return $.ajax({
             type: "POST",
             url: url,
@@ -561,6 +586,11 @@ class xLib {
         if (window.location.hostname.includes("tpcap")) {
             url = "/kanban" + url;
         }
+        let title = $(document).find("title").text();
+        title = title.split(" - ")[0];
+        title = title.split(" : ")[1];
+        ajexHeader.title = title;
+        console.log(ajexHeader);
         return $.ajax({
             type: "POST",
             url: url,

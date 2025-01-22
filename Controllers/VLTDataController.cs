@@ -1,7 +1,5 @@
-﻿using HINOSystem.Models;
+﻿using HINOSystem.Libs;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
-using HINOSystem.Libs;
 
 namespace HINOSystem.Controllers
 {
@@ -15,9 +13,9 @@ namespace HINOSystem.Controllers
 
 
         public VLTDataController(
-            ILogger<HomeController> logger, 
-            DbConnect dbConnect, 
-            AuthenGuard authenGuard, 
+            ILogger<HomeController> logger,
+            DbConnect dbConnect,
+            AuthenGuard authenGuard,
             WarrantyClaimConnect wrtConnect
             )
         {
@@ -51,6 +49,12 @@ namespace HINOSystem.Controllers
         }
 
         public IActionResult KBNIM0042()
+        {
+            //_authenGuard.ComponentToolbar = false;
+            return _authenGuard.guard(ControllerContext);
+        }
+
+        public IActionResult KBNIM0044()
         {
             //_authenGuard.ComponentToolbar = false;
             return _authenGuard.guard(ControllerContext);

@@ -24,46 +24,56 @@ namespace HINOSystem.Libs
             LogBL = new LoggerConfiguration()
                 .WriteTo.Logger(log => log
                 .WriteTo.File(
-                    @"\\hmmta-ppm\Event_Log\New_KanbanF3\New_Kanban_F3_Cal_BL.json",
+                    @"\\hmmta-ppm\Event_Log\New_KanbanF3\New_Kanban_F3_Cal_BL_.json",
                     outputTemplate: "{Timestamp:dd-MM-yyyy HH:mm:ss.fff zzz} [{Level}] {Message:lj}{NewLine}{NewLine}{Exception}",
-                    rollingInterval: RollingInterval.Month))
+                    rollingInterval: RollingInterval.Month,
+                    shared: true,
+                    rollOnFileSizeLimit: true,
+                    fileSizeLimitBytes: 524288000))
             .CreateLogger();
 
             LogMaster = new LoggerConfiguration()
                 .WriteTo.Logger(log => log
                 .WriteTo.File(
-                @"\\hmmta-ppm\Event_Log\New_KanbanF3\New_Kanban_F3_Master.json",
-                outputTemplate: "{Timestamp:dd-MM-yyyy HH:mm:ss.fff zzz} [{Level}] {Message:lj}{NewLine}{NewLine}{Exception}",
-                rollingInterval: RollingInterval.Month))
-                .CreateLogger();
+                    @"\\hmmta-ppm\Event_Log\New_KanbanF3\New_Kanban_F3_Master_.json",
+                    outputTemplate: "{Timestamp:dd-MM-yyyy HH:mm:ss.fff zzz} [{Level}] {Message:lj}{NewLine}{NewLine}{Exception}",
+                    rollingInterval: RollingInterval.Month,
+                    shared: true,
+                    rollOnFileSizeLimit: true,
+                    fileSizeLimitBytes: 524288000))
+            .CreateLogger();
 
             LogSpecial = new LoggerConfiguration()
                 .WriteTo.Logger(log => log
                 .WriteTo.File(
-                @"\\hmmta-ppm\Event_Log\New_KanbanF3\New_Kanban_F3_Special.json",
-                outputTemplate: "{Timestamp:dd-MM-yyyy HH:mm:ss.fff zzz} [{Level}] {Message:lj}{NewLine}{NewLine}{Exception}",
-                rollingInterval: RollingInterval.Month))
-                .CreateLogger();
+                    @"\\hmmta-ppm\Event_Log\New_KanbanF3\New_Kanban_F3_Special_.json",
+                    outputTemplate: "{Timestamp:dd-MM-yyyy HH:mm:ss.fff zzz} [{Level}] {Message:lj}{NewLine}{NewLine}{Exception}",
+                    rollingInterval: RollingInterval.Month,
+                    shared: true,
+                    rollOnFileSizeLimit: true,
+                    fileSizeLimitBytes: 524288000))
+            .CreateLogger();
 
             LogImport = new LoggerConfiguration()
                 .WriteTo.Logger(log => log
                 .WriteTo.File(
-                @"\\hmmta-ppm\Event_Log\New_KanbanF3\New_Kanban_F3_Import.json",
-                outputTemplate: "{Timestamp:dd-MM-yyyy HH:mm:ss.fff zzz} [{Level}] {Message:lj}{NewLine}{NewLine}{Exception}",
-                rollingInterval: RollingInterval.Month))
-                .CreateLogger();
+                    @"\\hmmta-ppm\Event_Log\New_KanbanF3\New_Kanban_F3_Import_.json",
+                    outputTemplate: "{Timestamp:dd-MM-yyyy HH:mm:ss.fff zzz} [{Level}] {Message:lj}{NewLine}{NewLine}{Exception}",
+                    rollingInterval: RollingInterval.Month,
+                    shared: true,
+                    rollOnFileSizeLimit: true,
+                    fileSizeLimitBytes: 524288000))
+            .CreateLogger();
 
         }
 
         public string Controller => _httpContextAccessor.HttpContext.Request.RouteValues["controller"].ToString();
         public string Action => _httpContextAccessor.HttpContext.Request.RouteValues["action"].ToString();
+        public string Title => _httpContextAccessor.HttpContext.Request.Headers["title"].ToString();
 
         public string GetLogMessage()
         {
-            string Controller = _httpContextAccessor.HttpContext.Request.RouteValues["controller"].ToString();
-            string Action = _httpContextAccessor.HttpContext.Request.RouteValues["action"].ToString();
-
-            return $"Controller : {Controller} | Action : {Action}";
+            return $"Controller : {Controller} : {Title} | Action : {Action}";
         }
 
         public void WriteLog(string Message, string UserName, string HostName)

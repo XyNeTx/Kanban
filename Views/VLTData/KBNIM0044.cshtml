@@ -1,0 +1,122 @@
+﻿<div class="row">
+
+    <div class="col-xl-12 col-md-12 col-sm-12">
+        <div class="card border-left-primary shadow h-100">
+            <div class="card-body">
+
+                <form id="frmCondition">
+
+                    <fieldset class="fieldset">
+                        <legend>Management : </legend>
+
+                        <div class="row">
+                            <div class="col-4">
+                                <item type="select" id="F_Customer" label="Customer"></item>
+                            </div>
+                        </div>
+                        <div class="row" style="font-size:22px;text-align:center;">
+                            <div class="col"></div>
+                            <div class="col-2" style="border-style:solid;border-width:1px;">LINE</div>
+                            <div class="col-2" style="border-style:solid;border-width:1px;">FRAME</div>
+                            <div class="col-2" style="border-style:solid;border-width:1px;">Side Panel</div>
+                            <div class="col-2" style="border-style:solid;border-width:1px;">Tail Gate</div>
+                            <div class="col-2" style="border-style:solid;border-width:1px;">RR Axle</div>
+                            <div class="col"></div>
+                        </div>
+                        <div class="row" style="font-size:22px;text-align:center;">
+                            <div class="col"></div>
+                            <div class="col-2" style="border-style:solid;border-width:1px;">Start Jig-In Seq.</div>
+                            <div class="col-2" style="border-style:solid;border-width:1px;">0</div>
+                            <div class="col-2" style="border-style:solid;border-width:1px;">0</div>
+                            <div class="col-2" style="border-style:solid;border-width:1px;">0</div>
+                            <div class="col-2" style="border-style:solid;border-width:1px;">0</div>
+                            <div class="col"></div>
+                        </div>
+                        <div class="row" style="font-size:22px;text-align:center;">
+                            <div class="col"></div>
+                            <div class="col-2" style="border-style:solid;border-width:1px;">Remain Unit</div>
+                            <div class="col-2" style="border-style:solid;border-width:1px;">0</div>
+                            <div class="col-2" style="border-style:solid;border-width:1px;">0</div>
+                            <div class="col-2" style="border-style:solid;border-width:1px;">0</div>
+                            <div class="col-2" style="border-style:solid;border-width:1px;">0</div>
+                            <div class="col"></div>
+                        </div>
+                        <div class="row" style="font-size:22px;text-align:center;">
+                            <div class="col"></div>
+                            <div class="col-2" style="border-style:solid;border-width:1px;">End Jig-In Seq.</div>
+                            <div class="col-2" style="border-style:solid;border-width:1px;">0</div>
+                            <div class="col-2" style="border-style:solid;border-width:1px;">0</div>
+                            <div class="col-2" style="border-style:solid;border-width:1px;">0</div>
+                            <div class="col-2" style="border-style:solid;border-width:1px;">0</div>
+                            <div class="col"></div>
+                        </div>
+
+                    </fieldset>
+                </form>
+
+
+                <div class="row">
+                    <div class="col">
+                        <fieldset class="fieldset">
+                            <legend>Cut Sequence Text: </legend>
+
+                            <div class="row">
+                                <div class="col-3">
+                                    <item type="checkbox" id="chkFrame" label="Cut Sequence for Frame"></item>
+                                </div>
+                                <div class="col-3">
+                                    <item type="checkbox" id="chkSidePanel" label="Cut Sequence for Side Panel"></item>
+                                </div>
+                                <div class="col-3">
+                                    <item type="checkbox" id="chkTailGate" label="Cut Sequence for Tail Gate"></item>
+                                </div>
+                                <div class="col-3">
+                                    <item type="checkbox" id="chkRRAxle" label="Cut Sequence for RR Axle"></item>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-3" style="text-align:center;font-size:28px">
+                                    Frame
+                                </div>
+                                <div class="col-3" style="text-align:center;font-size:28px">
+                                    Side Panel
+                                </div>
+                                <div class="col-3" style="text-align:center;font-size:28px">
+                                    Tail Gate
+                                </div>
+                                <div class="col-3" style="text-align:center;font-size:28px">
+                                    RR Axle
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-3">
+                                    <item type="table" id="tblFrame"></item>
+                                </div>
+                                <div class="col-3">
+                                    <item type="table" id="tblSidePanel"></item>
+                                </div>
+                                <div class="col-3">
+                                    <item type="table" id="tblTailGate"></item>
+                                </div>
+                                <div class="col-3">
+                                    <item type="table" id="tblRRAxle"></item>
+                                </div>
+                            </div>
+
+                        </fieldset>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+@using KANBAN.Libs
+@section Scripts {
+    <script type="text/javascript" src="@FileVersionHelper.VersionedScriptPath("/assets/.script/VLTData/KBNIM0044.js")"></script>
+}

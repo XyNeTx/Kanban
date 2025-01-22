@@ -1,7 +1,5 @@
-﻿using HINOSystem.Models;
+﻿using HINOSystem.Libs;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
-using HINOSystem.Libs;
 
 namespace HINOSystem.Controllers
 {
@@ -18,9 +16,9 @@ namespace HINOSystem.Controllers
 
 
         public MasterController(
-            ILogger<HomeController> logger, 
-            DbConnect dbConnect, 
-            AuthenGuard authenGuard, 
+            ILogger<HomeController> logger,
+            DbConnect dbConnect,
+            AuthenGuard authenGuard,
             WarrantyClaimConnect wrtConnect
             )
         {
@@ -185,6 +183,11 @@ namespace HINOSystem.Controllers
         }
 
         public IActionResult KBNMS029()
+        {
+            return _authenGuard.guard(ControllerContext);
+        }
+
+        public IActionResult KBNMS030()
         {
             return _authenGuard.guard(ControllerContext);
         }

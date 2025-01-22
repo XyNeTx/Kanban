@@ -21,7 +21,7 @@ namespace HINOSystem.Context
         private readonly IConfiguration _config;
         private static string plantDev = "";
 
-        public KB3Context(DbContextOptions<KB3Context> options, IHttpContextAccessor httpContextAccessor , IConfiguration configuration)
+        public KB3Context(DbContextOptions<KB3Context> options, IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
             : base(options)
         {
             _httpContextAccessor = httpContextAccessor;
@@ -35,7 +35,7 @@ namespace HINOSystem.Context
                 var isDev = _httpContextAccessor.HttpContext.Request.Cookies["isDev"];
                 string strPlant = "";
                 string strIsDev = "";
-                if(plantCookie != null)
+                if (plantCookie != null)
                 {
                     strPlant = plantCookie.ToString();
                 }
@@ -56,7 +56,7 @@ namespace HINOSystem.Context
                     _ => _config.GetConnectionString("DefaultConnection")
                 };
 
-                optionsBuilder.UseSqlServer(connectionString, option => 
+                optionsBuilder.UseSqlServer(connectionString, option =>
                     option.CommandTimeout(600)
                 );
             }
@@ -171,6 +171,7 @@ namespace HINOSystem.Context
         public DbSet<TB_Slide_Order> TB_Slide_Order { get; set; }
         public DbSet<TB_Slide_Order_Part> TB_Slide_Order_Part { get; set; }
         public DbSet<TB_MS_Print_Replace_KB_TMP> TB_MS_Print_Replace_KB_TMP { get; set; }
+        public DbSet<TB_MS_LineControl> TB_MS_LineControl { get; set; }
     }
 }
 

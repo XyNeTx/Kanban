@@ -74,6 +74,7 @@
     <Content Include="wwwroot\assets\.script\ERP\ERP01M010.js" />
     <Content Include="wwwroot\assets\.script\Home\Index.js" />
     <Content Include="wwwroot\assets\.script\Login\Index.js" />
+    <Content Include="wwwroot\assets\.script\Master\KBNMS030.js" />
     <Content Include="wwwroot\assets\.script\MonthlyForcast\KBNIM012M.js" />
     <Content Include="wwwroot\assets\.script\MonthlyForcast\KBNIM012.js" />
     <Content Include="wwwroot\assets\.script\MSPData\KBNIM003C.js" />

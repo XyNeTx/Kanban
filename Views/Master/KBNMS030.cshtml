@@ -1,0 +1,111 @@
+﻿@model KANBAN.Models.KB3.Master.TB_MS_LineControl;
+<div class="row">
+    <div class="col-xl-12 col-md-12 col-sm-12">
+        <div class="card border-left-primary shadow h-100">
+            <div class="card-body">
+
+                <div class="row">
+
+                    <div class="col-7" id="divBtn">
+
+                        <button type="button" class="btn btn-success col-2" id="btnInq">Inquiry</button>
+                        <button type="button" class="btn btn-primary col-2" id="btnNew">New</button>
+                        <button type="button" class="btn btn-warning col-2" id="btnUpd">Update</button>
+                        <button type="button" class="btn btn-danger col-2" id="btnDel">Delete</button>
+                        
+                    </div>
+
+                    <div class="col-5">
+                        <div class="row justify-content-end">
+                            <button type="button" class="btn btn-warning col-3" id="btnCan">Cancel</button>
+                            <a class="btn btn-danger col-3" asp-controller="Home" asp-action="Index">Exit</a>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row">
+                    <div class="col mt-4">
+                        <table class="table table-bordered w-100" id="tableMain">
+
+                        </table>
+                    </div>
+                </div>
+
+                <div class="row mt-2">
+
+                    <div class="col-8">
+                        <button type="button" class="btn btn-primary col-2" id="btnSelAll">Select All</button>
+                        <button type="button" class="btn btn-warning col-2" id="btnDeselAll">Deselect All</button>
+                    </div>
+
+                </div>
+
+                <div class="row mt-4" id="divInput">
+
+                    <div class="row justify-content-center">
+                        
+                        <div class="col-1 invisible"></div>
+
+                        <div class="col-8">
+
+                            <div class="row">
+
+                                <div class="input-group col">
+                                    <label class="input-group-text" asp-for="F_Line_ID"></label>
+                                    <input asp-for="F_Line_ID" class="form-control col-5" disabled/>
+                                </div>
+
+                                <div class="input-group col">
+                                    <label class="input-group-text" asp-for="F_Customer"></label>
+                                    <input asp-for="F_Customer" class="form-control col-5" disabled />
+                                </div>
+
+                            </div>
+
+
+                            <div class="row mt-2">
+
+                                <div class="input-group">
+                                    <label class="input-group-text" asp-for="F_Description"></label>
+                                    <input asp-for="F_Description" class="form-control col-10" disabled />
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="col-1 invisible"></div>
+
+                    </div>
+                
+                </div>
+
+                <div class="row mt-1">
+
+                    <div class="col">
+                        <div class="row justify-content-end">
+                            <button type="button" class="btn btn-primary col-1" id="btnSave">
+                                <i class="fas fa-save"></i>
+                                Save
+                            </button>
+                            <button type="button" class="btn btn-success col-1" id="btnReport">
+                                <i class="fa-solid fa-book"></i>
+                                Report
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+                
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@using KANBAN.Libs
+@section Scripts {
+    <script type="text/javascript" src="@FileVersionHelper.VersionedScriptPath("/assets/.script/Master/KBNMS030.js")"></script>
+}
