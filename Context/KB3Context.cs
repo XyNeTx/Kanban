@@ -172,6 +172,7 @@ namespace HINOSystem.Context
         public DbSet<TB_Slide_Order_Part> TB_Slide_Order_Part { get; set; }
         public DbSet<TB_MS_Print_Replace_KB_TMP> TB_MS_Print_Replace_KB_TMP { get; set; }
         public DbSet<TB_MS_LineControl> TB_MS_LineControl { get; set; }
+        public virtual DbSet<TB_Import_VHD> TB_Import_VHD { get; set; }
     }
 }
 

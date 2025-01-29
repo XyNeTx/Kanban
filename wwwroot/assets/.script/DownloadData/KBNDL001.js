@@ -1,4 +1,10 @@
-﻿$(document).ready(function () {
+﻿
+let itmDelivery = "";
+
+let itmDeliveryTo = "";
+
+$(document).ready(async function () {
+    await xSplash.hide();
 
     const KBNDL001 = new MasterTemplate({
         Controller: _PAGE_,
@@ -18,12 +24,12 @@
         Modal: 'modalMaster',
         Form: 'frmMaster',
         PostData: [
-            { name: 'F_Plant', value: _PLANT_ }
+            { name: 'F_Plant', value: _PLANT_ },
         ],
     });
+    
 
     KBNDL001.prepare();
-
     KBNDL001.initial(function (result) {
         //console.log(result);
         xDropDownList.bind('#frmCondition #itmPDS', result.data.PDSNo, 'F_OrderNo', 'F_OrderNo');
@@ -51,9 +57,83 @@
 
 
         xSplash.hide();
+
+        console.log(moment($("#itmDelivery").val(), "YYYY-MM-DD").format("YYYYMMDD"));
+    });
+
+    $("#itmDeliveryTo").on("change", function () {
+        if (itmDeliveryTo === $(this).val()) {
+            return;
+        }
+
+        itmDelivery = $("#itmDelivery").val();
+        itmDeliveryTo = $("#itmDeliveryTo").val();
+
+        _xLib.AJAX_Post("/KBNDL001/initial",
+            {
+                F_Delivery_Date: (moment(itmDelivery) == "Invalid date") ? "" : moment(itmDelivery, "YYYY-MM-DD").format("YYYYMMDD"),
+                F_Delivery_DateTo: (moment(itmDeliveryTo) == "Invalid date") ? "" : moment(itmDeliveryTo, "YYYY-MM-DD").format("YYYYMMDD"),
+            },
+            function (success) {
+                console.log(success);
+                $("#itmPDS").empty();
+                $("#itmPDSTo").empty();
+                $("#itmSupplier").empty();
+                $("#itmSupplierTo").empty();
+                $("#itmPDS").append(`<option value="" hidden></option>`);
+                $("#itmPDSTo").append(`<option value="" hidden></option>`);
+                success.data.PDSNo.forEach(function (item) {
+                    $("#itmPDS").append(`<option value="${item.F_OrderNo}">${item.F_OrderNo}</option>`);
+                    $("#itmPDSTo").append(`<option value="${item.F_OrderNo}">${item.F_OrderNo}</option>`);
+                });
+                success.data.Supplier.forEach(function (item) {
+                    $("#itmSupplier").append(`<option value="${item.SupplierCode}">${item.SupplierCode}</option>`);
+                    $("#itmSupplierTo").append(`<option value="${item.SupplierCode}">${item.SupplierCode}</option>`);
+                });
+            },
+            function (error) {
+                console.log(error);
+            }
+        );
     });
 
 
+    $("#itmDelivery").on("change", function () {
+        if (itmDelivery === $(this).val()) {
+            return;
+        }
+
+        itmDelivery = $("#itmDelivery").val();
+        itmDeliveryTo = $("#itmDeliveryTo").val();
+
+        let obj = {
+            F_Delivery_Date: (moment(itmDelivery) == "Invalid date") ? "" : moment(itmDelivery, "YYYY-MM-DD").format("YYYYMMDD"),
+            F_Delivery_DateTo: (moment(itmDeliveryTo) == "Invalid date") ? "" : moment(itmDeliveryTo, "YYYY-MM-DD").format("YYYYMMDD"),
+        }
+        let pData = JSON.stringify(JSON.stringify(obj));
+
+        _xLib.AJAX_Post("/KBNDL001/initial", pData,
+            function (success) {
+                $("#itmPDS").empty();
+                $("#itmPDSTo").empty();
+                $("#itmSupplier").empty();
+                $("#itmSupplierTo").empty();
+                $("#itmPDS").append(`<option value="" hidden></option>`);
+                $("#itmPDSTo").append(`<option value="" hidden></option>`);
+                success.data.PDSNo.forEach(function (item) {
+                    $("#itmPDS").append(`<option value="${item.F_OrderNo}">${item.F_OrderNo}</option>`);
+                    $("#itmPDSTo").append(`<option value="${item.F_OrderNo}">${item.F_OrderNo}</option>`);
+                });
+                success.data.Supplier.forEach(function (item) {
+                    $("#itmSupplier").append(`<option value="${item.SupplierCode}">${item.SupplierCode}</option>`);
+                    $("#itmSupplierTo").append(`<option value="${item.SupplierCode}">${item.SupplierCode}</option>`);
+                });
+            },
+            function (error) {
+                console.log(error);
+            }
+        );
+    });
 
 
     xAjax.onClick('#btnPlanning', async function () {

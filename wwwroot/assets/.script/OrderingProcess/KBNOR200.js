@@ -1,6 +1,6 @@
 $(document).ready(function () {
-
-    xSplash.hide();
+    checkProgramAuthorize();
+   
 
 });
 
@@ -20,3 +20,23 @@ $("button").click(function (e) {
     }
     return window.location.replace(`/SpecialOrdering/${_redirect}`);
 });
+
+
+function checkProgramAuthorize() {
+    _xLib.AJAX_Get("/xapi/GetAuthorizeProgram", null,
+        async (success) => {
+            success = _xLib.JSONparseMixData(success);
+            console.log(success);
+            $(".card-body").find("button").each(function (e) {
+                let id = $(this).attr("id");
+                //console.log($(this).attr("id"));
+                console.log(success.data.some(x => id == "btn" + x.F_Menu_ID));
+                !success.data.some(x => id == "btn" + x.F_Menu_ID) ? $(this).prop("disabled", true) : $(this).prop("disabled", false);
+            });
+            xSplash.hide();
+        },
+        async (error) => {
+            console.error(error);
+        }
+    );
+}

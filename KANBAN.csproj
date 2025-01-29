@@ -145,6 +145,7 @@
     <Content Include="wwwroot\assets\.script\V2VData\KBNIM002TR.js" />
     <Content Include="wwwroot\assets\.script\V2VData\KBNIM002M.js" />
     <Content Include="wwwroot\assets\.script\V2VData\KBNIM002.js" />
+    <Content Include="wwwroot\assets\.script\VLTData\KBNIM0044.js" />
     <Content Include="wwwroot\assets\.script\VLTData\KBNIM0042.js" />
     <Content Include="wwwroot\assets\.script\VLTData\KBNIM0043.js" />
     <Content Include="wwwroot\assets\.script\VLTData\KBNIM004M.js" />

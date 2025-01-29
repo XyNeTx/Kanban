@@ -7,6 +7,7 @@
         IKBNIM007C KBNIM007C { get; }
         IKBNIM010 KBNIM010 { get; }
         IKBNIM011 KBNIM011 { get; }
+        IKBNIM0044 KBNIM0044 { get; }
 
     }
 

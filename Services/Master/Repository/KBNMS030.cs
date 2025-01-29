@@ -80,13 +80,16 @@ namespace KANBAN.Services.Master.Repository
             try
             {
                 var check = await _kbContext.TB_MS_LineControl.AsNoTracking()
-                    .Where(x => x.F_Line_ID == data.F_Line_ID)
+                    .Where(x => x.F_Line_Customer == data.F_Line_Customer)
                     .FirstOrDefaultAsync();
 
                 if (check != null)
                 {
                     throw new CustomHttpException(400, "Data already exist");
                 }
+
+                data.F_Update_Date = DateTime.Now;
+                data.F_Update_By = _BearerClass.UserCode;
 
                 _kbContext.TB_MS_LineControl.Add(data);
                 _log.WriteLogMsg("INSERT TB_MS_LineControl : " + JsonConvert.SerializeObject(data));
@@ -105,7 +108,7 @@ namespace KANBAN.Services.Master.Repository
             try
             {
                 var check = await _kbContext.TB_MS_LineControl
-                    .Where(x => x.F_Line_ID == data.F_Line_ID)
+                    .Where(x => x.F_Line_Customer == data.F_Line_Customer)
                     .FirstOrDefaultAsync();
 
                 if (check == null)
@@ -113,11 +116,12 @@ namespace KANBAN.Services.Master.Repository
                     throw new CustomHttpException(400, "Data not found");
                 }
 
-                check.F_Description = data.F_Description;
-                check.F_Customer = data.F_Customer;
+                _kbContext.TB_MS_LineControl.Remove(check);
+                data.F_Update_By = _BearerClass.UserCode;
+                data.F_Update_Date = DateTime.Now;
 
-                _kbContext.TB_MS_LineControl.Update(check);
-                _log.WriteLogMsg("UPDATE TB_MS_LineControl : " + JsonConvert.SerializeObject(check));
+                _kbContext.TB_MS_LineControl.Add(data);
+                _log.WriteLogMsg("UPDATE TB_MS_LineControl : " + JsonConvert.SerializeObject(data));
                 await _kbContext.SaveChangesAsync();
             }
             catch (Exception ex)

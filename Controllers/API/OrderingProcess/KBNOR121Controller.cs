@@ -486,7 +486,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
                 string _SQL = "exec [dbo].[sp_DT_PartControl] @p0,@p1,@p2,@p3,@p4,@p5,@p6,@p7,@p8,@p9,@p10,@p11,@p12";
 
                 DT_PartControl = _FillDT.ExecuteSQL(_SQL,
-                    Start_Date, End_Date, obj.Supplier.Substring(0, 4), obj.Supplier.Substring(5, 1),
+                    ProcessDate.ToString("yyyyMMdd"), ProcessDate.ToString("yyyyMMdd"), obj.Supplier.Substring(0, 4), obj.Supplier.Substring(5, 1),
                     string.IsNullOrWhiteSpace(obj.Kanban) ? DBNull.Value : obj.Kanban,
                     string.IsNullOrWhiteSpace(obj.KanbanTo) ? DBNull.Value : obj.KanbanTo,
                     string.IsNullOrWhiteSpace(obj.Store) ? DBNull.Value : obj.Store,

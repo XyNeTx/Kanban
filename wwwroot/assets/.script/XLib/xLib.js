@@ -278,15 +278,21 @@ class xLib {
         if (window.location.hostname.includes("tpcap")) {
             url = "/kanban" + url;
         }
+        else if (window.location.hostname.includes("app07")) {
+            url = "/kanban" + url;
+        }
         let title = $(document).find("title").text();
-        title = title.split(" - ")[0];
-        title = title.split(" : ")[1];
-        ajexHeader.title = title;
-        console.log(ajexHeader);
+        //ajexHeader.title = title;
+        let obj = {
+            title: title
+        };
+        console.log(obj);
+        console.log(url);
         return $.ajax({
             type: "GET",
             url: url,
             data: data,
+            headers: obj,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             timeout: 5400000,
@@ -359,6 +365,9 @@ class xLib {
         if (window.location.hostname.includes("tpcap")) {
             url = "/kanban" + url;
         }
+        else if (window.location.hostname.includes("app07")) {
+            url = "/kanban" + url;
+        }
         let title = $(document).find("title").text();
         title = title.split(" - ")[0];
         title = title.split(" : ")[1];
@@ -425,7 +434,7 @@ class xLib {
 
                     // error was return by developer catch it
                     else if (xhr.responseJSON.response) {
-                        xSwal.error(xhr.responseJSON.response, xhr.responseJSON.message)
+                        //xSwal.error(xhr.responseJSON.response, xhr.responseJSON.message)
                         if (typeof errorFn == 'function') {
                             return errorFn(xhr, status, error)
                         }
@@ -438,6 +447,9 @@ class xLib {
 
     AJAX_Post(url, data, successFn, errorFn) {
         if (window.location.hostname.includes("tpcap")) {
+            url = "/kanban" + url;
+        }
+        else if (window.location.hostname.includes("app07")) {
             url = "/kanban" + url;
         }
         let title = $(document).find("title").text();
@@ -515,6 +527,9 @@ class xLib {
         if (window.location.hostname.includes("tpcap")) {
             url = "/kanban" + url;
         }
+        else if (window.location.hostname.includes("app07")) {
+            url = "/kanban" + url;
+        }
         let title = $(document).find("title").text();
         title = title.split(" - ")[0];
         title = title.split(" : ")[1];
@@ -584,6 +599,9 @@ class xLib {
 
     AJAX_PostFile(url, file, successFn, errorFn) {
         if (window.location.hostname.includes("tpcap")) {
+            url = "/kanban" + url;
+        }
+        else if (window.location.hostname.includes("app07")) {
             url = "/kanban" + url;
         }
         let title = $(document).find("title").text();

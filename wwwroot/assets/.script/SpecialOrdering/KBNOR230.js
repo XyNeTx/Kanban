@@ -28,6 +28,7 @@ $(document).ready(async () => {
             success = _xLib.JSONparseMixData(success);
             success = await GetCheckFlag(success);
             await _xDataTable.ClearAndAddDataDT("#tableMain", success.data);
+            xSplash.hide();
         },
         async (error) => {
             console.error(error);
@@ -35,8 +36,9 @@ $(document).ready(async () => {
     );
 
 
-    xSplash.hide();
+    
 });
+
 
 $("#chkAll").click(() => {
     $(".chkSelect").prop("checked", true);

@@ -1,6 +1,6 @@
 ﻿using HINOSystem.Libs;
+using KANBAN.Services;
 using KANBAN.Services.SpecialOrdering.Interface;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KANBAN.Controllers.API.SpecialOrder
@@ -35,14 +35,10 @@ namespace KANBAN.Controllers.API.SpecialOrder
 
                 await _services.IKBNOR210.Interface();
                 bool check = await _services.IKBNOR210.Check_Error();
+
                 if (check)
                 {
-                    return BadRequest(new
-                    {
-                        status = 400,
-                        response = "Bad Request",
-                        message = "Error found in the process."
-                    });
+                    throw new CustomHttpException(400, "Error found in the process.");
                 }
 
                 return Ok(new
@@ -54,12 +50,12 @@ namespace KANBAN.Controllers.API.SpecialOrder
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new
+                if (ex is CustomHttpException)
                 {
-                    status = 500,
-                    response = "Internal Server Error",
-                    message = ex.Message
-                });
+                    var customEx = ex as CustomHttpException;
+                    throw new CustomHttpException(customEx.StatusCode, customEx.Message);
+                }
+                throw new CustomHttpException(500, ex.Message);
             }
         }
 
@@ -68,7 +64,7 @@ namespace KANBAN.Controllers.API.SpecialOrder
         {
             try
             {
-                if(_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
+                if (_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
                 {
                     return StatusCode(_BearerClass.Status, new
                     {
@@ -78,23 +74,29 @@ namespace KANBAN.Controllers.API.SpecialOrder
                     });
                 }
 
+                var data = _services.IKBNOR210.Page_Load();
+
+                if (string.IsNullOrWhiteSpace(data) || data == null)
+                {
+                    throw new CustomHttpException(404, "Data not found.");
+                }
+
                 return Ok(new
                 {
                     status = 200,
                     response = "OK",
                     message = "Data Found",
-                    data = _services.IKBNOR210.Page_Load()
+                    data = data
                 });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new
+                if (ex is CustomHttpException)
                 {
-                    status = 500,
-                    response = "Internal Server Error",
-                    message = ex.Message
-
-                });
+                    var customEx = ex as CustomHttpException;
+                    throw new CustomHttpException(customEx.StatusCode, customEx.Message);
+                }
+                throw new CustomHttpException(500, ex.Message);
             }
         }
     }

@@ -1,7 +1,7 @@
 ﻿using HINOSystem.Libs;
 using KANBAN.Models.KB3.SpecialOrdering;
+using KANBAN.Services;
 using KANBAN.Services.SpecialOrdering.Interface;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -38,14 +38,9 @@ namespace KANBAN.Controllers.API.SpecialOrder
 
                 var data = await _services.IKBNOR210_1.LoadDataChangeDelivery(PDSNo, SuppCd, PartNo, chkDeli, DeliFrom, DeliTo);
 
-                if(data.Count == 0)
+                if (data.Count == 0)
                 {
-                    return StatusCode(404, new
-                    {
-                        status = "404",
-                        response = "Not Found",
-                        message = "Data not found"
-                    });
+                    throw new CustomHttpException(404, "Data not found");
                 }
 
                 return Ok(new
@@ -65,18 +60,18 @@ namespace KANBAN.Controllers.API.SpecialOrder
 
             catch (Exception ex)
             {
-                return StatusCode(500, new
+                if (ex is CustomHttpException)
                 {
-                    status = "500",
-                    response = "Error",
-                    message = ex.Message
-                });
+                    var customEx = ex as CustomHttpException;
+                    throw new CustomHttpException(customEx.StatusCode, customEx.Message);
+                }
+                throw new CustomHttpException(500, ex.Message);
             }
 
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetSupplierName (string SuppCd)
+        public async Task<IActionResult> GetSupplierName(string SuppCd)
         {
             try
             {
@@ -105,12 +100,12 @@ namespace KANBAN.Controllers.API.SpecialOrder
 
             catch (Exception ex)
             {
-                return StatusCode(500, new
+                if (ex is CustomHttpException)
                 {
-                    status = "500",
-                    response = "Error",
-                    message = ex.Message
-                });
+                    var customEx = ex as CustomHttpException;
+                    throw new CustomHttpException(customEx.StatusCode, customEx.Message);
+                }
+                throw new CustomHttpException(500, ex.Message);
             }
         }
 
@@ -140,12 +135,12 @@ namespace KANBAN.Controllers.API.SpecialOrder
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new
+                if (ex is CustomHttpException)
                 {
-                    status = "500",
-                    response = "Error",
-                    message = ex.Message
-                });
+                    var customEx = ex as CustomHttpException;
+                    throw new CustomHttpException(customEx.StatusCode, customEx.Message);
+                }
+                throw new CustomHttpException(500, ex.Message);
             }
         }
 
@@ -155,7 +150,7 @@ namespace KANBAN.Controllers.API.SpecialOrder
             try
             {
 
-                if(_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
+                if (_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
                 {
                     return StatusCode(_BearerClass.Status, new
                     {
@@ -169,12 +164,7 @@ namespace KANBAN.Controllers.API.SpecialOrder
 
                 if (data.Rows.Count == 0)
                 {
-                    return StatusCode(404, new
-                    {
-                        status = "404",
-                        response = "Not Found",
-                        message = "Data not found"
-                    });
+                    throw new CustomHttpException(404, "Data not found");
                 }
 
                 return Ok(new
@@ -188,17 +178,17 @@ namespace KANBAN.Controllers.API.SpecialOrder
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new
+                if (ex is CustomHttpException)
                 {
-                    status = "500",
-                    response = "Error",
-                    message = ex.Message
-                });
+                    var customEx = ex as CustomHttpException;
+                    throw new CustomHttpException(customEx.StatusCode, customEx.Message);
+                }
+                throw new CustomHttpException(500, ex.Message);
             }
         }
 
         [HttpPost]
-        public async Task<IActionResult> Save (List<VM_Save_KBNOR210_1> obj)
+        public async Task<IActionResult> Save(List<VM_Save_KBNOR210_1> obj)
         {
             try
             {
@@ -228,12 +218,12 @@ namespace KANBAN.Controllers.API.SpecialOrder
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new
+                if (ex is CustomHttpException)
                 {
-                    status = "500",
-                    response = "Error",
-                    message = ex.Message
-                });
+                    var customEx = ex as CustomHttpException;
+                    throw new CustomHttpException(customEx.StatusCode, customEx.Message);
+                }
+                throw new CustomHttpException(500, ex.Message);
             }
         }
 
@@ -265,12 +255,12 @@ namespace KANBAN.Controllers.API.SpecialOrder
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new
+                if (ex is CustomHttpException)
                 {
-                    status = "500",
-                    response = "Error",
-                    message = ex.Message
-                });
+                    var customEx = ex as CustomHttpException;
+                    throw new CustomHttpException(customEx.StatusCode, customEx.Message);
+                }
+                throw new CustomHttpException(500, ex.Message);
             }
         }
 
@@ -301,12 +291,12 @@ namespace KANBAN.Controllers.API.SpecialOrder
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new
+                if (ex is CustomHttpException)
                 {
-                    status = "500",
-                    response = "Error",
-                    message = ex.Message
-                });
+                    var customEx = ex as CustomHttpException;
+                    throw new CustomHttpException(customEx.StatusCode, customEx.Message);
+                }
+                throw new CustomHttpException(500, ex.Message);
             }
         }
 
@@ -339,12 +329,12 @@ namespace KANBAN.Controllers.API.SpecialOrder
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new
+                if (ex is CustomHttpException)
                 {
-                    status = "500",
-                    response = "Error",
-                    message = ex.Message
-                });
+                    var customEx = ex as CustomHttpException;
+                    throw new CustomHttpException(customEx.StatusCode, customEx.Message);
+                }
+                throw new CustomHttpException(500, ex.Message);
             }
         }
 
@@ -375,12 +365,12 @@ namespace KANBAN.Controllers.API.SpecialOrder
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new
+                if (ex is CustomHttpException)
                 {
-                    status = "500",
-                    response = "Error",
-                    message = ex.Message
-                });
+                    var customEx = ex as CustomHttpException;
+                    throw new CustomHttpException(customEx.StatusCode, customEx.Message);
+                }
+                throw new CustomHttpException(500, ex.Message);
             }
         }
 
@@ -413,13 +403,13 @@ namespace KANBAN.Controllers.API.SpecialOrder
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new
+                if (ex is CustomHttpException)
                 {
-                    status = "500",
-                    response = "Error",
-                    message = ex.Message
-                });
-            }   
+                    var customEx = ex as CustomHttpException;
+                    throw new CustomHttpException(customEx.StatusCode, customEx.Message);
+                }
+                throw new CustomHttpException(500, ex.Message);
+            }
         }
 
         [HttpGet]
@@ -450,18 +440,18 @@ namespace KANBAN.Controllers.API.SpecialOrder
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new
+                if (ex is CustomHttpException)
                 {
-                    status = "500",
-                    response = "Error",
-                    message = ex.Message
-                });
+                    var customEx = ex as CustomHttpException;
+                    throw new CustomHttpException(customEx.StatusCode, customEx.Message);
+                }
+                throw new CustomHttpException(500, ex.Message);
             }
 
         }
 
         [HttpGet]
-        public IActionResult STC_1_GetPartNo(bool isNew, string StockDate , string? Supplier_Code)
+        public IActionResult STC_1_GetPartNo(bool isNew, string StockDate, string? Supplier_Code)
         {
             try
             {
@@ -475,7 +465,7 @@ namespace KANBAN.Controllers.API.SpecialOrder
                     });
                 }
 
-                var data = _services.IKBNOR210_1.STC_1_GetPartNo(isNew, StockDate, Supplier_Code );
+                var data = _services.IKBNOR210_1.STC_1_GetPartNo(isNew, StockDate, Supplier_Code);
 
                 return Ok(new
                 {
@@ -488,12 +478,12 @@ namespace KANBAN.Controllers.API.SpecialOrder
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new
+                if (ex is CustomHttpException)
                 {
-                    status = "500",
-                    response = "Error",
-                    message = ex.Message
-                });
+                    var customEx = ex as CustomHttpException;
+                    throw new CustomHttpException(customEx.StatusCode, customEx.Message);
+                }
+                throw new CustomHttpException(500, ex.Message);
             }
         }
 
@@ -525,16 +515,16 @@ namespace KANBAN.Controllers.API.SpecialOrder
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new
+                if (ex is CustomHttpException)
                 {
-                    status = "500",
-                    response = "Error",
-                    message = ex.Message
-                });
+                    var customEx = ex as CustomHttpException;
+                    throw new CustomHttpException(customEx.StatusCode, customEx.Message);
+                }
+                throw new CustomHttpException(500, ex.Message);
             }
         }
 
-        [HttpGet] 
+        [HttpGet]
         public IActionResult STC_1_GetSupplierName(string Supplier_Code)
         {
             try
@@ -562,17 +552,17 @@ namespace KANBAN.Controllers.API.SpecialOrder
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new
+                if (ex is CustomHttpException)
                 {
-                    status = "500",
-                    response = "Error",
-                    message = ex.Message
-                });
+                    var customEx = ex as CustomHttpException;
+                    throw new CustomHttpException(customEx.StatusCode, customEx.Message);
+                }
+                throw new CustomHttpException(500, ex.Message);
             }
         }
 
         [HttpGet]
-        public IActionResult STC_1_GetPartName(string Supplier_Code ,string Part_No)
+        public IActionResult STC_1_GetPartName(string Supplier_Code, string Part_No)
         {
             try
             {
@@ -593,12 +583,17 @@ namespace KANBAN.Controllers.API.SpecialOrder
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { status = "500", response = "Error", message = ex.Message });
+                if (ex is CustomHttpException)
+                {
+                    var customEx = ex as CustomHttpException;
+                    throw new CustomHttpException(customEx.StatusCode, customEx.Message);
+                }
+                throw new CustomHttpException(500, ex.Message);
             }
         }
 
         [HttpGet]
-        public IActionResult STC_1_GetKB_Qty (string Supplier_Code, string Part_No, string Stock_Date, string Store_Code)
+        public IActionResult STC_1_GetKB_Qty(string Supplier_Code, string Part_No, string Stock_Date, string Store_Code)
         {
             try
             {
@@ -624,7 +619,12 @@ namespace KANBAN.Controllers.API.SpecialOrder
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { status = "500", response = "Error", message = ex.Message });
+                if (ex is CustomHttpException)
+                {
+                    var customEx = ex as CustomHttpException;
+                    throw new CustomHttpException(customEx.StatusCode, customEx.Message);
+                }
+                throw new CustomHttpException(500, ex.Message);
             }
         }
 
@@ -635,7 +635,8 @@ namespace KANBAN.Controllers.API.SpecialOrder
             {
                 if (_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
                 {
-                    return StatusCode(_BearerClass.Status, new {
+                    return StatusCode(_BearerClass.Status, new
+                    {
                         status = _BearerClass.Status,
                         response = _BearerClass.Response,
                         message = _BearerClass.Message
@@ -649,7 +650,12 @@ namespace KANBAN.Controllers.API.SpecialOrder
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { status = "500", response = "Error", message = ex.Message });
+                if (ex is CustomHttpException)
+                {
+                    var customEx = ex as CustomHttpException;
+                    throw new CustomHttpException(customEx.StatusCode, customEx.Message);
+                }
+                throw new CustomHttpException(500, ex.Message);
             }
         }
 
@@ -677,12 +683,17 @@ namespace KANBAN.Controllers.API.SpecialOrder
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { status = "500", response = "Error", message = ex.Message });
+                if (ex is CustomHttpException)
+                {
+                    var customEx = ex as CustomHttpException;
+                    throw new CustomHttpException(customEx.StatusCode, customEx.Message);
+                }
+                throw new CustomHttpException(500, ex.Message);
             }
         }
 
         [HttpGet]
-        public IActionResult STC_2_GetSupplier(string Type, bool chkFlg,bool chkFlgDT, string DateFrom, string DateTo)
+        public IActionResult STC_2_GetSupplier(string Type, bool chkFlg, bool chkFlgDT, string DateFrom, string DateTo)
         {
 
             try
@@ -698,20 +709,25 @@ namespace KANBAN.Controllers.API.SpecialOrder
                     });
                 }
 
-                var data = _services.IKBNOR210_1.STC_2_LoadSupplier(Type, chkFlg,chkFlgDT, DateFrom, DateTo);
+                var data = _services.IKBNOR210_1.STC_2_LoadSupplier(Type, chkFlg, chkFlgDT, DateFrom, DateTo);
 
                 return Ok(new { status = "200", response = "Success", message = "Data Found", data = data });
 
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { status = "500", response = "Error", message = ex.Message });
+                if (ex is CustomHttpException)
+                {
+                    var customEx = ex as CustomHttpException;
+                    throw new CustomHttpException(customEx.StatusCode, customEx.Message);
+                }
+                throw new CustomHttpException(500, ex.Message);
             }
 
         }
 
         [HttpGet]
-        public IActionResult STC_2_GetPartNo(string Type, bool chkFlg, bool chkFlgDT, string DateFrom, string DateTo,string SuppF,string SuppT)
+        public IActionResult STC_2_GetPartNo(string Type, bool chkFlg, bool chkFlgDT, string DateFrom, string DateTo, string SuppF, string SuppT)
         {
             try
             {
@@ -720,13 +736,18 @@ namespace KANBAN.Controllers.API.SpecialOrder
                     return StatusCode(_BearerClass.Status, new { status = _BearerClass.Status, response = _BearerClass.Response, message = _BearerClass.Message });
                 }
 
-                var data = _services.IKBNOR210_1.STC_2_LoadPartNo(Type, chkFlg, chkFlgDT, DateFrom, DateTo,SuppF, SuppT);
+                var data = _services.IKBNOR210_1.STC_2_LoadPartNo(Type, chkFlg, chkFlgDT, DateFrom, DateTo, SuppF, SuppT);
 
                 return Ok(new { status = "200", response = "Success", message = "Data Found", data = data });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { status = "500", response = "Error", message = ex.Message });
+                if (ex is CustomHttpException)
+                {
+                    var customEx = ex as CustomHttpException;
+                    throw new CustomHttpException(customEx.StatusCode, customEx.Message);
+                }
+                throw new CustomHttpException(500, ex.Message);
             }
         }
 
@@ -736,9 +757,9 @@ namespace KANBAN.Controllers.API.SpecialOrder
             try
             {
 
-                if(_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
+                if (_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
                 {
-                    return StatusCode(_BearerClass.Status, new { status = _BearerClass.Status, response = _BearerClass.Response, message = _BearerClass.Message});
+                    return StatusCode(_BearerClass.Status, new { status = _BearerClass.Status, response = _BearerClass.Response, message = _BearerClass.Message });
                 }
 
                 var data = _services.IKBNOR210_1.Del_LoadSupplier(DeliYM);
@@ -748,7 +769,12 @@ namespace KANBAN.Controllers.API.SpecialOrder
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { status = "500", response = "Error", message = ex.Message });
+                if (ex is CustomHttpException)
+                {
+                    var customEx = ex as CustomHttpException;
+                    throw new CustomHttpException(customEx.StatusCode, customEx.Message);
+                }
+                throw new CustomHttpException(500, ex.Message);
             }
         }
 
@@ -770,7 +796,12 @@ namespace KANBAN.Controllers.API.SpecialOrder
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { status = "500", response = "Error", message = ex.Message });
+                if (ex is CustomHttpException)
+                {
+                    var customEx = ex as CustomHttpException;
+                    throw new CustomHttpException(customEx.StatusCode, customEx.Message);
+                }
+                throw new CustomHttpException(500, ex.Message);
             }
         }
     }

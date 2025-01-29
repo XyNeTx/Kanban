@@ -233,6 +233,7 @@ $("#btnGen").click(function () {
             $("#tableMain input[type='checkbox']:checked").each(function () {
                 $("#tableMain").DataTable().row($(this).closest("tr")).remove().draw(false);
             });
+            LoadListView();
         },
         function (error) {
             console.log(error);

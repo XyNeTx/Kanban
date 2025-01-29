@@ -82,7 +82,7 @@ async function LoadCustomerPO() {
         },
         function (error) {
             console.error(error);
-            xSwal.error(error.responseJSON.response, error.responseJSON.message);
+            //xSwal.error(error.responseJSON.response, error.responseJSON.message);
         }
     );
 
@@ -114,6 +114,7 @@ $("#btnUnmerge").click(async function () {
             xSwal.success("Success", success.message);
             $("#inpNewCustomerOrderNo").val("");
             $("#tableMain").DataTable().clear().draw();
+            LoadCustomerPO();
         },
         async function (error) {
             await xSplash.hide();

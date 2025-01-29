@@ -38,9 +38,6 @@
 
 });
 
-$("#btnExt").click(function () {
-    window.location.replace("/OrderingProcess/KBNOR200");
-});
 
 function SupplierDropDown(isNew)
 {

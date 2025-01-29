@@ -193,6 +193,8 @@ $("#btnMerge").click(async function () {
                     $("#tableMain").DataTable().row($(this).closest("tr")).remove().draw(false);
                 });
 
+                GetCustomerPO();
+
             } else {
                 xSwal.error("Merge Fail!");
             }

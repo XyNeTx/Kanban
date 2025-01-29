@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Data;
-using Microsoft.EntityFrameworkCore;
+﻿using HINOSystem.Context;
 using HINOSystem.Libs;
-using HINOSystem.Context;
-using KANBAN.Models.KB3.UrgentOrder;
 using KANBAN.Context;
+using KANBAN.Models.KB3.UrgentOrder;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Data;
 //using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HINOSystem.Controllers.API.Master
@@ -54,7 +54,7 @@ namespace HINOSystem.Controllers.API.Master
         [HttpPost]
         public async Task<IActionResult> ImportSave(TB_Import_EKanban_Pack obj)
         {
-            
+
             _BearerClass.Authentication(Request);
             if (_BearerClass.Status == 401) return Unauthorized(new
             {
@@ -63,7 +63,7 @@ namespace HINOSystem.Controllers.API.Master
                 title = "Unauthorized",
                 message = "Please Login First"
             });
-            
+
             try
             {
 
@@ -71,7 +71,7 @@ namespace HINOSystem.Controllers.API.Master
                 string Plant = HttpContext.Session.GetString("USER_PLANT");
 
                 obj.F_Plant_CD = Plant;
-                obj.F_Update_By = UserID; 
+                obj.F_Update_By = UserID;
                 obj.F_Update_Date = DateTime.Now;
 
                 await _KB3Context.TB_Import_EKanban_Pack.AddAsync(obj);
@@ -88,7 +88,7 @@ namespace HINOSystem.Controllers.API.Master
             }
             catch (Exception ex)
             {
-                return StatusCode(500,new
+                return StatusCode(500, new
                 {
                     status = "500",
                     response = "Internal Server Error",
@@ -102,7 +102,7 @@ namespace HINOSystem.Controllers.API.Master
         [HttpGet]
         public async Task<IActionResult> AfterImported()
         {
-            
+
             _BearerClass.Authentication(Request);
 
             if (_BearerClass.Status == 401) return Unauthorized(new
@@ -115,14 +115,15 @@ namespace HINOSystem.Controllers.API.Master
             using var _KB3Transaction = _KB3Context.Database.BeginTransaction();
             try
             {
-                _KB3Transaction.CreateSavepoint("Start_AfterImported");
                 string UserID = HttpContext.Session.GetString("USER_CODE");
                 string Plant = HttpContext.Session.GetString("USER_PLANT");
 
-                await _KB3Context.Database.ExecuteSqlRawAsync($"DELETE From TB_Import_error Where F_Update_By = @p0 AND F_Type = 'KBNIM014' ",UserID);
+                await _KB3Context.Database.ExecuteSqlRawAsync($"DELETE From TB_Import_error Where F_Update_By = @p0 AND F_Type = 'KBNIM014' ", UserID);
+
+                _KB3Transaction.CreateSavepoint("Start_AfterImported");
 
                 //var intRow = 
-                await _KB3Context.Database.ExecuteSqlRawAsync($"EXEC [exec].[spKBNIM014] @p0,@p1",Plant,UserID);
+                await _KB3Context.Database.ExecuteSqlRawAsync($"EXEC [exec].[spKBNIM014] @p0,@p1", Plant, UserID);
 
                 //if(intRow > 0)
                 //{
@@ -135,12 +136,9 @@ namespace HINOSystem.Controllers.API.Master
                 _KB3Context.RemoveRange(_delList);
                 _KB3Context.SaveChanges();
 
+                int _haveError = await _KB3Context.Database.SqlQueryRaw<int>("SELECT COUNT(*) AS VALUE FROM TB_Import_error WHERE F_Update_By = @p0 AND F_Type = 'KBNIM014' ", UserID).FirstOrDefaultAsync();
+
                 _KB3Transaction.Commit();
-
-
-                int _haveError = await _KB3Context.Database.ExecuteSqlRawAsync($"SELECT * FROM TB_Import_Error Where F_Update_By = @p0 and F_Type = 'KBNIM014'; ",UserID);
-
-                _Log.WriteLog("KBNIM014 AfterImported ", UserID, _BearerClass.Device);
 
                 if (_haveError > 0)
                 {
@@ -155,6 +153,8 @@ namespace HINOSystem.Controllers.API.Master
 
                     });
                 }
+
+                _Log.WriteLog("KBNIM014 AfterImported ", UserID, _BearerClass.Device);
 
                 return Ok(new
                 {

@@ -124,11 +124,17 @@ $("#btnImport").click(async function () {
 
             let convertedData = data;
 
+            //console.log('Parsed data:', convertedData);
+
             for (var key in convertedData) {
 
                 //convertedData[key]["Customer Order Number"] = convertedData[key]["Customer\n Order Number"];
                 //delete convertedData[key]["Customer\n Order Number"];
 
+                console.log('Converted Data:', convertedData[key]["Amount / Item"]);
+                if (convertedData[key]["Amount / Item"] === undefined) {
+                    return xSwal.error("Import File Error", "Please check the column name 'Amount / Item'");
+                }
                 convertedData[key]["Amount_/_Item"] = parseFloat(convertedData[key]["Amount / Item"].replace(/,/g, ""));
                 delete convertedData[key]["Amount / Item"];
 
@@ -166,8 +172,10 @@ $("#btnImport").click(async function () {
                 convertedData[key]["Part_Name"] = convertedData[key]["Part Name"];
                 delete convertedData[key]["Part Name"];
 
+                if (convertedData[key]["Price / Unit"] === undefined) {
+                    return xSwal.error("Import File Error", "Please check the column name 'Price / Unit'");
+                }
                 convertedData[key]["Price_/_Unit"] = parseFloat(convertedData[key]["Price / Unit"].replace(/,/g, ""));
-
                 delete convertedData[key]["Price / Unit"];
 
                 //convertedData[key]["Customer Order Number"] = convertedData[key]["Receiving Case\n No."];

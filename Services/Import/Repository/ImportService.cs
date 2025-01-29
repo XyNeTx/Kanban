@@ -4,7 +4,6 @@ using KANBAN.Context;
 using KANBAN.Libs;
 using KANBAN.Services.Automapper.Interface;
 using KANBAN.Services.Import.Interface;
-using KANBAN.Services.SpecialOrdering.Interface;
 
 namespace KANBAN.Services.Import.Repository
 {
@@ -15,6 +14,7 @@ namespace KANBAN.Services.Import.Repository
         public IKBNIM007C KBNIM007C { get; }
         public IKBNIM010 KBNIM010 { get; }
         public IKBNIM011 KBNIM011 { get; }
+        public IKBNIM0044 KBNIM0044 { get; }
 
         public ImportService(KB3Context kbContext,
             BearerClass bearerClass,
@@ -56,7 +56,7 @@ namespace KANBAN.Services.Import.Repository
                 log,
                 emailService,
                 autoMapService);
-            
+
             KBNIM007C = new KBNIM007C(kbContext,
                 bearerClass,
                 ppm3Context,
@@ -64,6 +64,13 @@ namespace KANBAN.Services.Import.Repository
                 log,
                 emailService,
                 autoMapService);
+
+            KBNIM0044 = new KBNIM0044(kbContext,
+                bearerClass,
+                ppm3Context,
+                fillDT,
+                log,
+                emailService);
         }
     }
 

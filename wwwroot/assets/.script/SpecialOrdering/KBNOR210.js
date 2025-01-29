@@ -22,7 +22,7 @@ $(document).ready(async function () {
         },
         function (error) {
             console.log(error);
-            xSwal.error(error.responseJSON.response, error.responseJSON.message);
+            //xSwal.error(error.responseJSON.response, error.responseJSON.message);
         }
     );
 
@@ -86,7 +86,7 @@ $("#btnInterface").click(function () {
                     },
                     function (error) {
                         console.log(error);
-                        xSwal.success("Success", "Data has been refreshed");
+                        //xSwal.success("Success", "Data has been refreshed");
                     }
                 );
             }, 100);

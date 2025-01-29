@@ -1,5 +1,6 @@
 ﻿using HINOSystem.Context;
 using HINOSystem.Libs;
+using KANBAN.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -13,16 +14,19 @@ namespace KANBAN.Controllers
         private readonly KB3Context _KB3Context;
         private readonly FillDataTable _FillDT;
         private readonly BearerClass _BearerClass;
+        private readonly IHttpContextAccessor _Http;
 
         public xAPIController(
                         KB3Context kB3Context,
                         FillDataTable fillDT,
-                        BearerClass bearerClass
+                        BearerClass bearerClass,
+                        IHttpContextAccessor http
                        )
         {
             _KB3Context = kB3Context;
             _FillDT = fillDT;
             _BearerClass = bearerClass;
+            _Http = http;
         }
 
         [HttpGet]
@@ -78,6 +82,8 @@ namespace KANBAN.Controllers
             {
                 shift = "2";
             }
+            //var title = _Http.HttpContext.Request.Headers["title"].ToString();
+            //HttpContext.Request.Headers["title"].ToString();
 
             return Ok(new
             {
@@ -92,5 +98,39 @@ namespace KANBAN.Controllers
             });
 
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAuthorizeProgram()
+        {
+            try
+            {
+                await _BearerClass.CheckAuthorize();
+
+                string query = $@"	SELECT 
+	                DISTINCT 
+	                M.i18n AS F_Menu_ID
+	                FROM [erp].[UserAuthorize] UA 
+	                INNER JOIN [erp].[User] U 
+	                ON U._ID = UA.User_ID
+	                INNER JOIN [erp].[Menu] M
+	                ON M._ID = UA.Menu_ID
+	                WHERE U.Code = '{_BearerClass.UserCode}'";
+
+                var data = _FillDT.ExecuteSQL(query);
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "OK",
+                    message = "Success",
+                    data = JsonConvert.SerializeObject(data)
+                });
+            }
+            catch (Exception ex)
+            {
+                throw new CustomHttpException(500, ex.Message);
+            }
+        }
+
     }
 }

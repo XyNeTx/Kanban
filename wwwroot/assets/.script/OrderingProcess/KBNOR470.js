@@ -68,7 +68,7 @@ $("#btnUnlock").click(function () {
         },
         function (error) {
             console.log(error);
-            xSwal.error("Error", "Unlock Data Not Complete");
+            xSwal.error(error.responseJSON.response, error.responseJSON.message);
         }
     );
 });

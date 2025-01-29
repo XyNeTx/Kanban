@@ -1,12 +1,8 @@
 ﻿//using Microsoft.Office.Interop.Excel;
 using KANBAN.Services;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using NPOI.SS.Formula.Functions;
 using NPOI.SS.UserModel;
-using SkiaSharp;
 using System.Data;
 using System.Security.Cryptography;
 using System.Text;
@@ -19,6 +15,7 @@ namespace HINOSystem.Libs
         private readonly ERPConnection _erpConnection;
         private readonly KanbanConnection _KBCN;
         private readonly IHttpContextAccessor _http;
+        private readonly SerilogLibs _log;
 
         protected IWorkbook workbook;
         protected IFormulaEvaluator formulaEvaluator;
@@ -112,7 +109,7 @@ namespace HINOSystem.Libs
             string sql = "SELECT * FROM [erp].[UserAuthorize] WHERE User_ID = " + UserID + " AND Remark LIKE '%" + this.ActionName + "%' ";
             _dt = _KBCN.ExecuteSQL(sql, skipLog: true);
 
-            if(_dt == null || _dt.Rows.Count <= 0)
+            if (_dt == null || _dt.Rows.Count <= 0)
             {
                 this.Status = 403;
                 this.Response = "FORBIDDEN";
@@ -138,11 +135,11 @@ namespace HINOSystem.Libs
             this.Authentication(_http.HttpContext.Request);
             if (this.Status == 401)
             {
-                throw new CustomHttpException(401,"Unauthorized");
+                throw new CustomHttpException(401, "Unauthorized");
             }
             else if (this.Status == 403)
             {
-                throw new CustomHttpException(403,"Forbidden");
+                throw new CustomHttpException(403, "Forbidden");
             }
             _http.HttpContext.Response.Headers["Authorization"] = "Bearer " + this.Token;
             _http.HttpContext.Session.SetString("TOKEN", this.Token);
@@ -179,7 +176,7 @@ namespace HINOSystem.Libs
             };
         }
 
-            public string Encrypt(string clearText)
+        public string Encrypt(string clearText)
         {
             string EncryptionKey = _config.GetValue<string>("Application:EncryptionKey").ToString();
             byte[] clearBytes = Encoding.Unicode.GetBytes(clearText);

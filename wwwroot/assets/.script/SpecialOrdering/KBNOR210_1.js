@@ -477,6 +477,18 @@ $("#btnSave").click(async function () {
         function (success) {
             console.log(success);
             xSwal.success("Success", success.message);
+            _xLib.AJAX_Get("/api/KBNOR210_1/GetPOMergeData", obj,
+                function (success) {
+                    success = _xLib.JSONparseMixData(success);
+                    console.log(success);
+                    $("#tableMain").DataTable().clear().rows.add(success.data).draw();
+                    $("#tableMain tbody tr td").css("text-align", "center");
+                    $("#tableMain thead tr th").css("text-align", "center");
+                },
+                function (error) {
+                    console.error(error);
+                }
+            );
         },
         function (error) {
             console.error(error);

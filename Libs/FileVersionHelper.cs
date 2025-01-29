@@ -16,7 +16,7 @@
                     return $"{filePath}?v={lastWriteTime}";
                 }
             }
-            return $"{"/kanban"+filePath}?v={File.GetLastWriteTime(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", filePath.Replace("~", "").TrimStart('/'))).Ticks}";
+            return $"{"/kanban" + filePath}?v={File.GetLastWriteTime(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", filePath.Replace("~", "").TrimStart('/'))).Ticks}";
         }
     }
 }

@@ -60,6 +60,7 @@ $(document).on("click", "#tableMain tbody tr", function () {
     $("#F_Line_ID").val(obj.f_Line_ID);
     $("#F_Description").val(obj.f_Description);
     $("#F_Customer").val(obj.f_Customer);
+    $("#F_Line_Customer").val(obj.f_Line_Customer);
 
 });
 
@@ -86,7 +87,8 @@ function GetListData() {
     let obj = {
         f_Line_ID: $("#F_Line_ID").val(),
         f_Description: $("#F_Description").val(),
-        f_Customer: $("#F_Customer").val()
+        f_Customer: $("#F_Customer").val(),
+        f_Line_Customer: $("#F_Line_ID").val() + "_" + $("#F_Customer").val()
     };
 
     _xLib.AJAX_Get("/api/KBNMS030/GetListData", obj,
@@ -104,7 +106,8 @@ function Save() {
     let obj = {
         f_Line_ID: $("#F_Line_ID").val(),
         f_Description: $("#F_Description").val(),
-        f_Customer: $("#F_Customer").val()
+        f_Customer: $("#F_Customer").val(),
+        f_Line_Customer: $("#F_Line_ID").val() + "_" + $("#F_Customer").val()
     };
     listObj.push(obj);
 
@@ -117,9 +120,10 @@ function Save() {
     _xLib.AJAX_Post("/api/KBNMS030/Save?Action=" + action, listObj,
         function (success) {
             xSwal.success(success.response, success.message);
-            GetListData();
+            $("#btnCan").trigger("click");
         },
         function (error) {
+            xSwal.error(error.responseJSON.response, error.responseJSON.message);
         }
     );
 }

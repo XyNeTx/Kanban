@@ -181,8 +181,6 @@ $("#btnNextPage").click(async function () {
 });
 
 const previewFunction = async (intRow,_command) => {
-    //console.log("IntRow : ", intRow);
-
 
     $("#divSpinner").css("visibility", "visible");
     $("#divRead").css("visibility", "hidden");
@@ -199,11 +197,6 @@ const previewFunction = async (intRow,_command) => {
         kanban : $("#inputKanban").val(),
         kanbanTo: $("#inputKanbanTo").val(),
     }
-
-    //await _xLib.AJAX_Post('/api/KBNOR121/Find_StartEnd_Date', JSON.stringify(obj), function (result) {
-    //    result = _xLib.JSONparseAndTrim(result);
-    //    //console.log(result);
-    //});
 
     await _xLib.AJAX_Post('/api/KBNOR121/Get_All_Data', JSON.stringify(obj), async function (result) {
         result = _xLib.JSONparseAndTrimArray(result);

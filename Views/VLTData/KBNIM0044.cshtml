@@ -1,112 +1,160 @@
-﻿<div class="row">
+﻿@model KANBAN.Models.KB3.Master.TB_Import_VHD
+<head>
+    <style>
+        /* The switch - the box around the slider */
+        .switch {
+            position: relative;
+            display: flex;
+            width: 60px;
+            height: 34px;
+            padding-left: 0.75rem;
+            padding-right: 0.75rem;
+            flex: 0 0 auto;
+        }
+
+            /* Hide default HTML checkbox */
+            .switch input {
+                opacity: 0;
+                width: 0;
+                height: 0;
+            }
+
+        /* The slider */
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+        input + .slider {
+            background-color: royalblue;
+        }
+        input:checked + .slider {
+            background-color: darkorange;
+        }
+
+        input:focus + .slider {
+            box-shadow: 0 0 1px darkorange;
+        }
+
+        input:checked + .slider:before {
+            -webkit-transform: translateX(26px);
+            -ms-transform: translateX(26px);
+            transform: translateX(26px);
+        }
+
+        /* Rounded sliders */
+        .slider.round {
+            border-radius: 34px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        #tableLeft > thead > tr > th , #tableLeft > thead > tr > td {
+            border-bottom-color: #212529;
+        }
+
+        #tableLeft {
+            border: 2px solid #212529;
+        }
+
+        #tableLeft th, #tableLeft td {
+            padding: 0.25rem;
+        }
+
+    </style>
+</head>
+<div class="row">
 
     <div class="col-xl-12 col-md-12 col-sm-12">
         <div class="card border-left-primary shadow h-100">
             <div class="card-body">
 
-                <form id="frmCondition">
+                <div class="row justify-content-center">
+                    <div class="input-group">
+                        <label class="input-group-text" for="inpFile">Import VHD File</label>
+                        <input type="file" class="form-control col-8" id="inpFile" />
+                        <button type="button" class="btn btn-primary col-1" id="btnImp">Import</button>
+                    </div>
+                </div>
 
-                    <fieldset class="fieldset">
-                        <legend>Management : </legend>
-
-                        <div class="row">
-                            <div class="col-4">
-                                <item type="select" id="F_Customer" label="Customer"></item>
-                            </div>
-                        </div>
-                        <div class="row" style="font-size:22px;text-align:center;">
-                            <div class="col"></div>
-                            <div class="col-2" style="border-style:solid;border-width:1px;">LINE</div>
-                            <div class="col-2" style="border-style:solid;border-width:1px;">FRAME</div>
-                            <div class="col-2" style="border-style:solid;border-width:1px;">Side Panel</div>
-                            <div class="col-2" style="border-style:solid;border-width:1px;">Tail Gate</div>
-                            <div class="col-2" style="border-style:solid;border-width:1px;">RR Axle</div>
-                            <div class="col"></div>
-                        </div>
-                        <div class="row" style="font-size:22px;text-align:center;">
-                            <div class="col"></div>
-                            <div class="col-2" style="border-style:solid;border-width:1px;">Start Jig-In Seq.</div>
-                            <div class="col-2" style="border-style:solid;border-width:1px;">0</div>
-                            <div class="col-2" style="border-style:solid;border-width:1px;">0</div>
-                            <div class="col-2" style="border-style:solid;border-width:1px;">0</div>
-                            <div class="col-2" style="border-style:solid;border-width:1px;">0</div>
-                            <div class="col"></div>
-                        </div>
-                        <div class="row" style="font-size:22px;text-align:center;">
-                            <div class="col"></div>
-                            <div class="col-2" style="border-style:solid;border-width:1px;">Remain Unit</div>
-                            <div class="col-2" style="border-style:solid;border-width:1px;">0</div>
-                            <div class="col-2" style="border-style:solid;border-width:1px;">0</div>
-                            <div class="col-2" style="border-style:solid;border-width:1px;">0</div>
-                            <div class="col-2" style="border-style:solid;border-width:1px;">0</div>
-                            <div class="col"></div>
-                        </div>
-                        <div class="row" style="font-size:22px;text-align:center;">
-                            <div class="col"></div>
-                            <div class="col-2" style="border-style:solid;border-width:1px;">End Jig-In Seq.</div>
-                            <div class="col-2" style="border-style:solid;border-width:1px;">0</div>
-                            <div class="col-2" style="border-style:solid;border-width:1px;">0</div>
-                            <div class="col-2" style="border-style:solid;border-width:1px;">0</div>
-                            <div class="col-2" style="border-style:solid;border-width:1px;">0</div>
-                            <div class="col"></div>
-                        </div>
-
-                    </fieldset>
-                </form>
-
+                <div class="row d-flex mt-2 ps-2">
+                    <label class="switch">
+                        <input type="checkbox" id="chkSlider">
+                        <span class="slider round"></span>
+                    </label>
+                    <label class="text-danger fw-bolder">Blue switch Show unconfirmed Data. Yellow switch show postponed Data.</label>
+                </div>
 
                 <div class="row">
-                    <div class="col">
-                        <fieldset class="fieldset">
-                            <legend>Cut Sequence Text: </legend>
 
-                            <div class="row">
-                                <div class="col-3">
-                                    <item type="checkbox" id="chkFrame" label="Cut Sequence for Frame"></item>
-                                </div>
-                                <div class="col-3">
-                                    <item type="checkbox" id="chkSidePanel" label="Cut Sequence for Side Panel"></item>
-                                </div>
-                                <div class="col-3">
-                                    <item type="checkbox" id="chkTailGate" label="Cut Sequence for Tail Gate"></item>
-                                </div>
-                                <div class="col-3">
-                                    <item type="checkbox" id="chkRRAxle" label="Cut Sequence for RR Axle"></item>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-3" style="text-align:center;font-size:28px">
-                                    Frame
-                                </div>
-                                <div class="col-3" style="text-align:center;font-size:28px">
-                                    Side Panel
-                                </div>
-                                <div class="col-3" style="text-align:center;font-size:28px">
-                                    Tail Gate
-                                </div>
-                                <div class="col-3" style="text-align:center;font-size:28px">
-                                    RR Axle
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-3">
-                                    <item type="table" id="tblFrame"></item>
-                                </div>
-                                <div class="col-3">
-                                    <item type="table" id="tblSidePanel"></item>
-                                </div>
-                                <div class="col-3">
-                                    <item type="table" id="tblTailGate"></item>
-                                </div>
-                                <div class="col-3">
-                                    <item type="table" id="tblRRAxle"></item>
-                                </div>
-                            </div>
-
-                        </fieldset>
+                    <div class="pt-2 pe-0" style="flex:0 0 19%;">
+                        <table id="tableLeft" class="table table-bordered w-100 mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Delivery Date</th>
+                                    <td><input type="text" class="form-control" id="inpDeliveryDate" /></td>
+                                </tr>
+                                <tr>
+                                    <th>Shift</th>
+                                    <td>
+                                        @* <input type="text" class="form-control" id="inpShift" /> *@
+                                        <select class="form-select" id="inpShift">
+                                            <option value="Day">Day</option>
+                                            <option value="Night">Night</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Seq.q'ty/PDS</th>
+                                    <td><input type="number" min="0" class="form-control" id="inpSeqPds" /></td>
+                                </tr>
+                                <tr>
+                                    <th>Trip/Shift</th>
+                                    <td><input type="number" min="0" class="form-control" id="inpTripShift" /></td>
+                                </tr>
+                                <tr>
+                                    <th>Seq.q'ty'</th>
+                                    <td><input type="number" min="0" class="form-control" id="intSeqQty" /></td>
+                                </tr>
+                            </thead>
+                        </table>
+                        <div class="row justify-content-center">
+                            <button type="button" class="btn btn-success btn-rounded col-8 mt-2" id="btnConfirm">Confirm</button>
+                        </div>
                     </div>
+
+                    <div class="col pe-0">
+
+                        <table id="tableMain" class="table table-bordered border-2 border-dark w-100"></table>
+                        
+                        <div class="row mt-2 justify-content-center">
+                            <button type="button" class="btn btn-warning btn-rounded col-2 me-2" id="btnPost">Postpone</button>
+                            <button type="button" class="btn btn-danger btn-rounded col-2" id="btnDel">Delete</button>
+                        </div>
+
+                    </div>
+
                 </div>
 
             </div>

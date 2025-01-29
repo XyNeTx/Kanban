@@ -208,24 +208,7 @@ namespace KANBAN.Services.Master.Repository
         {
             try
             {
-
-                //string query = "SELECT F_Line,F_Code,COUNT(F_Bridge) AS F_Bridge" +
-                //    " FROM TB_MS_PartCode " +
-                //    "WHERE F_Line = 'S' " +
-                //    "GROUP BY F_Line,F_Code,F_Bridge " +
-                //    "HAVING COUNT(F_Bridge) < 2";
-
-                //ar data = _FillDT.ExecuteSQL(query);
-
                 var dataEF = await _kbContext.TB_MS_PartCode
-                    //.GroupBy(x => new { x.F_Line, x.F_Code, x.F_Bridge })
-                    //.Where(x => x.Count() < 2 && x.Key.F_Line == "S")
-                    //.Select(x => new
-                    //{
-                    //    x.Key.F_Line,
-                    //    x.Key.F_Code,
-                    //    F_Bridge = x.Count()
-                    //})
                     .Where(x => x.F_Line == "S")
                     .ToListAsync();
 

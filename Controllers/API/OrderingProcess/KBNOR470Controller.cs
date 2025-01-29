@@ -3,7 +3,6 @@ using HINOSystem.Libs;
 using KANBAN.Context;
 using KANBAN.Libs;
 using KANBAN.Models.KB3.UrgentOrder;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Data;
@@ -53,7 +52,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
 
                 var _dt = _FillDT.ExecuteSQL(_sql);
 
-                if(_dt.Rows.Count == 0)
+                if (_dt.Rows.Count == 0)
                 {
                     return StatusCode(404, new
                     {
@@ -68,7 +67,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
                 {
                     dr["F_SUpplier_Code"] = dr["F_SUpplier_Code"].ToString() + "-" + dr["F_SUpplier_Plant"].ToString();
                     dr["F_Part_No"] = dr["F_Part_No"].ToString() + "-" + dr["F_Ruibetsu"].ToString();
-                    dr["F_Delivery_Date"] = dr["F_Delivery_Date"].ToString().Substring(6,2) + "/" + dr["F_Delivery_Date"].ToString().Substring(4,2) + "/" + dr["F_Delivery_Date"].ToString().Substring(0,4);
+                    dr["F_Delivery_Date"] = dr["F_Delivery_Date"].ToString().Substring(6, 2) + "/" + dr["F_Delivery_Date"].ToString().Substring(4, 2) + "/" + dr["F_Delivery_Date"].ToString().Substring(0, 4);
                 }
 
                 return Ok(new
@@ -96,11 +95,12 @@ namespace KANBAN.Controllers.API.OrderingProcess
         [HttpPost]
         public async Task<IActionResult> Unlock(List<VM_KBNOR470_Unlock> listObj)
         {
+            using var transaction = _KB3Context.Database.BeginTransaction();
             try
             {
-
+                transaction.CreateSavepoint("UnlockPDS");
                 _BearerClass.Authentication(Request);
-                if(_BearerClass.Status == 401)
+                if (_BearerClass.Status == 401)
                 {
                     return StatusCode(401, new
                     {
@@ -112,7 +112,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
                 }
 
                 string CookieProcDate = Request.Cookies["processDate"].ToString();
-                string ProcessDate = DateTime.TryParseExact(CookieProcDate.Substring(0,10), "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dt) ? dt.ToString("dd/MM/yyyy") : DateTime.Now.ToString("dd/MM/yyyy");
+                string ProcessDate = DateTime.TryParseExact(CookieProcDate.Substring(0, 10), "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dt) ? dt.ToString("dd/MM/yyyy") : DateTime.Now.ToString("dd/MM/yyyy");
                 string ProcessShift = CookieProcDate.Substring(10, 1) == "D" ? "1:Day Shift" : "2:Night Shift";
 
 
@@ -161,11 +161,9 @@ namespace KANBAN.Controllers.API.OrderingProcess
 
                 await _IEmail.SendEmailUnlock("Urgent", "KBNOR470 : Un-Lock PDS not Price (For Interface Data to E-Procurement System)"
                     , nDetail, ProcessDate, ProcessShift, nSupplier);
-                
 
-                _log.WriteLogMsg("Un-Lock PDS Urgent");
-
-
+                transaction.Commit();
+                _log.WriteLogMsg("Un-Lock PDS Urgent + " + nDetail);
 
                 return Ok(new
                 {
@@ -177,6 +175,8 @@ namespace KANBAN.Controllers.API.OrderingProcess
             }
             catch (Exception ex)
             {
+                _log.WriteErrorLogMsg("Error Un-Lock PDS Urgent + " + ex.Message);
+                transaction.RollbackToSavepoint("UnlockPDS");
                 return StatusCode(500, new
                 {
                     status = "500",
@@ -185,6 +185,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
                     message = "Unexpected Error",
                     error = ex.Message
                 });
+
             }
         }
 

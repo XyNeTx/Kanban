@@ -20,7 +20,7 @@ namespace HINOSystem.Controllers.API.Master
         private readonly string StoragePath = @"wwwroot\Storage\Image\Barcode";
         private readonly string StoragePathQRCode = @"wwwroot\Storage\Image\QRCode";
 
-        
+
 
         private Dictionary<string, string[]> SumDigit = new Dictionary<string, string[]>();
 
@@ -72,8 +72,16 @@ namespace HINOSystem.Controllers.API.Master
                     });
                 }
 
+                dynamic _json = new dynamic[] { };
+                string F_DeliveryDateFrom = "", F_DeliveryDateTo = "";
+                if (pData.Contains("F_Delivery_Date") && pData.Contains("F_Delivery_DateTo"))
+                {
+                    _json = JsonConvert.DeserializeObject(pData);
+                    F_DeliveryDateFrom = _json["F_Delivery_Date"].ToString();
+                    F_DeliveryDateTo = _json["F_Delivery_DateTo"].ToString();
+                }
 
-                _SQL = @" EXEC [exec].[spKBNDL001_INI_PDS] '1'";
+                _SQL = $@" EXEC [exec].[spKBNDL001_INI_PDS] '1','{F_DeliveryDateFrom}','{F_DeliveryDateTo}' ";
                 string _jsPDSNo = _KBCN.ExecuteJSONKB1(_SQL, pControllerName: ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
 
                 _SQL = @" EXEC [exec].[spKBNDL001_INI_SUPPLIER] '1'";
@@ -129,9 +137,9 @@ namespace HINOSystem.Controllers.API.Master
                 if (pPostData != null) _data = JsonConvert.DeserializeObject(pPostData);
 
                 string _pdsno = Convert.ToString(_data.PDSNO);
-                string[] _arr = _pdsno.Substring(0, _pdsno.Length-1).Split(',');
+                string[] _arr = _pdsno.Substring(0, _pdsno.Length - 1).Split(',');
 
-                for (int i=0; i<_arr.Length; i++)
+                for (int i = 0; i < _arr.Length; i++)
                 {
                     string _p = _arr[i];
 
@@ -216,7 +224,7 @@ namespace HINOSystem.Controllers.API.Master
                     string _p = _arr[i];
 
                     string[] _f = _arr[i].Split('|');
-                    string _fileName = _f[11] + _f[0] + _f[9] + _f[14].Replace("/","_");
+                    string _fileName = _f[11] + _f[0] + _f[9] + _f[14].Replace("/", "_");
 
                     string _path = Path.Combine(StoragePathQRCode, DateTime.Now.ToString("yyyyMM"));
                     if (!Directory.Exists(_path)) Directory.CreateDirectory(_path);

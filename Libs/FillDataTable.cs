@@ -1,10 +1,7 @@
 ﻿using HINOSystem.Context;
-using HINOSystem.Libs;
 using KANBAN.Context;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using NPOI.HSSF.UserModel;
-using NPOI.Util.ArrayExtensions;
 using System.Data;
 
 namespace HINOSystem.Libs
@@ -19,10 +16,10 @@ namespace HINOSystem.Libs
         private readonly IHttpContextAccessor _IHttp;
 
         public FillDataTable(
-            KB3Context kB3Context, 
-            KanbanConnection kBCN, 
-            IConfiguration configuration, 
-            PPM3Context pPM3Context, 
+            KB3Context kB3Context,
+            KanbanConnection kBCN,
+            IConfiguration configuration,
+            PPM3Context pPM3Context,
             ProcDBContext procDB,
             IHttpContextAccessor iHttp
             )
@@ -88,7 +85,7 @@ namespace HINOSystem.Libs
                         // Add parameters to the SqlCommand
                         for (int i = 0; i < parameters.Length; i++)
                         {
-                            cmd.Parameters.AddWithValue("@p" + i, parameters[i] != null ? parameters[i] : DBNull.Value);
+                            cmd.Parameters.AddWithValue("@p" + i, string.IsNullOrWhiteSpace(parameters[i]?.ToString()) ? DBNull.Value : parameters[i]);
                         }
 
                         using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
@@ -109,7 +106,7 @@ namespace HINOSystem.Libs
 
             return dt;
         }
-        
+
         public DataTable ExecuteSQLPPMDB(string sql, params object[] parameters)
         {
             DataTable dt = new DataTable();
@@ -167,7 +164,7 @@ namespace HINOSystem.Libs
                         }
                         else
                         {
-                            for(int i = 0;i < parameters.Length; i++)
+                            for (int i = 0; i < parameters.Length; i++)
                             {
                                 sql = sql.Replace(parameters[i].ParameterName, $"{parameters[i].ParameterName}='{parameters[i].Value}'");
                             }
