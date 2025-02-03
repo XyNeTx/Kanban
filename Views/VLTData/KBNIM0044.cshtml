@@ -135,22 +135,32 @@
                                 </tr>
                                 <tr>
                                     <th>Seq.q'ty'</th>
-                                    <td><input type="number" min="0" class="form-control" id="intSeqQty" /></td>
+                                    <td><input type="number" min="0" class="form-control" id="inpSeqQty" readonly /></td>
                                 </tr>
                             </thead>
                         </table>
                         <div class="row justify-content-center">
-                            <button type="button" class="btn btn-success btn-rounded col-8 mt-2" id="btnConfirm">Confirm</button>
+                            <button type="button" class="btn btn-primary btn-rounded col-8 mt-2" id="btnSimulate">Simulate</button>
                         </div>
                     </div>
 
-                    <div class="col pe-0">
+                    <div class="pe-0" style="flex:0 0 80%;">
 
-                        <table id="tableMain" class="table table-bordered border-2 border-dark w-100"></table>
+                        <table id="tableMain" class="table table-bordered border-2 border-dark w-100 ps-1"></table>
                         
-                        <div class="row mt-2 justify-content-center">
-                            <button type="button" class="btn btn-warning btn-rounded col-2 me-2" id="btnPost">Postpone</button>
-                            <button type="button" class="btn btn-danger btn-rounded col-2" id="btnDel">Delete</button>
+                        <div class="row">
+                            <div class="col">
+                                <div class="row mt-2 justify-content-start">
+                                    <button type="button" class="btn btn-warning btn-rounded col-3 me-2" id="btnPost">Postpone</button>
+                                    <button type="button" class="btn btn-danger btn-rounded col-3" id="btnDel">Delete</button>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="row mt-2 justify-content-end">
+                                    <button type="button" class="btn btn-primary btn-rounded col-3 me-2" id="btnMain">Maintainance</button>
+                                    <button type="button" class="btn btn-success btn-rounded col-3" id="btnConf">Confirm Data</button>
+                                </div>
+                            </div>
                         </div>
 
                     </div>

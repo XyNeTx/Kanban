@@ -1,5 +1,4 @@
 ﻿using KANBAN.Models.KB3.SpecialOrdering;
-using Microsoft.AspNetCore.Http.Metadata;
 
 namespace KANBAN.Services.SpecialOrdering.Interface
 {
@@ -8,5 +7,6 @@ namespace KANBAN.Services.SpecialOrdering.Interface
         string LoadContactList();
         Task Confirm(List<VM_Post_KBNOR295> listObj);
         Task<string> UploadIMG(IFormFile formFile);
+        Task<string> ChkAuthenApproval(string userCode);
     }
 }

@@ -501,7 +501,7 @@ $("#boxDeliDate").change(function () {
     _xLib.AJAX_Get("/api/KBNMS006/GetDeliveryTime",
         {
             F_Supplier_Code: $("#selectSupplier").val(),
-            date: moment($("#stopDeliDate").val(), "DD/MM/YYYY").format("YYYYMMDD")
+            date: moment($("#boxDeliDate").val(), "DD/MM/YYYY").format("YYYYMMDD")
         },
         function (success) {
             if (success.status == 200) {
@@ -532,7 +532,7 @@ $("#cutDeliDate").change(function () {
     _xLib.AJAX_Get("/api/KBNMS006/GetDeliveryTime",
         {
             F_Supplier_Code: $("#selectSupplier").val(),
-            date: moment($("#stopDeliDate").val(), "DD/MM/YYYY").format("YYYYMMDD")
+            date: moment($("#cutDeliDate").val(), "DD/MM/YYYY").format("YYYYMMDD")
         },
         function (success) {
             if (success.status == 200) {

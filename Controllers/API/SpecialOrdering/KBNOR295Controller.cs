@@ -1,7 +1,6 @@
 ﻿using HINOSystem.Libs;
 using KANBAN.Models.KB3.SpecialOrdering;
 using KANBAN.Services.SpecialOrdering.Interface;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KANBAN.Controllers.API.SpecialOrder
@@ -120,5 +119,23 @@ namespace KANBAN.Controllers.API.SpecialOrder
                 return StatusCode(500, new { status = 500, response = "Error!", message = ex.Message });
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> ChkAuthenApproval(string F_User_ID)
+        {
+            try
+            {
+                await _bearerClass.CheckAuthorize();
+
+                var result = _services.IKBNOR295.ChkAuthenApproval(F_User_ID);
+
+                return Ok(new { status = 200, response = "Success", message = "Data Found", data = result });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { status = 500, response = "Error!", message = ex.Message });
+            }
+        }
+
     }
 }

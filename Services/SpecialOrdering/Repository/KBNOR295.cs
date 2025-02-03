@@ -143,5 +143,26 @@ namespace KANBAN.Services.SpecialOrdering.Repository
                 throw new Exception(ex.Message);
             }
         }
+
+        public async Task<string> ChkAuthenApproval(string userCode)
+        {
+            try
+            {
+                string sql = $"Select [dbo].[FN_Chk_AuthenAppval_SPC]('{userCode}') AS VALUE";
+                var result = await _kbContext.Database.SqlQueryRaw<string>(sql).FirstOrDefaultAsync();
+
+                if (result == null)
+                {
+                    throw new Exception("No data found");
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
     }
 }

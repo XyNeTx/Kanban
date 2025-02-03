@@ -473,11 +473,20 @@ $("#btnSave").click(async function () {
 
     console.log(listObj);
 
+    let objPO = {
+        PDSNo: $("#inpCustomerOrderNo").val(),
+        SuppCd: $("#inpSupplier").val(),
+        PartNo: $("#inpPartNo").val(),
+        chkDeli: $("#chkDate").is(":checked"),
+        DeliFrom: moment($("#inpDateFrom").val(), "DD/MM/YYYY").format("YYYYMMDD"),
+        DeliTo: moment($("#inpDateTo").val(), "DD/MM/YYYY").format("YYYYMMDD"),
+    }
+
     _xLib.AJAX_Post("/api/KBNOR210_1/Save", listObj,
         function (success) {
-            console.log(success);
+            //console.log(success);
             xSwal.success("Success", success.message);
-            _xLib.AJAX_Get("/api/KBNOR210_1/GetPOMergeData", obj,
+            _xLib.AJAX_Get("/api/KBNOR210_1/GetPOMergeData", objPO,
                 function (success) {
                     success = _xLib.JSONparseMixData(success);
                     console.log(success);

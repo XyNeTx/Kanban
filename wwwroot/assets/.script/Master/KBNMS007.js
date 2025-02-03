@@ -335,7 +335,8 @@ $("#btnSearch").click(async function () {
 
     _xLib.AJAX_Get("/api/KBNMS006/GetDeliveryTime",
         {
-            F_Supplier_Code: obj.F_Supplier_Code
+            F_Supplier_Code: obj.F_Supplier_Code,
+            date: moment($("#readDeliveryDate").val(), "DD/MM/YYYY").format("YYYYMMDD"),
         },
         function (success) {
             if (success.status == 200) {
@@ -359,6 +360,22 @@ $("#btnEdit").click(function () {
     $("#readDeliveryDate").prop("readonly", false);
     //$("#readDeliveryDate").parent().find('button').prop('disabled', false);
     $("#readAddQty").prop("readonly", false);
+
+    _xLib.AJAX_Get("/api/KBNMS006/GetDeliveryTime",
+        {
+            F_Supplier_Code: obj.F_Supplier_Code,
+            date: moment($("#readDeliveryDate").val(), "DD/MM/YYYY").format("YYYYMMDD"),
+        },
+        function (success) {
+            if (success.status == 200) {
+                console.log(success.data);
+                $("#readCycle").val(success.data);
+            }
+        },
+        function (error) {
+            xSwal.error("Error", "Delivery Time Not Found");
+        }
+    );
 });
 
 $("#radAddCycle").change(function () {

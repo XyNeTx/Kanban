@@ -104,7 +104,7 @@ $(document).on('focusout  keypress', '#tableMain tbody tr td', function (e) {
 
         let _newValue = $(this).find('input').val();
 
-        if (_newValue == _oriValue || _newValue == "") {
+        if (_newValue == _oriValue) {
             $(this).empty();
             $(this).text(_oriValue);
             return;

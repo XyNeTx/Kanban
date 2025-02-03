@@ -73,21 +73,17 @@ function LoadContactList() {
 let _oriValue = "";
 $(document).on('dblclick', '#tableMain tbody tr td', function () {
 
-    if ($(".clsEdit").length > 0) return;
+    //if ($(".clsEdit").length > 0) return;
 
     _oriValue = $(this).text();
 
     let row = $(this).closest('tr');
     row.find('td').each(function () {
         let value = $(this).text();
-        if($(this).index() >= 5) return;
+        if($(this).index() >= 4) return;
         $(this).empty();
         $(this).append('<input type="text" class="clsEdit form-control" id="txtEdit" value="'+value+'" />');
     });
-
-
-    //$(this).empty();
-    //$(this).append('<input type="text" class="clsEdit form-control" id="txtEdit" value="' + _oriValue + '" />');
 
     $('#txtEdit').focus();
 });
@@ -97,25 +93,41 @@ $(document).on('focusin', '#tableMain tbody tr td input[type="text"]', function 
     //console.log(_oriValue);
 });
 
-$(document).on('focusout  keypress', '#tableMain tbody tr td', function (e) {
-    if ((e.type == 'keypress' && e.which == 13) || e.type == 'focusout') {
+$(document).on('keydown', '#tableMain tbody tr td', async function (e) {
 
+    if (e.type == 'keydown' && (e.which == 13 || e.which == 9)) {
         let _newValue = $(this).find('input').val();
-
+        let index = await $(this).index();
+        if (index === 0) {
+            var result = await _xLib.AJAX_Get("/api/KBNOR295/ChkAuthenApproval", { F_User_ID: _newValue },
+                function (success) {
+                    return success;
+                },
+                function (error) {
+                    xSwal.error(error.responseJSON.response, error.responseJSON.message);
+                    return false;
+                }
+            );
+            if (result.data.result.toLowerCase() !== "can access") {
+                await $(this).remove('input');
+                await $(this).text("...");
+                await $("#tableMain tbody tr td").find('input[type="text"]').each(async function () {
+                    await $(this).trigger('focusin');
+                    await $(this).trigger('focusout');
+                });
+                await xSwal.error("Error", "Can not insert this user because not authorize for approval.");
+            }
+        }
         if (_newValue == _oriValue || _newValue == "") {
-            $(this).empty();
+            $(this).remove('input');
             $(this).text(_oriValue);
             return;
         };
-        $(this).empty();
-        $("#tableMain").DataTable().cell(this).data(_newValue).draw();
-
+        $(this).remove('input');
+        $("#tableMain").DataTable().cell($(this)).data(_newValue).draw();
         let row = $(this).closest('tr');
         let rowIndex = $("#tableMain").DataTable().row(row).index();
-        //console.log(rowIndex);
         let maxIndex = $("#tableMain").DataTable().rows().count() - 1;
-        //console.log(maxIndex);
-
         if (rowIndex == maxIndex) {
             let obj = {
                 F_User_ID: "...",

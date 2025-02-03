@@ -100,7 +100,7 @@ namespace KANBAN.Services.Import.Repository
                 var data = await _kbContext.TB_Import_VHD
                     .AsNoTracking()
                     .Where(x => x.F_Update_By == _BearerClass.UserCode
-                    && string.IsNullOrWhiteSpace(x.F_Flag))
+                    && string.IsNullOrWhiteSpace(x.F_Flag) || x.F_Flag == "S")
                     .ToListAsync();
 
                 if (data.Count == 0) throw new CustomHttpException(404, "Data not found");
@@ -136,6 +136,9 @@ namespace KANBAN.Services.Import.Repository
                     if (vltData == null) throw new CustomHttpException(404, "Data not found");
 
                     vltData.F_Flag = data.F_Flag;
+                    vltData.F_Deli_Date = data.F_Deli_Date;
+                    vltData.F_Deli_Shift = data.F_Deli_Shift;
+                    vltData.F_Deli_Trip = data.F_Deli_Trip;
                     vltData.F_Update_By = _BearerClass.UserCode;
                     vltData.F_Update_Date = DateTime.Now;
 

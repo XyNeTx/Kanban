@@ -17,7 +17,7 @@ namespace HINOSystem.Controllers.API.Master
     {
         private readonly IConfiguration _configuration;
         private readonly BearerClass _BearerClass;
-        private readonly ActionResultClass _ActionResult;        
+        private readonly ActionResultClass _ActionResult;
         private readonly KanbanConnection _KBCN;
         private readonly PPMConnect _PPMConnect;
         private readonly PPM3Context _PPM3Context;
@@ -53,7 +53,7 @@ namespace HINOSystem.Controllers.API.Master
         [HttpPost]
         public IActionResult initial([FromBody] string pData = null)
         {
-            
+
             dynamic _json = null;
             string _SQL = "";
             try
@@ -64,7 +64,7 @@ namespace HINOSystem.Controllers.API.Master
                 if (pData != null) _json = JsonConvert.DeserializeObject(pData);
 
                 _SQL = @" EXEC [exec].[spTB_MS_FACTORY] ";
-                string _jsTB_MS_Factory = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+                string _jsTB_MS_Factory = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName: ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
 
                 string _result = @"{
                     ""status"":""200"",
@@ -95,7 +95,7 @@ namespace HINOSystem.Controllers.API.Master
                 title = "Unauthorized",
                 message = "Please Login First"
             });
-            
+
             try
             {
                 string now = DateTime.Now.ToString("yyyyMMdd");
@@ -105,7 +105,7 @@ namespace HINOSystem.Controllers.API.Master
                 DataTable dt = _FillDT.ExecuteSQL($"Select DISTINCT F_PDS_No FROM TB_Transaction_TMP " +
                     $"Where F_Update_By = '{UserID}' AND F_Plant = '{Plant}' ");
 
-                if(dt.Rows.Count == 0)
+                if (dt.Rows.Count == 0)
                 {
                     return BadRequest(new
                     {
@@ -150,7 +150,7 @@ namespace HINOSystem.Controllers.API.Master
                 title = "Unauthorized",
                 message = "Please Login First"
             });
-            
+
             try
             {
                 string now = DateTime.Now.ToString("yyyyMMdd");
@@ -182,7 +182,7 @@ namespace HINOSystem.Controllers.API.Master
                         message = "Data not Found"
                     });
                 }
-                
+
                 changeObj.F_Qty = obj.F_Qty;
                 changeObj.F_Qty_Level1 = obj.F_Qty;
                 changeObj.F_Update_By = UserID;
@@ -225,7 +225,7 @@ namespace HINOSystem.Controllers.API.Master
                 title = "Unauthorized",
                 message = "Please Login First"
             });
-            
+
             try
             {
                 string now = DateTime.Now.ToString("yyyyMMdd");
@@ -274,7 +274,7 @@ namespace HINOSystem.Controllers.API.Master
                 message = "Please Login First"
             });
 
-            
+
             try
             {
                 string now = DateTime.Now.ToString("yyyyMMdd");
@@ -294,7 +294,7 @@ namespace HINOSystem.Controllers.API.Master
 
                 DataTable dt = _FillDT.ExecuteSQL(_SQL);
 
-                if(dt.Rows.Count == 0)
+                if (dt.Rows.Count == 0)
                 {
                     return BadRequest(new
                     {
@@ -366,7 +366,7 @@ namespace HINOSystem.Controllers.API.Master
                 title = "Unauthorized",
                 message = "Please Login First"
             });
-            
+
             try
             {
                 string now = DateTime.Now.ToString("yyyyMMdd");
@@ -399,14 +399,14 @@ namespace HINOSystem.Controllers.API.Master
                     status = "500",
                     response = "Internal Server Error",
                     title = "Internal Server Error",
-                    message= "Can't Get Supplier Code",
+                    message = "Can't Get Supplier Code",
                     err = ex.Message
                 });
             }
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetSupplierDetail(string F_Supplier_Cd)
+        public async Task<IActionResult> GetSupplierDetail(string F_Supplier_Cd, string F_ProcessDate)
         {
             _BearerClass.Authentication(Request);
 
@@ -417,7 +417,7 @@ namespace HINOSystem.Controllers.API.Master
                 title = "Unauthorized",
                 message = "Please Login First"
             });
-            
+
             try
             {
                 string now = DateTime.Now.ToString("yyyyMMdd");
@@ -428,7 +428,7 @@ namespace HINOSystem.Controllers.API.Master
 
                 var data = await _PPM3Context.T_Supplier_MS.Where(x => x.F_TC_Str.CompareTo(now) <= 0 && x.F_TC_End.CompareTo(now) >= 0
                     && x.F_Store_cd.StartsWith(Plant) && x.F_supplier_cd == SupCode && x.F_Plant_cd == SupPlant[0])
-                    .Select(x=> new
+                    .Select(x => new
                     {
                         x.F_supplier_cd,
                         x.F_Plant_cd,
@@ -461,17 +461,17 @@ namespace HINOSystem.Controllers.API.Master
                 var data2 = await _KB3Context.TB_MS_DeliveryTime
                         .Where
                         (x =>
-                            x.F_Start_Date.CompareTo(now) <= 0 
-                            && x.F_End_Date.CompareTo(now) >= 0
-                            && x.F_Plant == Plant 
+                            x.F_Start_Date.CompareTo(F_ProcessDate) <= 0
+                            && x.F_End_Date.CompareTo(F_ProcessDate) >= 0
+                            && x.F_Plant == Plant
                             && x.F_Supplier_Code == SupCode
                             && x.F_Supplier_Plant == SupPlant
-                        ).Select(x=> new
+                        ).Select(x => new
                         {
-                           F_Cycle = x.F_Cycle.Substring(1,1) + "-" + x.F_Cycle.Substring(2, 2) + "-" + x.F_Cycle.Substring(4, 2),
+                            F_Cycle = x.F_Cycle.Substring(1, 1) + "-" + x.F_Cycle.Substring(2, 2) + "-" + x.F_Cycle.Substring(4, 2),
                         }).FirstOrDefaultAsync();
 
-                if(data2 == null)
+                if (data2 == null)
                 {
                     return BadRequest(new
                     {
@@ -508,7 +508,7 @@ namespace HINOSystem.Controllers.API.Master
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetPartNo (string? F_Supplier_Cd = null)
+        public async Task<IActionResult> GetPartNo(string? F_Supplier_Cd = null)
         {
             _BearerClass.Authentication(Request);
 
@@ -519,7 +519,7 @@ namespace HINOSystem.Controllers.API.Master
                 title = "Unauthorized",
                 message = "Please Login First"
             });
-            
+
             try
             {
                 string now = DateTime.Now.ToString("yyyyMMdd");
@@ -539,7 +539,7 @@ namespace HINOSystem.Controllers.API.Master
 
                 DataTable dt = _FillDT.ExecuteSQL(_SQL);
 
-                if(dt.Rows.Count == 0)
+                if (dt.Rows.Count == 0)
                 {
                     return BadRequest(new
                     {
@@ -574,7 +574,7 @@ namespace HINOSystem.Controllers.API.Master
         }
 
         [HttpGet]
-        public async Task<IActionResult> PartNoChanged(string? F_Supplier_Cd = null,string? F_Part_No = null,string? F_Kanban_No = null)
+        public async Task<IActionResult> PartNoChanged(string? F_Supplier_Cd = null, string? F_Part_No = null, string? F_Kanban_No = null)
         {
             _BearerClass.Authentication(Request);
 
@@ -585,7 +585,7 @@ namespace HINOSystem.Controllers.API.Master
                 title = "Unauthorized",
                 message = "Please Login First"
             });
-            
+
             try
             {
                 string now = DateTime.Now.ToString("yyyyMMdd");
@@ -640,7 +640,7 @@ namespace HINOSystem.Controllers.API.Master
 
 
 
-                if(dt.Rows.Count == 0)
+                if (dt.Rows.Count == 0)
                 {
                     return BadRequest(new
                     {
@@ -688,7 +688,7 @@ namespace HINOSystem.Controllers.API.Master
                 title = "Unauthorized",
                 message = "Please Login First"
             });
-            
+
             using var _KB3Transaction = _KB3Context.Database.BeginTransaction();
             try
             {
@@ -740,7 +740,7 @@ namespace HINOSystem.Controllers.API.Master
                 title = "Unauthorized",
                 message = "Please Login First"
             });
-            
+
             using var _KB3Transaction = _KB3Context.Database.BeginTransaction();
             try
             {
@@ -761,7 +761,7 @@ namespace HINOSystem.Controllers.API.Master
 
                 DataTable dtErr = _FillDT.ExecuteSQL(_SQL);
 
-                if(dtErr.Rows.Count > 0)
+                if (dtErr.Rows.Count > 0)
                 {
                     return BadRequest(new
                     {

@@ -188,8 +188,12 @@ $("#buttonNew").click(function () {
     $("#selectSupplier").prop("disabled", false);
 });
 
-$("#selectSupplier").change(function () {
-    _xLib.AJAX_Get('/api/KBNIM007N/GetSupplierDetail', { F_Supplier_Cd: $("#selectSupplier").val() },
+$("#selectSupplier , #inputDeliveryDate").change(function () {
+    _xLib.AJAX_Get('/api/KBNIM007N/GetSupplierDetail',
+        {
+            F_Supplier_Cd: $("#selectSupplier").val(),
+            F_ProcessDate: $("#inputDeliveryDate").val().replaceAll("-", "")
+        },
         function (success) {
             if (success.status === "200") {
                 _xLib.TrimJSON(success.data)

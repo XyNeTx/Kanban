@@ -50,7 +50,12 @@ public partial class TB_Import_VHD
     [StringLength(1)]
     public string? F_Flag { get; set; }
 
+    [Column("F_PDS_Deleted")]
+    [StringLength(15)]
+    public string? F_PDS_Deleted { get; set; }
+
     [StringLength(15)]
     public string? F_Update_By { get; set; }
+
     public DateTime? F_Update_Date { get; set; }
 }

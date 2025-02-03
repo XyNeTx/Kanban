@@ -222,7 +222,7 @@ const previewFunction = async (intRow,_command) => {
         $("#readStoreCode").val(dT_PartControl[intRow].F_Store_Code);
         $("#readKanbanNo").val(dT_PartControl[intRow].F_Kanban_No);
         $("#readCycleTime").val(dT_Date[dT_Date.length - 1].F_Cycle.slice(0, 2) + "-" + dT_Date[dT_Date.length - 1].F_Cycle.slice(2, 4) + "-" + dT_Date[dT_Date.length - 1].F_Cycle.slice(4, 6));
-        $("#readQtyPack").val(dT_Header[intRow + dT_PartControl.length].F_Qty_Box);
+        $("#readQtyPack").val(dT_Header[intRow].F_Qty_Box);
 
         $("#spanProcessDate").text(_CookieProcessDate.slice(8, 10) + "/" + _CookieProcessDate.slice(5, 7) + "/" + _CookieProcessDate.slice(0, 4));
         $("#spanDeliveryDate").text(dT_DeliveryDate[0].F_Delivery_Date.slice(6, 8) + "/" + dT_DeliveryDate[0].F_Delivery_Date.slice(4, 6) + "/" + dT_DeliveryDate[0].F_Delivery_Date.slice(0, 4));
@@ -330,6 +330,17 @@ const addDetailToTable = async (dateSet, intRow) => {
     for (let i = intRow; i <= _headLength; i += _increase) {
         let _header = dT_Header[i]; // Make the Object easier to access
         //console.log(_header);
+        let _headerQty = dT_Header.filter(x => x.F_Supplier_Code == $("#readSupplier").val().split("-")[0]
+            && x.F_Supplier_Plant == $("#readSupplier").val().split("-")[1]
+            && x.F_Part_No == $("#readPartNo").val().split("-")[0]
+            && x.F_Ruibetsu == $("#readPartNo").val().split("-")[1]
+            && x.F_Store_Code == $("#readStoreCode").val()
+            && x.F_Kanban_No == $("#readKanbanNo").val()
+            && x.F_Process_Date == $("#inputProcessDateFor").val().replaceAll("-", ""))[0];
+
+        if (_headerQty != undefined) {
+            $("#readQtyPack").val(_headerQty.F_Qty_Box);
+        }
 
         if (_header == undefined) break; //if out of index then break loop
 

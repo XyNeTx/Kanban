@@ -121,9 +121,10 @@ namespace KANBAN.Services.Logistical.Repository
                         new SqlParameter("@User", _BearerClass.UserCode)
                      );
 
-                int CheckError = await _kbContext.Database.ExecuteSqlRawAsync
-                    ($"Select * From TB_Import_Error Where F_Update_By " +
-                    $"= {_BearerClass.UserCode} and F_TYpe ='KBNLC190'");
+                int CheckError = await _kbContext.Database.SqlQueryRaw<int>(
+                    $"Select COUNT(*) AS VALUE From TB_Import_Error Where F_Update_By " +
+                    $"= {_BearerClass.UserCode} and F_TYpe ='KBNLC190'")
+                    .FirstOrDefaultAsync();
 
                 if (CheckError > 0)
                 {
