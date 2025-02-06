@@ -5,126 +5,105 @@
         <div class="card border-left-primary shadow h-100">
             <div class="card-body">
 
-                <form id="frmCondition">
-                    <fieldset class="fieldset">
-                        <legend>Data : </legend>
-
-                        <div class="row">
-                            <div class="col-3">
-                                <item type="select" id="F_OrderFrom" label="Order No." value="@ViewData["_Plant"]" readonly></item>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col">
-                                <fieldset class="fieldset" id="fldDeliveryDate" disabled>
-                                    <legend><item type="checkbox" id="chkDeliveryDate" label="Search by Delivery Date :"></item></legend>
-
-                                    <div class="row">
-                                        <div class="col-3">
-                                            <item type="date" id="F_DeliveryFrom" label="Delivery Date" format="yyyy-mm-dd" default="now"></item>
-                                        </div>
-                                        <div class="col-3">
-                                            <item type="date" id="F_DeliveryTo" label="To" format="yyyy-mm-dd" default="now"></item>
-                                        </div>
-                                    </div>
-                                </fieldset>
-                            </div>
-                        </div>
-
-                    </fieldset>
-                </form>
-
                 <div class="row">
-                    <div class="col mt-4">
-                        <item type="table" id="tblMaster" regend="Maintenance Data"></item>
-                    </div>
-                </div>
 
-            </div>
-        </div>
-    </div>
-
-</div>
-
-
-<!-- Modal Master -->
-<div class="modal fade" id="modalMaster" tabindex="-1" aria-labelledby="modalMasterLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalMasterLabel"> @ViewData["AppName"] <span></span></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form id="frmMaster" class="needs-validation" autocomplete="off" novalidate>
-                <input type="hidden" class="form-control" id="_Action" name="_Action" value="POST">
-                <input type="hidden" class="form-control" id="_ID" name="_ID">
-                <input type="hidden" class="form-control" id="F_Plant" name="F_Plant">
-
-                <div class="modal-body" style="padding-left:10px;padding-top:5px;padding-right:10px;">
-
-                    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar">
-                        <div class="btn-group btn-group-sm me-2" role="group" aria-label="Toolbar">
-
-                            <button type="button" class="btn btn-success" id="btnSave" name="btnSave" onclick="onSave();" title="Save data" @(ViewData["ComponentToolbarSave"].ToString() == "true" ? "" : "disabled")>
-                                <i class="ti-save"></i>
-                            </button>
-                            <button type="button" class="btn btn-success" id="btnPrint" name="btnPrint" onclick="onPrint();" title="Print" @(ViewData["ComponentToolbarPrint"].ToString() == "true" ? "" : "disabled")>
-                                <i class="ti-printer"></i>
-                            </button>
-                            <button type="button" class="btn btn-success" id="btnExecute" name="btnExecute" onclick="onExecute()" title="Execute/Run" @(ViewData["ComponentToolbarExecute"].ToString() == "true" ? "" : "disabled")>
-                                <i class="fas fa-bolt"></i>
-                            </button>
-                            <button type="button" class="btn btn-success" id="btnDelete" name="btnDelete" onclick="onDelete();" title="Delete" @(ViewData["ComponentToolbarDelete"].ToString() == "true" ? "" : "disabled")>
-                                <i class="far fa-trash-alt"></i>
-                            </button>
-
+                    <div class="col-10">
+                    
+                        <div class="row">
+                            <div class="input-group col-6">
+                                <span class="input-group-text">Order No</span>
+                                <select class="selectpicker form-control col-6" id="inpOrderNo">
+                                    <option value="" hidden></option>
+                                </select>
+                            </div>
                         </div>
+
+                        <div class="row mt-4">
+                            <div class="col">
+                                <input type="checkbox" class="form-check-input border-1 border-dark ms-1" id="chkSearch" />
+                                <label class="form-check-label ms-4 justify-content-start align-items-center" for="chkSearch">Search by Delivery Date</label>
+                            </div>
+                        </div>
+
+                        <fieldset class="mt-3 border-4 border-dark">
+                    
+                            <legend>Delivery Date</legend>
+
+                            <div class="row">
+
+                                <div class="col">
+                                    <div class="input-group">
+                                        <span class="input-group-text">Delivery Date From</span>
+                                        <input type="text" class="datepicker form-control col-12" id="inpDeliveryDateFrom" readonly />
+                                    </div>
+                                </div>
+
+                                <div class="col">
+                                    <div class="input-group">
+                                        <span class="input-group-text">Delivery Date To</span>
+                                        <input type="text" class="datepicker form-control col-12" id="inpDeliveryDateTo" readonly/>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </fieldset>
+                    
                     </div>
 
-                    <div class="bg-white border rounded-3">
-                        <section class="w-100 p-2">
-                            <div class="row g-2">
-                                <div class="col-md-6">
-                                    <item type="select" id="F_Plant" label="Plant" value="3" readonly></item>
+                    <div class="col-2">
+
+                        <div class="d-flex flex-column justify-content-end" style="height: 28vh;">
+                            <div class="row justify-content-center">
+                                <div class="col-8">
+                                    <button type="button" class="btn btn-warning w-100" id="btnUpd">Update Cycle</button>
                                 </div>
                             </div>
-                            <div class="row g-2">
-                                <div class="col-md-6">
-                                    <item type="text" id="F_OrderType" label="Order Type"></item>
+                            <div class="row justify-content-center mt-2">
+                                <div class="col-8">
+                                    <button type="button" class="btn btn-success w-100" id="btnSearch">Search</button>
                                 </div>
                             </div>
-                            <div class="row g-2">
-                                <div class="col-md-6">
-                                    <item type="date" id="F_Effect_Date" label="Effective Date" format="yyyy-mm-dd" default="now" noedit required></item>
-                                </div>
-                                <div class="col-md-6">
-                                    <item type="date" id="F_End_Date" label="End Date" format="yyyy-mm-dd" default="now" noedit required></item>
-                                </div>
-                            </div>
-                        </section>
+                        </div>
+
+
                     </div>
 
                 </div>
-            </form>
 
-            <div class="modal-footer" style="padding-left:20px; padding-right:20px;">
-                <i class="modal-reference mr-auto">Reference Code : <i id="_REFERCODE_"></i></i>
-                @if (ViewData["UserGroupID"].ToString() == "1" || ViewData["UserGroupID"].ToString() == "2")
-                {
-                    <a href="#" data-bs-toggle="modal" data-bs-target="#ModalHistory" data-bs-remote="UserMaintenance">
-                        <i class="fas fa-scroll" title="History Log"></i>
-                    </a>
-                }
+                <div class="row mt-4">
+
+                    <div class="col-10">
+
+                        <table id="tableMain" class="table table-bordered border-2 border-dark w-100"></table>
+
+                    </div>
+
+                    <div class="col-2">
+
+                        <div class="row justify-content-center mt-4 pt-4">
+                            <button type="button" class="btn btn-outline-success btn-rounded col-8 mt-2" id="btnSel">Select All</button>
+                            <button type="button" class="btn btn-outline-warning btn-rounded col-8 mt-2" id="btnDesel">Deselect All</button>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="row justify-content-end mt-2">
+
+                    <button type="button" class="btn btn-primary btn-rounded col-1" id="btnConf">Confirm</button>
+                    <a class="btn btn-danger col-1" asp-controller="home" asp-action="index">Exit</a>
+
+                </div>
+
             </div>
         </div>
     </div>
-</div>
 
+</div>
 
 
 @section Scripts{
-    
-    @*<script type="text/javascript" src="~/assets/.script/Template/Master.js"></script>*@
     <script type="text/javascript" src="@FileVersionHelper.VersionedScriptPath("/assets/.script/ServiceData/KBNIM001C.js")"></script>
 }

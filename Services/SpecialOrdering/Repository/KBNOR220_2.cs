@@ -276,13 +276,16 @@ namespace KANBAN.Services.SpecialOrdering.Repository
 
                         if (DTM != null)
                         {
+                            _kbContext.TB_Survey_Detail.Remove(DTM);
+
                             DTM.F_Adjust_Qty = obj.POQty;
                             DTM.F_Qty = obj.Qty.Value;
                             DTM.F_Delivery_Date = obj.Delivery_Date;
                             DTM.F_PDS_No = "";
                             DTM.F_PDS_Flg = 0;
 
-                            _kbContext.TB_Survey_Detail.Update(DTM);
+                            await _kbContext.TB_Survey_Detail.AddAsync(DTM);
+
                         }
                         else
                         {
@@ -355,6 +358,8 @@ namespace KANBAN.Services.SpecialOrdering.Repository
 
                                 _kbContext.TB_Survey_Detail.Add(insDetail);
 
+                                _log.WriteLogMsg("Insert TB_Survey_Header Condtion => add header and detail | Obj => " + JsonConvert.SerializeObject(insHead));
+                                _log.WriteLogMsg("Insert TB_Survey_Detail Condtion => add header and detail | Obj => " + JsonConvert.SerializeObject(insDetail));
                             }
                             else
                             {
@@ -377,6 +382,13 @@ namespace KANBAN.Services.SpecialOrdering.Repository
                                     x.F_Adjust_Qty,
                                 }).ToList();
 
+                                var maxNo = insDetailList.GroupBy(x => x.F_Survey_Doc)
+                                    .Select(x => new
+                                    {
+                                        x.Key,
+                                        MaxNo = x.Max(y => y.F_No)
+                                    }).FirstOrDefault();
+
                                 var insDetail = insDetailList[0];
 
                                 insDetail.F_Survey_Doc = DTY[0].h.F_Survey_Doc;
@@ -386,21 +398,13 @@ namespace KANBAN.Services.SpecialOrdering.Repository
                                 insDetail.F_Delivery_Date = obj.Delivery_Date;
 
                                 _kbContext.TB_Survey_Detail.Add(insDetail);
+
+                                _log.WriteLogMsg("Insert TB_Survey_Detail Condtion => add new Qty | Obj => " + JsonConvert.SerializeObject(insDetail));
                             }
                         }
                     }
                     else
                     {
-                        //var _updDetail = await _kbContext.TB_Survey_Detail
-                        //    .Where(x => x.F_Survey_Doc.Trim() == obj.Survey
-                        //    && x.F_Part_No.Trim() + "-" + x.F_Ruibetsu.Trim() == obj.PartNo
-                        //    && x.F_Delivery_Date.Trim() == obj.Delivery_Date).FirstOrDefaultAsync();
-
-                        //if (_updDetail != null)
-                        //{
-                        //    _updDetail.F_Qty = 0;
-                        //    _kbContext.TB_Survey_Detail.Update(_updDetail);
-                        //}
 
                         //EF Core cant update primary key
                         string _sql = $@"Update TB_Survey_Detail Set F_Qty = 0 

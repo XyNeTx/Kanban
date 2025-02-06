@@ -606,6 +606,8 @@ namespace KANBAN.Services.SpecialOrdering.Repository
                     await UpdateCollectDT();
 
                 }
+
+
             }
             catch (Exception ex)
             {

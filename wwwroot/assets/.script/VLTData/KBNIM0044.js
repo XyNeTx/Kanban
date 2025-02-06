@@ -192,12 +192,12 @@ $("#btnSimulate").on("click", function () {
 
 });
 
-$(document).on("click", "#tableMain tbody tr td:not(input[type='checkbox'])", function () {
-    if (isSimulate) {
-        return;
-    }
-    $(this).closest("tr").find("input[type='checkbox']").prop("checked", !$(this).closest("tr").find("input[type='checkbox']").prop("checked"));
-});
+//$(document).on("dblclick", "#tableMain tbody tr td:not(input[type='checkbox'])", function () {
+//    if (isSimulate) {
+//        return;
+//    }
+//    $(this).closest("tr").find("input[type='checkbox']").prop("checked", !$(this).closest("tr").find("input[type='checkbox']").prop("checked"));
+//});
 
 $("#chkSlider").on("change", function () {
     GetListData();
@@ -266,6 +266,8 @@ $("#btnDel").click(function () {
 });
 
 function UpdateFlag(Flag) {
+    xSplash.show();
+
     let listObj = $("#tableMain").DataTable().rows().data().toArray();
 
     if (Flag === "P" || Flag === "D")
@@ -280,9 +282,10 @@ function UpdateFlag(Flag) {
     }
 
     _xLib.AJAX_Post("/api/KBNIM0044/UpdateFlag", listObj,
-        function (success) {
+        async function (success) {
+            await GetListData();
+            xSplash.hide();
             xSwal.success(success.response, success.message);
-            GetListData();
         },
         function (error) {
             xSwal.error(error.responseJSON.response, error.responseJSON.message);

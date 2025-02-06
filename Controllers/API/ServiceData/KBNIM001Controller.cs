@@ -1,20 +1,25 @@
 ﻿using HINOSystem.Context;
 using HINOSystem.Libs;
+using KANBAN.Context;
+using KANBAN.Models.KB3.UrgentOrder;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-//using static System.Runtime.InteropServices.JavaScript.JSType;
+using Microsoft.EntityFrameworkCore;
 
 namespace HINOSystem.Controllers.API.ServiceData
 {
-    public class KBNIM001Controller : Controller
+    [ApiController]
+    [Route("api/[controller]/[action]")]
+    public class KBNIM001Controller : ControllerBase
     {
         private readonly IConfiguration _configuration;
         private readonly BearerClass _BearerClass;
-        private readonly ActionResultClass _ActionResult;        
+        private readonly ActionResultClass _ActionResult;
         private readonly KanbanConnection _KBCN;
         private readonly PPMConnect _PPMConnect;
-
+        private readonly PPM3Context _PPM3Context;
         private readonly KB3Context _KB3Context;
+        private readonly SerilogLibs _Log;
+        private readonly FillDataTable _FillDT;
 
 
         private readonly string StoragePath = @"wwwroot\Storage\Uploads";
@@ -25,7 +30,10 @@ namespace HINOSystem.Controllers.API.ServiceData
             ActionResultClass actionResultClass,
             KanbanConnection kanbanConnection,
             PPMConnect ppmConnect,
-            KB3Context kB3Context
+            KB3Context kB3Context,
+            PPM3Context pPM3Context,
+            SerilogLibs serilogLibs,
+            FillDataTable fillDT
             )
         {
             _configuration = configuration;
@@ -34,78 +42,109 @@ namespace HINOSystem.Controllers.API.ServiceData
             _KB3Context = kB3Context;
             _KBCN = kanbanConnection;
             _PPMConnect = ppmConnect;
-
+            _PPM3Context = pPM3Context;
+            _Log = serilogLibs;
+            _FillDT = fillDT;
         }
-
 
 
         [HttpPost]
-        public IActionResult initial([FromBody] string pData = null)
+        public async Task<IActionResult> ImportData(List<TB_Import_Service> listObj)
         {
-            dynamic _json = null;
-            string _SQL = "";
+            _BearerClass.Authentication(Request);
+
+            if (_BearerClass.Status == 401) return Unauthorized(new
+            {
+                status = "401",
+                response = "Unauthorized",
+                title = "Unauthorized",
+                message = "Please Login First"
+            });
+
+            using var _KB3Transaction = _KB3Context.Database.BeginTransaction();
+            string UserID = HttpContext.Session.GetString("USER_CODE");
             try
             {
-                _BearerClass.Authentication(Request);
-                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
+                _KB3Transaction.CreateSavepoint("BeforeImport");
+                await _KB3Context.Database.ExecuteSqlRawAsync($"DELETE FROM TB_Import_Service WHERE F_Update_By = '{UserID}'");
 
-                if (pData != null) _json = JsonConvert.DeserializeObject(pData);
+                foreach (var each in listObj)
+                {
+                    if (each.F_Part_No.Count() == 10)
+                    {
+                        each.F_Ruibetsu = "00";
+                    }
+                    else
+                    {
+                        each.F_Ruibetsu = each.F_Part_No.Substring(10, 2);
+                        each.F_Part_No = each.F_Part_No.Substring(0, 10);
+                    }
+                    each.F_Update_By = UserID;
+                }
 
-                _SQL = @" EXEC [exec].[spTB_MS_FACTORY] ";
-                string _jsTB_MS_Factory = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
 
-                string _result = @"{
-                    ""status"":""200"",
-                    ""response"":""OK"",
-                    ""message"": ""Data Found"",
-                    ""data"":
-                            {
-                                ""TB_MS_Factory"" : " + _jsTB_MS_Factory + @"
-                            }
-                }";
-                return Content(_result, "application/json");
+                await _KB3Context.TB_Import_Service.AddRangeAsync(listObj);
+                await _KB3Context.SaveChangesAsync();
+                _KB3Transaction.Commit();
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "OK",
+                    message = "Data has been imported successfully",
+                    data = listObj,
+                });
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                return Content(e.Message.ToString(), "application/json");
+                _KB3Transaction.RollbackToSavepoint("BeforeImport");
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    response = "Internal Server Error",
+                    message = "Unexpected Error",
+                    error = ex.Message
+                });
             }
         }
 
-
-
-        [HttpPost]
-        public IActionResult search([FromBody] string pData = null)
+        [HttpGet]
+        public async Task<IActionResult> AfterImported(string advDate)
         {
-            dynamic _json = null;
-            string _SQL = "";
+            _BearerClass.Authentication(Request);
+
+            if (_BearerClass.Status == 401) return Unauthorized(new
+            {
+                status = "401",
+                response = "Unauthorized",
+                title = "Unauthorized",
+                message = "Please Login First"
+            });
+
+            using var _KB3Transaction = _KB3Context.Database.BeginTransaction();
+            string UserID = HttpContext.Session.GetString("USER_CODE");
+            string Plant = HttpContext.Session.GetString("USER_PLANT");
+
             try
             {
-                _BearerClass.Authentication(Request);
-                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
-
-                _json = JsonConvert.DeserializeObject(pData);
-
-
-                _SQL = @" EXEC [exec].[spKBNMS001_SEARCH] '" + _json.F_Plant + "' ";
-                
-                string _jsonData = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
-
-
-
-                string _result = @"{
-                    ""status"":""200"",
-                    ""response"":""OK"",
-                    ""message"": ""Data Found"",
-                    ""data"": " + _jsonData + @"
-                }";
-                return Content(_result, "application/json");
+                await _KB3Context.Database.ExecuteSqlRawAsync($"Exec dbo.SP_IM001_IMPORT_SRV '{Plant}','{UserID}' ,'{advDate}' ");
+                return Ok(new
+                {
+                    status = "200",
+                    response = "OK",
+                    message = "Data has been imported successfully",
+                });
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                return Content(e.Message.ToString(), "application/json");
+                return StatusCode(500, new
+                {
+                    status = "500",
+                    response = "Internal Server Error",
+                    message = "Unexpected Error",
+                    error = ex.Message
+                });
             }
         }
-
-
     }
 }

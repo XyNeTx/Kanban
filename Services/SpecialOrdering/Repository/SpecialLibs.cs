@@ -663,8 +663,15 @@ namespace KANBAN.Services.SpecialOrdering.Repository
                     }
                 }
 
+                string FacCD = Fac switch
+                {
+                    "1" => "9Z",
+                    "2" => "8Z",
+                    _ => "7Z",
+                };
+
                 string sql = $@"Select Isnull(Cast(Right(Max(F_OrderNo),{Digit}) As integer),0) As F_Running 
-                        From TB_PDS_Header Where F_OrderNo like '9Z%' ";
+                        From TB_PDS_Header Where F_OrderNo like '{FacCD}%' ";
 
                 if (!string.IsNullOrWhiteSpace(DeliYM))
                 {

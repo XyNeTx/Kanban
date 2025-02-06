@@ -133,7 +133,7 @@ namespace HINOSystem.Controllers.API.Master
                     status = "500",
                     response = "Internal Server Error",
                     title = "Internal Server Error",
-                    message = "Unexpected Error While Saving the Data",
+                    message = ex.InnerException.Message == null ? ex.Message : ex.InnerException.Message,
                     err = ex.Message
                 });
             }
@@ -207,7 +207,7 @@ namespace HINOSystem.Controllers.API.Master
                     status = "500",
                     response = "Internal Server Error",
                     title = "Internal Server Error",
-                    message = "Unexpected Error While Saving the Data",
+                    message = ex.InnerException.Message == null ? ex.Message : ex.InnerException.Message,
                     err = ex.Message
                 });
             }
@@ -255,7 +255,7 @@ namespace HINOSystem.Controllers.API.Master
                     status = "500",
                     response = "Internal Server Error",
                     title = "Internal Server Error",
-                    message = "Unexpected Error While Deleting Data",
+                    message = ex.InnerException.Message == null ? ex.Message : ex.InnerException.Message,
                     err = ex.Message
                 });
             }
@@ -321,7 +321,7 @@ namespace HINOSystem.Controllers.API.Master
                     status = "500",
                     response = "Internal Server Error",
                     title = "Internal Server Error",
-                    message = "Unexpected Error",
+                    message = ex.InnerException.Message == null ? ex.Message : ex.InnerException.Message,
                     err = ex.Message
                 });
             }
@@ -399,7 +399,7 @@ namespace HINOSystem.Controllers.API.Master
                     status = "500",
                     response = "Internal Server Error",
                     title = "Internal Server Error",
-                    message = "Can't Get Supplier Code",
+                    message = ex.InnerException.Message == null ? ex.Message : ex.InnerException.Message,
                     err = ex.Message
                 });
             }
@@ -501,7 +501,7 @@ namespace HINOSystem.Controllers.API.Master
                     status = "500",
                     response = "Internal Server Error",
                     title = "Internal Server Error",
-                    message = "Can't Get Supplier Detail",
+                    message = ex.InnerException.Message == null ? ex.Message : ex.InnerException.Message,
                     err = ex.Message
                 });
             }
@@ -567,7 +567,7 @@ namespace HINOSystem.Controllers.API.Master
                     status = "500",
                     response = "Internal Server Error",
                     title = "Internal Server Error",
-                    message = "Can't Get Part No",
+                    message = ex.InnerException.Message == null ? ex.Message : ex.InnerException.Message,
                     err = ex.Message
                 });
             }
@@ -670,7 +670,7 @@ namespace HINOSystem.Controllers.API.Master
                     status = "500",
                     response = "Internal Server Error",
                     title = "Internal Server Error",
-                    message = "Can't Get Supplier Detail",
+                    message = ex.InnerException.Message == null ? ex.Message : ex.InnerException.Message,
                     err = ex.Message
                 });
             }
@@ -722,7 +722,7 @@ namespace HINOSystem.Controllers.API.Master
                     status = "500",
                     response = "Internal Server Error",
                     title = "Internal Server Error",
-                    message = "Unexpected Error While Saving the Data",
+                    message = ex.InnerException.Message == null ? ex.Message : ex.InnerException.Message,
                     err = ex.Message
                 });
             }
@@ -789,7 +789,7 @@ namespace HINOSystem.Controllers.API.Master
                     status = "500",
                     response = "Internal Server Error",
                     title = "Internal Server Error",
-                    message = "Unexpected Error While Saving the Data",
+                    message = ex.InnerException.Message == null ? ex.Message : ex.InnerException.Message,
                     err = ex.Message
                 });
             }

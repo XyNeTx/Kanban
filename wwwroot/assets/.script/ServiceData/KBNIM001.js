@@ -80,7 +80,7 @@ $("#btnImport").on("click", async function () {
 
             console.log(filterData);
 
-            await _xLib.AJAX_Post("/api/KBNIM001C/ImportData", JSON.stringify(filterData),
+            await _xLib.AJAX_Post("/api/KBNIM001/ImportData", JSON.stringify(filterData),
                 async function (success) {
                     //console.log(success);
                     await $("#tblCOMPLETE").DataTable().row.add({ F_File_Name: file.name }).draw();
@@ -105,7 +105,7 @@ $("#btnImport").on("click", async function () {
 
 async function AfterImported() {
     var AdvanceDate = $("#AdvanceDate").val();
-    _xLib.AJAX_Get("/api/KBNIM001C/AfterImported", { advDate: AdvanceDate },
+    _xLib.AJAX_Get("/api/KBNIM001/AfterImported", { advDate: AdvanceDate },
         function (success) {
             return xSwal.success("Success", success.message);
         },

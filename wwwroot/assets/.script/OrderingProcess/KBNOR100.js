@@ -35,6 +35,7 @@ $(document).ready(function () {
                         $(`#${_btnName}`).prop('disabled', true);
                     });
                 }
+                xSwal.error("Error", error.responseJSON.message);
             }
         );
 

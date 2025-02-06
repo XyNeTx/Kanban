@@ -128,6 +128,15 @@ namespace KANBAN.Services.Import.Repository
         {
             try
             {
+                var isConfirmed = await _kbContext.TB_Import_VHD
+                    .AsNoTracking()
+                    .AnyAsync(x => x.F_Update_By == _BearerClass.UserCode
+                    && x.F_Flag == "C"
+                    && x.F_Deli_Shift == listData[0].F_Deli_Shift
+                    && x.F_Deli_Date == listData[0].F_Deli_Date);
+
+                if (isConfirmed) throw new CustomHttpException(400, "This Date and Shift already confirmed");
+
                 foreach (var data in listData)
                 {
                     var vltData = await _kbContext.TB_Import_VHD

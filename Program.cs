@@ -106,7 +106,13 @@ builder.Services.AddScoped<ISpecialOrderingServices, SpecialOrderingServices>();
 builder.Services.AddScoped<IMasterRepo, MasterRepo>();
 builder.Services.AddScoped<IOtherConditionRepo, OtherConditionRepo>();
 
-builder.Services.AddAutoMapper(typeof(PDS_Header_To_REC_Header_Profile), typeof(PDS_Detail_To_Rec_Detail_Profile));
+builder.Services.AddAutoMapper
+    (
+        typeof(PDS_Header_To_REC_Header_Profile),
+        typeof(PDS_Detail_To_Rec_Detail_Profile),
+        typeof(TransactionTMP_To_Transaction_Profile)
+    );
+
 builder.Services.AddTransient(typeof(IAutoMapRepo<,>), typeof(AutoMapRepo<,>));
 builder.Services.AddTransient<IAutoMapService, AutoMapService>();
 

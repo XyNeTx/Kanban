@@ -1,6 +1,5 @@
 ﻿using HINOSystem.Context;
 using HINOSystem.Libs;
-using HINOSystem.Models.KB3.Master;
 using KANBAN.Context;
 using KANBAN.Libs;
 using KANBAN.Models.KB3.Receive_Process;
@@ -119,6 +118,8 @@ namespace KANBAN.Services.SpecialOrdering.Repository
                     _ => "9Z"
                 };
 
+                List<string> listOrder = new List<string>();
+
                 foreach (var obj in listObj)
                 {
                     await _kbContext.TB_REC_HEADER
@@ -138,7 +139,12 @@ namespace KANBAN.Services.SpecialOrdering.Repository
                         Values ('{obj.F_OrderNo}', '{obj.F_Approver}', GetDate(), '{_BearerClass.UserCode}')";
 
                     await _kbContext.Database.ExecuteSqlRawAsync(sql);
-                    sPDS = sPDS + obj.F_OrderNo + "<br>";
+
+                    if (!listOrder.Contains(obj.F_OrderNo))
+                    {
+                        listOrder.Add(obj.F_OrderNo);
+                        sPDS = sPDS + obj.F_OrderNo + "<br>";
+                    }
 
                     await _kbContext.SaveChangesAsync();
                 }
@@ -150,7 +156,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             }
             catch (Exception ex)
             {
-                if(ex is CustomHttpException) throw;
+                if (ex is CustomHttpException) throw;
                 throw new CustomHttpException(500, ex.Message);
             }
         }
