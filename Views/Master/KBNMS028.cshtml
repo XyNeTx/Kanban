@@ -1,24 +1,424 @@
-﻿<div class="row">
+﻿@model TB_MS_Remark_DocSheet;
+
+<div class="row">
 
     <div class="col-xl-12 col-md-12 col-sm-12">
         <div class="card border-left-primary shadow h-100">
             <div class="card-body">
 
-                <form id="frmCondition">
-@*
+                <div class="row">
+                    <table id="tableMain" class="table table-bordered border-2 border-dark w-100"></table>
+                </div>
+
+                <form id="formMain">
+                    
                     <div class="row">
-                        <div class="col-6">
-                            <item type="select" id="F_Plant" label="Plant" value="3" readonly></item>
+
+                        <div class="col-4">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-4" asp-for="F_Dock_Cd"></label>
+                                <select class="selectpicker p-0 col-6" asp-for="F_Dock_Cd">
+                                    <option value="" hidden></option>
+                                </select>
+                            </div>
+
                         </div>
+
+                        <div class="col-6">
+
+                            <span class="text-danger">Remark : Dock Code ไม่เลือกออกหมด</span>
+
+                        </div>
+
                     </div>
-*@
+
+                    <div class="row">
+
+                        <div class="col-4">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-4" asp-for="F_short_Logistic1"></label>
+                                <select class="selectpicker p-0 col-6" asp-for="F_short_Logistic1">
+                                    <option value="" hidden></option>
+                                </select>
+                            </div>
+
+                        </div>
+
+                        <div class="col-6">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-2" asp-for="F_Remark1"></label>
+                                <input type="text" class="form-control col-10" asp-for="F_Remark1"/>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-4">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-4" asp-for="F_short_Logistic2"></label>
+                                <select class="selectpicker p-0 col-6" asp-for="F_short_Logistic2">
+                                    <option value="" hidden></option>
+                                </select>
+                            </div>
+
+                        </div>
+
+                        <div class="col-6">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-2" asp-for="F_Remark2"></label>
+                                <input type="text" class="form-control col-10" asp-for="F_Remark2" />
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-4">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-4" asp-for="F_short_Logistic3"></label>
+                                <select class="selectpicker p-0 col-6" asp-for="F_short_Logistic3">
+                                    <option value="" hidden></option>
+                                </select>
+                            </div>
+
+                        </div>
+
+                        <div class="col-6">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-2" asp-for="F_Remark3"></label>
+                                <input type="text" class="form-control col-10" asp-for="F_Remark3" />
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-4">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-4" asp-for="F_short_Logistic4"></label>
+                                <select class="selectpicker p-0 col-6" asp-for="F_short_Logistic4">
+                                    <option value="" hidden></option>
+                                </select>
+                            </div>
+
+                        </div>
+
+                        <div class="col-6">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-2" asp-for="F_Remark4"></label>
+                                <input type="text" class="form-control col-10" asp-for="F_Remark4" />
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-4">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-4" asp-for="F_short_Logistic5"></label>
+                                <select class="selectpicker p-0 col-6" asp-for="F_short_Logistic5">
+                                    <option value="" hidden></option>
+                                </select>
+                            </div>
+
+                        </div>
+
+                        <div class="col-6">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-2" asp-for="F_Remark5"></label>
+                                <input type="text" class="form-control col-10" asp-for="F_Remark5" />
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-4">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-4" asp-for="F_short_Logistic6"></label>
+                                <select class="selectpicker p-0 col-6" asp-for="F_short_Logistic6">
+                                    <option value="" hidden></option>
+                                </select>
+                            </div>
+
+                        </div>
+
+                        <div class="col-6">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-2" asp-for="F_Remark6"></label>
+                                <input type="text" class="form-control col-10" asp-for="F_Remark6" />
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-4">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-4" asp-for="F_short_Logistic7"></label>
+                                <select class="selectpicker p-0 col-6" asp-for="F_short_Logistic7">
+                                    <option value="" hidden></option>
+                                </select>
+                            </div>
+
+                        </div>
+
+                        <div class="col-6">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-2" asp-for="F_Remark7"></label>
+                                <input type="text" class="form-control col-10" asp-for="F_Remark7" />
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-4">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-4" asp-for="F_short_Logistic8"></label>
+                                <select class="selectpicker p-0 col-6" asp-for="F_short_Logistic8">
+                                    <option value="" hidden></option>
+                                </select>
+                            </div>
+
+                        </div>
+
+                        <div class="col-6">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-2" asp-for="F_Remark8"></label>
+                                <input type="text" class="form-control col-10" asp-for="F_Remark8" />
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-4">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-4" asp-for="F_short_Logistic9"></label>
+                                <select class="selectpicker p-0 col-6" asp-for="F_short_Logistic9">
+                                    <option value="" hidden></option>
+                                </select>
+                            </div>
+
+                        </div>
+
+                        <div class="col-6">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-2" asp-for="F_Remark9"></label>
+                                <input type="text" class="form-control col-10" asp-for="F_Remark9" />
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-4">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-4" asp-for="F_short_Logistic10"></label>
+                                <select class="selectpicker p-0 col-6" asp-for="F_short_Logistic10">
+                                    <option value="" hidden></option>
+                                </select>
+                            </div>
+
+                        </div>
+
+                        <div class="col-6">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-2" asp-for="F_Remark10"></label>
+                                <input type="text" class="form-control col-10" asp-for="F_Remark10" />
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-4">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-4" asp-for="F_short_Logistic11"></label>
+                                <select class="selectpicker p-0 col-6" asp-for="F_short_Logistic11">
+                                    <option value="" hidden></option>
+                                </select>
+                            </div>
+
+                        </div>
+
+                        <div class="col-6">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-2" asp-for="F_Remark11"></label>
+                                <input type="text" class="form-control col-10" asp-for="F_Remark11" />
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-4">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-4" asp-for="F_short_Logistic12"></label>
+                                <select class="selectpicker p-0 col-6" asp-for="F_short_Logistic12">
+                                    <option value="" hidden></option>
+                                </select>
+                            </div>
+
+                        </div>
+
+                        <div class="col-6">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-2" asp-for="F_Remark12"></label>
+                                <input type="text" class="form-control col-10" asp-for="F_Remark12" />
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-4">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-4" asp-for="F_short_Logistic13"></label>
+                                <select class="selectpicker p-0 col-6" asp-for="F_short_Logistic13">
+                                    <option value="" hidden></option>
+                                </select>
+                            </div>
+
+                        </div>
+
+                        <div class="col-6">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-2" asp-for="F_Remark13"></label>
+                                <input type="text" class="form-control col-10" asp-for="F_Remark13" />
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-4">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-4" asp-for="F_short_Logistic14"></label>
+                                <select class="selectpicker p-0 col-6" asp-for="F_short_Logistic14">
+                                    <option value="" hidden></option>
+                                </select>
+                            </div>
+
+                        </div>
+
+                        <div class="col-6">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-2" asp-for="F_Remark14"></label>
+                                <input type="text" class="form-control col-10" asp-for="F_Remark14" />
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-4">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-4" asp-for="F_short_Logistic15"></label>
+                                <select class="selectpicker p-0 col-6" asp-for="F_short_Logistic15">
+                                    <option value="" hidden></option>
+                                </select>
+                            </div>
+
+                        </div>
+
+                        <div class="col-6">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-2" asp-for="F_Remark15"></label>
+                                <input type="text" class="form-control col-10" asp-for="F_Remark15" />
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-4">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-4" asp-for="F_short_Logistic16"></label>
+                                <select class="selectpicker p-0 col-6" asp-for="F_short_Logistic16">
+                                    <option value="" hidden></option>
+                                </select>
+                            </div>
+
+                        </div>
+
+                        <div class="col-6">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-2" asp-for="F_Remark16"></label>
+                                <input type="text" class="form-control col-10" asp-for="F_Remark16" />
+                            </div>
+
+                        </div>
+
+                    </div>
+
                 </form>
 
-                <div class="row">
-                    <div class="col mt-4">
-                        <item type="table" id="tblMaster"></item>
-                    </div>
-                </div>
 
             </div>
         </div>
@@ -26,213 +426,7 @@
 
 </div>
 
-
-<!-- Modal Master -->
-<div class="modal fade" id="modalMaster" tabindex="-1" aria-labelledby="modalMasterLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalMasterLabel"> @ViewData["AppName"] <span></span></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form id="frmMaster" class="needs-validation" autocomplete="off" novalidate>
-                <div class="modal-body" style="padding-left:10px;padding-top:5px;padding-right:10px;">
-
-                    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar">
-                        <div class="btn-group btn-group-sm me-2" role="group" aria-label="Toolbar">
-
-                            <button type="button" class="btn btn-success" id="btnSave" name="btnSave" onclick="onSave();" title="Save data" @(ViewData["ComponentToolbarSave"].ToString() == "true" ? "" : "disabled")>
-                                <i class="ti-save"></i>
-                            </button>
-                            <button type="button" class="btn btn-success" id="btnPrint" name="btnPrint" onclick="onPrint();" title="Print" @(ViewData["ComponentToolbarPrint"].ToString() == "true" ? "" : "disabled")>
-                                <i class="ti-printer"></i>
-                            </button>
-                            <button type="button" class="btn btn-success" id="btnExecute" name="btnExecute" onclick="onExecute()" title="Execute/Run" @(ViewData["ComponentToolbarExecute"].ToString() == "true" ? "" : "disabled")>
-                                <i class="fas fa-bolt"></i>
-                            </button>
-                            <button type="button" class="btn btn-success" id="btnDelete" name="btnDelete" onclick="onDelete();" title="Delete" @(ViewData["ComponentToolbarDelete"].ToString() == "true" ? "" : "disabled")>
-                                <i class="far fa-trash-alt"></i>
-                            </button>
-
-                        </div>
-                    </div>
-
-                    <input type="hidden" class="form-control" id="_Action" name="_Action" value="POST">
-                    <input type="hidden" class="form-control" id="F_Plant" name="F_Plant">
-                    <div class="bg-white border rounded-3">
-                        <section class="w-100 p-2">
-
-                            <div class="row g-2">
-                                <div class="col-md-6">
-                                    <item type="list" id="F_Dock_Cd" label="Dock Code"></item>
-                                </div>
-                            </div>
-
-                            <div class="row g-2">
-                                <div class="col-md-5">
-                                    <item type="list" id="F_short_Logistic1" label="Supplier LP1"></item>
-                                </div>
-                                <div class="col-md-7">
-                                    <item type="text" id="F_Remark1" label="Remark1"></item>
-                                </div>
-                            </div>
-
-                            <div class="row g-2">
-                                <div class="col-md-5">
-                                    <item type="list" id="F_short_Logistic2" label="Supplier LP2"></item>
-                                </div>
-                                <div class="col-md-7">
-                                    <item type="text" id="F_Remark2" label="Remark2"></item>
-                                </div>
-                            </div>
-
-                            <div class="row g-2">
-                                <div class="col-md-5">
-                                    <item type="list" id="F_short_Logistic3" label="Supplier LP3"></item>
-                                </div>
-                                <div class="col-md-7">
-                                    <item type="text" id="F_Remark3" label="Remark3"></item>
-                                </div>
-                            </div>
-
-                            <div class="row g-2">
-                                <div class="col-md-5">
-                                    <item type="list" id="F_short_Logistic4" label="Supplier LP4"></item>
-                                </div>
-                                <div class="col-md-7">
-                                    <item type="text" id="F_Remark4" label="Remark4"></item>
-                                </div>
-                            </div>
-
-                            <div class="row g-2">
-                                <div class="col-md-5">
-                                    <item type="list" id="F_short_Logistic5" label="Supplier LP5"></item>
-                                </div>
-                                <div class="col-md-7">
-                                    <item type="text" id="F_Remark5" label="Remark5"></item>
-                                </div>
-                            </div>
-
-                            <div class="row g-2">
-                                <div class="col-md-5">
-                                    <item type="list" id="F_short_Logistic6" label="Supplier LP6"></item>
-                                </div>
-                                <div class="col-md-7">
-                                    <item type="text" id="F_Remark6" label="Remark6"></item>
-                                </div>
-                            </div>
-
-                            <div class="row g-2">
-                                <div class="col-md-5">
-                                    <item type="list" id="F_short_Logistic7" label="Supplier LP7"></item>
-                                </div>
-                                <div class="col-md-7">
-                                    <item type="text" id="F_Remark7" label="Remark7"></item>
-                                </div>
-                            </div>
-
-                            <div class="row g-2">
-                                <div class="col-md-5">
-                                    <item type="list" id="F_short_Logistic8" label="Supplier LP8"></item>
-                                </div>
-                                <div class="col-md-7">
-                                    <item type="text" id="F_Remark8" label="Remark8"></item>
-                                </div>
-                            </div>
-
-                            <div class="row g-2">
-                                <div class="col-md-5">
-                                    <item type="list" id="F_short_Logistic9" label="Supplier LP9"></item>
-                                </div>
-                                <div class="col-md-7">
-                                    <item type="text" id="F_Remark9" label="Remark9"></item>
-                                </div>
-                            </div>
-
-                            <div class="row g-2">
-                                <div class="col-md-5">
-                                    <item type="list" id="F_short_Logistic10" label="Supplier LP10"></item>
-                                </div>
-                                <div class="col-md-7">
-                                    <item type="text" id="F_Remark10" label="Remark10"></item>
-                                </div>
-                            </div>
-
-                            <div class="row g-2">
-                                <div class="col-md-5">
-                                    <item type="list" id="F_short_Logistic11" label="Supplier LP11"></item>
-                                </div>
-                                <div class="col-md-7">
-                                    <item type="text" id="F_Remark11" label="Remark11"></item>
-                                </div>
-                            </div>
-
-                            <div class="row g-2">
-                                <div class="col-md-5">
-                                    <item type="list" id="F_short_Logistic12" label="Supplier LP12"></item>
-                                </div>
-                                <div class="col-md-7">
-                                    <item type="text" id="F_Remark12" label="Remark12"></item>
-                                </div>
-                            </div>
-
-                            <div class="row g-2">
-                                <div class="col-md-5">
-                                    <item type="list" id="F_short_Logistic13" label="Supplier LP13"></item>
-                                </div>
-                                <div class="col-md-7">
-                                    <item type="text" id="F_Remark13" label="Remark13"></item>
-                                </div>
-                            </div>
-
-                            <div class="row g-2">
-                                <div class="col-md-5">
-                                    <item type="list" id="F_short_Logistic14" label="Supplier LP14"></item>
-                                </div>
-                                <div class="col-md-7">
-                                    <item type="text" id="F_Remark14" label="Remark14"></item>
-                                </div>
-                            </div>
-
-                            <div class="row g-2">
-                                <div class="col-md-5">
-                                    <item type="list" id="F_short_Logistic15" label="Supplier LP15"></item>
-                                </div>
-                                <div class="col-md-7">
-                                    <item type="text" id="F_Remark15" label="Remark15"></item>
-                                </div>
-                            </div>
-
-                            <div class="row g-2">
-                                <div class="col-md-5">
-                                    <item type="list" id="F_short_Logistic16" label="Supplier LP16"></item>
-                                </div>
-                                <div class="col-md-7">
-                                    <item type="text" id="F_Remark16" label="Remark16"></item>
-                                </div>
-                            </div>
-                        </section>
-                    </div>
-
-                </div>
-            </form>
-
-            <div class="modal-footer" style="padding-left:20px; padding-right:20px;">
-                <i class="modal-reference mr-auto">Reference Code : <i id="_REFERCODE_"></i></i>
-                @if (ViewData["UserGroupID"].ToString() == "1" || ViewData["UserGroupID"].ToString() == "2")
-                {
-                    <a href="#" data-bs-toggle="modal" data-bs-target="#ModalHistory" data-bs-remote="UserMaintenance">
-                        <i class="fas fa-scroll" title="History Log"></i>
-                    </a>
-                }
-            </div>
-
-        </div>
-    </div>
-</div>
-
-
-
+@using HINOSystem.Models.KB3.Master
 @using KANBAN.Libs
 @section Scripts {
     <script type="text/javascript" src="@FileVersionHelper.VersionedScriptPath("/assets/.script/Master/KBNMS028.js")"></script>
