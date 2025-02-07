@@ -83,6 +83,10 @@ $("#btnUpd").click(function () {
     UpdateCycle();
 });
 
+$("#btnConf").click(function () {
+    Confirm();
+});
+
 function GetOrderNo() {
 
     let obj = {
@@ -94,6 +98,7 @@ function GetOrderNo() {
     _xLib.AJAX_Get("/api/KBNIM001C/GetOrderNo", obj,
         function (success) {
             console.log(success);
+            $("#inpOrderNo").addListSelectPicker(success.data, "f_PDS_No");
         },
         function (error) {
             xSwal.error(error.responseJSON.response, error.responseJSON.message);
@@ -120,18 +125,42 @@ function Search() {
 
 }
 
-function UpdateCycle() {
+async function UpdateCycle() {
+    var isConfirm = await xSwal.confirm("Are you sure to update the cycle?");
 
-    _xLib.AJAX_Post("/api/KBNIM001C/UpdateCycle", null,
-        function (success) {
-            console.log(success);
-            xSwal.success(success.response, success.message);
-            //Search();
-        },
-        function (error) {
-            xSwal.error(error.responseJSON.response, error.responseJSON.message);
-        }
-    );
+    if (isConfirm) {
 
+        _xLib.AJAX_Post("/api/KBNIM001C/UpdateCycle", null,
+            function (success) {
+                console.log(success);
+                xSwal.success(success.response, success.message);
+                Search();
+            },
+            function (error) {
+                xSwal.error(error.responseJSON.response, error.responseJSON.message);
+            }
+        );
+
+    }
 
 }
+
+async function Confirm() {
+    var isConfirm = await xSwal.confirm("Are you sure to Confirm Order Service?");
+
+    var listData = _xDataTable.GetSelectedDataDT("#tableMain");
+
+    if (isConfirm) {
+        _xLib.AJAX_Post("/api/KBNIM001C/Confirm", listData,
+            function (success) {
+                console.log(success);
+                xSwal.success(success.response, success.message);
+                Search();
+            },
+            function (error) {
+                xSwal.error(error.responseJSON.response, error.responseJSON.message);
+            }
+        );
+    }
+
+ }

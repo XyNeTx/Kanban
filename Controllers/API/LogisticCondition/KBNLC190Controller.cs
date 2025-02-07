@@ -1,5 +1,4 @@
-﻿using HINOSystem.Context;
-using HINOSystem.Libs;
+﻿using HINOSystem.Libs;
 using KANBAN.Models.KB3.LogisticCondition;
 using KANBAN.Services.Logistical.Interface;
 using Microsoft.AspNetCore.Mvc;
@@ -49,7 +48,7 @@ namespace HINOSystem.Controllers.API.Master
             }
             catch (Exception ex)
             {
-                return StatusCode(500,new
+                return StatusCode(500, new
                 {
                     status = "500",
                     response = "Internal Server Error",
@@ -79,7 +78,7 @@ namespace HINOSystem.Controllers.API.Master
                     status = "200",
                     response = "Success",
                     message = "Data has been Found",
-                    data = data.Select(x=>new
+                    data = data.Select(x => new
                     {
                         x.F_short_Logistic,
                         x.F_Supplier_Code,

@@ -2,7 +2,9 @@
 using HINOSystem.Libs;
 using KANBAN.Context;
 using KANBAN.Models.KB3.UrgentOrder;
+using KANBAN.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace HINOSystem.Controllers.API.ServiceData
@@ -66,8 +68,6 @@ namespace HINOSystem.Controllers.API.ServiceData
             try
             {
                 _KB3Transaction.CreateSavepoint("BeforeImport");
-                await _KB3Context.Database.ExecuteSqlRawAsync($"DELETE FROM TB_Import_Service WHERE F_Update_By = '{UserID}'");
-
                 foreach (var each in listObj)
                 {
                     if (each.F_Part_No.Count() == 10)
@@ -102,8 +102,7 @@ namespace HINOSystem.Controllers.API.ServiceData
                 {
                     status = "500",
                     response = "Internal Server Error",
-                    message = "Unexpected Error",
-                    error = ex.Message
+                    message = ex.InnerException?.Message ?? ex.Message
                 });
             }
         }
@@ -127,12 +126,30 @@ namespace HINOSystem.Controllers.API.ServiceData
 
             try
             {
-                await _KB3Context.Database.ExecuteSqlRawAsync($"Exec dbo.SP_IM001_IMPORT_SRV '{Plant}','{UserID}' ,'{advDate}' ");
+                var execute = await _KB3Context.Database.ExecuteSqlRawAsync("Exec dbo.SP_IM001_IMPORT_SRV {0},{1},{2}",
+                    Plant, UserID, advDate);
+
+                var delInt = await _KB3Context.Database.ExecuteSqlRawAsync("DELETE FROM TB_Import_Service WHERE F_Update_By = {0}",
+                    UserID);
+
+                await _KB3Transaction.CommitAsync();
+
+                var error = await _KB3Context.Database.SqlQueryRaw<int>("SELECT COUNT(*) AS VALUE FROM TB_IMPORT_ERROR WHERE F_UPDATE_BY = @User and F_Type = @TypeImport",
+                    new SqlParameter("@User", UserID),
+                    new SqlParameter("@TypeImport", "KBNIM001")).FirstOrDefaultAsync();
+
+                if (error > 0)
+                {
+                    throw new CustomHttpException(400, "Import Have Errors Please Check Report");
+                }
+
                 return Ok(new
                 {
                     status = "200",
                     response = "OK",
                     message = "Data has been imported successfully",
+                    del = delInt,
+                    execute = execute,
                 });
             }
             catch (Exception ex)
@@ -141,8 +158,7 @@ namespace HINOSystem.Controllers.API.ServiceData
                 {
                     status = "500",
                     response = "Internal Server Error",
-                    message = "Unexpected Error",
-                    error = ex.Message
+                    message = ex.InnerException?.Message ?? ex.Message
                 });
             }
         }

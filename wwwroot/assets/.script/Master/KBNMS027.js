@@ -48,7 +48,7 @@
 
 });
 
-$("#divBtn").on("click", "button", function () {
+$("#divBtn").on("click", "button", async function () {
 
     $("#divBtn").find("button").prop("disabled", true);
     $(this).prop("disabled", false);
@@ -56,37 +56,111 @@ $("#divBtn").on("click", "button", function () {
     $("#F_Short_Logistic").prop("disabled", false);
     $("#F_Short_Logistic").selectpicker("refresh");
 
-    if ($(this).attr("id") == "btnNew" || $(this).attr("id") == "btnUpd") {
+    $("#F_Supplier_CD").prop("disabled", false);
+    $("#F_Supplier_CD").selectpicker("refresh");
+
+    if ($(this).attr("id") == "btnUpd") {
         $("#F_Short_Name").prop("disabled", false);
         $("#F_Short_Name").selectpicker("refresh");
     }
+    else if ($(this).attr("id") == "btnNew") {
+
+        if ($(document).find("input[id='F_Short_Logistic']").length == 0) {
+
+            await $("select[name='F_Short_Logistic']").parent().remove();
+
+            $("label[for='F_Short_Logistic']").parent().append(
+                `
+             <input type='text' class="form-control col-7"
+             data-val="true" data-val-length="The field Supplier Logistic must be a string
+             with a maximum length of 15." data-val-length-max="15" data-val-required="The Supplier Logistic field is required."
+             id="F_Short_Logistic" name="F_Short_Logistic"></input>
+            `
+            );
+
+            await $("select[name='F_Supplier_CD']").parent().remove();
+
+            $("label[for='F_Supplier_CD']").parent().append(
+                `
+            <input type='text' class="form-control col-7" data-val="true" data-val-length="The field Supplier Code must be a string with a maximum length of 6." data-val-length-max="6" data-val-required="The Supplier Code field is required." id="F_Supplier_CD" name="F_Supplier_CD">
+            </input >
+            `
+            );
+
+            await $("select[name='F_Short_Name']").parent().remove();
+
+            $("label[for='F_Short_Name']").parent().append(
+                `
+            <input type='text' class="form-control col-7" data-val="true" data-val-length="The field Supplier Order must be a string with a maximum length of 10." data-val-length-max="10" data-val-required="The Supplier Order field is required." id="F_Short_Name" name="F_Short_Name" tabindex="null">
+            </input>
+            `
+            );
+        }
+    }
     else {
-        $("#F_Short_Name").prop("disabled", true);
+        $("#F_Short_Name").prop("disabled", false);
         $("#F_Short_Name").selectpicker("refresh");
     }
-   
 
-    $("#F_Supplier_CD").prop("disabled", false);
-    $("#F_Supplier_CD").selectpicker("refresh");
 
 
 });
 
-$("#btnCan").click(function () {
+$("#btnCan").click(async function () {
+
+    if ($(document).find("select[name='F_Short_Logistic']").length == 0) {
+
+        await $("input[name='F_Short_Logistic']").remove();
+
+        $("label[for='F_Short_Logistic']").parent().append(
+            `
+        <select class="selectpicker form-control col-7 p-0" data-live-search="true" data-size="8" data-width="100%" disabled="" data-val="true" data-val-length="The field Supplier Logistic must be a string with a maximum length of 15." data-val-length-max="15" data-val-required="The Supplier Logistic field is required." id="F_Short_Logistic" name="F_Short_Logistic"></select>
+        `
+        );
+
+        await $("input[name='F_Supplier_CD']").remove();
+
+        $("label[for='F_Supplier_CD']").parent().append(
+            `
+        <select class="selectpicker form-control col-7 p-0" data-live-search="true" data-size="8" data-width="100%" disabled="" data-val="true" data-val-length="The field Supplier Code must be a string with a maximum length of 6." data-val-length-max="6" data-val-required="The Supplier Code field is required." id="F_Supplier_CD" name="F_Supplier_CD">
+        </select>
+        `
+        );
+
+        await $("input[name='F_Short_Name']").remove();
+
+        $("label[for='F_Short_Name']").parent().append(
+            `
+        <select class="selectpicker form-control col-7 p-0" data-live-search="true" data-size="8" data-width="100%" disabled="" data-val="true" data-val-length="The field Supplier Order must be a string with a maximum length of 10." data-val-length-max="10" data-val-required="The Supplier Order field is required." id="F_Short_Name" name="F_Short_Name"></select>
+        `
+        );
+    }
 
     $("#divBtn").find("button").prop("disabled", false);
-    $("#F_Short_Logistic").prop("disabled", true);
-    $("#F_Short_Logistic").resetSelectPicker();
-    $("#F_Short_Name").prop("disabled", true);
-    $("#F_Short_Name").resetSelectPicker();
-    $("#F_Supplier_CD").prop("disabled", true);
-    $("#F_Supplier_CD").resetSelectPicker();
+
+    console.log($(document).find("#F_Short_Logistic"));
+
+    $(document).find("#F_Short_Logistic").selectpicker("refresh");
+    $(document).find("#F_Short_Logistic").prop("disabled", true);
+    $(document).find("#F_Short_Logistic").resetSelectPicker();
+
+    $(document).find("#F_Short_Name").selectpicker("refresh");
+    $(document).find("#F_Short_Name").prop("disabled", true);
+    $(document).find("#F_Short_Name").resetSelectPicker();
+
+    $(document).find("#F_Supplier_CD").selectpicker("refresh");
+    $(document).find("#F_Supplier_CD").prop("disabled", true);
+    $(document).find("#F_Supplier_CD").resetSelectPicker(); 
+
+    GetShortLogistic();
+    GetShortName();
+
     $("#F_name").val("");
     $("#tableMain").DataTable().clear().draw();
 
 });
 
-$("#F_Short_Logistic").change(function () {
+$(document).on('change',"#F_Short_Logistic",function () {
     GetListData();
     $("#F_Short_Name").resetSelectPicker();
     $('#F_Supplier_CD').resetSelectPicker();
@@ -94,7 +168,7 @@ $("#F_Short_Logistic").change(function () {
 
 });
 
-$("#F_Short_Name").change(function () {
+$(document).on('change', "#F_Short_Name",function () {
     SupOrderSelected();
 });
 
@@ -122,6 +196,8 @@ async function GetShortLogistic() {
             console.log(success);
         },
         function (error) {
+            console.log(error);
+            xSwal.error(error.responseJSON.response, error.responseJSON.message);
         }
     );
 }
@@ -134,6 +210,8 @@ async function GetShortName() {
             console.log(success);
         },
         function (error) {
+            console.log(error);
+            //xSwal.error(error.responseJSON.response, error.responseJSON.message);
         }
     );
 }
@@ -168,6 +246,8 @@ async function SupOrderSelected() {
             $("#F_Supplier_CD").addListSelectPicker(success.data, "f_supplier_cd");
         },
         function (error) {
+            console.log(error);
+            xSwal.error(error.responseJSON.response, error.responseJSON.message);
         }
     );
 }
@@ -201,6 +281,8 @@ async function Save() {
             GetListData();
         },
         function (error) {
+            console.log(error);
+            xSwal.error(error.responseJSON.response, error.responseJSON.message);
         }
     );
 

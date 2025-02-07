@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Net;
-using System.Text.Json;
+﻿using System.Net;
 
 namespace KANBAN.Services
 {
@@ -8,8 +6,9 @@ namespace KANBAN.Services
     {
         public int StatusCode { get; set; }
         public string Response { get; set; }
+        public string Message { get; set; }
 
-        public CustomHttpException(int? statusCode, string message) : base(message)
+        public CustomHttpException(int? statusCode, string? message = null, Exception? ex = null) : base(message, ex)
         {
             if (statusCode == null)
             {
@@ -25,6 +24,7 @@ namespace KANBAN.Services
                 500 => "Internal Server Error",
                 _ => "Error",
             };
+            Message = ex?.InnerException?.Message ?? message ?? ex!.Message;
         }
     }
 }

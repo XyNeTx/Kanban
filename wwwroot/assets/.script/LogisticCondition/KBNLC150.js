@@ -117,12 +117,22 @@ $("#btnImport").click(async function () {
                     },
                     function (error) {
                         xSwal.error(error.responseJSON.response, error.responseJSON.message);
+                        var obj = {
+                            UserID: ajexHeader.UserCode,
+                            Type: "IDT"
+                        };
+                        _xLib.OpenReportObj("/KBNIMERR", obj);
                     }
                 );
             }
         },
         function (error) {
             xSwal.error(error.responseJSON.response, error.responseJSON.message);
+            var obj = {
+                UserID: ajexHeader.UserCode,
+                Type: "IDT"
+            };
+            _xLib.OpenReportObj("/KBNIMERR", obj);
         }
     )
 

@@ -96,13 +96,13 @@ namespace HINOSystem.Controllers.API.ServiceData
                 }
                 else
                 {
-                    throw new CustomHttpException(500, ex.Message);
+                    throw new CustomHttpException(500, null, ex);
                 }
             }
         }
 
         [HttpGet]
-        public async Task<IActionResult> Search(string OrderNo, bool isChkDate, string? DateFrom, string? DateTo)
+        public async Task<IActionResult> Search(string? OrderNo, bool isChkDate, string? DateFrom, string? DateTo)
         {
             try
             {
@@ -170,7 +170,7 @@ namespace HINOSystem.Controllers.API.ServiceData
                 }
                 else
                 {
-                    throw new CustomHttpException(500, ex.Message);
+                    throw new CustomHttpException(500, null, ex);
                 }
             }
         }
@@ -212,7 +212,7 @@ namespace HINOSystem.Controllers.API.ServiceData
                 }
                 else
                 {
-                    throw new CustomHttpException(500, ex.Message);
+                    throw new CustomHttpException(500, null, ex);
                 }
             }
         }
@@ -264,6 +264,7 @@ namespace HINOSystem.Controllers.API.ServiceData
                     addTransaction.F_Reg_Flg = '1';
                     addTransaction.F_HMMT_PDS = "";
                     addTransaction.F_Survey_Doc = "";
+                    addTransaction.F_Freight = "";
                     addTransaction.F_Update_Date = DateTime.Now;
                     addTransaction.F_Update_By = _BearerClass.UserCode;
 
@@ -295,7 +296,7 @@ namespace HINOSystem.Controllers.API.ServiceData
                 }
                 else
                 {
-                    throw new CustomHttpException(500, ex.Message);
+                    throw new CustomHttpException(500, null, ex);
                 }
             }
         }

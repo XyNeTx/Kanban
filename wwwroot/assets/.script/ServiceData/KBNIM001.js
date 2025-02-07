@@ -110,7 +110,16 @@ async function AfterImported() {
             return xSwal.success("Success", success.message);
         },
         function (error) {
-            xSwal.error("Error", error.responseJSON.message);
+            xSwal.xError(error);
+            if (error.responseJSON.message.includes("Report")) {
+                var obj = {
+                    UserID: ajexHeader.UserCode,
+                    Type: "KBNIM001"
+                };
+
+                _xLib.OpenReportObj("/KBNIMERR", obj);
+
+            }
         }
     );
 }

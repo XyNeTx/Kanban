@@ -155,6 +155,28 @@ class libSwal {
 
     }
 
+    xError(error) {
+        Swal.fire({
+            icon: "error",
+            title: error.responseJSON.response,
+            text: error.responseJSON.message,
+            showConfirmButton: true,
+            confirmButtonColor: '#FD00A5',
+            confirmButtonText: "OK",
+        });
+    }
+
+    xErrorAwait(error) {
+        return Swal.fire({
+            icon: "error",
+            title: error.responseJSON.response,
+            text: error.responseJSON.message,
+            showConfirmButton: true,
+            confirmButtonColor: '#FD00A5',
+            confirmButtonText: "OK",
+        });
+    }
+
     Error(pTitle = "", pMessage = "", pCallback = null) {
         this.error(pTitle, pMessage, pCallback);
     }
@@ -268,6 +290,35 @@ class libSwal {
         this.success(pTitle, pMessage, pCallback);
     }
 
+    xSuccess(success) {
+        Swal.fire({
+            icon: 'success',
+            title: success.response,
+            text: success.message,
+            showCancelButton: false,
+            showConfirmButton: true,
+            confirmButtonColor: '#FD00A5',
+            cancelButtonColor: '#3085D6',
+            cancelButtonText: i18nLayout.modal.button.close,
+            confirmButtonText: i18nLayout.modal.button.save,
+            timer: 10000
+        })
+    }
+
+    xSuccessAwait(success) {
+        return Swal.fire({
+            icon: 'success',
+            title: success.response,
+            text: success.message,
+            showCancelButton: false,
+            showConfirmButton: true,
+            confirmButtonColor: '#FD00A5',
+            cancelButtonColor: '#3085D6',
+            cancelButtonText: i18nLayout.modal.button.close,
+            confirmButtonText: i18nLayout.modal.button.save,
+            timer: 10000
+        })
+    }
 
     input(pMessage, pCallback = null, pValue = null) {
         if (pMessage != '') {

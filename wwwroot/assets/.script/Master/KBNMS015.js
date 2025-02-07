@@ -93,6 +93,8 @@ $("#btnCan").click(function () {
     $(document).find("input:not(:disabled)").each(function () {
         $(this).val("");
     });
+    $("#F_Start_Date").val(moment().format('DD/MM/YYYY'));
+    $("#F_End_Date").val("31/12/2999");
 
     $("#tableMain").DataTable().clear().draw();
 });
@@ -158,6 +160,7 @@ function GetDropDown() {
 
         },
         function (error) {
+            xSwal.xError(error);
         }
     );
 }
@@ -181,6 +184,7 @@ function SupplierChanged() {
             
         },
         function (error) {
+            xSwal.xError(error);
         }
     );
 }
@@ -204,6 +208,7 @@ function PartNoSelected() {
             $("#F_Description").val(success.data.F_Text);
         },
         function (error) {
+            xSwal.xError(error);
         }
     );
 
@@ -225,6 +230,7 @@ async function GetListData() {
             _xDataTable.ClearAndAddDataDT("#tableMain", success.data);
         },
         function (error) {
+            xSwal.xError(error);
         }
     );
 };
@@ -262,11 +268,14 @@ async function Save()
 
     let action = $("#divBtn").find("button:not(:disabled)").attr("id").split("btn")[1];
 
+    if (action.toLowerCase() == "inq") return xSwal.error("Error", "Action Command is invalid");
+
     _xLib.AJAX_Post("/api/KBNMS015/Save?action=" + action, listObj,
         function (success) {
             xSwal.success(success.response, success.message);
         },
         function (error) {
+            xSwal.xError(error);
         }
     );
 }

@@ -126,7 +126,7 @@ $("#btnInterface").click(function () {
             xSwal.error(error.responseJSON.response, error.responseJSON.message);
 
             let obj = {
-                UserID : error.responseJSON.userid,
+                UserID: ajexHeader.UserCode,
                 Type : "KBNLC190",
             }
 
