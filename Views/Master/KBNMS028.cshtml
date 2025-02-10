@@ -6,19 +6,36 @@
         <div class="card border-left-primary shadow h-100">
             <div class="card-body">
 
+                <div class="row mb-4">
+                    <div class="col-7">
+                        <div id="divBtn" class="row">
+                            <button type="button" class="btn btn-primary btn-rounded col-2" id="btnInq">Inquiry</button>
+                            <button type="button" class="btn btn-success btn-rounded col-2" id="btnNew">New</button>
+                            <button type="button" class="btn btn-warning btn-rounded col-2" id="btnUpd">Update</button>
+                            <button type="button" class="btn btn-danger btn-rounded col-2" id="btnDel">Delete</button>
+                        </div>
+                    </div>
+                    <div class="col-5">
+                        <div class="row justify-content-end">
+                            <button type="button" class="btn btn-dark btn-rounded col-2" id="btnCan">Cancel</button>
+                            <a class="btn btn-danger btn-rounded col-2" asp-action="index" asp-controller="home">Exit</a>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="row">
                     <table id="tableMain" class="table table-bordered border-2 border-dark w-100"></table>
                 </div>
 
                 <form id="formMain">
                     
-                    <div class="row">
+                    <div class="row mt-4">
 
                         <div class="col-4">
 
                             <div class="input-group">
                                 <label class="input-group-text col-4" asp-for="F_Dock_Cd"></label>
-                                <select class="selectpicker p-0 col-6" asp-for="F_Dock_Cd">
+                                <select class="selectpicker p-0 col-6" asp-for="F_Dock_Cd" data-live-search="true" data-size="6">
                                     <option value="" hidden></option>
                                 </select>
                             </div>
@@ -39,7 +56,7 @@
 
                             <div class="input-group">
                                 <label class="input-group-text col-4" asp-for="F_short_Logistic1"></label>
-                                <select class="selectpicker p-0 col-6" asp-for="F_short_Logistic1">
+                                <select class="selectpicker p-0 col-6" asp-for="F_short_Logistic1" data-live-search="true" data-size="6">
                                     <option value="" hidden></option>
                                 </select>
                             </div>
@@ -63,7 +80,7 @@
 
                             <div class="input-group">
                                 <label class="input-group-text col-4" asp-for="F_short_Logistic2"></label>
-                                <select class="selectpicker p-0 col-6" asp-for="F_short_Logistic2">
+                                <select class="selectpicker p-0 col-6" asp-for="F_short_Logistic2" data-live-search="true" data-size="6">
                                     <option value="" hidden></option>
                                 </select>
                             </div>
@@ -87,7 +104,7 @@
 
                             <div class="input-group">
                                 <label class="input-group-text col-4" asp-for="F_short_Logistic3"></label>
-                                <select class="selectpicker p-0 col-6" asp-for="F_short_Logistic3">
+                                <select class="selectpicker p-0 col-6" asp-for="F_short_Logistic3" data-live-search="true" data-size="6">
                                     <option value="" hidden></option>
                                 </select>
                             </div>
@@ -111,7 +128,7 @@
 
                             <div class="input-group">
                                 <label class="input-group-text col-4" asp-for="F_short_Logistic4"></label>
-                                <select class="selectpicker p-0 col-6" asp-for="F_short_Logistic4">
+                                <select class="selectpicker p-0 col-6" asp-for="F_short_Logistic4" data-live-search="true" data-size="6">
                                     <option value="" hidden></option>
                                 </select>
                             </div>
@@ -135,7 +152,7 @@
 
                             <div class="input-group">
                                 <label class="input-group-text col-4" asp-for="F_short_Logistic5"></label>
-                                <select class="selectpicker p-0 col-6" asp-for="F_short_Logistic5">
+                                <select class="selectpicker p-0 col-6" asp-for="F_short_Logistic5" data-live-search="true" data-size="6">
                                     <option value="" hidden></option>
                                 </select>
                             </div>
@@ -159,7 +176,7 @@
 
                             <div class="input-group">
                                 <label class="input-group-text col-4" asp-for="F_short_Logistic6"></label>
-                                <select class="selectpicker p-0 col-6" asp-for="F_short_Logistic6">
+                                <select class="selectpicker p-0 col-6" asp-for="F_short_Logistic6" data-live-search="true" data-size="6">
                                     <option value="" hidden></option>
                                 </select>
                             </div>
@@ -183,7 +200,7 @@
 
                             <div class="input-group">
                                 <label class="input-group-text col-4" asp-for="F_short_Logistic7"></label>
-                                <select class="selectpicker p-0 col-6" asp-for="F_short_Logistic7">
+                                <select class="selectpicker p-0 col-6" asp-for="F_short_Logistic7" data-live-search="true" data-size="6">
                                     <option value="" hidden></option>
                                 </select>
                             </div>
@@ -207,7 +224,7 @@
 
                             <div class="input-group">
                                 <label class="input-group-text col-4" asp-for="F_short_Logistic8"></label>
-                                <select class="selectpicker p-0 col-6" asp-for="F_short_Logistic8">
+                                <select class="selectpicker p-0 col-6" asp-for="F_short_Logistic8" data-live-search="true" data-size="6">
                                     <option value="" hidden></option>
                                 </select>
                             </div>
@@ -231,7 +248,7 @@
 
                             <div class="input-group">
                                 <label class="input-group-text col-4" asp-for="F_short_Logistic9"></label>
-                                <select class="selectpicker p-0 col-6" asp-for="F_short_Logistic9">
+                                <select class="selectpicker p-0 col-6" asp-for="F_short_Logistic9" data-live-search="true" data-size="6">
                                     <option value="" hidden></option>
                                 </select>
                             </div>
@@ -255,7 +272,7 @@
 
                             <div class="input-group">
                                 <label class="input-group-text col-4" asp-for="F_short_Logistic10"></label>
-                                <select class="selectpicker p-0 col-6" asp-for="F_short_Logistic10">
+                                <select class="selectpicker p-0 col-6" asp-for="F_short_Logistic10" data-live-search="true" data-size="6">
                                     <option value="" hidden></option>
                                 </select>
                             </div>
@@ -279,7 +296,7 @@
 
                             <div class="input-group">
                                 <label class="input-group-text col-4" asp-for="F_short_Logistic11"></label>
-                                <select class="selectpicker p-0 col-6" asp-for="F_short_Logistic11">
+                                <select class="selectpicker p-0 col-6" asp-for="F_short_Logistic11" data-live-search="true" data-size="6">
                                     <option value="" hidden></option>
                                 </select>
                             </div>
@@ -303,7 +320,7 @@
 
                             <div class="input-group">
                                 <label class="input-group-text col-4" asp-for="F_short_Logistic12"></label>
-                                <select class="selectpicker p-0 col-6" asp-for="F_short_Logistic12">
+                                <select class="selectpicker p-0 col-6" asp-for="F_short_Logistic12" data-live-search="true" data-size="6">
                                     <option value="" hidden></option>
                                 </select>
                             </div>
@@ -327,7 +344,7 @@
 
                             <div class="input-group">
                                 <label class="input-group-text col-4" asp-for="F_short_Logistic13"></label>
-                                <select class="selectpicker p-0 col-6" asp-for="F_short_Logistic13">
+                                <select class="selectpicker p-0 col-6" asp-for="F_short_Logistic13" data-live-search="true" data-size="6">
                                     <option value="" hidden></option>
                                 </select>
                             </div>
@@ -351,7 +368,7 @@
 
                             <div class="input-group">
                                 <label class="input-group-text col-4" asp-for="F_short_Logistic14"></label>
-                                <select class="selectpicker p-0 col-6" asp-for="F_short_Logistic14">
+                                <select class="selectpicker p-0 col-6" asp-for="F_short_Logistic14" data-live-search="true" data-size="6">
                                     <option value="" hidden></option>
                                 </select>
                             </div>
@@ -375,7 +392,7 @@
 
                             <div class="input-group">
                                 <label class="input-group-text col-4" asp-for="F_short_Logistic15"></label>
-                                <select class="selectpicker p-0 col-6" asp-for="F_short_Logistic15">
+                                <select class="selectpicker p-0 col-6" asp-for="F_short_Logistic15" data-live-search="true" data-size="6">
                                     <option value="" hidden></option>
                                 </select>
                             </div>
@@ -399,7 +416,7 @@
 
                             <div class="input-group">
                                 <label class="input-group-text col-4" asp-for="F_short_Logistic16"></label>
-                                <select class="selectpicker p-0 col-6" asp-for="F_short_Logistic16">
+                                <select class="selectpicker p-0 col-6" asp-for="F_short_Logistic16" data-live-search="true" data-size="6">
                                     <option value="" hidden></option>
                                 </select>
                             </div>
@@ -417,8 +434,29 @@
 
                     </div>
 
+                    <input type="hidden" asp-for="F_Update_By" />
+                    <input type="hidden" asp-for="F_Plant" />
+                    <input type="hidden" value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")" asp-for="F_Update_Date" />
+
                 </form>
 
+                <div class="row mt-4">
+
+                    <div class="col">
+                        <div class="row justify-content-start">
+                            <button type="button" class="btn btn-success btn-rounded col-3" id="btnSelAll">Select All</button>
+                            <button type="button" class="btn btn-primary btn-rounded col-3" id="btnDeselAll">Deselect All</button>
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div class="row justify-content-end">
+                            <button type="button" class="btn btn-success btn-rounded col-2" id="btnSave">Save</button>
+                            <button type="button" class="btn btn-primary btn-rounded col-2" id="btnRpt">Report</button>
+                        </div>
+                    </div>
+
+                </div>
 
             </div>
         </div>

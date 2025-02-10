@@ -27,7 +27,7 @@ namespace KANBAN.Services
                 {
                     status = ex.StatusCode,
                     response = ex.Response,
-                    message = ex?.Message ?? ex?.InnerException?.Message
+                    message = ex.Message,
                 });
 
                 await context.Response.WriteAsync(result);

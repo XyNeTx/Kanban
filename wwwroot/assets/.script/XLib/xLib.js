@@ -19,6 +19,7 @@ class DataTableLib {
     }
 
     InitialDataTable(id, options) {
+        $(".btn-toolbar[role='toolbar']").addClass("d-none");
         if (id == undefined) return console.error("id is undefined");
         if (!id.includes('#')) id = '#' + id;
 
@@ -275,6 +276,7 @@ class xLib {
 
 
     AJAX_GetNoHeader(url, data, successFn, errorFn) {
+        $(".btn-toolbar[role='toolbar']").addClass("d-none");
         if (window.location.hostname.includes("tpcap")) {
             url = "/kanban" + url;
         }
@@ -362,6 +364,7 @@ class xLib {
     }
 
     AJAX_Get(url, data, successFn, errorFn) {
+        $(".btn-toolbar[role='toolbar']").addClass("d-none");
         if (window.location.hostname.includes("tpcap")) {
             url = "/kanban" + url;
         }
@@ -446,6 +449,7 @@ class xLib {
     }
 
     AJAX_Post(url, data, successFn, errorFn) {
+        $(".btn-toolbar[role='toolbar']").addClass("d-none");
         if (window.location.hostname.includes("tpcap")) {
             url = "/kanban" + url;
         }
@@ -524,6 +528,7 @@ class xLib {
     }
 
     AJAX_PostString(url, data, successFn, errorFn) {
+        $(".btn-toolbar[role='toolbar']").addClass("d-none");
         if (window.location.hostname.includes("tpcap")) {
             url = "/kanban" + url;
         }
@@ -598,6 +603,7 @@ class xLib {
     }
 
     AJAX_PostFile(url, file, successFn, errorFn) {
+        $(".btn-toolbar[role='toolbar']").addClass("d-none");
         if (window.location.hostname.includes("tpcap")) {
             url = "/kanban" + url;
         }
@@ -716,9 +722,24 @@ const _xLib = new xLib();
 
     $.fn.resetAllSelectPicker = async function () {
         $(".selectpicker").resetSelectPicker();
+        //console.log("test");
     };
 
+    $.fn.formToJSON = async function () {
+        let formData = {};
+        //console.log($(this));
+        $(this).serializeArray().forEach(function (item) {
+            //console.log(item);
+            formData[item.name] = item.value;
+        });
+
+        //console.log(formData);
+
+        return formData;
+    }
+
     $.fn.addListSelectPicker = async function (arrData, objKey) {
+        $(".btn-toolbar[role='toolbar']").addClass("d-none");
         //console.log($(this));
         await $(this).empty();
         await $(this).append(`<option value=''></option >`);
@@ -732,6 +753,7 @@ const _xLib = new xLib();
     }
 
     $.fn.initDatepicker = async function (date) {
+        $(".btn-toolbar[role='toolbar']").addClass("d-none");
         await $(this).datepicker({
             uiLibrary: 'bootstrap5',
             format: 'dd/mm/yyyy',
@@ -746,6 +768,7 @@ const _xLib = new xLib();
     };
 
     $.fn.initialDataTable = function (options) {
+        $(".btn-toolbar[role='toolbar']").addClass("d-none");
         if (this.length === 0) return console.error("Element not found");
 
         let defaultSettings = {
