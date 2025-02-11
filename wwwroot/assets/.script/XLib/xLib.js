@@ -711,19 +711,24 @@ const _xLib = new xLib();
 
 (($) => {
     $.fn.resetSelectPicker = async function () {
-        //console.log(this);
-        await $(this).val('');
-        await $(this).selectpicker('refresh');
+        $(this).val("").trigger("change");
 
-        $(this).parent().find("div[class='filter-option-inner-inner']").text("");
-        $(this).parent().find("div[class='filter-option-inner-inner']").text("Nothing Selected");
-        //console.log($(this).parent().find("div[class='filter-option-inner-inner']").text());
+        $(this).find("option.bs-title-option").remove();
+
+        $(this).selectpicker('refresh');
+
+        $(this).parent().find(".filter-option-inner-inner").text("Nothing Selected");
     };
 
     $.fn.resetAllSelectPicker = async function () {
-        $(".selectpicker").resetSelectPicker();
+        await $(".selectpicker").resetSelectPicker();
         //console.log("test");
     };
+
+    $.fn.disableSelectPicker = async function () {
+        var id = $(this).attr("id");
+        $(`button[data-id='${id}']`).addClass("disabled");
+    }
 
     $.fn.formToJSON = async function () {
         let formData = {};

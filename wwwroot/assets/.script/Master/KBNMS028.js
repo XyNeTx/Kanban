@@ -128,6 +128,13 @@
     xSplash.hide();
 });
 
+$("#btnSelAll").click(function () {
+    $(".chkbox").prop("checked", true);
+});
+$("#btnDeselAll").click(function () {
+    $(".chkbox").prop("checked", false);
+});
+
 $("#divBtn").on("click", "button", async function () {
     GetListData();
     $("#divBtn").find("button").prop("disabled", true);
@@ -145,25 +152,54 @@ $("#btnCan").click(async function () {
 
 $(document).on("dblclick","table tbody tr td", async function () {
 
+    await $("#formMain").trigger("reset");
     var row = $(this).closest("tr");
     var obj = $("#tableMain").DataTable().row(row).data();
 
     $(".selected").removeClass("selected");
 
     $(this).closest("tr").toggleClass("selected");
+    $(this).closest("tr").find("#chkbox").prop("checked", true);
 
-    //console.log(obj);
+    for (const e of Object.keys(obj))
+    {
 
-    Object.keys(obj).forEach(async function (e) {
-        let newE = "F" + e.substring(1, e.length);
-        //console.log(e);
-        //console.log(newE);
-        //console.log(obj[e]);
-        $(`#${newE}`).val(obj[e]);
-        if ($(`#${newE}`).prop("tagName") === "SELECT") {
-            $(`#${newE}`).selectpicker("refresh");
+        let _e = "F" + e.substring(1, e.length);
+
+        if (_e.includes("short_Logistic")) {
+            if (obj[e] === "") break;
         }
-    });
+
+        console.log(_e);
+
+        $(`#${_e}`).val(obj[e]);
+        if ($(`#${_e}`).prop("tagName") === "SELECT") {
+            $(`#${_e}`).selectpicker("refresh");
+        }
+
+    }
+
+    //Object.keys(obj).forEach(async function (e) {
+    //    let _e = "F" + e.substring(1, e.length);
+
+    //    if (_e.includes("short_Logistic")) {
+    //        if (obj[e] === "") return;
+    //    }
+
+    //    console.log(_e);
+    //    $(`#${_e}`).val(obj[e]);
+    //    if ($(`#${_e}`).prop("tagName") === "SELECT") {
+    //        $(`#${_e}`).selectpicker("refresh");
+    //    }
+    //});
+
+    var action = $("#divBtn").find("button:not(:disabled)").attr("id").split("btn")[1];
+
+    if (action.toLowerCase() == "upd")
+    {
+        //$("#F_Dock_Cd").prop("readonly", true);
+        $("#F_Dock_Cd").disableSelectPicker();
+    }
 
 });
 
@@ -219,14 +255,22 @@ async function GetListData() {
 }
 
 async function Save() {
+    var listObj = []
     var data = await $('#formMain').formToJSON();
+
+    listObj.push(data);
     //console.log($("#divBtn").find("button:not(:disabled)").attr("id"));
     var action = $("#divBtn").find("button:not(:disabled)").attr("id").split("btn")[1];
 
-    _xLib.AJAX_Post("/api/KBNMS028/Save?action=" + action, data,
+    if (action == "Del")
+    {
+        listObj = _xDataTable.GetSelectedDataDT("#tableMain");
+    }
+
+    _xLib.AJAX_Post("/api/KBNMS028/Save?action=" + action, listObj,
         function (success) {
-            $("#formMain").trigger("clear");
-            $().resetAllSelectPicker();
+            $("#btnCan").trigger("click");
+            GetListData();
             xSwal.xSuccess(success);
         },
         function (error) {

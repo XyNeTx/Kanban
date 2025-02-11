@@ -97,13 +97,16 @@ namespace HINOSystem.Controllers.API.Master
         }
 
         [HttpPost]
-        public async Task<IActionResult> Save(TB_MS_Remark_DocSheet obj, string action)
+        public async Task<IActionResult> Save(List<TB_MS_Remark_DocSheet> listObj, string action)
         {
             try
             {
                 await _BearerClass.CheckAuthorize();
 
-                await _masterRepo.IKBNMS028.Save(obj, action);
+                foreach (var obj in listObj)
+                {
+                    await _masterRepo.IKBNMS028.Save(obj, action);
+                }
 
                 return Ok(new
                 {

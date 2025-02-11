@@ -1,5 +1,8 @@
 ﻿@model TB_MS_Remark_DocSheet;
-
+@{
+    //var Ihttp = IHttpContextAccessor;
+    //var userCode = 
+}
 <div class="row">
 
     <div class="col-xl-12 col-md-12 col-sm-12">
@@ -25,6 +28,13 @@
 
                 <div class="row">
                     <table id="tableMain" class="table table-bordered border-2 border-dark w-100"></table>
+                </div>
+
+                <div class="row mt-2 justify-content-start">
+                    <div class="col-4">
+                        <button type="button" class="btn btn-success btn-rounded col-4" id="btnSelAll">Select All</button>
+                        <button type="button" class="btn btn-primary btn-rounded col-4" id="btnDeselAll">Deselect All</button>
+                    </div>
                 </div>
 
                 <form id="formMain">
@@ -442,11 +452,11 @@
 
                 <div class="row mt-4">
 
-                    <div class="col">
-                        <div class="row justify-content-start">
+                    <div class="col invisible">
+                        @* <div class="row justify-content-start">
                             <button type="button" class="btn btn-success btn-rounded col-3" id="btnSelAll">Select All</button>
                             <button type="button" class="btn btn-primary btn-rounded col-3" id="btnDeselAll">Deselect All</button>
-                        </div>
+                        </div> *@
                     </div>
 
                     <div class="col">

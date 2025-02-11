@@ -46,7 +46,7 @@ namespace HINOSystem.Controllers.API.Master
         public string now = DateTime.Now.ToString("yyyyMMdd");
 
         [HttpGet]
-        public IActionResult GetList(string supplier,string? store, string? typeOrder)
+        public IActionResult GetList(string supplier, string? store, string? typeOrder)
         {
             try
             {
@@ -135,7 +135,7 @@ namespace HINOSystem.Controllers.API.Master
                 {
                     status = "500",
                     response = "Internal Server Error",
-                    message = "Unexpected Error!",
+                    message = ex.InnerException?.Message ?? ex.Message,
                     error = ex.Message
                 });
             }
@@ -206,15 +206,15 @@ namespace HINOSystem.Controllers.API.Master
                     }
                     if (!string.IsNullOrWhiteSpace(partNo))
                     {
-                        supplier = supplier.Where(x => x.F_Part_No.Trim() +"-"+x.F_Ruibetsu == partNo);
+                        supplier = supplier.Where(x => x.F_Part_No.Trim() + "-" + x.F_Ruibetsu == partNo);
                     }
 
                     var data = await supplier.Select(x => new
                     {
                         F_Supplier = x.F_Supplier_Cd.Trim() + "-" + x.F_Supplier_Plant.ToString().Trim(),
                     }).ToListAsync();
-                    
-                    
+
+
                     return Ok(new
                     {
                         status = "200",
@@ -230,7 +230,7 @@ namespace HINOSystem.Controllers.API.Master
                 {
                     status = "500",
                     response = "Internal Server Error",
-                    message = "Unexpected Error!",
+                    message = ex.InnerException?.Message ?? ex.Message,
                     error = ex.Message
                 });
             }
@@ -272,7 +272,7 @@ namespace HINOSystem.Controllers.API.Master
 
                     var data = await kanban.Select(x => new
                     {
-                        F_Kanban = ("0000" + x.F_Sebango).Substring(x.F_Sebango.Length,4)
+                        F_Kanban = ("0000" + x.F_Sebango).Substring(x.F_Sebango.Length, 4)
                     }).ToListAsync();
 
 
@@ -326,7 +326,7 @@ namespace HINOSystem.Controllers.API.Master
                 {
                     status = "500",
                     response = "Internal Server Error",
-                    message = "Unexpected Error!",
+                    message = ex.InnerException?.Message ?? ex.Message,
                     error = ex.Message
                 });
             }
@@ -421,7 +421,7 @@ namespace HINOSystem.Controllers.API.Master
                 {
                     status = "500",
                     response = "Internal Server Error",
-                    message = "Unexpected Error!",
+                    message = ex.InnerException?.Message ?? ex.Message,
                     error = ex.Message
                 });
             }
@@ -517,7 +517,7 @@ namespace HINOSystem.Controllers.API.Master
                 {
                     status = "500",
                     response = "Internal Server Error",
-                    message = "Unexpected Error!",
+                    message = ex.InnerException?.Message ?? ex.Message,
                     error = ex.Message
                 });
             }
@@ -585,7 +585,7 @@ namespace HINOSystem.Controllers.API.Master
                 {
                     status = "500",
                     response = "Internal Server Error",
-                    message = "Unexpected Error!",
+                    message = ex.InnerException?.Message ?? ex.Message,
                     error = ex.Message
                 });
             }
@@ -593,7 +593,7 @@ namespace HINOSystem.Controllers.API.Master
 
 
         [HttpPost]
-        public async Task<IActionResult> Save([FromQuery] string action,[FromBody] TB_MS_PartOrder obj)
+        public async Task<IActionResult> Save([FromQuery] string action, [FromBody] TB_MS_PartOrder obj)
         {
             try
             {
@@ -607,7 +607,7 @@ namespace HINOSystem.Controllers.API.Master
                 if (ModelState.IsValid)
                 {
 
-                    if(obj.F_Start_Date.CompareTo(obj.F_End_Date) > 0)
+                    if (obj.F_Start_Date.CompareTo(obj.F_End_Date) > 0)
                     {
                         return BadRequest(new
                         {
@@ -659,8 +659,8 @@ namespace HINOSystem.Controllers.API.Master
                             {
                                 status = "400",
                                 response = "Bad Request",
-                                message = "Invalid Data!",
-                                error = "Please Select Start Date From Present OR More Before Process Data!"
+                                message = "Please Select Start Date From Present OR More Before Process Data!",
+                                //error = "Please Select Start Date From Present OR More Before Process Data!"
                             });
                         }
 
@@ -673,10 +673,10 @@ namespace HINOSystem.Controllers.API.Master
                     }
                     else
                     {
-                        throw new CustomHttpException(400,"Bad Request");
+                        throw new CustomHttpException(400, "Bad Request");
                     }
-                    
-                    
+
+
                     await _KB3Context.SaveChangesAsync();
                     _log.WriteLogMsg($"TB_MS_PartOrder(Save) Commit : {JsonConvert.SerializeObject(obj)}");
 
@@ -692,7 +692,7 @@ namespace HINOSystem.Controllers.API.Master
                 {
                     status = "400",
                     response = "Bad Request",
-                    message = "Invalid Data!",
+                    message = ModelState.Values.SelectMany(x => x.Errors).Select(x => x.ErrorMessage),
                     error = ModelState.Values.SelectMany(x => x.Errors).Select(x => x.ErrorMessage)
                 });
 
@@ -703,7 +703,7 @@ namespace HINOSystem.Controllers.API.Master
                 {
                     status = "500",
                     response = "Internal Server Error",
-                    message = "Unexpected Error!",
+                    message = ex.InnerException?.Message ?? ex.Message,
                     error = ex.Message
                 });
                 throw;
