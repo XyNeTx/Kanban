@@ -202,38 +202,26 @@ namespace HINOSystem.Libs
         }
 
 
+        public string SerializeErrObjHTML(object obj)
+        {
+            try
+            {
+                var listKey = obj.GetType().GetProperties();
+                string serialized = "<br><br>";
 
-        //public void WriteLogBL(string Message)
-        //{
-        //    try
-        //    {
-        //        string logMessage = GetLogMessage();
-        //        LogBL.Information($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        this.WriteErrorLogMsg($"message: {ex.Message}");
-        //        Console.WriteLine(ex.StackTrace);
-        //        Console.WriteLine(ex.Message);
-        //        throw;
-        //    }
-        //}
+                for (int i = 0; i < listKey.Length; i++)
+                {
+                    var property = listKey[i];
+                    serialized += property.Name + " : " + (string)(property.GetValue(obj)) + "<br>";
+                }
 
-        //public void WriteLogMaster(string Message)
-        //{
-        //    try
-        //    {
-        //        string logMessage = GetLogMessage();
-        //        LogMaster.Information($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        this.WriteErrorLogMsg($"message: {ex.Message}");
-        //        Console.WriteLine(ex.StackTrace);
-        //        Console.WriteLine(ex.Message);
-        //        throw;
-        //    }
-        //}
+                return serialized;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
 
     }
 }

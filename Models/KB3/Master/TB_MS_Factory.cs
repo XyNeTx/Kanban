@@ -7,7 +7,6 @@
     public class TB_MS_Factory
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 
         public string F_Plant { get; set; }
         public string? F_Plant_Name { get; set; }

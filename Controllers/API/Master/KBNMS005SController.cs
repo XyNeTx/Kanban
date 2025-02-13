@@ -1,15 +1,10 @@
-﻿using Azure;
-using HINOSystem.Context;
+﻿using HINOSystem.Context;
 using HINOSystem.Libs;
 using KANBAN.Context;
-using KANBAN.Libs;
 using KANBAN.Models.KB3.Master;
-using KANBAN.Models.PPM3;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using NPOI.SS.Formula.Functions;
 using System.Data;
 
 namespace KANBAN.Controllers.API.Master
@@ -56,7 +51,7 @@ namespace KANBAN.Controllers.API.Master
         {
             try
             {
-                
+
                 _BearerClass.Authentication(Request);
                 if (_BearerClass.Status == 401) return Unauthorized(new
                 {
@@ -131,7 +126,7 @@ namespace KANBAN.Controllers.API.Master
         {
             try
             {
-                
+
                 _BearerClass.Authentication(Request);
                 if (_BearerClass.Status == 401) return Unauthorized(new
                 {
@@ -301,7 +296,7 @@ namespace KANBAN.Controllers.API.Master
         {
             try
             {
-                
+
                 _BearerClass.Authentication(Request);
                 if (_BearerClass.Status == 401) return Unauthorized(new
                 {
@@ -349,6 +344,7 @@ namespace KANBAN.Controllers.API.Master
                     message = "Data Not Found"
                 });
 
+                _KB3Transaction.Commit();
                 return Ok(new
                 {
                     status = "200",
@@ -378,7 +374,7 @@ namespace KANBAN.Controllers.API.Master
             using var _KB3Transaction = _KB3Context.Database.BeginTransaction();
             try
             {
-                
+
                 _BearerClass.Authentication(Request);
                 if (_BearerClass.Status == 401) return Unauthorized(new
                 {
@@ -481,7 +477,7 @@ namespace KANBAN.Controllers.API.Master
             using var _KB3Transaction = _KB3Context.Database.BeginTransaction();
             try
             {
-                
+
                 _BearerClass.Authentication(Request);
                 if (_BearerClass.Status == 401) return Unauthorized(new
                 {
@@ -522,10 +518,10 @@ namespace KANBAN.Controllers.API.Master
                 if (existed.F_Sup_Cd == "9999" || existed.F_Sup_Cd == "9995")
                 {
                     await _KB3Context.Database.ExecuteSqlRawAsync("EXEC [CKD_Inhouse].sp_set_StockBalance_Delete @p0,@p1,@p2,@p3,@p4,@p5,@p6,@p7,@p8,@p9",
-                        _BearerClass.Plant, Obj.F_Sup_Cd, Obj.F_Sup_Plant, Obj.F_Part_No, Obj.F_Ruibetsu,Obj.F_Sebango,Obj.F_Store_Cd,Obj.F_Date,Obj.F_Shift,_BearerClass.UserCode);
+                        _BearerClass.Plant, Obj.F_Sup_Cd, Obj.F_Sup_Plant, Obj.F_Part_No, Obj.F_Ruibetsu, Obj.F_Sebango, Obj.F_Store_Cd, Obj.F_Date, Obj.F_Shift, _BearerClass.UserCode);
                 }
                 else await _KB3Context.Database.ExecuteSqlRawAsync("EXEC [dbo].sp_set_StockBalance_Delete @p0,@p1,@p2,@p3,@p4,@p5,@p6,@p7,@p8,@p9",
-                        _BearerClass.Plant, Obj.F_Sup_Cd, Obj.F_Sup_Plant, Obj.F_Part_No, Obj.F_Ruibetsu,Obj.F_Sebango,Obj.F_Store_Cd,Obj.F_Date,Obj.F_Shift,_BearerClass.UserCode);
+                        _BearerClass.Plant, Obj.F_Sup_Cd, Obj.F_Sup_Plant, Obj.F_Part_No, Obj.F_Ruibetsu, Obj.F_Sebango, Obj.F_Store_Cd, Obj.F_Date, Obj.F_Shift, _BearerClass.UserCode);
 
                 _Log.WriteLog("Update TB_Calculate_D : Flag_Chg_BL_Stock ", _BearerClass.UserCode, _BearerClass.Device);
 

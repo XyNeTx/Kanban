@@ -46,6 +46,12 @@ class DataTableLib {
             layout: (constr.layout) ?? this.layout
         });
 
+        $(`${id} table thead tr th`).css("text-align", "center");
+        $(`${id} table thead tr th`).css("vertical-align", "middle");
+
+        $(`${id} table tbody tr td`).css("text-align", "center");
+        $(`${id} table tbody tr td`).css("vertical-align", "middle");
+
     }
 
     ClearAndAddDataDT(id, data) {
@@ -711,11 +717,13 @@ const _xLib = new xLib();
 
 (($) => {
     $.fn.resetSelectPicker = async function () {
-        $(this).val("").trigger("change");
+        $(this).selectpicker("val", "");
+        //console.log($(this));
+        //await $(this).trigger("change");
 
         $(this).find("option.bs-title-option").remove();
 
-        $(this).selectpicker('refresh');
+        //$(this).selectpicker('refresh');
 
         $(this).parent().find(".filter-option-inner-inner").text("Nothing Selected");
     };
@@ -769,7 +777,7 @@ const _xLib = new xLib();
         });
 
         $(this).closest("div[class*='input-group']").removeClass("input-group");
-
+        $(this).append("<span class='fa fa-search'></span>");
     };
 
     $.fn.initialDataTable = function (options) {

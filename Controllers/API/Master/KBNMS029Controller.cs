@@ -1,285 +1,49 @@
-﻿using Microsoft.AspNetCore.Http.Extensions;
+﻿using HINOSystem.Libs;
+using KANBAN.Services;
+using KANBAN.Services.Master.IRepository;
 using Microsoft.AspNetCore.Mvc;
-using System.Data;
-using System;
-using System.Web;
-using System.Security.Principal;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-
-using System.Reflection.PortableExecutable;
-using System.DirectoryServices;
-using System.DirectoryServices.AccountManagement;
-using Microsoft.Net.Http.Headers;
-using System.Collections.Specialized;
-using System.Net;
-using System.DirectoryServices.ActiveDirectory;
-using System.Net.Http;
-using Microsoft.AspNetCore.Authorization;
-
-using System.Security.Claims;
-using Org.BouncyCastle.Asn1.Ocsp;
-
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-
-using System.Threading.Tasks;
-
-using HINOSystem.Libs;
-using HINOSystem.Context;
-using HINOSystem.Models.KB3.Master;
 
 namespace HINOSystem.Controllers.API.Master
 {
-    public class KBNMS029Controller : Controller
+    [ApiController]
+    [Route("/api/[controller]/[action]")]
+    public class KBNMS029Controller : ControllerBase
     {
-        private readonly IConfiguration _configuration;
         private readonly BearerClass _BearerClass;
-        private readonly KanbanConnection _KBCN;
-
-        private readonly KB3Context _KB3Context;
-
-        public KBNMS029Controller(
-            IConfiguration configuration,
-            BearerClass bearerClass,
-            KanbanConnection kanbanConnection,
-            KB3Context kB3Context
+        private readonly IMasterRepo _masterRepo;
+        public KBNMS029Controller
+            (
+                BearerClass bearerClass,
+                IMasterRepo masterRepo
             )
         {
-            _configuration = configuration;
             _BearerClass = bearerClass;
-            _KBCN = kanbanConnection;
-            _KB3Context = kB3Context;
-
+            _masterRepo = masterRepo;
         }
 
-
-
-        [HttpPost]
-        public IActionResult initial([FromBody] string pData = null)
+        [HttpGet]
+        public async Task<IActionResult> GetListData(string? Plant, string? DockCode)
         {
-            dynamic _json = null;
-            string _SQL = "";
             try
             {
-                if (_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
+                await _BearerClass.CheckAuthorize();
+
+                var data = await _masterRepo.IKBNMS029.GetListData(Plant, DockCode);
+
+                return Ok(new
                 {
-                    return StatusCode(_BearerClass.Status, new
-                    {
-                        status = _BearerClass.Status,
-                        response = _BearerClass.Response,
-                        message = _BearerClass.Message
-                    });
-                }
+                    status = "200",
+                    response = "Success",
+                    message = "Data Found",
+                    data = data
+                });
 
-
-                _SQL = @" EXEC [exec].[spTB_MS_FACTORY] ";
-                string _jsTB_MS_Factory = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
-
-                string _result = @"{
-                    ""status"":""200"",
-                    ""response"":""OK"",
-                    ""message"": ""Data Found"",
-                    ""data"":
-                            {
-                                ""TB_MS_Factory"" : " + _jsTB_MS_Factory + @"
-                            }
-                }";
-                return Content(_result, "application/json");
             }
-            catch (Exception e)
+            catch (CustomHttpException ex)
             {
-                return Content(e.Message.ToString(), "application/json");
+                throw;
             }
         }
 
-
-
-        [HttpPost]
-        public IActionResult search([FromBody] string pData = null)
-        {
-            dynamic _json = null;
-            string _SQL = "";
-            try
-            {
-                if (_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
-                {
-                    return StatusCode(_BearerClass.Status, new
-                    {
-                        status = _BearerClass.Status,
-                        response = _BearerClass.Response,
-                        message = _BearerClass.Message
-                    });
-                }
-
-
-                _json = JsonConvert.DeserializeObject(pData);
-
-                _SQL = @" EXEC [exec].[spKBNMS029_SEARCH] '" + _BearerClass.Plant + "' ";
-                string _jsonData = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
-
-                string _result = @"{
-                    ""status"":""200"",
-                    ""response"":""OK"",
-                    ""message"": ""Data Found"",
-                    ""data"": " + _jsonData + @"
-                }";
-                return Content(_result, "application/json");
-            }
-            catch (Exception e)
-            {
-                return Content(e.Message.ToString(), "application/json");
-            }
-        }
-
-
-
-        [HttpPost]
-        public IActionResult save()
-        {
-            dynamic _json = null;
-            string _SQL = "";
-            try
-            {
-                if (_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
-                {
-                    return StatusCode(_BearerClass.Status, new
-                    {
-                        status = _BearerClass.Status,
-                        response = _BearerClass.Response,
-                        message = _BearerClass.Message
-                    });
-                }
-
-                TB_MS_Dock_Code TB_MS_Dock_Code = new TB_MS_Dock_Code();
-                TB_MS_Dock_Code.F_Plant = _BearerClass.Plant;
-                TB_MS_Dock_Code.F_Dock_Code = Request.Form["F_Dock_Code"].ToString();
-                TB_MS_Dock_Code.F_Start_Date = Request.Form["F_Start_Date"].ToString().Substring(0, 4) + Request.Form["F_Start_Date"].ToString().Substring(5, 2) + Request.Form["F_Start_Date"].ToString().Substring(8, 2);
-                TB_MS_Dock_Code.F_End_Date = Request.Form["F_End_Date"].ToString().Substring(0, 4) + Request.Form["F_End_Date"].ToString().Substring(5, 2) + Request.Form["F_End_Date"].ToString().Substring(8, 2);
-                TB_MS_Dock_Code.F_Create_By = _BearerClass.UserCode.ToString();
-                TB_MS_Dock_Code.F_Create_Date = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss"));
-                TB_MS_Dock_Code.F_Update_By = _BearerClass.UserCode.ToString();
-                TB_MS_Dock_Code.F_Update_Date = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss"));
-                _KB3Context.TB_MS_Dock_Code.Add(TB_MS_Dock_Code);
-                _KB3Context.SaveChanges();
-
-
-                string _result = @"{
-                    ""status"":""200"",
-                    ""response"":""OK"",
-                    ""message"": ""Data has been save""
-                }";
-                return Content(_result, "application/json");
-            }
-            catch (Exception e)
-            {
-                return Content(e.Message.ToString(), "application/json");
-            }
-        }
-
-
-
-
-        [HttpPatch]
-        public IActionResult save(int id = 0)
-        {
-            dynamic _json = null;
-            string _SQL = "";
-            string _result = @"{
-                        ""status"":""200"",
-                        ""response"":""OK"",
-                        ""message"": ""Data not found""
-                    }";
-            try
-            {
-                if (_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
-                {
-                    return StatusCode(_BearerClass.Status, new
-                    {
-                        status = _BearerClass.Status,
-                        response = _BearerClass.Response,
-                        message = _BearerClass.Message
-                    });
-                }
-
-
-                _SQL = @"
-                    UPDATE [dbo].[TB_MS_Dock_Code]
-                    SET F_Plant = '" + Request.Form["F_Plant"].ToString().Replace("-", "") + @"'
-                        ,F_Dock_Code = '" + Request.Form["F_Dock_Code"].ToString().Replace("-", "") + @"'
-                        ,F_Start_Date = '" + Request.Form["F_Start_Date"].ToString().Replace("-", "") + @"'
-                        ,F_End_Date = '" + Request.Form["F_End_Date"].ToString().Replace("-", "") + @"'
-                        ,F_Update_By = '" + _BearerClass.UserCode + @"'
-                        ,F_Update_Date = '" + DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss")) + @"'
-                    WHERE 1=1
-                    AND F_Plant = '" + Request.Form["F_Plant"].ToString() + @"'
-                    AND F_Dock_Code = '" + Request.Form["F_Dock_Code"].ToString() + @"'
-                ";
-                _KBCN.Execute(_SQL);
-
-
-                _result = @"{
-                    ""status"":""200"",
-                    ""response"":""OK"",
-                    ""message"": ""Data has been save""
-                }";
-                return Content(_result, "application/json");
-            }
-            catch (Exception e)
-            {
-                return Content(e.Message.ToString(), "application/json");
-            }
-        }
-
-
-
-
-        [HttpPost]
-        public IActionResult delete(int id = 0)
-        {
-            dynamic _json = null;
-            string _SQL = "";
-            string _result = @"{
-                        ""status"":""200"",
-                        ""response"":""OK"",
-                        ""message"": ""Data not found""
-                    }";
-            try
-            {
-                if (_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
-                {
-                    return StatusCode(_BearerClass.Status, new
-                    {
-                        status = _BearerClass.Status,
-                        response = _BearerClass.Response,
-                        message = _BearerClass.Message
-                    });
-                }
-
-
-                _SQL = @"
-                    DELETE [dbo].[TB_MS_Dock_Code]
-                    WHERE 1=1
-                    AND F_Plant = '" + Request.Form["F_Plant"].ToString() + @"'
-                    AND F_Dock_Code = '" + Request.Form["F_Dock_Code"].ToString() + @"'
-                    AND F_Start_Date = '" + Request.Form["F_Start_Date"].ToString().Replace("-", "") + @"'
-                    AND F_End_Date = '" + Request.Form["F_End_Date"].ToString().Replace("-", "") + @"'
-                ";
-                _KBCN.Execute(_SQL);
-
-
-                _result = @"{
-                    ""status"":""200"",
-                    ""response"":""OK"",
-                    ""message"": ""Data has been delete""
-                }";
-                return Content(_result, "application/json");
-            }
-            catch (Exception e)
-            {
-                return Content(e.Message.ToString(), "application/json");
-            }
-        }
     }
 }

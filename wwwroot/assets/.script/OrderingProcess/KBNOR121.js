@@ -933,21 +933,21 @@ $("#btnReCal").click(function () {
     _xLib.AJAX_Post('/api/KBNOR121/Recalculate', JSON.stringify(obj),
         function (result) {
             if (result.status == 200) {
-                //previewFunction($("#txtPage").val().split("/")[0] - 1, _command);
+                previewFunction($("#txtPage").val().split("/")[0] - 1, _command);
                 xSwal.success("Success", "Recalculate Success");
 
-                _xLib.AJAX_Post('/api/KBNOR121/Bl_Recalculate', JSON.stringify(obj),
-                    function (result) {
-                        if (result.status == 200) {
-                            previewFunction($("#txtPage").val().split("/")[0] - 1, _command);
-                            xSwal.success("Success", "Recalculate BL Success");
-                        }
-                    },
-                    function (error) {
-                        xSwal.error("Error", error.responseJSON.message);
-                        console.error(error);
-                    }
-                );
+                //_xLib.AJAX_Post('/api/KBNOR121/Bl_Recalculate', JSON.stringify(obj),
+                //    function (result) {
+                //        if (result.status == 200) {
+                //            previewFunction($("#txtPage").val().split("/")[0] - 1, _command);
+                //            xSwal.success("Success", "Recalculate BL Success");
+                //        }
+                //    },
+                //    function (error) {
+                //        xSwal.error("Error", error.responseJSON.message);
+                //        console.error(error);
+                //    }
+                //);
 
             }
         },

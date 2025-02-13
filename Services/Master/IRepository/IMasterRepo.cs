@@ -10,6 +10,7 @@
         IKBNMS025 IKBNMS025 { get; }
         IKBNMS027 IKBNMS027 { get; }
         IKBNMS028 IKBNMS028 { get; }
+        IKBNMS029 IKBNMS029 { get; }
         IKBNMS030 IKBNMS030 { get; }
 
     }

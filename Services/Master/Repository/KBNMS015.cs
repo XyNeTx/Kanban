@@ -291,6 +291,7 @@ namespace KANBAN.Services.Master.Repository
                     }
 
                     var updObj = existObj.FirstOrDefault();
+                    _log.WriteLogMsg("UPDATE TB_MS_Label BEFORE => " + JsonConvert.SerializeObject(existObj));
 
                     updObj.F_Cycle = obj.F_Cycle;
                     updObj.F_Color = obj.F_Color;
@@ -300,7 +301,7 @@ namespace KANBAN.Services.Master.Repository
                     updObj.F_Update_Date = DateTime.Now;
 
                     _kbContext.TB_MS_Label.Update(updObj);
-                    _log.WriteLogMsg("UPDATE TB_MS_Label => " + JsonConvert.SerializeObject(updObj));
+                    _log.WriteLogMsg("UPDATE TB_MS_Label AFTER => " + JsonConvert.SerializeObject(updObj));
 
                 }
                 else if (action.ToLower() == "del")
@@ -325,7 +326,89 @@ namespace KANBAN.Services.Master.Repository
                         _log.WriteLogMsg("DELETE TB_MS_Label => " + JsonConvert.SerializeObject(delObj));
                     }
                 }
+                else if (action.ToLower() == "imp")
+                {
 
+                    var labels = _kbContext.TB_MS_Label
+                        .AsNoTracking()
+                        .ToList(); // Materialize data from the database
+
+                    var isAnyExist = labels.Any(x =>
+                        listObj.Any(y =>
+                            (x.F_Supplier_Cd + "-" + x.F_Supplier_Plant) == y.F_Supplier_Code &&
+                            (x.F_Part_No + "-" + x.F_Ruibetsu) == y.F_Part_No &&
+                             x.F_Kanban_No == y.F_Kanban_No &&
+                             x.F_Store_Code == y.F_Store_Code &&
+                             x.F_Start_Date == y.F_Start_Date));
+
+
+                    if (isAnyExist)
+                    {
+                        throw new CustomHttpException(400, "Can't insert exist data to Database");
+                    }
+
+                    foreach (var each in listObj)
+                    {
+                        var objSupplier = _PPM3Context.T_Supplier_MS
+                            .AsNoTracking()
+                            .FirstOrDefault(x => x.F_supplier_cd + "-" + x.F_Plant_cd == each.F_Supplier_Code
+                            && x.F_TC_Str.CompareTo(strDateNow) <= 0
+                            && x.F_TC_End.CompareTo(strDateNow) >= 0
+                            && x.F_Store_cd == each.F_Store_Code);
+
+                        if (objSupplier == null)
+                        {
+                            throw new CustomHttpException(404, "Not found Supplier In Supplier Master " + JsonConvert.SerializeObject(each));
+                        }
+
+                        var cycle = objSupplier.F_Cycle_A.Length == 1 ? "0" + objSupplier.F_Cycle_A + objSupplier.F_Cycle_B + objSupplier.F_Cycle_C
+                            : objSupplier.F_Cycle_A + objSupplier.F_Cycle_B + objSupplier.F_Cycle_C;
+
+                        var objPart = _PPM3Context.T_Construction
+                            .AsNoTracking()
+                            .FirstOrDefault(x => x.F_Part_no.Trim() + "-" + x.F_Ruibetsu == each.F_Part_No
+                            && x.F_Store_cd == each.F_Store_Code
+                            && x.F_Local_Str.CompareTo(strDateNow) <= 0
+                            && x.F_Local_End.CompareTo(strDateNow) >= 0
+                            && x.F_supplier_cd + "-" + x.F_plant == each.F_Supplier_Code
+                            && x.F_Sebango == each.F_Kanban_No.Substring(1, 3));
+
+                        if (objPart == null)
+                        {
+                            throw new CustomHttpException(404, "Not found Part In BOM " + _log.SerializeErrObjHTML(each));
+                        }
+
+
+                        TB_MS_Label addObj = new TB_MS_Label
+                        {
+                            F_Color = each.F_Color,
+                            F_Create_By = _BearerClass.UserCode,
+                            F_Create_Date = DateTime.Now,
+                            F_Update_By = _BearerClass.UserCode,
+                            F_Update_Date = DateTime.Now,
+                            F_Cycle = cycle,
+                            F_Kanban_No = each.F_Kanban_No,
+                            F_Plant = _BearerClass.Plant,
+                            F_Supplier_Cd = each.F_Supplier_Code.Split("-")[0],
+                            F_Supplier_Plant = each.F_Supplier_Code.Split("-")[1],
+                            F_End_Date = each.F_End_Date,
+                            F_Start_Date = each.F_Start_Date,
+                            F_Part_No = each.F_Part_No.Split("-")[0],
+                            F_Ruibetsu = each.F_Part_No.Split("-")[1],
+                            F_Store_Code = each.F_Store_Code,
+                            F_Text = each.F_Description,
+                            F_Type_Order = "",
+                        };
+
+
+                        await _kbContext.TB_MS_Label.AddAsync(addObj);
+                    }
+                    _log.WriteLogMsg("IMPORT INSERT TO TB_MS_Label => " + JsonConvert.SerializeObject(listObj));
+                }
+                else
+                {
+                    throw new CustomHttpException(400, "Please Select Action to proceed");
+                }
 
                 await _kbContext.SaveChangesAsync();
 

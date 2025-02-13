@@ -116,12 +116,14 @@ namespace KANBAN.Services.Master.Repository
                     throw new CustomHttpException(400, "Data not found");
                 }
 
+                _log.WriteLogMsg("UPDATE TB_MS_LineControl BEFORE : " + JsonConvert.SerializeObject(data));
+
                 _kbContext.TB_MS_LineControl.Remove(check);
                 data.F_Update_By = _BearerClass.UserCode;
                 data.F_Update_Date = DateTime.Now;
 
                 _kbContext.TB_MS_LineControl.Add(data);
-                _log.WriteLogMsg("UPDATE TB_MS_LineControl : " + JsonConvert.SerializeObject(data));
+                _log.WriteLogMsg("UPDATE TB_MS_LineControl AFTER : " + JsonConvert.SerializeObject(data));
                 await _kbContext.SaveChangesAsync();
             }
             catch (Exception ex)

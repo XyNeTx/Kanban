@@ -156,14 +156,26 @@ class libSwal {
     }
 
     xError(error) {
-        Swal.fire({
-            icon: "error",
-            title: error.responseJSON.response,
-            text: error.responseJSON.message,
-            showConfirmButton: true,
-            confirmButtonColor: '#FD00A5',
-            confirmButtonText: "OK",
-        });
+        if (!error.responseJSON.message.includes("<br>")) {
+            Swal.fire({
+                icon: "error",
+                title: error.responseJSON.response,
+                text: error.responseJSON.message,
+                showConfirmButton: true,
+                confirmButtonColor: '#FD00A5',
+                confirmButtonText: "OK",
+            });
+        }
+        else {
+            Swal.fire({
+                icon: "error",
+                title: error.responseJSON.response,
+                html: error.responseJSON.message,
+                showConfirmButton: true,
+                confirmButtonColor: '#FD00A5',
+                confirmButtonText: "OK",
+            });
+        }
     }
 
     xErrorAwait(error) {

@@ -167,12 +167,26 @@
 
                     </div>
 
+                    <div class="row pe-0">
+                        <div class="col-8">
+                            <input type="file" class="form-control col-12" id="uploadFile" accept=".xlsx"/>
+                        </div>
+                        <div class="col-1 ps-0">
+                            <button type="button" id="btnImp" class="btn btn-success ms-1 col-12">Import</button>
+                        </div>
+                        <div class="col-3 pe-0">
+                            <div class="d-flex justify-content-end">
+                                <a href="~/TemplateFiles/Template_KB_Label.xlsx" class="ms-4 btn btn-primary col-6">Template File</a>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
 
                 <div class="row mt-4">
 
                     <div class="col">
-                        <div class="row justify-content-start">
+                        <div class="ps-2 row justify-content-start">
                             <button type="button" class="btn btn-success btn-rounded col-3" id="btnSelAll">Select All</button>
                             <button type="button" class="btn btn-primary btn-rounded col-3" id="btnDeselAll">Deselect All</button>
                         </div>

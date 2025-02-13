@@ -75,11 +75,11 @@ $("#divBtn").on("click", "button", async function () {
 
     $(document).find("select:disabled").each(function () {
         $(this).prop("disabled", false);
-        $(this).selectpicker("refresh");
+        //$(this).resetSelectPicker();
     });
 
     //console.log("click 2");
-
+    $().resetAllSelectPicker();
     GetDropDown();
 
 });
@@ -88,15 +88,25 @@ $("#btnCan").click(function () {
     $("#divBtn").find("button").prop("disabled", false);
     $(document).find("select:not(:disabled)").each(function () {
         $(this).prop("disabled", true);
-        $(this).resetSelectPicker();
+        //$(this).resetSelectPicker();
     });
     $(document).find("input:not(:disabled)").each(function () {
         $(this).val("");
     });
+
     $("#F_Start_Date").val(moment().format('DD/MM/YYYY'));
     $("#F_End_Date").val("31/12/2999");
 
+    $().resetAllSelectPicker();
+
     $("#tableMain").DataTable().clear().draw();
+});
+
+$("#btnSelAll").click(function () {
+    $(".chkbox").prop("checked", true);
+});
+$("#btnDeselAll").click(function () {
+    $(".chkbox").prop("checked", true);
 });
 
 $("#F_Supplier_Code").change(function () {
@@ -127,6 +137,57 @@ $("#F_Part_No").change(function () {
 $("#btnSave").click(function () {
     Save();
 });
+
+let uploadFile;
+
+$("#uploadFile").change(function (e) {
+    //console.log(e);
+    uploadFile = e.target.files[0];
+});
+
+$("#btnImp").click(function () {
+    ImportFile(uploadFile);
+});
+
+async function ImportFile(_files) {
+    try {
+        const file = _files;
+        if (!file) return xSwal.error("Import File Error", "No file selected");
+        //console.log('File being processed:', file);
+
+        const arrayBuffer = await file.arrayBuffer();
+        const read = await XLSX.read(arrayBuffer);
+
+        let newRead = read;
+
+        for (var key in newRead.Sheets[newRead.SheetNames[0]]) {
+            newRead.Sheets[newRead.SheetNames[0]][key].v = newRead.Sheets[newRead.SheetNames[0]][key].w;
+        }
+
+        let data = XLSX.utils.sheet_to_json(newRead.Sheets[newRead.SheetNames[0]]);
+
+        data.forEach(function (each)
+        {
+            each.F_End_Date = "29991231";
+        })
+
+        console.log(data);
+
+        _xLib.AJAX_Post("/api/KBNMS015/Save?action=imp", data,
+            function (success) {
+                GetListData();
+                xSwal.success(success.response, success.message);
+            },
+            function (error) {
+                xSwal.xError(error);
+            }
+        );
+
+    }
+    catch (ex) {
+        xSwal.error("Error", ex)
+    }
+}
 
 function GetDropDown() {
     let obj = {
@@ -272,6 +333,7 @@ async function Save()
 
     _xLib.AJAX_Post("/api/KBNMS015/Save?action=" + action, listObj,
         function (success) {
+            GetListData();
             xSwal.success(success.response, success.message);
         },
         function (error) {

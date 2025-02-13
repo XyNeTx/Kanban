@@ -406,8 +406,10 @@ $("#selectDate").change(function () {
     );
 
 });
-
+let selectDate = "";
 function ShowData() {
+
+
     var obj = {
         supplier: $("#selectSupplier").val(),
         kanban: $("#selectKanban").val(),
@@ -424,6 +426,10 @@ function ShowData() {
         return;
     }
 
+    if (selectDate == moment($("#selectDate").val(), "DD/MM/YYYY").format("YYYYMMDD")) return;
+    xSplash.show();
+
+    selectDate = obj.selDate;
     _xLib.AJAX_Get("/api/KBNMS008/Show_Data", obj,
     function (success) {
             if (success.status == "200") {
@@ -444,7 +450,7 @@ function ShowData() {
                     console.log(data);
                 });
                 $("#tableMain").DataTable().rows.add(success.data).draw();
-
+                xSplash.hide();
             }
         },
         function (error) {
@@ -486,6 +492,7 @@ $("#btnSearch").click(async function () {
                     $("#selectDate").parent().find("button").prop("disabled", false);
                     $("#selectDate").val($("#selectDelivery").val());
                 }
+                ShowData();
                 //console.log(success.data);
             }
         },
