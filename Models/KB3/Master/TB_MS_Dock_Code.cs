@@ -6,7 +6,7 @@
     using System.ComponentModel.DataAnnotations.Schema;
 
     [Table("TB_MS_Dock_Code")]
-    [PrimaryKey("F_Plant", "F_Dock_Code", "F_Start_Date", "F_End_Date")]
+    [PrimaryKey("F_Plant", "F_Dock_Code", "F_Start_Date")]
     public class TB_MS_Dock_Code
     {
         [DisplayName("Plant")]
@@ -15,10 +15,10 @@
         [DisplayName("Dock Code : ")]
         [StringLength(10)]
         public string F_Dock_Code { get; set; }
-        [DisplayName("Start Date")]
+        [DisplayName("Start Date : ")]
         [StringLength(8)]
         public string F_Start_Date { get; set; }
-        [DisplayName("End Date")]
+        [DisplayName("End Date : ")]
         [StringLength(8)]
         public string F_End_Date { get; set; }
         public DateTime? F_Create_Date { get; set; }

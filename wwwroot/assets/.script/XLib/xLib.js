@@ -717,15 +717,15 @@ const _xLib = new xLib();
 
 (($) => {
     $.fn.resetSelectPicker = async function () {
-        $(this).selectpicker("val", "");
+        await $(this).selectpicker("val", "");
         //console.log($(this));
         //await $(this).trigger("change");
 
-        $(this).find("option.bs-title-option").remove();
+        await $(this).find("option.bs-title-option").remove();
 
         //$(this).selectpicker('refresh');
 
-        $(this).parent().find(".filter-option-inner-inner").text("Nothing Selected");
+        return $(this).parent().find(".filter-option-inner-inner").text("Nothing Selected");
     };
 
     $.fn.resetAllSelectPicker = async function () {
@@ -738,11 +738,21 @@ const _xLib = new xLib();
         $(`button[data-id='${id}']`).addClass("disabled");
     }
 
+    $.fn.enableSelectPicker = async function () {
+        var id = $(this).attr("id");
+        $(`button[data-id='${id}']`).removeClass("disabled");
+    }
+
     $.fn.formToJSON = async function () {
         let formData = {};
         //console.log($(this));
         $(this).serializeArray().forEach(function (item) {
-            //console.log(item);
+            console.log(item);
+
+            if ($(`#${item.name}`).attr("data-datepicker"))
+            {
+                item.value = moment(item.value, "DD/MM/YYYY").format("YYYYMMDD");
+            }
             formData[item.name] = item.value;
         });
 
