@@ -692,7 +692,7 @@ namespace HINOSystem.Controllers.API.Master
             using var _KB3Transaction = _KB3Context.Database.BeginTransaction();
             try
             {
-                _KB3Transaction.CreateSavepoint("Start_ImportSave");
+                await _KB3Transaction.CreateSavepointAsync("Start_ImportSave");
 
                 string now = DateTime.Now.ToString("yyyyMMdd");
                 string UserID = HttpContext.Session.GetString("USER_CODE");
@@ -717,6 +717,7 @@ namespace HINOSystem.Controllers.API.Master
             }
             catch (Exception ex)
             {
+                await _KB3Transaction.RollbackToSavepointAsync("Start_ImportSave");
                 return StatusCode(500, new
                 {
                     status = "500",

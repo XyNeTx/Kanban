@@ -418,7 +418,7 @@ $("#buttonOK").click(async function () {
 });
 
 
-async function OkClicked(_arrObj) {
+async function OkClicked(_arrObj,isImport) {
     //return console.log(_arrObj);
 
     for (const item in _arrObj) {
@@ -463,7 +463,11 @@ async function OkClicked(_arrObj) {
         );
     }
 
-    await _xLib.AJAX_Get('/api/KBNIM007N/AllDataWasSaved', { F_PDS_No: $("#txtOrderNo").val() },
+    let PDS_No = $("#txtOrderNo").val();
+
+    PDS_No = isImport ? PDS_No + "IMP" : PDS_No;
+
+    await _xLib.AJAX_Get('/api/KBNIM007N/AllDataWasSaved', { F_PDS_No: PDS_No },
         function (success) {
             if (success.status === "200") {
                 return xSwal.success(success.title, success.message);
@@ -511,5 +515,5 @@ $("#buttonImport").click(async function () {
 
     //return console.log('Data: ', _arrObj);
 
-    return await OkClicked(_arrObj);
+    return await OkClicked(_arrObj, true);
 });

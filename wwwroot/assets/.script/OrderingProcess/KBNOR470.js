@@ -53,7 +53,7 @@ $("#btnUnlock").click(function () {
         var data = $("#tableMain").DataTable().row($(this).val()).data();
         data.F_SUpplier_Code = data.F_SUpplier_Code.split("-")[0];
         data.F_PART_NO = data.F_PART_NO.split("-")[0];
-        data.F_Delivery_Date = moment(data.F_Delivery_Date).format("YYYYMMDD");
+        data.F_Delivery_Date = data.F_Delivery_Date;
         listObj.push(data);
     });
     //console.log(moment().format("YYYY-MM-DD"))

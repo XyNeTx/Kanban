@@ -1,69 +1,42 @@
 ﻿$(document).ready(function () {
-
-    const xKBNMS019 = new MasterTemplate({
-        Controller: _PAGE_,
-        Table: 'tblMaster',
-        ColumnTitle: {
-            "EN": ['Supplier Code', 'Kanban No', 'Part No', 'Part Name', 'Store Code', 'Qty', 'Max Trip'],
-            "TH": ['Supplier Code', 'Kanban No', 'Part No', 'Part Name', 'Store Code', 'Qty', 'Max Trip'],
-            "JP": ['Supplier Code', 'Kanban No', 'Part No', 'Part Name', 'Store Code', 'Qty', 'Max Trip'],
-        },
-        ColumnValue: [
-            { "data": "F_Supplier" },
-            { "data": "F_Kanban_No" },
-            { "data": "F_Part" },
-            { "data": "F_Part_Name" },
-            { "data": "F_Store_CD" },
-            { "data": "F_Qty" },
-            { "data": "F_Max_Trip" }
-        ],
-        Modal: 'modalMaster',
-        Form: 'frmMaster',
-        PostData: [
-            { name: 'F_Plant', value: _PLANT_ }
-        ],
-    });
-
-    xKBNMS019.prepare();
-
-    xKBNMS019.initial(function (result) {
-        xDropDownList.bind('#frmCondition #F_Plant', result.data.TB_MS_Factory, 'F_Plant', 'F_Plant_Name');
-        xDropDownList.bind('#frmMaster #F_Plant', result.data.TB_MS_Factory, 'F_Plant', 'F_Plant_Name');
-
-        xKBNMS019.search();
-    });
-
-    onSave = function () {
-        xKBNMS019.save(function () {
-            xKBNMS019.search();
+    _xDataTable.InitialDataTable("#tableMain",
+        {
+            "processing": false,
+            "serverSide": false,
+            width: '100%',
+            paging: false,
+            sorting: false,
+            searching: false,
+            scrollX: true,
+            scrollY: "200px",
+            scrollCollapse: false,
+            "columns": [
+                {
+                    title: "Flag", render(data, type, row) {
+                        return `<input type="checkbox" class="chkbox" id="chkbox" name="chkbox">`;
+                    }
+                },
+                {
+                    title: "Plant", data: "F_PlantCode"
+                },
+                {
+                    title: "Dock Code", data: "F_Dock_Code"
+                },
+                {
+                    title: "Start Date", data: "F_Start_Date", render: function (row, meta) {
+                        return moment(row, "YYYYMMDD").format("DD/MM/YYYY");
+                    }
+                },
+                {
+                    title: "End Date", data: "F_End_Date", render: function (row, meta) {
+                        return moment(row, "YYYYMMDD").format("DD/MM/YYYY");
+                    }
+                },
+            ],
+            select: false,
+            order: [[0, "asc"]]
         });
-    }
 
-    onDelete = function () {
-        xKBNMS019.delete(function () {
-            xKBNMS019.search();
-        });
-    }
-
-    onDeleteAll = function () {
-        xKBNMS019.deleteall(function () {
-            xKBNMS019.search();
-        });
-    }
-
-    onPrint = function () { }
-
-    onExecute = function () { }
-
-    xAjax.onChange('#frmCondition #F_Plant', function () {
-        $('#frmMaster #F_Plant').val($('#frmCondition #F_Plant').val());
-
-        xKBNMS019.search();
-    });
-
-
-
-
-
+    xSplash.hide();
 })
 
