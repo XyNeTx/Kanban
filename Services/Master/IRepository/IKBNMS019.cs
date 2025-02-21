@@ -1,4 +1,5 @@
 ﻿using HINOSystem.Models.KB3.Master;
+using KANBAN.Models.KB3.Master.ViewModel;
 using KANBAN.Models.KB3.Receive_Process;
 using KANBAN.Models.PPM3;
 
@@ -13,5 +14,7 @@ namespace KANBAN.Services.Master.IRepository
         Task<List<TB_MS_MAXAREA>> GetPartInq(string SupplierCode);
         Task<T_Construction> GetPartName(string PartNo);
         Task<TB_MS_MAXAREA> GetMaxTrip(string SupplierCode, string PartNo, string StoreCode, string KanbanNo);
+        Task<List<VM_KBNMS019>> GetListMaxArea(string? SupplierCode, string? PartNo, string? StoreCode, string? KanbanNo);
+        Task Save(List<VM_KBNMS019> listObj, string action);
     }
 }

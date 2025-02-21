@@ -122,14 +122,12 @@ namespace HINOSystem.Controllers.API.Master
 
                 _KB3Transaction.CreateSavepoint("Start_AfterImported");
 
-                //var intRow = 
-                await _KB3Context.Database.ExecuteSqlRawAsync($"EXEC [exec].[spKBNIM014] @p0,@p1", Plant, UserID);
+                var ImportList = await _KB3Context.TB_Import_EKanban_Pack.AsNoTracking()
+                    .Where(x => x.F_Update_By == _BearerClass.UserCode && x.F_Update_Date.Value.Date == DateTime.Now.Date)
+                    .Select(x => x.F_PDS_No)
+                    .ToListAsync();
 
-                //if(intRow > 0)
-                //{
-                //    await _KB3Context.Database.ExecuteSqlRawAsync($"DELETE FROM TB_Import_EKanban_Pack Where F_Plant_CD = @p0 AND F_Update_By = @p1", Plant, UserID);
-                //    throw new Exception("Data Imported but Have Some Error Please Try Again");
-                //}
+                await _KB3Context.Database.ExecuteSqlRawAsync($"EXEC [exec].[spKBNIM014] @p0,@p1", Plant, UserID);
 
                 var _delList = await _KB3Context.TB_Import_EKanban_Pack.Where(x => x.F_Plant_CD == Plant && x.F_Update_By == UserID).ToListAsync();
 
@@ -151,6 +149,27 @@ namespace HINOSystem.Controllers.API.Master
                         userid = UserID,
                         type = "KBNIM014"
 
+                    });
+                }
+
+                var TransList = await _KB3Context.TB_Transaction.AsNoTracking()
+                    .Where(x => ImportList.Any(y => x.F_PDS_No == y)).ToListAsync();
+
+                TransList = TransList.DistinctBy(x => x.F_PDS_No).ToList();
+
+                if (TransList.Count > 0)
+                {
+                    string errorMessage = "These PDS No was Already Confirmed or Already Confirmed <br>";
+                    foreach (var trans in TransList)
+                    {
+                        errorMessage += "PDS_No => " + trans.F_PDS_No.Trim() + "<br>";
+                    }
+                    return StatusCode(400, new
+                    {
+                        status = "400",
+                        response = "Bad Request",
+                        title = "Bad Request",
+                        message = errorMessage
                     });
                 }
 

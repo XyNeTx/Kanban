@@ -390,36 +390,10 @@ namespace KANBAN.Controllers.API.Master
                     var existed = _KB3Context.TB_BL_SET.Where(x => x.F_Date == each.F_Date && x.F_Sup_Cd == each.F_Sup_Cd && x.F_Sup_Plant == each.F_Sup_Plant
                     && x.F_Store_Cd == each.F_Store_Cd && x.F_Sebango == each.F_Sebango.Substring(1, 3) && x.F_Shift == each.F_Shift && x.F_Part_No == each.F_Part_No && x.F_Ruibetsu == each.F_Ruibetsu)
                         .FirstOrDefault();
-
-                    if (existed != null)
+                    string KanbanNo = each.F_Sebango;
+                    if (existed.F_Bl_PCS + existed.F_BL_Kanban > 0
+                        && existed.F_BL != 0 && existed == null)
                     {
-                        existed = each;
-                        string KanbanNo = each.F_Sebango;
-                        existed.F_Sebango = each.F_Sebango.Substring(1, 3);
-                        existed.F_Update_By = _BearerClass.UserCode;
-                        existed.F_Update_Date = DateTime.Now;
-                        _KB3Context.TB_BL_SET.Update(existed);
-                        _KB3Context.SaveChanges();
-
-                        if (each.F_Sup_Cd == "9999")
-                        {
-                            await _KB3Context.Database.ExecuteSqlRawAsync("EXEC [CKD_Inhouse].sp_setStockBalance @p0,@p1,@p2,@p3,@p4,@p5,@p6,@p7,@p8,@p9,@p10"
-                                , _BearerClass.Plant, each.F_Sup_Cd, each.F_Sup_Plant, each.F_Part_No, each.F_Ruibetsu, KanbanNo, each.F_Store_Cd
-                                , each.F_Date, each.F_Shift, each.F_BL, _BearerClass.UserCode);
-                        }
-                        else
-                        {
-                            await _KB3Context.Database.ExecuteSqlRawAsync("EXEC [dbo].sp_setStockBalance @p0,@p1,@p2,@p3,@p4,@p5,@p6,@p7,@p8,@p9,@p10"
-                                , _BearerClass.Plant, each.F_Sup_Cd, each.F_Sup_Plant, each.F_Part_No, each.F_Ruibetsu, KanbanNo, each.F_Store_Cd
-                                , each.F_Date, each.F_Shift, each.F_BL, _BearerClass.UserCode);
-                        }
-
-                        string _logData = JsonConvert.SerializeObject(each);
-                        _Log.WriteLog(_logData, _BearerClass.UserCode, _BearerClass.Device);
-                    }
-                    else
-                    {
-                        string KanbanNo = each.F_Sebango;
                         each.F_Sebango = each.F_Sebango.Substring(1, 3);
                         each.F_Update_By = _BearerClass.UserCode;
                         each.F_Update_Date = DateTime.Now;
@@ -438,10 +412,33 @@ namespace KANBAN.Controllers.API.Master
                             , _BearerClass.Plant, each.F_Sup_Cd, each.F_Sup_Plant, each.F_Part_No, each.F_Ruibetsu, KanbanNo, each.F_Store_Cd
                             , each.F_Date, each.F_Shift, each.F_BL, _BearerClass.UserCode);
                         }
-
-                        string _logData = JsonConvert.SerializeObject(each);
-                        _Log.WriteLog(_logData, _BearerClass.UserCode, _BearerClass.Device);
                     }
+                    else if (existed != null)
+                    {
+                        existed.F_BL = each.F_BL;
+                        existed.F_BL_Kanban = each.F_BL_Kanban;
+                        existed.F_Bl_PCS = each.F_Bl_PCS;
+                        existed.F_Update_By = _BearerClass.UserCode;
+                        existed.F_Update_Date = DateTime.Now;
+                        _KB3Context.TB_BL_SET.Update(existed);
+                        _KB3Context.SaveChanges();
+
+                        if (each.F_Sup_Cd == "9999")
+                        {
+                            await _KB3Context.Database.ExecuteSqlRawAsync("EXEC [CKD_Inhouse].sp_setStockBalance @p0,@p1,@p2,@p3,@p4,@p5,@p6,@p7,@p8,@p9,@p10"
+                            , _BearerClass.Plant, each.F_Sup_Cd, each.F_Sup_Plant, each.F_Part_No, each.F_Ruibetsu, KanbanNo, each.F_Store_Cd
+                            , each.F_Date, each.F_Shift, each.F_BL, _BearerClass.UserCode);
+                        }
+                        else
+                        {
+                            await _KB3Context.Database.ExecuteSqlRawAsync("EXEC [dbo].sp_setStockBalance @p0,@p1,@p2,@p3,@p4,@p5,@p6,@p7,@p8,@p9,@p10"
+                            , _BearerClass.Plant, each.F_Sup_Cd, each.F_Sup_Plant, each.F_Part_No, each.F_Ruibetsu, KanbanNo, each.F_Store_Cd
+                            , each.F_Date, each.F_Shift, each.F_BL, _BearerClass.UserCode);
+                        }
+                    }
+
+                    string _logData = JsonConvert.SerializeObject(each);
+                    _Log.WriteLog(_logData, _BearerClass.UserCode, _BearerClass.Device);
                 }
 
                 await _KB3Context.Database.ExecuteSqlRawAsync($"Exec [exec].spKBNMS005S_UPD_D '{_BearerClass.Plant}','{ListObj[0].F_Date}','{ListObj[0].F_Shift}','{ListObj[0].F_Sup_Cd + "-" + ListObj[0].F_Sup_Plant}','{ListObj[0].F_Store_Cd}'");

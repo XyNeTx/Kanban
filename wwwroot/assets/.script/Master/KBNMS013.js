@@ -330,7 +330,7 @@ $("#btnCancel").on("click", async function () {
 
 });
 
-$(document).on("click","#tableMain tbody tr", function () {
+$(document).on("click", "#tableMain tbody tr", async function () {
     if($("#btnUpdate").prop("disabled") == false || $("#btnDelete").prop("disabled") == false){
         var data = $("#tableMain").DataTable().row(this).data();
         console.log(data);
@@ -348,6 +348,23 @@ $(document).on("click","#tableMain tbody tr", function () {
         $("#inpTypeOrder").val(data.F_Type_Order).selectpicker("refresh");
         $("#inpCycle").val(data.F_Cycle);
         $("#inpPDSGroup").val(data.F_PDS_Group);
+
+        var obj = {
+            F_Supplier_Code: $("#inpSupplierCode").val(),
+        }
+
+        await _xLib.AJAX_Get("/api/KBNMS006/GetSupplierDetail", obj,
+            function (success) {
+                if (success.status == 200) {
+                    var data = success.data;
+                    $("#inpSupplierName").val(data.f_Supplier_Name);
+                    $("#inpCycle").val(data.f_Cycle);
+                }
+            },
+            function (error) {
+                xSwal.error("Error", "Supplier Detail Not Found");
+            }
+        );
     }
 });
 

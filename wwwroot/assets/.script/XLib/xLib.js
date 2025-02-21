@@ -294,8 +294,8 @@ class xLib {
         let obj = {
             title: title
         };
-        console.log(obj);
-        console.log(url);
+        //console.log(obj);
+        //console.log(url);
         return $.ajax({
             type: "GET",
             url: url,
@@ -381,7 +381,7 @@ class xLib {
         title = title.split(" - ")[0];
         title = title.split(" : ")[1];
         ajexHeader.title = title;
-        console.log(ajexHeader);
+        //console.log(ajexHeader);
         return $.ajax({
             type: "GET",
             url: url,
@@ -466,7 +466,7 @@ class xLib {
         title = title.split(" - ")[0];
         title = title.split(" : ")[1];
         ajexHeader.title = title;
-        console.log(ajexHeader);
+        //console.log(ajexHeader);
         return $.ajax({
             type: "POST",
             url: url,
@@ -545,7 +545,7 @@ class xLib {
         title = title.split(" - ")[0];
         title = title.split(" : ")[1];
         ajexHeader.title = title;
-        console.log(ajexHeader);
+        //console.log(ajexHeader);
         return $.ajax({
             type: "POST",
             url: url,
@@ -620,7 +620,7 @@ class xLib {
         title = title.split(" - ")[0];
         title = title.split(" : ")[1];
         ajexHeader.title = title;
-        console.log(ajexHeader);
+        //console.log(ajexHeader);
         return $.ajax({
             type: "POST",
             url: url,
@@ -687,6 +687,20 @@ class xLib {
         });
     }
 
+    ObjSetVal = async (objData, isTrigger) => {
+        console.log(objData);
+        for (const e of Object.keys(objData)) {
+            let _e = "F" + e.substring(1, e.length);
+
+            if ($(`#${_e}`).attr("data-datepicker")) {
+                await $(`#${_e}`).val(moment(objData[e], "YYYYMMDD").format("DD/MM/YYYY"));
+            } else {
+                await $(`#${_e}`).val(objData[e]);
+            }
+        }
+        $(".selectpicker").selectpicker("refresh");
+    }
+
     OpenReport(reportName,query) {
         var _url = "http://hmmt-app03/Reports/Pages/ReportViewer.aspx?/KB3"
         _url = _url + reportName + "&" + query;
@@ -747,7 +761,7 @@ const _xLib = new xLib();
         let formData = {};
         //console.log($(this));
         $(this).serializeArray().forEach(function (item) {
-            console.log(item);
+            //console.log(item);
 
             if ($(`#${item.name}`).attr("data-datepicker"))
             {

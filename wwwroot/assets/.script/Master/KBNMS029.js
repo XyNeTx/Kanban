@@ -104,7 +104,7 @@ $(document).on("dblclick", "table tbody tr td", async function () {
         else $(`#${_e}`).val(obj[e]);
         
         if ($(`#${_e}`).prop("tagName") === "SELECT") {
-            $(`#${_e}`).selectpicker("refresh");
+            $(`#${_e}`).selectpicker('val',obj[e]);
         }
 
     }

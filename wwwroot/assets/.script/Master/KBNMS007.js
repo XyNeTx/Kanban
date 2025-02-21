@@ -45,7 +45,7 @@ async function GetSupplier() {
             }
         },
         function (error) {
-            xSwal.error("Error", "Supplier Not Found");
+            xSwal.xError(error);
         }
     );
 
@@ -73,7 +73,7 @@ async function GetPartNo() {
             }
         },
         function (error) {
-            xSwal.error("Error", "Part No Not Found");
+            xSwal.xError(error);
         }
     );
 }
@@ -91,7 +91,7 @@ async function GetKanban(F_Supplier_Code) {
             }
         },
         function (error) {
-            xSwal.error("Error", "Kanban No Not Found");
+            xSwal.xError(error);
         }
     );
 
@@ -118,7 +118,7 @@ async function GetStore() {
             }
         },
         function (error) {
-            xSwal.error("Error", "Store Code Not Found");
+            xSwal.xError(error);
         }
     );
 }
@@ -145,7 +145,7 @@ $("#selectSupplier").change(async function () {
             }
         },
         function (error) {
-            xSwal.error("Error", "Supplier Detail Not Found");
+            xSwal.xError(error);
         }
     );
 
@@ -164,7 +164,7 @@ $("#readDeliveryDate").change(function () {
             }
         },
         function (error) {
-            xSwal.error("Error", "Delivery Time Not Found");
+            xSwal.xError(error);
         }
     );
 });
@@ -218,7 +218,7 @@ $("#selectKanban").change(async function () {
             }
         },
         function (error) {
-            xSwal.error("Error", "Kanban Detail Not Found");
+            xSwal.xError(error);
         }
     );
 });
@@ -255,7 +255,7 @@ $("#btnSearch").click(async function () {
             }
         },
         function (error) {
-            xSwal.error("Error", "Data Not Found");
+            xSwal.xError(error);
         }
     );
 
@@ -329,7 +329,7 @@ $("#btnSearch").click(async function () {
             }
         },
         function (error) {
-            xSwal.error("Error", "Data Not Found");
+            xSwal.xError(error);
         }
     );
 
@@ -345,7 +345,7 @@ $("#btnSearch").click(async function () {
             }
         },
         function (error) {
-            xSwal.error("Error", "Delivery Time Not Found");
+            xSwal.xError(error);
         }
     );
 });
@@ -373,7 +373,7 @@ $("#btnEdit").click(function () {
             }
         },
         function (error) {
-            xSwal.error("Error", "Delivery Time Not Found");
+            xSwal.xError(error);
         }
     );
 });

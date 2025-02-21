@@ -22,7 +22,7 @@
                     </div>
                 </div>
 
-                <form id="formTop">
+                <form id="formMain">
                     <div class="row">
 
                         <div class="col-5">
@@ -36,20 +36,20 @@
 
                         <div class="col-5">
                             <div class="input-group">
-                                <label class="input-group-text" asp-for="F_Total_Max_Trip">Total Max/Trip : </label>
-                                <input type="number" min="0" class="form-control col-6" asp-for="F_Total_Max_Trip">
+                                <label class="input-group-text" asp-for="F_Total_Max_Trip"></label>
+                                <input type="number" class="form-control col-6" asp-for="F_Total_Max_Trip" value="0" readonly>
                             </div>
                         </div>
 
                     </div>
 
-                </form>
+                @* </form> *@
 
                 <div class="row">
                     <table id="tableMain" class="table table-bordered border-2 border-dark w-100"></table>
                 </div>
-
-                <form id="formBot">
+@* 
+                <form id="formBot"> *@
 
                     <div class="row mt-3">
 
@@ -106,7 +106,7 @@
                         <div class="col-5">
                             <div class="input-group">
                                 <label class="input-group-text" asp-for="F_Max_Trip"></label>
-                                <input type="number" min="0" class="form-control col-6" asp-for="F_Max_Trip">
+                                <input type="number" class="form-control col-6" value="0" asp-for="F_Max_Trip">
                             </div>
                         </div>
 

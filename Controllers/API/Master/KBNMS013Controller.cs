@@ -61,9 +61,9 @@ namespace HINOSystem.Controllers.API.Master
 
                 string sql = $@"SELECT  RTRIM(K.F_Plant) AS F_Plant,RTRIM(K.F_Supplier_Cd)+'-'+RTRIM(K.F_Supplier_Plant) AS F_Supplier_Code 
                                 ,RTRIM(S.F_name) AS F_name 
-                                ,RIGHT('00'+ CONVERT(VARCHAR,S.F_Cycle_A),2) 
-                                +'-'+RIGHT('00'+ CONVERT(VARCHAR,S.F_cycle_B),2) 
-                                +'-'+RIGHT('00'+ CONVERT(VARCHAR,S.F_cycle_C),2) AS F_Cycle 
+                                ,RIGHT('00'+ CONVERT(VARCHAR,TRIM(S.F_Cycle_A)),2) 
+                                +'-'+RIGHT('00'+ CONVERT(VARCHAR,TRIM(S.F_cycle_B)),2) 
+                                +'-'+RIGHT('00'+ CONVERT(VARCHAR,TRIM(S.F_cycle_C)),2) AS F_Cycle 
                                 ,RTRIM(K.F_Part_No)+'-'+RTRIM(K.F_Ruibetsu) AS F_Part_No 
                                 ,RTRIM(K.F_Kanban_No) AS F_Kanban_No 
                                 ,RTRIM(C.F_Part_nm) AS F_Part_nm 
@@ -101,7 +101,7 @@ namespace HINOSystem.Controllers.API.Master
                 }
 
                 sql += "GROUP BY RTRIM(K.F_Plant),RTRIM(K.F_Supplier_Cd)+'-'+RTRIM(K.F_Supplier_Plant) ,RTRIM(S.F_name) " +
-                    ",RIGHT('00'+ CONVERT(VARCHAR,S.F_Cycle_A),2) +'-'+RIGHT('00'+ CONVERT(VARCHAR,S.F_cycle_B),2) +'-'+RIGHT('00'+ CONVERT(VARCHAR,S.F_cycle_C),2) " +
+                    ",RIGHT('00'+ CONVERT(VARCHAR,TRIM(S.F_Cycle_A)),2) +'-'+RIGHT('00'+ CONVERT(VARCHAR,TRIM(S.F_cycle_B)),2) +'-'+RIGHT('00'+ CONVERT(VARCHAR,TRIM(S.F_cycle_C)),2) " +
                     ",RTRIM(K.F_Part_No)+'-'+RTRIM(K.F_Ruibetsu) " +
                     ",RTRIM(K.F_Kanban_No) ,RTRIM(C.F_Part_nm) ,RTRIM(K.F_Kanban_No),RTRIM(K.F_Store_Code) " +
                     ",SUBSTRING(K.F_Start_Date,7,2)+'/'+SUBSTRING(K.F_Start_Date,5,2)+'/'+SUBSTRING(K.F_Start_Date,1,4) " +
@@ -636,6 +636,7 @@ namespace HINOSystem.Controllers.API.Master
                             partOrder.F_Update_Date = DateTime.Now;
                             partOrder.F_End_Date = obj.F_End_Date;
                             partOrder.F_PDS_Group = obj.F_PDS_Group;
+                            partOrder.F_Cycle = obj.F_Cycle;
                             partOrder.F_Type_Order = obj.F_Type_Order;
                             _KB3Context.TB_MS_PartOrder.Update(partOrder);
 

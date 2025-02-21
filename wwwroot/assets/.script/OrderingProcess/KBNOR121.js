@@ -899,7 +899,7 @@ $(document).on('click', '#divCheckBox', function (e) {
 });
 
 $("#btnBlCal").click(function () {
-
+    xSplash.show();
     var obj = {
         action: "Re-Calculate BL",
         supplier: $("#readSupplier").val(),
@@ -911,6 +911,7 @@ $("#btnBlCal").click(function () {
     _xLib.AJAX_Post('/api/KBNOR121/Bl_Recalculate', JSON.stringify(obj),
         function (result) {
             if (result.status == 200) {
+                xSplash.hide();
                 previewFunction($("#txtPage").val().split("/")[0] - 1, _command);
                 xSwal.success("Success", "Recalculate BL Success");
             }
@@ -921,7 +922,7 @@ $("#btnBlCal").click(function () {
 })
 
 $("#btnReCal").click(function () {
-
+    xSplash.show();
     var obj = {
         action: "Re-Calculate",
         supplier: $("#readSupplier").val(),
@@ -933,6 +934,7 @@ $("#btnReCal").click(function () {
     _xLib.AJAX_Post('/api/KBNOR121/Recalculate', JSON.stringify(obj),
         function (result) {
             if (result.status == 200) {
+                xSplash.hide();
                 previewFunction($("#txtPage").val().split("/")[0] - 1, _command);
                 xSwal.success("Success", "Recalculate Success");
 

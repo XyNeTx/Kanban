@@ -1,36 +1,8 @@
-﻿using Microsoft.AspNetCore.Http.Extensions;
-using Microsoft.AspNetCore.Mvc;
-using System.Data;
-using System;
-using System.Web;
-using System.Security.Principal;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-
-using System.Reflection.PortableExecutable;
-using System.DirectoryServices;
-using System.DirectoryServices.AccountManagement;
-using Microsoft.Net.Http.Headers;
-using System.Collections.Specialized;
-using System.Net;
-using System.DirectoryServices.ActiveDirectory;
-using System.Net.Http;
-using Microsoft.AspNetCore.Authorization;
-
-using System.Security.Claims;
-using Org.BouncyCastle.Asn1.Ocsp;
-
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-
-using System.Threading.Tasks;
-
+﻿using HINOSystem.Context;
 using HINOSystem.Libs;
-using HINOSystem.Context;
-using HINOSystem.Models.KB3.Master;
-using NPOI.SS.Formula.Functions;
-using System.Dynamic;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using System.Data;
 
 namespace HINOSystem.Controllers.API.Master
 {
@@ -75,7 +47,7 @@ namespace HINOSystem.Controllers.API.Master
 
             try
             {
-                
+
 
                 //_SQL = @"
                 //    SELECT F_Plant
@@ -120,7 +92,7 @@ namespace HINOSystem.Controllers.API.Master
 
             try
             {
-                
+
 
                 if (pPostData != null) _data = JsonConvert.DeserializeObject(pPostData);
 
@@ -232,7 +204,7 @@ namespace HINOSystem.Controllers.API.Master
 
             try
             {
-                
+
 
                 if (pPostData != null) _data = JsonConvert.DeserializeObject(pPostData);
 
@@ -281,7 +253,7 @@ namespace HINOSystem.Controllers.API.Master
                             _KBCN.Execute(_SQL, pUser: _BearerClass,
                                             pControllerName: ControllerContext.ActionDescriptor.ControllerName,
                                             pActionName: ControllerContext.ActionDescriptor.ActionName
-                                            );                            
+                                            );
                         }
                     }
                 }
@@ -335,7 +307,7 @@ namespace HINOSystem.Controllers.API.Master
 
             try
             {
-                
+
 
                 if (pPostData != null) _data = JsonConvert.DeserializeObject(pPostData);
 
@@ -354,7 +326,7 @@ namespace HINOSystem.Controllers.API.Master
                     String _Detail = "", _Key = "";
                     for (int i = 0; i < _dtChk.Rows.Count; i++)
                     {
-                        if(i > 0 && _Key != _dtChk.Rows[i]["F_SUpplier_CD"].ToString() + _dtChk.Rows[i]["F_SUpplier_Plant"].ToString()
+                        if (i > 0 && _Key != _dtChk.Rows[i]["F_SUpplier_CD"].ToString() + _dtChk.Rows[i]["F_SUpplier_Plant"].ToString()
                                 + _dtChk.Rows[i]["F_Store_Cd"].ToString()
                                 + _dtChk.Rows[i]["F_Delivery_Date"].ToString() + _dtChk.Rows[i]["F_Delivery_Trip"].ToString())
                         {
@@ -376,7 +348,7 @@ namespace HINOSystem.Controllers.API.Master
                         _Detail += _dtChk.Rows[i]["F_Remark"].ToString() + ",";
                         _Key = _dtChk.Rows[i]["F_SUpplier_CD"].ToString() + _dtChk.Rows[i]["F_SUpplier_Plant"].ToString()
                             + _dtChk.Rows[i]["F_Store_Cd"].ToString()
-                            + _dtChk.Rows[i]["F_Delivery_Date"].ToString()+ _dtChk.Rows[i]["F_Delivery_Trip"].ToString();
+                            + _dtChk.Rows[i]["F_Delivery_Date"].ToString() + _dtChk.Rows[i]["F_Delivery_Trip"].ToString();
 
                     }
 

@@ -102,7 +102,7 @@ namespace HINOSystem.Controllers.API.Master
                     status = "500",
                     response = "Internal Server Error",
                     title = "Error",
-                    message = "Unexpected Error",
+                    message = ex.InnerException?.Message ?? ex.Message,
                     error = ex.Message
                 });
             }
@@ -167,7 +167,7 @@ namespace HINOSystem.Controllers.API.Master
                     status = "500",
                     response = "Internal Server Error",
                     title = "Error",
-                    message = "Unexpected Error",
+                    message = ex.InnerException?.Message ?? ex.Message,
                     error = ex.Message
                 });
             }
@@ -231,7 +231,7 @@ namespace HINOSystem.Controllers.API.Master
                     status = "500",
                     response = "Internal Server Error",
                     title = "Error",
-                    message = "Unexpected Error",
+                    message = ex.InnerException?.Message ?? ex.Message,
                     error = ex.Message
                 });
             }
@@ -298,7 +298,7 @@ namespace HINOSystem.Controllers.API.Master
                     status = "500",
                     response = "Internal Server Error",
                     title = "Error",
-                    message = "Unexpected Error",
+                    message = ex.InnerException?.Message ?? ex.Message,
                     error = ex.Message
                 });
             }
@@ -355,9 +355,9 @@ namespace HINOSystem.Controllers.API.Master
                     data = supplierDetail.Select(x => new
                     {
                         F_Supplier_Name = "(" + x.F_short_name?.Trim() + ") " + x.F_name?.Trim(),
-                        F_Cycle = ("00" + x.F_Cycle_A).Substring(("00" + x.F_Cycle_A).Length - 2, 2)
-                        + "-" + ("00" + x.F_Cycle_B).Substring(("00" + x.F_Cycle_B).Length - 2, 2)
-                        + "-" + ("00" + x.F_Cycle_C).Substring(("00" + x.F_Cycle_C).Length - 2, 2)
+                        F_Cycle = ("00" + x.F_Cycle_A.Trim()).Substring(("00" + x.F_Cycle_A.Trim()).Length - 2, 2)
+                        + "-" + ("00" + x.F_Cycle_B.Trim()).Substring(("00" + x.F_Cycle_B.Trim()).Length - 2, 2)
+                        + "-" + ("00" + x.F_Cycle_C.Trim()).Substring(("00" + x.F_Cycle_C.Trim()).Length - 2, 2)
                     }).FirstOrDefault()
                 });
 
@@ -370,7 +370,7 @@ namespace HINOSystem.Controllers.API.Master
                     status = "500",
                     response = "Internal Server Error",
                     title = "Error",
-                    message = "Unexpected Error",
+                    message = ex.InnerException?.Message ?? ex.Message,
                     error = ex.Message
                 });
             }
@@ -448,7 +448,7 @@ namespace HINOSystem.Controllers.API.Master
                     status = "500",
                     response = "Internal Server Error",
                     title = "Error",
-                    message = "Unexpected Error",
+                    message = ex.InnerException?.Message ?? ex.Message,
                     error = ex.Message
                 });
             }
@@ -669,7 +669,7 @@ namespace HINOSystem.Controllers.API.Master
                             F_Create_By = x.F_Create_By?.Trim(),
                             x.F_Update_Date,
                             F_Update_By = x.F_Update_By?.Trim(),
-                        }).FirstOrDefault(),
+                        }).SingleOrDefault(),
                         stop = stop.Select(x => new
                         {
                             F_Status = x.F_Status == null ? "0" : x.F_Status,
@@ -681,7 +681,7 @@ namespace HINOSystem.Controllers.API.Master
                             F_Create_By = x.F_Create_By?.Trim(),
                             x.F_Update_Date,
                             F_Update_By = x.F_Update_By?.Trim(),
-                        }).FirstOrDefault(),
+                        }).SingleOrDefault(),
                         cut = cut.Select(x => new
                         {
                             F_Status = x.F_Status == null ? "0" : x.F_Status,
@@ -696,12 +696,12 @@ namespace HINOSystem.Controllers.API.Master
                             F_Update_By = x.F_Update_By.Trim(),
                             x.F_Create_Date,
                             x.F_Update_Date,
-                        }).FirstOrDefault(),
+                        }).SingleOrDefault(),
                         master = master.Select(x => new
                         {
                             F_Address = x.F_Address?.Trim(),
                             F_Supply_Code = x.F_Supply_Code.Trim(),
-                        }).FirstOrDefault()
+                        }).SingleOrDefault()
                     }
                 });
             }
@@ -712,7 +712,7 @@ namespace HINOSystem.Controllers.API.Master
                     status = "500",
                     response = "Internal Server Error",
                     title = "Error",
-                    message = "Unexpected Error",
+                    message = ex.InnerException?.Message ?? ex.Message,
                     error = ex.Message
                 });
             }
@@ -802,7 +802,7 @@ namespace HINOSystem.Controllers.API.Master
                 && x.F_Store_Code == obj.F_Store_Code && x.F_Kanban_No == obj.F_Kanban_No
                 && x.F_Part_No == obj.F_Part_No && x.F_Ruibetsu == obj.F_Ruibetsu);
 
-                if(dbObj != null)
+                if (dbObj != null)
                 {
                     dbObj.F_Supply_Code = obj.F_Supply_Code;
                     dbObj.F_Address = obj.F_Address;
@@ -832,19 +832,19 @@ namespace HINOSystem.Controllers.API.Master
             }
             catch (Exception ex)
             {
-                return StatusCode(500 ,new
+                return StatusCode(500, new
                 {
                     status = "500",
                     response = "Internal Server Error",
                     title = "Error",
-                    message = "Unexpected Error",
+                    message = ex.InnerException?.Message ?? ex.Message,
                     error = ex.Message
                 });
             }
         }
 
         [HttpPost]
-        public async Task<IActionResult> SaveBoxQtyChg (TB_Kanban_Chg_Qty obj)
+        public async Task<IActionResult> SaveBoxQtyChg(TB_Kanban_Chg_Qty obj)
         {
             try
             {
@@ -872,7 +872,7 @@ namespace HINOSystem.Controllers.API.Master
                         message = "Delivery Date นี้ Process ไปเรียบร้อยแล้ว"
                     });
                 }
-                if(await IsProcessDateHoliday(obj.F_Delivery_Date, obj.F_Store_Code))
+                if (await IsProcessDateHoliday(obj.F_Delivery_Date, obj.F_Store_Code))
                 {
                     return BadRequest(new
                     {
@@ -882,8 +882,8 @@ namespace HINOSystem.Controllers.API.Master
                         message = "Delivery Date นี้เป็นวันหยุด"
                     });
                 }
-                
-                if ( int.Parse(obj.F_Delivery_Trip) > await GetCycleTime(obj.F_Delivery_Date, int.Parse(obj.F_Delivery_Trip), supplier))
+
+                if (int.Parse(obj.F_Delivery_Trip) > await GetCycleTime(obj.F_Delivery_Date, int.Parse(obj.F_Delivery_Trip), supplier))
                 {
                     return BadRequest(new
                     {
@@ -900,7 +900,7 @@ namespace HINOSystem.Controllers.API.Master
                 && x.F_Store_Code == obj.F_Store_Code && x.F_Kanban_No == obj.F_Kanban_No
                 && x.F_Part_No == obj.F_Part_No && x.F_Ruibetsu == obj.F_Ruibetsu);
 
-                if(dbObj != null)
+                if (dbObj != null)
                 {
                     _KB3Context.TB_Kanban_Chg_Qty.Remove(dbObj);
                     await _KB3Context.SaveChangesAsync();
@@ -942,14 +942,14 @@ namespace HINOSystem.Controllers.API.Master
                     status = "500",
                     response = "Internal Server Error",
                     title = "Error",
-                    message = "Unexpected Error",
+                    message = ex.InnerException?.Message ?? ex.Message,
                     error = ex.Message
                 });
             }
         }
 
         [HttpPost]
-        public async Task<IActionResult> StartBoxQtyChg (TB_Kanban_Chg_Qty obj)
+        public async Task<IActionResult> StartBoxQtyChg(TB_Kanban_Chg_Qty obj)
         {
             try
             {
@@ -1005,7 +1005,7 @@ namespace HINOSystem.Controllers.API.Master
                     status = "500",
                     response = "Internal Server Error",
                     title = "Error",
-                    message = "Unexpected Error",
+                    message = ex.InnerException?.Message ?? ex.Message,
                     error = ex.Message
                 });
             }
@@ -1068,7 +1068,7 @@ namespace HINOSystem.Controllers.API.Master
                     status = "500",
                     response = "Internal Server Error",
                     title = "Error",
-                    message = "Unexpected Error",
+                    message = ex.InnerException?.Message ?? ex.Message,
                     error = ex.Message
                 });
             }
@@ -1103,7 +1103,7 @@ namespace HINOSystem.Controllers.API.Master
                         message = "Delivery Date นี้ Process ไปเรียบร้อยแล้ว"
                     });
                 }
-                
+
                 if (await IsProcessDateHoliday(obj.F_Delivery_Date, obj.F_Store_Code))
                 {
                     return BadRequest(new
@@ -1171,7 +1171,7 @@ namespace HINOSystem.Controllers.API.Master
                     status = "500",
                     response = "Internal Server Error",
                     title = "Error",
-                    message = "Unexpected Error",
+                    message = ex.InnerException?.Message ?? ex.Message,
                     error = ex.Message
                 });
             }
@@ -1183,7 +1183,7 @@ namespace HINOSystem.Controllers.API.Master
             try
             {
                 _BearerClass.Authentication(Request);
-                if(_BearerClass.Status == 401)
+                if (_BearerClass.Status == 401)
                 {
                     return Unauthorized(new
                     {
@@ -1235,7 +1235,7 @@ namespace HINOSystem.Controllers.API.Master
                     status = "500",
                     response = "Internal Server Error",
                     title = "Error",
-                    message = "Unexpected Error",
+                    message = ex.InnerException?.Message ?? ex.Message,
                     error = ex.Message
                 });
             }
@@ -1299,7 +1299,7 @@ namespace HINOSystem.Controllers.API.Master
                     status = "500",
                     response = "Internal Server Error",
                     title = "Error",
-                    message = "Unexpected Error",
+                    message = ex.InnerException?.Message ?? ex.Message,
                     error = ex.Message
                 });
             }
@@ -1324,8 +1324,8 @@ namespace HINOSystem.Controllers.API.Master
                 }
 
                 string supplier = obj.F_Supplier_Code.Substring(0, 4) + "-" + obj.F_Supplier_Plant;
-                
-                if(await IsProcessDatePast(obj.F_Delivery_Date, int.Parse(obj.F_Delivery_Trip), supplier, obj.F_Kanban_No))
+
+                if (await IsProcessDatePast(obj.F_Delivery_Date, int.Parse(obj.F_Delivery_Trip), supplier, obj.F_Kanban_No))
                 {
                     return BadRequest(new
                     {
@@ -1345,7 +1345,7 @@ namespace HINOSystem.Controllers.API.Master
                         message = "Delivery Date นี้เป็นวันหยุด"
                     });
                 }
-                if(int.Parse(obj.F_Delivery_Trip) > await GetCycleTime(obj.F_Delivery_Date, int.Parse(obj.F_Delivery_Trip), supplier))
+                if (int.Parse(obj.F_Delivery_Trip) > await GetCycleTime(obj.F_Delivery_Date, int.Parse(obj.F_Delivery_Trip), supplier))
                 {
                     return BadRequest(new
                     {
@@ -1405,7 +1405,7 @@ namespace HINOSystem.Controllers.API.Master
                     status = "500",
                     response = "Internal Server Error",
                     title = "Error",
-                    message = "Unexpected Error",
+                    message = ex.InnerException?.Message ?? ex.Message,
                     error = ex.Message
                 });
             }
@@ -1469,7 +1469,7 @@ namespace HINOSystem.Controllers.API.Master
                     status = "500",
                     response = "Internal Server Error",
                     title = "Error",
-                    message = "Unexpected Error",
+                    message = ex.InnerException?.Message ?? ex.Message,
                     error = ex.Message
                 });
             }
@@ -1533,7 +1533,7 @@ namespace HINOSystem.Controllers.API.Master
                     status = "500",
                     response = "Internal Server Error",
                     title = "Error",
-                    message = "Unexpected Error",
+                    message = ex.InnerException?.Message ?? ex.Message,
                     error = ex.Message
                 });
             }
@@ -1599,14 +1599,14 @@ namespace HINOSystem.Controllers.API.Master
                     status = "500",
                     response = "Internal Server Error",
                     title = "Error",
-                    message = "Unexpected Error",
+                    message = ex.InnerException?.Message ?? ex.Message,
                     error = ex.Message
                 });
             }
 
         }
 
-        private async Task<bool> IsProcessDatePast (string date,int trip,string supplier,string kanban)
+        private async Task<bool> IsProcessDatePast(string date, int trip, string supplier, string kanban)
         {
             try
             {
@@ -1625,8 +1625,8 @@ namespace HINOSystem.Controllers.API.Master
 
                 //if(supplier.Substring(0,4) != "9999")
                 //{
-                    _sql += "WHERE D.F_Process_Date = (Select LEFT(F_Value3,8) From TB_MS_Parameter Where F_Code = 'LO') " +
-                        "AND D.F_Process_Shift = (Select RIGHT(F_Value3,1) From TB_MS_Parameter Where F_Code = 'LO') ";
+                _sql += "WHERE D.F_Process_Date = (Select LEFT(F_Value3,8) From TB_MS_Parameter Where F_Code = 'LO') " +
+                    "AND D.F_Process_Shift = (Select RIGHT(F_Value3,1) From TB_MS_Parameter Where F_Code = 'LO') ";
                 //}
                 //else
                 //{
@@ -1646,7 +1646,7 @@ namespace HINOSystem.Controllers.API.Master
 
                 else
                 {
-                    for(int i = 0; i < _dt.Rows.Count; i++)
+                    for (int i = 0; i < _dt.Rows.Count; i++)
                     {
 
                         string _base = (date + ("00" + trip.ToString()).Substring(("00" + trip.ToString()).Length - 2, 2));
@@ -1670,7 +1670,7 @@ namespace HINOSystem.Controllers.API.Master
             }
         }
 
-        private async Task<bool> IsProcessDateHoliday (string date, string store)
+        private async Task<bool> IsProcessDateHoliday(string date, string store)
         {
             try
             {
@@ -1686,7 +1686,7 @@ namespace HINOSystem.Controllers.API.Master
                 {
                     return true;
                 }
-                
+
                 return false;
             }
             catch (Exception ex)
@@ -1695,7 +1695,7 @@ namespace HINOSystem.Controllers.API.Master
             }
         }
 
-        private async Task<int> GetCycleTime (string date , int trip,string supplier)
+        private async Task<int> GetCycleTime(string date, int trip, string supplier)
         {
             string _sql = $"exec [dbo].[sp_getCycleTime] @p0,@p1,@p2,@p3";
             var _dt = _FillDT.ExecuteSQL(_sql, supplier.Substring(0, 4), supplier[5], date, date);

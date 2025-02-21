@@ -105,9 +105,12 @@ $("#btnImport").click(async function () {
                 }
             },
             function (err) {
-                if (error.responseJSON.message.includes("Have Some Error")) {
-                    xSwal.error("Error !!", error.responseJSON.message);
-                    return _xLib.OpenReport("KBNIMERR", `&UserID=${error.responseJSON.userid}&Type=${error.responseJSON.type}`);
+                if (err.responseJSON.message.includes("Have Some Error")) {
+                    xSwal.error("Error !!", err.responseJSON.message);
+                    return _xLib.OpenReport("KBNIMERR", `&UserID=${err.responseJSON.userid}&Type=${err.responseJSON.type}`);
+                }
+                else if (err.responseJSON.message.includes("<br>")) {
+                    xSwal.xError(err);
                 }
                 return xSwal.error("Error !!", err.responseJSON.message);
             }
@@ -116,6 +119,7 @@ $("#btnImport").click(async function () {
     }
     catch (error) {
         console.error("UploadFile Error: ", error);
+        
     }
     finally {
         $("#divProgressBar").css("visibility", "hidden");
