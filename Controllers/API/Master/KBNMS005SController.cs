@@ -115,8 +115,8 @@ namespace KANBAN.Controllers.API.Master
                     status = "500",
                     response = "Internal Server Error",
                     title = "Internal Server Error",
-                    message = ex.Message.ToString(),
-                    error = ex.Message.ToString()
+                    message = ex.InnerException.Message ?? ex.Message,
+                    error = ex.InnerException.Message ?? ex.Message
                 });
             }
         }
@@ -232,8 +232,8 @@ namespace KANBAN.Controllers.API.Master
                     status = "500",
                     response = "Internal Server Error",
                     title = "Internal Server Error",
-                    message = ex.Message.ToString(),
-                    error = ex.Message.ToString()
+                    message = ex.InnerException.Message ?? ex.Message,
+                    error = ex.InnerException.Message ?? ex.Message
                 });
             }
         }
@@ -285,8 +285,8 @@ namespace KANBAN.Controllers.API.Master
                     status = "500",
                     response = "Internal Server Error",
                     title = "Internal Server Error",
-                    message = ex.Message.ToString(),
-                    error = ex.Message.ToString()
+                    message = ex.InnerException.Message ?? ex.Message,
+                    error = ex.InnerException.Message ?? ex.Message
                 });
             }
         }
@@ -362,8 +362,8 @@ namespace KANBAN.Controllers.API.Master
                     status = "500",
                     response = "Internal Server Error",
                     title = "Internal Server Error",
-                    message = ex.Message.ToString(),
-                    error = ex.Message.ToString()
+                    message = ex.InnerException.Message ?? ex.Message,
+                    error = ex.InnerException.Message ?? ex.Message
                 });
             }
         }
@@ -391,8 +391,8 @@ namespace KANBAN.Controllers.API.Master
                     && x.F_Store_Cd == each.F_Store_Cd && x.F_Sebango == each.F_Sebango.Substring(1, 3) && x.F_Shift == each.F_Shift && x.F_Part_No == each.F_Part_No && x.F_Ruibetsu == each.F_Ruibetsu)
                         .FirstOrDefault();
                     string KanbanNo = each.F_Sebango;
-                    if (existed.F_Bl_PCS + existed.F_BL_Kanban > 0
-                        && existed.F_BL != 0 && existed == null)
+                    if (each.F_Bl_PCS + each.F_BL_Kanban > 0
+                        && each.F_BL != 0 && existed == null)
                     {
                         each.F_Sebango = each.F_Sebango.Substring(1, 3);
                         each.F_Update_By = _BearerClass.UserCode;
@@ -462,8 +462,8 @@ namespace KANBAN.Controllers.API.Master
                     status = "500",
                     response = "Internal Server Error",
                     title = "Internal Server Error",
-                    message = ex.Message.ToString(),
-                    error = ex.Message.ToString()
+                    message = ex.InnerException.Message ?? ex.Message,
+                    error = ex.InnerException.Message ?? ex.Message
                 });
             }
         }
@@ -540,8 +540,8 @@ namespace KANBAN.Controllers.API.Master
                     status = "500",
                     response = "Internal Server Error",
                     title = "Internal Server Error",
-                    message = ex.Message.ToString(),
-                    error = ex.Message.ToString()
+                    message = ex.InnerException.Message ?? ex.Message,
+                    error = ex.InnerException.Message ?? ex.Message
                 });
             }
         }

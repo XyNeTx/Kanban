@@ -1,266 +1,208 @@
-﻿using Microsoft.AspNetCore.Http.Extensions;
+﻿using HINOSystem.Libs;
+using KANBAN.Models.KB3.Master.ViewModel;
+using KANBAN.Services;
+using KANBAN.Services.Master.IRepository;
 using Microsoft.AspNetCore.Mvc;
-using System.Data;
-using System;
-using System.Web;
-using System.Security.Principal;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-
-using System.Reflection.PortableExecutable;
-using System.DirectoryServices;
-using System.DirectoryServices.AccountManagement;
-using Microsoft.Net.Http.Headers;
-using System.Collections.Specialized;
-using System.Net;
-using System.DirectoryServices.ActiveDirectory;
-using System.Net.Http;
-using Microsoft.AspNetCore.Authorization;
-
-using System.Security.Claims;
-using Org.BouncyCastle.Asn1.Ocsp;
-
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-
-using System.Threading.Tasks;
-
-using HINOSystem.Libs;
-using HINOSystem.Context;
-using HINOSystem.Models.KB3.Master;
 
 namespace HINOSystem.Controllers.API.Master
 {
-    public class KBNMS020Controller : Controller
+    [ApiController]
+    [Route("/api/[controller]/[action]")]
+    public class KBNMS020Controller : ControllerBase
     {
-        private readonly IConfiguration _configuration;
         private readonly BearerClass _BearerClass;
-        private readonly KanbanConnection _KBCN;
-
-        private readonly KB3Context _KB3Context;
-
-        public KBNMS020Controller(
-            IConfiguration configuration,
-            BearerClass bearerClass,
-            KanbanConnection kanbanConnection,
-            KB3Context kB3Context
+        private readonly IMasterRepo _masterRepo;
+        public KBNMS020Controller
+            (
+                BearerClass bearerClass,
+                IMasterRepo masterRepo
             )
         {
-            _configuration = configuration;
             _BearerClass = bearerClass;
-            _KBCN = kanbanConnection;
-            _KB3Context = kB3Context;
-
+            _masterRepo = masterRepo;
         }
 
-
-
-        [HttpPost]
-        public IActionResult initial([FromBody] string pData = null)
+        [HttpGet]
+        public async Task<IActionResult> GetDropDownList(string? F_Supplier, string? F_KanbanNo, string? F_StoreCD, string? F_PartNo)
         {
-            dynamic _json = null;
-            string _SQL = "";
             try
             {
-                _BearerClass.Authentication(Request);
-                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
+                await _BearerClass.CheckAuthorize();
 
-                
+                var data = await _masterRepo.IKBNMS020.GetDropDownList(F_Supplier, F_KanbanNo, F_StoreCD, F_PartNo);
 
-                _SQL = @" EXEC [exec].[spTB_MS_FACTORY] ";
-                string _jsTB_MS_Factory = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
-
-                string _result = @"{
-                    ""status"":""200"",
-                    ""response"":""OK"",
-                    ""message"": ""Data Found"",
-                    ""data"":
-                            {
-                                ""TB_MS_Factory"" : " + _jsTB_MS_Factory + @"
-                            }
-                }";
-                return Content(_result, "application/json");
-            }
-            catch (Exception e)
-            {
-                return Content(e.Message.ToString(), "application/json");
-            }
-        }
-
-
-
-        [HttpPost]
-        public IActionResult search([FromBody] string pData = null)
-        {
-            dynamic _json = null;
-            string _SQL = "";
-            try
-            {
-                _BearerClass.Authentication(Request);
-                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
-
-                
-
-                _json = JsonConvert.DeserializeObject(pData);
-
-                _SQL = @" EXEC [exec].[spKBNMS020_SEARCH] '" + _BearerClass.Plant + "' ";
-                string _jsTB_MS_OrderType = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
-
-
-
-                string _result = @"{
-                    ""status"":""200"",
-                    ""response"":""OK"",
-                    ""message"": ""Data Found"",
-                    ""data"": " + _jsTB_MS_OrderType + @"
-                }";
-                return Content(_result, "application/json");
-            }
-            catch (Exception e)
-            {
-                return Content(e.Message.ToString(), "application/json");
-            }
-        }
-
-
-
-        [HttpPost]
-        public IActionResult save()
-        {
-            dynamic _json = null;
-            string _SQL = "";
-            try
-            {
-                _BearerClass.Authentication(Request);
-                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
-
-
-                TB_MS_OldPart _TB_MS_OldPart = new TB_MS_OldPart();
-                _TB_MS_OldPart.F_Plant = _BearerClass.Plant;
-                _TB_MS_OldPart.F_Parent_Part = Request.Form["F_Parent_Part"].ToString();
-                _TB_MS_OldPart.F_Ruibetsu = Request.Form["F_Ruibetsu"].ToString();
-                _TB_MS_OldPart.F_Part_Name = Request.Form["F_Part_Name"].ToString();
-                _TB_MS_OldPart.F_Store_Cd = Request.Form["F_Store_Cd"].ToString();
-                _TB_MS_OldPart.F_Start_Date = Request.Form["F_Start_Date"].ToString();
-                _TB_MS_OldPart.F_End_Date = Request.Form["F_End_Date"].ToString();
-                _TB_MS_OldPart.F_Update_By = _BearerClass.UserCode.ToString();
-                _TB_MS_OldPart.F_Update_Date = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss"));
-                _KB3Context.TB_MS_OldPart.Add(_TB_MS_OldPart);
-                _KB3Context.SaveChanges();
-
-
-                string _result = @"{
-                    ""status"":""200"",
-                    ""response"":""OK"",
-                    ""message"": ""Data has been save""
-                }";
-                return Content(_result, "application/json");
-            }
-            catch (Exception e)
-            {
-                return Content(e.Message.ToString(), "application/json");
-            }
-        }
-
-
-
-
-        [HttpPatch]
-        public IActionResult save(int id = 0)
-        {
-            dynamic _json = null;
-            string _SQL = "";
-            string _result = @"{
-                        ""status"":""200"",
-                        ""response"":""OK"",
-                        ""message"": ""Data not found""
-                    }";
-            try
-            {
-                _BearerClass.Authentication(Request);
-                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
-
-                
-
-                _SQL = @"
-                    UPDATE [dbo].[TB_MS_OldPart]
-                    SET F_Part_Name = '" + Request.Form["F_Part_Name"].ToString().Replace("-", "") + @"'
-                        ,F_End_Date = '" + Request.Form["F_End_Date"].ToString().Replace("-","") + @"'
-                        ,F_Update_By = '" + _BearerClass.UserCode + @"'
-                        ,F_Update_Date = '" + DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss")) + @"'
-                    WHERE 1=1
-                    AND F_Plant = '" + Request.Form["F_Plant"].ToString() + @"'
-                    AND F_Parent_Part = '" + Request.Form["F_Parent_Part"].ToString() + @"'
-                    AND F_Ruibetsu = '" + Request.Form["F_Ruibetsu"].ToString().Replace("-", "") + @"'
-                    AND F_Store_Cd = '" + Request.Form["F_Store_Cd"].ToString().Replace("-", "") + @"'
-                    AND F_Start_Date = '" + Request.Form["F_Start_Date"].ToString().Replace("-", "") + @"'
-                ";
-                _KBCN.Execute(_SQL);
-
-
-                _result = @"{
-                    ""status"":""200"",
-                    ""response"":""OK"",
-                    ""message"": ""Data has been save""
-                }";
-                return Content(_result, "application/json");
-            }
-            catch (Exception e)
-            {
-                return Content(e.Message.ToString(), "application/json");
-            }
-        }
-
-
-
-
-        [HttpPost]
-        public IActionResult delete(int id = 0)
-        {
-            dynamic _json = null;
-            string _SQL = "";
-            string _result = @"{
-                        ""status"":""200"",
-                        ""response"":""OK"",
-                        ""message"": ""Data not found""
-                    }";
-            try
-            {
-                if (_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
+                return Ok(new
                 {
-                    return StatusCode(_BearerClass.Status, new
+                    status = "200",
+                    response = "Success",
+                    message = "Data Found",
+                    data = new
                     {
-                        status = _BearerClass.Status,
-                        response = _BearerClass.Response,
-                        message = _BearerClass.Message
-                    });
-                }
+                        F_Supplier = data.Select(x => new
+                        {
+                            F_Supplier = x.F_supplier_cd + "-" + x.F_plant
+                        }).DistinctBy(x => x.F_Supplier).OrderBy(x => x.F_Supplier),
 
+                        F_KanbanNo = data.Select(x => new
+                        {
+                            F_KanbanNo = "0" + x.F_Sebango
+                        }).DistinctBy(x => x.F_KanbanNo).OrderBy(x => x.F_KanbanNo),
 
-                _SQL = @"
-                    DELETE [dbo].[TB_MS_OldPart]
-                    WHERE 1=1
-                    AND F_Plant = '" + Request.Form["F_Plant"].ToString() + @"'
-                    AND F_Parent_Part = '" + Request.Form["F_Parent_Part"].ToString() + @"'
-                    AND F_Ruibetsu = '" + Request.Form["F_Ruibetsu"].ToString().Replace("-", "") + @"'
-                    AND F_Store_Cd = '" + Request.Form["F_Store_Cd"].ToString().Replace("-", "") + @"'
-                    AND F_Start_Date = '" + Request.Form["F_Start_Date"].ToString().Replace("-", "") + @"'
-                ";
-                _KBCN.Execute(_SQL);
+                        F_StoreCD = data.Select(x => new
+                        {
+                            F_StoreCD = x.F_Store_cd
+                        }).DistinctBy(x => x.F_StoreCD).OrderBy(x => x.F_StoreCD),
 
+                        F_PartNo = data.Select(x => new
+                        {
+                            F_PartNo = x.F_Part_no.Trim() + "-" + x.F_Ruibetsu
+                        }).DistinctBy(x => x.F_PartNo).OrderBy(x => x.F_PartNo),
+                    }
+                });
 
-                _result = @"{
-                    ""status"":""200"",
-                    ""response"":""OK"",
-                    ""message"": ""Data has been delete""
-                }";
-                return Content(_result, "application/json");
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                return Content(e.Message.ToString(), "application/json");
+                if (ex is CustomHttpException) throw;
+                else throw new CustomHttpException(500, ex.InnerException?.Message ?? ex.Message);
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetSupplierName(string F_Supplier, string? F_StoreCD)
+        {
+            try
+            {
+                await _BearerClass.CheckAuthorize();
+
+                var data = await _masterRepo.IKBNMS020.GetSupplierName(F_Supplier, F_StoreCD);
+
+                string cycle = data.F_Cycle_A.Trim().Length == 1 ? "0" + data.F_Cycle_A.Trim() + "-" : data.F_Cycle_A.Trim() + "-";
+                cycle += data.F_Cycle_B.Trim().Length == 1 ? "0" + data.F_Cycle_B.Trim() + "-" : data.F_Cycle_B.Trim() + "-";
+                cycle += data.F_Cycle_C.Trim().Length == 1 ? "0" + data.F_Cycle_C.Trim() : data.F_Cycle_C.Trim();
+
+                string name = data.F_name.Trim();
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data Found",
+                    data = new
+                    {
+                        cycle = cycle,
+                        name = name,
+                    }
+                });
+
+            }
+            catch (Exception ex)
+            {
+                if (ex is CustomHttpException) throw;
+                else throw new CustomHttpException(500, ex.InnerException?.Message ?? ex.Message);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetQtyBox(string? F_Supplier, string? F_KanbanNo, string? F_StoreCD, string? F_PartNo)
+        {
+            try
+            {
+                await _BearerClass.CheckAuthorize();
+
+                var data = await _masterRepo.IKBNMS020.GetDropDownList(F_Supplier, F_KanbanNo, F_StoreCD, F_PartNo);
+
+                var obj = data.FirstOrDefault();
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data Found",
+                    data = obj?.F_qty_box ?? 0
+                });
+
+            }
+            catch (Exception ex)
+            {
+                if (ex is CustomHttpException) throw;
+                else throw new CustomHttpException(500, ex.InnerException?.Message ?? ex.Message);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetPartName(string? F_Supplier, string? F_KanbanNo, string? F_StoreCD, string? F_PartNo)
+        {
+            try
+            {
+                await _BearerClass.CheckAuthorize();
+
+                var data = await _masterRepo.IKBNMS020.GetDropDownList(F_Supplier, F_KanbanNo, F_StoreCD, F_PartNo);
+
+                var obj = data.FirstOrDefault();
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data Found",
+                    data = obj?.F_Part_nm?.Trim() ?? ""
+                });
+
+            }
+            catch (Exception ex)
+            {
+                if (ex is CustomHttpException) throw;
+                else throw new CustomHttpException(500, ex.InnerException?.Message ?? ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Save(List<VM_KBNMS020> listObj, string action)
+        {
+            try
+            {
+                await _BearerClass.CheckAuthorize();
+
+                await _masterRepo.IKBNMS020.Save(listObj, action);
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data Saved Successfully",
+                });
+            }
+            catch (Exception ex)
+            {
+                if (ex is CustomHttpException) throw;
+                else throw new CustomHttpException(500, ex.InnerException?.Message ?? ex.Message);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetListData(string? F_Supplier, string? F_KanbanNo, string? F_StoreCD, string? F_PartNo)
+        {
+            try
+            {
+                await _BearerClass.CheckAuthorize();
+
+                var data = await _masterRepo.IKBNMS020.GetListData(F_Supplier, F_KanbanNo, F_StoreCD, F_PartNo);
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data Found",
+                    data = data
+                });
+            }
+            catch (Exception ex)
+            {
+                if (ex is CustomHttpException) throw;
+                else throw new CustomHttpException(500, ex.InnerException?.Message ?? ex.Message);
+            }
+        }
+
     }
 }
