@@ -69,8 +69,6 @@ namespace KANBAN.Libs
                     mailMessage.To.Add(toEmail);
                 }
 
-                mailMessage.To.Add("Sitthiporn_P@hinothailand.com");
-
                 var ccEmails = await CcToEmail(orderType);
 
                 foreach (var ccEmail in ccEmails)

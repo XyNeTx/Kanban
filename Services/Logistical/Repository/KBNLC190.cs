@@ -44,7 +44,8 @@ namespace KANBAN.Services.Logistical.Repository
                 var data = _kbContext.TB_Import_Delivery
                     .Where(x => x.F_YM == YM
                     && x.F_Plant == _BearerClass.Plant
-                    && x.F_Delivery_Trip != 0 && x.F_Flag == "2")
+                    && x.F_Delivery_Trip != 0 && x.F_Flag == "2"
+                    && x.F_Import_By == _BearerClass.UserCode)
                     .OrderByDescending(x => x.F_Rev);
 
                 var disticntData = data.ToList().DistinctBy(x => new
@@ -76,7 +77,8 @@ namespace KANBAN.Services.Logistical.Repository
                 var data = await _kbContext.TB_Import_Delivery
                     .Where(x => x.F_YM == YM && x.F_Rev == Rev
                     && x.F_Plant == _BearerClass.Plant
-                    && x.F_Delivery_Trip != 0 && x.F_Flag == "2")
+                    && x.F_Delivery_Trip != 0 && x.F_Flag == "2"
+                    && x.F_Import_By == _BearerClass.UserCode)
                     .OrderBy(x => x.F_short_Logistic)
                     .ToListAsync();
 
@@ -120,6 +122,8 @@ namespace KANBAN.Services.Logistical.Repository
                         new SqlParameter("@StartDate", StartDate),
                         new SqlParameter("@User", _BearerClass.UserCode)
                      );
+
+                _log.WriteLogMsg($"EXEC [exec].[spKBNLC190] '{_BearerClass.Plant}' , '{YM}' , '{Rev}' , '{StartDate}' , '{_BearerClass.UserCode}' ");
 
                 int CheckError = await _kbContext.Database.SqlQueryRaw<int>(
                     $"Select COUNT(*) AS VALUE From TB_Import_Error Where F_Update_By " +

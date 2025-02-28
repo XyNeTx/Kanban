@@ -688,10 +688,11 @@ class xLib {
     }
 
     ObjSetVal = async (objData, isTrigger) => {
-        console.log(objData);
+        //console.log(objData);
         for (const e of Object.keys(objData)) {
+            //console.log(e);
             let _e = "F" + e.substring(1, e.length);
-
+            //console.log(_e);
             if ($(`#${_e}`).attr("data-datepicker")) {
                 await $(`#${_e}`).val(moment(objData[e], "YYYYMMDD").format("DD/MM/YYYY"));
             } else {
@@ -731,30 +732,39 @@ const _xLib = new xLib();
 
 (($) => {
     $.fn.resetSelectPicker = async function () {
-        await $(this).selectpicker("val", "");
-        //console.log($(this));
+        $(this).val("");
+        console.log($(this));
         //await $(this).trigger("change");
+        $(this).attr("title", "Nothing Selected");
+        //$(this).find("option.bs-title-option").remove();
 
-        await $(this).find("option.bs-title-option").remove();
+        $(this).selectpicker('refresh');
 
-        //$(this).selectpicker('refresh');
-
-        return $(this).parent().find(".filter-option-inner-inner").text("Nothing Selected");
+        //$(this).parent().find(".filter-option-inner-inner").text("Nothing Selected");
     };
 
+    //$.fn.NoneSelectPicker = async function () {
+    //    console.log("noneSelectPicker");
+    //    console.log($(this).parent().find(".filter-option-inner-inner").text());
+    //    $(this).parent().find(".filter-option-inner-inner").text("Nothing Selected");
+    //    return console.log($(this).parent().find(".filter-option-inner-inner").text());
+    //}
+
     $.fn.resetAllSelectPicker = async function () {
-        await $(".selectpicker").resetSelectPicker();
+        $(".selectpicker").each(function () {
+            $(this).resetSelectPicker();
+        })
         //console.log("test");
     };
 
     $.fn.disableSelectPicker = async function () {
         var id = $(this).attr("id");
-        $(`button[data-id='${id}']`).addClass("disabled");
+        return $(`button[data-id='${id}']`).addClass("disabled");
     }
 
     $.fn.enableSelectPicker = async function () {
         var id = $(this).attr("id");
-        $(`button[data-id='${id}']`).removeClass("disabled");
+        return $(`button[data-id='${id}']`).removeClass("disabled");
     }
 
     $.fn.formToJSON = async function () {
@@ -775,6 +785,12 @@ const _xLib = new xLib();
         return formData;
     }
 
+    //$.fn.SetJsonValue = async function (jsonData) {
+    //    Object.keys(jsonData).forEach(async (key) => {
+    //        $(`#${key}`).val(jsonData[key]);
+    //    });
+    //}
+
     $.fn.addListSelectPicker = async function (arrData, objKey) {
         $(".btn-toolbar[role='toolbar']").addClass("d-none");
         //console.log($(this));
@@ -786,7 +802,7 @@ const _xLib = new xLib();
             //console.log(thisElement);
             thisElement.append(`<option value='${each[objKey]}' >${each[objKey]}</option>`);
         });
-        await $(this).selectpicker('refresh');
+        return $(this).selectpicker('refresh');
     }
 
     $.fn.initDatepicker = async function (date) {

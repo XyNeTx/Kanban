@@ -120,8 +120,8 @@ namespace KANBAN.Controllers.API.OrderingProcess
                     status = "500",
                     response = "Internal Server Error",
                     title = "Error",
-                    message = "Onloading is error.",
-                    error = ex.Message
+                    message = ex.InnerException?.Message ?? ex.Message
+
                 });
             }
         }
@@ -176,8 +176,8 @@ namespace KANBAN.Controllers.API.OrderingProcess
                     status = "500",
                     response = "Internal Server Error",
                     title = "Error",
-                    message = "Unexpected Error !!",
-                    error = ex.Message
+                    message = ex.InnerException?.Message ?? ex.Message
+
                 });
             }
         }
@@ -242,8 +242,8 @@ namespace KANBAN.Controllers.API.OrderingProcess
                     status = "500",
                     response = "Internal Server Error",
                     title = "Error",
-                    message = "Unexpected Error !!",
-                    error = ex.Message
+                    message = ex.InnerException?.Message ?? ex.Message
+
                 });
             }
         }
@@ -294,8 +294,8 @@ namespace KANBAN.Controllers.API.OrderingProcess
                     status = "500",
                     response = "Internal Server Error",
                     title = "Error",
-                    message = "Unexpected Error !!",
-                    error = ex.Message
+                    message = ex.InnerException?.Message ?? ex.Message
+
                 });
             }
         }
@@ -347,8 +347,8 @@ namespace KANBAN.Controllers.API.OrderingProcess
                     status = "500",
                     response = "Internal Server Error",
                     title = "Error",
-                    message = "Unexpected Error !!",
-                    error = ex.Message
+                    message = ex.InnerException?.Message ?? ex.Message
+
                 });
             }
         }
@@ -661,8 +661,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
                     status = "500",
                     response = "Internal Server Error",
                     title = "Error",
-                    message = "Unexpected Error !!",
-                    error = ex.Message
+                    message = ex.InnerException?.Message ?? ex.Message
                 });
             }
         }
@@ -859,8 +858,15 @@ namespace KANBAN.Controllers.API.OrderingProcess
 
                 var dtMRP = _FillDT.ExecuteSQL(_SQL);
 
-                float MRP = float.Parse(dtMRP.Rows[0]["F_MRP"].ToString());
-                float HMMT_Prod = float.Parse(dtMRP.Rows[0]["F_HMMT_Prod"].ToString());
+                float MRP = 0f;
+                float HMMT_Prod = 0f;
+
+                if (dtMRP.Rows.Count > 0)
+                {
+                    float.TryParse(dtMRP.Rows[0]["F_MRP"]?.ToString(), out MRP);
+                    float.TryParse(dtMRP.Rows[0]["F_HMMT_Prod"]?.ToString(), out MRP);
+                }
+
                 string MRPCheck = "";
                 if (HMMT_Prod * 0.8 > MRP)
                 {
@@ -1039,8 +1045,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
                     status = "500",
                     response = "Internal Server Error",
                     title = "Error",
-                    message = "Unexpected Error !!",
-                    error = ex.Message
+                    message = ex.InnerException?.Message ?? ex.Message
                 });
             }
         }
@@ -1090,8 +1095,8 @@ namespace KANBAN.Controllers.API.OrderingProcess
                     status = "500",
                     response = "Internal Server Error",
                     title = "Error",
-                    message = "Unexpected Error !!",
-                    error = ex.Message
+                    message = ex.InnerException?.Message ?? ex.Message
+
                 });
             }
         }
@@ -1153,8 +1158,8 @@ namespace KANBAN.Controllers.API.OrderingProcess
                     status = "500",
                     response = "Internal Server Error",
                     title = "Error",
-                    message = "Unexpected Error !!",
-                    error = ex.Message
+                    message = ex.InnerException?.Message ?? ex.Message
+
                 });
             }
         }
@@ -1279,8 +1284,8 @@ namespace KANBAN.Controllers.API.OrderingProcess
                     status = "500",
                     response = "Internal Server Error",
                     title = "Error",
-                    message = "Unexpected Error !!",
-                    error = ex.Message
+                    message = ex.InnerException?.Message ?? ex.Message
+
                 });
             }
         }
@@ -1678,7 +1683,11 @@ namespace KANBAN.Controllers.API.OrderingProcess
                             _Log.WriteLogMsg($"Update TB_Calculate_D : Not Complete | Query : {_execSQL} | BLPlan_Solution : {BLPlan_Solution} | BLActual_Solution : {BLActual_Solution}" +
                                 $"Data : {JsonConvert.SerializeObject(DT.Rows[i])}");
                         }
-                        if (DT.Rows[_intRow]["F_Not_Recalculate"].ToString() == "True")
+                        if (_intRow == 5)
+                        {
+                            Console.WriteLine("5");
+                        }
+                        if (DT.Rows[i]["F_Not_Recalculate"].ToString() == "True")
                         {
                             Last_BL_Plan = int.TryParse(DT.Rows[i]["F_BL_SET_Plan"].ToString(), out int F_BL_SET_Plan) ? F_BL_SET_Plan : 0;
                             Last_BL_Actual = int.TryParse(DT.Rows[i]["F_BL_SET_Actual"].ToString(), out int F_BL_SET_Actual) ? F_BL_SET_Actual : 0;
@@ -1928,8 +1937,8 @@ namespace KANBAN.Controllers.API.OrderingProcess
                     status = "500",
                     response = "Internal Server Error",
                     title = "Error",
-                    message = ex.Message,
-                    error = ex.Message
+                    message = ex.InnerException?.Message ?? ex.Message
+
                 });
             }
         }
@@ -1967,8 +1976,8 @@ namespace KANBAN.Controllers.API.OrderingProcess
                     status = "500",
                     response = "Internal Server Error",
                     title = "Error",
-                    message = ex.Message,
-                    error = ex.Message
+                    message = ex.InnerException?.Message ?? ex.Message
+
                 });
             }
         }

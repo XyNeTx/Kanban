@@ -594,6 +594,7 @@ $("#inpFile").change(function () {
 });
 
 $("#btnImport").click(async function () {
+    xSplash.show();
     try {
 
         $("#btnImport").prop("disabled", true);
@@ -694,6 +695,7 @@ $("#btnImport").click(async function () {
                     await _xLib.AJAX_Post("/api/KBNMS008/UploadImportToKanbanPlan", "",
                         function (success) {
                             if (success.status == "200") {
+                                xSplash.hide();
                                 xSwal.success("Success", "Import Data Complete");
                                 $("#btnImport").prop("disabled", false);
                             }
@@ -713,6 +715,7 @@ $("#btnImport").click(async function () {
         );
     }
     catch (error) {
+        xSplash.hide();
         console.error(error);
         xSwal.error("Error", "Can't Import Data");
     }

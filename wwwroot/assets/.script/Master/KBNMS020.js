@@ -45,9 +45,9 @@
                 },
                 {
                     title: "STD Stock (KB)", data: "", render(data, type, row) {
-                        console.log(data);
-                        console.log(type);
-                        console.log(row);
+                        //console.log(data);
+                        //console.log(type);
+                        //console.log(row);
                         return row.F_STD_Stock / row.F_BoxQty;
                     }
                 },

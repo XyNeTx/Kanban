@@ -56,8 +56,10 @@ async function UploadFile(_files) {
 
 $("#btnImport").click(async function () {
     try {
-        const data = await UploadFile(_files);
+        let data = await UploadFile(_files);
         //console.log('Data: ', data);
+        //delete data[0];
+        //delete data[data.length - 1];
         if (data.includes("Error")) return console.error("Error: ", data);
 
         const _dataLength = data.length;
@@ -74,7 +76,7 @@ $("#btnImport").click(async function () {
             const _data = await data[each];
             _data.F_Type = "URGENT";
             let _jsondata = await JSON.stringify(_data);
-            //console.log('JSON Data: ', _jsondata);
+            console.log('JSON Data: ', _jsondata);
             await _xLib.AJAX_Post("/api/KBNIM014/ImportSave", _jsondata,
                 function (response) {
                     //console.log("Success: ", response);

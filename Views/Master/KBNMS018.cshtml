@@ -1,23 +1,358 @@
-﻿<div class="row">
+﻿@model TB_MS_Heijunka;
+
+<div class="row">
 
     <div class="col-xl-12 col-md-12 col-sm-12">
         <div class="card border-left-primary shadow h-100">
             <div class="card-body">
 
-                <form id="frmCondition">
-@*
-                    <div class="row">
-                        <div class="col-6">
-                            <item type="select" id="F_Plant" label="Plant" value="3" readonly></item>
+                <div class="row ps-2 pe-2 mb-4">
+                    <div class="col-7">
+                        <div id="divBtn" class="row">
+                            <button type="button" class="btn btn-primary btn-rounded col-2" id="btnInq">Inquiry</button>
+                            <button type="button" class="btn btn-success btn-rounded col-2" id="btnNew">New</button>
+                            <button type="button" class="btn btn-warning btn-rounded col-2" id="btnUpd">Update</button>
+                            <button type="button" class="btn btn-danger btn-rounded col-2" id="btnDel">Delete</button>
                         </div>
                     </div>
-*@
+                    <div class="col-5">
+                        <div class="row justify-content-end">
+                            <button type="button" class="btn btn-dark btn-rounded col-2" id="btnCan">Cancel</button>
+                            <a class="btn btn-danger btn-rounded col-2" asp-action="index" asp-controller="home">Exit</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-2">
+                    <table id="tableMain" class="table table-bordered border-2 border-dark w-100"></table>
+                </div>
+
+                <form class="mt-2" id="formMain">
+
+                    <div class="row">
+
+                        <div class="col-3">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-4" asp-for="F_CycleB"></label>
+                                <select class="selectpicker p-0 col-8" asp-for="F_CycleB" data-live-search="true" data-size="6">
+                                    <option value="" hidden></option>
+                                </select>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-5" asp-for="F_Round1"></label>
+                                <input type="number" value="0" class="form-control" asp-for="F_Round1" />
+                            </div>
+
+                        </div>
+
+                        <div class="col">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-5" asp-for="F_Round2"></label>
+                                <input type="number" value="0" class="form-control" asp-for="F_Round2" />
+                            </div>
+
+                        </div>
+
+                        <div class="col">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-5" asp-for="F_Round3"></label>
+                                <input type="number" value="0" class="form-control" asp-for="F_Round3" />
+                            </div>
+
+                        </div>
+
+                        <div class="col">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-5" asp-for="F_Round4"></label>
+                                <input type="number" value="0" class="form-control" asp-for="F_Round4" />
+                            </div>
+
+                        </div>
+
+                        <div class="col">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-5" asp-for="F_Round5"></label>
+                                <input type="number" value="0" class="form-control" asp-for="F_Round5" />
+                            </div>
+
+                        </div>                        
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-5" asp-for="F_Round6"></label>
+                                <input type="number" value="0" class="form-control" asp-for="F_Round6" />
+                            </div>
+
+                        </div>
+
+                        <div class="col">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-5" asp-for="F_Round7"></label>
+                                <input type="number" value="0" class="form-control" asp-for="F_Round7" />
+                            </div>
+
+                        </div>
+
+                        <div class="col">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-5" asp-for="F_Round8"></label>
+                                <input type="number" value="0" class="form-control" asp-for="F_Round8" />
+                            </div>
+
+                        </div>
+
+                        <div class="col">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-5" asp-for="F_Round9"></label>
+                                <input type="number" value="0" class="form-control" asp-for="F_Round9" />
+                            </div>
+
+                        </div>
+
+                        <div class="col">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-5" asp-for="F_Round10"></label>
+                                <input type="number" value="0" class="form-control" asp-for="F_Round10" />
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-5" asp-for="F_Round11"></label>
+                                <input type="number" value="0" class="form-control" asp-for="F_Round11" />
+                            </div>
+
+                        </div>
+
+                        <div class="col">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-5" asp-for="F_Round12"></label>
+                                <input type="number" value="0" class="form-control" asp-for="F_Round12" />
+                            </div>
+
+                        </div>
+
+                        <div class="col">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-5" asp-for="F_Round13"></label>
+                                <input type="number" value="0" class="form-control" asp-for="F_Round13" />
+                            </div>
+
+                        </div>
+
+                        <div class="col">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-5" asp-for="F_Round14"></label>
+                                <input type="number" value="0" class="form-control" asp-for="F_Round14" />
+                            </div>
+
+                        </div>
+
+                        <div class="col">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-5" asp-for="F_Round15"></label>
+                                <input type="number" value="0" class="form-control" asp-for="F_Round15" />
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-5" asp-for="F_Round16"></label>
+                                <input type="number" value="0" class="form-control" asp-for="F_Round16" />
+                            </div>
+
+                        </div>
+
+                        <div class="col">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-5" asp-for="F_Round17"></label>
+                                <input type="number" value="0" class="form-control" asp-for="F_Round17" />
+                            </div>
+
+                        </div>
+
+                        <div class="col">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-5" asp-for="F_Round18"></label>
+                                <input type="number" value="0" class="form-control" asp-for="F_Round18" />
+                            </div>
+
+                        </div>
+
+                        <div class="col">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-5" asp-for="F_Round19"></label>
+                                <input type="number" value="0" class="form-control" asp-for="F_Round19" />
+                            </div>
+
+                        </div>
+
+                        <div class="col">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-5" asp-for="F_Round20"></label>
+                                <input type="number" value="0" class="form-control" asp-for="F_Round20" />
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-5" asp-for="F_Round21"></label>
+                                <input type="number" value="0" class="form-control" asp-for="F_Round21" />
+                            </div>
+
+                        </div>
+
+                        <div class="col">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-5" asp-for="F_Round22"></label>
+                                <input type="number" value="0" class="form-control" asp-for="F_Round22" />
+                            </div>
+
+                        </div>
+
+                        <div class="col">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-5" asp-for="F_Round23"></label>
+                                <input type="number" value="0" class="form-control" asp-for="F_Round23" />
+                            </div>
+
+                        </div>
+
+                        <div class="col">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-5" asp-for="F_Round24"></label>
+                                <input type="number" value="0" class="form-control" asp-for="F_Round24" />
+                            </div>
+
+                        </div>
+
+                        <div class="col">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-5" asp-for="F_Round25"></label>
+                                <input type="number" value="0" class="form-control" asp-for="F_Round25" />
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-5" asp-for="F_Round26"></label>
+                                <input type="number" value="0" class="form-control" asp-for="F_Round26" />
+                            </div>
+
+                        </div>
+
+                        <div class="col">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-5" asp-for="F_Round27"></label>
+                                <input type="number" value="0" class="form-control" asp-for="F_Round27" />
+                            </div>
+
+                        </div>
+
+                        <div class="col">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-5" asp-for="F_Round28"></label>
+                                <input type="number" value="0" class="form-control" asp-for="F_Round28" />
+                            </div>
+
+                        </div>
+
+                        <div class="col">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-5" asp-for="F_Round29"></label>
+                                <input type="number" value="0" class="form-control" asp-for="F_Round29" />
+                            </div>
+
+                        </div>
+
+                        <div class="col">
+
+                            <div class="input-group">
+                                <label class="input-group-text col-5" asp-for="F_Round30"></label>
+                                <input type="number" value="0" class="form-control" asp-for="F_Round30" />
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+
                 </form>
 
-                <div class="row">
-                    <div class="col mt-4">
-                        <item type="table" id="tblMaster"></item>
+                <div class="row mt-2 justify-content-start">
+
+                    <div class="d-flex justify-content-end col-12">
+                        <button type="button" class="btn btn-success btn-rounded col-1" id="btnSave">Save</button>
+                        <button type="button" class="btn btn-primary btn-rounded col-1" id="btnReport">Report</button>
                     </div>
+
                 </div>
 
             </div>
@@ -27,176 +362,8 @@
 </div>
 
 
-<!-- Modal Master -->
-<div class="modal fade" id="modalMaster" tabindex="-1" aria-labelledby="modalMasterLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-    <div class="modal-dialog modal-dialog-centered modal-xl">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalMasterLabel"> @ViewData["AppName"] <span></span></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form id="frmMaster" class="needs-validation" autocomplete="off" novalidate>
-                <div class="modal-body" style="padding-left:10px;padding-top:5px;padding-right:10px;">
 
-                    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar">
-                        <div class="btn-group btn-group-sm me-2" role="group" aria-label="Toolbar">
-
-                            <button type="button" class="btn btn-success" id="btnSave" name="btnSave" onclick="onSave();" title="Save data" @(ViewData["ComponentToolbarSave"].ToString() == "true" ? "" : "disabled")>
-                                <i class="ti-save"></i>
-                            </button>
-                            <button type="button" class="btn btn-success" id="btnPrint" name="btnPrint" onclick="onPrint();" title="Print" @(ViewData["ComponentToolbarPrint"].ToString() == "true" ? "" : "disabled")>
-                                <i class="ti-printer"></i>
-                            </button>
-                            <button type="button" class="btn btn-success" id="btnExecute" name="btnExecute" onclick="onExecute()" title="Execute/Run" @(ViewData["ComponentToolbarExecute"].ToString() == "true" ? "" : "disabled")>
-                                <i class="fas fa-bolt"></i>
-                            </button>
-                            <button type="button" class="btn btn-success" id="btnDelete" name="btnDelete" onclick="onDelete();" title="Delete" @(ViewData["ComponentToolbarDelete"].ToString() == "true" ? "" : "disabled")>
-                                <i class="far fa-trash-alt"></i>
-                            </button>
-
-                        </div>
-                    </div>
-
-                    <input type="hidden" class="form-control" id="_Action" name="_Action" value="POST">
-                    <input type="hidden" class="form-control" id="F_Plant" name="F_Plant">
-                    <div class="bg-white border rounded-3">
-                        <section class="w-100 p-2">
-
-                            <div class="row g-2">
-                                <div class="col-md-4">
-                                    <item type="select" id="F_CycleB" label="CycleB"></item>
-                                </div>
-                            </div>
-
-                            <div class="row g-2">
-                                <div class="col">
-                                    <item type="text" id="F_Round1" label="Round 1"></item>
-                                </div>
-                                <div class="col">
-                                    <item type="text" id="F_Round2" label="Round 2"></item>
-                                </div>
-                                <div class="col">
-                                    <item type="text" id="F_Round3" label="Round 3"></item>
-                                </div>
-                                <div class="col">
-                                    <item type="text" id="F_Round4" label="Round 4"></item>
-                                </div>
-                                <div class="col">
-                                    <item type="text" id="F_Round5" label="Round 5"></item>
-                                </div>
-                                <div class="col">
-                                    <item type="text" id="F_Round6" label="Round 6"></item>
-                                </div>
-                            </div>
-
-                            <div class="row g-2">
-                                <div class="col">
-                                    <item type="text" id="F_Round7" label="Round 7"></item>
-                                </div>
-                                <div class="col">
-                                    <item type="text" id="F_Round8" label="Round 8"></item>
-                                </div>
-                                <div class="col">
-                                    <item type="text" id="F_Round9" label="Round 9"></item>
-                                </div>
-                                <div class="col">
-                                    <item type="text" id="F_Round10" label="Round 10"></item>
-                                </div>
-                                <div class="col">
-                                    <item type="text" id="F_Round11" label="Round 11"></item>
-                                </div>
-                                <div class="col">
-                                    <item type="text" id="F_Round12" label="Round 12"></item>
-                                </div>
-                            </div>
-
-                            <div class="row g-2">
-                                <div class="col">
-                                    <item type="text" id="F_Round13" label="Round 13"></item>
-                                </div>
-                                <div class="col">
-                                    <item type="text" id="F_Round14" label="Round 14"></item>
-                                </div>
-                                <div class="col">
-                                    <item type="text" id="F_Round15" label="Round 15"></item>
-                                </div>
-                                <div class="col">
-                                    <item type="text" id="F_Round16" label="Round 16"></item>
-                                </div>
-                                <div class="col">
-                                    <item type="text" id="F_Round17" label="Round 17"></item>
-                                </div>
-                                <div class="col">
-                                    <item type="text" id="F_Round18" label="Round 18"></item>
-                                </div>
-                            </div>
-
-                            <div class="row g-2">
-                                <div class="col">
-                                    <item type="text" id="F_Round19" label="Round 19"></item>
-                                </div>
-                                <div class="col">
-                                    <item type="text" id="F_Round20" label="Round 20"></item>
-                                </div>
-                                <div class="col">
-                                    <item type="text" id="F_Round21" label="Round 21"></item>
-                                </div>
-                                <div class="col">
-                                    <item type="text" id="F_Round22" label="Round 22"></item>
-                                </div>
-                                <div class="col">
-                                    <item type="text" id="F_Round23" label="Round 23"></item>
-                                </div>
-                                <div class="col">
-                                    <item type="text" id="F_Round24" label="Round 24"></item>
-                                </div>
-                            </div>
-
-                            <div class="row g-2">
-                                <div class="col">
-                                    <item type="text" id="F_Round25" label="Round 25"></item>
-                                </div>
-                                <div class="col">
-                                    <item type="text" id="F_Round26" label="Round 26"></item>
-                                </div>
-                                <div class="col">
-                                    <item type="text" id="F_Round27" label="Round 27"></item>
-                                </div>
-                                <div class="col">
-                                    <item type="text" id="F_Round28" label="Round 28"></item>
-                                </div>
-                                <div class="col">
-                                    <item type="text" id="F_Round29" label="Round 29"></item>
-                                </div>
-                                <div class="col">
-                                    <item type="text" id="F_Round30" label="Round 30"></item>
-                                </div>
-                            </div>
-
-                        </section>
-                    </div>
-
-
-
-                </div>
-            </form>
-
-            <div class="modal-footer" style="padding-left:20px; padding-right:20px;">
-                <i class="modal-reference mr-auto">Reference Code : <i id="_REFERCODE_"></i></i>
-                @if (ViewData["UserGroupID"].ToString() == "1" || ViewData["UserGroupID"].ToString() == "2")
-                {
-                    <a href="#" data-bs-toggle="modal" data-bs-target="#ModalHistory" data-bs-remote="UserMaintenance">
-                        <i class="fas fa-scroll" title="History Log"></i>
-                    </a>
-                }
-            </div>
-
-        </div>
-    </div>
-</div>
-
-
-
+@using HINOSystem.Models.KB3.Master
 @using KANBAN.Libs
 @section Scripts {
     <script type="text/javascript" src="@FileVersionHelper.VersionedScriptPath("/assets/.script/Master/KBNMS018.js")"></script>

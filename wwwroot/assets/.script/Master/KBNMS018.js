@@ -1,62 +1,140 @@
 ﻿$(document).ready(function () {
 
-    const xKBNMS018 = new MasterTemplate({
-        Controller: _PAGE_,
-        Table: 'tblMaster',
-        ColumnTitle: {
-            "EN": ['Cycle B'],
-            "TH": ['Cycle B'],
-            "JP": ['Cycle B'],
+    // Define the base columns
+    let columns = [
+        {
+            title: "Flag",
+            render(data, type, row) {
+                return `<input type="checkbox" class="chkbox" id="chkbox" name="chkbox">`;
+            }
         },
-        ColumnValue: [
-            { "data": "F_CycleB" }
-        ],
-        Modal: 'modalMaster',
-        Form: 'frmMaster',
-        PostData: [
-            { name: 'F_Plant', value: _PLANT_ }
-        ],
+        {
+            title: "Cycle B",
+            data: "f_CycleB"
+        }
+    ];
+
+    // Dynamically add "Round 1" to "Round 30" columns
+    for (let i = 1; i <= 30; i++) {
+        columns.push({
+            title: `Round ${i}`,
+            data: `f_Round${i}`
+        });
+    }
+
+    // Initialize the DataTable with the dynamically created columns
+    _xDataTable.InitialDataTable("#tableMain", {
+        processing: false,
+        serverSide: false,
+        width: '100%',
+        paging: false,
+        sorting: false,
+        searching: false,
+        scrollX: true,
+        scrollY: "200px",
+        scrollCollapse: false,
+        columns: columns,
+        select: false,
+        order: [[0, "asc"]]
     });
 
-    xKBNMS018.prepare();
-
-    xKBNMS018.initial(function (result) {
-        xDropDownList.bind('#frmCondition #F_Plant', result.data.TB_Factory, 'F_Plant', 'F_Plant_Name');
-
-        xDropDownList.bind('#frmMaster #F_Plant', result.data.TB_Factory, 'F_Plant', 'F_Plant_Name');
-        xDropDownList.bind('#frmMaster #F_CycleB', result.data.TB_Heijunka, 'F_CycleB', 'F_CycleB');
-
-        xKBNMS018.search();
-    });
-
-
-
-    onSave = function () {
-        xKBNMS018.save(function () {
-            xKBNMS018.search();
-        });
+    for (let i = 1; i <= 30; i++) {
+        $(`#F_Round${i}`).prop("readonly", true);
     }
 
-    onDelete = function () {
-        xKBNMS018.delete(function () {
-            xKBNMS018.search();
-        });
-    }
+    addOptionCycle();
 
-    onDeleteAll = function () {
-        xKBNMS018.deleteall(function () {
-            xKBNMS018.search();
-        });
-    }
-
-    onPrint = function () {
-    }
-
-    onExecute = function () { }
-
-
-
-
-
+    xSplash.hide();
 })
 
+$("#F_CycleB").change(async function () {
+
+    var data = await $("#formMain").formToJSON();
+
+    _xLib.AJAX_Get("/api/KBNMS018/GetListData", data,
+        function (success) {
+            _xDataTable.ClearAndAddDataDT("#tableMain", success.data);
+            _xLib.ObjSetVal(success.data[0]);
+            setRoundReadOnly();
+        },
+    );
+});
+
+var action = "";
+
+$("#divBtn").on("click", "button", async function () {
+    $("#divBtn").find("button").prop("disabled", true);
+    $(this).prop("disabled", false);
+
+    action = $(this).attr("id").split("btn")[1].toLowerCase();
+
+    if (action == "new" || action == "upd") {
+        setRoundReadOnly();
+    }
+});
+
+$("#btnCan").click(function () {
+    $("#divBtn").find("button").prop("disabled", false)
+    $("#formMain").trigger("reset");
+    $().resetAllSelectPicker();
+    $("#tableMain").DataTable().clear().draw();
+
+    for (let i = 1; i <= 30; i++) {
+        $(`#F_Round${i}`).prop("readonly", true);
+    }
+
+    action = "";
+})
+
+$("#btnSave").click(function () {
+    Save();
+});
+
+function addOptionCycle() {
+    $("#F_CycleB").append(`<option value='00'></option>`)
+    for (let i = 1; i <= 30; i++) {
+        let value = i.toString().length == 1 ? "0" + i.toString() : i.toString();
+        $("#F_CycleB").append(`<option value='${value}'>${value}</option>`)
+        //$(`#F_Round${i}`).prop("readonly", false);
+        //console.log(`F_Round${i}`);
+    }
+    $("#F_CycleB").selectpicker("refresh");
+}
+function setRoundReadOnly() {
+
+    let cycleB = parseInt($("#F_CycleB").val()) ?? 0;
+
+    if (action == "new" || action == "upd") {
+
+        for (let i = 1; i <= 30; i++) {
+            $(`#F_Round${i}`).prop("readonly", false);
+        }
+
+        for (let i = 30; i > cycleB; i--) {
+            $(`#F_Round${i}`).prop("readonly", true);
+        }
+
+    }
+}
+
+async function Save()
+{
+    let SaveObj = await $("#formMain").formToJSON();
+    SaveObj.F_Plant = ajexHeader.Plant;
+    SaveObj.F_Round31 = "0";
+    SaveObj.F_Round32 = "0";
+
+    _xLib.AJAX_Post("/api/KBNMS018/Save?action=" + action, SaveObj,
+        function (success) {
+            _xLib.AJAX_Get("/api/KBNMS018/GetListData", data,
+                function (success) {
+                    _xDataTable.ClearAndAddDataDT("#tableMain", success.data);
+                    _xLib.ObjSetVal(success.data[0]);
+                    setRoundReadOnly();
+                },
+            );
+            xSwal.xSuccess(success);
+        }
+    );
+
+}
