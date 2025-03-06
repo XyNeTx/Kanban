@@ -239,9 +239,9 @@ const previewFunction = async (intRow,_command) => {
         var THeadR3 = $("#THeadR3");
         var dateSet = [];
 
-        THeadR1.append('<th style="border:0px"><input class="form-control" value="MRP : 15/07/2024" id="inputMRP" readonly /></th>');
-        THeadR2.append('<th style="border:0px"><input type="radio" name="radMRP" id="MRP-20" /> MRP-20% </th>');
-        THeadR3.append(`<th style="border:0px"><input type="radio" name="radMRP" id="MRP20" /> MRP+20%</th>`);
+        THeadR1.append('<th class="sticky-col" style="border:0px"><input class="form-control" value="MRP : 15/07/2024" id="inputMRP" readonly /></th>');
+        THeadR2.append('<th class="sticky-col" style="border:0px"><input type="radio" name="radMRP" id="MRP-20" /> MRP-20% </th>');
+        THeadR3.append(`<th class="sticky-col" style="border:0px"><input type="radio" name="radMRP" id="MRP20" /> MRP+20%</th>`);
 
         var count = 1;
         var _dayColSpan = 0; // Collect Day Colspan in first loop each Date
@@ -540,6 +540,8 @@ const addDetailToTable = async (dateSet, intRow) => {
         var _Key = ["F_Adj_Pattern", "F_Qty"];
 
         _Row.forEach(function (row, i) {
+            //console.log(item[_Key[i]]);
+            //console.log("i : " + i, "Row : " + row, "Item : " + item[_Key[i]]);
             if (item[_Key[i]] == undefined || item[_Key[i]] == 0 || item[_Key[i]] == 0) return;
             let _insPattern = `tdR${row}T${F_Delivery_Trip}${F_Delivery_Date}`;
             let _PatternKB = parseInt(item[_Key[i]]) / parseInt($("#readQtyPack").val()); // Convert Qty to KB
@@ -877,15 +879,18 @@ const sumKB = async (dateSet) => {
         && x.F_Kanban_No == $("#readKanbanNo").val()
         && x.F_Adj_Pattern != 0
     ).forEach(function (item, i) {
-        console.log(item);
+        //console.log(item);
         let _pattern = parseInt(item.F_Adj_Pattern / parseInt($("#readQtyPack").val()));
+
         //let _oldPattern = $(`#tdR15KB${item.F_Delivery_Date.slice(6, 8) + "-" + item.F_Delivery_Date.slice(4, 6) + "-" + item.F_Delivery_Date.slice(0, 4)}`).text();
 
-        let _oldPattern = 0;
+        //let _oldPattern = 0;
 
-        let _sumPattern = _pattern + parseInt(_oldPattern);
+        //let _sumPattern = _pattern + parseInt(_oldPattern);
 
-        //console.log(_sumPattern);
+        _sumPattern = _sumPattern + _pattern;
+
+        //console.log("Sum Pattern " + _sumPattern);
         $(`#tdR15KB${item.F_Delivery_Date.slice(6, 8) + "-" + item.F_Delivery_Date.slice(4, 6) + "-" + item.F_Delivery_Date.slice(0, 4)}`).text(_sumPattern);
         $(`#tdR15Pcs${item.F_Delivery_Date.slice(6, 8) + "-" + item.F_Delivery_Date.slice(4, 6) + "-" + item.F_Delivery_Date.slice(0, 4)}`).text(_sumPattern * parseInt($("#readQtyPack").val()));
 

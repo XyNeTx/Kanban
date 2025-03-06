@@ -1,275 +1,264 @@
-﻿using Microsoft.AspNetCore.Http.Extensions;
-using Microsoft.AspNetCore.Mvc;
-using System.Data;
-using System;
-using System.Web;
-using System.Security.Principal;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-
-using System.Reflection.PortableExecutable;
-using System.DirectoryServices;
-using System.DirectoryServices.AccountManagement;
-using Microsoft.Net.Http.Headers;
-using System.Collections.Specialized;
-using System.Net;
-using System.DirectoryServices.ActiveDirectory;
-using System.Net.Http;
-using Microsoft.AspNetCore.Authorization;
-
-using System.Security.Claims;
-using Org.BouncyCastle.Asn1.Ocsp;
-
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-
-using System.Threading.Tasks;
-
+﻿using HINOSystem.Context;
 using HINOSystem.Libs;
-using HINOSystem.Context;
 using HINOSystem.Models.KB3.Master;
+using KANBAN.Context;
+using KANBAN.Libs;
+using KANBAN.Services;
+using KANBAN.Services.Automapper.Interface;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace HINOSystem.Controllers.API.Master
 {
-    public class KBNMS017Controller : Controller
+    [ApiController]
+    [Route("/api/[controller]/[action]")]
+    public class KBNMS017Controller : ControllerBase
     {
-        private readonly IConfiguration _configuration;
+        private readonly KB3Context _kbContext;
         private readonly BearerClass _BearerClass;
-        private readonly KanbanConnection _KBCN;
-        private readonly DBConnection _ppmConnect;
+        private readonly PPM3Context _PPM3Context;
+        private readonly FillDataTable _FillDT;
+        private readonly SerilogLibs _log;
+        private readonly IEmailService _emailService;
+        private readonly IAutoMapService _autoMap;
 
-        private readonly KB3Context _KB3Context;
 
-        public KBNMS017Controller(
-            IConfiguration configuration,
-            BearerClass bearerClass,
-            KanbanConnection kanbanConnection,
-            KB3Context kB3Context
+        public KBNMS017Controller
+            (
+            KB3Context kbContext,
+            BearerClass BearerClass,
+            PPM3Context PPM3Context,
+            FillDataTable FillDT,
+            SerilogLibs log,
+            IEmailService emailService,
+            IAutoMapService autoMap
             )
         {
-            _configuration = configuration;
-            _BearerClass = bearerClass;
-            _KBCN = kanbanConnection;
-            _KB3Context = kB3Context;
-
-            _ppmConnect = new DBConnection(_configuration, "ppm");
-
+            _kbContext = kbContext;
+            _BearerClass = BearerClass;
+            _PPM3Context = PPM3Context;
+            _FillDT = FillDT;
+            _log = log;
+            _emailService = emailService;
+            _autoMap = autoMap;
         }
 
+        public string strDateNow = DateTime.Now.ToString("yyyyMMdd");
 
+
+        [HttpGet]
+        public async Task<IActionResult> ListData(string? F_Part_No, string? F_Ruibetsu, string? F_Store_Cd)
+        {
+            try
+            {
+                await _BearerClass.CheckAuthorize();
+
+                var data = await _kbContext.TB_MS_RatioAddress.AsNoTracking()
+                    .Where(x => x.F_Plant == _BearerClass.Plant).ToListAsync();
+
+                if (!string.IsNullOrWhiteSpace(F_Part_No))
+                {
+                    data = data.Where(x => x.F_Part_No.Trim() == F_Part_No
+                    && x.F_Ruibetsu == F_Ruibetsu).ToList();
+                }
+                if (!string.IsNullOrWhiteSpace(F_Store_Cd))
+                {
+                    data = data.Where(x => x.F_Store_Cd == F_Store_Cd).ToList();
+                }
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data Found",
+                    data = data
+                });
+
+            }
+            catch (Exception ex)
+            {
+                if (ex is CustomHttpException) throw;
+                else throw new CustomHttpException(500, ex.InnerException?.Message ?? ex.Message);
+            }
+        }
 
         [HttpPost]
-        public IActionResult initial([FromBody] string pData = null)
+        public async Task<IActionResult> Save(List<TB_MS_RatioAddress> listObj, string action)
         {
-            dynamic _json = null;
-            string _SQL = "";
             try
             {
-                _BearerClass.Authentication(Request);
-                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
+                string logMsg = "";
+                await _BearerClass.CheckAuthorize();
 
-                
+                var obj = listObj.FirstOrDefault();
 
-                _SQL = @" EXEC [exec].[spTB_MS_FACTORY] ";
-                string _jsTB_Factory = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+                if (!string.IsNullOrWhiteSpace(obj.F_Address2))
+                {
+                    if (obj.F_Ratio2 == 0)
+                    {
+                        throw new CustomHttpException(400, "Please Input Ratio2 Before Process Data");
+                    }
+                }
 
-                _SQL = @" EXEC [exec].[spTB_MS_PartOrder] ";
-                string _jsTB_Supplier = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
+                if (!string.IsNullOrWhiteSpace(obj.F_Address3))
+                {
+                    if (obj.F_Ratio3 == 0)
+                    {
+                        throw new CustomHttpException(400, "Please Input Ratio3 Before Process Data");
+                    }
+                }
 
-                _SQL = @"
-                    SELECT DISTINCT RTRIM(F_Address_no) AS F_Address
-                    FROM [dbo].[T_Address] 
-                    WHERE 1=1
-                    ORDER BY F_Address
-                ";
-                string _jsPPM_T_Address = _ppmConnect.ExecuteJSON(_SQL);
+                var T_Con = await _PPM3Context.T_Construction.AsNoTracking()
+                    .Where(x => x.F_Local_Str.CompareTo(strDateNow) <= 0
+                    && x.F_Local_End.CompareTo(strDateNow) >= 0
+                    && x.F_Store_cd.StartsWith(_BearerClass.Plant)).ToListAsync();
 
-                string _result = @"{
-                    ""status"":""200"",
-                    ""response"":""OK"",
-                    ""message"": ""Data Found"",
-                    ""data"":
-                            {
-                                ""TB_Factory"" : " + _jsTB_Factory + @",
-                                ""TB_Supplier"" : " + _jsTB_Supplier + @",
-                                ""PPM_T_Address"" : " + _jsPPM_T_Address + @"
-                            }
-                }";
-                return Content(_result, "application/json");
+                if (!string.IsNullOrWhiteSpace(obj.F_Part_No))
+                {
+                    T_Con = T_Con.Where(x => x.F_Part_no.Trim() == obj.F_Part_No
+                        && x.F_Ruibetsu == obj.F_Ruibetsu
+                        ).ToList();
+                }
+                if (!string.IsNullOrWhiteSpace(obj.F_Store_Cd))
+                {
+                    T_Con = T_Con.Where(x => x.F_Store_cd == obj.F_Store_Cd).ToList();
+                }
+
+                if (T_Con.Count == 0)
+                {
+                    throw new CustomHttpException(400, "Data not exist in System!!");
+                }
+
+                if (action.ToLower() == "new")
+                {
+                    var listExObj = await _kbContext.TB_MS_RatioAddress.AsNoTracking()
+                    .Where(x => x.F_Plant == _BearerClass.Plant).ToListAsync();
+
+                    if (!string.IsNullOrWhiteSpace(obj.F_Part_No))
+                    {
+                        listExObj = listExObj.Where(x => x.F_Part_No.Trim() + "-" + x.F_Ruibetsu == obj.F_Part_No).ToList();
+                    }
+                    if (!string.IsNullOrWhiteSpace(obj.F_Store_Cd))
+                    {
+                        listExObj = listExObj.Where(x => x.F_Store_Cd == obj.F_Store_Cd).ToList();
+                    }
+
+                    if (listExObj.Count == 0)
+                    {
+                        await _kbContext.TB_MS_RatioAddress.AddAsync(obj);
+                        logMsg = "INSERT INTO TB_MS_RatioAddress => " + JsonConvert.SerializeObject(obj);
+                    }
+                    else
+                    {
+                        throw new CustomHttpException(400, "Data have exist in System!!");
+                    }
+                }
+                else if (action.ToLower() == "upd")
+                {
+                    var listExObj = await _kbContext.TB_MS_RatioAddress.AsNoTracking()
+                    .Where(x => x.F_Plant == _BearerClass.Plant).ToListAsync();
+
+                    if (!string.IsNullOrWhiteSpace(obj.F_Part_No))
+                    {
+                        listExObj = listExObj.Where(x => x.F_Part_No.Trim() + "-" + x.F_Ruibetsu == obj.F_Part_No).ToList();
+                    }
+                    if (!string.IsNullOrWhiteSpace(obj.F_Store_Cd))
+                    {
+                        listExObj = listExObj.Where(x => x.F_Store_Cd == obj.F_Store_Cd).ToList();
+                    }
+
+                    if (listExObj.Count > 0)
+                    {
+                        logMsg = "UPDATE TB_MS_RatioAddress Before => " + JsonConvert.SerializeObject(listExObj.FirstOrDefault());
+
+                        _kbContext.TB_MS_RatioAddress.Attach(obj);
+                        _kbContext.Entry(obj).State = EntityState.Modified;
+
+                        logMsg += Environment.NewLine + "UPDATE TB_MS_RatioAddress After => " + JsonConvert.SerializeObject(obj);
+                    }
+                    else
+                    {
+                        throw new CustomHttpException(400, "Data have not exist in System!!");
+                    }
+                }
+                else if (action.ToLower() == "del")
+                {
+                    foreach (var item in listObj)
+                    {
+                        var delObj = await _kbContext.TB_MS_RatioAddress
+                            .FirstOrDefaultAsync(x => x.F_Plant == _BearerClass.Plant
+                            && x.F_Part_No == obj.F_Part_No
+                            && x.F_Ruibetsu == obj.F_Ruibetsu
+                            && x.F_Store_Cd == obj.F_Store_Cd);
+
+                        if (delObj != null)
+                        {
+                            _kbContext.TB_MS_RatioAddress.Remove(delObj);
+                            logMsg = "DELETE TB_MS_RatioAddress => " + JsonConvert.SerializeObject(delObj);
+                        }
+                    }
+                }
+                else
+                {
+                    throw new CustomHttpException(400, "Please select action to process");
+                }
+                await _kbContext.SaveChangesAsync();
+                _log.WriteLogMsg(logMsg);
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data Saved",
+                });
+
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                return Content(e.Message.ToString(), "application/json");
+                if (ex is CustomHttpException) throw;
+                else throw new CustomHttpException(500, ex.InnerException?.Message ?? ex.Message);
             }
         }
 
-
-
-        [HttpPost]
-        public IActionResult search([FromBody] string pData = null)
+        [HttpGet]
+        public async Task<IActionResult> GetDropDownList(string? F_Part_No, string? F_Ruibetsu, string? F_Store_Cd, string action)
         {
-            dynamic _json = null;
-            string _SQL = "";
             try
             {
-                _BearerClass.Authentication(Request);
-                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
+                await _BearerClass.CheckAuthorize();
+                if (action.ToLower() == "new")
+                {
+                    var data = await _PPM3Context.T_Construction.AsNoTracking()
+                        .Where(x => x.F_Plant_CD == _BearerClass.Plant[0]
+                        && x.F_Local_Str.CompareTo(strDateNow) <= 0
+                        && x.F_Local_End.CompareTo(strDateNow) >= 0)
+                        .ToListAsync();
 
-                
-
-                _json = JsonConvert.DeserializeObject(pData);
-
-                _SQL = @" EXEC [exec].[spKBNMS017_SEARCH] '" + _BearerClass.Plant + "' ";
-                string _jsonData = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
-
-
-
-                string _result = @"{
-                    ""status"":""200"",
-                    ""response"":""OK"",
-                    ""message"": ""Data Found"",
-                    ""data"": " + _jsonData + @"
-                }";
-                return Content(_result, "application/json");
+                    return Ok(new
+                    {
+                        status = "200",
+                        resposne = "Success",
+                        message = "Data Found",
+                        partNo = data.Select(x => new
+                        {
+                            F_Part_No = x.F_Part_no.Trim() + "-" + x.F_Ruibetsu
+                        }).DistinctBy(x => x.F_Part_No).OrderBy(x => x.F_Part_No).ToList(),
+                        storeCode = data.Select(x => new
+                        {
+                            F_Store_Cd = x.F_Store_cd
+                        }).DistinctBy(x => x.F_Store_Cd).OrderBy(x => x.F_Store_Cd).ToList()
+                    });
+                }
+                else
+                {
+                    return Ok();
+                }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                return Content(e.Message.ToString(), "application/json");
-            }
-        }
-
-
-
-        [HttpPost]
-        public IActionResult save()
-        {
-            dynamic _json = null;
-            string _SQL = "";
-            try
-            {
-                _BearerClass.Authentication(Request);
-                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
-
-
-                TB_MS_OldPart _TB_MS_OldPart = new TB_MS_OldPart();
-                _TB_MS_OldPart.F_Plant = _BearerClass.Plant;
-                _TB_MS_OldPart.F_Parent_Part = Request.Form["F_Parent_Part"].ToString();
-                _TB_MS_OldPart.F_Ruibetsu = Request.Form["F_Ruibetsu"].ToString();
-                _TB_MS_OldPart.F_Part_Name = Request.Form["F_Part_Name"].ToString();
-                _TB_MS_OldPart.F_Store_Cd = Request.Form["F_Store_Cd"].ToString();
-                _TB_MS_OldPart.F_Start_Date = Request.Form["F_Start_Date"].ToString();
-                _TB_MS_OldPart.F_End_Date = Request.Form["F_End_Date"].ToString();
-                _TB_MS_OldPart.F_Update_By = _BearerClass.UserCode.ToString();
-                _TB_MS_OldPart.F_Update_Date = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss"));
-                _KB3Context.TB_MS_OldPart.Add(_TB_MS_OldPart);
-                _KB3Context.SaveChanges();
-
-
-                string _result = @"{
-                    ""status"":""200"",
-                    ""response"":""OK"",
-                    ""message"": ""Data has been save""
-                }";
-                return Content(_result, "application/json");
-            }
-            catch (Exception e)
-            {
-                return Content(e.Message.ToString(), "application/json");
-            }
-        }
-
-
-
-
-        [HttpPatch]
-        public IActionResult save(int id = 0)
-        {
-            dynamic _json = null;
-            string _SQL = "";
-            string _result = @"{
-                        ""status"":""200"",
-                        ""response"":""OK"",
-                        ""message"": ""Data not found""
-                    }";
-            try
-            {
-                _BearerClass.Authentication(Request);
-                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
-
-                
-
-                _SQL = @"
-                    UPDATE [dbo].[TB_MS_OldPart]
-                    SET F_Part_Name = '" + Request.Form["F_Part_Name"].ToString().Replace("-", "") + @"'
-                        ,F_End_Date = '" + Request.Form["F_End_Date"].ToString().Replace("-", "") + @"'
-                        ,F_Update_By = '" + _BearerClass.UserCode + @"'
-                        ,F_Update_Date = '" + DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss")) + @"'
-                    WHERE 1=1
-                    AND F_Plant = '" + Request.Form["F_Plant"].ToString() + @"'
-                    AND F_Parent_Part = '" + Request.Form["F_Parent_Part"].ToString() + @"'
-                    AND F_Ruibetsu = '" + Request.Form["F_Ruibetsu"].ToString().Replace("-", "") + @"'
-                    AND F_Store_Cd = '" + Request.Form["F_Store_Cd"].ToString().Replace("-", "") + @"'
-                    AND F_Start_Date = '" + Request.Form["F_Start_Date"].ToString().Replace("-", "") + @"'
-                ";
-                _KBCN.Execute(_SQL);
-
-
-                _result = @"{
-                    ""status"":""200"",
-                    ""response"":""OK"",
-                    ""message"": ""Data has been save""
-                }";
-                return Content(_result, "application/json");
-            }
-            catch (Exception e)
-            {
-                return Content(e.Message.ToString(), "application/json");
-            }
-        }
-
-
-
-
-        [HttpPost]
-        public IActionResult delete(int id = 0)
-        {
-            dynamic _json = null;
-            string _SQL = "";
-            string _result = @"{
-                        ""status"":""200"",
-                        ""response"":""OK"",
-                        ""message"": ""Data not found""
-                    }";
-            try
-            {
-                _BearerClass.Authentication(Request);
-                if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
-
-                
-
-                _SQL = @"
-                    DELETE [dbo].[TB_MS_OldPart]
-                    WHERE 1=1
-                    AND F_Plant = '" + Request.Form["F_Plant"].ToString() + @"'
-                    AND F_Parent_Part = '" + Request.Form["F_Parent_Part"].ToString() + @"'
-                    AND F_Ruibetsu = '" + Request.Form["F_Ruibetsu"].ToString().Replace("-", "") + @"'
-                    AND F_Store_Cd = '" + Request.Form["F_Store_Cd"].ToString().Replace("-", "") + @"'
-                    AND F_Start_Date = '" + Request.Form["F_Start_Date"].ToString().Replace("-", "") + @"'
-                ";
-                _KBCN.Execute(_SQL);
-
-
-                _result = @"{
-                    ""status"":""200"",
-                    ""response"":""OK"",
-                    ""message"": ""Data has been delete""
-                }";
-                return Content(_result, "application/json");
-            }
-            catch (Exception e)
-            {
-                return Content(e.Message.ToString(), "application/json");
+                if (ex is CustomHttpException) throw;
+                else throw new CustomHttpException(500, ex.InnerException?.Message ?? ex.Message);
             }
         }
     }

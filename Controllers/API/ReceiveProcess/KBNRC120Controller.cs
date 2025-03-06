@@ -355,10 +355,10 @@ namespace HINOSystem.Controllers.API.Master
                                             _isZeroRec = false;
 
                                             string Receive_Local_Date = pdsDetailSingle.F_Receive_Date.Value.ToString("yyyyMMdd");
-                                            if (pdsDetailSingle.F_Receive_Date.Value.TimeOfDay < new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 7, 30, 0).TimeOfDay)
-                                            {
-                                                Receive_Local_Date = pdsDetailSingle.F_Receive_Date.Value.AddDays(-1).ToString("yyyyMMdd");
-                                            }
+                                            //if (pdsDetailSingle.F_Receive_Date.Value.TimeOfDay < new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 7, 30, 0).TimeOfDay)
+                                            //{
+                                            //    Receive_Local_Date = pdsDetailSingle.F_Receive_Date.Value.AddDays(-1).ToString("yyyyMMdd");
+                                            //}
 
                                             T_Receive_Local local = new T_Receive_Local
                                             {
@@ -408,7 +408,7 @@ namespace HINOSystem.Controllers.API.Master
                                         _singleReceiveAll.F_Receive_amount = sumQty;
                                         _singleReceiveAll.F_Receive_Date = await GetLoginDate();
                                         _KB3Context.TB_REC_DETAIL.Update(_singleReceiveAll);
-
+                                        await _KB3Context.SaveChangesAsync();
                                         var header = await _KB3Context.TB_REC_HEADER.SingleOrDefaultAsync(x => x.F_OrderNo == PDSNo);
                                         if (header != null)
                                         {
@@ -416,10 +416,10 @@ namespace HINOSystem.Controllers.API.Master
                                             {
                                                 _isZeroRec = false;
                                                 string Receive_Local_Date = _singleReceiveAll.F_Receive_Date.Value.ToString("yyyyMMdd");
-                                                if (_singleReceiveAll.F_Receive_Date.Value.TimeOfDay < new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 7, 30, 0).TimeOfDay)
-                                                {
-                                                    Receive_Local_Date = _singleReceiveAll.F_Receive_Date.Value.AddDays(-1).ToString("yyyyMMdd");
-                                                }
+                                                //if (_singleReceiveAll.F_Receive_Date.Value.TimeOfDay < new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 7, 30, 0).TimeOfDay)
+                                                //{
+                                                //    Receive_Local_Date = _singleReceiveAll.F_Receive_Date.Value.AddDays(-1).ToString("yyyyMMdd");
+                                                //}
                                                 T_Receive_Local local = new T_Receive_Local
                                                 {
                                                     F_Order_No = header.F_OrderNo,

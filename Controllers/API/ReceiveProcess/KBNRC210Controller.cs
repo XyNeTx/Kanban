@@ -351,6 +351,7 @@ namespace KANBAN.Controllers.API.ReceiveProcess
                                     pdsDetailSingle.F_Receive_amount = sumQty;
                                     pdsDetailSingle.F_Receive_Date = DateTime.ParseExact(header.F_Delivery_Date, "yyyyMMdd", CultureInfo.InvariantCulture);
                                     _KB3Context.TB_REC_DETAIL.Update(pdsDetailSingle);
+                                    await _KB3Context.SaveChangesAsync();
                                     _isReceiveAll = false;
                                     _isZeroRec = false;
                                     T_Receive_Local local = new T_Receive_Local

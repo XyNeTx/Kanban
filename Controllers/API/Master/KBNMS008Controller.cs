@@ -571,6 +571,11 @@ namespace HINOSystem.Controllers.API.Master
                     });
                 };
 
+                if (obj.F_Part_No == "486540K160")
+                {
+                    Console.WriteLine("Test");
+                }
+
                 var isInsert = await Insert_TMP(obj, isImport);
                 var isDetail = await Detail_Data(obj);
 
@@ -1190,7 +1195,10 @@ namespace HINOSystem.Controllers.API.Master
                 }
 
                 var existList = _KB3Context.TMP_Planning_Order.Where(x => x.F_Plant == _BearerClass.Plant
-                                   && x.F_Create_By == _BearerClass.UserCode).ToList();
+                                   //&& x.F_Create_By == _BearerClass.UserCode
+                                   && x.F_Supplier_Code == listObj[0].F_Supplier_Code
+                                   && x.F_Supplier_Plant == listObj[0].F_Supplier_Plant
+                                   ).ToList();
 
                 _KB3Context.TMP_Planning_Order.RemoveRange(existList);
                 await _KB3Context.SaveChangesAsync();
@@ -1391,7 +1399,7 @@ namespace HINOSystem.Controllers.API.Master
             catch (Exception ex)
             {
                 _log.WriteLogMsg($"UploadImportToKanbanPlan ERROR!!! : {ex.Message}");
-
+                _kb3Trans.RollbackToSavepoint("Star UploadToKanbanPlan");
                 return StatusCode(500, new
                 {
                     status = "500",

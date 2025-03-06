@@ -365,10 +365,10 @@ namespace HINOSystem.Controllers.API.Master
                     foreach (var receive in recDetail)
                     {
                         string Receive_Local_Date = receive.F_Receive_Date.Value.ToString("yyyyMMdd");
-                        if (receive.F_Receive_Date.Value.TimeOfDay < new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 7, 30, 0).TimeOfDay)
-                        {
-                            Receive_Local_Date = receive.F_Receive_Date.Value.AddDays(-1).ToString("yyyyMMdd");
-                        }
+                        //if (receive.F_Receive_Date.Value.TimeOfDay < new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 7, 30, 0).TimeOfDay)
+                        //{
+                        //    Receive_Local_Date = receive.F_Receive_Date.Value.AddDays(-1).ToString("yyyyMMdd");
+                        //}
 
                         T_Receive_Local _trl = new T_Receive_Local
                         {

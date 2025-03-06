@@ -9,27 +9,27 @@
     [PrimaryKey("F_Plant", "F_Part_No", "F_Ruibetsu", "F_Store_Cd")]
     public class TB_MS_RatioAddress
     {
-        [Required]
+        //[Required]
         [DisplayName("Plant")]
         [StringLength(1)]
         public string F_Plant { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Please Select Part Number Before Process Data")]
         [DisplayName("Part No. : ")]
-        [StringLength(10)]
+        [StringLength(13)]
         public string F_Part_No { get; set; }
-        [Required]
+        //[Required]
         [DisplayName("Ruibetsu : ")]
         [StringLength(2)]
         public string F_Ruibetsu { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Please Select Store Code Before Process Data")]
         [DisplayName("Store Code : ")]
         [StringLength(2)]
         public string F_Store_Cd { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Please Input Address1 Before Process Data")]
         [DisplayName("Address1 : ")]
         [StringLength(10)]
         public string F_Address1 { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Please Input Ratio1 Before Process Data")]
         [DisplayName("Ratio1 : ")]
         public int F_Ratio1 { get; set; }
         [DisplayName("Address2 : ")]

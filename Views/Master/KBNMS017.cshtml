@@ -1,120 +1,136 @@
-﻿<div class="row">
+﻿@model TB_MS_RatioAddress;
+
+<div class="row">
 
     <div class="col-xl-12 col-md-12 col-sm-12">
         <div class="card border-left-primary shadow h-100">
             <div class="card-body">
 
-                <form id="frmCondition">
-@*
-                    <div class="row">
-                        <div class="col-6">
-                            <item type="select" id="F_Plant" label="Plant" value="3" readonly></item>
+                <div class="row ps-2 pe-2 mb-4">
+                    <div class="col-7">
+                        <div id="divBtn" class="row">
+                            <button type="button" class="btn btn-primary btn-rounded col-2" id="btnInq">Inquiry</button>
+                            <button type="button" class="btn btn-success btn-rounded col-2" id="btnNew">New</button>
+                            <button type="button" class="btn btn-warning btn-rounded col-2" id="btnUpd">Update</button>
+                            <button type="button" class="btn btn-danger btn-rounded col-2" id="btnDel">Delete</button>
                         </div>
                     </div>
-*@
+                    <div class="col-5">
+                        <div class="row justify-content-end">
+                            <button type="button" class="btn btn-dark btn-rounded col-2" id="btnCan">Cancel</button>
+                            <a class="btn btn-danger btn-rounded col-2" asp-action="index" asp-controller="home">Exit</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-2">
+                    <table id="tableMain" class="table table-bordered border-2 border-dark w-100"></table>
+                </div>
+
+                <form id="formMain">
+
+                    <div class="row mt-4">
+                        
+                        <div class="col-4">
+
+                            <div class="input-group">
+
+                                <label class="input-group-text" asp-for="F_Part_No"></label>
+                                <select class="selectpicker p-0 col-8" asp-for="F_Part_No" data-live-search="true" data-size="6">
+                                    <option value="" hidden></option>
+                                </select>
+
+                            </div>
+
+                        </div>
+
+                        <div class="col-6">
+                            <input type="text" class="form-control col-10" id="F_Part_Name" name="F_Part_Name" readonly />
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+                        
+                        <div class="col-4">
+                            <div class="input-group">
+                                <label class="input-group-text" asp-for="F_Store_Cd"></label>
+                                <select class="selectpicker p-0 col-8" asp-for="F_Store_Cd" data-live-search="true" data-size="6">
+                                    <option value="" hidden></option>
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-4">
+                            <div class="input-group">
+                                <label class="input-group-text" asp-for="F_Address1"></label>
+                                <select class="selectpicker p-0 col-8" asp-for="F_Address1" data-live-search="true" data-size="6">
+                                    <option value="" hidden></option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-4">
+                            <div class="input-group">
+                                <label class="input-group-text" asp-for="F_Address2"></label>
+                                <select class="selectpicker p-0 col-8" asp-for="F_Address2" data-live-search="true" data-size="6">
+                                    <option value="" hidden></option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-4">
+                            <div class="input-group">
+                                <label class="input-group-text" asp-for="F_Address3"></label>
+                                <select class="selectpicker p-0 col-8" asp-for="F_Address3" data-live-search="true" data-size="6">
+                                    <option value="" hidden></option>
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+                    
+                    <div class="row">
+
+                        <div class="col-4">
+                            <div class="input-group">
+                                <label class="input-group-text" asp-for="F_Ratio1"></label>
+                                <input type="number" class="form-control col-6" asp-for="F_Ratio1" />
+
+                            </div>
+                        </div>
+
+                        <div class="col-4">
+                            <div class="input-group">
+                                <label class="input-group-text" asp-for="F_Ratio2"></label>
+                                <input type="number" class="form-control col-6" asp-for="F_Ratio2" />
+
+                            </div>
+                        </div>
+
+                        <div class="col-4">
+                            <div class="input-group">
+                                <label class="input-group-text" asp-for="F_Ratio3"></label>
+                                <input type="number" class="form-control col-6" asp-for="F_Ratio3" />
+
+                            </div>
+                        </div>
+
+                    </div>
+
                 </form>
 
-                <div class="row">
-                    <div class="col mt-4">
-                        <item type="table" id="tblMaster"></item>
-                    </div>
-                </div>
-
             </div>
         </div>
     </div>
 
 </div>
 
-
-<!-- Modal Master -->
-<div class="modal fade" id="modalMaster" tabindex="-1" aria-labelledby="modalMasterLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-    <div class="modal-dialog modal-dialog-centered modal-xl">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalMasterLabel"> @ViewData["AppName"] <span></span></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form id="frmMaster" class="needs-validation" autocomplete="off" novalidate>
-                <div class="modal-body" style="padding-left:10px;padding-top:5px;padding-right:10px;">
-
-                    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar">
-                        <div class="btn-group btn-group-sm me-2" role="group" aria-label="Toolbar">
-
-                            <button type="button" class="btn btn-success" id="btnSave" name="btnSave" onclick="onSave();" title="Save data" @(ViewData["ComponentToolbarSave"].ToString() == "true" ? "" : "disabled")>
-                                <i class="ti-save"></i>
-                            </button>
-                            <button type="button" class="btn btn-success" id="btnPrint" name="btnPrint" onclick="onPrint();" title="Print" @(ViewData["ComponentToolbarPrint"].ToString() == "true" ? "" : "disabled")>
-                                <i class="ti-printer"></i>
-                            </button>
-                            <button type="button" class="btn btn-success" id="btnExecute" name="btnExecute" onclick="onExecute()" title="Execute/Run" @(ViewData["ComponentToolbarExecute"].ToString() == "true" ? "" : "disabled")>
-                                <i class="fas fa-bolt"></i>
-                            </button>
-                            <button type="button" class="btn btn-success" id="btnDelete" name="btnDelete" onclick="onDelete();" title="Delete" @(ViewData["ComponentToolbarDelete"].ToString() == "true" ? "" : "disabled")>
-                                <i class="far fa-trash-alt"></i>
-                            </button>
-
-                        </div>
-                    </div>
-
-                    <input type="hidden" class="form-control" id="_Action" name="_Action" value="POST">
-                    <input type="hidden" class="form-control" id="F_Plant" name="F_Plant">
-                    <div class="bg-white border rounded-3">
-                        <section class="w-100 p-2">
-                            <div class="row g-2">
-                                <div class="col-md-8">
-                                    <item type="lov" id="F_Part_No" label="Part No" data-controller="LOVKB3.PartList" data-value="F_Part_No:Code" data-description="F_Part_Name" class-value="col-sm-2"></item>
-                                </div>
-                            </div>
-                            <div class="row g-2">
-                                <div class="col-md-4">
-                                    <item type="list" id="F_Store_Code" label="Store Code" data-controller="LOVKB3.PartList" data-value="F_Store_Code:Code"></item>
-                                </div>
-                            </div>
-                            <div class="row g-2">
-                                <div class="col-md-4">
-                                    <item type="select" id="F_Address1" label="Address1"></item>
-                                </div>
-                                <div class="col-md-4">
-                                    <item type="select" id="F_Address2" label="Address2"></item>
-                                </div>
-                                <div class="col-md-4">
-                                    <item type="select" id="F_Address3" label="Address3"></item>
-                                </div>
-                            </div>
-                            <div class="row g-2">
-                                <div class="col-md-4">
-                                    <item type="text" id="F_Ratio1" label="Ratio1"></item>
-                                </div>
-                                <div class="col-md-4">
-                                    <item type="text" id="F_Ratio2" label="Ratio2"></item>
-                                </div>
-                                <div class="col-md-4">
-                                    <item type="text" id="F_Ratio3" label="Ratio3"></item>
-                                </div>
-                            </div>
-                        </section>
-                    </div>
-
-                </div>
-            </form>
-
-            <div class="modal-footer" style="padding-left:20px; padding-right:20px;">
-                <i class="modal-reference mr-auto">Reference Code : <i id="_REFERCODE_"></i></i>
-                @if (ViewData["UserGroupID"].ToString() == "1" || ViewData["UserGroupID"].ToString() == "2")
-                {
-                    <a href="#" data-bs-toggle="modal" data-bs-target="#ModalHistory" data-bs-remote="UserMaintenance">
-                        <i class="fas fa-scroll" title="History Log"></i>
-                    </a>
-                }
-            </div>
-
-        </div>
-    </div>
-</div>
-
-
-
+@using HINOSystem.Models.KB3.Master
 @using KANBAN.Libs
 @section Scripts {
     <script type="text/javascript" src="@FileVersionHelper.VersionedScriptPath("/assets/.script/Master/KBNMS017.js")"></script>

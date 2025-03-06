@@ -17,7 +17,7 @@ $(document).ready(async function () {
         "serverSide": false,
         width: '100%',
         paging: false,
-        sorting: false,
+        sorting: true,
         searching: false,
         scrollX: true,
         "columns": [
@@ -356,10 +356,18 @@ $("#selectDeliveryTo").change(function () {
     }
 });
 
+let selectDateChg = "";
+
 $("#selectDate").change(function () {
     if ($("#selectDate").val() == "") {
         return;
     }
+    if ($(this).val() == selectDateChg) {
+        return;
+    }
+    console.log($(this).val());
+    console.log(selectDateChg);
+    selectDateChg = $(this).val();
 
     let cycle = $("#readCycle").val().split("-")[2];
 
@@ -406,6 +414,7 @@ $("#selectDate").change(function () {
     );
 
 });
+
 let selectDate = "";
 function ShowData() {
 
@@ -594,7 +603,7 @@ $("#inpFile").change(function () {
 });
 
 $("#btnImport").click(async function () {
-    xSplash.show();
+    xSplash.show("Importing Data");
     try {
 
         $("#btnImport").prop("disabled", true);

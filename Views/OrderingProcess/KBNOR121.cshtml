@@ -63,6 +63,11 @@
           transform: rotate(360deg) translateY(-200%);
        }
     }
+
+    .sticky-col {
+        position: sticky;
+        left: 0;
+    }
 </style>
 <div class="row">
     <!-- Left Panel -->
@@ -294,81 +299,94 @@
                     <div></div>
                     <div></div>
                 </div>
+
                 <table id="tableMaster" class="table table-bordered mt-2" style="overflow-x:auto;display:block">
 
                     <thead class="text-center">
                         <tr class ="text-center" id="THeadR1">
-                            <th style="border:0px"><input class="form-control" value="MRP : 15/07/2024" id="inputMRP" readonly /></th>
+                            <th class="sticky-col" style="border:0px">
+                                <input class="form-control" value="MRP : 15/07/2024" id="inputMRP" readonly />
+                            </th>
                         </tr>
                         <tr class="text-center" style="border:0px" id="THeadR2">
-                            <th style="border:0px"><input class="form-check-input" type="radio" name="radMRP" id="MRP-20" /> <label class="form-check-label" for="MRP-20" id="lbMrp-20">MRP-20%</label> </th>
+                            <th class="sticky-col" style="border:0px">
+                                <input class="form-check-input" type="radio" name="radMRP" id="MRP-20" /> 
+                                <label class="form-check-label" for="MRP-20" id="lbMrp-20">
+                                    MRP-20%
+                                </label> 
+                            </th>
                         </tr>
                         <tr class="text-center" id="THeadR3">
-                            <th style="border:0px"><input class="form-check-input" type="radio" name="radMRP" id="MRP20" /> <label class="form-check-label" for="MRP20" id="lbMrp20">MRP+20%</label></th>
+                            <th class="sticky-col" style="border:0px">
+                                <input class="form-check-input" type="radio" name="radMRP" id="MRP20" /> 
+                                    <label class="form-check-label" for="MRP20" id="lbMrp20">
+                                        MRP+20%
+                                    </label>
+                            </th>
                         </tr>
                     </thead>
 
                     <tbody class="text-center">
 
                         <tr id="TBodyR1">
-                            <th class="text-start" style="width:10dvw;height:2dvh" id="F_TMT_FO">TMT Forecast</th>
+                            <th class="text-start sticky-col" style="width:10dvw;height:2dvh" id="F_TMT_FO">TMT Forecast</th>
                         </tr>
                         <tr id="TBodyR2">
-                            <th class="text-start" id="F_HMMT_Prod">HMMT Prod.Forecast</th>
+                            <th class="text-start sticky-col" id="F_HMMT_Prod">HMMT Prod.Forecast</th>
                         </tr>
                         <tr id="TBodyR3">
-                            <th class="text-start" id="F_HMMT_Order">HMMT Order Plan</th>
+                            <th class="text-start sticky-col" id="F_HMMT_Order">HMMT Order Plan</th>
                         </tr>
                         <tr id="TBodyR4">
-                            <th class="text-start" id="F_Cycle_Order">Production Volume</th>
+                            <th class="text-start sticky-col" id="F_Cycle_Order">Production Volume</th>
                         </tr>
                         <tr id="TBodyR5">
-                            <th class="text-start" id="F_MRP">MRP (Actual Production)</th>
+                            <th class="text-start sticky-col" id="F_MRP">MRP (Actual Production)</th>
                         </tr>
                         <tr id="TBodyR6">
-                            <th class="text-start" id="F_Diff_MRP_FC">Diff Last MRP vs FC</th>
+                            <th class="text-start sticky-col" id="F_Diff_MRP_FC">Diff Last MRP vs FC</th>
                         </tr>
                         <tr id="TBodyR7">
-                            <th class="text-start" id="F_AbNormal_Part">Abnormal Part</th>
+                            <th class="text-start sticky-col" id="F_AbNormal_Part">Abnormal Part</th>
                         </tr>
                         <tr id="TBodyR8">
-                            <th class="text-start" id="F_Total">Total</th>
+                            <th class="text-start sticky-col" id="F_Total">Total</th>
                         </tr>
                         <tr id="TBodyR9">
-                            <th class="text-start" id="F_Remain_LastTrip">Remain From Last Trip</th>
+                            <th class="text-start sticky-col" id="F_Remain_LastTrip">Remain From Last Trip</th>
                         </tr>
                         <tr id="TBodyR10">
-                            <th class="text-start" id="F_Order_Base">Order Base</th>
+                            <th class="text-start sticky-col" id="F_Order_Base">Order Base</th>
                         </tr>
                         <tr id="TBodyR11">
-                            <th class="text-start" id="F_Lot_SizeOrder">ToTal Order</th>
+                            <th class="text-start sticky-col" id="F_Lot_SizeOrder">ToTal Order</th>
                         </tr>
                         <tr id="TBodyR12">
-                            <th class="text-start" id="F_KB_CutAdd">KB Cut (-) / Add (+)</th>
+                            <th class="text-start sticky-col" id="F_KB_CutAdd">KB Cut (-) / Add (+)</th>
                         </tr> 
                         <tr id="TBodyR13">
-                            <th class="text-start" id="F_Actual_Order">Actual Order</th>
+                            <th class="text-start sticky-col" id="F_Actual_Order">Actual Order</th>
                         </tr> 
                         <tr id="TBodyR14">
-                            <th class="text-start" id="F_Urgent_Order">Urgent (Pcs.)</th>
+                            <th class="text-start sticky-col" id="F_Urgent_Order">Urgent (Pcs.)</th>
                         </tr> 
                         <tr id="TBodyR15">
-                            <th class="bg-success text-start">Pattern Delivery</th>
+                            <th class="bg-success text-start sticky-col">Pattern Delivery</th>
                         </tr>
                         <tr id="TBodyR16">
-                            <th class="bg-info text-start">Adjust Order/Trip</th>
+                            <th class="bg-info text-start sticky-col">Adjust Order/Trip</th>
                         </tr>
                         <tr id="TBodyR17">
-                            <th class="text-start">Receive Plan</th>
+                            <th class="text-start sticky-col">Receive Plan</th>
                         </tr>
                         <tr id="TBodyR18">
-                            <th>BL (Plan)</th>
+                            <th class="sticky-col">BL (Plan)</th>
                         </tr>
                         <tr id="TBodyR19">
-                            <th class="text-start">Receive Actual</th>
+                            <th class="text-start sticky-col">Receive Actual</th>
                         </tr>
                         <tr id="TBodyR20">
-                            <th>BL (Actual)</th>
+                            <th class="sticky-col">BL (Actual)</th>
                         </tr>
 
                     </tbody>

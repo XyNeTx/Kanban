@@ -320,7 +320,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
                         and TB_Survey_Header.F_Revise_Rev= TB_Survey_Detail.F_Revise_Rev 
                         Where  TB_Survey_Header.F_Status <> 'D'  and TB_Survey_Detail.F_PDS_Flg = 0 
                         and TB_Survey_Detail.F_PDS_No  = '' 
-                        and F_Factory_Code  in ('1','B') 
+                        and F_Factory_Code = '{Fac}'
                         Group by RTrim(TB_Survey_Header.F_Survey_Doc),TB_Survey_Header.F_Revise_Rev,Rtrim(F_Supplier_Cd),F_Supplier_Plant,TB_Survey_Header.F_PO_Customer, 
                         F_Issued_Date, F_Dept_Code, F_Acc_Dr, F_Acc_Cr, F_Wk_code, F_Remark, F_Remark2, F_Remark3, F_Remark_KB ";
                 }

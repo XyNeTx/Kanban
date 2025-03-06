@@ -127,7 +127,7 @@ $("#btnInq").click(InqClicked = async () => {
     $("#selSurveyDoc").prop("disabled", false);
 
     $("#selSurveyDoc").val("");
-    $("#selPlant").val("1");
+    $("#selPlant").val("3");
 
     $("#selPlant").selectpicker("refresh");
     $("#selSurveyDoc").selectpicker("refresh");
@@ -143,7 +143,7 @@ $("#btnUpd").click(UpdClicked = async () => {
     $("#btnSave").prop("disabled", false);
 
     $("#selSurveyDoc").val("");
-    $("#selPlant").val("1");
+    $("#selPlant").val("3");
 
     $(document).find("select").prop("disabled", false);
     $(document).find("select").selectpicker("refresh");
@@ -182,7 +182,7 @@ $("#btnDel").click(DelClicked = async () => {
     $("#btnSave").prop("disabled", false);
 
     $("#selSurveyDoc").val("");
-    $("#selPlant").val("1");
+    $("#selPlant").val("3");
 
     $("#selPlant").prop("disabled", false);
     $("#selSurveyDoc").prop("disabled", false);
