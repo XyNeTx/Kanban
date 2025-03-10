@@ -1,4 +1,5 @@
-﻿class labAjax {
+﻿
+class labAjax {
     constructor() {
         this.ajaxItem = new AjaxItemProperties();
     }

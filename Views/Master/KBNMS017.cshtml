@@ -99,7 +99,7 @@
                         <div class="col-4">
                             <div class="input-group">
                                 <label class="input-group-text" asp-for="F_Ratio1"></label>
-                                <input type="number" class="form-control col-6" asp-for="F_Ratio1" />
+                                <input type="number" value="0" min="0" class="form-control col-6" asp-for="F_Ratio1" />
 
                             </div>
                         </div>
@@ -107,7 +107,7 @@
                         <div class="col-4">
                             <div class="input-group">
                                 <label class="input-group-text" asp-for="F_Ratio2"></label>
-                                <input type="number" class="form-control col-6" asp-for="F_Ratio2" />
+                                <input type="number" value="0" min="0" class="form-control col-6" asp-for="F_Ratio2" />
 
                             </div>
                         </div>
@@ -115,7 +115,7 @@
                         <div class="col-4">
                             <div class="input-group">
                                 <label class="input-group-text" asp-for="F_Ratio3"></label>
-                                <input type="number" class="form-control col-6" asp-for="F_Ratio3" />
+                                <input type="number" value="0" min="0" class="form-control col-6" asp-for="F_Ratio3" />
 
                             </div>
                         </div>
@@ -123,6 +123,15 @@
                     </div>
 
                 </form>
+
+                <div class="row mt-2 justify-content-start">
+
+                    <div class="d-flex justify-content-end col-12">
+                        <button type="button" class="btn btn-success btn-rounded col-1" id="btnSave">Save</button>
+                        <button type="button" class="btn btn-primary btn-rounded col-1" id="btnReport">Report</button>
+                    </div>
+
+                </div>
 
             </div>
         </div>

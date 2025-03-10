@@ -1131,7 +1131,8 @@ namespace HINOSystem.Controllers.API.Master
                                 F_Cycle = obj.F_Cycle,
                             };
 
-                            var exist = await _KB3Context.TB_Kanban_Planning.Where(x => x.F_Plant == planObj.F_Plant
+                            var exist = await _KB3Context.TB_Kanban_Planning.AsNoTracking()
+                                .Where(x => x.F_Plant == planObj.F_Plant
                                 && x.F_Supplier_Code == planObj.F_Supplier_Code
                                 && x.F_Supplier_Plant == planObj.F_Supplier_Plant
                                 && x.F_Store_Code == planObj.F_Store_Code

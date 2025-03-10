@@ -687,6 +687,10 @@ class xLib {
         });
     }
 
+    ConsoleTest = () => {
+        console.log("Test Import");
+    }
+
     ObjSetVal = async (objData, isTrigger) => {
         //console.log(objData);
         for (const e of Object.keys(objData)) {
@@ -756,6 +760,64 @@ const _xLib = new xLib();
         })
         //console.log("test");
     };
+
+    //$.fn.ValueIsNullOrWhiteSpace = async function () {
+    //};
+
+    $.fn.SelectToInput = async function (type,col) {
+        let select = $(this).parent().find("select");
+
+        let dls = select.attr("data-live-search");
+        let ds = select.attr("data-size");
+        let dv = select.attr("data-val");
+        let dvl = select.attr("data-val-length");
+        let dvlm = select.attr("data-val-length-max");
+        let dvr = select.attr("data-val-required");
+        let id = select.attr("id");
+        col = col == "" ? "7" : col
+
+        select.parent().remove();
+
+        //console.log(`label[for='${id}']`);
+        //console.log($(`label[for='${id}']`));
+
+        return $(`label[for='${id}']`).parent().append(
+            `
+                <input type="${type}" class="form-control col-${col}" data-live-search="${dls}" data-size="${ds}" 
+                data-val="${dv}" data-val-length="${dvl}" data-val-length-max="${dvlm}" 
+                data-val-required="${dvr}" id="${id}" name="${id}" />
+            `);
+
+    }
+
+    $.fn.InputToSelect = async function (col) {
+        let input = $(this).parent().find("input");
+
+        let dls = input.attr("data-live-search");
+        let ds = input.attr("data-size");
+        let dv = input.attr("data-val");
+        let dvl = input.attr("data-val-length");
+        let dvlm = input.attr("data-val-length-max");
+        let dvr = input.attr("data-val-required");
+        let id = input.attr("id");
+        col = col == "" ? "8" : col
+
+        input.remove();
+
+        //console.log(`label[for='${id}']`);
+        //console.log($(`label[for='${id}']`));
+
+        $(`label[for='${id}']`).parent().append(
+            `
+                <select class="selectpicker col-${col}" data-live-search="${dls}" data-size="${ds}" 
+                data-val="${dv}" data-val-length="${dvl}" data-val-length-max="${dvlm}" 
+                data-val-required="${dvr}" id="${id}" name="${id}" 
+                data-live-search="true" data-size="6">
+                </select>
+            `);
+
+        return $(`#${id}`).selectpicker('refresh');
+    }
 
     $.fn.disableSelectPicker = async function () {
         var id = $(this).attr("id");

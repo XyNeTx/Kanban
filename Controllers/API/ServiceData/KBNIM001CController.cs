@@ -273,7 +273,6 @@ namespace HINOSystem.Controllers.API.ServiceData
 
                     logList.Add(addTransaction);
                     logDelList.Add(singleTMP);
-
                 }
                 await _KB3Context.SaveChangesAsync();
                 _Log.WriteLogMsg("INSERT INTO TB_TRANSACTION SRV => " + JsonConvert.SerializeObject(logList));

@@ -15,7 +15,7 @@
         public string F_Plant { get; set; }
         [Required(ErrorMessage = "Please Select Part Number Before Process Data")]
         [DisplayName("Part No. : ")]
-        [StringLength(13)]
+        [StringLength(10)]
         public string F_Part_No { get; set; }
         //[Required]
         [DisplayName("Ruibetsu : ")]

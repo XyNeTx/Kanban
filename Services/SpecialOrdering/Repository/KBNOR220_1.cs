@@ -121,19 +121,20 @@ namespace KANBAN.Services.SpecialOrdering.Repository
                     foreach (var model in listModel)
                     {
                         var exModel = await _kbContext.TB_Survey_Header
-                            .FirstOrDefaultAsync(x => x.F_Survey_Doc == model.F_Survey_Doc
-                                                       && x.F_PO_Customer == model.F_PO_Customer);
+                            .FirstOrDefaultAsync(x => x.F_Survey_Doc.Trim() == model.F_Survey_Doc
+                                                       && x.F_PO_Customer.Trim() == model.F_PO_Customer);
 
                         if (exModel == null)
                         {
                             throw new CustomHttpException(400, "Survey Header not found!");
                         }
 
-                        exModel.F_Status_D = "D";
+                        exModel.F_Status = "D";
                         exModel.F_Update_By = _BearerClass.UserCode;
                         exModel.F_Update_Date = DateTime.Now;
 
                         _kbContext.Update(exModel);
+                        await _kbContext.SaveChangesAsync();
                         _log.WriteLogMsg("Delete Survey Header" + JsonConvert.SerializeObject(exModel));
                     }
                 }

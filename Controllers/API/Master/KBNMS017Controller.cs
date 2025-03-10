@@ -137,7 +137,8 @@ namespace HINOSystem.Controllers.API.Master
 
                     if (!string.IsNullOrWhiteSpace(obj.F_Part_No))
                     {
-                        listExObj = listExObj.Where(x => x.F_Part_No.Trim() + "-" + x.F_Ruibetsu == obj.F_Part_No).ToList();
+                        listExObj = listExObj.Where(x => x.F_Part_No.Trim() == obj.F_Part_No
+                            && x.F_Ruibetsu == obj.F_Ruibetsu).ToList();
                     }
                     if (!string.IsNullOrWhiteSpace(obj.F_Store_Cd))
                     {
@@ -146,6 +147,12 @@ namespace HINOSystem.Controllers.API.Master
 
                     if (listExObj.Count == 0)
                     {
+                        obj.F_Create_By = _BearerClass.UserCode;
+                        obj.F_Update_By = _BearerClass.UserCode;
+                        obj.F_Create_Date = DateTime.Now;
+                        obj.F_Update_Date = DateTime.Now;
+                        obj.F_Ratio2 = obj.F_Ratio2 == 0 ? null : obj.F_Ratio2;
+                        obj.F_Ratio3 = obj.F_Ratio3 == 0 ? null : obj.F_Ratio3;
                         await _kbContext.TB_MS_RatioAddress.AddAsync(obj);
                         logMsg = "INSERT INTO TB_MS_RatioAddress => " + JsonConvert.SerializeObject(obj);
                     }
@@ -161,7 +168,8 @@ namespace HINOSystem.Controllers.API.Master
 
                     if (!string.IsNullOrWhiteSpace(obj.F_Part_No))
                     {
-                        listExObj = listExObj.Where(x => x.F_Part_No.Trim() + "-" + x.F_Ruibetsu == obj.F_Part_No).ToList();
+                        listExObj = listExObj.Where(x => x.F_Part_No.Trim() == obj.F_Part_No
+                            && x.F_Ruibetsu == obj.F_Ruibetsu).ToList();
                     }
                     if (!string.IsNullOrWhiteSpace(obj.F_Store_Cd))
                     {
@@ -172,6 +180,12 @@ namespace HINOSystem.Controllers.API.Master
                     {
                         logMsg = "UPDATE TB_MS_RatioAddress Before => " + JsonConvert.SerializeObject(listExObj.FirstOrDefault());
 
+                        obj.F_Create_By = listExObj[0].F_Create_By;
+                        obj.F_Create_Date = listExObj[0].F_Create_Date;
+                        obj.F_Update_By = _BearerClass.UserCode;
+                        obj.F_Update_Date = DateTime.Now;
+                        obj.F_Ratio2 = obj.F_Ratio2 == 0 ? null : obj.F_Ratio2;
+                        obj.F_Ratio3 = obj.F_Ratio3 == 0 ? null : obj.F_Ratio3;
                         _kbContext.TB_MS_RatioAddress.Attach(obj);
                         _kbContext.Entry(obj).State = EntityState.Modified;
 
@@ -235,6 +249,16 @@ namespace HINOSystem.Controllers.API.Master
                         && x.F_Local_End.CompareTo(strDateNow) >= 0)
                         .ToListAsync();
 
+                    if (!string.IsNullOrWhiteSpace(F_Part_No))
+                    {
+                        data = data.Where(x => x.F_Part_no.Trim() == F_Part_No
+                            && x.F_Ruibetsu == F_Ruibetsu).ToList();
+                    }
+                    if (!string.IsNullOrWhiteSpace(F_Store_Cd))
+                    {
+                        data = data.Where(x => x.F_Store_cd.Trim() == F_Store_Cd).ToList();
+                    }
+
                     return Ok(new
                     {
                         status = "200",
@@ -252,7 +276,33 @@ namespace HINOSystem.Controllers.API.Master
                 }
                 else
                 {
-                    return Ok();
+
+                    var data = await _kbContext.TB_MS_RatioAddress.AsNoTracking()
+                        .Where(x => x.F_Plant == _BearerClass.Plant).ToListAsync();
+
+                    if (!string.IsNullOrWhiteSpace(F_Part_No))
+                    {
+                        data = data.Where(x => x.F_Part_No.Trim() + "-" + x.F_Ruibetsu == x.F_Part_No + "-" + x.F_Ruibetsu).ToList();
+                    }
+                    if (!string.IsNullOrWhiteSpace(F_Store_Cd))
+                    {
+                        data = data.Where(x => x.F_Store_Cd.Trim() == x.F_Store_Cd).ToList();
+                    }
+
+                    return Ok(new
+                    {
+                        status = "200",
+                        resposne = "Success",
+                        message = "Data Found",
+                        partNo = data.Select(x => new
+                        {
+                            F_Part_No = x.F_Part_No.Trim() + "-" + x.F_Ruibetsu
+                        }).DistinctBy(x => x.F_Part_No).OrderBy(x => x.F_Part_No).ToList(),
+                        storeCode = data.Select(x => new
+                        {
+                            F_Store_Cd = x.F_Store_Cd
+                        }).DistinctBy(x => x.F_Store_Cd).OrderBy(x => x.F_Store_Cd).ToList()
+                    });
                 }
             }
             catch (Exception ex)
@@ -261,5 +311,38 @@ namespace HINOSystem.Controllers.API.Master
                 else throw new CustomHttpException(500, ex.InnerException?.Message ?? ex.Message);
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetPartName(string? F_Part_No, string? F_Ruibetsu)
+        {
+            try
+            {
+                await _BearerClass.CheckAuthorize();
+
+                var PartName = await _PPM3Context.T_Construction.AsNoTracking()
+                    .FirstOrDefaultAsync(x => x.F_Plant_CD == _BearerClass.Plant[0]
+                    && x.F_Local_Str.CompareTo(strDateNow) <= 0
+                    && x.F_Local_End.CompareTo(strDateNow) >= 0
+                    && x.F_Part_no.Trim() == F_Part_No
+                    && x.F_Ruibetsu == F_Ruibetsu);
+
+
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data Found",
+                    data = PartName.F_Part_nm.Trim()
+                });
+
+            }
+            catch (Exception ex)
+            {
+                if (ex is CustomHttpException) throw;
+                else throw new CustomHttpException(500, ex.InnerException?.Message ?? ex.Message);
+            }
+        }
+
     }
 }
