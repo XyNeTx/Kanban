@@ -18,7 +18,8 @@ $(document).ready(async function () {
         width: '100%',
         paging: false,
         sorting: true,
-        searching: false,
+        searching: true,
+        orderable: true,
         scrollX: true,
         "columns": [
             { title: "Part No", data: "f_Part_No", },
@@ -237,9 +238,9 @@ function GetTrip() {
         width: '100%',
         paging: false,
         scrollX: true,
-        sorting: false,
-        orderable: false,
-        searching: false,
+        sorting: true,
+        orderable: true,
+        searching: true,
         "columns": [
             {
                 title: "Part No", data: function (data) {
@@ -257,12 +258,15 @@ function GetTrip() {
             { title: "Total(Pcs)", data: "f_Total_Pcs" },
             { title: "Order Diff(Pcs)", data: "f_Order_Diff" },
         ],
-
+        order: [[1, "asc"]]
     });
 
-    $("#tableMain").DataTable().columns.adjust().draw();
+    $("table thead tr th").css("background-color","black");
+    $("table thead tr th").css("color", "white");
+    $("table thead tr th").css("text-align", "center");
 
-    
+
+    $("#tableMain").DataTable().columns.adjust().draw();
 
 }
 
@@ -437,15 +441,15 @@ function ShowData() {
 
     if (selectDate == moment($("#selectDate").val(), "DD/MM/YYYY").format("YYYYMMDD")) return;
     xSplash.show();
-
     selectDate = obj.selDate;
+
+    let listColor = ["Beige", "PaleTurquoise", "Gainsboro", "IndianRed", "MistyRose", "PaleGreen","Thistle"]
+
     _xLib.AJAX_Get("/api/KBNMS008/Show_Data", obj,
     function (success) {
             if (success.status == "200") {
                 //console.log(success.data);
                 $("#tableMain").DataTable().clear();
-                $("#tableMain").DataTable().columns.adjust().draw();
-
                 success.data.forEach(function (data) {
                     let sum = 0;
                     for (let obj in data) {
@@ -456,9 +460,33 @@ function ShowData() {
                     data["f_Total_KB"] = sum;
                     data["f_Total_Pcs"] = sum * data.f_Qty;
 
-                    console.log(data);
+                    //console.log(data);
                 });
                 $("#tableMain").DataTable().rows.add(success.data).draw();
+
+                let i = 0;
+                $("table tbody tr td").each(function () {
+                    let index = $(this).index(); // Get the index of the current <td>
+                    $(this).addClass("fw-bolder");
+                    let text = $("table thead tr th:eq(" + index + ")").text(); // Get the header text using the index
+                    //console.log(index);
+                    //console.log(text);
+                    if (text.includes("Trip")) {
+                        $(this).css("background-color", listColor[i])
+                        $(this).addClass("ps-1 pe-1 pt-2 pb-2");
+                        i++;
+                        if (i == (listColor.length)) {
+                            i = 0;
+                        }
+                    }
+                    else {
+                        $(this).addClass("ps-4 pe-4 pt-2 pb-2");
+                    }
+
+                });
+
+                $("#tableMain").DataTable().columns.adjust().draw();
+
                 xSplash.hide();
             }
         },

@@ -246,33 +246,38 @@ namespace HINOSystem.Controllers.API.ServiceData
                         throw new CustomHttpException(400, "Please Check Cycle Time <> Delivery Time Master!!");
                     }
 
-                    var singleTMP = await _KB3Context.TB_Transaction_TMP
-                        .AsNoTracking().FirstOrDefaultAsync(x => x.F_Type == "SRV" && x.F_PDS_No == each.F_PDS_No
-                        && x.F_PDS_Issued_Date == sIssuedDate && x.F_Delivery_Date == sDeliDate);
+                    var listTMP = await _KB3Context.TB_Transaction_TMP
+                        .AsNoTracking().Where(x => x.F_Type == "SRV" && x.F_PDS_No == each.F_PDS_No
+                        && x.F_PDS_Issued_Date == sIssuedDate && x.F_Delivery_Date == sDeliDate)
+                        .ToListAsync();
 
-                    if (singleTMP == null)
+                    foreach (var singleTMP in listTMP)
                     {
-                        throw new CustomHttpException(404, "Transaction Tmp not found");
+
+                        if (singleTMP == null)
+                        {
+                            throw new CustomHttpException(404, "Transaction Tmp not found");
+                        }
+
+                        var mappingService = _automapService.GetAutoMapRepo<TB_Transaction_TMP, TB_Transaction>();
+                        var addTransaction = mappingService.MapTo(singleTMP);
+
+                        addTransaction.F_Process_By = "";
+                        addTransaction.F_Process_Date = DateTime.Now.ToString("yyyyMMdd");
+                        addTransaction.F_Round = 1;
+                        addTransaction.F_Reg_Flg = '1';
+                        addTransaction.F_HMMT_PDS = "";
+                        addTransaction.F_Survey_Doc = "";
+                        addTransaction.F_Freight = "";
+                        addTransaction.F_Update_Date = DateTime.Now;
+                        addTransaction.F_Update_By = _BearerClass.UserCode;
+
+                        await _KB3Context.TB_Transaction.AddAsync(addTransaction);
+                        _KB3Context.TB_Transaction_TMP.Remove(singleTMP);
+
+                        logList.Add(addTransaction);
+                        logDelList.Add(singleTMP);
                     }
-
-                    var mappingService = _automapService.GetAutoMapRepo<TB_Transaction_TMP, TB_Transaction>();
-                    var addTransaction = mappingService.MapTo(singleTMP);
-
-                    addTransaction.F_Process_By = "";
-                    addTransaction.F_Process_Date = DateTime.Now.ToString("yyyyMMdd");
-                    addTransaction.F_Round = 1;
-                    addTransaction.F_Reg_Flg = '1';
-                    addTransaction.F_HMMT_PDS = "";
-                    addTransaction.F_Survey_Doc = "";
-                    addTransaction.F_Freight = "";
-                    addTransaction.F_Update_Date = DateTime.Now;
-                    addTransaction.F_Update_By = _BearerClass.UserCode;
-
-                    await _KB3Context.TB_Transaction.AddAsync(addTransaction);
-                    _KB3Context.TB_Transaction_TMP.Remove(singleTMP);
-
-                    logList.Add(addTransaction);
-                    logDelList.Add(singleTMP);
                 }
                 await _KB3Context.SaveChangesAsync();
                 _Log.WriteLogMsg("INSERT INTO TB_TRANSACTION SRV => " + JsonConvert.SerializeObject(logList));

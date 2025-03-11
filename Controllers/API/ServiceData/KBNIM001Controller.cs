@@ -6,6 +6,7 @@ using KANBAN.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace HINOSystem.Controllers.API.ServiceData
 {
@@ -85,6 +86,7 @@ namespace HINOSystem.Controllers.API.ServiceData
 
                 await _KB3Context.TB_Import_Service.AddRangeAsync(listObj);
                 await _KB3Context.SaveChangesAsync();
+                _Log.WriteLogMsg("INSERT INTO TB_Import_Service => " + JsonConvert.SerializeObject(listObj));
                 _KB3Transaction.Commit();
 
                 return Ok(new

@@ -328,21 +328,34 @@ const addDetailToTable = async (dateSet, intRow) => {
     //console.log("Increase : ", _increase);
 
     for (let i = intRow; i <= _headLength; i += _increase) {
-        let _header = dT_Header[i]; // Make the Object easier to access
+        //let _header = dT_Header[i]; // Make the Object easier to access
         //console.log(_header);
+        //let _headerQty = dT_Header.filter(x => x.F_Supplier_Code == $("#readSupplier").val().split("-")[0]
+        //    && x.F_Supplier_Plant == $("#readSupplier").val().split("-")[1]
+        //    && x.F_Part_No == $("#readPartNo").val().split("-")[0]
+        //    && x.F_Ruibetsu == $("#readPartNo").val().split("-")[1]
+        //    && x.F_Store_Code == $("#readStoreCode").val()
+        //    && x.F_Kanban_No == $("#readKanbanNo").val()
+        //    && x.F_Process_Date == $("#inputProcessDateFor").val().replaceAll("-", ""))[0];
+
         let _headerQty = dT_Header.filter(x => x.F_Supplier_Code == $("#readSupplier").val().split("-")[0]
             && x.F_Supplier_Plant == $("#readSupplier").val().split("-")[1]
             && x.F_Part_No == $("#readPartNo").val().split("-")[0]
             && x.F_Ruibetsu == $("#readPartNo").val().split("-")[1]
             && x.F_Store_Code == $("#readStoreCode").val()
             && x.F_Kanban_No == $("#readKanbanNo").val()
-            && x.F_Process_Date == $("#inputProcessDateFor").val().replaceAll("-", ""))[0];
+            && x.F_Process_Date == moment(dateSet[_countDateSet], "DD-MM-YYYY").format("YYYYMMDD"))[0];
 
+        //console.log(dateSet[_countDateSet] + " count");
+
+        //console.log(_headerQty + " HeaderQty");
         if (_headerQty != undefined) {
             $("#readQtyPack").val(_headerQty.F_Qty_Box);
+            //console.log(_headerQty.F_Qty_Box + " HeaderQty F_Qty_Box");
         }
 
-        if (_header == undefined) break; //if out of index then break loop
+        console.log(_headerQty + " HeaderQty");
+        if (_headerQty == undefined) break; //if out of index then break loop
 
         let _headerDate = dT_Header[i].F_Process_Date.slice(6, 8) + "-" + dT_Header[i].F_Process_Date.slice(4, 6) + "-" + dT_Header[i].F_Process_Date.slice(0, 4);
         if(!dateSet.some(f => f.includes(_headerDate))) continue; //if date not in dateSet then skip loop
@@ -357,7 +370,7 @@ const addDetailToTable = async (dateSet, intRow) => {
         //insert DTHeader to Table Body Row was fixed at 15
         for (let k = 1; k <= 20; k++) {
             if (k >= 15 || k == 12) $(`#TBodyR${k}`).append(`<td id=tdR${k}Pcs${dateSet[_countDateSet]}></td>`)
-            else $(`#TBodyR${k}`).append(`<td id=tdR${k}Pcs${dateSet[_countDateSet]}>${_header[_setAccessHeader[k - 1]]}</td>`)
+            else $(`#TBodyR${k}`).append(`<td id=tdR${k}Pcs${dateSet[_countDateSet]}>${_headerQty[_setAccessHeader[k - 1]]}</td>`)
         }
 
         for (let j = 0; j <= _headColSpan - 2; j++) {
@@ -366,10 +379,11 @@ const addDetailToTable = async (dateSet, intRow) => {
             for (let k = 1; k <= 20; k++) {
                 //$(`#TBodyR${k}`).append(`<td id=tdR${k}${_id}>${_header[_setAccessHeader[k-1]]}</td>`)
                 if (k == 12 && _id == "KB") {
-                    _header["F_KB_CutAdd"] = parseInt(_header["F_KB_CutAdd"]) / parseInt($("#readQtyPack").val());
+                    console.log(_headerQty["F_KB_CutAdd"] + " Debuging ");
+                    _headerQty["F_KB_CutAdd"] = parseInt(_headerQty["F_KB_CutAdd"]) / parseInt($("#readQtyPack").val());
 
-                    if (isNaN(_header["F_KB_CutAdd"])) _header["F_KB_CutAdd"] = 0;
-                    $(`#TBodyR${k}`).append(`<td id='tdR${k}${_id}${dateSet[_countDateSet]}'>${_header["F_KB_CutAdd"]}</td>`)
+                    if (isNaN(_headerQty["F_KB_CutAdd"]) || _headerQty["F_KB_CutAdd"] === Infinity) _headerQty["F_KB_CutAdd"] = 0;
+                    $(`#TBodyR${k}`).append(`<td id='tdR${k}${_id}${dateSet[_countDateSet]}'>${_headerQty["F_KB_CutAdd"]}</td>`)
                 }
                 else {
                     if (dateSet[_countDateSet] != _CookieProcessDate) {
@@ -466,6 +480,7 @@ const addDetailToTable = async (dateSet, intRow) => {
 
             if (k == 11 || k == 12 || k == 13) { //convert qty to KB fixed by row
                 let _KB = parseInt(item[_setAccessDetail[k - 1]]) / parseInt($("#readQtyPack").val());
+
                 if (isNaN(_KB) || _KB == Infinity) _KB = 0;
                 $(`#${_insIdDetail}`).text(_KB);
             }
@@ -832,15 +847,15 @@ const sumKB = async (dateSet) => {
                 if ($Id.slice(-12, -10) == "T1") _countDateSet += 1;
                 if ($Id.includes(dateSet[_countDateSet])) {
                     let kbToSum = parseInt($(`#${$Id}`).text());
-                    //console.log(kbToSum);
                     //if (isNaN(sum) || sum === Infinity) sum = 0;
                     if (isNaN(kbToSum) || kbToSum === Infinity) kbToSum = 0;
                     let _kb = (parseInt($(`#tdR${_Row[i]}KB${dateSet[_countDateSet]}`).text())) == NaN ? 0 : parseInt($(`#tdR${_Row[i]}KB${dateSet[_countDateSet]}`).text());
                     _kb = isNaN(_kb) || _kb === Infinity ? 0 : _kb;
 
                     let kbResult = _kb + kbToSum;
+                    //console.log(kbToSum + " kbToSum");
                     //console.log($(`#tdR${_Row[i]}KB${dateSet[_countDateSet]}`).text());
-                    //console.log(kbResult);
+                    //console.log(kbResult + " kbResult");
                     $(`#tdR${_Row[i]}KB${dateSet[_countDateSet]}`).text(kbResult);
                 }
 
@@ -940,7 +955,8 @@ $("#btnReCal").click(function () {
         function (result) {
             if (result.status == 200) {
                 xSplash.hide();
-                previewFunction($("#txtPage").val().split("/")[0] - 1, _command);
+                $("#btnBlCal").trigger("click");
+                //previewFunction($("#txtPage").val().split("/")[0] - 1, _command);
                 xSwal.success("Success", "Recalculate Success");
 
                 //_xLib.AJAX_Post('/api/KBNOR121/Bl_Recalculate', JSON.stringify(obj),

@@ -98,6 +98,7 @@ function GetOrderNo() {
     _xLib.AJAX_Get("/api/KBNIM001C/GetOrderNo", obj,
         function (success) {
             console.log(success);
+            $("#inpOrderNo").resetSelectPicker();
             $("#inpOrderNo").addListSelectPicker(success.data, "f_PDS_No");
         },
         function (error) {
@@ -156,6 +157,7 @@ async function Confirm() {
                 console.log(success);
                 xSwal.success(success.response, success.message);
                 Search();
+                GetOrderNo();
             },
             function (error) {
                 xSwal.error(error.responseJSON.response, error.responseJSON.message);

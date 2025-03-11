@@ -744,25 +744,14 @@ const _xLib = new xLib();
 
         $(this).selectpicker('refresh');
 
-        //$(this).parent().find(".filter-option-inner-inner").text("Nothing Selected");
     };
-
-    //$.fn.NoneSelectPicker = async function () {
-    //    console.log("noneSelectPicker");
-    //    console.log($(this).parent().find(".filter-option-inner-inner").text());
-    //    $(this).parent().find(".filter-option-inner-inner").text("Nothing Selected");
-    //    return console.log($(this).parent().find(".filter-option-inner-inner").text());
-    //}
 
     $.fn.resetAllSelectPicker = async function () {
         $(".selectpicker").each(function () {
             $(this).resetSelectPicker();
         })
-        //console.log("test");
     };
 
-    //$.fn.ValueIsNullOrWhiteSpace = async function () {
-    //};
 
     $.fn.SelectToInput = async function (type,col) {
         let select = $(this).parent().find("select");
@@ -847,11 +836,6 @@ const _xLib = new xLib();
         return formData;
     }
 
-    //$.fn.SetJsonValue = async function (jsonData) {
-    //    Object.keys(jsonData).forEach(async (key) => {
-    //        $(`#${key}`).val(jsonData[key]);
-    //    });
-    //}
 
     $.fn.addListSelectPicker = async function (arrData, objKey) {
         $(".btn-toolbar[role='toolbar']").addClass("d-none");
