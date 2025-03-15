@@ -1,34 +1,8 @@
-﻿using Microsoft.AspNetCore.Http.Extensions;
-using Microsoft.AspNetCore.Mvc;
-using System.Data;
-using System;
-using System.Web;
-using System.Security.Principal;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-
-using System.Reflection.PortableExecutable;
-using System.DirectoryServices;
-using System.DirectoryServices.AccountManagement;
-using Microsoft.Net.Http.Headers;
-using System.Collections.Specialized;
-using System.Net;
-using System.DirectoryServices.ActiveDirectory;
-using System.Net.Http;
-using Microsoft.AspNetCore.Authorization;
-
-using System.Security.Claims;
-using Org.BouncyCastle.Asn1.Ocsp;
-
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-
-using System.Threading.Tasks;
-
+﻿using HINOSystem.Context;
 using HINOSystem.Libs;
-using HINOSystem.Context;
 using HINOSystem.Models.KB3.Master;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace HINOSystem.Controllers.API.Master
 {
@@ -134,8 +108,15 @@ namespace HINOSystem.Controllers.API.Master
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
                 string[] _F = Request.Form["F_Parent_Part_Name"].ToString().Split("-");
+
+                if (_F.Length != 2)
+                {
+                    throw new Exception("Please Input '-' for Split Part No and Ruibetsu");
+                }
+
                 string _F_Parent_Part = (_F.Length > 0 ? _F[0] : "");
                 string _F_Ruibetsu = (_F.Length > 0 ? _F[1] : "");
+
 
                 TB_MS_OldPart _TB_MS_OldPart = new TB_MS_OldPart();
                 _TB_MS_OldPart.F_Plant = _BearerClass.Plant;
@@ -239,7 +220,7 @@ namespace HINOSystem.Controllers.API.Master
                 _BearerClass.Authentication(Request);
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
-                
+
 
                 _SQL = @"
                     DELETE FROM [dbo].[TB_MS_OldPart]

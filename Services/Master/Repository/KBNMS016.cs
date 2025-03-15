@@ -3,6 +3,7 @@ using HINOSystem.Libs;
 using HINOSystem.Models.KB3.Master;
 using KANBAN.Context;
 using KANBAN.Libs;
+using KANBAN.Models.KB3.Receive_Process;
 using KANBAN.Models.PPM3;
 using KANBAN.Services.Automapper.Interface;
 using KANBAN.Services.Master.IRepository;
@@ -61,7 +62,7 @@ namespace KANBAN.Services.Master.Repository
                     +'-'+RIGHT('00000'+ CONVERT(VARCHAR,S.F_cycle_C),2) AS F_Cycle 
                     ,RTRIM(P.F_Kanban_No) AS F_Kanban_No 
                     ,RTRIM(C.F_Part_nm) AS F_Part_nm 
-                    ,RTRIM(P.F_Store_Cd) AS F_Store_Code 
+                    ,RTRIM(P.F_Store_Cd) AS F_Store_Cd 
                     ,RTRIM(P.F_Part_No)+'-'+RTRIM(P.F_Ruibetsu) AS F_Part_No 
                     ,RTRIM(P.F_Qty) AS F_Qty 
                     FROM TB_MS_PairOrder P INNER JOIN {ppmCon}.[dbo].[T_Construction] C 
@@ -107,7 +108,7 @@ namespace KANBAN.Services.Master.Repository
                     ,RIGHT('00000'+ CONVERT(VARCHAR,S.F_Cycle_A),2) +'-'+RIGHT('00000'+ CONVERT(VARCHAR,S.F_cycle_B),2) +'-'+RIGHT('00000'+ CONVERT(VARCHAR,S.F_cycle_C),2) 
                     ,RTRIM(P.F_Kanban_No),RTRIM(C.F_Part_nm),RTRIM(P.F_Store_Cd),RTRIM(P.F_Part_No)+'-'+RTRIM(P.F_Ruibetsu) 
                     ,RTRIM(P.F_Qty) 
-                    ORDER BY F_Group,F_Supplier_Cd,F_Cycle,F_Kanban_No,F_Store_Code,F_Part_No,F_Qty ";
+                    ORDER BY F_Group,F_Supplier_Cd,F_Cycle,F_Kanban_No,F_Store_Cd,F_Part_No,F_Qty ";
 
                 var dt = _FillDT.ExecuteSQL(sql);
 
@@ -121,7 +122,7 @@ namespace KANBAN.Services.Master.Repository
             }
         }
 
-        public async Task<List<T_Construction>> GetDropDownInq(string? F_Supplier_Cd, string? F_Kanban_No, string? F_Part_No, string? F_Store_Cd, string? F_Supplier_Plant, string? F_Ruibetsu)
+        public async Task<List<T_Construction>> GetDropDownNew(string? F_Supplier_Cd, string? F_Kanban_No, string? F_Part_No, string? F_Store_Cd, string? F_Supplier_Plant, string? F_Ruibetsu)
         {
             try
             {
@@ -132,13 +133,13 @@ namespace KANBAN.Services.Master.Repository
 
                 if (!string.IsNullOrWhiteSpace(F_Supplier_Cd))
                 {
-                    data = data.Where(x => x.F_supplier_cd == F_Supplier_Cd
-                        && x.F_plant == F_Supplier_Plant[0]).ToList();
+                    data = data.Where(x => x.F_supplier_cd?.Trim() == F_Supplier_Cd
+                        && x.F_plant == F_Supplier_Plant?[0]).ToList();
                 }
 
                 if (!string.IsNullOrWhiteSpace(F_Part_No))
                 {
-                    data = data.Where(x => x.F_Part_no == F_Part_No
+                    data = data.Where(x => x.F_Part_no.Trim() == F_Part_No
                         && x.F_Ruibetsu == F_Ruibetsu).ToList();
                 }
 
@@ -162,7 +163,49 @@ namespace KANBAN.Services.Master.Repository
             }
         }
 
-        public async Task<List<TB_MS_PairOrder>> GetDropDownNew(string? F_Supplier_Cd, string? F_Kanban_No, string? F_Part_No, string? F_Store_Cd, string? F_Supplier_Plant, string? F_Ruibetsu, string? F_Group)
+        public async Task<T_Supplier_MS> GetSupplierDetail(string F_Supplier_Cd, string F_Supplier_Plant)
+        {
+            try
+            {
+                var data = await _PPM3Context.T_Supplier_MS.AsNoTracking()
+                    .Where(x => x.F_supplier_cd == F_Supplier_Cd
+                    && x.F_Plant_cd == F_Supplier_Plant[0]
+                    && x.F_TC_Str.CompareTo(strDateNow) <= 0
+                    && x.F_TC_End.CompareTo(strDateNow) >= 0
+                    && x.F_Store_cd.StartsWith(_BearerClass.Plant)).FirstOrDefaultAsync();
+
+                return data;
+
+            }
+            catch (Exception ex)
+            {
+                if (ex is CustomHttpException) throw;
+                else throw new CustomHttpException(500, ex.InnerException?.Message ?? ex.Message);
+            }
+        }
+
+        public async Task<T_Construction> GetPartNoDetail(string? F_Part_No, string? F_Ruibetsu)
+        {
+            try
+            {
+                var data = await _PPM3Context.T_Construction.AsNoTracking()
+                    .Where(x => x.F_Part_no == F_Part_No
+                    && x.F_Ruibetsu == F_Ruibetsu
+                    && x.F_Local_Str.CompareTo(strDateNow) <= 0
+                    && x.F_Local_End.CompareTo(strDateNow) >= 0
+                    && x.F_Store_cd.StartsWith(_BearerClass.Plant)).ToListAsync();
+
+                return data?.FirstOrDefault();
+
+            }
+            catch (Exception ex)
+            {
+                if (ex is CustomHttpException) throw;
+                else throw new CustomHttpException(500, ex.InnerException?.Message ?? ex.Message);
+            }
+        }
+
+        public async Task<List<TB_MS_PairOrder>> GetDropDownInq(string? F_Supplier_Cd, string? F_Kanban_No, string? F_Part_No, string? F_Store_Cd, string? F_Supplier_Plant, string? F_Ruibetsu, string? F_Group)
         {
             try
             {
@@ -171,13 +214,13 @@ namespace KANBAN.Services.Master.Repository
 
                 if (!string.IsNullOrWhiteSpace(F_Supplier_Cd))
                 {
-                    data = data.Where(x => x.F_Supplier_Cd == F_Supplier_Cd
+                    data = data.Where(x => x.F_Supplier_Cd.Trim() == F_Supplier_Cd
                         && x.F_Supplier_Plant == F_Supplier_Plant).ToList();
                 }
 
                 if (!string.IsNullOrWhiteSpace(F_Part_No))
                 {
-                    data = data.Where(x => x.F_Part_No == F_Part_No
+                    data = data.Where(x => x.F_Part_No.Trim() == F_Part_No
                         && x.F_Ruibetsu == F_Ruibetsu).ToList();
                 }
 
@@ -193,11 +236,92 @@ namespace KANBAN.Services.Master.Repository
 
                 if (!string.IsNullOrWhiteSpace(F_Group))
                 {
-                    data = data.Where(x => x.F_Group == F_Group).ToList();
+                    data = data.Where(x => x.F_Group.Trim() == F_Group).ToList();
                 }
 
                 return data;
 
+            }
+            catch (Exception ex)
+            {
+                if (ex is CustomHttpException) throw;
+                else throw new CustomHttpException(500, ex.InnerException?.Message ?? ex.Message);
+            }
+        }
+
+        public async Task Save(List<TB_MS_PairOrder> listObj, string action)
+        {
+            try
+            {
+                var obj = listObj.FirstOrDefault();
+                string logMsg = "";
+
+                if (obj == null)
+                {
+                    throw new CustomHttpException(400, "Please input Data to Save");
+                }
+
+                var existObj = await _kbContext.TB_MS_PairOrder.AsNoTracking()
+                    .FirstOrDefaultAsync(x => x.F_Supplier_Cd.Trim() == obj.F_Supplier_Cd
+                    && x.F_Supplier_Plant == obj.F_Supplier_Plant
+                    && x.F_Part_No.Trim() == obj.F_Part_No
+                    && x.F_Ruibetsu == obj.F_Ruibetsu
+                    && x.F_Store_Cd == obj.F_Store_Cd
+                    && x.F_Kanban_No == obj.F_Kanban_No);
+
+                if (action.ToLower() == "new")
+                {
+                    if (existObj != null)
+                    {
+                        throw new CustomHttpException(400, "Already Have Data in System");
+                    }
+                    else
+                    {
+                        obj.F_Create_By = _BearerClass.UserCode;
+                        obj.F_Create_Date = DateTime.Now;
+                        obj.F_Update_By = _BearerClass.UserCode;
+                        obj.F_Update_Date = DateTime.Now;
+
+                        await _kbContext.TB_MS_PairOrder.AddAsync(obj);
+                        logMsg = "INSERT INTO TB_MS_PairOrder => " + JsonConvert.SerializeObject(obj);
+                    }
+                }
+                else if (action.ToLower() == "upd")
+                {
+                    if (existObj != null)
+                    {
+                        logMsg = "UPDATE TO TB_MS_PairOrder BEFORE => " + JsonConvert.SerializeObject(existObj);
+
+                        obj.F_Create_By = existObj.F_Create_By;
+                        obj.F_Create_Date = existObj.F_Create_Date;
+                        obj.F_Update_By = _BearerClass.UserCode;
+                        obj.F_Update_Date = DateTime.Now;
+
+                        _kbContext.TB_MS_PairOrder.Attach(obj);
+                        _kbContext.Entry(obj).State = EntityState.Modified;
+
+                        logMsg = Environment.NewLine + "UPDATE TO TB_MS_PairOrder AFTER => " + JsonConvert.SerializeObject(obj);
+                    }
+                    else
+                    {
+                        throw new CustomHttpException(400, "Don't Have Data in System to Update");
+                    }
+                }
+                else if (action.ToLower() == "del")
+                {
+                    foreach (var each in listObj)
+                    {
+                        _kbContext.TB_MS_PairOrder.Remove(each);
+                        logMsg += "DELETE TB_MS_PairOrder => " + JsonConvert.SerializeObject(each);
+                    }
+                }
+                else
+                {
+                    throw new CustomHttpException(400, "Action is Invalid !!!");
+                }
+
+                await _kbContext.SaveChangesAsync();
+                _log.WriteLogMsg(logMsg);
             }
             catch (Exception ex)
             {

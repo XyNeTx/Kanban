@@ -354,10 +354,11 @@ const addDetailToTable = async (dateSet, intRow) => {
             //console.log(_headerQty.F_Qty_Box + " HeaderQty F_Qty_Box");
         }
 
-        console.log(_headerQty + " HeaderQty");
+        //console.log(_headerQty + " HeaderQty");
         if (_headerQty == undefined) break; //if out of index then break loop
 
-        let _headerDate = dT_Header[i].F_Process_Date.slice(6, 8) + "-" + dT_Header[i].F_Process_Date.slice(4, 6) + "-" + dT_Header[i].F_Process_Date.slice(0, 4);
+        //let _headerDate = dT_Header[i].F_Process_Date.slice(6, 8) + "-" + dT_Header[i].F_Process_Date.slice(4, 6) + "-" + dT_Header[i].F_Process_Date.slice(0, 4);
+        let _headerDate = _headerQty.F_Process_Date.slice(6, 8) + "-" + _headerQty.F_Process_Date.slice(4, 6) + "-" + _headerQty.F_Process_Date.slice(0, 4);
         if(!dateSet.some(f => f.includes(_headerDate))) continue; //if date not in dateSet then skip loop
 
 
@@ -379,7 +380,7 @@ const addDetailToTable = async (dateSet, intRow) => {
             for (let k = 1; k <= 20; k++) {
                 //$(`#TBodyR${k}`).append(`<td id=tdR${k}${_id}>${_header[_setAccessHeader[k-1]]}</td>`)
                 if (k == 12 && _id == "KB") {
-                    console.log(_headerQty["F_KB_CutAdd"] + " Debuging ");
+                    //console.log(_headerQty["F_KB_CutAdd"] + " Debuging ");
                     _headerQty["F_KB_CutAdd"] = parseInt(_headerQty["F_KB_CutAdd"]) / parseInt($("#readQtyPack").val());
 
                     if (isNaN(_headerQty["F_KB_CutAdd"]) || _headerQty["F_KB_CutAdd"] === Infinity) _headerQty["F_KB_CutAdd"] = 0;
@@ -867,8 +868,9 @@ const sumKB = async (dateSet) => {
             _countDateSet = 0;
             $(`table tbody tr td[id*='tdR${_Row[i]}KB']`).each(function () {
                 let $Id = $(this).attr("id");
-                //console.log($Id);
+                console.log($Id + " ID");
                 let $KB = parseInt($(`#${$Id}`).text());
+                console.log($KB + " $KB");
                 let $Pcs = $KB * parseInt($("#readQtyPack").val());
                 if (isNaN($Pcs) || $Pcs === Infinity) $Pcs = 0;
                 if (isNaN($KB) || $KB === Infinity) $KB = 0;
@@ -877,7 +879,8 @@ const sumKB = async (dateSet) => {
                 //console.log(`tdR${_Row[i]}Pcs${dateSet[_countDateSet]}`);
 
                 $(`#tdR${_Row[i]}Pcs${dateSet[_countDateSet]}`).text($Pcs);
-                $Pcs === 0 ? $(`#tdR${_Row[i]}KB${dateSet[_countDateSet]}`).text($Pcs) : $(`#tdR${_Row[i]}Kb${dateSet[_countDateSet]}`).text($KB);
+                $Pcs === 0 ? $(`#tdR${_Row[i]}KB${dateSet[_countDateSet]}`).text($Pcs) : $(`#tdR${_Row[i]}KB${dateSet[_countDateSet]}`).text($KB);
+                $(`#tdR${_Row[i]}KB${dateSet[_countDateSet]}`).text($KB);
                 _countDateSet += 1;
 
             });
@@ -894,7 +897,14 @@ const sumKB = async (dateSet) => {
         && x.F_Kanban_No == $("#readKanbanNo").val()
         && x.F_Adj_Pattern != 0
     ).forEach(function (item, i) {
-        //console.log(item);
+        console.log(item.F_Delivery_Date);
+        console.log(_OldDate);
+        if (_OldDate !== item.F_Delivery_Date)
+        {
+            _sumPattern = 0;
+            _OldDate = item.F_Delivery_Date;
+        }
+
         let _pattern = parseInt(item.F_Adj_Pattern / parseInt($("#readQtyPack").val()));
 
         //let _oldPattern = $(`#tdR15KB${item.F_Delivery_Date.slice(6, 8) + "-" + item.F_Delivery_Date.slice(4, 6) + "-" + item.F_Delivery_Date.slice(0, 4)}`).text();

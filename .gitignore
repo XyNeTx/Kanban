@@ -372,3 +372,5 @@ FodyWeavers.xsd
 /wwwroot/Storage/Uploads/202412/16
 /wwwroot/TemplateFiles
 /wwwroot/QRCode
+/wwwroot/file_temp/IMPORT_SPECIAL.txt
+/wwwroot/file_temp/IMPORT_SPECIAL.xlsx

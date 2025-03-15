@@ -798,7 +798,7 @@ const _xLib = new xLib();
 
         $(`label[for='${id}']`).parent().append(
             `
-                <select class="selectpicker col-${col}" data-live-search="${dls}" data-size="${ds}" 
+                <select class="selectpicker p-0 col-${col}" data-live-search="${dls}" data-size="${ds}" 
                 data-val="${dv}" data-val-length="${dvl}" data-val-length-max="${dvlm}" 
                 data-val-required="${dvr}" id="${id}" name="${id}" 
                 data-live-search="true" data-size="6">

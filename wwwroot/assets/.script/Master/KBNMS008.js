@@ -443,7 +443,8 @@ function ShowData() {
     xSplash.show();
     selectDate = obj.selDate;
 
-    let listColor = ["Beige", "PaleTurquoise", "Gainsboro", "IndianRed", "MistyRose", "PaleGreen","Thistle"]
+    //let listColor = ["#FFBF00","#7DF9FF" ]
+    //let listRowColor = ["#FFFFFF", "FF3131"];
 
     _xLib.AJAX_Get("/api/KBNMS008/Show_Data", obj,
     function (success) {
@@ -464,24 +465,35 @@ function ShowData() {
                 });
                 $("#tableMain").DataTable().rows.add(success.data).draw();
 
-                let i = 0;
+                let i = -1;
+                let j = 0;
+                let oldTrip;
                 $("table tbody tr td").each(function () {
                     let index = $(this).index(); // Get the index of the current <td>
                     $(this).addClass("fw-bolder");
                     let text = $("table thead tr th:eq(" + index + ")").text(); // Get the header text using the index
                     //console.log(index);
                     //console.log(text);
-                    if (text.includes("Trip")) {
-                        $(this).css("background-color", listColor[i])
-                        $(this).addClass("ps-1 pe-1 pt-2 pb-2");
-                        i++;
-                        if (i == (listColor.length)) {
-                            i = 0;
-                        }
+                    //if (text.includes("Trip")) {
+                    //    if (parseInt(text.substring(4)) % 2 === 0) {
+                    //        $(this).css("background-color", "#7DF9FF")
+                    //    }
+                    //    else {
+                    //        $(this).css("background-color", "#FFBF00")
+                    //    }
+                    //}
+                    //else {
+                    let isRowOdd = $(this).closest("tr").attr("class") === "odd";
+
+                    if (isRowOdd) {
+                        $(this).css("background-color", "#FFFFFF")
                     }
                     else {
-                        $(this).addClass("ps-4 pe-4 pt-2 pb-2");
+                        $(this).css("background-color", "#818589")
                     }
+
+                    //}
+                    $(this).addClass("ps-1 pe-1 pt-2 pb-2");
 
                 });
 
