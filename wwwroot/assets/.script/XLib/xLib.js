@@ -29,7 +29,7 @@ class DataTableLib {
         //console.log(constr.scrollCollapse, "scrollCollapse");
         //console.log(this.scrollCollapse, "this.scrollCollapse");
 
-        return $(`${id}`).DataTable({
+        const dataTable = $(`${id}`).DataTable({
             width: (constr.width) ?? this.width,
             paging: (constr.paging) ?? this.paging,
             scrollCollapse: (constr.scrollCollapse) ?? this.scrollCollapse,
@@ -46,12 +46,17 @@ class DataTableLib {
             layout: (constr.layout) ?? this.layout
         });
 
-        $(`${id} table thead tr th`).css("text-align", "center");
-        $(`${id} table thead tr th`).css("vertical-align", "middle");
+        //$(`${id} table thead tr th`).css("text-align", "center");
+        //$(`${id} table thead tr th`).css("vertical-align", "middle");
+        //console.log($(`${id}`).parent().parent().find($(".dataTables_scrollHead .dataTables_scrollHeadInner .dataTable")));
+        $(`${id}`).parent().parent().find($("th")).css("vertical-align", "middle");
+        $(`${id}`).parent().parent().find($("th")).css("text-align", "center");
 
-        $(`${id} table tbody tr td`).css("text-align", "center");
-        $(`${id} table tbody tr td`).css("vertical-align", "middle");
+        $(`${id} tbody tr td`).css("text-align", "center");
+        $(`${id} tbody tr td`).css("vertical-align", "middle");
 
+
+        return dataTable;
     }
 
     ClearAndAddDataDT(id, data) {
@@ -737,7 +742,7 @@ const _xLib = new xLib();
 (($) => {
     $.fn.resetSelectPicker = async function () {
         $(this).val("");
-        console.log($(this));
+        //console.log($(this));
         //await $(this).trigger("change");
         $(this).attr("title", "Nothing Selected");
         //$(this).find("option.bs-title-option").remove();
@@ -848,6 +853,14 @@ const _xLib = new xLib();
             //console.log(thisElement);
             thisElement.append(`<option value='${each[objKey]}' >${each[objKey]}</option>`);
         });
+        return $(this).selectpicker('refresh');
+    }
+
+    $.fn.removeListSelectPicker = async function () {
+        $(".btn-toolbar[role='toolbar']").addClass("d-none");
+        //console.log($(this));
+        await $(this).empty();
+        await $(this).append(`<option value=''></option >`);
         return $(this).selectpicker('refresh');
     }
 

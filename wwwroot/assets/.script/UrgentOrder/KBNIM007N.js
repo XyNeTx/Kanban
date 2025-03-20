@@ -335,6 +335,7 @@ $("#inputDeliveryTrip").on("keypress", function (e) {
 });
 
 $("#buttonOK").click(async function () {
+    xSplash.show("Saving Data");
     if (_command === 'New') {
         $("#buttonOK").prop("disabled", true);
         var rows = $("input[name='inputChkBox']:checked").closest("tr");
@@ -349,7 +350,7 @@ $("#buttonOK").click(async function () {
         if (rows.length === 0) return xSwal.error("Error !!", "No data selected.");
         let _arrObj = $("#table").DataTable().rows(rows).data().toArray();
         var _hasError = false;
-        _arrObj.forEach(function (item,i) {
+        _arrObj.forEach(async function (item, i) {
             item.Supplier = item.F_Supplier;
             item.Part_No = item.F_Part_No;
             item.Qty = item.F_Qty;
@@ -366,7 +367,7 @@ $("#buttonOK").click(async function () {
             delete item.F_Delivery_Trip;
             delete item.F_Kanban_No;
 
-            _xLib.AJAX_Post('/api/KBNIM007N/Update', JSON.stringify(item),
+            await _xLib.AJAX_Post('/api/KBNIM007N/Update', JSON.stringify(item),
                 function (success) {
                     if (success.status === "200") {
                         console.log("Success: ", success);
@@ -385,22 +386,24 @@ $("#buttonOK").click(async function () {
         if (_hasError) return;
         else {
             $("#table").DataTable().clear().draw();
+            xSplash.hide();
             return xSwal.success("Success !!", "Data was updated.");
         }
     }
     else if (_command === "Delete") {
-        xSwal.question("Confirm !!", "Are you sure to delete data?", function () {
+        xSwal.question("Confirm !!", "Are you sure to delete data?", async function () {
             $("#buttonOK").prop("disabled", true);
             var rows = $("input[name='inputChkBox']:checked").closest("tr");
             if (rows.length === 0) return xSwal.error("Error !!", "No data selected.");
             let _Obj = $("#table").DataTable().row(rows[0]).data();
-            _xLib.AJAX_Post('/api/KBNIM007N/Delete', JSON.stringify(_Obj),
+            await _xLib.AJAX_Post('/api/KBNIM007N/Delete', JSON.stringify(_Obj),
                 function (success) {
                     if (success.status === "200") {
                         console.log("Success: ", success);
                         if ($("input[name='inputChkBox']:checked").length > 0) {
                             $("#table").DataTable().clear().draw();
                             $("#buttonInq").trigger("click");
+                            xSplash.hide();
                             return xSwal.success("Success !!", "Data was deleted.");
                         }
                     }
@@ -414,6 +417,7 @@ $("#buttonOK").click(async function () {
     else {
         return xSwal.error("Error !!", "Please select command.");
     }
+
 
 });
 
@@ -456,6 +460,7 @@ async function OkClicked(_arrObj,isImport) {
                         $("#table").DataTable().row().remove().draw();
                     }
                 }
+
             },
             function (error) {
                 return xSwal.error("Error !!", error.responseJSON.message);
@@ -487,6 +492,8 @@ async function OkClicked(_arrObj,isImport) {
     $("#table").DataTable().clear().draw();
     $("#buttonOK").prop("disabled", false);
     $("#buttonImport").prop("disabled", false);
+
+    xSplash.hide();
     return;
 }
 
@@ -497,6 +504,7 @@ $("#inputFile").change(function (e) {
     _File = e.target.files;
 });
 $("#buttonImport").click(async function () {
+    xSplash.show("Saving Data");
     $("#buttonImport").prop("disabled", true);
     if (!_File.length) return xSwal.error("Error !!", "No file selected.");
     const file = _File[0];

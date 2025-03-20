@@ -376,7 +376,7 @@ namespace HINOSystem.Controllers.API.Master
                                                 F_Inventory_Flg = '0',
                                                 F_Upload_Flg = '0',
                                                 F_UpdateBy = "KBN",
-                                                F_UpdateDate = DateTime.Now.Date,
+                                                F_UpdateDate = DateTime.Now,
                                                 F_ID = 0,
                                                 F_Pds_No = "",
                                                 F_Pack_Code = ""

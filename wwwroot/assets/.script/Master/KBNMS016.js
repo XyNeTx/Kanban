@@ -212,6 +212,9 @@ async function Save() {
     _xLib.AJAX_Post("/api/KBNMS016/Save?action=" + action, listObj,
         function (success) {
             xSwal.xSuccess(success);
+            $("#formMain").trigger("reset");
+            $().resetAllSelectPicker();
+            //$("#tableMain").DataTable().clear().draw();
             List_Data();
         },
         function (error) {

@@ -4,6 +4,7 @@
     {
         IKBNMS004 IKBNMS004 { get; }
         IKBNMS009 IKBNMS009 { get; }
+        IKBNMS012 IKBNMS012 { get; }
         IKBNMS014 IKBNMS014 { get; }
         IKBNMS015 IKBNMS015 { get; }
         IKBNMS016 IKBNMS016 { get; }

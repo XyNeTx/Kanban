@@ -62,6 +62,19 @@ namespace KANBAN.Services.Master.Repository
             }
         }
 
+        public IKBNMS012 IKBNMS012
+        {
+            get
+            {
+                return new KBNMS012(_kbContext,
+                                    _BearerClass,
+                                    _PPM3Context,
+                                    _FillDT, _log,
+                                    _emailService,
+                                    _automapService);
+            }
+        }
+
         public IKBNMS014 IKBNMS014
         {
             get
