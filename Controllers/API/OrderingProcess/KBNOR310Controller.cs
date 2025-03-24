@@ -1,8 +1,7 @@
 ﻿using HINOSystem.Libs;
 using KANBAN.Services;
-using KANBAN.Services.Master.IRepository;
+using KANBAN.Services.CKD_Ordering.IRepository;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 
 namespace HINOSystem.Controllers.API.Master
 {
@@ -11,51 +10,36 @@ namespace HINOSystem.Controllers.API.Master
     public class KBNOR310Controller : ControllerBase
     {
         private readonly BearerClass _BearerClass;
-        private readonly IMasterRepo _masterRepo;
+        private readonly ICKDService _CKDRepo;
         public KBNOR310Controller
             (
                 BearerClass bearerClass,
-                IMasterRepo masterRepo
+                ICKDService CKDRepo
             )
         {
             _BearerClass = bearerClass;
-            _masterRepo = masterRepo;
+            _CKDRepo = CKDRepo;
         }
 
-
-        [HttpPost]
-        public IActionResult initial([FromBody] string pPostData = null)
+        [HttpGet]
+        public async Task<IActionResult> Onload()
         {
-            dynamic _data = null;
-            string _SQL, _resData;
-            string _result = @"{
-                    ""status"":""200"",
-                    ""response"":""OK"",
-                    ""message"": ""No data found"",
-                    ""data"": null
-                }";
-
-            _BearerClass.Authentication(Request);
-            if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
-
             try
             {
+                await _BearerClass.CheckAuthorize();
+                await _CKDRepo.IKBNOR310.getCKD_ProcessDateTime();
 
-
-                if (pPostData != null) _data = JsonConvert.DeserializeObject(pPostData);
-
-
-                _result = @"{
-                    ""status"":""200"",
-                    ""response"":""OK"",
-                    ""message"": ""Data Found"",
-                    ""data"": null
-                }";
-                return Content(_result, "application/json");
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Onload Completed"
+                });
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                return Content(e.Message.ToString(), "application/json");
+                if (ex is CustomHttpException) throw;
+                else throw new CustomHttpException(500, ex.InnerException?.Message ?? ex.Message);
             }
         }
 
@@ -64,13 +48,15 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                //string sqlQuery = $@"SELECT A.F_Value3 AS Last_Order, B.F_Value2 AS Step_Order 
-                //    FROM TB_MS_Parameter A, TB_MS_Parameter B 
-                //    WHERE A.F_Code = 'LO_CKD' AND B.F_Code = 'ST_CKD' ";
+                await _BearerClass.CheckAuthorize();
+                await _CKDRepo.IKBNOR310.Interface();
 
-                //var _dt =
-
-                return Ok();
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Interface Data Completed"
+                });
             }
             catch (Exception ex)
             {

@@ -6,6 +6,8 @@ using KANBAN.Services;
 using KANBAN.Services.Automapper.Interface;
 using KANBAN.Services.Automapper.MapProfile;
 using KANBAN.Services.Automapper.Repository;
+using KANBAN.Services.CKD_Ordering.IRepository;
+using KANBAN.Services.CKD_Ordering.Repository;
 using KANBAN.Services.Import.Interface;
 using KANBAN.Services.Import.Repository;
 using KANBAN.Services.Logistical.Interface;
@@ -104,6 +106,7 @@ builder.Services.AddScoped<IImportService, ImportService>();
 builder.Services.AddScoped<ILogisticService, LogisticService>();
 builder.Services.AddScoped<ISpecialOrderingServices, SpecialOrderingServices>();
 builder.Services.AddScoped<IMasterRepo, MasterRepo>();
+builder.Services.AddScoped<ICKDService, CKDService>();
 builder.Services.AddScoped<IOtherConditionRepo, OtherConditionRepo>();
 
 builder.Services.AddAutoMapper

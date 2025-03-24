@@ -4,7 +4,9 @@ using KANBAN.Context;
 using KANBAN.Libs;
 using KANBAN.Services.Automapper.Interface;
 using KANBAN.Services.CKD_Ordering.IRepository;
+using Microsoft.EntityFrameworkCore;
 using System.Data;
+using System.Globalization;
 
 namespace KANBAN.Services.CKD_Ordering.Repository
 {
@@ -51,6 +53,8 @@ namespace KANBAN.Services.CKD_Ordering.Repository
         {
             try
             {
+                await getCKD_ProcessDateTime();
+
                 string sqlQuery = $@"SELECT A.F_Value3 AS Last_Order, B.F_Value2 AS Step_Order 
                     FROM TB_MS_Parameter A, TB_MS_Parameter B 
                     WHERE A.F_Code = 'LO_CKD' AND B.F_Code = 'ST_CKD' ";
@@ -59,7 +63,14 @@ namespace KANBAN.Services.CKD_Ordering.Repository
 
                 if (_dt.Rows.Count > 0)
                 {
-                    //if (_dt.Rows[0]["Last_Order"].ToString())
+                    if (_dt.Rows[0]["Last_Order"].ToString().CompareTo(dateProcessDate_CKD.ToString("yyyyMMdd") + chrProcessShift_CKD) < 0
+                        && _dt.Rows[0]["Step_Order"].ToString() == "0")
+                    {
+                        await _kbContext.Database.ExecuteSqlRawAsync("Exec CKD_Inhouse.SP_INF_CKDORDER {0},{1}",
+                            dateProcessDate_CKD.ToString("yyyyMMdd"), chrProcessShift_CKD);
+
+                        _log.WriteLogMsg($"Exec CKD_Inhouse.SP_INF_CKDORDER '{dateProcessDate_CKD.ToString("yyyyMMdd")}' , '{chrProcessShift_CKD}' ");
+                    }
                 }
 
             }
@@ -75,11 +86,15 @@ namespace KANBAN.Services.CKD_Ordering.Repository
             try
             {
                 string sqlQuery = $@"EXEC [CKD_Inhouse].[sp_getProcessDateTime] '{_BearerClass.Plant}' 
-                    ,'{DateTime.Now.ToString("dd/MM/yyyy")}','{(_BearerClass.Shift == "Day" ? "07:30:00" : "19:30:00")}' ";
+                    ,'{DateTime.Now.ToString("yyyy-MM-dd")} {(_BearerClass.Shift == "1" ? "07:30:00" : "19:30:00")}' ";
 
                 var _dt = _FillDT.ExecuteSQL(sqlQuery);
 
-                dateProcessDate_CKD = DateTime.ParseExact(_dt.Rows[0]["ProcessDate"].ToString())
+                dateProcessDate_CKD = DateTime.ParseExact(_dt.Rows[0]["ProcessDate"].ToString(), "MM/dd/yyyy h:mm:ss tt", CultureInfo.InvariantCulture);
+                chrProcessShift_CKD = _dt.Rows[0]["ProcessShift"].ToString();
+                strProcessCycle = _dt.Rows[0]["ProcessCycleTime"].ToString();
+                dateProcessLastDate_CKD = DateTime.ParseExact(_dt.Rows[0]["LastProcessDate"].ToString(), "MM/dd/yyyy h:mm:ss tt", CultureInfo.InvariantCulture);
+                chrProcessLastShift_CKD = _dt.Rows[0]["LastProcessShift"].ToString();
 
                 return _dt;
             }
