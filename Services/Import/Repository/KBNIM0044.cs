@@ -5,6 +5,7 @@ using KANBAN.Libs;
 using KANBAN.Models.KB3.Master;
 using KANBAN.Models.KB3.VLT;
 using KANBAN.Services.Import.Interface;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
@@ -99,8 +100,7 @@ namespace KANBAN.Services.Import.Repository
             {
                 var data = await _kbContext.TB_Import_VHD
                     .AsNoTracking()
-                    .Where(x => x.F_Update_By == _BearerClass.UserCode
-                    && string.IsNullOrWhiteSpace(x.F_Flag) || x.F_Flag == "S")
+                    .Where(x => string.IsNullOrWhiteSpace(x.F_Flag) || x.F_Flag == "S")
                     .ToListAsync();
 
                 if (data.Count == 0) throw new CustomHttpException(404, "Data not found");
@@ -109,8 +109,7 @@ namespace KANBAN.Services.Import.Repository
                 {
                     data = await _kbContext.TB_Import_VHD
                         .AsNoTracking()
-                        .Where(x => x.F_Update_By == _BearerClass.UserCode
-                        && x.F_Flag == "P")
+                        .Where(x => x.F_Flag == "P")
                         .ToListAsync();
                 }
 
@@ -130,8 +129,7 @@ namespace KANBAN.Services.Import.Repository
             {
                 var isConfirmed = await _kbContext.TB_Import_VHD
                     .AsNoTracking()
-                    .AnyAsync(x => x.F_Update_By == _BearerClass.UserCode
-                    && x.F_Flag == "C"
+                    .AnyAsync(x => x.F_Flag == "C"
                     && x.F_Deli_Shift == listData[0].F_Deli_Shift
                     && x.F_Deli_Date == listData[0].F_Deli_Date);
 
@@ -160,6 +158,47 @@ namespace KANBAN.Services.Import.Repository
                 if (ex is CustomHttpException) throw;
                 else if (ex.InnerException != null) throw new CustomHttpException(500, ex.InnerException.Message);
                 else throw new CustomHttpException(500, ex.Message);
+            }
+        }
+
+        public async Task Confirm(List<TB_Import_VHD> listData)
+        {
+            try
+            {
+                await _kbContext.Database.ExecuteSqlRawAsync($@"exec [exec].[spKBNIM044_Confirm] @sPlant,@User",
+                    new SqlParameter("@sPlant", _BearerClass.Plant),
+                    new SqlParameter("@User", _BearerClass.UserCode));
+
+                _log.WriteLogMsg($@"exec [exec].[spKBNIM044_Confirm] '{_BearerClass.Plant}' , '{_BearerClass.UserCode}' ");
+
+                //var simDataList = await _kbContext.TB_Import_VHD
+                //    .Where(x => x.F_Flag == "S" && x.F_Update_By == _BearerClass.UserCode)
+                //    .ToListAsync();
+
+                string LogMsg = "";
+
+                foreach (var sim in listData)
+                {
+                    sim.F_Flag = "C";
+                    sim.F_Update_By = _BearerClass.UserCode;
+                    sim.F_Update_Date = DateTime.Now;
+
+                    //_kbContext.TB_Import_VHD.Update(sim);
+
+                    //LogMsg += Environment.NewLine + "Confirming IMPORT VHD Data => " + JsonConvert.SerializeObject(sim);
+                }
+
+                _kbContext.TB_Import_VHD.UpdateRange(listData);
+                await _kbContext.SaveChangesAsync();
+                LogMsg = "Confirm IMPORT VHD Data => " + JsonConvert.SerializeObject(listData, Formatting.Indented);
+
+                _log.WriteLogMsg(LogMsg);
+
+            }
+            catch (Exception ex)
+            {
+                if (ex is CustomHttpException) throw;
+                else throw new CustomHttpException(500, ex.InnerException?.Message ?? ex.Message);
             }
         }
 

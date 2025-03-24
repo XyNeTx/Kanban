@@ -106,6 +106,27 @@ namespace HINOSystem.Controllers.API.Master
             }
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Confirm(List<TB_Import_VHD> listData)
+        {
+            try
+            {
+                await _BearerClass.CheckAuthorize();
+
+                await _importRepo.KBNIM0044.Confirm(listData);
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Data has been Confirmed"
+                });
+            }
+            catch (CustomHttpException ex)
+            {
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
+            }
+        }
 
     }
 }

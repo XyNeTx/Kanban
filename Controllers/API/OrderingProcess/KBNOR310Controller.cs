@@ -1,60 +1,26 @@
-﻿using Microsoft.AspNetCore.Http.Extensions;
+﻿using HINOSystem.Libs;
+using KANBAN.Services;
+using KANBAN.Services.Master.IRepository;
 using Microsoft.AspNetCore.Mvc;
-using System.Data;
-using System;
-using System.Web;
-using System.Security.Principal;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-
-using System.Reflection.PortableExecutable;
-using System.DirectoryServices;
-using System.DirectoryServices.AccountManagement;
-using Microsoft.Net.Http.Headers;
-using System.Collections.Specialized;
-using System.Net;
-using System.DirectoryServices.ActiveDirectory;
-using System.Net.Http;
-using Microsoft.AspNetCore.Authorization;
-
-using System.Security.Claims;
-using Org.BouncyCastle.Asn1.Ocsp;
-
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-
-using System.Threading.Tasks;
-
-using HINOSystem.Libs;
-using HINOSystem.Context;
-using HINOSystem.Models.KB3.Master;
-using NPOI.SS.Formula.Functions;
 
 namespace HINOSystem.Controllers.API.Master
 {
-    public class KBNOR310Controller : Controller
+    [ApiController]
+    [Route("/api/[controller]/[action]")]
+    public class KBNOR310Controller : ControllerBase
     {
-        private readonly IConfiguration _configuration;
         private readonly BearerClass _BearerClass;
-        private readonly KanbanConnection _KBCN;
-
-        private readonly KB3Context _KB3Context;
-
-        public KBNOR310Controller(
-            IConfiguration configuration,
-            BearerClass bearerClass,
-            KanbanConnection kanbanConnection,
-            KB3Context kB3Context
+        private readonly IMasterRepo _masterRepo;
+        public KBNOR310Controller
+            (
+                BearerClass bearerClass,
+                IMasterRepo masterRepo
             )
         {
-            _configuration = configuration;
             _BearerClass = bearerClass;
-            _KBCN = kanbanConnection;
-            _KB3Context = kB3Context;
-
+            _masterRepo = masterRepo;
         }
-
 
 
         [HttpPost]
@@ -74,27 +40,10 @@ namespace HINOSystem.Controllers.API.Master
 
             try
             {
-                
+
 
                 if (pPostData != null) _data = JsonConvert.DeserializeObject(pPostData);
 
-                //_SQL = @" EXEC [exec].[spKBNOR310] '"
-                //    + _BearerClass.Plant + @"','"
-                //    + _BearerClass.UserCode + @"','"
-                //    + _data.ProcessDate.ToString().Replace("-", "") + @"','"
-                //    + _data.ProcessShift.ToString() + @"','' ";
-
-                //_resData = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass,
-                //    pControllerName: ControllerContext.ActionDescriptor.ControllerName,
-                //    pActionName: ControllerContext.ActionDescriptor.ActionName
-                //    );
-
-                //_result = @"{
-                //    ""status"":""200"",
-                //    ""response"":""OK"",
-                //    ""message"": ""Data Found"",
-                //    ""data"": " + _resData + @"
-                //}";
 
                 _result = @"{
                     ""status"":""200"",
@@ -110,56 +59,25 @@ namespace HINOSystem.Controllers.API.Master
             }
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Interface()
+        {
+            try
+            {
+                //string sqlQuery = $@"SELECT A.F_Value3 AS Last_Order, B.F_Value2 AS Step_Order 
+                //    FROM TB_MS_Parameter A, TB_MS_Parameter B 
+                //    WHERE A.F_Code = 'LO_CKD' AND B.F_Code = 'ST_CKD' ";
 
+                //var _dt =
 
-        //[HttpPost]
-        //public IActionResult search([FromBody] string pPostData = null)
-        //{
-        //    dynamic _data = null;
-        //    string _SQL, _resData;
-        //    string _result = @"{
-        //            ""status"":""200"",
-        //            ""response"":""OK"",
-        //            ""message"": ""No data found"",
-        //            ""data"": null
-        //        }";
-
-        //    _BearerClass.Authentication(Request);
-        //    if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
-
-        //    try
-        //    {
-        //        
-
-        //        if (pPostData != null) _data = JsonConvert.DeserializeObject(pPostData);
-
-        //        _SQL = @" EXEC [exec].[spKBNOR310] '"
-        //            + _BearerClass.Plant + @"','"
-        //            + _BearerClass.UserCode + @"','"
-        //            + _data.ProcessDate.ToString().Replace("-", "") + @"','"
-        //            + _data.ProcessShift.ToString() + @"','' ";
-
-        //        _resData = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass,
-        //            pControllerName: ControllerContext.ActionDescriptor.ControllerName,
-        //            pActionName: ControllerContext.ActionDescriptor.ActionName
-        //            );
-
-        //        _result = @"{
-        //            ""status"":""200"",
-        //            ""response"":""OK"",
-        //            ""message"": ""Data Found"",
-        //            ""data"": " + _resData + @"
-        //        }";
-        //        return Content(_result, "application/json");
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        return Content(e.Message.ToString(), "application/json");
-        //    }
-        //}
-
-
-
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                if (ex is CustomHttpException) throw;
+                else throw new CustomHttpException(500, ex.InnerException?.Message ?? ex.Message);
+            }
+        }
 
     }
 }

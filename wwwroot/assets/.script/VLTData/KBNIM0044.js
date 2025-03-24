@@ -156,7 +156,7 @@ $("#btnImp").on("click", async function () {
 
 $("#btnSimulate").on("click", function () {
     isSimulate = true;
-    $("#tableMain tbody tr td input[type='checkbox']").prop("readonly", isSimulate);
+    //$("#tableMain tbody tr td input[type='checkbox']").prop("readonly", isSimulate);
 
     let listObj = $("#tableMain").DataTable().rows().data().toArray();
     if (listObj.length < SeqQty) {
@@ -188,7 +188,7 @@ $("#btnSimulate").on("click", function () {
     UpdateFlag();
 
     $("#btnPost").prop("disabled", true);
-    $("#btnDel").prop("disabled", true);
+    //$("#btnDel").prop("disabled", true);
 
 });
 
@@ -261,9 +261,32 @@ $("#btnMain").click(function () {
 $("#btnPost").click(function () {
     UpdateFlag("P");
 });
-$("#btnDel").click(function () {
-    UpdateFlag("D");
-});
+//$("#btnDel").click(function () {
+//    UpdateFlag("D");
+//});
+
+$("#btnConf").click(function () {
+    Confirm();
+})
+
+function Confirm() {
+    let listObj = _xDataTable.GetSelectedDataDT("#tableMain");
+
+    if (listObj.length < SeqQty) {
+        return xSwal.error("Error", "Data in table is not enough.");
+    }
+    //return console.log(listObj);
+
+    _xLib.AJAX_Post("/api/KBNIM0044/Confirm", listObj,
+        async function (success) {
+            await GetListData();
+            xSwal.xSuccess(success);
+        },
+        function (error) {
+            xSwal.xError(error);
+        }
+    );
+}
 
 function UpdateFlag(Flag) {
     xSplash.show();
