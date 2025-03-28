@@ -1,165 +1,48 @@
-﻿using Microsoft.AspNetCore.Http.Extensions;
+﻿using HINOSystem.Libs;
+using KANBAN.Services;
+using KANBAN.Services.CKD_Ordering.IRepository;
 using Microsoft.AspNetCore.Mvc;
-using System.Data;
-using System;
-using System.Web;
-using System.Security.Principal;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-
-using System.Reflection.PortableExecutable;
-using System.DirectoryServices;
-using System.DirectoryServices.AccountManagement;
-using Microsoft.Net.Http.Headers;
-using System.Collections.Specialized;
-using System.Net;
-using System.DirectoryServices.ActiveDirectory;
-using System.Net.Http;
-using Microsoft.AspNetCore.Authorization;
-
-using System.Security.Claims;
-using Org.BouncyCastle.Asn1.Ocsp;
-
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-
-using System.Threading.Tasks;
-
-using HINOSystem.Libs;
-using HINOSystem.Context;
-using HINOSystem.Models.KB3.Master;
-using NPOI.SS.Formula.Functions;
 
 namespace HINOSystem.Controllers.API.Master
 {
-    public class KBNOR320Controller : Controller
+    [ApiController]
+    [Route("/api/[controller]/[action]")]
+    public class KBNOR320Controller : ControllerBase
     {
-        private readonly IConfiguration _configuration;
         private readonly BearerClass _BearerClass;
-        private readonly KanbanConnection _KBCN;
-
-        private readonly KB3Context _KB3Context;
-
-        public KBNOR320Controller(
-            IConfiguration configuration,
-            BearerClass bearerClass,
-            KanbanConnection kanbanConnection,
-            KB3Context kB3Context
+        private readonly ICKDService _CKDRepo;
+        public KBNOR320Controller
+            (
+                BearerClass bearerClass,
+                ICKDService CKDRepo
             )
         {
-            _configuration = configuration;
             _BearerClass = bearerClass;
-            _KBCN = kanbanConnection;
-            _KB3Context = kB3Context;
-
+            _CKDRepo = CKDRepo;
         }
-
-
 
         [HttpPost]
-        public IActionResult initial([FromBody] string pPostData = null)
+        public async Task<IActionResult> Calculate()
         {
-            dynamic _data = null;
-            string _SQL, _resData;
-            string _result = @"{
-                    ""status"":""200"",
-                    ""response"":""OK"",
-                    ""message"": ""No data found"",
-                    ""data"": null
-                }";
-
-            _BearerClass.Authentication(Request);
-            if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
-
             try
             {
-                
+                await _BearerClass.CheckAuthorize();
+                await _CKDRepo.IKBNOR320.completeRecalculateCKD();
 
-                if (pPostData != null) _data = JsonConvert.DeserializeObject(pPostData);
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Calculate CKD Order Success"
+                });
 
-                //_SQL = @" EXEC [exec].[spKBNOR310] '"
-                //    + _BearerClass.Plant + @"','"
-                //    + _BearerClass.UserCode + @"','"
-                //    + _data.ProcessDate.ToString().Replace("-", "") + @"','"
-                //    + _data.ProcessShift.ToString() + @"','' ";
-
-                //_resData = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass,
-                //    pControllerName: ControllerContext.ActionDescriptor.ControllerName,
-                //    pActionName: ControllerContext.ActionDescriptor.ActionName
-                //    );
-
-                //_result = @"{
-                //    ""status"":""200"",
-                //    ""response"":""OK"",
-                //    ""message"": ""Data Found"",
-                //    ""data"": " + _resData + @"
-                //}";
-
-                _result = @"{
-                    ""status"":""200"",
-                    ""response"":""OK"",
-                    ""message"": ""Data Found"",
-                    ""data"": null
-                }";
-                return Content(_result, "application/json");
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                return Content(e.Message.ToString(), "application/json");
+                if (ex is CustomHttpException) throw;
+                else throw new CustomHttpException(500, ex.InnerException?.Message ?? ex.Message);
             }
         }
-
-
-
-        //[HttpPost]
-        //public IActionResult search([FromBody] string pPostData = null)
-        //{
-        //    dynamic _data = null;
-        //    string _SQL, _resData;
-        //    string _result = @"{
-        //            ""status"":""200"",
-        //            ""response"":""OK"",
-        //            ""message"": ""No data found"",
-        //            ""data"": null
-        //        }";
-
-        //    _BearerClass.Authentication(Request);
-        //    if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
-
-        //    try
-        //    {
-        //        
-
-        //        if (pPostData != null) _data = JsonConvert.DeserializeObject(pPostData);
-
-        //        _SQL = @" EXEC [exec].[spKBNOR310] '"
-        //            + _BearerClass.Plant + @"','"
-        //            + _BearerClass.UserCode + @"','"
-        //            + _data.ProcessDate.ToString().Replace("-", "") + @"','"
-        //            + _data.ProcessShift.ToString() + @"','' ";
-
-        //        _resData = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass,
-        //            pControllerName: ControllerContext.ActionDescriptor.ControllerName,
-        //            pActionName: ControllerContext.ActionDescriptor.ActionName
-        //            );
-
-        //        _result = @"{
-        //            ""status"":""200"",
-        //            ""response"":""OK"",
-        //            ""message"": ""Data Found"",
-        //            ""data"": " + _resData + @"
-        //        }";
-        //        return Content(_result, "application/json");
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        return Content(e.Message.ToString(), "application/json");
-        //    }
-        //}
-
-
-
 
     }
 }

@@ -3,5 +3,6 @@
     public interface ICKDService
     {
         public IKBNOR310 IKBNOR310 { get; }
+        public IKBNOR320 IKBNOR320 { get; }
     }
 }

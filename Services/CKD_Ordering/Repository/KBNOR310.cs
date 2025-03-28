@@ -43,11 +43,11 @@ namespace KANBAN.Services.CKD_Ordering.Repository
 
         public static string strDateNow = DateTime.Now.ToString("yyyyMMdd");
 
-        public static DateTime dateProcessDate_CKD;
-        public static string chrProcessShift_CKD = "";
-        public static string strProcessCycle = "";
-        public static DateTime dateProcessLastDate_CKD;
-        public static string chrProcessLastShift_CKD = "";
+        public static DateTime dateProcessDate_CKD { get; set; }
+        public static string chrProcessShift_CKD { get; set; } = "";
+        public static string strProcessCycle { get; set; } = "";
+        public static DateTime dateProcessLastDate_CKD { get; set; }
+        public static string chrProcessLastShift_CKD { get; set; } = "";
 
         public async Task Interface()
         {

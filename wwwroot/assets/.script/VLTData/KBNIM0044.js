@@ -133,6 +133,8 @@ $("#btnImp").on("click", async function () {
             item.F_Seq = item.F_Seq.toString();
         });
 
+        return console.log(data);
+
         if (parseInt(maxRow) !== checkRow) {
             return xSwal.error("Error", "Please check row of import file.");
         }
@@ -170,22 +172,7 @@ $("#btnSimulate").on("click", function () {
         item.f_Deli_Trip = null;
     });
 
-    let Trip = 1;
-    let n = 0;
-    for (j = 0; j < TripShift; j++) {
-        for (i = 0; i < SeqQtyPds; i++) {
-            listObj[n].f_Flag = "S";
-            listObj[n].f_Deli_Trip = Trip;
-            listObj[n].f_Deli_Shift = $("#inpShift").val().substring(0, 1);
-            listObj[n].f_Deli_Date = moment($("#inpDeliveryDate").val(), "DD/MM/YYYY").format("YYYYMMDD");
-            n++;
-        }
-        Trip++;
-    }
-
-    _xDataTable.ClearAndAddDataDT("#tableMain", listObj);
-
-    UpdateFlag();
+    UpdateFlag("S");
 
     $("#btnPost").prop("disabled", true);
     //$("#btnDel").prop("disabled", true);
@@ -225,8 +212,8 @@ function GetListData() {
 
 $("#btnMain").click(function () {
     const changeList = listObjChecked.map(obj => ({ ...obj }));
-    let listObj = $("#tableMain").DataTable().rows().data().toArray();
-    let listCheckBox = $("#tableMain tbody tr td input[type='checkbox']");
+    //let listObj = $("#tableMain").DataTable().rows().data().toArray();
+    //let listCheckBox = $("#tableMain tbody tr td input[type='checkbox']");
     let listCheckedBox = $("#tableMain tbody tr td input[type='checkbox']:checked");
 
 
@@ -234,27 +221,7 @@ $("#btnMain").click(function () {
         return xSwal.error("Error", "Check box was over simulate data.");
     }
 
-    let j = -1;
-    for (let i = 0; i < listObj.length; i++) {
-        if (j >= changeList.length) break;
-        if (listCheckBox[i].checked) {
-            j++;
-            listObj[i].f_Flag = "S";
-            listObj[i].f_Deli_Date = changeList[j].f_Deli_Date;
-            listObj[i].f_Deli_Shift = changeList[j].f_Deli_Shift;
-            listObj[i].f_Deli_Trip = changeList[j].f_Deli_Trip;
-        }
-        else {
-            listObj[i].f_Flag = null;
-            listObj[i].f_Deli_Date = null;
-            listObj[i].f_Deli_Shift = null;
-            listObj[i].f_Deli_Trip = null;
-        }
-    }
-
-    _xDataTable.ClearAndAddDataDT("#tableMain", listObj);
-
-    UpdateFlag();
+    UpdateFlag("M");
 
 });
 
@@ -293,8 +260,7 @@ function UpdateFlag(Flag) {
 
     let listObj = $("#tableMain").DataTable().rows().data().toArray();
 
-    if (Flag === "P" || Flag === "D")
-    {
+    if (Flag === "P" || Flag === "D") {
         listObj = _xDataTable.GetSelectedDataDT("#tableMain");
         listObj.forEach(function (item) {
             item.f_Flag = Flag
@@ -302,6 +268,46 @@ function UpdateFlag(Flag) {
             item.f_Deli_Shift = null;
             item.f_Deli_Trip = null;
         });
+    }
+    else if (Flag === "S") {
+        let Trip = 1;
+        let n = 0;
+        for (j = 0; j < TripShift; j++) {
+            for (i = 0; i < SeqQtyPds; i++) {
+                listObj[n].f_Flag = "S";
+                listObj[n].f_Deli_Trip = Trip;
+                listObj[n].f_Deli_Shift = $("#inpShift").val().substring(0, 1);
+                listObj[n].f_Deli_Date = moment($("#inpDeliveryDate").val(), "DD/MM/YYYY").format("YYYYMMDD");
+                n++;
+            }
+            Trip++;
+        }
+    }
+    else if (Flag === "M") {
+        const changeList = listObjChecked.map(obj => ({ ...obj }));
+        let listObj = $("#tableMain").DataTable().rows().data().toArray();
+        let listCheckBox = $("#tableMain tbody tr td input[type='checkbox']");
+
+        let j = -1;
+        for (let i = 0; i < listObj.length; i++) {
+            if (j >= changeList.length) break;
+            if (listCheckBox[i].checked) {
+                j++;
+                listObj[i].f_Flag = "S";
+                listObj[i].f_Deli_Date = changeList[j].f_Deli_Date;
+                listObj[i].f_Deli_Shift = changeList[j].f_Deli_Shift;
+                listObj[i].f_Deli_Trip = changeList[j].f_Deli_Trip;
+            }
+            else {
+                listObj[i].f_Flag = null;
+                listObj[i].f_Deli_Date = null;
+                listObj[i].f_Deli_Shift = null;
+                listObj[i].f_Deli_Trip = null;
+            }
+        }
+    }
+    else {
+        return xSwal.error("Invalid Action");
     }
 
     _xLib.AJAX_Post("/api/KBNIM0044/UpdateFlag", listObj,

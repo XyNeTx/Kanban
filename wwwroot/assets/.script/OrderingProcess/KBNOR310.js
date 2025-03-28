@@ -18,15 +18,20 @@
 
 })
 
-$("#btnInterface").click(function () {
+$("#btnInterface").click(async function () {
 
-    _xLib.AJAX_Post("/api/KBNOR310/Interface", "",
-        function (success) {
-            xSwal.xSuccess(success);
-        },
-        function (error) {
-            xSwal.xError(error);
-        }
-    );
+    let isConfirm = await xSwal.confirm("Are you Sure to Interface CKD In-House Data from Import Order");
 
+    if (isConfirm) {
+
+        _xLib.AJAX_Post("/api/KBNOR310/Interface", "",
+            function (success) {
+                xSwal.xSuccess(success);
+            },
+            function (error) {
+                xSwal.xError(error);
+            }
+        );
+
+    }
 })

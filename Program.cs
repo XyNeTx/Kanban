@@ -100,6 +100,7 @@ builder.Services.AddScoped<ActionResultClass>();
 builder.Services.AddScoped<FillDataTable>();
 builder.Services.AddScoped<SerilogLibs>();
 builder.Services.AddScoped<TextFileClass>();
+builder.Services.AddScoped<KBNOR310>();
 
 builder.Services.AddScoped<ISpecialLibs, SpecialLibs>();
 builder.Services.AddScoped<IImportService, ImportService>();

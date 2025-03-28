@@ -48,6 +48,18 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                                     _automapService);
             }
         }
+        public IKBNOR320 IKBNOR320
+        {
+            get
+            {
+                return new KBNOR320(_kbContext,
+                                    _BearerClass,
+                                    _PPM3Context,
+                                    _FillDT, _log,
+                                    _emailService,
+                                    _automapService);
+            }
+        }
 
     }
 }

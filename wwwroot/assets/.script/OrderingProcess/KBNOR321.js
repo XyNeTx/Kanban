@@ -1023,7 +1023,7 @@
             var _ExpireDate;
             var _intDayShift, _intNightShift;
 
-            '@Remark : เก็บจำนวน Column ทั้งหมดของ Datagrid
+            //'@Remark : เก็บจำนวน Column ทั้งหมดของ Datagrid
             var CountDGHeader = 0;
             var CountDGDetail = 0, CountDGFC = 0;
             var CountDGVolume = 0;

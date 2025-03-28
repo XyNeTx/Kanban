@@ -249,6 +249,8 @@
             },
         });
 
+        console.log(_dtKanban);
+
         if (_dtKanban.rows == null) MsgBox("Order data not found.", MsgBoxStyle.Information, "Information");
         if (_dtKanban.rows != null) {
 
@@ -280,7 +282,9 @@
                 xItem.progress({ id: 'prgProcess', current: _pcent, label: 'Processing, Please wait : ' + i + '/' + _dtKanban.rows.length + ' ({{##.##}}) %' });
 
             }
-                                              
+
+            console.log(_dt);
+
             for (var i = 0; i < _dt.rows.length; i++) {
                 _OrderType = Trim(_dt.rows[i].F_Order_Type);
                 _OrderType = (_OrderType == 'N' ? 'NORMAL' : (_OrderType == 'S' ? 'SPECIAL' : (_OrderType == 'U' ? 'URGENT' : '')));
