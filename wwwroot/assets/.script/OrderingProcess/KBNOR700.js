@@ -273,6 +273,7 @@
                         "@F_OrderNo": Trim(_dtKanban.rows[i].F_OrderNO),
                         "@F_PartNO": Trim(_dtKanban.rows[i].F_PartNO),
                         "@F_Kanban_No": Trim(_dtKanban.rows[i].F_Kanban_No),
+                        "@F_Remark_KB": Trim(_dtKanban.rows[i].F_Remark_KB),
                         "@pMax": _ceil,
                         "@pBoxQty": (_amt > 0 ? _amt : '')
                     },
