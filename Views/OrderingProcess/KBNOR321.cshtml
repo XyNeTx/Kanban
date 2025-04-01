@@ -1,483 +1,486 @@
-﻿<div class="row">
+﻿@{
+}
+<style>
+    .table th, .table td {
+        padding: 0.25rem 1rem;
+        vertical-align: top;
+        /* border-top: 1px solid #e3e6f0; */
+    }
 
+    .table tbody tr th {
+        font-weight: bolder;
+        font-size: 0.8rem;
+        /* position : absolute;
+            left : 0;
+            width : auto;
+            height : auto; */
+    }
+
+    .spinner {
+        position: relative;
+        width: 24.6px;
+        height: 24.6px;
+    }
+
+        .spinner div {
+            animation: spinner-4t3wzl 2.25s infinite backwards;
+            background-color: #0086f2;
+            border-radius: 50%;
+            height: 100%;
+            position: absolute;
+            width: 100%;
+        }
+
+            .spinner div:nth-child(1) {
+                animation-delay: 0.18s;
+                background-color: rgba(0,134,242,0.9);
+            }
+
+            .spinner div:nth-child(2) {
+                animation-delay: 0.36s;
+                background-color: rgba(0,134,242,0.8);
+            }
+
+            .spinner div:nth-child(3) {
+                animation-delay: 0.54s;
+                background-color: rgba(0,134,242,0.7);
+            }
+
+            .spinner div:nth-child(4) {
+                animation-delay: 0.72s;
+                background-color: rgba(0,134,242,0.6);
+            }
+
+            .spinner div:nth-child(5) {
+                animation-delay: 0.8999999999999999s;
+                background-color: rgba(0,134,242,0.5);
+            }
+
+    @@keyframes spinner-4t3wzl {
+        0% {
+            transform: rotate(0deg) translateY(-200%);
+        }
+
+        60%, 100% {
+            transform: rotate(360deg) translateY(-200%);
+        }
+    }
+
+    .sticky-col {
+        position: sticky;
+        left: 0;
+    }
+</style>
+<div class="row">
     <!-- Left Panel -->
     <div class="col-xl-12 col-md-12 col-sm-12 mb-2">
         <div class="card border-left-primary shadow h-100 py-2">
             <div class="card-body">
-
-                <div class="row g-2">
-
-
-                    <div class="row mb-2">
-                        <div class="col-5">
-
-                            <fieldset class="fieldset">
-                                <div class="row">
-                                    <div class="col">
-                                        <item type="select" id="itmSupplier" label="Supplier"></item>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                        <item type="select" id="itmKanban" label="Kanban"></item>
-                                    </div>
-                                    <div class="col">
-                                        <item type="select" id="itmKanbanTo" label="To"></item>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                        <item type="select" id="itmStoreCode" label="Store Code"></item>
-                                    </div>
-                                    <div class="col">
-                                        <item type="select" id="itmStoreCodeTo" label="To"></item>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                        <item type="select" id="itmPartNo" label="Part No"></item>
-                                    </div>
-                                    <div class="col">
-                                        <item type="select" id="itmPartNoTo" label="To"></item>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                    </div>
-                                    <div class="col-3">
-                                        <item type="button" id="btnProcess" label="Process <i class='fas fa-cogs'></i>" style="width:100%"></item>
-                                    </div>
-                                    <div class="col-3">
-                                        <item type="button" id="btnPreview" label="Preview <i class='fas fa-binoculars'></i>" style="width:100%"></item>
-                                    </div>
-                                </div>
-                            </fieldset>
-
+                @*------------------- div select to preview ----------------------*@
+                <div class="row" id="divPreview">
+                    <div id="divSelect" class="col-4 p-1 pt-4" style="border:solid;border-color:aqua;border-width:medium;">
+                        <div class="row">
+                            <div class="input-group col-7" style="padding-right:.25rem">
+                                <label class="input-group-text col-5" style="padding-left:.35rem; for="inputSupplier">Supplier :</label>
+                                <select class="form-select" id="inputSupplier">
+                                    <option value="" hidden></option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="col-4">
-
-                            <fieldset class="fieldset bg-secondary text-white">
-                                <div class="row">
-                                    <div class="col" style="text-align:center;height:100%">
-                                        <h1>CKD IN-HOUSE </h1>ORDER
-                                    </div>
-                                </div>
-                            </fieldset>
-
+                        <div class="row">
+                            <div class="input-group col-7" style="padding-right:.25rem">
+                                <label class="input-group-text col-5" style="padding-left:.35rem; for="inputKanban">Kanban :</label>
+                                <select class="form-select" id="inputKanban">
+                                    <option value="" hidden></option>
+                                </select>
+                            </div>
+                            <div class="input-group col-5" style="padding-left:.25rem">
+                                <label class="input-group-text" for="inputKanbanTo">To :</label>
+                                <select class="form-select" id="inputKanbanTo">
+                                    <option value="" hidden></option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="col-3">
+                        <div class="row">
+                            <div class="input-group col-7" style="padding-right:.25rem">
+                                <label class="input-group-text col-5" style="padding-left:.35rem; for="inputStore">Store Code :</label>
+                                <select class="form-select" id="inputStore">
+                                    <option value="" hidden></option>
+                                </select>
+                            </div>
+                            <div class="input-group col-5" style="padding-left:.25rem">
+                                <label class="input-group-text" for="inputStoreTo">To :</label>
+                                <select class="form-select" id="inputStoreTo">
+                                    <option value="" hidden></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-group col-7" style="padding-right:.25rem">
+                                <label class="input-group-text col-5" style="padding-left:.35rem; for="inputPart">Part No. :</label>
+                                <select class="form-select" id="inputPart">
+                                    <option value="" hidden></option>
+                                </select>
+                            </div>
+                            <div class="input-group col-5" style="padding-left:.25rem">
+                                <label class="input-group-text" for="inputPartTo">To :</label>
+                                <select class="form-select" id="inputPartTo">
+                                    <option value="" hidden></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="d-flex justify-content-end align-item-end">
+                                <button type="button" class="btn btn-primary col-3 me-1" id="btnProcess" disabled>
+                                    <i class="fa-solid fa-link"></i>
+                                    Process
+                                </button>
+                                <button type="button" class="btn btn-success col-3" id="btnPreview" disabled>
+                                    <i class="fa-solid fa-binoculars"></i>
+                                    Preview
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-5 p-4" style="border:solid;border-color:aqua;border-width:medium;border-left:0px">
+                        <div class="row">
+                            <div class="col">
+                                <span class="d-flex justify-content-center text-center" style="font-size:4.5rem;font-weight:bolder;margin-bottom:auto;">CKD</span>
+                                <span class="d-flex justify-content-end text-center fs-5 fw-bold">Order</span>
+                            </div>
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col mt-1" style="padding:0 0 0 0">
+                                        <span class="fw-bolder" style="font-size:0.85rem">กระดานแจ้งข่าว</span>
+                                    </div>
+                                    <div class="col">
+                                        <button type="button" class="btn btn-outline-dark float-end" id="btnEditNews">แก้ไขข่าว</button>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <textarea class="form-control mt-2 fs-6" id="txtNews" rows="6"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-3 p-1 pt-4" style="border:solid;border-color:aqua;border-width:medium;border-left:0px">
+                        <div class="row">
+                            <div class="input-group">
+                                <label class="input-group-text" for="inputProcessDateFor">Process Date For :</label>
+                                <input type="date" class="form-control" id="inputProcessDateFor" value="" readonly>
+                            </div>
+                            <div class="input-group">
+                                <label class="input-group-text" for="inputProcessShiftFor">Process Shift For :</label>
+                                <input type="text" class="form-control" id="inputProcessShiftFor" value="" readonly>
+                            </div>
+                            <div class="input-group">
+                                <label class="input-group-text" for="inputPlant">Plant :</label>
+                                <input type="text" class="form-control" id="inputPlant" readonly>
+                            </div>
+                            <div class="input-group">
+                                <label class="input-group-text" for="inputOrderType">Order Type :</label>
+                                <input type="text" class="form-control" id="inputOrderType" value="Daily Order" readonly>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            
+                            <div class="col">
 
-                            <fieldset class="fieldset">
-                                <div class="row">
-                                    <div class="col">
-                                        <item type="text" id="itmProcessDate" label="Process Date For" value="@ViewData["_ProcessDate"]" readonly></item>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                        <item type="text" id="itmProcessShift" label="Process Shift For" value="@ViewData["_ShiftTitle"]" readonly></item>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                        <item type="text" id="itmProcessPlant" label="Plant" value="@ViewData["_Plant"]" readonly></item>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                        <item type="text" id="itmProcessOrderType" label="Order Type" value="CKD In-House Order" readonly></item>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                    </div>
-                                    <div class="col-5">
-                                        <item type="button" id="btnReport" label="Report <i class='fas fa-table-list'></i>" style="width:100%"></item>
-                                    </div>
-                                    <div class="col-5">
-                                        <item type="button" id="btnCancel" label="Cancel <i class='fas fa-ban'></i>" style="width:100%"></item>
-                                    </div>
-                                </div>
+                                <button type="button" class="btn btn-primary col-4 m-0" id="buttonReport">
+                                    <i class="fas fa-file-text" aria-hidden="true"></i>
+                                    Report
+                                </button>
 
-                            </fieldset>
+                                <button type="button" class="btn btn-warning col-4 m-0" id="buttonCancel">
+                                    <i class="fa-solid fa-xmark"></i>
+                                    Cancel
+                                </button>
+
+                                <button type="button" class="btn btn-danger col m-0" style="max-width:30%;flex:0 0 30%;" id="buttonExit">
+                                    <i class="fa-solid fa-door-open"></i>
+                                    Exit
+                                </button>
+
+                            </div>
 
                         </div>
                     </div>
-
-
-
-                    <div class="row">
-                        <div class="col">
-
-                            <fieldset class="fieldset">
-
-                                <div class="row mb-1">
-                                    <div class="col">
-                                        <div class="row mb-2">
-                                            <div class="col">
-                                                <item type="textfloating" id="txtSupplier" label="Supplier" value="" readonly></item>
-                                            </div>
-
-                                            <div class="col-2">
-                                                <item type="textfloating" id="txtSupplierName" label="Supplier Name" value="" readonly></item>
-                                            </div>
-
-                                            <div class="col">
-                                                <item type="textfloating" id="txtPartNo" label="Part No." value="" readonly></item>
-                                            </div>
-
-                                            <div class="col-2">
-                                                <item type="textfloating" id="txtPartName" label="Part Name" value="" readonly></item>
-                                            </div>
-
-                                            <div class="col">
-                                                <item type="textfloating" id="txtStoreCode" label="Store Code" value="" readonly></item>
-                                            </div>
-
-                                            <div class="col">
-                                                <item type="textfloating" id="txtKanbanNo" label="Kanban No." value="" readonly></item>
-                                            </div>
-
-                                            <div class="col">
-                                                <item type="textfloating" id="txtQtyPack" label="Qty/Pack" value="" readonly></item>
-                                            </div>
-
-                                            <div class="col">
-                                                <item type="textfloating" id="txtCycleTime" label="Cycle Time" value="" readonly></item>
-                                            </div>
-
-                                        </div>
-                                        <div class="row">
-                                            <div class="col">
-                                                <item type="textfloating" id="txtUseDay" label="Use/Day (Pcs.)" value="" readonly></item>
-                                            </div>
-
-                                            <div class="col">
-                                                <item type="textfloating" id="txtForecastMax" label="Forecast Max(Pcs.)" value="" readonly></item>
-                                            </div>
-
-                                            <div class="col">
-                                                <item type="textfloating" id="txtSafetyStock" label="Safety Stock" value="" readonly></item>
-                                            </div>
-
-                                            <div class="col">
-                                                <item type="textfloating" id="txtMaxArea" label="Max Area (KB)" value="" readonly></item>
-                                            </div>
-
-                                            <div class="col">
-                                                <item type="textfloating" id="txtTotalLimit" label="Total Limit/Trip" value="" readonly></item>
-                                            </div>
-
-                                            <div class="col">
-                                                <item type="textfloating" id="txtLine" label="Line" value="" readonly></item>
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                    <div class="col-1">
-                                        <div class="row">
-                                            <div class="col">
-                                                <item type="textfloating" id="txtStdB" label="Std+B(Pcs)" readonly></item>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col">
-                                                <item type="textfloating" id="txtStdStock" label="Std. Stock" readonly></item>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col">
-                                                <item type="textfloating" id="txtMinStock" label="Min (Pcs)" readonly></item>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-
-                                
-
-                                <div class="row mb-2">
-                                    <div class="col">
-                                        @*<item type="table" id="tblMaster" legend=""></item>*@
-                                        <table id="tblMaster" class="display compact cell-border" style="font-size:10px;">
-                                            <thead>
-                                                <tr>
-                                                    <th class="thTop thLeft" id="thTableMRP"><item type="text" id="txtTableMRP" label="" value="MRP : 15/03/2024" style="width:1500px" readonly></item></th>
-                                                    <th class="thTop" colspan="5" style="text-align:center">11-08-2023</th>
-                                                    <th class="thTop" colspan="5" style="text-align:center">12-08-2023</th>
-                                                    <th class="thTop" colspan="5" style="text-align:center">13-08-2023</th>
-                                                    <th class="thTop" colspan="5" style="text-align:center">14-08-2023</th>
-                                                    <th class="thTop" colspan="5" style="text-align:center">15-08-2023</th>
-                                                    <th class="thTop" colspan="5" style="text-align:center">16-08-2023</th>
-                                                    <th class="thTop" colspan="5" style="text-align:center">17-08-2023</th>
-                                                    <th class="thTop" colspan="5" style="text-align:center">18-08-2023</th>
-                                                    <th class="thTop" colspan="5" style="text-align:center">19-08-2023</th>
-                                                    <th class="thTop thRight" colspan="5">20-08-2023</th>
-                                                </tr>
-                                                <tr>
-                                                    <th class="thLeft">
-                                                        <item type="radio" id="rdoMRP" value="MRPLess20" label="MRP-20%"></item>
-                                                    </th>
-                                                    <th rowspan="2">Pcs</th>
-                                                    <th rowspan="2">KB</th>
-                                                    <th colspan="2" style="text-align:center">D</th>
-                                                    <th colspan="1" style="text-align:center">N</th>
-                                                    <th rowspan="2">Pcs</th>
-                                                    <th rowspan="2">KB</th>
-                                                    <th colspan="2" style="text-align:center">D</th>
-                                                    <th colspan="1" style="text-align:center">N</th>
-                                                    <th rowspan="2">Pcs</th>
-                                                    <th rowspan="2">KB</th>
-                                                    <th colspan="2" style="text-align:center">D</th>
-                                                    <th colspan="1" style="text-align:center">N</th>
-                                                    <th rowspan="2">Pcs</th>
-                                                    <th rowspan="2">KB</th>
-                                                    <th colspan="2" style="text-align:center">D</th>
-                                                    <th colspan="1" style="text-align:center">N</th>
-                                                    <th rowspan="2">Pcs</th>
-                                                    <th rowspan="2">KB</th>
-                                                    <th colspan="2" style="text-align:center">D</th>
-                                                    <th colspan="1" style="text-align:center">N</th>
-                                                    <th rowspan="2">Pcs</th>
-                                                    <th rowspan="2">KB</th>
-                                                    <th colspan="2" style="text-align:center">D</th>
-                                                    <th colspan="1" style="text-align:center">N</th>
-                                                    <th rowspan="2">Pcs</th>
-                                                    <th rowspan="2">KB</th>
-                                                    <th colspan="2" style="text-align:center">D</th>
-                                                    <th colspan="1" style="text-align:center">N</th>
-                                                    <th rowspan="2">Pcs</th>
-                                                    <th rowspan="2">KB</th>
-                                                    <th colspan="2" style="text-align:center">D</th>
-                                                    <th colspan="1" style="text-align:center">N</th>
-                                                    <th rowspan="2">Pcs</th>
-                                                    <th rowspan="2">KB</th>
-                                                    <th colspan="2" style="text-align:center">D</th>
-                                                    <th colspan="1" style="text-align:center">N</th>
-                                                    <th rowspan="2">Pcs</th>
-                                                    <th rowspan="2">KB</th>
-                                                    <th colspan="2" style="text-align:center">D</th>
-                                                    <th colspan="1" style="text-align:center">N</th>
-                                                </tr>
-                                                <tr>
-                                                    <th class="thLeft">MRP+20%</th>
-                                                    <th>T1</th>
-                                                    <th>T2</th>
-                                                    <th>T3</th>
-                                                    <th>T1</th>
-                                                    <th>T2</th>
-                                                    <th>T3</th>
-                                                    <th>T1</th>
-                                                    <th>T2</th>
-                                                    <th>T3</th>
-                                                    <th>T1</th>
-                                                    <th>T2</th>
-                                                    <th>T3</th>
-                                                    <th>T1</th>
-                                                    <th>T2</th>
-                                                    <th>T3</th>
-                                                    <th>T1</th>
-                                                    <th>T2</th>
-                                                    <th>T3</th>
-                                                    <th>T1</th>
-                                                    <th>T2</th>
-                                                    <th>T3</th>
-                                                    <th>T1</th>
-                                                    <th>T2</th>
-                                                    <th>T3</th>
-                                                    <th>T1</th>
-                                                    <th>T2</th>
-                                                    <th>T3</th>
-                                                    <th>T1</th>
-                                                    <th>T2</th>
-                                                    <th>T3</th>
-                                                </tr>
-                                            </thead>
-                                            <tfoot>
-                                                <tr><td></td></tr>
-                                            </tfoot>
-                                        </table>
-
-                                    </div>
-                                </div>
-                                
-                                <div class="row">
-
-                                    <div class="col-4">
-                                        <div class="row">
-                                            <div class="col-6">
-                                                <div class="row">
-                                                    <div class="col-5 px-1">
-                                                        <item type="button" id="btnLock" label="Lock <i class='fas fa-lock'></i>" style="width:100%"></item>
-                                                    </div>
-                                                    <div class="col-6 px-1">
-                                                        <item type="button" id="btnUnlock" label="Unlock <i class='fas fa-lock-open'></i>" style="width:100%"></item>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col px-1">
-                                                <div class="row">
-                                                    <div class="col px-1">
-                                                        <b><label class="input-group-text" id="Label36">16/08/2023</label></b>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col px-1">
-                                                        <item type="checkbox" id="chkKanbanOrder" label="Order Table"></item>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col px-1">
-                                                        <item type="checkbox" id="chkChangeCycleTime" label="Change Cycle Time"></item>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col px-1">
-                                                <div class="row">
-                                                    <div class="col px-1">
-                                                        <b><label class="input-group-text" id="Label35">17/08/2023</label></b>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col px-1">
-                                                        <item type="checkbox" id="chkSliceOrder" label="Slice Order"></item>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col px-1">
-                                                        <item type="checkbox" id="chkReceiveSlice" label="Receive Slice"></item>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-
-                                    <div class="col-2">
-                                        <div class="row">
-                                            <div class="col-5">
-                                                <div class="row">
-                                                    <div class="col px-1">
-                                                        <item type="radio" id="rdoStatus" value="STOP" label="STOP"></item>
-                                                        <item type="radio" id="rdoStatus" value="ADD" label="ADD"></item>
-                                                        <item type="radio" id="rdoStatus" value="CUT" label="CUT"></item>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="col">
-                                                <div class="row">
-                                                    <div class="col px-1">
-                                                        <div class="input-group">
-                                                            <button type="button" class="btn btn-primary btn-sm" id="btnLeft">
-                                                                <i class="fas fa-caret-left"></i>
-                                                            </button>
-                                                            <input type="text" class="form-control" id="txtNumber" style="width:20px;padding:1px;text-align: center;font-size:11px;" value="99/99" />
-                                                            <button type="button" class="btn btn-primary btn-sm" id="btnRight">
-                                                                <i class="fas fa-caret-right"></i>
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col">
-                                        <div class="row">
-
-                                            <div class="col px-1">
-                                                <item type="button" id="btnReCalculateBL" label="Re-Calculate BL<i class='fas fa-redo fa-rotate-90'></i>" style="width:100%"></item>
-                                            </div>
-                                            <div class="col px-1">
-                                                <item type="button" id="btnReCalculate" label="Re-Calculate<i class='fas fa-sync-alt'></i>" style="width:100%"></item>
-                                            </div>
-                                            <div class="col px-1">
-                                                <item type="button" id="btnChangeCycleTime" label="Change Cycle Time<i class='fas fa-history'></i>" style="width:100%"></item>
-                                            </div>
-                                            <div class="col-2 px-1">
-                                                <item type="button" id="btnUpdate" label="Update<i class='fas fa-edit'></i>" style="width:100%"></item>
-                                            </div>
-                                        </div>
-                                    </div>
-
-
-                                </div>
-                            </fieldset>
-                        </div>
-                    </div>
-
-
-                
                 </div>
+
+                <div id="divRead">
+                    <div class="row text-center mt-2">
+                        <div class="col-10">
+                            <div class="row">
+                                <div class="col" style="padding:0 0.5rem 0 0">
+                                    <label class="form-label" for="readSupplier">Supplier</label>
+                                    <input type="text" class="form-control text-center" id="readSupplier" readonly />
+                                </div>
+                                <div style="flex: 0 0 11.5%;padding:0 0.5rem 0 0">
+                                    <label class="form-label" for="readSupplierName">Supplier Name</label>
+                                    <input type="text" class="form-control text-center" id="readSupplierName" readonly />
+                                </div>
+                                <div style="flex: 0 0 15%;padding:0 0.5rem 0 0">
+                                    <label class="form-label" for="readPartNo">Part No.</label>
+                                    <input type="text" class="form-control text-center" id="readPartNo" readonly />
+                                </div>
+                                <div style="flex: 0 0 18%;padding:0 0.5rem 0 0">
+                                    <label class="form-label" for="readPartName">Part Name</label>
+                                    <input type="text" class="form-control text-center" id="readPartName" readonly />
+                                </div>
+                                <div class="col" style="padding:0 0.5rem 0 0">
+                                    <label class="form-label" for="readStoreCode">Store Code</label>
+                                    <input type="text" class="form-control text-center" id="readStoreCode" readonly />
+                                </div>
+                                <div class="col" style="padding:0 0.5rem 0 0">
+                                    <label class="form-label" for="readKanbanNo">Kanban No.</label>
+                                    <input type="text" class="form-control text-center" id="readKanbanNo" readonly />
+                                </div>
+                                <div class="col" style="padding:0 0.5rem 0 0">
+                                    <label class="form-label" for="readQtyPack">Qty/Pack</label>
+                                    <input type="text" class="form-control text-center" id="readQtyPack" readonly />
+                                </div>
+                                <div style="flex: 0 0 10%;padding:0 0.5rem 0 0">
+                                    <label class="form-label" for="readCycleTime">Cycle Time</label>
+                                    <input type="text" class="form-control text-center" id="readCycleTime" readonly />
+                                </div>
+                                <div style="flex: 0 0 9%;padding:0 0.5rem 0 0">
+                                    <label class="form-label" for="readLine">Line</label>
+                                    <input type="text" class="form-control text-center" id="readLine" readonly />
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col input-group" style="padding:0 0.5rem 0 0">
+                                    <label class="input-group-text" style="font-size: .7rem;padding: 0.375rem 0.3rem;" for="readUseDay">Use/Day(Pcs.)</label>
+                                    <input type="text" class="form-control text-center" id="readUseDay" readonly />
+                                </div>
+                                <div class="col input-group" style="padding:0 0.5rem 0 0">
+                                    <label class="input-group-text" style="font-size: .7rem;padding: 0.375rem 0.3rem;" for="readForecastMax">Forecast Max(Pcs.)</label>
+                                    <input type="text" class="form-control text-center" id="readForecastMax" readonly />
+                                </div>
+                                <div class="col input-group" style="padding:0 0.5rem 0 0">
+                                    <label class="input-group-text" style="font-size: .7rem;padding: 0.375rem 0.3rem;" for="readSafetyStock">Safety Stock</label>
+                                    <input type="text" class="form-control text-center" id="readSafetyStock" readonly />
+                                </div>
+                                <div class="col input-group" style="padding:0 0.5rem 0 0">
+                                    <label class="input-group-text" style="font-size: .7rem;padding: 0.375rem 0.3rem;" for="readMaxArea">Max Area (KB)</label>
+                                    <input type="text" class="form-control text-center" id="readMaxArea" readonly />
+                                </div>
+                                <div class="col input-group" style="padding:0 0.5rem 0 0">
+                                    <label class="input-group-text" style="font-size: .7rem;padding: 0.375rem 0.3rem;" for="readLimitTrip">Total Limit/Trip</label>
+                                    <input type="text" class="form-control text-center" id="readLimitTrip" readonly />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="row">
+                                <div class="col input-group" style="padding:0 0 0 0">
+                                    <label class="input-group-text" style="font-size: .7rem;padding: 0.375rem 0.3rem;" for="readStdBPcs">Std+B(Pcs.) </label>
+                                    <input type="text" class="form-control bg-warning text-light fw-bolder text-center" id="readStdBPcs" readonly />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col input-group" style="padding:0 0 0 0">
+                                    <label class="input-group-text" style="font-size: .7rem;padding: 0.375rem 0.3rem;" for="readStdStock">Std.Stock(Pcs.) </label>
+                                    <input type="text" class="form-control bg-success text-light fw-bolder text-center" id="readStdStock" readonly />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col input-group" style="padding:0 0 0 0">
+                                    <label class="input-group-text" style="font-size: .7rem;padding: 0.375rem 0.3rem;" for="readMinStock">Min.Stock(Pcs.) </label>
+                                    <input type="text" class="form-control bg-danger text-light fw-bolder text-center" id="readMinStock" readonly />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                @*------------------- div table to preview ----------------------*@
+                <div class="spinner" id="divSpinner" style="visibility:hidden;margin:auto">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+
+                <table id="tableMaster" class="table table-bordered mt-2" style="overflow-x:auto;display:block">
+
+                    <thead class="text-center">
+                        <tr class="text-center" id="THeadR1">
+                            <th class="sticky-col" style="border:0px">
+                                <input class="form-control" value="MRP : 15/07/2024" id="inputMRP" readonly />
+                            </th>
+                        </tr>
+                        <tr class="text-center" style="border:0px" id="THeadR2">
+                            <th class="sticky-col" style="border:0px">
+                                <input class="form-check-input" type="radio" name="radMRP" id="MRP-20" />
+                                <label class="form-check-label" for="MRP-20" id="lbMrp-20">
+                                    MRP-20%
+                                </label>
+                            </th>
+                        </tr>
+                        <tr class="text-center" id="THeadR3">
+                            <th class="sticky-col" style="border:0px">
+                                <input class="form-check-input" type="radio" name="radMRP" id="MRP20" />
+                                <label class="form-check-label" for="MRP20" id="lbMrp20">
+                                    MRP+20%
+                                </label>
+                            </th>
+                        </tr>
+                    </thead>
+
+                    <tbody class="text-center">
+
+                        <tr id="TBodyR1">
+                            <th class="text-start sticky-col" style="width:10dvw;height:2dvh" id="F_TMT_FO">TMT Forecast</th>
+                        </tr>
+                        <tr id="TBodyR2">
+                            <th class="text-start sticky-col" id="F_HMMT_Prod">HMMT Prod.Forecast</th>
+                        </tr>
+                        <tr id="TBodyR3">
+                            <th class="text-start sticky-col" id="F_HMMT_Order">HMMT Order Plan</th>
+                        </tr>
+                        <tr id="TBodyR4">
+                            <th class="text-start sticky-col" id="F_Cycle_Order">Production Volume</th>
+                        </tr>
+                        <tr id="TBodyR5">
+                            <th class="text-start sticky-col" id="F_MRP">MRP (Actual Production)</th>
+                        </tr>
+                        <tr id="TBodyR6">
+                            <th class="text-start sticky-col" id="F_Diff_MRP_FC">Diff Last MRP vs FC</th>
+                        </tr>
+                        <tr id="TBodyR7">
+                            <th class="text-start sticky-col" id="F_AbNormal_Part">Abnormal Part</th>
+                        </tr>
+                        <tr id="TBodyR8">
+                            <th class="text-start sticky-col" id="F_Total">Total</th>
+                        </tr>
+                        <tr id="TBodyR9">
+                            <th class="text-start sticky-col" id="F_Remain_LastTrip">Remain From Last Trip</th>
+                        </tr>
+                        <tr id="TBodyR10">
+                            <th class="text-start sticky-col" id="F_Order_Base">Order Base</th>
+                        </tr>
+                        <tr id="TBodyR11">
+                            <th class="text-start sticky-col" id="F_Lot_SizeOrder">ToTal Order</th>
+                        </tr>
+                        <tr id="TBodyR12">
+                            <th class="text-start sticky-col" id="F_KB_CutAdd">KB Cut (-) / Add (+)</th>
+                        </tr>
+                        <tr id="TBodyR13">
+                            <th class="text-start sticky-col" id="F_Actual_Order">Actual Order</th>
+                        </tr>
+                        <tr id="TBodyR14">
+                            <th class="text-start sticky-col" id="F_Urgent_Order">Urgent (Pcs.)</th>
+                        </tr>
+                        <tr id="TBodyR15">
+                            <th class="bg-success text-start sticky-col">Pattern Delivery</th>
+                        </tr>
+                        <tr id="TBodyR16">
+                            <th class="bg-info text-start sticky-col">Adjust Order/Trip</th>
+                        </tr>
+                        <tr id="TBodyR17">
+                            <th class="text-start sticky-col">Receive Plan</th>
+                        </tr>
+                        <tr id="TBodyR18">
+                            <th class="sticky-col">BL (Plan)</th>
+                        </tr>
+                        <tr id="TBodyR19">
+                            <th class="text-start sticky-col">Receive Actual</th>
+                        </tr>
+                        <tr id="TBodyR20">
+                            <th class="sticky-col">BL (Actual)</th>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+                <div class="row mt-1">
+                    <div class="col-2">
+                    </div>
+                    <div class="col-3">
+                        <div class="row">
+                            <div class="col-7" style="padding-right:5px;">
+                                <span class="text-center" id="spanProcessDate">Process Date</span>
+                            </div>
+                            <div class="col" style="padding-left:0px;">
+                                <span class="text-center" id="spanDeliveryDate">Delivery Date</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="row ms-4">
+                            <div class="col-3">
+                                <input type="radio" class="form-check-input" id="radioKbStop" />
+                                <label class="form-check-label text-primary" id="lbKbStop" for="radioKbStop">Stop</label>
+                            </div>
+                            <div class="col-3">
+                                <input type="radio" class="form-check-input" id="radioKbAdd" />
+                                <label class="form-check-label text-primary" id="lbKbAdd" for="radioKbAdd">Add</label>
+                            </div>
+                            <div class="col-3">
+                                <input type="radio" class="form-check-input" id="radioKbCut" />
+                                <label class="form-check-label text-primary" id="lbKbCut" for="radioKbCut">Cut</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col"></div>
+                </div>
+
+                <div class="row mt-2">
+                    <div class="col-2">
+                        <div class="row ms-2">
+                            <button type="button" class="btn btn-outline-dark col-5 me-1" disabled>Lock <i class="fa-solid fa-lock"></i></button>
+                            <button type="button" class="btn btn-outline-dark col-6 me-1" disabled>Unlock <i class="fa-solid fa-lock-open"></i></button>
+                        </div>
+                    </div>
+                    <div class="col-3" id="divCheckBox">
+                        <div class="row ms-2">
+                            <div class="col-7">
+                                <input type="checkbox" class="form-check-input" id="chkBoxOrderTable" readonly />
+                                <label class="form-check-label text-primary" id="lbOrderTable" for="chkBoxOrderTable">Order Table</label>
+                            </div>
+                            <div class="col">
+                                <input type="checkbox" class="form-check-input" id="chkBoxSliceOrder" readonly />
+                                <label class="form-check-label text-primary" id="lbSliceOrder" for="chkBoxSliceOrder">Slice Order</label>
+                            </div>
+                        </div>
+                        <div class="row ms-2">
+                            <div class="col-7">
+                                <input type="checkbox" class="form-check-input" id="chkBoxChgCycleTime" readonly />
+                                <label class="form-check-label text-primary" id="lbChgCycleTime" for="chkBoxChgCycleTime">Change Cycle Time</label>
+                            </div>
+                            <div class="col">
+                                <input type="checkbox" class="form-check-input" id="chkBoxRecSlice" readonly />
+                                <label class="form-check-label text-primary" id="lbRecSlice" for="chkBoxRecSlice">Receive Slice</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="d-flex ms-4 ps-4">
+                            <button type="button" class="btn btn-outline-dark btn-rounded col-2" id="btnPrevPage"><i class="fa-solid fa-backward-step"></i></button>
+                            <input type="text" class="form-control text-center col-4" id="txtPage" value="1/1" readonly>
+                            <button type="button" class="btn btn-outline-dark btn-rounded col-2" id="btnNextPage"><i class="fa-solid fa-forward-step"></i></button>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="d-flex align-end justify-content-end">
+                            <button type="button" style="font-size:0.65rem;padding:0.35rem 0.35rem;" class="btn btn-outline-dark btn-rounded col-4" id="btnBlCal">
+                                Re-Calculate BL
+                            </button>
+                            <button type="button" style="font-size:0.65rem;padding:0.35rem 0.35rem;" class="btn btn-outline-dark btn-rounded col-4" id="btnReCal">
+                                Re-Calculate
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
 
             </div>
         </div>
     </div>
-
-
-
 </div>
-
-
-
-
-<style>
-    .card-body {
-        font-size: 10px;
-    }
-
-    th {
-        border-bottom-color: #c1c1c1;
-        border-bottom-style: solid;
-        border-bottom-width: 0px;
-        border-left-color: #c1c1c1;
-        border-left-style: solid;
-        border-left-width: 0px;
-        border-right-color: #c1c1c1;
-        border-right-style: solid;
-        border-right-width: 1px;
-        border-top-color: #c1c1c1;
-        border-top-style: solid;
-        border-top-width: 0px;
-    }
-
-    .thTop {
-        border-top-color: #c1c1c1;
-        border-top-style: solid;
-        border-top-width: 1px;
-    }
-
-    .thRight {
-        border-right-color: #c1c1c1;
-        border-right-style: solid;
-        border-right-width: 1px;
-    }
-
-    .thLeft {
-        border-left-color: #c1c1c1;
-        border-left-style: solid;
-        border-left-width: 1px;
-        left: 0px;
-        z-index: 3;
-        background-color: white;
-        position: sticky;
-    }
-
-    #tblMaster_wrapper{
-        width:1024px;
-    }
-/*
-    #tblMaster thead {
-        width: 1024px;
-        height: 800px;
-    }*/
-
-    
-
-</style>
-
-
 
 @using KANBAN.Libs
 @section Scripts {

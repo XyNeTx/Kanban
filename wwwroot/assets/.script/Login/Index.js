@@ -45,6 +45,19 @@
 
         initTheme();
 
+        //axios.get('http://hmmt-app07/sso_test/api/SingleSignOn/GetLogin', {
+        //    params: {
+        //        system_name: 'Hino Kanban System'
+        //    },
+        //    withCredentials: true // Include credentials in the request
+        //})
+        //    .then(response => {
+        //        console.log("AXIOS : ");
+        //        console.log(response.data);
+        //    })
+        //    .catch(error => {
+        //        console.error('Error:', error);
+        //    });
 
         await $.ajax({
             url: "http://hmmt-app07/sso_test/api/SingleSignOn/GetLogin",
@@ -80,7 +93,7 @@
                 _xLib.SetCookie('plantCode', result.userDetail.locationCode);
             },
             error: async function (error) {
-                //console.log(error);
+                console.log(error);
                 await xSplash.hide();
                 xSwal.error('Error', "Can't Get User to Login");
             }

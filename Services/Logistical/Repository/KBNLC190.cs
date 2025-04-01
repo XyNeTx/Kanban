@@ -112,9 +112,9 @@ namespace KANBAN.Services.Logistical.Repository
 
         public async Task<bool> Interface(string YM, string Rev, string StartDate)
         {
+            using var transaction = await _kbContext.Database.BeginTransactionAsync();
             try
             {
-
                 await _kbContext.Database.ExecuteSqlRawAsync("EXEC [exec].[spKBNLC190]  @Plant,@YM,@Rev,@StartDate,@User",
                         new SqlParameter("@Plant", _BearerClass.Plant),
                         new SqlParameter("@YM", YM),
@@ -123,7 +123,6 @@ namespace KANBAN.Services.Logistical.Repository
                         new SqlParameter("@User", _BearerClass.UserCode)
                      );
 
-                _log.WriteLogMsg($"EXEC [exec].[spKBNLC190] '{_BearerClass.Plant}' , '{YM}' , '{Rev}' , '{StartDate}' , '{_BearerClass.UserCode}' ");
 
                 int CheckError = await _kbContext.Database.SqlQueryRaw<int>(
                     $"Select COUNT(*) AS VALUE From TB_Import_Error Where F_Update_By " +
@@ -135,11 +134,24 @@ namespace KANBAN.Services.Logistical.Repository
                     throw new Exception("Error Found, Please Check Error Log");
                 }
 
+                var checkImportSuccess = await _kbContext.TB_Import_Delivery.AsNoTracking()
+                    .Where(x => x.F_YM == YM && x.F_Rev == int.Parse(Rev) && x.F_Plant == _BearerClass.Plant)
+                    .ToListAsync();
+
+                if (checkImportSuccess.Count > 0)
+                {
+                    throw new Exception("Error Found, Delivery Time is not Imported");
+                }
+
+                await transaction.CommitAsync();
+                _log.WriteLogMsg($"EXEC [exec].[spKBNLC190] '{_BearerClass.Plant}' , '{YM}' , '{Rev}' , '{StartDate}' , '{_BearerClass.UserCode}' ");
+
                 return true;
 
             }
             catch (Exception ex)
             {
+                await transaction.RollbackAsync();
                 throw new Exception(ex.Message);
             }
         }

@@ -190,6 +190,37 @@ namespace HINOSystem.Libs
             return dt;
         }
 
+        public DataTable ExecuteStoreSQL(string sql, params SqlParameter[] parameters)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                using (SqlConnection con = new SqlConnection(_KB3Context.Database.GetConnectionString()))
+                {
+                    using (SqlCommand cmd = new SqlCommand(sql, con))
+                    {
+                        cmd.CommandType = CommandType.Text;
+                        cmd.Parameters.AddRange(parameters);
+                        using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
+                        {
+                            sda.Fill(dt);
+                        }
+                    }
+                }
+            }
+            catch (SqlException SQLex) when (SQLex.Number == -2) // Handle timeout exception
+            {
+                Console.WriteLine("Timeout occurred. Returning partial results.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            return dt;
+        }
+
         public DataTable ExecuteSQLProc_Web(string sql, params object[] parameters)
         {
             DataTable dt = new DataTable();

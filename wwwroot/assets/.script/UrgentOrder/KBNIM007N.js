@@ -188,7 +188,7 @@ $("#buttonNew").click(function () {
     $("#selectSupplier").prop("disabled", false);
 });
 
-$("#selectSupplier , #inputDeliveryDate").change(function () {
+$(document).on('change',"#selectSupplier , #inputDeliveryDate",function () {
     _xLib.AJAX_Get('/api/KBNIM007N/GetSupplierDetail',
         {
             F_Supplier_Cd: $("#selectSupplier").val(),
