@@ -131,6 +131,7 @@ namespace KANBAN.Services.Logistical.Repository
 
                 if (CheckError > 0)
                 {
+                    await transaction.CommitAsync();
                     throw new Exception("Error Found, Please Check Error Log");
                 }
 
@@ -142,8 +143,8 @@ namespace KANBAN.Services.Logistical.Repository
                 {
                     throw new Exception("Error Found, Delivery Time is not Imported");
                 }
-
                 await transaction.CommitAsync();
+
                 _log.WriteLogMsg($"EXEC [exec].[spKBNLC190] '{_BearerClass.Plant}' , '{YM}' , '{Rev}' , '{StartDate}' , '{_BearerClass.UserCode}' ");
 
                 return true;
@@ -151,7 +152,10 @@ namespace KANBAN.Services.Logistical.Repository
             }
             catch (Exception ex)
             {
-                await transaction.RollbackAsync();
+                if (ex.Message != "Error Found, Please Check Error Log")
+                {
+                    await transaction.RollbackAsync();
+                }
                 throw new Exception(ex.Message);
             }
         }

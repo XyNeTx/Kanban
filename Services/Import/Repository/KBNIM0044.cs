@@ -39,11 +39,11 @@ namespace KANBAN.Services.Import.Repository
             _emailService = emailService;
         }
 
-        public async Task SaveImportData(List<VM_KBNIM0044> listData)
+        public async Task<int> SaveImportData(List<VM_KBNIM0044> listData)
         {
             try
             {
-
+                using var kbTrans = await _kbContext.Database.BeginTransactionAsync();
                 var isInLineControl = await _kbContext.TB_MS_LineControl
                         .AsNoTracking()
                         .Select(x => x.F_Line_ID)
@@ -55,6 +55,13 @@ namespace KANBAN.Services.Import.Repository
                 }
 
                 listData = listData.Where(x => isInLineControl.Any(y => x.F_LineCode.StartsWith(y))).ToList();
+
+                if (listData.Count == 0)
+                {
+                    throw new CustomHttpException(404, "Please check Line Code, 0 record to Import");
+                }
+
+                int intRecords = 0;
 
                 foreach (var data in listData)
                 {
@@ -81,10 +88,13 @@ namespace KANBAN.Services.Import.Repository
 
                     if (isExist != null) throw new CustomHttpException(400, $"Data already exist at Seq {vltData.F_Seq} | Customer {vltData.F_Customer} | Part Code {vltData.F_PartCode}");
 
-                    await _kbContext.TB_Import_VHD.AddAsync(vltData);
+                    var test = await _kbContext.TB_Import_VHD.AddAsync(vltData);
                     _log.WriteLogMsg("INSERT TB_Import_VHD => " + JsonConvert.SerializeObject(vltData));
-                    await _kbContext.SaveChangesAsync();
                 }
+                intRecords = await _kbContext.SaveChangesAsync();
+                await kbTrans.CommitAsync();
+
+                return intRecords;
             }
             catch (Exception ex)
             {
@@ -103,8 +113,6 @@ namespace KANBAN.Services.Import.Repository
                     .Where(x => string.IsNullOrWhiteSpace(x.F_Flag) || x.F_Flag == "S")
                     .ToListAsync();
 
-                if (data.Count == 0) throw new CustomHttpException(404, "Data not found");
-
                 if (!isAll)
                 {
                     data = await _kbContext.TB_Import_VHD
@@ -112,6 +120,9 @@ namespace KANBAN.Services.Import.Repository
                         .Where(x => x.F_Flag == "P")
                         .ToListAsync();
                 }
+
+                if (data.Count == 0) throw new CustomHttpException(404, "Data not found");
+
 
                 return data;
             }
@@ -123,7 +134,7 @@ namespace KANBAN.Services.Import.Repository
             }
         }
 
-        public async Task UpdateFlag(List<TB_Import_VHD> listData)
+        public async Task UpdateFlag(List<TB_Import_VHD> listData, string shift)
         {
             try
             {
@@ -133,6 +144,8 @@ namespace KANBAN.Services.Import.Repository
                     && x.F_Deli_Shift == listData[0].F_Deli_Shift
                     && x.F_Deli_Date == listData[0].F_Deli_Date);
 
+                int sumDeliveryTrip = 0;
+
                 if (isConfirmed) throw new CustomHttpException(400, "This Date and Shift already confirmed");
 
                 foreach (var data in listData)
@@ -140,18 +153,45 @@ namespace KANBAN.Services.Import.Repository
                     var vltData = await _kbContext.TB_Import_VHD
                         .FirstOrDefaultAsync(x => x.F_Cust_Seq == data.F_Cust_Seq);
 
+                    _log.WriteLogMsg("UPDATE TB_Import_VHD BEFORE UPDATE => " + JsonConvert.SerializeObject(vltData));
+                    int maxTrip = 0;
+
+                    if (shift.ToLower() == "night")
+                    {
+                        var dbDeliveryTime = await _kbContext.TB_MS_DeliveryTime.AsNoTracking()
+                            .Where(x => (x.F_Delivery_Time.CompareTo("07:29") <= 0 || x.F_Delivery_Time.CompareTo("19:30") >= 0)
+                            && x.F_Supplier_Code == "2937"
+                            && x.F_Supplier_Plant == "Z")
+                            .OrderBy(x => x.F_Delivery_Trip)
+                            .FirstOrDefaultAsync();
+
+                        if (dbDeliveryTime != null)
+                        {
+                            sumDeliveryTrip = dbDeliveryTime.F_Delivery_Trip - 1;
+                            maxTrip = int.Parse(dbDeliveryTime.F_Cycle.Substring(2, 2));
+                        }
+
+                    }
+
                     if (vltData == null) throw new CustomHttpException(404, "Data not found");
 
                     vltData.F_Flag = data.F_Flag;
                     vltData.F_Deli_Date = data.F_Deli_Date;
                     vltData.F_Deli_Shift = data.F_Deli_Shift;
-                    vltData.F_Deli_Trip = data.F_Deli_Trip;
+                    vltData.F_Deli_Trip = data.F_Deli_Trip + sumDeliveryTrip;
                     vltData.F_Update_By = _BearerClass.UserCode;
                     vltData.F_Update_Date = DateTime.Now;
 
-                    _log.WriteLogMsg("UPDATE TB_Import_VHD => " + JsonConvert.SerializeObject(vltData));
-                    await _kbContext.SaveChangesAsync();
+
+                    if (vltData.F_Deli_Trip > maxTrip)
+                    {
+                        throw new CustomHttpException(400, "Trip > cycle time Error!!");
+                    }
+
+
                 }
+                await _kbContext.SaveChangesAsync();
+                _log.WriteLogMsg("UPDATE TB_Import_VHD AFTER UPDATE => " + JsonConvert.SerializeObject(listData, Formatting.Indented));
             }
             catch (Exception ex)
             {

@@ -169,14 +169,14 @@ namespace KANBAN.Services.SpecialOrdering.Repository
                         .ExecuteUpdateAsync(setter => setter.SetProperty(x => x.F_PDS_Flg, 2));
 
                     await _kbContext.TB_PDS_Detail.Where(x => x.F_OrderNo == PDSNO).ExecuteDeleteAsync();
-                    _log.WriteLogMsg("Delete from TB_Survey_Detail  : " + PDSNO);
+                    _log.WriteLogMsg("Delete from TB_PDS_Detail  : " + PDSNO);
 
                     await _kbContext.TB_PDS_Header.Where(x => x.F_OrderNo == PDSNO
                         && x.F_Delivery_Date == DateTime.ParseExact(DeliDate, "dd/MM/yyyy", CultureInfo.InvariantCulture).ToString("yyyyMMdd")
                         && x.F_Supplier_Code == Supp_CD && x.F_Supplier_Plant == Supp_Plant
                         && x.F_Delivery_Trip == int.Parse(trip)).ExecuteDeleteAsync();
 
-                    _log.WriteLogMsg("Delete from TB_Survey_Header  : " + PDSNO);
+                    _log.WriteLogMsg("Delete from TB_PDS_Header  : " + PDSNO);
 
                 }
 

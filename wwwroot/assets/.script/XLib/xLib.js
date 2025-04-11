@@ -73,6 +73,19 @@ class DataTableLib {
         $("table tbody tr td").css("vertical-align", "middle");
     }
 
+    ClearData(id) {
+        if (id == undefined) return console.error("id is undefined");
+        if (!id.includes('#')) id = '#' + id;
+        $(`${id}`).DataTable().clear().draw();
+        $(`${id}`).DataTable().columns.adjust().draw();
+
+        $("table thead tr th").css("text-align", "center");
+        $("table thead tr th").css("vertical-align", "middle");
+
+        $("table tbody tr td").css("text-align", "center");
+        $("table tbody tr td").css("vertical-align", "middle");
+    }
+
     GetDataDT(id, closestRow) {
         if (id == undefined) return console.error("id is undefined");
         if (!id.includes('#')) id = '#' + id;
@@ -523,14 +536,14 @@ class xLib {
 
                     // error was return by developer catch it
                     else if (xhr.responseJSON.response) {
-                        xSwal.error(xhr.responseJSON.response, xhr.responseJSON.message)
+                        //xSwal.error(xhr.responseJSON.response, xhr.responseJSON.message)
                         if (typeof errorFn == 'function') {
                             return errorFn(xhr, status, error)
                         }
                     }
 
                     else {
-                        xSwal.error("Error", xhr.responseJSON.message)
+                        //xSwal.error("Error", xhr.responseJSON.message)
                     }
 
                 }
@@ -602,7 +615,7 @@ class xLib {
 
                     // error was return by developer catch it
                     else if (xhr.responseJSON.response) {
-                        xSwal.error(xhr.responseJSON.response, xhr.responseJSON.message)
+                        //xSwal.error(xhr.responseJSON.response, xhr.responseJSON.message)
                         if (typeof errorFn == 'function') {
                             return errorFn(xhr, status, error)
                         }

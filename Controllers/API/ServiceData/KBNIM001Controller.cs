@@ -54,7 +54,7 @@ namespace HINOSystem.Controllers.API.ServiceData
         [HttpPost]
         public async Task<IActionResult> ImportData(List<TB_Import_Service> listObj)
         {
-            _BearerClass.Authentication(Request);
+            await _BearerClass.CheckAuthorize();
 
             if (_BearerClass.Status == 401) return Unauthorized(new
             {
@@ -65,7 +65,7 @@ namespace HINOSystem.Controllers.API.ServiceData
             });
 
             using var _KB3Transaction = _KB3Context.Database.BeginTransaction();
-            string UserID = HttpContext.Session.GetString("USER_CODE");
+
             try
             {
                 _KB3Transaction.CreateSavepoint("BeforeImport");
@@ -80,7 +80,7 @@ namespace HINOSystem.Controllers.API.ServiceData
                         each.F_Ruibetsu = each.F_Part_No.Substring(10, 2);
                         each.F_Part_No = each.F_Part_No.Substring(0, 10);
                     }
-                    each.F_Update_By = UserID;
+                    each.F_Update_By = _BearerClass.UserCode;
                 }
 
 
@@ -112,7 +112,7 @@ namespace HINOSystem.Controllers.API.ServiceData
         [HttpGet]
         public async Task<IActionResult> AfterImported(string advDate)
         {
-            _BearerClass.Authentication(Request);
+            await _BearerClass.CheckAuthorize();
 
             if (_BearerClass.Status == 401) return Unauthorized(new
             {
@@ -123,21 +123,16 @@ namespace HINOSystem.Controllers.API.ServiceData
             });
 
             using var _KB3Transaction = _KB3Context.Database.BeginTransaction();
-            string UserID = HttpContext.Session.GetString("USER_CODE");
-            string Plant = HttpContext.Session.GetString("USER_PLANT");
-
             try
             {
-                var execute = await _KB3Context.Database.ExecuteSqlRawAsync("Exec dbo.SP_IM001_IMPORT_SRV {0},{1},{2}",
-                    Plant, UserID, advDate);
+                var execute = await _KB3Context.Database.ExecuteSqlRawAsync($"Exec dbo.SP_IM001_IMPORT_SRV '{_BearerClass.Plant}','{_BearerClass.UserCode}',{advDate}");
 
-                var delInt = await _KB3Context.Database.ExecuteSqlRawAsync("DELETE FROM TB_Import_Service WHERE F_Update_By = {0}",
-                    UserID);
+                var delInt = await _KB3Context.Database.ExecuteSqlRawAsync($"DELETE FROM TB_Import_Service WHERE F_Update_By = '{_BearerClass.UserCode}'");
 
                 await _KB3Transaction.CommitAsync();
 
                 var error = await _KB3Context.Database.SqlQueryRaw<int>("SELECT COUNT(*) AS VALUE FROM TB_IMPORT_ERROR WHERE F_UPDATE_BY = @User and F_Type = @TypeImport",
-                    new SqlParameter("@User", UserID),
+                    new SqlParameter("@User", _BearerClass.UserCode),
                     new SqlParameter("@TypeImport", "KBNIM001")).FirstOrDefaultAsync();
 
                 if (error > 0)

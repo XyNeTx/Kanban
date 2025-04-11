@@ -1,1316 +1,372 @@
-﻿$(document).ready(function () {
-    var _i18n = '@ViewData["UserLanguage"].ToString()';
-
-    var data = [
-        {
-            "Detail": "TMT Forecast",
-            "PCS": "196",
-            "KB": "",
-            "T1": "98",
-            "T2": "",
-            "T3": "98"
-        },
-        {
-            "Detail": "HMMT Prod.Forecast",
-            "PCS": "211",
-            "KB": "",
-            "T1": "71",
-            "T2": "70",
-            "T3": "70"
-        },
-        {
-            "Detail": "HMMT Order Plan",
-            "PCS": "211",
-            "KB": "",
-            "T1": "71",
-            "T2": "70",
-            "T3": "70"
-        },
-        {
-            "Detail": "Production Volumn",
-            "PCS": "201",
-            "KB": "",
-            "T1": "",
-            "T2": "",
-            "T3": ""
-        },
-        {
-            "Detail": "MRP (Actual Production)",
-            "PCS": "186",
-            "KB": "",
-            "T1": "62",
-            "T2": "62",
-            "T3": "62"
-        },
-        {
-            "Detail": "Diff Last MRP vs PC",
-            "PCS": "0",
-            "KB": "",
-            "T1": "",
-            "T2": "",
-            "T3": ""
-        },
-        {
-            "Detail": "Abnormal Part",
-            "PCS": "0",
-            "KB": "",
-            "T1": "",
-            "T2": "",
-            "T3": ""
-        },
-        {
-            "Detail": "Total",
-            "PCS": "201",
-            "KB": "",
-            "T1": "",
-            "T2": "",
-            "T3": ""
-        },
-        {
-            "Detail": "Remain From Last Trip",
-            "PCS": "4",
-            "KB": "",
-            "T1": "",
-            "T2": "",
-            "T3": ""
-        },
-        {
-            "Detail": "Order Base",
-            "PCS": "197",
-            "KB": "",
-            "T1": "",
-            "T2": "",
-            "T3": ""
-        },
-        {
-            "Detail": "Total Order",
-            "PCS": "200",
-            "KB": "",
-            "T1": "",
-            "T2": "",
-            "T3": ""
-        },
-        {
-            "Detail": "KB Cut(-)/Add(+)",
-            "PCS": "",
-            "KB": "0",
-            "T1": "0",
-            "T2": "0",
-            "T3": "0"
-        },
-        {
-            "Detail": "Actual Order",
-            "PCS": "200",
-            "KB": "",
-            "T1": "",
-            "T2": "",
-            "T3": ""
-        },
-        {
-            "Detail": "Urgent (Pcs.)",
-            "PCS": "0",
-            "KB": "",
-            "T1": "",
-            "T2": "",
-            "T3": ""
-        },
-        {
-            "Detail": "Adjust Order/Trip",
-            "PCS": "",
-            "KB": "",
-            "T1": "",
-            "T2": "",
-            "T3": ""
-        },
-        {
-            "Detail": "Receive Plan",
-            "PCS": "160",
-            "KB": "8",
-            "T1": "3",
-            "T2": "3",
-            "T3": "2"
-        },
-        {
-            "Detail": "BL (Plan)",
-            "PCS": "220",
-            "KB": "",
-            "T1": "218",
-            "T2": "216",
-            "T3": "194"
-        },
-        {
-            "Detail": "Receive Actual",
-            "PCS": "160",
-            "KB": "8",
-            "T1": "2",
-            "T2": "3",
-            "T3": "3"
-        },
-        {
-            "Detail": "BL (Actual)",
-            "PCS": "220",
-            "KB": "",
-            "T1": "198",
-            "T2": "196",
-            "T3": "194"
-        }
-    ];
-
-    var _rdoMRPMore20 = `
-                        <div class="input-group">
-                            <div class="form-check">
-                                <label>
-                                    <input class="form-check-input" type="radio" id="rdoMRPMRPMore20" name="rdoMRP" value="MRPMore20">
-                                    <span>MRP+20%</span>
-                                </label>
-                            </div>   
-                        </div>
-    `;
-
-    var tblMaster = xDataTable.Initial({
-        name: 'tblMaster',
-        //data: data,
-        running: -1,
-        freezeleft: 1,
-        toolbar: false,
-        dom: '<"clear">',
-        scrollbar: 2200,
-        ordering: false,
-        columnTitle: {
-            "EN": [_rdoMRPMore20, 'Pcs', 'KB', 'T1', 'T2', 'T3', 'Pcs', 'KB', 'T1', 'T2', 'T3', 'Pcs', 'KB', 'T1', 'T2', 'T3', 'Pcs', 'KB', 'T1', 'T2', 'T3', 'Pcs', 'KB', 'T1', 'T2', 'T3', 'Pcs', 'KB', 'T1', 'T2', 'T3', 'Pcs', 'KB', 'T1', 'T2', 'T3', 'Pcs', 'KB', 'T1', 'T2', 'T3', 'Pcs', 'KB', 'T1', 'T2', 'T3', 'Pcs', 'KB', 'T1', 'T2', 'T3'],
-            "TH": [_rdoMRPMore20, 'Pcs', 'KB', 'T1', 'T2', 'T3', 'Pcs', 'KB', 'T1', 'T2', 'T3', 'Pcs', 'KB', 'T1', 'T2', 'T3', 'Pcs', 'KB', 'T1', 'T2', 'T3', 'Pcs', 'KB', 'T1', 'T2', 'T3', 'Pcs', 'KB', 'T1', 'T2', 'T3', 'Pcs', 'KB', 'T1', 'T2', 'T3', 'Pcs', 'KB', 'T1', 'T2', 'T3', 'Pcs', 'KB', 'T1', 'T2', 'T3', 'Pcs', 'KB', 'T1', 'T2', 'T3'],
-            "JP": [_rdoMRPMore20, 'Pcs', 'KB', 'T1', 'T2', 'T3', 'Pcs', 'KB', 'T1', 'T2', 'T3', 'Pcs', 'KB', 'T1', 'T2', 'T3', 'Pcs', 'KB', 'T1', 'T2', 'T3', 'Pcs', 'KB', 'T1', 'T2', 'T3', 'Pcs', 'KB', 'T1', 'T2', 'T3', 'Pcs', 'KB', 'T1', 'T2', 'T3', 'Pcs', 'KB', 'T1', 'T2', 'T3', 'Pcs', 'KB', 'T1', 'T2', 'T3', 'Pcs', 'KB', 'T1', 'T2', 'T3'],
-        },
-        column:
-            [
-                { "data": "Detail" },
-                { "data": "PCS" },
-                { "data": "PCS" },
-                { "data": "PCS" },
-                { "data": "PCS" },
-                { "data": "PCS" },
-                { "data": "PCS" },
-                { "data": "PCS" },
-                { "data": "PCS" },
-                { "data": "PCS" },
-                { "data": "PCS" },
-                { "data": "PCS" },
-                { "data": "PCS" },
-                { "data": "PCS" },
-                { "data": "PCS" },
-                { "data": "PCS" },
-                { "data": "PCS" },
-                { "data": "PCS" },
-                { "data": "PCS" },
-                { "data": "PCS" },
-                { "data": "PCS" },
-                { "data": "PCS" },
-                { "data": "PCS" },
-                { "data": "PCS" },
-                { "data": "PCS" },
-                { "data": "PCS" },
-                { "data": "PCS" },
-                { "data": "PCS" },
-                { "data": "PCS" },
-                { "data": "PCS" },
-                { "data": "PCS" },
-                { "data": "PCS" },
-                { "data": "PCS" },
-                { "data": "PCS" },
-                { "data": "PCS" },
-                { "data": "PCS" },
-                { "data": "PCS" },
-                { "data": "PCS" },
-                { "data": "PCS" },
-                { "data": "PCS" },
-                { "data": "PCS" },
-                { "data": "PCS" },
-                { "data": "PCS" },
-                { "data": "PCS" },
-                { "data": "PCS" },
-                { "data": "PCS" },
-                { "data": "PCS" },
-                { "data": "PCS" },
-                { "data": "PCS" },
-                { "data": "PCS" },
-                { "data": "PCS" }
-            ],
-        columnDefs: [
-            { target: 0, visible: false, searchable: false }
-        ],
-        then: function (config) {
-            //var _style = $('#tblMaster tbody tr').attr('style', 'font-size:10px;padding:2px;');
-            //$('.dataTables_scrollHeadInner table thead tr th').attr('style', 'border-style:solid;border-color:red;color:red;bor');
-            $('#tblMaster tbody tr td').attr('style', 'font-size:10px;padding:2px;');
-            //console.log(_style);
-
-
-
-            $('.thTop').each(function () {
-                let _html = $(this)[0].innerHTML;
-                let _color = (_html == '17-08-2023' ? 'background-color:orange;' : (_html > '17-08-2023' ? 'background-color:green;color:white;' : ''));
-                _color = (_html.indexOf('MRP') >= 0 ? '' : _color);
-
-                $(this).attr('style', 'text-align:center;' + _color);
-            });
-
-            $('th').each(function () {
-                let _html = $(this)[0].innerHTML;
-                let _style = $(this).attr('style');
-                //console.log(_html);
-                let _color = (_html == 'D' ? 'background-color:orange;color:white;' : (_html == 'N' ? 'background-color:violet;color:white;' : _style));
-                //_color = (_html.indexOf('MRP') >= 0 ? '' : _color);
-
-                $(this).attr('style', 'text-align:center;' + _color);
-            });
-
-
-
-
-            $('#tblMaster tbody tr td').each(function () {
-                let _html = $(this)[0].innerHTML;
-                //console.log(_html);
-
-                if (_html == 'BL (Plan)') {
-                    console.log(_html)
-                }
-
-                //let _style = $(this).attr('style');
-                //console.log(_html);
-                //let _color = (_html == 'D' ? 'background-color:orange;color:white;' : (_html == 'N' ? 'background-color:violet;color:white;' : _style));
-                ////_color = (_html.indexOf('MRP') >= 0 ? '' : _color);
-
-                //$(this).attr('style', 'text-align:center;' + _color);
-            });
-
-
-
-
-
-
-            xSplash.hide();
-        }
-    });
-
-    var srtAction = 'preview'
-    var _arrSupplier, _arrPartNo, _arrPartNoTo;
-
-    var _dtPartControl, _dtDeliveryDate, _dtDate, _dtPeriod;
-    var _dtHeader, _dtDetail, _dtVolume, _dtAdjustOrderTrip, _dtActualReceive;
-    var _charStartDate, _charEndDate, _intAmountShow;
-    var _dateDelivery, _intDeliveryTrip;
-
-    xAjax.onClick('btnPreview', async function () {
-
-        if ($('#itmSupplier').val() == null) {
-            MsgBox("Please Select Supplier Before Process Data", MsgBoxStyle.Critical, "DATA ERROR");
-            return;
-        }
-        if ($('#itmKanban').val() > $('#itmKanbanTo').val()) {
-            MsgBox("Please Select Kanban No. Again Before Process Data", MsgBoxStyle.Critical, "DATA ERROR");
-            return;
-        }
-        if ($('#itmStoreCode').val() > $('#itmStoreCodeTo').val()) {
-            MsgBox("Please Select Store Code Again Before Process Data", MsgBoxStyle.Critical, "DATA ERROR");
-            return;
-        }
-        if ($('#itmPartNo').val() > $('#itmPartNoTo').val()) {
-            MsgBox("Please Select Part No. Again Before Process Data", MsgBoxStyle.Critical, "DATA ERROR");
-            return;
-        }
-
-        _arrSupplier = $('#itmSupplier').val().split('-');
-
-        srtAction = 'preview';
-        Find_StartEnd_Date();      // '@Remark : Find Start/End Date
-        Get_ALL_Data();     //'@Remark : Get Data fill in DT
-
-
-
-        //console.log($('#itmPartNo').val());
-
-        _arrPartNo = ($('#itmPartNo').val() != null ? $('#itmPartNo').val().split('-') : '');
-        _arrPartNoTo = ($('#itmPartNoTo').val() != null ? $('#itmPartNoTo').val().split('-') : '');
-
-
-        if (_dtHeader.rows != null) {
-            _dtHeader.rows.forEach(async function (item) {
-                //console.log(item);
-
-
-
-
-            });
-        }
-
-
-    });
-
-
-
-
-
-    ////'1. Find Start/End Date
-    Find_StartEnd_Date = async function () {
-        try {
-
-            if (srtAction == 'preview') {
-                var _dt = await xAjax.ExecuteJSON({
-                    data: {
-                        "Module": "[CKD_Inhouse].[sp_NumberOfDayToPreview]",
-                        "@Plant": _PLANT_,
-                        "@Supplier_Code": _arrSupplier[0],
-                        "@Supplier_Plant": _arrSupplier[1],
-                        "@Store_Code": '1A',
-                        "@Date": ReplaceAll(_PROCESSDATE_, '-', '')
-                        //"@Date": '20230918'
-                    },
-                });
-                //console.log(_dt);
-                if (_dt.rows != null) _charStartDate = _dt.rows[0].Start_Date;
-                if (_dt.rows != null) _charEndDate = _dt.rows[0].End_Date;
-                if (_dt.rows != null) _intAmountShow = _dt.rows[0].Display_Date;
-            } else if (srtAction == 'preview') {
-                var _dt = await xAjax.ExecuteJSON({
-                    data: {
-                        "Module": "[CKD_Inhouse].[sp_NumberOfDayToSearch]",
-                        "@Plant": _PLANT_,
-                        "@Supplier_Code": _arrSupplier[0],
-                        "@Supplier_Plant": _arrSupplier[1],
-                        "@Date": xDate.Now('yyyyMMdd'),
-                        "@Shift": (_SHIFT_ == 1 ? 'D' : 'N'),
-                        "@UserName": _DISPLAY_
-                    },
-                });
-                //console.log(_dt);
-                if (_dt.rows != null) _charStartDate = _dt.rows[0].Start_Date;
-                if (_dt.rows != null) _charEndDate = _dt.rows[0].End_Date;
-                if (_dt.rows != null) _intAmountShow = _dt.rows[0].Display_Date;
-            }
-
-
-            _dtDeliveryDate = await xAjax.ExecuteJSON({
-                data: {
-                    "Module": "[CKD_Inhouse].[sp_getDeliveryDateTrip]",
-                    "@Plant": _PLANT_,
-                    "@Supplier_Code": _arrSupplier[0],
-                    "@Supplier_Plant": _arrSupplier[1],
-                    "@ProcessDate": xDate.Now('yyyyMMdd'),
-                    "@ProcessShift": (_SHIFT_ == 1 ? 'D' : 'N')
-                },
-            });
-            //console.log(_dtDeliveryDate);
-            if (_dtDeliveryDate.rows != null) _dateDelivery = _dtDeliveryDate.rows[0].F_Delivery_Date;
-            if (_dtDeliveryDate.rows != null) _intDeliveryTrip = _dtDeliveryDate.rows[0].F_Delivery_Trip;
-
-
-            _dtDate = await xAjax.ExecuteJSON({
-                data: {
-                    "Module": "[dbo].[sp_getCycleTime]",
-                    "@Supplier_Code": _arrSupplier[0],
-                    "@Supplier_Plant": _arrSupplier[1],
-                    "@StartDate": _charStartDate,
-                    "@EndDate": _charEndDate
-                },
-            });
-            //'Check Start_Date and End_Date for Support ECI Case
-            if (_dtDate.rows != null) {
-                if (_charStartDate != _dtDate.rows[0].F_Date) _charStartDate = _dtDate.rows[0].F_Date;
-                if (_charEndDate != _dtDate.rows[_dtDate.rows.length - 1].F_Date) _charEndDate = _dtDate.rows[_dtDate.rows.length - 1].F_Date;
-                _intAmountShow = _dtDate.rows.length;
-            }
-
-
-
-            for (var i = 0; i < _intAmountShow; i++) {
-                _dtPeriod = await xAjax.ExecuteJSON({
-                    data: {
-                        "Module": "[dbo].[sp_findPeriod]",
-                        "@Plant": _PLANT_,
-                        "@Supplier_Code": _arrSupplier[0],
-                        "@Supplier_Plant": _arrSupplier[1],
-                        "@dateNow": _dtDate.rows[0].F_Date,
-                        "@UserName": _DISPLAY_
-                    },
-                });
-            }
-
-        } catch (error) {
-            MsgBox("Error Sub : Find_StartEnd_Date() " + error.Message)
-        }
-
-    }
-
-
-    ////'2. Get Data
-    Get_ALL_Data = async function () {
-        try {
-            _dtPartControl = await xAjax.ExecuteJSON({
-                data: {
-                    "Module": "[CKD_Inhouse].[sp_DT_PartControl]",
-                    "@StartDate": _charStartDate,
-                    "@EndDate": _charEndDate,
-                    "@Supplier_Code": _arrSupplier[0],
-                    "@Supplier_Plant": _arrSupplier[1],
-                    "@Part_No_FROM": _arrPartNo[0],
-                    "@Part_No_TO": _arrPartNo[1],
-                    "@Ruibetsu_FROM": _arrPartNoTo[0],
-                    "@Ruibetsu_TO": _arrPartNoTo[1],
-                    "@Kanban_No_FROM": $('#itmKanban').val(),
-                    "@Kanban_No_TO": $('#itmKanbanTo').val(),
-                    "@Store_Code_FROM": $('#itmStoreCode').val(),
-                    "@Store_Code_TO": $('#itmStoreCodeTo').val(),
-                    "@OrderType": ''
-                },
-            });
-            if (_dtPartControl.rows == null) {
-                MsgBox("No Data PartControl", MsgBoxStyle.Critical, "DATA ERROR")
-                return false;
-            } else {
-                //If sender.Text = "Re-Calculate BL" OrElse sender.Text = "Re-Calculate" Then
-                //get_startDate(sender)
-                //End If
-            }
-
-
-            //'@Remark : Get Data to DT_Header
-            _dtHeader = await xAjax.ExecuteJSON({
-                data: {
-                    "Module": "[CKD_Inhouse].[sp_DT_Header]",
-                    "@StartDate": _charStartDate,
-                    "@EndDate": _charEndDate,
-                    "@Supplier_Code": _arrSupplier[0],
-                    "@Supplier_Plant": _arrSupplier[1],
-                    "@Part_No_FROM": _arrPartNo[0],
-                    "@Part_No_TO": _arrPartNo[1],
-                    "@Ruibetsu_FROM": _arrPartNoTo[0],
-                    "@Ruibetsu_TO": _arrPartNoTo[1],
-                    "@Kanban_No_FROM": $('#itmKanban').val(),
-                    "@Kanban_No_TO": $('#itmKanbanTo').val(),
-                    "@Store_Code_FROM": $('#itmStoreCode').val(),
-                    "@Store_Code_TO": $('#itmStoreCodeTo').val(),
-                    "@OrderType": ''
-                },
-            });
-            if (_dtHeader.rows == null) {
-                MsgBox("No Data", MsgBoxStyle.Critical, "DATA ERROR")
-                return false;
-            }
-
-
-            //'@Remark : Get Data to DT_Detail
-            _dtDetail = await xAjax.ExecuteJSON({
-                data: {
-                    "Module": "[CKD_Inhouse].[sp_DT_Detail]",
-                    "@StartDate": _charStartDate,
-                    "@EndDate": _charEndDate,
-                    "@Supplier_Code": _arrSupplier[0],
-                    "@Supplier_Plant": _arrSupplier[1],
-                    "@Part_No_FROM": _arrPartNo[0],
-                    "@Part_No_TO": _arrPartNo[1],
-                    "@Ruibetsu_FROM": _arrPartNoTo[0],
-                    "@Ruibetsu_TO": _arrPartNoTo[1],
-                    "@Kanban_No_FROM": $('#itmKanban').val(),
-                    "@Kanban_No_TO": $('#itmKanbanTo').val(),
-                    "@Store_Code_FROM": $('#itmStoreCode').val(),
-                    "@Store_Code_TO": $('#itmStoreCodeTo').val(),
-                    "@OrderType": ''
-                },
-            });
-            if (_dtDetail.rows == null) {
-                MsgBox("No Data", MsgBoxStyle.Critical, "DATA ERROR")
-                return false;
-            }
-
-
-            //'@Remark : Get Data to DT_Volume
-            _dtVolume = await xAjax.ExecuteJSON({
-                data: {
-                    "Module": "[CKD_Inhouse].[sp_DT_Volume]",
-                    "@StartDate": _charStartDate,
-                    "@EndDate": _charEndDate,
-                    "@Supplier_Code": _arrSupplier[0],
-                    "@Supplier_Plant": _arrSupplier[1],
-                    "@Part_No_FROM": _arrPartNo[0],
-                    "@Part_No_TO": _arrPartNo[1],
-                    "@Ruibetsu_FROM": _arrPartNoTo[0],
-                    "@Ruibetsu_TO": _arrPartNoTo[1],
-                    "@Kanban_No_FROM": $('#itmKanban').val(),
-                    "@Kanban_No_TO": $('#itmKanbanTo').val(),
-                    "@Store_Code_FROM": $('#itmStoreCode').val(),
-                    "@Store_Code_TO": $('#itmStoreCodeTo').val(),
-                    "@OrderType": ''
-                },
-            });
-            if (_dtVolume.rows == null) {
-                MsgBox("No Data", MsgBoxStyle.Critical, "DATA ERROR")
-                return false;
-            }
-
-
-            //'@Remark : Get Data to DT_AdjustOrder_Trip
-            _dtAdjustOrderTrip = await xAjax.ExecuteJSON({
-                data: {
-                    "Module": "[dbo].[sp_DT_AdjustOder_Trip]",
-                    "@StartDate": _charStartDate,
-                    "@EndDate": _charEndDate,
-                    "@Supplier_Code": _arrSupplier[0],
-                    "@Supplier_Plant": _arrSupplier[1],
-                    "@Part_No_FROM": _arrPartNo[0],
-                    "@Part_No_TO": _arrPartNo[1],
-                    "@Ruibetsu_FROM": _arrPartNoTo[0],
-                    "@Ruibetsu_TO": _arrPartNoTo[1],
-                    "@Kanban_No_FROM": $('#itmKanban').val(),
-                    "@Kanban_No_TO": $('#itmKanbanTo').val(),
-                    "@Store_Code_FROM": $('#itmStoreCode').val(),
-                    "@Store_Code_TO": $('#itmStoreCodeTo').val(),
-                    "@OrderType": ''
-                },
-            });
-            if (_dtAdjustOrderTrip.rows == null) {
-                MsgBox("No Data", MsgBoxStyle.Critical, "DATA ERROR")
-                return false;
-            }
-
-
-            //'@Remark : Get Data to DT_Actual_Receive : [hmmt-ppm].[PPMDB].[dbo].[T_Receive_Local] rl
-            _dtActualReceive = await xAjax.ExecuteJSON({
-                data: {
-                    "Module": "[dbo].[sp_DT_Actual_Receive]",
-                    "@StartDate": _charStartDate,
-                    "@EndDate": _charEndDate,
-                    "@Supplier_Code": _arrSupplier[0],
-                    "@Supplier_Plant": _arrSupplier[1],
-                    "@Part_No_FROM": _arrPartNo[0],
-                    "@Part_No_TO": _arrPartNo[1],
-                    "@Ruibetsu_FROM": _arrPartNoTo[0],
-                    "@Ruibetsu_TO": _arrPartNoTo[1],
-                    "@Store_Code_FROM": $('#itmStoreCode').val(),
-                    "@Store_Code_TO": $('#itmStoreCodeTo').val()
-                },
-            });
-            if (_dtActualReceive.rows == null) {
-                MsgBox("No Data", MsgBoxStyle.Critical, "DATA ERROR")
-                return false;
-            }
-
-
-            //'@Remark : Create Datagrid
-            //If DataGridView1.ColumnCount > 0 OrElse Me.DataGridView1.ColumnHeadersHeight <> 23 Then
-            //Me.DataGridView1.ColumnHeadersHeight = 23 'ลดความยาวเพื่อเตรียมสร้างใหม่
-            //DataGridView1.Columns.Clear()
-            //End If
-            //CreateDataGrid(sender)
-
-
-
-
-            //'@Remark : Display Detail
-            Detail_Data(intRun)
-            Display_Data(intRun)
-
-
-
-
-
-        } catch (error) {
-            MsgBox("Error Method : Get_ALL_Data() " + error.Message)
-        }
-    }
-
-
-    ////'4. Fill Detail
-    Detail_Data = async function (pIntRow = 1) {
-        try {
-            $('#Label36').val(xDate.Now('dd/MM/yyyy'));
-            $('#Label35').val(xDate.Format(_dateDelivery, 'dd/MM/yyyy'));
-
-
-            //'@Remark : Forecast Max
-            var _dtForecastMax = await xAjax.ExecuteJSON({
-                data: {
-                    "Module": "[dbo].[sp_getForecastMax]",
-                    "@StartDate": _PLANT_,
-                    "@Supplier_Code": _arrSupplier[0],
-                    "@Supplier_Plant": _arrSupplier[1],
-                    "@Part_No": _dtPartControl.rows[pIntRow].F_Part_No,
-                    "@Ruibetsu": _dtPartControl.rows[pIntRow].F_Ruibetsu,
-                    "@Kanban_No": _dtPartControl.rows[pIntRow].F_Kanban_No,
-                    "@Store_Code": _dtPartControl.rows[pIntRow].F_Store_Code,
-                    "@Date": _dateDelivery
-
-                },
-            });
-            var _intFCMax = 0;
-            if (_dtForecastMax.rows == null) {
-                MsgBox("ไม่พบค่า Forecast Max", MsgBoxStyle.Information)
-            } else {
-                _intFCMax = (_dtForecastMax.rows[0].ForecastMax >= 0 ? _dtForecastMax.rows[0].ForecastMax : 0);
-                $('#txtForecastMax').val(_intFCMax)
-            }
-
-
-            var _strCycle = _dtDate.rows[0].F_Cycle;
-            var _intCycleB = intCycleB.substring(3, 2);
-            //'@Remark : Cycle
-            //DR_GetData = DT_Date.Select("F_Date = '" & Format(dateDelivery, "yyyyMMdd") & "' ")
-            //If DR_GetData.Length > 0 Then
-            //    strCycle = DR_GetData(0).Item("F_Cycle").ToString.Trim
-            //    intCycleB = Mid(strCycle, 3, 2)
-            //End If
-
-
-            if (_dtHeader.rows != null) {
-                _dtHeader.rows.forEach(async function (item) {
-
-                    ////'@Remark : Qty/Pack
-                    var _intQtyPack = 0;
-                    if (item.F_Process_Date == _dateDelivery
-                        && item.F_Store_Code == _dtPartControl.rows[_intRow].F_Store_Code
-                        && item.F_Kanban_No == _dtPartControl.rows[_intRow].F_Kanban_No
-                        && item.F_Part_No == _dt_dtPartControl.rows[_intRow].F_Part_No
-                        && item.F_Ruibetsu == _dtPartControl.rows[_intRow].F_Ruibetsu
-                    ) {
-                        _intQtyPack = (item.F_Qty_Box > 0 ? item.F_Qty_Box : 1);
-                    }
-
-
-
-
-                    ////'@Remark : Supplier, Cycle Time, Store Code, Part No, Kanban No, Qty/Pack
-                    if (item.F_Store_Code == _dtPartControl.rows[_intRow].F_Store_Code
-                        && item.F_Kanban_No == _dtPartControl.rows[_intRow].F_Kanban_No
-                        && item.F_Part_No == _dt_dtPartControl.rows[_intRow].F_Part_No
-                        && item.F_Ruibetsu == _dtPartControl.rows[_intRow].F_Ruibetsu
-                    ) {
-                        $('#txtSupplier').val(item.F_Supplier_Code + '-' + item.F_Supplier_Plant);
-                        $('#txtCycleTime').val(_strCycle + '-' + _strCycle + '-' + _strCycle);
-                        $('#txtStoreCode').val(item.F_Store_Code);
-                        $('#txtPartNo').val(item.F_Part_No + '-' + item.F_Ruibetsu);
-                        $('#txtKanbanNo').val(item.F_Kanban_No);
-                        $('#txtQtyPack').val(_intQtyPack);
-                    } else {
-                        MsgBox("ไม่พบข้อมูลรายละเอียด Part นี้", MsgBoxStyle.Information);
-                        $('#txtSupplier').val("XXXX-X");
-                        $('#txtCycleTime').val("00-00-00");
-                        $('#txtStoreCode').val("");
-                        $('#txtPartNo').val("0000000000-00");
-                        $('#txtKanbanNo').val("0000");
-                        $('#txtQtyPack').val("0");
-                    }
-
-
-                    ////'@Remark : AvgTrip, Current Use ต้องใช้วันที่ในการค้นหา
-                    if (item.F_Process_Date == _dateDelivery
-                        && item.F_Store_Code == _dtPartControl.rows[_intRow].F_Store_Code
-                        && item.F_Kanban_No == _dtPartControl.rows[_intRow].F_Kanban_No
-                        && item.F_Part_No == _dt_dtPartControl.rows[_intRow].F_Part_No
-                        && item.F_Ruibetsu == _dtPartControl.rows[_intRow].F_Ruibetsu
-                    ) {
-                        $('#txtTotalLimit').val(Math.ceil((_intFCMax / _intCycleB) / _intQtyPack) * _intQtyPack);
-                        $('#txtUseDay').val(item.F_TMT_FO);
-                    } else {
-                        $('#txtTotalLimit').val("0");
-                        $('#txtUseDay').val("0");
-                    }
-
-
-                });
-
-            }
-
-            ////'@Remark : Part Name, Supplier Name
-            var _dtPPM = await xAjax.ExecuteJSON({
-                data: {
-                    "Module": "[exec].[spKBNOR321_SUP]",
-                    "@F_plant": _dtPartControl.rows[_intRow].F_Supplier_Plant,
-                    "@F_Part_no": _dtPartControl.rows[_intRow].F_Part_No,
-                    "@F_Ruibetsu": _dtPartControl.rows[_intRow].F_Ruibetsu,
-                    "@F_Store_cd": _dtPartControl.rows[_intRow].F_Store_Code,
-                    "@F_supplier_cd": _dtPartControl.rows[_intRow].F_Supplier_Code,
-                    "@F_Sebango": _dtPartControl.rows[_intRow].F_Kanban_No
-                },
-            });
-            if (_dtPPM.rows != null) {
-                $('#txtPartName').val(_dtPPM.rows[0].F_Part_nm);
-                $('#txtSupplierName').val(_dtPPM.rows[0].F_short_name);
-                $('#txtLine').val(_dtPPM.rows[0].F_Address);
-            } else {
-                $('#txtPartName').val('');
-                $('#txtSupplierName').val('');
-                $('#txtLine').val('');
-            }
-
-
-
-            ////'@Remark : Max Area
-            var _dtArea = await xAjax.ExecuteJSON({
-                data: {
-                    "Module": "[exec].[spKBNOR321_AREA]",
-                    "@F_plant": _PLANT_,
-                    "@F_supplier_cd": _dtPartControl.rows[_intRow].F_Supplier_Code,
-                    "@F_Supplier_Plant": _dtPartControl.rows[_intRow].F_Supplier_Plant,
-                    "@F_Part_no": _dtPartControl.rows[_intRow].F_Part_No,
-                    "@F_Ruibetsu": _dtPartControl.rows[_intRow].F_Ruibetsu,
-                    "@F_Store_cd": _dtPartControl.rows[_intRow].F_Store_Code,
-                    "@F_Kanban_No": _dtPartControl.rows[_intRow].F_Kanban_No
-                },
-            });
-            if (_dtArea.rows != null) {
-                $('#txtMaxArea').val(_dtArea.rows[0].F_Max_Area);
-            } else {
-                $('#txtMaxArea').val('0');
-            }
-
-
-
-            ////'@Remark : STD+B
-            var _dtSTDB = await xAjax.ExecuteJSON({
-                data: {
-                    "Module": "[dbo].[sp_getSTD_B]",
-                    "@Plant": _PLANT_,
-                    "@Supplier_Code": _arrSupplier[0],
-                    "@Supplier_Plant": _arrSupplier[1],
-                    "@Part_No": _dtPartControl.rows[_intRow].F_Part_No,
-                    "@Ruibetsu": _dtPartControl.rows[_intRow].F_Ruibetsu,
-                    "@Kanban_No": _dtPartControl.rows[_intRow].F_Kanban_No,
-                    "@Store_Code": _dtPartControl.rows[_intRow].F_Store_Code,
-                    "@Date": _dateDelivery
-                },
-            });
-            if (_dtSTDB.rows != null) {
-                $('#txtStdB').val(Math.Round(_dtSTDB.rows[0].STD_B));
-                $('#txtSafetyStock').val(_dtSTDB.rows[0].Safety_Stock);
-            } else {
-                MsgBox("ไม่พบค่า Safety Stock", MsgBoxStyle.Information);
-                $('#txtStdB').val('0');
-                $('#txtSafetyStock').val('0');
-            }
-
-
-
-            ////'@Remark : STD
-            var _dtSTD = await xAjax.ExecuteJSON({
-                data: {
-                    "Module": "[dbo].[sp_getSTDStock]",
-                    "@Plant": _PLANT_,
-                    "@Supplier_Code": _arrSupplier[0],
-                    "@Supplier_Plant": _arrSupplier[1],
-                    "@Part_No": _dtPartControl.rows[_intRow].F_Part_No,
-                    "@Ruibetsu": _dtPartControl.rows[_intRow].F_Ruibetsu,
-                    "@Kanban_No": _dtPartControl.rows[_intRow].F_Kanban_No,
-                    "@Store_Code": _dtPartControl.rows[_intRow].F_Store_Code,
-                    "@Date": _dateDelivery
-                },
-            });
-            if (_dtSTD.rows != null) {
-                $('#txtStdStock').val(Math.Round(_dtSTD.rows[0].STDStock));
-            } else {
-                MsgBox("ไม่พบค่า Standard Stock", MsgBoxStyle.Information)
-                $('#txtStdStock').val('0');
-            }
-
-
-
-            ////'@Remark : Min STD
-            var _dtMINSTD = await xAjax.ExecuteJSON({
-                data: {
-                    "Module": "[dbo].[sp_getMinStock]",
-                    "@Plant": _PLANT_,
-                    "@Supplier_Code": _arrSupplier[0],
-                    "@Supplier_Plant": _arrSupplier[1],
-                    "@Part_No": _dtPartControl.rows[_intRow].F_Part_No,
-                    "@Ruibetsu": _dtPartControl.rows[_intRow].F_Ruibetsu,
-                    "@Kanban_No": _dtPartControl.rows[_intRow].F_Kanban_No,
-                    "@Store_Code": _dtPartControl.rows[_intRow].F_Store_Code,
-                    "@Date": _dateDelivery
-                },
-            });
-            if (_dtMINSTD.rows != null) {
-                $('#txtMinStock').val(Math.Round(_dtMINSTD.rows[0].Min_Stock));
-            } else {
-                MsgBox("ไม่พบค่า Minimum Stock", MsgBoxStyle.Information)
-                $('#txtMinStock').val('0');
-            }
-
-
-
-            ////'@Remark : State MRP
-            var _dtStateMRP = await xAjax.ExecuteJSON({
-                data: {
-                    "Module": "[exec].[spKBNOR321_MRP]",
-                    "@F_Supplier_Code": _arrSupplier[0],
-                    "@F_Supplier_Plant": _arrSupplier[1],
-                    "@F_Part_No": _dtPartControl.rows[_intRow].F_Part_No,
-                    "@F_Ruibetsu": _dtPartControl.rows[_intRow].F_Ruibetsu,
-                    "@F_Store_Code": _dtPartControl.rows[_intRow].F_Store_Code,
-                    "@F_Kanban_No": _dtPartControl.rows[_intRow].F_Kanban_No,
-                    "@F_Process_Date": _dtPartControl.rows[_intRow].F_Store_Code,
-                    "@F_Process_Shift": _dateDelivery
-                },
-            });
-            $('#rdoMRPMRPLess20').removeAttr('checked');
-            $('#rdoMRPMRPLess20').removeAttr('readonly');
-            $('#rdoMRPMRPLess20_label').attr('style', 'color:black');
-
-            $('#rdoMRPMRPMore20').removeAttr('checked');
-            $('#rdoMRPMRPMore20').removeAttr('readonly');
-            $('#rdoMRPMRPMore20_label').attr('style', 'color:black');
-
-            if (_dtStateMRP.rows != null
-                && $.isNumeric(_dtStateMRP.rows[0].F_MRP)
-                && $.isNumeric(_dtStateMRP.rows[0].F_TMT_FO)) {
-                if ((_dtStateMRP.rows[0].F_TMT_FO * 0.8) > _dtStateMRP.rows[0].F_MRP) {
-                    $('#rdoMRPMRPLess20').attr('checked', 'checked');
-                    $('#rdoMRPMRPLess20').attr('readonly', true);
-                    $('#rdoMRPMRPLess20_label').attr('style', 'color:red');
-                } else if ((_dtStateMRP.rows[0].F_TMT_FO * 0.8) > _dtStateMRP.rows[0].F_MRP) {
-                    $('#rdoMRPMRPMore20').attr('checked', 'checked');
-                    $('#rdoMRPMRPMore20').attr('readonly', true);
-                    $('#rdoMRPMRPMore20_label').attr('style', 'color:red');
-                }
-            }
-
-
-
-            ////'@Remark : Maintenance Kanban
-            var _dtKanban = await xAjax.ExecuteJSON({
-                data: {
-                    "Module": "[exec].[spKBNOR321_Kanban]",
-                    "@F_Supplier_Code": _arrSupplier[0],
-                    "@F_Supplier_Plant": _arrSupplier[1],
-                    "@F_Part_No": _dtPartControl.rows[_intRow].F_Part_No,
-                    "@F_Ruibetsu": _dtPartControl.rows[_intRow].F_Ruibetsu,
-                    "@F_Store_Code": _dtPartControl.rows[_intRow].F_Store_Code,
-                    "@F_Kanban_No": _dtPartControl.rows[_intRow].F_Kanban_No,
-                    "@F_Process_Date": _dtPartControl.rows[_intRow].F_Store_Code,
-                    "@F_Process_Shift": _dateDelivery
-                },
-            });
-            $('#rdoStatusSTOP').removeAttr('checked');
-            $('#rdoStatusSTOP').removeAttr('readonly');
-            $('#rdoStatusADD').removeAttr('checked');
-            $('#rdoStatusADD').removeAttr('readonly');
-            $('#rdoStatusCUT').removeAttr('checked');
-            $('#rdoStatusCUT').removeAttr('readonly');
-            if (_dtKanban.rows != null) {
-                if (_dtKanban.rows[0].F_NON_STOP == '0') {
-                    $('#rdoStatusSTOP').attr('checked', 'checked');
-                    $('#rdoStatusSTOP').attr('readonly', true);
-                }
-                if (_dtKanban.rows[0].F_KB_ADD > 0) {
-                    $('#rdoStatusADD').attr('checked', 'checked');
-                    $('#rdoStatusADD').attr('readonly', true);
-                }
-                if (_dtKanban.rows[0].F_KB_CUT < 0) {
-                    $('#rdoStatusCUT').attr('checked', 'checked');
-                    $('#rdoStatusCUT').attr('readonly', true);
-                }
-            }
-
-
-
-            ////'@Remark : Kanban Order
-            var _dtOrder = await xAjax.ExecuteJSON({
-                data: {
-                    "Module": "[exec].[spKBNOR321_Order]",
-                    "@F_Process_Date": _PLANT_,
-                    "@F_Supplier_Code": _arrSupplier[0],
-                    "@F_Supplier_Plant": _arrSupplier[1],
-                    "@F_Part_No": _dtPartControl.rows[_intRow].F_Part_No,
-                    "@F_Ruibetsu": _dtPartControl.rows[_intRow].F_Ruibetsu,
-                    "@F_Kanban_No": _dtPartControl.rows[_intRow].F_Kanban_No,
-                    "@F_Store_Code": _dtPartControl.rows[_intRow].F_Store_Code
-                },
-            });
-            $('#chkKanbanOrder').removeAttr('checked');
-            $('#chkKanbanOrder').removeAttr('readonly');
-            if (_dtOrder.rows != null) {
-                $('#chkKanbanOrder').attr('checked', 'checked');
-                $('#chkKanbanOrder').attr('readonly', true);
-            }
-
-
-
-
-
-
-            ////'@Remark : Change CycleTime
-            Set_Cycle_Time()
-
-
-
-
-            ////'@Remark : Slice Order
-            var _dtSlice = await xAjax.ExecuteJSON({
-                data: {
-                    "Module": "[exec].[spKBNOR321_Slice]",
-                    "@F_Plant": _PLANT_,
-                    "@F_Supplier_CD": _arrSupplier[0],
-                    "@F_Supplier_Plant": _arrSupplier[1],
-                    "@F_Store_CD": _dtPartControl.rows[_intRow].F_Store_Code,
-                    "@F_Delivery_Date": _dateDelivery,
-                    "@F_Delivery_Trip": _intDeliveryTrip,
-                    "@F_Part_No": _dtPartControl.rows[_intRow].F_Part_No,
-                    "@F_Ruibetsu": _dtPartControl.rows[_intRow].F_Ruibetsu
-                },
-            });
-            $('#chkSliceOrder').removeAttr('checked');
-            $('#chkSliceOrder').removeAttr('readonly');
-            if (_dtSlice.rows != null) {
-                $('#chkSliceOrder').attr('checked', 'checked');
-                $('#chkSliceOrder').attr('readonly', true);
-            }
-
-
-
-            ////'@Remark : Receive Slice Order
-            var _dtReceiveSlice = await xAjax.ExecuteJSON({
-                data: {
-                    "Module": "[exec].[spKBNOR321_ReceiveSlice]",
-                    "@F_Plant": _PLANT_,
-                    "@F_Supplier_CD": _arrSupplier[0],
-                    "@F_Supplier_Plant": _arrSupplier[1],
-                    "@F_Store_CD": _dtPartControl.rows[_intRow].F_Store_Code,
-                    "@F_Slide_Date": _dateDelivery,
-                    "@F_Slide_Trip": _intDeliveryTrip,
-                    "@F_Part_No": _dtPartControl.rows[_intRow].F_Part_No,
-                    "@F_Ruibetsu": _dtPartControl.rows[_intRow].F_Ruibetsu
-                },
-            });
-            $('#chkReceiveSlice').removeAttr('checked');
-            $('#chkReceiveSlice').removeAttr('readonly');
-            if (_dtReceiveSlice.rows != null) {
-                $('#chkReceiveSlice').attr('checked', 'checked');
-                $('#chkReceiveSlice').attr('readonly', true);
-            }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        } catch (error) {
-
-        }
-    }
-
-
-    Display_Data = async function (pIntRow = 1) {
-        try {
-            var _ExpireDate;
-            var _intDayShift, _intNightShift;
-
-            //'@Remark : เก็บจำนวน Column ทั้งหมดของ Datagrid
-            var CountDGHeader = 0;
-            var CountDGDetail = 0, CountDGFC = 0;
-            var CountDGVolume = 0;
-            $('#txtNumber').val(pIntRow + '/' + _dtPartControl.rows.length);
-
-
-            if (_dtHeader.rows != null) {
-                _dtHeader.rows.forEach(async function (item) {
-
-                    ////'@Remark : Check Expire Date of Part No.
-                    if (item.F_Supplier_Code == _dtPartControl.rows[pIntRow].F_Supplier_Code
-                        && item.F_Supplier_Plant == _dtPartControl.rows[pIntRow].F_Supplier_Plant
-                        && item.F_Store_Code == _dtPartControl.rows[pIntRow].F_Store_Code
-                        && item.F_Kanban_No == _dtPartControl.rows[pIntRow].F_Kanban_No
-                        && item.F_Part_No == _dt_dtPartControl.rows[pIntRow].F_Part_No
-                        && item.F_Ruibetsu == _dtPartControl.rows[pIntRow].F_Ruibetsu
-                    ) {
-                        _ExpireDate = item.F_Process_Date;
-                    }
-
-
-                });
-            }
-
-            var _dgHeader = [];
-
-            for (var i=0; i < _intAmountShow; i++) {
-                //'@Remark : Support ECI : แสดงข้อมูลถึงวันสุดท้ายที่มี Forecast
-                if (_dtDate.rows[i].F_Date <= _ExpireDate) {
-
-                    _intCycleB = _dtDate.rows[i].F_Cycle.substring(3, 2);
-
-                    _dtPeriod.rows.forEach(async function (item) {
-                        if (item.Date_Now == _dtDate.rows[i].F_Date
-                            && item.Row_Num == '1'
-                        ) {
-                            _intDayShift = item.F_Period;
-                        }
-                    });
-                    _dtPeriod.rows.forEach(async function (item) {
-                        if (item.Date_Now == _dtDate.rows[i].F_Date
-                            && item.Row_Num == '2'
-                        ) {
-                            _intNightShift = item.F_Period;
-                        }
-                    });
-
-                    var _intSumActual = 0;
-                    _dtActualReceive.rows.forEach(async function (item) {
-                        if (item.F_Receive_Date == _dtPartControl.rows[pIntRow].F_Date
-                            && item.F_Store_CD == _dtPartControl.rows[pIntRow].F_Store_Code
-                            && item.F_Part_No == _dtPartControl.rows[pIntRow].F_Part_No
-                            && item.F_Ruibetsu == _dtPartControl.rows[pIntRow].F_Ruibetsu
-                        ) {
-                            _intSumActual += item.F_Receive_Qty;
-                        }
-                    });
-
-
-                    ////'@Remark : Header
-                    for (var iShift=0; iShift <= 1; iShifti++) {
-                        _dtHeader.rows.forEach(async function (item) {
-
-                            ////'@Remark : Check Expire Date of Part No.
-                            if (item.F_Process_Date == _dtDate.rows[pIntRow].F_Date
-                                && item.F_Process_Shift == (iShift = 0 ? "D" : "N")
-                                && item.F_Store_Code == _dtPartControl.rows[pIntRow].F_Store_Code
-                                && item.F_Kanban_No == _dtPartControl.rows[pIntRow].F_Kanban_No
-                                && item.F_Part_No == _dt_dtPartControl.rows[pIntRow].F_Part_No
-                                && item.F_Ruibetsu == _dtPartControl.rows[pIntRow].F_Ruibetsu
-                            ) {
-                                if (item != null && CountDGHeader < 100) {
-                                    _dgHeader[CountDGHeader][0] = item.F_TMT_FO;
-                                    _dgHeader[CountDGHeader][1] = item.F_MRP;
-                                    _dgHeader[CountDGHeader][2] = item.F_AbNormal_Part;
-                                    _dgHeader[CountDGHeader][3] = item.F_TMT_FO;
-                                }
-
-
-                                
-                            }
-
-
-                        });
-
-                    }
-
-
-
-
-
-
-                }
-
-
-
-
-
-
-
-
-
-
-            }
-
-
-
-
-
-
-        } catch (error) {
-
-        }
-    }
-
-
-
-    ////'7. Check ว่าปุ่ม "Set Cycle Time" จะเปิด หรือปิด
-    Set_Cycle_Time = async function () {
-        try {
-            ////' Enable Set Cycle Time
-            var _dtCycleTime = await xAjax.ExecuteJSON({
-                data: {
-                    "Module": "[exec].[spKBNOR321_CycleTime]",
-                    "@F_Supplier_Code": _arrSupplier[0],
-                    "@F_Supplier_Plant": _arrSupplier[1],
-                    "@F_Start_Date": xDate.Now('yyyyMMdd'),
-                    "@F_End_Date": xDate.Now('yyyyMMdd')
-                },
-            });
-            $('#chkChangeCycleTime').removeAttr('checked');
-            $('#chkChangeCycleTime').removeAttr('readonly');
-            if (_dtCycleTime.rows != null) {
-                $('#chkChangeCycleTime').attr('checked', 'checked');
-                $('#chkChangeCycleTime').attr('readonly', true);
-            }
-        } catch (error) {
-
-        }
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    xAjax.onClick('btnReport', async function () {
-        $('#rdoStatusSTOP').attr('checked', 'checked');
-        $('#rdoStatusSTOP').attr('readonly', true);
-    });
-
-
-    xAjax.onClick('itmSupplier', async function () { setCriteria(1); });
-    xAjax.onClick('itmKanban', async function () { setCriteria(2); });
-    xAjax.onClick('itmKanbanTo', async function () { setCriteria(2); });
-    xAjax.onClick('itmStoreCode', async function () { setCriteria(3); });
-    xAjax.onClick('itmStoreCodeTo', async function () { setCriteria(3); });
-    xAjax.onClick('itmPartNo', async function () { setCriteria(4); });
-    xAjax.onClick('itmPartNoTo', async function () { setCriteria(4); });
-
-
-    setCriteria = async function (pLevel = 0) {
-        var _supplier = ($('#itmSupplier').val() != null ? ", @Supplier_Code='" + $('#itmSupplier').val().substring(0, 4) + "' " : "")
-            + ($('#itmSupplier').val() != null ? ", @Supplier_Plant='" + $('#itmSupplier').val().substring(5) + "' " : "");
-        var _store = ($('#itmStoreCode').val() != null ? ", @Store_Code_FROM='" + $('#itmStoreCode').val() + "' " : "")
-            + ($('#itmStoreCodeTo').val() != null ? ", @Store_Code_TO='" + $('#itmStoreCodeTo').val() + "' " : "");
-
-
-        //sp_NormalOrder_getSupplier
-        var _dt = await xAjax.xExecuteJSON({
-            data: {
-                "Module": "[dbo].[sp_NormalOrder_getSupplier] '1', @Supplier_Code='9999' "
-            },
-        });
-        if (_dt.rows != null && $('#itmSupplier').val() == null) xDropDownList.bind('#itmSupplier', _dt.rows, 'F_Supplier', 'F_Supplier');
-
-
-        //sp_NormalOrder_getKanban
-        _dt = await xAjax.xExecuteJSON({
-            data: {
-                "Module": "[dbo].[sp_NormalOrder_getKanban] '1', @OrderType='Daily' " + _supplier
-            },
-        });
-        if (_dt.rows != null && (pLevel < 2 || $('#itmKanban').val() == null)) xDropDownList.bind('#itmKanban', _dt.rows, 'F_Kanban_No', 'F_Kanban_No');
-        if (_dt.rows != null && (pLevel < 2 || $('#itmKanbanTo').val() == null)) xDropDownList.bind('#itmKanbanTo', _dt.rows, 'F_Kanban_No', 'F_Kanban_No');
-
-
-        //sp_NormalOrder_getStoreCode
-        _dt = await xAjax.xExecuteJSON({
-            data: {
-                "Module": "[dbo].[sp_NormalOrder_getStoreCode] '1', @OrderType='Daily' " + _supplier
-            },
-        });
-        if (_dt.rows != null && (pLevel < 3 || $('#itmStoreCode').val() == null)) xDropDownList.bind('#itmStoreCode', _dt.rows, 'F_Store_CD', 'F_Store_CD');
-        if (_dt.rows != null && (pLevel < 3 || $('#itmStoreCodeTo').val() == null)) xDropDownList.bind('#itmStoreCodeTo', _dt.rows, 'F_Store_CD', 'F_Store_CD');
-
-
-        //sp_NormalOrder_getPartNo
-        _dt = await xAjax.xExecuteJSON({
-            data: {
-                "Module": "[dbo].[sp_NormalOrder_getPartNo] '1', @OrderType='Daily' " + _supplier + _store
-            },
-        });
-        if (_dt.rows != null && (pLevel < 4 || $('#itmPartNo').val() == null)) xDropDownList.bind('#itmPartNo', _dt.rows, 'F_Part_No', 'F_Part_No');
-        if (_dt.rows != null && (pLevel < 4 || $('#itmPartNoTo').val() == null)) xDropDownList.bind('#itmPartNoTo', _dt.rows, 'F_Part_No', 'F_Part_No');
-
-
-
-
-    }
-
-
-    initial = async function () {
-
-        var _dt = await xAjax.ExecuteJSON({
-            data: {
-                "Module": "[exec].[spKBNOR321]"
-            },
-        });
-
-        if (_dt.rows != null) xDataTable.loading('#tblMaster', _dt.rows);
-
-        var _pWidth = $('#tblMaster_wrapper').parent().width();
-        $('#tblMaster_wrapper').width(_pWidth);
-        $('.dataTables_scrollHeadInner .display').width($('#tblMaster_wrapper').width(_pWidth));
-
-        setCriteria(0);
-
-
-
-        var _dt = await xAjax.xExecuteJSON({
-            data: {
-                "Module": "[exec].[spMSParameter] '"
-                    + ajexHeader.UserCode + "' "
-                    + ", 'CI_CKD' "
-                    + ", @ErrorMessage='' "
-            },
-        });
-        //console.log(_dt.rows[0].F_Value2);
-        //console.log(_dt.rows[0].F_Value3);
-        var _nNextProcess = xDate.Format(_PROCESSDATE_, 'yyyyMMdd') + (_SHIFT_ == '1' ? 'D' : 'N');
-        //console.log(_nNextProcess);
-        if (_dt.rows != null) {
-            if (_dt.rows[0].F_Value2 == '0' || _dt.rows[0].F_Value2 == '3' || _dt.rows[0].F_Value3 != _nNextProcess) {
-                //$('#btnProcess').attr('readonly', true);
-                //$('#btnPreview').attr('readonly', true);
-                //$('#btnReCalculate').attr('readonly', true);
-            } else {
-                $('#btnProcess').removeAttr('readonly');
-                $('#btnPreview').removeAttr('readonly');
-                $('#btnReCalculate').removeAttr('readonly');
-                //'If shiftNow = "D" AndAlso srtAction = "Process" _ IT เปิดให้ ReCal ได้ทั้งกลางวัน กลางคืนละ 
-                //    If srtAction = "Process" _
-                //    AndAlso Txt_Supplier.Text.Trim <> "" AndAlso Txt_PartNo.Text.Trim <> "" _
-                //    AndAlso Txt_Kanban.Text.Trim <> "" AndAlso Txt_StoreCode.Text.Trim <> "" Then
-                //Btn_ReCalculate.Enabled = True
-                //Else
-                //Btn_ReCalculate.Enabled = False
-                //    End If
-            }
-
-        }
-
-
-        xSplash.hide();
-    }
-    initial();
-
-
-    $('.form-floating label').attr('style', 'font-size:10px;height: 32px;');
-    $('.form-floating input').attr('style', 'font-size:10px;height: 32px;');
-
-
+﻿let dT_Actual_Receive = [];
+let dT_AdjustOrder_Trip = [];
+let dT_Date = [];
+let dT_DeliveryDate = [];
+let dT_Detail = [];
+let dT_Header = [];
+let dT_PartControl = [];
+let dT_Period = [];
+let dT_Volume = [];
+let action = "";
+
+$(document).ready(async function () {
+    await Onload();
+    await GetDropDownData();
+    //await Find_StartEnd_Date();
+    xSplash.hide()
 });
+
+async function GetDropDownData() {
+    let obj = {
+        F_Supplier_Code: $("#inputSupplier").val(),
+        F_Store_Code: $("#inputStore").val(),
+    }
+    return _xLib.AJAX_Get("/api/KBNOR321/GetDropDownData", obj,
+        async function (success) {
+            console.log(success);
+            if ($("#inputSupplier").val() == "") {
+                $("#inputSupplier").empty();
+                $("#inputSupplier").append("<option value='' hidden></option>");
+                success.data[0].forEach(function (e) {
+                    $("#inputSupplier").append(`<option value=${e}>${e}</option>`)
+                })
+            }
+            if ($("#inputKanban").val() == "") {
+                $("#inputKanban").empty();
+                $("#inputKanbanTo").empty();
+                $("#inputKanban").append("<option value='' hidden></option>");
+                $("#inputKanbanTo").append("<option value='' hidden></option>");
+                success.data[1].forEach(function (e) {
+                    $("#inputKanban").append(`<option value=${e}>${e}</option>`)
+                    $("#inputKanbanTo").append(`<option value=${e}>${e}</option>`)
+                })
+            }
+            if ($("#inputStore").val() == "") {
+                $("#inputStore").empty();
+                $("#inputStoreTo").empty();
+                $("#inputStore").append("<option value='' hidden></option>");
+                $("#inputStoreTo").append("<option value='' hidden></option>");
+                success.data[2].forEach(function (e) {
+                    $("#inputStore").append(`<option value=${e}>${e}</option>`)
+                    $("#inputStoreTo").append(`<option value=${e}>${e}</option>`)
+                })
+            }
+            if ($("#inputPart").val() == "") {
+                $("#inputPart").empty();
+                $("#inputPartTo").empty();
+                $("#inputPart").append("<option value='' hidden></option>");
+                $("#inputPartTo").append("<option value='' hidden></option>");
+                success.data[3].forEach(function (e) {
+                    $("#inputPart").append(`<option value=${e}>${e}</option>`)
+                    $("#inputPartTo").append(`<option value=${e}>${e}</option>`)
+                })
+            }
+        },
+    )
+}
+
+$("#inputSupplier").change(function () {
+    GetDropDownData();
+});
+$("#inputKanban").change(function () {
+    $("#inputKanbanTo").val($(this).val());
+    GetDropDownData();
+});
+$("#inputStore").change(function () {
+    $("#inputStoreTo").val($(this).val());
+    GetDropDownData();
+});
+$("#inputPart").change(function () {
+    $("#inputPartTo").val($(this).val());
+    GetDropDownData();
+});
+
+$("#btnPrevPage").click(async function () {
+    var page = parseInt($("#txtPage").val().split("/")[0]) - 1;
+    if (page == 0) return;
+    $("#txtPage").val(page.toString() + "/" + dT_PartControl.length.toString());
+    await Get_All_Data(action, parseInt(page) - 1);
+    window.scrollTo(0, 0);
+});
+
+$("#btnNextPage").click(async function () {
+    var page = parseInt($("#txtPage").val().split("/")[0]) + 1;
+    if (page == parseInt($("#txtPage").val().split("/")[1]) + 1) return;
+    $("#txtPage").val(page.toString() + "/" + dT_PartControl.length.toString());
+    await Get_All_Data(action, parseInt(page) - 1);
+    window.scrollTo(0, 0);
+});
+
+$("#btnProcess").click(async function () {
+    action = "Process";
+    await Get_All_Data("Process",0);
+})
+$("#btnPreview").click(async function () {
+    action = "Preview";
+    await Get_All_Data("Preview",0);
+})
+
+async function GetSelectObject(action) {
+    let obj = {
+        action: action,
+        F_Supplier_Code: $("#inputSupplier").val(),
+        F_KanbanFrom: $("#inputKanban").val(),
+        F_KanbanTo: $("#inputKanbanTo").val(),
+        F_StoreFrom: $("#inputStore").val(),
+        F_StoreTo: $("#inputStoreTo").val(),
+        F_PartFrom: $("#inputPart").val(),
+        F_PartTo: $("#inputPartTo").val(),
+    }
+
+    return obj;
+}
+
+async function Get_All_Data(action,intRow) {
+    let obj = await GetSelectObject(action);
+    return _xLib.AJAX_Get("/api/KBNOR321/Get_All_Data", obj,
+        async function (success) {
+            success = _xLib.JSONparseMixData(success);
+            console.log(success);
+            dT_Actual_Receive = success.data.dT_Actual_Receive
+            dT_AdjustOrder_Trip = success.data.dT_AdjustOrder_Trip
+            dT_Date = success.data.dT_Date
+            dT_DeliveryDate = success.data.dT_DeliveryDate
+            dT_Detail = success.data.dT_Detail
+            dT_Header = success.data.dT_Header
+            dT_PartControl = success.data.dT_PartControl
+            dT_Period = success.data.dT_Period
+            dT_Volume = success.data.dT_Volume
+
+            //console.log(dT_PartControl);
+
+            $("#txtPage").val((parseInt(intRow) + 1) + "/" + dT_PartControl.length);
+            await Set_Dynamic_Table();
+            Set_Data(intRow);
+        },
+        async function (error) {
+            xSwal.xError(error);
+        }
+    )
+}
+
+async function Set_Dynamic_Table()
+{
+    let _oldDate = "";
+    let _headColumn = 0;
+    let _sumT = 0;
+
+    if ($(".tempHead").length > 0)
+    {
+        $(".tempHead").remove();
+        $(".tempDetail").remove();
+    }
+
+    dT_Period.forEach(function (e,i) {
+        _headColumn += (e.F_Period + 2);
+
+        if (i == 0) {
+            _headColumn += (e.F_Period + 2);
+        }
+
+        if (_oldDate != e.Date_Now) {
+            let DateFormated = moment(e.Date_Now, "YYYYMMDD").format("DD-MM-YYYY");
+            $("#THeadR1").append(`<th class='tempHead' id='thDate_${e.Date_Now}' colspan='${_headColumn}'>${DateFormated}</th>`)
+            _oldDate = e.Date_Now;
+
+            for (let i = 1; i <= 18; i++) {
+                let T = 1;
+                for (let j = 1; j <= _headColumn; j++) {
+                    if (T > (_headColumn - 4)) {
+                        T = 1;
+                    }
+                    let _id = "";
+                    if (j % 3 == 1) {
+                        _id = `TD_R${i}_T${T}_Pcs_` + e.Date_Now;
+                    }
+                    else if (j % 3 == 2) {
+                        _id = `TD_R${i}_T${T}_KB_` + e.Date_Now;
+                    }
+                    else {
+                        _id = `TD_R${i}_T${T}_` + e.Date_Now;
+                        T++;
+                    }
+                    //$(`#TBodyR${i}`).append(`<td class='tempDetail' id='${_id}'>${_id}</td>`)
+                    $(`#TBodyR${i}`).append(`<td class='tempDetail' id='${_id}'></td>`)
+                }
+            }
+            _headColumn = 0;
+            _sumT = 0;
+        }
+
+        $("#THeadR2").append(`<th class='tempHead' id='thBlankCol' colspan='2'></th>`)
+
+        if (e.Row_Num == "1") $("#THeadR2").append(`<th class='tempHead text-danger' id='thDay_${e.Date_Now}' style='background-color:#fba8a1;' >Day</th>`);
+        else $("#THeadR2").append(`<th class='tempHead' id='thNight_${e.Date_Now}' style='background-color:#86b6fd;color:#001eff'>Night</th>`)
+
+        $("#THeadR3").append(`<th class='tempHead' id='thPcs_${e.Date_Now}'>Pcs</th>`)
+        $("#THeadR3").append(`<th class='tempHead' id='thKB_${e.Date_Now}'>KB</th>`)
+        for (let i = 1; i <= e.F_Period; i++) {
+            $("#THeadR3").append(`<th class='tempHead' id='thT${_sumT + i}_${e.Date_Now}'>T${_sumT + i}</th>`)
+            _sumT += e.F_Period;
+        }
+    })
+
+    return;
+
+}
+
+async function Set_Data(intRow)
+{
+    let keyHead = ["F_TMT_FO", "F_MRP", "F_AbNormal_Part", "F_Total", "F_Remain_LastTrip", "F_Remain_LastClear"
+        , "F_Order_Base", "F_Lot_SizeOrder + F_Qty_Box", "F_KB_CutAdd", "F_Actual_Order"
+        , "F_Urgent_Order", "F_UrgentTemp_Order", "F_Pattern_Order"];
+
+    let keyDetail = ["F_TMT_FO", "F_MRP", "", "", "", "", "", "F_Lot_SizeOrder"
+        , "F_KB_CutADD", "F_Actual_order", "", "", "", "", "F_Receive_Plan", "F_BL_Plan", "","F_BL_Actual"];
+
+    //console.log(keyHead);
+
+    $("#readSupplier").val(dT_PartControl[intRow].F_Supplier_Code + "-" + dT_PartControl[intRow].F_Supplier_Plant);
+    $("#readPartNo").val(dT_PartControl[intRow].F_Part_No + "-" + dT_PartControl[intRow].F_Ruibetsu);
+    $("#readStoreCode").val(dT_PartControl[intRow].F_Store_Code);
+    $("#readKanbanNo").val(dT_PartControl[intRow].F_Kanban_No);
+    $("#readCycleTime").val(dT_Date[dT_Date.length - 1].F_Cycle.slice(0, 2) + "-" + dT_Date[dT_Date.length - 1].F_Cycle.slice(2, 4) + "-" + dT_Date[dT_Date.length - 1].F_Cycle.slice(4, 6));
+
+
+    for (let j = 0; j < dT_Period.length; j++) {
+        var headData = dT_Header.filter(x =>
+            x.F_Supplier_Code == dT_PartControl[intRow].F_Supplier_Code &&
+            x.F_Supplier_Plant == dT_PartControl[intRow].F_Supplier_Plant &&
+            x.F_Part_No == dT_PartControl[intRow].F_Part_No &&
+            x.F_Ruibetsu == dT_PartControl[intRow].F_Ruibetsu &&
+            x.F_Store_Code == dT_PartControl[intRow].F_Store_Code &&
+            x.F_Kanban_No == dT_PartControl[intRow].F_Kanban_No &&
+            x.F_Process_Date == dT_Period[j].Date_Now &&
+            x.F_Process_Shift == (dT_Period[j].Row_Num == "1" ? "D" : "N")
+        )[0];
+
+        $("#readQtyPack").val((headData.F_Qty_Box == 0 ? 1 : headData.F_Qty_Box));
+        $("#readUseDay").val(headData.F_TMT_FO);
+
+        var detailData = dT_Detail.filter(x =>
+            x.F_Supplier_Code == dT_PartControl[intRow].F_Supplier_Code &&
+            x.F_Supplier_Plant == dT_PartControl[intRow].F_Supplier_Plant &&
+            x.F_Part_No == dT_PartControl[intRow].F_Part_No &&
+            x.F_Ruibetsu == dT_PartControl[intRow].F_Ruibetsu &&
+            x.F_Kanban_No == dT_PartControl[intRow].F_Kanban_No &&
+            x.F_Store_Code == dT_PartControl[intRow].F_Store_Code &&
+            x.F_Process_Date == dT_Period[j].Date_Now &&
+            x.F_Process_Shift == (dT_Period[j].Row_Num == "1" ? "D" : "N") &&
+            x.F_Process_Round == dT_Period[j].Row_Num
+        )[0];
+
+        var volumeData = dT_Volume.filter(x =>
+            x.F_Supplier_Code == dT_PartControl[intRow].F_Supplier_Code &&
+            x.F_Supplier_Plant == dT_PartControl[intRow].F_Supplier_Plant &&
+            x.F_Part_No == dT_PartControl[intRow].F_Part_No &&
+            x.F_Ruibetsu == dT_PartControl[intRow].F_Ruibetsu &&
+            x.F_Kanban_No == dT_PartControl[intRow].F_Kanban_No &&
+            x.F_Store_Code == dT_PartControl[intRow].F_Store_Code &&
+            x.F_Delivery_Date == dT_Period[j].Date_Now &&
+            //x.F_Process_Shift == (dT_Period[j].Row_Num == "1" ? "D" : "N") &&
+            x.F_Delivery_Round == dT_Period[j].Row_Num
+        )[0];
+
+        var actualData = dT_Actual_Receive.filter(x =>
+            x.F_Supplier_code == dT_PartControl[intRow].F_Supplier_Code &&
+            x.F_Supplier_Plant == dT_PartControl[intRow].F_Supplier_Plant &&
+            x.F_PART_No == dT_PartControl[intRow].F_Part_No &&
+            x.F_RUibetsu == dT_PartControl[intRow].F_Ruibetsu &&
+            x.F_Kanban_No == dT_PartControl[intRow].F_Kanban_No &&
+            x.F_Store_Cd == dT_PartControl[intRow].F_Store_Code &&
+            x.F_Receive_Date == dT_Period[j].Date_Now &&
+            //x.F_Process_Shift == (dT_Period[j].Row_Num == "1" ? "D" : "N") &&
+            x.F_Delivery_Trip == dT_Period[j].Row_Num
+        )[0];
+
+        console.log(headData);
+        console.log(detailData);
+        console.log(volumeData);
+        console.log(actualData);
+
+        for (let i = 1; i <= 18; i++) {
+            try {
+                //console.log(dT_Period);
+                //console.log(dT_PartControl[intRow].F_Part_No);
+                //console.log(dT_PartControl[intRow].F_Ruibetsu);
+                //console.log(dT_PartControl[intRow].F_Kanban_No);
+                //console.log(dT_PartControl[intRow].F_Store_Code);
+                //console.log(dT_Period[j].Date_Now);
+                //console.log(dT_Period[j].Row_Num == "1" ? "D" : "N");
+
+                let _idPcs = `TD_R${i}_T${dT_Period[j].Row_Num}_Pcs_${dT_Period[j].Date_Now}`;
+                let _idKB = `TD_R${i}_T${dT_Period[j].Row_Num}_KB_${dT_Period[j].Date_Now}`;
+                let _idT = `TD_R${i}_T${dT_Period[j].Row_Num}_${dT_Period[j].Date_Now}`;
+
+                //console.log(keyHead[i - 1]);
+                //console.log(headData[keyHead[i - 1]]);
+                //console.log(_idPcs);
+
+                if (i == 8)
+                {
+                    let Total_Order = headData.F_Lot_SizeOrder * headData.F_Qty_Box;
+                    $(`#${_idPcs}`).text(Total_Order);
+                    $(`#${_idKB}`).text(headData.F_Lot_SizeOrder);
+                }
+                else if (i == 9 || i == 10 || i == 13)
+                {
+                    $(`#${_idKB}`).text((headData[keyHead[i - 1]] == undefined ? 0 : headData[keyHead[i - 1]]));
+                    if (i == 10) $(`#${_idPcs}`).text((headData[keyHead[i - 1]] == undefined ? 0 : headData[keyHead[i - 1]] * headData.F_Qty_Box));
+                    else if (i != 9) $(`#${_idPcs}`).text((headData[keyHead[i - 1]] == undefined ? 0 : headData[keyHead[i - 1]]));
+                }
+                else if (i < 13)
+                {
+                    $(`#${_idPcs}`).text((headData[keyHead[i - 1]] == undefined ? 0 : headData[keyHead[i - 1]]));
+                }
+
+                //for DetailData
+                if (i <= 2 || (i >= 8 && i <= 10) || i == 16 || i == 18)
+                {
+                    $(`#${_idT}`).text(detailData[keyDetail[i - 1]]);
+                }
+
+                //for VolumeData
+                if (i == 15) { //|| i == 17) {
+                    if (volumeData !== undefined) {
+                        if (volumeData.F_Qty !== undefined) {
+                            $(`#${_idPcs}`).text(volumeData.F_Qty);
+                            $(`#${_idKB}`).text(volumeData.F_Receive_Plan);
+                            $(`#${_idT}`).text(volumeData.F_Receive_Plan);
+                        }
+                        else {
+                            $(`#${_idPcs}`).text("0");
+                            $(`#${_idKB}`).text("0");
+                            $(`#${_idT}`).text("0");
+                        }
+                    }
+                    else if (headData !== undefined && detailData !== undefined) {
+                        $(`#${_idPcs}`).text("0");
+                        $(`#${_idKB}`).text("0");
+                        $(`#${_idT}`).text("0");
+                    }
+                }
+            }
+            catch (e) {
+                console.log(e);
+                continue;
+            }
+        }
+    }
+
+}
+
+async function Onload() {
+    let obj = {
+        _loginDate: _xLib.GetCookie('loginDate')
+    }
+    return _xLib.AJAX_Get("/api/KBNOR321/Onload", obj,
+        async function (success) {
+            console.log(success);
+        },
+    )
+}

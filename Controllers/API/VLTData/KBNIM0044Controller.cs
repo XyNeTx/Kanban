@@ -31,13 +31,13 @@ namespace HINOSystem.Controllers.API.Master
             {
                 await _BearerClass.CheckAuthorize();
 
-                await _importRepo.KBNIM0044.SaveImportData(listData);
+                var RowAffected = await _importRepo.KBNIM0044.SaveImportData(listData);
 
                 return Ok(new
                 {
                     status = "200",
                     response = "Success",
-                    message = "Data has been saved"
+                    message = "Data has been saved, " + RowAffected + " Records was Saved"
                 });
             }
             catch (CustomHttpException ex)
@@ -85,13 +85,13 @@ namespace HINOSystem.Controllers.API.Master
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdateFlag(List<TB_Import_VHD> listObj)
+        public async Task<IActionResult> UpdateFlag([FromBody] List<TB_Import_VHD> listObj, [FromQuery] string shift)
         {
             try
             {
                 await _BearerClass.CheckAuthorize();
 
-                await _importRepo.KBNIM0044.UpdateFlag(listObj);
+                await _importRepo.KBNIM0044.UpdateFlag(listObj, shift);
 
                 return Ok(new
                 {

@@ -60,11 +60,11 @@ namespace HINOSystem.Libs
             }
             catch (SqlException SQLex) when (SQLex.Number == -2) // Handle timeout exception
             {
-                Console.WriteLine("Timeout occurred. Returning partial results.");
+                throw new Exception(SQLex.Message);
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                throw new Exception(ex.Message);
             }
 
             return dt;
@@ -97,15 +97,56 @@ namespace HINOSystem.Libs
             }
             catch (SqlException SQLex) when (SQLex.Number == -2) // Handle timeout exception
             {
-                Console.WriteLine("Timeout occurred. Returning partial results.");
+                throw new Exception(SQLex.Message);
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                throw new Exception(ex.Message);
             }
 
             return dt;
         }
+
+        public async Task<DataTable> ExecuteSQLAsync(string sql, params object[] parameters)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                using (SqlConnection con = new SqlConnection(_KB3Context.Database.GetConnectionString()))
+                {
+                    await con.OpenAsync(); // Open connection asynchronously
+
+                    using (SqlCommand cmd = new SqlCommand(sql, con))
+                    {
+                        cmd.CommandType = CommandType.Text;
+                        cmd.CommandTimeout = 300;
+
+                        // Add parameters to the SqlCommand
+                        for (int i = 0; i < parameters.Length; i++)
+                        {
+                            cmd.Parameters.AddWithValue("@p" + i, string.IsNullOrWhiteSpace(parameters[i]?.ToString()) ? DBNull.Value : parameters[i]);
+                        }
+
+                        using (SqlDataReader reader = await cmd.ExecuteReaderAsync()) // ExecuteReaderAsync
+                        {
+                            dt.Load(reader); // Load DataTable from reader
+                        }
+                    }
+                }
+            }
+            catch (SqlException SQLex) when (SQLex.Number == -2) // Handle timeout exception
+            {
+                throw new Exception(SQLex.Message);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
+            return dt;
+        }
+
 
         public DataTable ExecuteSQLPPMDB(string sql, params object[] parameters)
         {
@@ -133,11 +174,11 @@ namespace HINOSystem.Libs
             }
             catch (SqlException SQLex) when (SQLex.Number == -2) // Handle timeout exception
             {
-                Console.WriteLine("Timeout occurred. Returning partial results.");
+                throw new Exception(SQLex.Message);
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                throw new Exception(ex.Message);
             }
 
             return dt;
@@ -180,11 +221,11 @@ namespace HINOSystem.Libs
             }
             catch (SqlException SQLex) when (SQLex.Number == -2) // Handle timeout exception
             {
-                Console.WriteLine("Timeout occurred. Returning partial results.");
+                throw new Exception(SQLex.Message);
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                throw new Exception(ex.Message);
             }
 
             return dt;
@@ -200,7 +241,8 @@ namespace HINOSystem.Libs
                 {
                     using (SqlCommand cmd = new SqlCommand(sql, con))
                     {
-                        cmd.CommandType = CommandType.Text;
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Clear();
                         cmd.Parameters.AddRange(parameters);
                         using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
                         {
@@ -211,11 +253,54 @@ namespace HINOSystem.Libs
             }
             catch (SqlException SQLex) when (SQLex.Number == -2) // Handle timeout exception
             {
-                Console.WriteLine("Timeout occurred. Returning partial results.");
+                throw new Exception(SQLex.Message);
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                throw new Exception(ex.Message);
+            }
+
+            return dt;
+        }
+
+        public async Task<DataTable> ExecuteStoreSQLAsync(string sql, params SqlParameter[] parameters)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                using (SqlConnection con = new SqlConnection(_KB3Context.Database.GetConnectionString()))
+                {
+                    await con.OpenAsync(); // Open connection asynchronously
+
+                    using (SqlCommand cmd = new SqlCommand(sql, con))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Clear();
+                        foreach (var param in parameters)
+                        {
+                            cmd.Parameters.Add(new SqlParameter(param.ParameterName, param.Value)
+                            {
+                                SqlDbType = param.SqlDbType,
+                                Direction = param.Direction,
+                                Size = param.Size
+                            });
+                        }
+
+                        using (SqlDataReader reader = await cmd.ExecuteReaderAsync()) // ExecuteReaderAsync
+                        {
+                            dt.Load(reader); // Load DataTable from reader
+                        }
+                    }
+                }
+            }
+            catch (SqlException SQLex) when (SQLex.Number == -2) // Handle timeout exception
+            {
+                throw new Exception(SQLex.Message);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
             }
 
             return dt;
@@ -248,11 +333,11 @@ namespace HINOSystem.Libs
             }
             catch (SqlException SQLex) when (SQLex.Number == -2) // Handle timeout exception
             {
-                Console.WriteLine("Timeout occurred. Returning partial results.");
+                throw new Exception(SQLex.Message);
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                throw new Exception(ex.Message);
             }
 
             return dt;

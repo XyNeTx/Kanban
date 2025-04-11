@@ -960,7 +960,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
                         AND F_Ruibetsu = '{DT_PartControl.Rows[intRow]["F_Ruibetsu"].ToString().Trim()}' 
                         AND F_Store_CD = '{DT_PartControl.Rows[intRow]["F_Store_Code"].ToString().Trim()}' 
                         AND F_Delivery_Date = '{dateDelivery.ToString("yyyyMMdd")}' 
-                        AND F_Delivery_Trip = '{DeliveryTrip}  ) B '
+                        AND F_Delivery_Trip = '{DeliveryTrip}'  ) B
                         WHERE A.Slide_Order + B.Slide_Order_Part > 0 ";
 
                 var dtSlideOrder = _FillDT.ExecuteSQL(_SQL);
@@ -985,7 +985,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
                         AND F_Ruibetsu = '{DT_PartControl.Rows[intRow]["F_Ruibetsu"].ToString().Trim()}'                         AND F_Store_CD = '{DT_PartControl.Rows[intRow]["F_Store_Code"].ToString().Trim()}' 
                         AND F_Slide_Date = '{dateDelivery.ToString("yyyyMMdd")}' 
                         AND F_Slide_Trip = '{DeliveryTrip}'  ) B
-                        WHERE A.Slide_Order + B.Slide_Order_Part > 0 ";
+                        WHERE A.Rec_Slide_Order + B.Rec_Slide_Order_Part > 0 ";
 
                 var dtRecSlideOrder = _FillDT.ExecuteSQL(_SQL);
                 string RecSlideOrderCheck = "0";
@@ -1336,6 +1336,17 @@ namespace KANBAN.Controllers.API.OrderingProcess
                     (x.Flag_Chg_BL_Stock == true || x.Flag_Cancel_PDS == true || x.Flag_Chg_MRP == true ||
                     x.Flag_Chg_Urgent == true || x.Flag_Adjust_Order == true)
                     ).OrderBy(x => x.F_Process_Date).FirstOrDefaultAsync();
+
+                //var _ProcessDateList = await _KB3Context.TB_Calculate_D.Where(x =>
+                //    x.F_Supplier_Code == DT_PartControl.Rows[_intRow]["F_Supplier_Code"].ToString().Trim() &&
+                //    x.F_Supplier_Plant == DT_PartControl.Rows[_intRow]["F_Supplier_Plant"].ToString().Trim() &&
+                //    x.F_Part_No == DT_PartControl.Rows[_intRow]["F_Part_No"].ToString().Trim() &&
+                //    x.F_Ruibetsu == DT_PartControl.Rows[_intRow]["F_Ruibetsu"].ToString().Trim() &&
+                //    x.F_Store_Code == DT_PartControl.Rows[_intRow]["F_Store_Code"].ToString().Trim() &&
+                //    x.F_Kanban_No == DT_PartControl.Rows[_intRow]["F_Kanban_No"].ToString().Trim() &&
+                //    (x.Flag_Chg_BL_Stock == true || x.Flag_Cancel_PDS == true || x.Flag_Chg_MRP == true ||
+                //    x.Flag_Chg_Urgent == true || x.Flag_Adjust_Order == true)
+                //    ).OrderBy(x => x.F_Process_Date).ToListAsync();
 
                 if (_ProcessDate != null)
                 {

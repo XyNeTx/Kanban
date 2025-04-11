@@ -864,7 +864,7 @@ namespace HINOSystem.Controllers.API.Master
                     {
                         last_Date = last_Date.AddDays(-1);
 
-                        string _sql = $"SELECT CONVERT(Integer,F_workCd_D{last_Date.ToString("dd")}) + CONVERT(Integer,F_workCd_N{last_Date.ToString("dd")}) AS F_Work " +
+                        string _sql = $"SELECT CONVERT(Integer,F_workCd_D{last_Date.Day.ToString("d")}) + CONVERT(Integer,F_workCd_N{last_Date.Day.ToString("d")}) AS F_Work " +
                             $"FROM TB_Calendar WHERE F_Store_cd = '{storecode}' AND F_YM = '{last_Date.ToString("yyyyMM")}' ";
 
                         dt = _FillDT.ExecuteSQL(_sql);

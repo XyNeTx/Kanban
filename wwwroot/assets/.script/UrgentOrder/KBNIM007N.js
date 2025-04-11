@@ -336,88 +336,93 @@ $("#inputDeliveryTrip").on("keypress", function (e) {
 
 $("#buttonOK").click(async function () {
     xSplash.show("Saving Data");
-    if (_command === 'New') {
-        $("#buttonOK").prop("disabled", true);
-        var rows = $("input[name='inputChkBox']:checked").closest("tr");
-        if (rows.length === 0) return xSwal.error("Error !!", "No data selected.");
-        let _arrObj = $("#table").DataTable().rows(rows).data().toArray();
-
-        return await OkClicked(_arrObj);
-    }
-    else if (_command === 'Update') {
-        $("#buttonOK").prop("disabled", true);
-        var rows = $("input[name='inputChkBox']:checked").closest("tr");
-        if (rows.length === 0) return xSwal.error("Error !!", "No data selected.");
-        let _arrObj = $("#table").DataTable().rows(rows).data().toArray();
-        var _hasError = false;
-        _arrObj.forEach(async function (item, i) {
-            item.Supplier = item.F_Supplier;
-            item.Part_No = item.F_Part_No;
-            item.Qty = item.F_Qty;
-            item.Pack = item.F_Pack;
-            item.Delivery_Date = item.F_Delivery_Date;
-            item.Delivery_Trip = item.F_Delivery_Trip;
-            item.Kanban_No = item.F_Kanban_No;
-
-            delete item.F_Supplier;
-            delete item.F_Part_No;
-            delete item.F_Qty;
-            delete item.F_Pack;
-            delete item.F_Delivery_Date;
-            delete item.F_Delivery_Trip;
-            delete item.F_Kanban_No;
-
-            await _xLib.AJAX_Post('/api/KBNIM007N/Update', JSON.stringify(item),
-                function (success) {
-                    if (success.status === "200") {
-                        console.log("Success: ", success);
-                        if ($("input[name='inputChkBox']:checked").length > 0) {
-                            $("#table").DataTable().row(rows[i]).remove().draw();
-                            $("#buttonInq").trigger("click");
-                        }
-                    }
-                },
-                function (error) {
-                    _hasError = true;
-                    return xSwal.error("Error !!", error.responseJSON.message);
-                }
-            );
-        });
-        if (_hasError) return;
-        else {
-            $("#table").DataTable().clear().draw();
-            xSplash.hide();
-            return xSwal.success("Success !!", "Data was updated.");
-        }
-    }
-    else if (_command === "Delete") {
-        xSwal.question("Confirm !!", "Are you sure to delete data?", async function () {
+    try {
+        if (_command === 'New') {
             $("#buttonOK").prop("disabled", true);
             var rows = $("input[name='inputChkBox']:checked").closest("tr");
             if (rows.length === 0) return xSwal.error("Error !!", "No data selected.");
-            let _Obj = $("#table").DataTable().row(rows[0]).data();
-            await _xLib.AJAX_Post('/api/KBNIM007N/Delete', JSON.stringify(_Obj),
-                function (success) {
-                    if (success.status === "200") {
-                        console.log("Success: ", success);
-                        if ($("input[name='inputChkBox']:checked").length > 0) {
-                            $("#table").DataTable().clear().draw();
-                            $("#buttonInq").trigger("click");
-                            xSplash.hide();
-                            return xSwal.success("Success !!", "Data was deleted.");
-                        }
-                    }
-                },
-                function (error) {
-                    return xSwal.error("Error !!", error.responseJSON.message);
-                }
-            );
-        });
-    }
-    else {
-        return xSwal.error("Error !!", "Please select command.");
-    }
+            let _arrObj = $("#table").DataTable().rows(rows).data().toArray();
 
+            return await OkClicked(_arrObj);
+        }
+        else if (_command === 'Update') {
+            $("#buttonOK").prop("disabled", true);
+            var rows = $("input[name='inputChkBox']:checked").closest("tr");
+            if (rows.length === 0) return xSwal.error("Error !!", "No data selected.");
+            let _arrObj = $("#table").DataTable().rows(rows).data().toArray();
+            var _hasError = false;
+            _arrObj.forEach(async function (item, i) {
+                item.Supplier = item.F_Supplier;
+                item.Part_No = item.F_Part_No;
+                item.Qty = item.F_Qty;
+                item.Pack = item.F_Pack;
+                item.Delivery_Date = item.F_Delivery_Date;
+                item.Delivery_Trip = item.F_Delivery_Trip;
+                item.Kanban_No = item.F_Kanban_No;
+
+                delete item.F_Supplier;
+                delete item.F_Part_No;
+                delete item.F_Qty;
+                delete item.F_Pack;
+                delete item.F_Delivery_Date;
+                delete item.F_Delivery_Trip;
+                delete item.F_Kanban_No;
+
+                await _xLib.AJAX_Post('/api/KBNIM007N/Update', JSON.stringify(item),
+                    function (success) {
+                        if (success.status === "200") {
+                            console.log("Success: ", success);
+                            if ($("input[name='inputChkBox']:checked").length > 0) {
+                                $("#table").DataTable().row(rows[i]).remove().draw();
+                                $("#buttonInq").trigger("click");
+                            }
+                        }
+                    },
+                    function (error) {
+                        _hasError = true;
+                        return xSwal.error("Error !!", error.responseJSON.message);
+                    }
+                );
+            });
+            if (_hasError) return;
+            else {
+                $("#table").DataTable().clear().draw();
+                xSplash.hide();
+                return xSwal.success("Success !!", "Data was updated.");
+            }
+        }
+        else if (_command === "Delete") {
+            xSwal.question("Confirm !!", "Are you sure to delete data?", async function () {
+                $("#buttonOK").prop("disabled", true);
+                var rows = $("input[name='inputChkBox']:checked").closest("tr");
+                if (rows.length === 0) return xSwal.error("Error !!", "No data selected.");
+                let _Obj = $("#table").DataTable().row(rows[0]).data();
+                await _xLib.AJAX_Post('/api/KBNIM007N/Delete', JSON.stringify(_Obj),
+                    function (success) {
+                        if (success.status === "200") {
+                            console.log("Success: ", success);
+                            if ($("input[name='inputChkBox']:checked").length > 0) {
+                                $("#table").DataTable().clear().draw();
+                                $("#buttonInq").trigger("click");
+                                xSplash.hide();
+                                return xSwal.success("Success !!", "Data was deleted.");
+                            }
+                        }
+                    },
+                    function (error) {
+                        return xSwal.error("Error !!", error.responseJSON.message);
+                    }
+                );
+            });
+        }
+        else {
+            return xSwal.error("Error !!", "Please select command.");
+        }
+    }
+    catch (error) {
+        xSplash.hide();
+        console.log(error);
+    }
 
 });
 
@@ -448,6 +453,9 @@ async function OkClicked(_arrObj,isImport) {
             delete _arrObj[item].F_Kanban_No;
             delete _arrObj[item].F_Pack;
             
+        }
+        if (_arrObj[item].Delivery_Date == undefined) {
+            continue;
         }
         _arrObj[item].Delivery_Date = _arrObj[item].Delivery_Date.toString();
         var _json = JSON.stringify(_arrObj[item]);

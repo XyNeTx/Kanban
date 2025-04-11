@@ -1,137 +1,105 @@
-﻿using HINOSystem.Context;
-using HINOSystem.Libs;
+﻿using HINOSystem.Libs;
+using KANBAN.Services;
+using KANBAN.Services.CKD_Ordering.IRepository;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 
 namespace HINOSystem.Controllers.API.Master
 {
-    public class KBNOR321Controller : Controller
+    [ApiController]
+    [Route("/api/[controller]/[action]")]
+    public class KBNOR321Controller : ControllerBase
     {
-        private readonly IConfiguration _configuration;
         private readonly BearerClass _BearerClass;
-        private readonly KanbanConnection _KBCN;
-
-        private readonly KB3Context _KB3Context;
-
-        public KBNOR321Controller(
-            IConfiguration configuration,
-            BearerClass bearerClass,
-            KanbanConnection kanbanConnection,
-            KB3Context kB3Context
+        private readonly ICKDService _CKDRepo;
+        public KBNOR321Controller
+            (
+                BearerClass bearerClass,
+                ICKDService CKDRepo
             )
         {
-            _configuration = configuration;
             _BearerClass = bearerClass;
-            _KBCN = kanbanConnection;
-            _KB3Context = kB3Context;
-
+            _CKDRepo = CKDRepo;
         }
 
-
-
-        [HttpPost]
-        public IActionResult initial([FromBody] string pPostData = null)
+        [HttpGet]
+        public async Task<IActionResult> GetDropDownData(string? F_Supplier_Code, string? F_Store_Code)
         {
-            dynamic _data = null;
-            string _SQL, _resData;
-            string _result = @"{
-                    ""status"":""200"",
-                    ""response"":""OK"",
-                    ""message"": ""No data found"",
-                    ""data"": null
-                }";
-
-            _BearerClass.Authentication(Request);
-            if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
-
             try
             {
+                await _BearerClass.CheckAuthorize();
 
+                var data = await _CKDRepo.IKBNOR321.GetDropDownData(F_Supplier_Code, F_Store_Code);
 
-                if (pPostData != null) _data = JsonConvert.DeserializeObject(pPostData);
-
-                //_SQL = @" EXEC [exec].[spKBNOR310] '"
-                //    + _BearerClass.Plant + @"','"
-                //    + _BearerClass.UserCode + @"','"
-                //    + _data.ProcessDate.ToString().Replace("-", "") + @"','"
-                //    + _data.ProcessShift.ToString() + @"','' ";
-
-                //_resData = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass,
-                //    pControllerName: ControllerContext.ActionDescriptor.ControllerName,
-                //    pActionName: ControllerContext.ActionDescriptor.ActionName
-                //    );
-
-                //_result = @"{
-                //    ""status"":""200"",
-                //    ""response"":""OK"",
-                //    ""message"": ""Data Found"",
-                //    ""data"": " + _resData + @"
-                //}";
-
-                _result = @"{
-                    ""status"":""200"",
-                    ""response"":""OK"",
-                    ""message"": ""Data Found"",
-                    ""data"": null
-                }";
-                return Content(_result, "application/json");
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Success",
+                    data = data
+                });
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                return Content(e.Message.ToString(), "application/json");
+                if (ex is CustomHttpException) throw;
+                else throw new CustomHttpException(500, ex.InnerException?.Message ?? ex.Message);
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Get_All_Data(string action, string F_Supplier_Code, string? F_KanbanFrom, string? F_KanbanTo, string? F_StoreFrom, string? F_StoreTo, string? F_PartFrom, string? F_PartTo)
+        {
+            try
+            {
+                await _BearerClass.CheckAuthorize();
 
+                var data = await _CKDRepo.IKBNOR321.Get_All_Data(action, F_Supplier_Code, F_KanbanFrom, F_KanbanTo, F_StoreFrom, F_StoreTo, F_PartFrom, F_PartTo);
 
-        //[HttpPost]
-        //public IActionResult search([FromBody] string pPostData = null)
-        //{
-        //    dynamic _data = null;
-        //    string _SQL, _resData;
-        //    string _result = @"{
-        //            ""status"":""200"",
-        //            ""response"":""OK"",
-        //            ""message"": ""No data found"",
-        //            ""data"": null
-        //        }";
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Success",
+                    data = new
+                    {
+                        DT_DeliveryDate = data[0],
+                        DT_Date = data[1],
+                        DT_Period = data[2],
+                        DT_PartControl = data[3],
+                        DT_Header = data[4],
+                        DT_Detail = data[5],
+                        DT_Volume = data[6],
+                        DT_AdjustOrder_Trip = data[7],
+                        DT_Actual_Receive = data[8],
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                if (ex is CustomHttpException) throw;
+                else throw new CustomHttpException(500, ex.InnerException?.Message ?? ex.Message);
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> Onload(string _loginDate)
+        {
+            try
+            {
+                await _BearerClass.CheckAuthorize();
 
-        //    _BearerClass.Authentication(Request);
-        //    if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
+                await _CKDRepo.IKBNOR321.Onload(_loginDate);
 
-        //    try
-        //    {
-        //        
-
-        //        if (pPostData != null) _data = JsonConvert.DeserializeObject(pPostData);
-
-        //        _SQL = @" EXEC [exec].[spKBNOR310] '"
-        //            + _BearerClass.Plant + @"','"
-        //            + _BearerClass.UserCode + @"','"
-        //            + _data.ProcessDate.ToString().Replace("-", "") + @"','"
-        //            + _data.ProcessShift.ToString() + @"','' ";
-
-        //        _resData = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass,
-        //            pControllerName: ControllerContext.ActionDescriptor.ControllerName,
-        //            pActionName: ControllerContext.ActionDescriptor.ActionName
-        //            );
-
-        //        _result = @"{
-        //            ""status"":""200"",
-        //            ""response"":""OK"",
-        //            ""message"": ""Data Found"",
-        //            ""data"": " + _resData + @"
-        //        }";
-        //        return Content(_result, "application/json");
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        return Content(e.Message.ToString(), "application/json");
-        //    }
-        //}
-
-
-
-
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Success"
+                });
+            }
+            catch (Exception ex)
+            {
+                if (ex is CustomHttpException) throw;
+                else throw new CustomHttpException(500, ex.InnerException?.Message ?? ex.Message);
+            }
+        }
     }
 }

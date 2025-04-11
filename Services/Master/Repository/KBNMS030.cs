@@ -123,8 +123,8 @@ namespace KANBAN.Services.Master.Repository
                 data.F_Update_Date = DateTime.Now;
 
                 _kbContext.TB_MS_LineControl.Add(data);
-                _log.WriteLogMsg("UPDATE TB_MS_LineControl AFTER : " + JsonConvert.SerializeObject(data));
                 await _kbContext.SaveChangesAsync();
+                _log.WriteLogMsg("UPDATE TB_MS_LineControl AFTER : " + JsonConvert.SerializeObject(data));
             }
             catch (Exception ex)
             {

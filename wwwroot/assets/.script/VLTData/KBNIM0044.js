@@ -76,12 +76,14 @@ let TripShift = 0;
 let SeqQty = 0;
 $("#inpSeqPds").change(function () {
     SeqQtyPds = parseInt($("#inpSeqPds").val());
+    TripShift = parseInt($("#inpTripShift").val());
 
     SeqQty = SeqQtyPds * TripShift;
 
     $("#inpSeqQty").val(SeqQty);
 });
 $("#inpTripShift").change(function () {
+    SeqQtyPds = parseInt($("#inpSeqPds").val());
     TripShift = parseInt($("#inpTripShift").val());
 
     SeqQty = SeqQtyPds * TripShift;
@@ -133,7 +135,7 @@ $("#btnImp").on("click", async function () {
             item.F_Seq = item.F_Seq.toString();
         });
 
-        return console.log(data);
+        //return console.log(data);
 
         if (parseInt(maxRow) !== checkRow) {
             return xSwal.error("Error", "Please check row of import file.");
@@ -187,6 +189,7 @@ $("#btnSimulate").on("click", function () {
 //});
 
 $("#chkSlider").on("change", function () {
+    _xDataTable.ClearData("tableMain");
     GetListData();
 });
 
@@ -310,7 +313,9 @@ function UpdateFlag(Flag) {
         return xSwal.error("Invalid Action");
     }
 
-    _xLib.AJAX_Post("/api/KBNIM0044/UpdateFlag", listObj,
+    let shift = $("#inpShift").val();
+
+    _xLib.AJAX_Post("/api/KBNIM0044/UpdateFlag?shift=" + shift, listObj,
         async function (success) {
             await GetListData();
             xSplash.hide();
