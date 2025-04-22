@@ -203,6 +203,7 @@ namespace KANBAN.Services.Import.Repository
 
         public async Task Confirm(List<TB_Import_VHD> listData)
         {
+            using var dbTrans = await _kbContext.Database.BeginTransactionAsync();
             try
             {
                 await _kbContext.Database.ExecuteSqlRawAsync($@"exec [exec].[spKBNIM044_Confirm] @sPlant,@User",
@@ -230,10 +231,24 @@ namespace KANBAN.Services.Import.Repository
 
                 _kbContext.TB_Import_VHD.UpdateRange(listData);
                 await _kbContext.SaveChangesAsync();
-                LogMsg = "Confirm IMPORT VHD Data => " + JsonConvert.SerializeObject(listData, Formatting.Indented);
 
-                _log.WriteLogMsg(LogMsg);
+                string sql = $@"SELECT COUNT(*) FROM TB_Order
+                WHERE F_Update_By = '{_BearerClass.UserCode}' ";
 
+                var dtChk = await _FillDT.ExecuteSQLAsync(sql);
+
+                if (dtChk != null && dtChk.Rows.Count == listData.Count)
+                {
+                    await dbTrans.CommitAsync();
+                    LogMsg = "Confirm IMPORT VHD Data => " + JsonConvert.SerializeObject(listData, Formatting.Indented);
+                    _log.WriteLogMsg(LogMsg);
+
+                }
+                else
+                {
+                    await dbTrans.RollbackAsync();
+                    throw new CustomHttpException(500, "All Data Can't be Confirm Please check data again");
+                }
             }
             catch (Exception ex)
             {

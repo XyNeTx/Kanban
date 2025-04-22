@@ -570,6 +570,8 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                     partName,
                     supName,
                     maxArea,
+                    STD_B,
+                    Safety_Stock,
                 };
 
                 return result;
@@ -579,6 +581,68 @@ namespace KANBAN.Services.CKD_Ordering.Repository
             {
                 if (ex is CustomHttpException) throw;
                 else throw new CustomHttpException(500, ex.InnerException?.Message ?? ex.Message);
+            }
+        }
+        public async Task<List<string>> GetBL(string strDate, string Row_Num, int intRow)
+        {
+            try
+            {
+                int intAbnormal = 0;
+                string strCycle = DT_Date.Rows[DT_Date.Rows.Count - 1]["F_Cycle"].ToString().Trim();
+                int intCycleB = int.Parse(strCycle.Substring(2, 2));
+
+                DateTime _Date = DateTime.ParseExact(strDate, "yyyyMMdd", null);
+                List<SqlParameter> sqlParams = new List<SqlParameter>
+                {
+                    new SqlParameter("@Supplier_Code", DT_PartControl.Rows[intRow]["F_Supplier_Code"].ToString()),
+                    new SqlParameter("@Supplier_Plant", DT_PartControl.Rows[intRow]["F_Supplier_Plant"].ToString()),
+                    new SqlParameter("@Part_No", DT_PartControl.Rows[intRow]["F_Part_No"].ToString()),
+                    new SqlParameter("@Ruibetsu", DT_PartControl.Rows[intRow]["F_Ruibetsu"].ToString()),
+                    new SqlParameter("@Kanban_No", DT_PartControl.Rows[intRow]["F_Kanban_No"].ToString()),
+                    new SqlParameter("@Store_Code", DT_PartControl.Rows[intRow]["F_Store_Code"].ToString()),
+                };
+
+                if (Row_Num == "2")
+                {
+                    sqlParams.Add(new SqlParameter("@Date", _Date.ToString("yyyyMMdd")));
+                    sqlParams.Add(new SqlParameter("@Shift", "D"));
+                }
+                else
+                {
+                    sqlParams.Add(new SqlParameter("@Date", _Date.AddDays(-1).ToString("yyyyMMdd")));
+                    sqlParams.Add(new SqlParameter("@Shift", "N"));
+                }
+
+                var DT_Last = await _FillDT.ExecuteStoreSQLAsync("[CKD_Inhouse].sp_autoRecalculateBL_First", sqlParams.ToArray());
+
+                if (DT_Last.Rows.Count > 0)
+                {
+                    List<string> result = new List<string>
+                    {
+                        (DT_Last.Rows[0]["F_BL_SET_Plan"].ToString().Trim()),
+                        (DT_Last.Rows[0]["F_BL_SET_Actual"].ToString().Trim()),
+                        (DT_Last.Rows[0]["F_Not_Recalculate"].ToString().Trim()),
+                    };
+
+                    return result;
+                }
+                else
+                {
+                    List<string> result = new List<string>
+                    {
+                        "0",
+                        "0",
+                        "0",
+                    };
+
+                    return result;
+                }
+            }
+            catch (Exception ex)
+            {
+                if (ex is CustomHttpException) throw;
+                else if (ex.InnerException != null) throw new CustomHttpException(500, ex.InnerException.Message);
+                else throw new CustomHttpException(500, ex.Message);
             }
         }
 

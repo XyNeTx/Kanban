@@ -101,5 +101,28 @@ namespace HINOSystem.Controllers.API.Master
                 else throw new CustomHttpException(500, ex.InnerException?.Message ?? ex.Message);
             }
         }
+        [HttpGet]
+        public async Task<IActionResult> GetBL(string strDate, string Row_Num, int intRow)
+        {
+            try
+            {
+                await _BearerClass.CheckAuthorize();
+
+                var data = await _CKDRepo.IKBNOR321.GetBL(strDate, Row_Num, intRow);
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Success",
+                    data = data
+                });
+            }
+            catch (Exception ex)
+            {
+                if (ex is CustomHttpException) throw;
+                else throw new CustomHttpException(500, ex.InnerException?.Message ?? ex.Message);
+            }
+        }
     }
 }
