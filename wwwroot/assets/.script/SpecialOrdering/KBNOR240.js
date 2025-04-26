@@ -49,6 +49,7 @@ $("#btnGetStatus").click(async () => {
         },
         async (error) => {
             xSplash.hide();
+            xSwal.xError(error);
             console.error(error);
         }
     );

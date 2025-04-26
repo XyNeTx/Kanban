@@ -111,6 +111,9 @@ SendApprove = async () => {
         async (success) => {
             await xSwal.success(success.response, success.message);
             await GetPDSDataNoApprove();
+        },
+        async (error) => {
+            xSwal.xError(error);
         }
     );
 }
@@ -156,6 +159,9 @@ $("#modalBtnResend").click(async () => {
         async (success) => {
             await xSwal.success(success.response, success.message);
             await GetPDSDataNoApprove();
+        },
+        async (error) => {
+            xSwal.xError(error);
         }
     );
 });

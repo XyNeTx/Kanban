@@ -193,7 +193,7 @@ $("#chkSlider").on("change", function () {
     GetListData();
 });
 
-function GetListData() {
+async function GetListData() {
 
     let obj = {
         isAll : !$("#chkSlider").prop("checked")
@@ -236,18 +236,32 @@ $("#btnPost").click(function () {
 //});
 
 $("#btnConf").click(function () {
+    $("#exampleModal").modal('show');
+    //Confirm();
+})
+
+$("#btnConfirmModal").click(function () {
+    //$("#exampleModal").modal('show');
     Confirm();
 })
 
-function Confirm() {
+async function Confirm() {
     let listObj = _xDataTable.GetSelectedDataDT("#tableMain");
+    let InchargeUser = $("#inpUserInfModal").val();
 
+    if (listObj.length == 0) {
+        return xSwal.error("Error", "Please Select Data before Confirm");
+    }
     if (listObj.length < SeqQty) {
         return xSwal.error("Error", "Data in table is not enough.");
     }
     //return console.log(listObj);
 
-    _xLib.AJAX_Post("/api/KBNIM0044/Confirm", listObj,
+    if (InchargeUser == null) {
+        return xSwal.error("Error", "Please Select User to Interface Order");
+    }
+
+    _xLib.AJAX_Post("/api/KBNIM0044/Confirm?InchargeUser=" + InchargeUser, listObj,
         async function (success) {
             await GetListData();
             xSwal.xSuccess(success);
@@ -258,7 +272,7 @@ function Confirm() {
     );
 }
 
-function UpdateFlag(Flag) {
+async function UpdateFlag(Flag) {
     xSplash.show();
 
     let listObj = $("#tableMain").DataTable().rows().data().toArray();

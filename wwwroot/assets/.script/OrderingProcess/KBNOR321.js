@@ -121,7 +121,8 @@ async function GetSelectObject(action) {
     return obj;
 }
 
-async function Get_All_Data(action,intRow) {
+async function Get_All_Data(action, intRow) {
+    xSplash.show("Loading CKD Data");
     let obj = await GetSelectObject(action);
     return _xLib.AJAX_Get("/api/KBNOR321/Get_All_Data", obj,
         async function (success) {
@@ -141,7 +142,11 @@ async function Get_All_Data(action,intRow) {
 
             $("#txtPage").val((parseInt(intRow) + 1) + "/" + dT_PartControl.length);
             await Set_Dynamic_Table();
-            Set_Data(intRow);
+            await Set_Data(intRow);
+            await Detail_Data(intRow);
+            await EditTableStyle(action);
+            await GetInformNews();
+            xSplash.hide();
         },
         async function (error) {
             xSwal.xError(error);
@@ -234,176 +239,195 @@ async function Set_Data(intRow)
 
 
     for (let j = 0; j < dT_Period.length; j++) {
-        var headData = dT_Header.filter(x =>
-            x.F_Supplier_Code == dT_PartControl[intRow].F_Supplier_Code &&
-            x.F_Supplier_Plant == dT_PartControl[intRow].F_Supplier_Plant &&
-            x.F_Part_No == dT_PartControl[intRow].F_Part_No &&
-            x.F_Ruibetsu == dT_PartControl[intRow].F_Ruibetsu &&
-            x.F_Store_Code == dT_PartControl[intRow].F_Store_Code &&
-            x.F_Kanban_No == dT_PartControl[intRow].F_Kanban_No &&
-            x.F_Process_Date == dT_Period[j].Date_Now &&
-            x.F_Process_Shift == (dT_Period[j].Row_Num == "1" ? "D" : "N")
-        )[0];
+        try {
+            var headData = dT_Header.filter(x =>
+                x.F_Supplier_Code == dT_PartControl[intRow].F_Supplier_Code &&
+                x.F_Supplier_Plant == dT_PartControl[intRow].F_Supplier_Plant &&
+                x.F_Part_No == dT_PartControl[intRow].F_Part_No &&
+                x.F_Ruibetsu == dT_PartControl[intRow].F_Ruibetsu &&
+                x.F_Store_Code == dT_PartControl[intRow].F_Store_Code &&
+                x.F_Kanban_No == dT_PartControl[intRow].F_Kanban_No &&
+                x.F_Process_Date == dT_Period[j].Date_Now &&
+                x.F_Process_Shift == (dT_Period[j].Row_Num == "1" ? "D" : "N")
+            )[0];
 
-        $("#readQtyPack").val((headData.F_Qty_Box == 0 ? 1 : headData.F_Qty_Box));
-        $("#readUseDay").val(headData.F_TMT_FO);
+            if (headData == undefined) {
+                break;
+            }
 
-        var detailData = dT_Detail.filter(x =>
-            x.F_Supplier_Code == dT_PartControl[intRow].F_Supplier_Code &&
-            x.F_Supplier_Plant == dT_PartControl[intRow].F_Supplier_Plant &&
-            x.F_Part_No == dT_PartControl[intRow].F_Part_No &&
-            x.F_Ruibetsu == dT_PartControl[intRow].F_Ruibetsu &&
-            x.F_Kanban_No == dT_PartControl[intRow].F_Kanban_No &&
-            x.F_Store_Code == dT_PartControl[intRow].F_Store_Code &&
-            x.F_Process_Date == dT_Period[j].Date_Now &&
-            x.F_Process_Shift == (dT_Period[j].Row_Num == "1" ? "D" : "N") &&
-            x.F_Process_Round == dT_Period[j].Row_Num
-        )[0];
+            var detailData = dT_Detail.filter(x =>
+                x.F_Supplier_Code == dT_PartControl[intRow].F_Supplier_Code &&
+                x.F_Supplier_Plant == dT_PartControl[intRow].F_Supplier_Plant &&
+                x.F_Part_No == dT_PartControl[intRow].F_Part_No &&
+                x.F_Ruibetsu == dT_PartControl[intRow].F_Ruibetsu &&
+                x.F_Kanban_No == dT_PartControl[intRow].F_Kanban_No &&
+                x.F_Store_Code == dT_PartControl[intRow].F_Store_Code &&
+                x.F_Process_Date == dT_Period[j].Date_Now &&
+                x.F_Process_Shift == (dT_Period[j].Row_Num == "1" ? "D" : "N") &&
+                x.F_Process_Round == dT_Period[j].Row_Num
+            )[0];
 
-        var volumeData = dT_Volume.filter(x =>
-            x.F_Supplier_Code == dT_PartControl[intRow].F_Supplier_Code &&
-            x.F_Supplier_Plant == dT_PartControl[intRow].F_Supplier_Plant &&
-            x.F_Part_No == dT_PartControl[intRow].F_Part_No &&
-            x.F_Ruibetsu == dT_PartControl[intRow].F_Ruibetsu &&
-            x.F_Kanban_No == dT_PartControl[intRow].F_Kanban_No &&
-            x.F_Store_Code == dT_PartControl[intRow].F_Store_Code &&
-            x.F_Delivery_Date == dT_Period[j].Date_Now &&
-            //x.F_Process_Shift == (dT_Period[j].Row_Num == "1" ? "D" : "N") &&
-            x.F_Delivery_Round == dT_Period[j].Row_Num
-        )[0];
+            var volumeData = dT_Volume.filter(x =>
+                x.F_Supplier_Code == dT_PartControl[intRow].F_Supplier_Code &&
+                x.F_Supplier_Plant == dT_PartControl[intRow].F_Supplier_Plant &&
+                x.F_Part_No == dT_PartControl[intRow].F_Part_No &&
+                x.F_Ruibetsu == dT_PartControl[intRow].F_Ruibetsu &&
+                x.F_Kanban_No == dT_PartControl[intRow].F_Kanban_No &&
+                x.F_Store_Code == dT_PartControl[intRow].F_Store_Code &&
+                x.F_Delivery_Date == dT_Period[j].Date_Now &&
+                //x.F_Process_Shift == (dT_Period[j].Row_Num == "1" ? "D" : "N") &&
+                x.F_Delivery_Round == dT_Period[j].Row_Num
+            )[0];
 
-        var actualData = dT_Actual_Receive.filter(x =>
-            x.F_Supplier_code == dT_PartControl[intRow].F_Supplier_Code &&
-            x.F_Supplier_Plant == dT_PartControl[intRow].F_Supplier_Plant &&
-            x.F_PART_No == dT_PartControl[intRow].F_Part_No &&
-            x.F_RUibetsu == dT_PartControl[intRow].F_Ruibetsu &&
-            // x.F_Kanban_No == dT_PartControl[intRow].F_Kanban_No &&
-            x.F_Store_Cd == dT_PartControl[intRow].F_Store_Code &&
-            x.F_Receive_Date == dT_Period[j].Date_Now
-            //x.F_Process_Shift == (dT_Period[j].Row_Num == "1" ? "D" : "N") &&
-            // x.F_Delivery_Trip == dT_Period[j].Row_Num
-        );
+            var actualData = dT_Actual_Receive.filter(x =>
+                x.F_Supplier_code == dT_PartControl[intRow].F_Supplier_Code &&
+                x.F_Supplier_Plant == dT_PartControl[intRow].F_Supplier_Plant &&
+                x.F_PART_No == dT_PartControl[intRow].F_Part_No &&
+                x.F_RUibetsu == dT_PartControl[intRow].F_Ruibetsu &&
+                // x.F_Kanban_No == dT_PartControl[intRow].F_Kanban_No &&
+                x.F_Store_Cd == dT_PartControl[intRow].F_Store_Code &&
+                x.F_Receive_Date == dT_Period[j].Date_Now
+                //x.F_Process_Shift == (dT_Period[j].Row_Num == "1" ? "D" : "N") &&
+                // x.F_Delivery_Trip == dT_Period[j].Row_Num
+            );
 
-        await GetBL(dT_Period[j].Date_Now, dT_Period[j].Row_Num, intRow);
+            await GetBL(dT_Period[j].Date_Now, dT_Period[j].Row_Num, intRow);
 
-        //console.log(headData);
-        //console.log(detailData);
-        //console.log(volumeData);
-        //console.log(dT_Period[j].Date_Now);
-        //console.log(dT_Period[j].Row_Num);
-        //console.log(actualData);
+            //console.log(headData);
+            //console.log(detailData);
+            //console.log(volumeData);
+            //console.log(dT_Period[j].Date_Now);
+            //console.log(dT_Period[j].Row_Num);
+            //console.log(actualData);
 
-        for (let i = 1; i <= 18; i++) {
-            try {
-                //console.log(dT_Period);
-                //console.log(dT_PartControl[intRow].F_Part_No);
-                //console.log(dT_PartControl[intRow].F_Ruibetsu);
-                //console.log(dT_PartControl[intRow].F_Kanban_No);
-                //console.log(dT_PartControl[intRow].F_Store_Code);
-                //console.log(dT_Period[j].Date_Now);
-                //console.log(dT_Period[j].Row_Num == "1" ? "D" : "N");
+            for (let i = 1; i <= 18; i++) {
+                try {
+                    //console.log(dT_Period);
+                    //console.log(dT_PartControl[intRow].F_Part_No);
+                    //console.log(dT_PartControl[intRow].F_Ruibetsu);
+                    //console.log(dT_PartControl[intRow].F_Kanban_No);
+                    //console.log(dT_PartControl[intRow].F_Store_Code);
+                    //console.log(dT_Period[j].Date_Now);
+                    //console.log(dT_Period[j].Row_Num == "1" ? "D" : "N");
 
-                let _idPcs = `TD_R${i}_T${dT_Period[j].Row_Num}_Pcs_${dT_Period[j].Date_Now}`;
-                let _idKB = `TD_R${i}_T${dT_Period[j].Row_Num}_KB_${dT_Period[j].Date_Now}`;
-                let _idT = `TD_R${i}_T${dT_Period[j].Row_Num}_${dT_Period[j].Date_Now}`;
+                    let _idPcs = `TD_R${i}_T${dT_Period[j].Row_Num}_Pcs_${dT_Period[j].Date_Now}`;
+                    let _idKB = `TD_R${i}_T${dT_Period[j].Row_Num}_KB_${dT_Period[j].Date_Now}`;
+                    let _idT = `TD_R${i}_T${dT_Period[j].Row_Num}_${dT_Period[j].Date_Now}`;
 
-                //console.log(keyHead[i - 1]);
-                //console.log(headData[keyHead[i - 1]]);
-                //console.log(_idPcs);
+                    //console.log(keyHead[i - 1]);
+                    //console.log(headData[keyHead[i - 1]]);
+                    //console.log(_idPcs);
 
-                if (i == 8) {
-                    let Total_Order = headData.F_Lot_SizeOrder * headData.F_Qty_Box;
-                    $(`#${_idPcs}`).text(Total_Order);
-                    $(`#${_idKB}`).text(headData.F_Lot_SizeOrder);
-                }
-                else if (i == 9 || i == 10) {
-                    $(`#${_idKB}`).text((headData[keyHead[i - 1]] == undefined ? 0 : headData[keyHead[i - 1]]));
-                    if (i == 10) $(`#${_idPcs}`).text((headData[keyHead[i - 1]] == undefined ? 0 : headData[keyHead[i - 1]] * headData.F_Qty_Box));
-                    else if (i != 9) $(`#${_idPcs}`).text((headData[keyHead[i - 1]] == undefined ? 0 : headData[keyHead[i - 1]]));
-                }
-                else if (i == 12) {
-                    $(`#${_idPcs}`).text((headData[keyHead[i - 1]] == undefined ? 0 : headData[keyHead[i - 1]]));
-                    //$(`#${_idT}`).text((headData[keyHead[i - 1]] == undefined ? "" : headData[keyHead[i - 1]] == 0 ? "" : headData[keyHead[i - 1]]));
-                }
-                else if (i < 13) {
-                    $(`#${_idPcs}`).text((headData[keyHead[i - 1]] == undefined ? 0 : headData[keyHead[i - 1]]));
-                }
-                else if (i == 13) {
-                    //$(`#${_idKB}`).text((headData[keyHead[i - 1]] == undefined ? "" : headData[keyHead[i - 1]] == 0 ? "" : headData[keyHead[i - 1]]));
-                    //$(`#${_idPcs}`).text((headData[keyHead[i - 1]] == undefined ? "" : headData[keyHead[i - 1]] == 0 ? "" : headData[keyHead[i - 1]]));
-                    $(`#${_idKB}`).text((headData[keyHead[i - 1]] == undefined ? headData[keyHead[i - 1]] == 0 ? "" : headData[keyHead[i - 1]] : headData[keyHead[i - 1]]));
-                    $(`#${_idPcs}`).text((headData[keyHead[i - 1]] == undefined ? headData[keyHead[i - 1]] == 0 ? "" : headData[keyHead[i - 1]] : headData[keyHead[i - 1]]));
-                }
-                //else if (i == 15)
-                //{
-                //    console.log(keyHead);
-                //    conzole.log(i - 1);
-                //    console.log(headData[keyHead[i - 1]]);
-                //    $(`#${_idKB}`).text((headData[keyHead[i - 1]] == undefined ? 0 : headData[keyHead[i - 1]]));
-                //    $(`#${_idPcs}`).text((headData[keyHead[i - 1]] == undefined ? 0 : headData[keyHead[i - 1]] * headData.F_Qty_Box));
-                //}
-
-                //for DetailData
-                if (i <= 2 || (i >= 8 && i <= 12) || i == 16 || i == 18)
-                {
-                    if (i === 11 || i === 12) {
-                        $(`#${_idT}`).text(detailData[keyDetail[i - 1]] == 0 ? "" : detailData[keyDetail[i - 1]]);
+                    if (i == 8) {
+                        let Total_Order = headData.F_Lot_SizeOrder * headData.F_Qty_Box;
+                        $(`#${_idPcs}`).text(Total_Order);
+                        $(`#${_idKB}`).text(headData.F_Lot_SizeOrder);
                     }
-                    else $(`#${_idT}`).text(detailData[keyDetail[i - 1]]);
-                }
+                    else if (i == 9 || i == 10) {
+                        $(`#${_idKB}`).text((headData[keyHead[i - 1]] == undefined ? 0 : headData[keyHead[i - 1]]));
+                        if (i == 10) $(`#${_idPcs}`).text((headData[keyHead[i - 1]] == undefined ? 0 : headData[keyHead[i - 1]] * headData.F_Qty_Box));
+                        else if (i != 9) $(`#${_idPcs}`).text((headData[keyHead[i - 1]] == undefined ? 0 : headData[keyHead[i - 1]]));
+                    }
+                    else if (i == 12) {
+                        $(`#${_idPcs}`).text((headData[keyHead[i - 1]] == undefined ? 0 : headData[keyHead[i - 1]]));
+                        //$(`#${_idT}`).text((headData[keyHead[i - 1]] == undefined ? "" : headData[keyHead[i - 1]] == 0 ? "" : headData[keyHead[i - 1]]));
+                    }
+                    else if (i < 13) {
+                        $(`#${_idPcs}`).text((headData[keyHead[i - 1]] == undefined ? 0 : headData[keyHead[i - 1]]));
+                    }
+                    else if (i == 13) {
+                        //$(`#${_idKB}`).text((headData[keyHead[i - 1]] == undefined ? "" : headData[keyHead[i - 1]] == 0 ? "" : headData[keyHead[i - 1]]));
+                        //$(`#${_idPcs}`).text((headData[keyHead[i - 1]] == undefined ? "" : headData[keyHead[i - 1]] == 0 ? "" : headData[keyHead[i - 1]]));
+                        $(`#${_idKB}`).text((headData[keyHead[i - 1]] == undefined ? headData[keyHead[i - 1]] == 0 ? "" : headData[keyHead[i - 1]] : headData[keyHead[i - 1]]));
+                        $(`#${_idPcs}`).text((headData[keyHead[i - 1]] == undefined ? headData[keyHead[i - 1]] == 0 ? "" : headData[keyHead[i - 1]] : headData[keyHead[i - 1]]));
+                    }
+                    //else if (i == 15)
+                    //{
+                    //    console.log(keyHead);
+                    //    conzole.log(i - 1);
+                    //    console.log(headData[keyHead[i - 1]]);
+                    //    $(`#${_idKB}`).text((headData[keyHead[i - 1]] == undefined ? 0 : headData[keyHead[i - 1]]));
+                    //    $(`#${_idPcs}`).text((headData[keyHead[i - 1]] == undefined ? 0 : headData[keyHead[i - 1]] * headData.F_Qty_Box));
+                    //}
 
-                //for VolumeData
-                if (i == 15) { //|| i == 17) {
-                    if (volumeData !== undefined) {
-                        if (volumeData.F_Qty !== undefined) {
-                            $(`#${_idPcs}`).text(volumeData.F_Qty);
-                            $(`#${_idKB}`).text(volumeData.F_Receive_Plan);
-                            $(`#${_idT}`).text(volumeData.F_Receive_Plan);
+                    //for DetailData
+                    if (i <= 2 || (i >= 8 && i <= 12) || i == 16 || i == 18) {
+                        if (i === 11 || i === 12) {
+                            $(`#${_idT}`).text(detailData[keyDetail[i - 1]] == 0 ? "" : detailData[keyDetail[i - 1]]);
                         }
-                        else {
+                        else $(`#${_idT}`).text(detailData[keyDetail[i - 1]]);
+                    }
+
+                    //for VolumeData
+                    if (i == 15) { //|| i == 17) {
+                        if (volumeData !== undefined) {
+                            if (volumeData.F_Qty !== undefined) {
+                                $(`#${_idPcs}`).text(volumeData.F_Qty);
+                                $(`#${_idKB}`).text(volumeData.F_Receive_Plan);
+                                $(`#${_idT}`).text(volumeData.F_Receive_Plan);
+                            }
+                            else {
+                                $(`#${_idPcs}`).text("0");
+                                $(`#${_idKB}`).text("0");
+                                $(`#${_idT}`).text("0");
+                            }
+                        }
+                        else if (headData !== undefined && detailData !== undefined) {
                             $(`#${_idPcs}`).text("0");
                             $(`#${_idKB}`).text("0");
                             $(`#${_idT}`).text("0");
                         }
                     }
-                    else if (headData !== undefined && detailData !== undefined) {
-                        $(`#${_idPcs}`).text("0");
-                        $(`#${_idKB}`).text("0");
+
+                    if (i === 17) {
+                        let sumReceiveActual = 0;
                         $(`#${_idT}`).text("0");
-                    }
-                }
+                        actualData.forEach(function (x) {
+                            sumReceiveActual += x.F_Receive_QTY;
+                        })
 
-                if (i === 17)
-                {
-                    let sumReceiveActual = 0;
-                    $(`#${_idT}`).text("0");
-                    actualData.forEach(function (x) {
-                        sumReceiveActual += x.F_Receive_QTY;
-                    })
+                        $(`#${_idKB}`).text(sumReceiveActual / headData.F_Qty_Box);
+                        $(`#${_idPcs}`).text(sumReceiveActual);
 
-                    $(`#${_idKB}`).text(sumReceiveActual / headData.F_Qty_Box);
-                    $(`#${_idPcs}`).text(sumReceiveActual);
-
-                    if (dT_Period[j].Row_Num == "1") {
-                        if (actualData != undefined) {
-                            $(`#${_idT}`).text(actualData[0].F_Receive_QTY / headData.F_Qty_Box);
+                        if (dT_Period[j].Row_Num == "1") {
+                            if (actualData != undefined) {
+                                $(`#${_idT}`).text(actualData[0].F_Receive_QTY / headData.F_Qty_Box);
+                            }
                         }
-                    }
-                    if (dT_Period[j].Row_Num == "2") {
-                        if (actualData != undefined) {
-                            $(`#${_idT}`).text(actualData[1].F_Receive_QTY / headData.F_Qty_Box);
+                        if (dT_Period[j].Row_Num == "2") {
+                            if (actualData != undefined) {
+                                $(`#${_idT}`).text(actualData[1].F_Receive_QTY / headData.F_Qty_Box);
+                            }
                         }
+
                     }
 
                 }
-
-            }
-            catch (e) {
-                //console.log(e);
-                continue;
+                catch (e) {
+                    //console.log(e);
+                    continue;
+                }
             }
         }
+        catch (e) {
+
+        }
     }
+    var findHeadData = dT_Header.filter(x =>
+        x.F_Supplier_Code == dT_PartControl[intRow].F_Supplier_Code &&
+        x.F_Supplier_Plant == dT_PartControl[intRow].F_Supplier_Plant &&
+        x.F_Part_No == dT_PartControl[intRow].F_Part_No &&
+        x.F_Ruibetsu == dT_PartControl[intRow].F_Ruibetsu &&
+        x.F_Store_Code == dT_PartControl[intRow].F_Store_Code &&
+        x.F_Kanban_No == dT_PartControl[intRow].F_Kanban_No &&
+        x.F_Process_Date == moment($("#inputProcessDateFor").val(), "DD/MM/YYYY").format("YYYYMMDD") &&
+        x.F_Process_Shift == $("#inputProcessShiftFor").val()
+    )[0];
+
+    $("#readQtyPack").val((findHeadData.F_Qty_Box == 0 ? 1 : findHeadData.F_Qty_Box));
+    $("#readUseDay").val(findHeadData.F_TMT_FO);
+    $("#spanDeliveryDate").text(moment(dT_DeliveryDate[0].F_Delivery_Date, "YYYYMMDD").format("DD/MM/YYYY"));
+    $("#spanProcessDate").text($("#inputProcessDateFor").val());
 
 }
 
@@ -435,7 +459,138 @@ async function Onload() {
     }
     return _xLib.AJAX_Get("/api/KBNOR321/Onload", obj,
         async function (success) {
+            success = _xLib.JSONparseMixData(success);
             console.log(success);
+            $("#inputPlant").val(_xLib.GetCookie("plantCode") + ":Fac-" + _xLib.GetCookie("plantCode"));
+            $("#inputProcessDateFor").val(moment(success.data[0].ProcessDate.slice(0, 10), "YYYY-MM-DD").format("DD/MM/YYYY"));
+            $("#inputProcessShiftFor").val(success.data[0].ProcessShift);
+            
         },
     )
+}
+
+async function GetInformNews() {
+    let obj = {
+        F_Supplier_Code: $("#readSupplier").val(),
+        F_Kanban: $("#readKanbanNo").val(),
+        F_Store: $("#readStoreCode").val(),
+        F_Part: $("#readPartNo").val()
+    }
+    return _xLib.AJAX_Get("/api/KBNOR321/GetInformNews", obj,
+        async function (success) {
+            //success = _xLib.JSONparseMixData(success);
+            console.log(success);
+            $("#txtNews").text(success.data.f_Text);
+            
+        },
+    )
+}
+
+async function Detail_Data(intRow) {
+    let obj = {
+        F_Supplier_Code: $("#inputSupplier").val(),
+        intRow: intRow
+    }
+    return _xLib.AJAX_Get("/api/KBNOR321/Detail_Data", obj,
+        async function (success) {
+            console.log(success);
+            $("#readLine").val(success.data[0])
+            $("#readPartName").val(success.data[1])
+            $("#readSupplierName").val(success.data[2])
+            $("#readMaxArea").val(success.data[3])
+            $("#readStdBPcs").val(success.data[4])
+            $("#readSafetyStock").val(success.data[5])
+            $("#readForecastMax").val(success.data[6])
+            $("#readStdStock").val(success.data[7])
+            $("#readMinStock").val(success.data[8])
+            let intCycleB = parseInt($("#readCycleTime").val().slice(3, 5));
+            let intQtyBox = parseInt($("#readQtyPack").val());
+            console.log(intCycleB)
+            console.log(intQtyBox)
+            let totalLimit = Math.ceil(Math.floor((parseInt(success.data[6]) / intCycleB) / intQtyBox)) * intQtyBox;
+            console.log(totalLimit);
+            $("#readLimitTrip").val(totalLimit)
+
+            //let base = Math.floor(parseInt(success.data[6]) / intCycleB / intQtyBox);
+            //let totalLimit = Math.ceil(base) * intQtyBox;
+        },
+    )
+}
+
+async function EditTableStyle(action) {
+    var processDate = moment($("#inputProcessDateFor").val(), "DD/MM/YYYY").format("YYYYMMDD");
+    $(document).find("th[id*='thDate']").each(function () {
+        if ($(this).attr("id").includes(processDate)) {
+            $(this).addClass("bg-warning");
+        }
+        else {
+            $(this).addClass("bg-success");
+        }
+        $(this).addClass("fw-bolder");
+    });
+    if (action.toLowerCase() == "preview") {
+        //console.log(action);
+        $(document).find("td[id*='Pcs']").each(function () {
+            //console.log($(this));
+            $(this).css("background-color", "#C0C0C0");
+            $(this).css("border-color", "#A9A9A9");
+
+            let atrID = $(this).attr("id") !== undefined ? $(this).attr("id") : "";
+            if (atrID.includes("R1_")) {
+                $(this).css("font-weight", "800");
+            }
+        });
+        $(document).find("td[id*='KB']").each(function () {
+            //console.log($(this));
+            $(this).css("background-color", "#C0C0C0");
+            $(this).css("border-color", "#A9A9A9");
+        });
+        $(document).find("td").not("[id*='KB'],td[id*='Pcs']").each(function (e,t) {
+            //console.log($(this));
+            $(this).css("background-color", "#E0E0E0");
+            $(this).css("border-color", "#A9A9A9");
+            //console.log($(this).attr("id"));
+            if ($(this).attr("id") === undefined) {
+                return;
+            }
+            let atrID = $(this).attr("id") !== undefined ? $(this).attr("id") : "";
+            if (atrID.includes("R1_")) {
+                var index = $("#tableMaster").find("#" + atrID).index();
+                //console.log(index);
+                index = index - (index / 3);
+                var findHeadR2 = $("#tableMaster tr[id='THeadR2'] th").eq(index);
+                //console.log(findHeadR2);
+                let atrStyle = findHeadR2.attr("style");
+                let atrClass = findHeadR2.attr("class").split("tempHead")[1];
+                //if (findHeadR2)
+                $(this).attr("style", atrStyle);
+                $(this).attr("class", "tempDetail" + atrClass);
+                $(this).css("font-weight", "800");
+            }
+            else if (atrID.includes("R16_") || atrID.includes("R18_"))
+            {
+                let STD_B = parseInt($("#readStdBPcs").val())
+                let STD_Stock = parseInt($("#readStdStock").val())
+                let Min_Stock = parseInt($("#readMinStock").val())
+
+
+                let Value = parseInt($(this).text());
+
+                //console.log(STD_B)
+                //console.log(STD_Stock)
+                //console.log(Min_Stock)
+                //console.log(Value)
+
+                if (Value >= STD_B) {
+                    $(this).addClass("bg-warning");
+                }
+                else if (Value >= Min_Stock && Value < STD_B) {
+                    $(this).addClass("bg-success");
+                }
+                else if (Value < Min_Stock) {
+                    $(this).addClass("bg-danger");
+                }
+            }
+        });
+    }
 }

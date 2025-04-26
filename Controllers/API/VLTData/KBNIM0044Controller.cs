@@ -107,13 +107,13 @@ namespace HINOSystem.Controllers.API.Master
         }
 
         [HttpPost]
-        public async Task<IActionResult> Confirm(List<TB_Import_VHD> listData)
+        public async Task<IActionResult> Confirm([FromBody] List<TB_Import_VHD> listData, [FromQuery] string InchargeUser)
         {
             try
             {
                 await _BearerClass.CheckAuthorize();
 
-                await _importRepo.KBNIM0044.Confirm(listData);
+                await _importRepo.KBNIM0044.Confirm(listData, InchargeUser);
 
                 return Ok(new
                 {

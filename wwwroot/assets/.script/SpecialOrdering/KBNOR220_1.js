@@ -256,6 +256,7 @@ $("#btnSave").click(SaveClicked = async () => {
         },
         async (error) => {
             console.log(error);
+            xSwal.xError(error);
         }
     );
 

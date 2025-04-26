@@ -2,6 +2,7 @@
 using HINOSystem.Libs;
 using KANBAN.Context;
 using KANBAN.Libs;
+using KANBAN.Models.KB3.OrderingProcess;
 using KANBAN.Services.Automapper.Interface;
 using KANBAN.Services.CKD_Ordering.IRepository;
 using Microsoft.Data.SqlClient;
@@ -63,12 +64,32 @@ namespace KANBAN.Services.CKD_Ordering.Repository
         private static DataTable DT_AdjustOrder_Trip = new DataTable();
         private static DataTable DT_Actual_Receive = new DataTable();
 
-        public async Task Onload(string _loginDate)
+        public async Task<DataTable> Onload(string _loginDate)
         {
             try
             {
                 DateLogin = DateTime.ParseExact(_loginDate.Substring(0, 10), "yyyy-MM-dd", CultureInfo.InvariantCulture);
                 ShiftLogin = _loginDate.Substring(10, 1);
+
+                if (ShiftLogin == "D")
+                {
+                    DateLogin = new DateTime(DateLogin.Year, DateLogin.Month, DateLogin.Day, 7, 30, 0);
+                }
+                else
+                {
+                    DateLogin = new DateTime(DateLogin.Year, DateLogin.Month, DateLogin.Day, 19, 30, 0);
+                }
+
+                var sqlParams = new List<SqlParameter>
+                {
+                    new SqlParameter("@Plant",_BearerClass.Plant),
+                    new SqlParameter("@getDate",DateLogin)
+                };
+
+                var dt = await _FillDT.ExecuteStoreSQLAsync("[CKD_Inhouse].[sp_getProcessDateTime]", sqlParams.ToArray());
+
+                return dt;
+
             }
             catch (Exception ex)
             {
@@ -494,7 +515,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
 
                 var sqlParams = new List<SqlParameter>
                 {
-                    new SqlParameter("@Plant",charStartDate),
+                    new SqlParameter("@Plant",_BearerClass.Plant),
                     new SqlParameter("@Supplier_Code",F_Supplier_Code.Split("-")[0]),
                     new SqlParameter("@Supplier_Plant",F_Supplier_Code.Split("-")[1]),
                     new SqlParameter("@Part_No",DT_PartControl.Rows[intRow]["F_Part_No"].ToString().Trim()),
@@ -561,8 +582,14 @@ namespace KANBAN.Services.CKD_Ordering.Repository
 
                 _dt = await _FillDT.ExecuteStoreSQLAsync("sp_getSTD_B", sqlParams.ToArray());
 
-                string STD_B = Math.Round(decimal.Parse(_dt.Rows[0]["STD_B"].ToString())).ToString();
+                string STD_B = decimal.TryParse(_dt.Rows[0]["STD_B"].ToString(), null, out decimal result1) ? Math.Round(result1).ToString() : 0m.ToString();
                 string Safety_Stock = _dt.Rows[0]["Safety_Stock"].ToString();
+
+                _dt = await _FillDT.ExecuteStoreSQLAsync("sp_getSTDStock", sqlParams.ToArray());
+                string STD_Stock = decimal.TryParse(_dt.Rows[0]["STDStock"].ToString(), null, out decimal result2) ? Math.Round(result2).ToString() : 0m.ToString();
+
+                _dt = await _FillDT.ExecuteStoreSQLAsync("sp_getMinStock", sqlParams.ToArray());
+                string Min_Stock = decimal.TryParse(_dt.Rows[0]["Min_Stock"].ToString(), null, out decimal result3) ? Math.Round(result3).ToString() : 0m.ToString();
 
                 var result = new List<string>
                 {
@@ -572,6 +599,9 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                     maxArea,
                     STD_B,
                     Safety_Stock,
+                    forecastMax,
+                    STD_Stock,
+                    Min_Stock
                 };
 
                 return result;
@@ -637,6 +667,30 @@ namespace KANBAN.Services.CKD_Ordering.Repository
 
                     return result;
                 }
+            }
+            catch (Exception ex)
+            {
+                if (ex is CustomHttpException) throw;
+                else if (ex.InnerException != null) throw new CustomHttpException(500, ex.InnerException.Message);
+                else throw new CustomHttpException(500, ex.Message);
+            }
+        }
+
+        public async Task<TB_MS_Inform_News> GetInformNews(string F_Supplier_Code, string F_Kanban, string F_Store, string F_Part)
+        {
+            try
+            {
+                var dbNews = await _kbContext.TB_MS_Inform_News.AsNoTracking()
+                    .Where(x => x.F_Supplier_Code + "-" + x.F_Supplier_Plant == F_Supplier_Code
+                    && x.F_Store_Code == F_Store && x.F_Kanban_No.Trim() == F_Kanban
+                    && x.F_Part_No.Trim() + "-" + x.F_Ruibetsu == F_Part).FirstOrDefaultAsync();
+
+                if (dbNews == null)
+                {
+                    throw new CustomHttpException(500, "Inform News Not Found");
+                }
+
+                return dbNews;
             }
             catch (Exception ex)
             {

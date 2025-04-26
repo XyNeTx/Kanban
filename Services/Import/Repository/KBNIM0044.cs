@@ -172,6 +172,24 @@ namespace KANBAN.Services.Import.Repository
                         }
 
                     }
+                    else
+                    {
+                        var listDbDeliveryTime = await _kbContext.TB_MS_DeliveryTime.AsNoTracking()
+                            .Where(x => (x.F_Delivery_Time.CompareTo("07:29") >= 0 || x.F_Delivery_Time.CompareTo("19:30") <= 0)
+                            && x.F_Supplier_Code == "2937"
+                            && x.F_Supplier_Plant == "Z")
+                            .OrderBy(x => x.F_Delivery_Trip)
+                            .ToListAsync();
+
+                        var dbDeliveryTime = listDbDeliveryTime.FirstOrDefault();
+                        var dbDeliveryTimeMax = listDbDeliveryTime.OrderByDescending(x => x.F_Delivery_Trip).FirstOrDefault();
+
+                        if (dbDeliveryTime != null)
+                        {
+                            sumDeliveryTrip = dbDeliveryTime.F_Delivery_Trip - 1;
+                            maxTrip = int.Parse(dbDeliveryTimeMax.F_Cycle.Substring(2, 2));
+                        }
+                    }
 
                     if (vltData == null) throw new CustomHttpException(404, "Data not found");
 
@@ -201,7 +219,7 @@ namespace KANBAN.Services.Import.Repository
             }
         }
 
-        public async Task Confirm(List<TB_Import_VHD> listData)
+        public async Task Confirm(List<TB_Import_VHD> listData, string InchargeUser)
         {
             using var dbTrans = await _kbContext.Database.BeginTransactionAsync();
             try
@@ -224,25 +242,31 @@ namespace KANBAN.Services.Import.Repository
                     sim.F_Update_By = _BearerClass.UserCode;
                     sim.F_Update_Date = DateTime.Now;
 
-                    //_kbContext.TB_Import_VHD.Update(sim);
-
-                    //LogMsg += Environment.NewLine + "Confirming IMPORT VHD Data => " + JsonConvert.SerializeObject(sim);
                 }
 
                 _kbContext.TB_Import_VHD.UpdateRange(listData);
                 await _kbContext.SaveChangesAsync();
+                LogMsg = "Confirming IMPORT VHD Data => " + JsonConvert.SerializeObject(listData, Formatting.Indented);
+                _log.WriteLogMsg(LogMsg);
 
-                string sql = $@"SELECT COUNT(*) FROM TB_Order
-                WHERE F_Update_By = '{_BearerClass.UserCode}' ";
+                var chkData = await _kbContext.TB_Transaction.AsNoTracking()
+                    .Where(x => x.F_Update_By == _BearerClass.UserCode
+                    && x.F_Type == "VLT" && x.F_Type_Spc == "Sequence")
+                    .ToListAsync();
 
-                var dtChk = await _FillDT.ExecuteSQLAsync(sql);
-
-                if (dtChk != null && dtChk.Rows.Count == listData.Count)
+                if (chkData.Count == listData.Count)
                 {
+                    foreach (var each in chkData)
+                    {
+                        each.F_Update_By = InchargeUser;
+                        //each.F_Process_By = InchargeUser;
+                        _kbContext.Attach(each);
+                        _kbContext.Entry(each).State = EntityState.Modified;
+                        await _kbContext.SaveChangesAsync();
+                    }
                     await dbTrans.CommitAsync();
-                    LogMsg = "Confirm IMPORT VHD Data => " + JsonConvert.SerializeObject(listData, Formatting.Indented);
+                    LogMsg = "Confirmed IMPORT VHD Data => " + JsonConvert.SerializeObject(chkData, Formatting.Indented);
                     _log.WriteLogMsg(LogMsg);
-
                 }
                 else
                 {
@@ -252,6 +276,7 @@ namespace KANBAN.Services.Import.Repository
             }
             catch (Exception ex)
             {
+                await dbTrans.RollbackAsync();
                 if (ex is CustomHttpException) throw;
                 else throw new CustomHttpException(500, ex.InnerException?.Message ?? ex.Message);
             }

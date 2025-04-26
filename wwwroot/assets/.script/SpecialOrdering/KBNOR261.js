@@ -56,6 +56,9 @@ Approve = async () => {
             xSwal.success(success.response, success.message);
             $("#tableMain").DataTable().clear().draw();
             //GetPDSWaitApprove();
+        },
+        async (error) => {
+            xSwal.xError(error);
         }
     );
 
@@ -75,6 +78,9 @@ Preview = async (e) => {
             let link = `http://hmmta-tpcap/E-Report/Report.aspx?Register=REC&PDSNoFrom=${data.F_OrderNO}&PDSNoTo=${data.F_OrderNO}&DateFrom=2024-07-01&DateTo=2999-12-31`;
 
             window.open(link, "_blank");
+        },
+        async (error) => {
+            xSwal.xError(error);
         }
     );
 }

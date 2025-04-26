@@ -152,6 +152,9 @@ Unlock = async () => {
                 $("#tableMain").DataTable().row($(this).closest("tr")).remove().draw(false);
             });
             //await $("#mthDeliYM").trigger("change");
+        },
+        async (error) => {
+            xSwal.xError(error);
         }
     );
 }
@@ -181,6 +184,9 @@ Generate = async () => {
                 $("#tableMain").DataTable().row($(this).closest("tr")).remove().draw(false);
             });
             //await $("#mthDeliYM").trigger("change");
+        },
+        async (error) => {
+            xSwal.xError(error);
         }
     );
 }

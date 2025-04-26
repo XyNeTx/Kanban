@@ -132,7 +132,8 @@ function SaveColorTag() {
             xSwal.success(success.response, success.message);
             return LoadColorTag();
         },
-        function (error) {
+        async (error) => {
+            xSwal.xError(error);
             console.log(error);
         }
     );

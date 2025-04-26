@@ -166,6 +166,7 @@ $(document).on('change', 'input[type="file"]', function () {
         },
         function (error) {
             console.log(error);
+            xSwal.xError(error);
         }
     );
 
@@ -202,6 +203,7 @@ function Confirm() {
             },
             function (error) {
                 console.log(error);
+                xSwal.xError(error);
             }
         );
     }

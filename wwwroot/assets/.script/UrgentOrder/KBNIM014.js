@@ -109,7 +109,11 @@ $("#btnImport").click(async function () {
             function (err) {
                 if (err.responseJSON.message.includes("Have Some Error")) {
                     xSwal.error("Error !!", err.responseJSON.message);
-                    return _xLib.OpenReport("KBNIMERR", `&UserID=${err.responseJSON.userid}&Type=${err.responseJSON.type}`);
+                    let obj = {
+                        UserID: err.responseJSON.userid,
+                        Type: err.responseJSON.type,
+                    }
+                    return _xLib.OpenReportObj("/KBNIMERR", obj);
                 }
                 else if (err.responseJSON.message.includes("<br>")) {
                     xSwal.xError(err);

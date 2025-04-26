@@ -110,40 +110,43 @@ namespace KANBAN.Services.Logistical.Repository
             }
         }
 
+
         public async Task<bool> Interface(string YM, string Rev, string StartDate)
         {
-            using var transaction = await _kbContext.Database.BeginTransactionAsync();
+            //using var transaction = await _kbContext.Database.BeginTransactionAsync();
             try
             {
-                await _kbContext.Database.ExecuteSqlRawAsync("EXEC [exec].[spKBNLC190]  @Plant,@YM,@Rev,@StartDate,@User",
-                        new SqlParameter("@Plant", _BearerClass.Plant),
-                        new SqlParameter("@YM", YM),
-                        new SqlParameter("@Rev", Rev),
-                        new SqlParameter("@StartDate", StartDate),
-                        new SqlParameter("@User", _BearerClass.UserCode)
-                     );
-
+                await _kbContext.Database.ExecuteSqlRawAsync("EXEC [exec].[spKBNLC190]  @Plant,@YM,@Rev,@StartDate,@User",
+                new SqlParameter("@Plant", _BearerClass.Plant),
+                new SqlParameter("@YM", YM),
+                new SqlParameter("@Rev", Rev),
+                new SqlParameter("@StartDate", StartDate),
+                new SqlParameter("@User", _BearerClass.UserCode)
+                );
 
                 int CheckError = await _kbContext.Database.SqlQueryRaw<int>(
-                    $"Select COUNT(*) AS VALUE From TB_Import_Error Where F_Update_By " +
-                    $"= {_BearerClass.UserCode} and F_TYpe ='KBNLC190'")
-                    .FirstOrDefaultAsync();
+                $"Select COUNT(*) AS VALUE From TB_Import_Error Where F_Update_By " +
+                $"= {_BearerClass.UserCode} and F_TYpe ='KBNLC190'")
+                .FirstOrDefaultAsync();
 
                 if (CheckError > 0)
                 {
-                    await transaction.CommitAsync();
+                    //await transaction.RollbackAsync();
                     throw new Exception("Error Found, Please Check Error Log");
                 }
 
                 var checkImportSuccess = await _kbContext.TB_Import_Delivery.AsNoTracking()
-                    .Where(x => x.F_YM == YM && x.F_Rev == int.Parse(Rev) && x.F_Plant == _BearerClass.Plant)
-                    .ToListAsync();
+                .Where(x => x.F_YM == YM && x.F_Rev == int.Parse(Rev)
+                && x.F_Plant == _BearerClass.Plant && x.F_Flag == "0")
+                .ToListAsync();
 
                 if (checkImportSuccess.Count > 0)
                 {
+                    //await transaction.RollbackAsync();
                     throw new Exception("Error Found, Delivery Time is not Imported");
                 }
-                await transaction.CommitAsync();
+
+                //await transaction.CommitAsync();
 
                 _log.WriteLogMsg($"EXEC [exec].[spKBNLC190] '{_BearerClass.Plant}' , '{YM}' , '{Rev}' , '{StartDate}' , '{_BearerClass.UserCode}' ");
 
@@ -152,13 +155,11 @@ namespace KANBAN.Services.Logistical.Repository
             }
             catch (Exception ex)
             {
-                if (ex.Message != "Error Found, Please Check Error Log")
-                {
-                    await transaction.RollbackAsync();
-                }
+                //await transaction.RollbackAsync();
                 throw new Exception(ex.Message);
             }
         }
+
 
     }
 }

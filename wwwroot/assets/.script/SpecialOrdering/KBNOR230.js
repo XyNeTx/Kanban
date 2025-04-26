@@ -92,6 +92,7 @@ Upload = async () => {
         },
         async (error) => {
             xSplash.hide();
+            xSwal.xError(error);
             console.error(error);
         }
     );

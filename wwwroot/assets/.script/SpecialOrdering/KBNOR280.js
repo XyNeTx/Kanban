@@ -81,6 +81,7 @@ Register = async () => {
             });
         },
         async (error) => {
+            xSwal.xError(error);
             console.error(error);
         }
     );

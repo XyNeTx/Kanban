@@ -289,9 +289,9 @@ namespace KANBAN.Services.SpecialOrdering.Repository
                         }
                         else
                         {
-                            var DTY = await _kbContext.TB_Survey_Header
+                            var DTY = await _kbContext.TB_Survey_Header.AsNoTracking()
                                 .Where(h => h.F_Supplier_CD.Trim() + "-" + h.F_Supplier_Plant.Trim() == obj.SuppCD)
-                                .Join(_kbContext.TB_Survey_Detail
+                                .Join(_kbContext.TB_Survey_Detail.AsNoTracking()
                                 .Where(d => d.F_PO_Customer.Trim() == obj.Survey.Substring(0, obj.Survey.Length - 4)
                                 && d.F_Delivery_Date.StartsWith(obj.Delivery_Date.Substring(0, 6))),
                                 h => new { h.F_Survey_Doc, h.F_Revise_Rev },
@@ -423,6 +423,8 @@ namespace KANBAN.Services.SpecialOrdering.Repository
 
                 _kbContext.TB_Survey_Detail.RemoveRange(delList);
 
+                _log.WriteLogMsg("DELETE TB_Survey_Detail => " + JsonConvert.SerializeObject(delList, Formatting.Indented));
+
                 var DTZ = await _kbContext.TB_Survey_Header
                     .Where(x => x.F_Survey_Doc.Trim() == listObj[0].Survey)
                     .Join(_kbContext.TB_Survey_Detail,
@@ -488,6 +490,10 @@ namespace KANBAN.Services.SpecialOrdering.Repository
                 }
                 else
                 {
+                    var updHead = await _kbContext.TB_Survey_Header
+                        .Where(x => x.F_Survey_Doc.Trim() == listObj[0].Survey).ToListAsync();
+
+                    _log.WriteLogMsg("DELETE TB_Survey_Header => " + JsonConvert.SerializeObject(updHead, Formatting.Indented));
                     await _kbContext.Database.ExecuteSqlRawAsync($"Delete From TB_Survey_Header Where F_Survey_Doc = '{listObj[0].Survey}'");
                 }
 
@@ -524,7 +530,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
                     throw new CustomHttpException(StatusCodes.Status404NotFound, "Data Not Found");
                 }
 
-                return data.Rows[0]["F_PO_Customer"].ToString() + "/" + data.Rows[0]["F_Survey_Running"].ToString().PadRight(3, '0');
+                return data.Rows[0]["F_PO_Customer"].ToString() + "/" + data.Rows[0]["F_Survey_Running"].ToString().PadLeft(3, '0');
             }
             catch (Exception ex)
             {

@@ -1,7 +1,6 @@
 ﻿using HINOSystem.Libs;
 using KANBAN.Services;
 using KANBAN.Services.SpecialOrdering.Interface;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KANBAN.Controllers.API.SpecialOrdering
@@ -24,6 +23,7 @@ namespace KANBAN.Controllers.API.SpecialOrdering
         {
             try
             {
+                await _bearer.CheckAuthorize();
                 var data = await _services.IKBNOR290.ProdYMChanged(YM);
                 return Ok(new
                 {
@@ -47,6 +47,7 @@ namespace KANBAN.Controllers.API.SpecialOrdering
         {
             try
             {
+                await _bearer.CheckAuthorize();
                 var data = await _services.IKBNOR290.GetSuppCD(PO);
                 return Ok(new
                 {
@@ -70,6 +71,7 @@ namespace KANBAN.Controllers.API.SpecialOrdering
         {
             try
             {
+                await _bearer.CheckAuthorize();
                 var data = await _services.IKBNOR290.GetData(PO, Supplier);
 
                 return Ok(new

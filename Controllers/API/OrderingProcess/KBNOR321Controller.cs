@@ -2,6 +2,7 @@
 using KANBAN.Services;
 using KANBAN.Services.CKD_Ordering.IRepository;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace HINOSystem.Controllers.API.Master
 {
@@ -86,13 +87,14 @@ namespace HINOSystem.Controllers.API.Master
             {
                 await _BearerClass.CheckAuthorize();
 
-                await _CKDRepo.IKBNOR321.Onload(_loginDate);
+                var dt = await _CKDRepo.IKBNOR321.Onload(_loginDate);
 
                 return Ok(new
                 {
                     status = "200",
                     response = "Success",
-                    message = "Success"
+                    message = "Success",
+                    data = JsonConvert.SerializeObject(dt)
                 });
             }
             catch (Exception ex)
@@ -101,6 +103,7 @@ namespace HINOSystem.Controllers.API.Master
                 else throw new CustomHttpException(500, ex.InnerException?.Message ?? ex.Message);
             }
         }
+
         [HttpGet]
         public async Task<IActionResult> GetBL(string strDate, string Row_Num, int intRow)
         {
@@ -124,5 +127,55 @@ namespace HINOSystem.Controllers.API.Master
                 else throw new CustomHttpException(500, ex.InnerException?.Message ?? ex.Message);
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Detail_Data(int intRow, string F_Supplier_Code)
+        {
+            try
+            {
+                await _BearerClass.CheckAuthorize();
+
+                var data = await _CKDRepo.IKBNOR321.Detail_Data(intRow, F_Supplier_Code);
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Success",
+                    data = data
+                });
+            }
+            catch (Exception ex)
+            {
+                if (ex is CustomHttpException) throw;
+                else throw new CustomHttpException(500, ex.InnerException?.Message ?? ex.Message);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetInformNews(string F_Supplier_Code, string F_Kanban, string F_Store, string F_Part)
+        {
+            try
+            {
+                await _BearerClass.CheckAuthorize();
+
+                var data = await _CKDRepo.IKBNOR321.GetInformNews(F_Supplier_Code, F_Kanban, F_Store, F_Part);
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Success",
+                    data = data
+                });
+
+            }
+            catch (Exception ex)
+            {
+                if (ex is CustomHttpException) throw;
+                else throw new CustomHttpException(500, ex.InnerException?.Message ?? ex.Message);
+            }
+        }
+
     }
 }

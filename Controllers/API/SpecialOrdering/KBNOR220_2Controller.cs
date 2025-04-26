@@ -2,7 +2,6 @@
 using KANBAN.Models.KB3.SpecialOrdering;
 using KANBAN.Services;
 using KANBAN.Services.SpecialOrdering.Interface;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KANBAN.Controllers.API.SpecialOrdering
@@ -25,6 +24,7 @@ namespace KANBAN.Controllers.API.SpecialOrdering
         {
             try
             {
+                await _bearer.CheckAuthorize();
                 var data = await _services.IKBNOR220_2.GetCalendar(YM);
 
                 return Ok(new { status = "200", response = "Success", message = "Data Found", data = data });
@@ -40,6 +40,7 @@ namespace KANBAN.Controllers.API.SpecialOrdering
         {
             try
             {
+                await _bearer.CheckAuthorize();
                 var data = await _services.IKBNOR220_2.GetPOList();
 
                 return Ok(new { status = "200", response = "Success", message = "Data Found", data = data });
@@ -51,10 +52,11 @@ namespace KANBAN.Controllers.API.SpecialOrdering
         }
 
         [HttpGet]
-        public IActionResult GetSurvey(string YM)
+        public async Task<IActionResult> GetSurvey(string YM)
         {
             try
             {
+                await _bearer.CheckAuthorize();
                 var data = _services.IKBNOR220_2.GetSurvey(YM);
 
                 return Ok(new { status = "200", response = "Success", message = "Data Found", data = data });
@@ -64,12 +66,13 @@ namespace KANBAN.Controllers.API.SpecialOrdering
                 throw new CustomHttpException(ex.StatusCode, ex.Message);
             }
         }
-        
+
         [HttpGet]
-        public IActionResult GetSuppCD(string Survey, string? YM)
+        public async Task<IActionResult> GetSuppCD(string Survey, string? YM)
         {
             try
             {
+                await _bearer.CheckAuthorize();
                 var data = _services.IKBNOR220_2.GetSuppCD(Survey, YM);
 
                 return Ok(new { status = "200", response = "Success", message = "Data Found", data = data });
@@ -79,12 +82,13 @@ namespace KANBAN.Controllers.API.SpecialOrdering
                 throw new CustomHttpException(ex.StatusCode, ex.Message);
             }
         }
-        
+
         [HttpGet]
-        public async Task<IActionResult> GetPartNo(string Survey,string SuppCD)
+        public async Task<IActionResult> GetPartNo(string Survey, string SuppCD)
         {
             try
             {
+                await _bearer.CheckAuthorize();
                 var data = await _services.IKBNOR220_2.GetPartNo(Survey, SuppCD);
 
                 return Ok(new { status = "200", response = "Success", message = "Data Found", data = data });
@@ -100,6 +104,7 @@ namespace KANBAN.Controllers.API.SpecialOrdering
         {
             try
             {
+                await _bearer.CheckAuthorize();
                 var data = await _services.IKBNOR220_2.PartNoSelected(Survey, SuppCD, PartNo);
 
                 return Ok(new { status = "200", response = "Success", message = "Data Found", data = data });
@@ -115,6 +120,7 @@ namespace KANBAN.Controllers.API.SpecialOrdering
         {
             try
             {
+                await _bearer.CheckAuthorize();
                 var data = await _services.IKBNOR220_2.GetCalendarQty(Survey, SuppCD, YM, PartNo);
 
                 return Ok(new { status = "200", response = "Success", message = "Data Found", data = data });
@@ -130,6 +136,7 @@ namespace KANBAN.Controllers.API.SpecialOrdering
         {
             try
             {
+                await _bearer.CheckAuthorize();
                 await _services.IKBNOR220_2.Save(listObj);
 
                 return Ok(new { status = "200", response = "Success", message = "Data Saved" });
@@ -145,6 +152,7 @@ namespace KANBAN.Controllers.API.SpecialOrdering
         {
             try
             {
+                await _bearer.CheckAuthorize();
                 var data = await _services.IKBNOR220_2.GetSupplierName(SuppCD, SuppPlant);
 
                 return Ok(new { status = "200", response = "Success", message = "Data Found", data = data });

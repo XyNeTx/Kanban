@@ -198,7 +198,11 @@ $("#btnMerge").click(async function () {
             } else {
                 xSwal.error("Merge Fail!");
             }
-        })
+        },
+        function (error) {
+            xSwal.xError(error);
+        }
+    )
 
     await xSplash.hide();
 });

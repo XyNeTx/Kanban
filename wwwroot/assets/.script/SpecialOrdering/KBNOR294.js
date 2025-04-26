@@ -155,6 +155,7 @@ function Confirm() {
             return LoadContactList();
         },
         function (error) {
+            xSwal.xError(error);
             console.log(error);
         }
     );

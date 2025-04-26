@@ -158,6 +158,9 @@ Preview = async (e) => {
             let link = `http://hmmta-tpcap/E-Report/Report.aspx?Register=REC&PDSNoFrom=${data[0].F_OrderNO}&PDSNoTo=${data[data.length-1].F_OrderNO}&DateFrom=2024-07-01&DateTo=2999-12-31`;
 
             await window.open(link, "_blank");
+        },
+        async (error) => {
+            xSwal.xError(error);
         }
     );
 }

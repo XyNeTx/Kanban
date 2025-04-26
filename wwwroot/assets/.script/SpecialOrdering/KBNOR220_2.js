@@ -155,6 +155,7 @@ $("#btnSave").click(() => {
             $("#selPartNo").trigger("change");
         },
         async (error) => {
+            xSwal.xError(error);
             console.log(error);
         }
     );

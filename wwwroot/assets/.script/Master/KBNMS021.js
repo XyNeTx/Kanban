@@ -209,7 +209,7 @@ $("#btnUpd").click(async function () {
     });
 
     DisableButton(true);
-
+    $("#readDetail").prop("readonly", false);
 
     await GetLine();
     await GetPartCode();
