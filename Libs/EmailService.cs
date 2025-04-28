@@ -253,7 +253,7 @@ namespace KANBAN.Libs
                     $" INNER JOIN [HMMT-APP07].[Price_Approval_Part].dbo.TB_CTL_USER U ON " +
                     $" B.F_User_Normal = U.F_User_ID INNER JOIN [HMMT-APP07].[Price_Approval_Part].dbo.TB_CTL_USER U1 ON  " +
                     $" U.F_Team_ID = U1.F_User_ID Where B.F_SUpplier_Code in ('{nSupplier}') Union all " +
-                    $" Select distinct F_User_ID,F_User_name,F_EMAIL from [New_Kanban].dbo.TB_USER Where Isnull(F_Email,'') <>'' ";
+                    $" Select distinct F_User_ID,F_User_name,F_EMAIL from [New_Kanban_F3].dbo.TB_USER Where Isnull(F_Email,'') <>'' ";
 
                 var _dt = _FillDT.ExecuteSQL(_sql);
                 List<string> toEmailList = new List<string>();

@@ -109,6 +109,7 @@ builder.Services.AddScoped<ISpecialOrderingServices, SpecialOrderingServices>();
 builder.Services.AddScoped<IMasterRepo, MasterRepo>();
 builder.Services.AddScoped<ICKDService, CKDService>();
 builder.Services.AddScoped<IOtherConditionRepo, OtherConditionRepo>();
+builder.Services.AddHttpClient();
 
 builder.Services.AddAutoMapper
     (

@@ -18,6 +18,7 @@ namespace HINOSystem.Libs
         private static readonly ILogger LogMaster;
         private static readonly ILogger LogSpecial;
         private static readonly ILogger LogImport;
+        private static readonly ILogger LogError;
 
         static SerilogLibs()
         {
@@ -58,6 +59,17 @@ namespace HINOSystem.Libs
                 .WriteTo.Logger(log => log
                 .WriteTo.File(
                     @"\\hmmta-ppm\Event_Log\New_KanbanF3\New_Kanban_F3_Import_.json",
+                    outputTemplate: "{Timestamp:dd-MM-yyyy HH:mm:ss.fff zzz} [{Level}] {Message:lj}{NewLine}{NewLine}{Exception}",
+                    rollingInterval: RollingInterval.Month,
+                    shared: true,
+                    rollOnFileSizeLimit: true,
+                    fileSizeLimitBytes: 524288000))
+            .CreateLogger();
+
+            LogError = new LoggerConfiguration()
+                .WriteTo.Logger(log => log
+                .WriteTo.File(
+                    @"\\hmmta-ppm\Event_Log\New_KanbanF3\New_Kanban_F3_Error_.json",
                     outputTemplate: "{Timestamp:dd-MM-yyyy HH:mm:ss.fff zzz} [{Level}] {Message:lj}{NewLine}{NewLine}{Exception}",
                     rollingInterval: RollingInterval.Month,
                     shared: true,
@@ -135,26 +147,27 @@ namespace HINOSystem.Libs
             {
                 string logMessage = GetLogMessage();
 
-                if (this.Controller.ToUpper().Contains("KBNMS"))
-                {
-                    LogMaster.Error($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
-                }
-                else if (this.Action.ToUpper().Contains("CAL") && this.Controller.ToLower().Contains("kbnor121"))
-                {
-                    LogBL.Error($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
-                }
-                else if (this.Controller.ToUpper().Contains("KBNOR2"))
-                {
-                    LogSpecial.Error($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
-                }
-                else if (this.Controller.ToUpper().Contains("KBNIM"))
-                {
-                    LogImport.Error($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
-                }
-                else
-                {
-                    Log.Error($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
-                }
+                //if (this.Controller.ToUpper().Contains("KBNMS"))
+                //{
+                //    LogMaster.Error($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
+                //}
+                //else if (this.Action.ToUpper().Contains("CAL") && this.Controller.ToLower().Contains("kbnor121"))
+                //{
+                //    LogBL.Error($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
+                //}
+                //else if (this.Controller.ToUpper().Contains("KBNOR2"))
+                //{
+                //    LogSpecial.Error($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
+                //}
+                //else if (this.Controller.ToUpper().Contains("KBNIM"))
+                //{
+                //    LogImport.Error($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
+                //}
+                //else
+                //{
+                //    Log.Error($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
+                //}
+                LogError.Error($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
             }
             catch (Exception ex)
             {

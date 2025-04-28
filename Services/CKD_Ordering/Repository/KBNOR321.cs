@@ -2,6 +2,7 @@
 using HINOSystem.Libs;
 using KANBAN.Context;
 using KANBAN.Libs;
+using KANBAN.Models.KB3.NewFolder;
 using KANBAN.Models.KB3.OrderingProcess;
 using KANBAN.Services.Automapper.Interface;
 using KANBAN.Services.CKD_Ordering.IRepository;
@@ -697,6 +698,273 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                 if (ex is CustomHttpException) throw;
                 else if (ex.InnerException != null) throw new CustomHttpException(500, ex.InnerException.Message);
                 else throw new CustomHttpException(500, ex.Message);
+            }
+        }
+
+        public async Task get_startDate(string action, int? intRun)
+        {
+            try
+            {
+                if (action.ToLower() == "re-calculate bl")
+                {
+                    for (int rowIndex = 0; rowIndex < DT_PartControl.Rows.Count; rowIndex++)
+                    {
+                        await set_startDate(rowIndex);
+                    }
+                }
+                else if (action.ToLower() == "re-calculate")
+                {
+                    await set_startDate(intRun ?? 0);
+                }
+            }
+            catch (Exception ex)
+            {
+                if (ex is CustomHttpException) throw;
+                else throw new CustomHttpException(500, ex.InnerException.Message ?? ex.Message);
+            }
+        }
+
+        public async Task set_startDate(int RowIndex)
+        {
+            try
+            {
+                string start_Date; string end_Date;
+
+                var dbCalD = await _kbContext.TB_Calculate_D_CKD.AsNoTracking()
+                    .Where(x => x.F_Part_No == DT_PartControl.Rows[RowIndex]["F_Part_No"].ToString().Trim()
+                    && x.F_Ruibetsu == DT_PartControl.Rows[RowIndex]["F_Ruibetsu"].ToString().Trim()
+                    && x.F_Supplier_Code == DT_PartControl.Rows[RowIndex]["F_Supplier_Code"].ToString().Trim()
+                    && x.F_Supplier_Plant == DT_PartControl.Rows[RowIndex]["F_Supplier_Plant"].ToString().Trim()
+                    && x.F_Store_Code == DT_PartControl.Rows[RowIndex]["F_Store_Code"].ToString().Trim()
+                    && x.F_Kanban_No == DT_PartControl.Rows[RowIndex]["F_Kanban_No"].ToString().Trim()
+                    && x.Flag_Chg_BL_Stock == true
+                    ).OrderBy(x => x.F_Process_Date).FirstOrDefaultAsync();
+
+                if (dbCalD != null)
+                {
+                    start_Date = dbCalD.F_Process_Date;
+                }
+                else
+                {
+                    start_Date = DateTime.Now.ToString("yyyyMMdd");
+                }
+
+                string Dynamic_Store = _BearerClass.Plant switch
+                {
+                    "1" => "1A",
+                    "2" => "2B",
+                    "3" => "3C",
+                    _ => "3C"
+                };
+
+                var sqlParams = new List<SqlParameter>
+                {
+                    new SqlParameter("@Plant",_BearerClass.Plant),
+                    new SqlParameter("@Supplier_Code",DT_PartControl.Rows[RowIndex]["F_Supplier_Code"].ToString().Trim()),
+                    new SqlParameter("@Supplier_Plant",DT_PartControl.Rows[RowIndex]["F_Supplier_Plant"].ToString().Trim()),
+                    new SqlParameter("@Store_Code",Dynamic_Store),
+                    new SqlParameter("@Date",DateTime.Now.ToString("yyyyMMdd")),
+                };
+
+                var dt = await _FillDT.ExecuteStoreSQLAsync("sp_NumberOfDayToPreview", sqlParams.ToArray());
+
+                if (start_Date == DateTime.Now.ToString("yyyyMMdd"))
+                {
+                    start_Date = dt.Rows[0]["Start_Date"].ToString().Trim();
+                }
+                end_Date = dt.Rows[0]["End_Date"].ToString().Trim();
+
+                await re_Calculate_Trail(start_Date, end_Date, RowIndex);
+            }
+            catch (Exception ex)
+            {
+                if (ex is CustomHttpException) throw;
+                else throw new CustomHttpException(500, ex.InnerException.Message ?? ex.Message);
+            }
+        }
+
+        public async Task re_Calculate_Trail(string start_Date, string end_Date, int RowIndex)
+        {
+            try
+            {
+                int Last_BL_Plan = 0; int Last_BL_Actual = 0;
+                bool blnFromSetStock;
+                DateECI dateECI = await get_ECIDate(start_Date, end_Date, RowIndex);
+                var dateLast_Trip = DateTime.ParseExact(start_Date, "yyyyMMdd", CultureInfo.InvariantCulture);
+
+                var sqlParams = new List<SqlParameter>
+                {
+                    new SqlParameter("@Date",dateLast_Trip.AddDays(-1).ToString("yyyyMMdd")),
+                    new SqlParameter("@Supplier_Code",DT_PartControl.Rows[RowIndex]["F_Supplier_Code"].ToString().Trim()),
+                    new SqlParameter("@Supplier_Plant",DT_PartControl.Rows[RowIndex]["F_Supplier_Plant"].ToString().Trim()),
+                    new SqlParameter("@Part_No",DT_PartControl.Rows[RowIndex]["F_Part_No"].ToString().Trim()),
+                    new SqlParameter("@Ruibetsu",DT_PartControl.Rows[RowIndex]["F_Ruibetsu"].ToString().Trim()),
+                    new SqlParameter("@Kanban_No",DT_PartControl.Rows[RowIndex]["F_Kanban_No"].ToString().Trim()),
+                    new SqlParameter("@Store_Code",DT_PartControl.Rows[RowIndex]["F_Store_Code"].ToString().Trim()),
+                };
+
+                var _DT = await _FillDT.ExecuteStoreSQLAsync("[CKD_Inhouse].sp_autoRecalculateBL_First", sqlParams.ToArray());
+
+                if (_DT.Rows.Count > 0)
+                {
+                    Last_BL_Plan = int.Parse(_DT.Rows[0]["F_BL_SET_Plan"].ToString().Trim());
+                    Last_BL_Actual = int.Parse(_DT.Rows[0]["F_BL_SET_Actual"].ToString().Trim());
+                    blnFromSetStock = bool.Parse(_DT.Rows[0]["F_Not_Recalculate"].ToString().Trim());
+                }
+                else
+                {
+                    Last_BL_Plan = 0;
+                    Last_BL_Actual = 0;
+                    blnFromSetStock = false;
+                }
+
+                sqlParams = new List<SqlParameter>
+                {
+                    new SqlParameter("@StartDate",dateLast_Trip.ToString("yyyyMMdd")),
+                    new SqlParameter("@EndDate",end_Date),
+                    new SqlParameter("@Supplier_Code",DT_PartControl.Rows[RowIndex]["F_Supplier_Code"].ToString().Trim()),
+                    new SqlParameter("@Supplier_Plant",DT_PartControl.Rows[RowIndex]["F_Supplier_Plant"].ToString().Trim()),
+                    new SqlParameter("@Part_No",DT_PartControl.Rows[RowIndex]["F_Part_No"].ToString().Trim()),
+                    new SqlParameter("@Ruibetsu",DT_PartControl.Rows[RowIndex]["F_Ruibetsu"].ToString().Trim()),
+                    new SqlParameter("@Kanban_No",DT_PartControl.Rows[RowIndex]["F_Kanban_No"].ToString().Trim()),
+                    new SqlParameter("@Store_Code",DT_PartControl.Rows[RowIndex]["F_Store_Code"].ToString().Trim()),
+                };
+
+                var DT = await _FillDT.ExecuteStoreSQLAsync("[CKD_Inhouse].sp_autoRecalculateBL_Second", sqlParams.ToArray());
+                var DT_Actual = await _FillDT.ExecuteStoreSQLAsync("[CKD_Inhouse].sp_autoRecalculateBL_Third", sqlParams.ToArray());
+                var DT_Adjust = await _FillDT.ExecuteStoreSQLAsync("[CKD_Inhouse].sp_autoRecalculateBL_Fourth", sqlParams.ToArray());
+
+                if (DT.Rows.Count > 0)
+                {
+                    int InRec = 0; int InActual = 0;
+                    int BlPlan = 0; int BlActual = 0;
+                    DateTime dateDelivery = new DateTime();
+                    string BLPlan_Solution, BLActual_Solution = "";
+                    //DataRow DR_Receive = null;
+
+                    using var kbTrans = await _kbContext.Database.BeginTransactionAsync();
+
+                    for (int i = 0; i < DT.Rows.Count; i++)
+                    {
+                        BLPlan_Solution = ""; BLActual_Solution = "";
+
+                        if (i > 0)
+                        {
+                            if (DT.Rows[i]["F_Process_Round"].ToString().Trim() == DT.Rows[i - 1]["F_Process_Round"].ToString().Trim()
+                                && DT.Rows[i]["F_Process_Date"].ToString().Trim() == DT.Rows[i - 1]["F_Process_Date"].ToString().Trim())
+                            {
+                                dateDelivery = DateTime.ParseExact(DT.Rows[i]["F_Process_Date"].ToString().Trim(), "yyyyMMdd", CultureInfo.InvariantCulture);
+
+                                sqlParams = new List<SqlParameter>
+                                {
+                                    new SqlParameter("@Date",dateDelivery.AddDays(-1).ToString("yyyyMMdd")),
+                                    new SqlParameter("@Supplier_Code",DT_PartControl.Rows[RowIndex]["F_Supplier_Code"].ToString().Trim()),
+                                    new SqlParameter("@Supplier_Plant",DT_PartControl.Rows[RowIndex]["F_Supplier_Plant"].ToString().Trim()),
+                                    new SqlParameter("@Part_No",DT_PartControl.Rows[RowIndex]["F_Part_No"].ToString().Trim()),
+                                    new SqlParameter("@Ruibetsu",DT_PartControl.Rows[RowIndex]["F_Ruibetsu"].ToString().Trim()),
+                                    new SqlParameter("@Kanban_No",DT_PartControl.Rows[RowIndex]["F_Kanban_No"].ToString().Trim()),
+                                    new SqlParameter("@Store_Code",DT_PartControl.Rows[RowIndex]["F_Store_Code"].ToString().Trim()),
+                                };
+
+                                var DT_LastBL = await _FillDT.ExecuteStoreSQLAsync("sp_autoRecalculateBL_First", sqlParams.ToArray());
+
+                                if (DT_LastBL.Rows.Count > 0)
+                                {
+                                    Last_BL_Plan = int.Parse(DT_LastBL.Rows[0]["F_BL_SET_Plan"].ToString().Trim());
+                                    Last_BL_Actual = int.Parse(DT_LastBL.Rows[0]["F_BL_SET_Actual"].ToString().Trim());
+                                }
+                                else
+                                {
+                                    Last_BL_Plan = 0;
+                                    Last_BL_Actual = 0;
+                                }
+                            }
+                        }
+
+                        var DR_Receive = DT_Actual.Select($@"F_Delivery_trip = '{DT.Rows[i]["F_Process_Round"].ToString().Trim()}' 
+                            AND F_Receive_date = '{DT.Rows[i]["F_Process_Date"].ToString().Trim()}' 
+                            AND F_Supplier_Code = '{DT.Rows[i]["F_Supplier_Code"].ToString().Trim()}' 
+                            AND F_Supplier_Plant = '{DT.Rows[i]["F_Supplier_Plant"].ToString().Trim()}' 
+                            AND F_Part_No = '{DT.Rows[i]["F_Part_No"].ToString().Trim()}' 
+                            AND F_Ruibetsu = '{DT.Rows[i]["F_Ruibetsu"].ToString().Trim()}' 
+                            AND F_Store_CD = '{DT.Rows[i]["F_Store_Code"].ToString().Trim()}' ");
+
+                        if (DR_Receive.Length > 0)
+                        {
+                            InActual = int.Parse(DR_Receive[0]["IN_ACTUAL"].ToString());
+                        }
+                        else
+                        {
+                            InActual = 0;
+                        }
+
+
+
+                    }
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _log.WriteErrorLogMsg(ex.ToString());
+                if (ex is CustomHttpException) throw;
+                else throw new CustomHttpException(500, ex.InnerException.Message ?? ex.Message);
+            }
+        }
+
+        public async Task<DateECI> get_ECIDate(string start_Date, string end_Date, int RowIndex)
+        {
+            try
+            {
+                DateECI dateECI = new DateECI();
+                DateTime dateLast_Trip = new DateTime();
+
+                dateLast_Trip = DateTime.ParseExact(start_Date, "yyyyMMdd", CultureInfo.InvariantCulture);
+
+                var dbConstruction = await _PPM3Context.T_Construction.AsNoTracking()
+                    .Where(x => x.F_Part_no == DT_PartControl.Rows[RowIndex]["F_Part_No"].ToString().Trim()
+                    && x.F_Ruibetsu == DT_PartControl.Rows[RowIndex]["F_Ruibetsu"].ToString().Trim()
+                    && x.F_Store_cd == DT_PartControl.Rows[RowIndex]["F_Store_Code"].ToString().Trim()
+                    && x.F_supplier_cd == DT_PartControl.Rows[RowIndex]["F_Supplier_Code"].ToString().Trim()
+                    && x.F_plant == DT_PartControl.Rows[RowIndex]["F_Supplier_Plant"].ToString().Trim()[0]
+                    && x.F_Sebango == DT_PartControl.Rows[RowIndex]["F_Kanban_No"].ToString().Trim().Substring(1, 3)
+                    ).FirstOrDefaultAsync();
+
+                if (dbConstruction != null)
+                {
+                    dateECI.Begining_Date = dbConstruction.F_Local_Str;
+                }
+                else
+                {
+                    dateECI.Begining_Date = dateLast_Trip.ToString("yyyyMMdd");
+                }
+
+                var dbCalculateD = await _kbContext.TB_Calculate_D_CKD.AsNoTracking()
+                    .Where(x => x.F_Part_No == DT_PartControl.Rows[RowIndex]["F_Part_No"].ToString().Trim()
+                    && x.F_Ruibetsu == DT_PartControl.Rows[RowIndex]["F_Ruibetsu"].ToString().Trim()
+                    && x.F_Supplier_Code == DT_PartControl.Rows[RowIndex]["F_Supplier_Code"].ToString().Trim()
+                    && x.F_Supplier_Plant == DT_PartControl.Rows[RowIndex]["F_Supplier_Plant"].ToString().Trim()
+                    && x.F_Store_Code == DT_PartControl.Rows[RowIndex]["F_Store_Code"].ToString().Trim()
+                    && x.F_Kanban_No == DT_PartControl.Rows[RowIndex]["F_Kanban_No"].ToString().Trim())
+                    .OrderBy(x => x.F_Process_Date).FirstOrDefaultAsync();
+
+                if (dbCalculateD != null)
+                {
+                    dateECI.Begining_Calculate = dbCalculateD.F_Process_Date;
+                }
+                else
+                {
+                    dateECI.Begining_Calculate = dateLast_Trip.ToString("yyyyMMdd");
+                }
+
+                return dateECI;
+            }
+            catch (Exception ex)
+            {
+                _log.WriteErrorLogMsg(ex.ToString());
+                if (ex is CustomHttpException) throw;
+                else throw new CustomHttpException(500, ex.InnerException.Message ?? ex.Message);
             }
         }
 

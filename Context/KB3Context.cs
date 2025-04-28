@@ -2,6 +2,7 @@
 using KANBAN.Models.KB3.Login;
 using KANBAN.Models.KB3.LogisticCondition;
 using KANBAN.Models.KB3.Master;
+using KANBAN.Models.KB3.NewFolder;
 using KANBAN.Models.KB3.OrderingProcess;
 using KANBAN.Models.KB3.OtherCondition.Model;
 using KANBAN.Models.KB3.Receive_Process;
@@ -174,6 +175,7 @@ namespace HINOSystem.Context
         public DbSet<TB_MS_LineControl> TB_MS_LineControl { get; set; }
         public DbSet<TB_Kanban_SetOrder> TB_Kanban_SetOrder { get; set; }
         public virtual DbSet<TB_Import_VHD> TB_Import_VHD { get; set; }
+        public virtual DbSet<TB_Calculate_D_CKD> TB_Calculate_D_CKD { get; set; }
     }
 }
 

@@ -47,8 +47,8 @@ namespace KANBAN.Controllers.API.OrderingProcess
         {
             try
             {
-
-                string _sql = "Exec [exec].[spKBNOR460_GetPriceZeroUrgent] NULL,NULL";
+                await _BearerClass.CheckAuthorize();
+                string _sql = $"Exec [exec].[spKBNOR460_GetPriceZeroUrgent] '{_BearerClass.UserCode}','{_BearerClass.Data["Table"][0]["Name"]}'";
 
                 var _dt = _FillDT.ExecuteSQL(_sql);
 
@@ -99,17 +99,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
             try
             {
                 transaction.CreateSavepoint("UnlockPDS");
-                _BearerClass.Authentication(Request);
-                if (_BearerClass.Status == 401)
-                {
-                    return StatusCode(401, new
-                    {
-                        status = "401",
-                        response = "Unauthorized",
-                        title = "Error",
-                        message = "Unauthorized"
-                    });
-                }
+                await _BearerClass.CheckAuthorize();
 
                 string CookieProcDate = Request.Cookies["processDate"].ToString();
                 string ProcessDate = DateTime.TryParseExact(CookieProcDate.Substring(0, 10), "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dt) ? dt.ToString("dd/MM/yyyy") : DateTime.Now.ToString("dd/MM/yyyy");

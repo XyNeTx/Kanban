@@ -2,8 +2,10 @@
 using HINOSystem.Libs;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 using System.Data;
 using System.DirectoryServices.AccountManagement;
+using System.Web;
 
 
 namespace HINOSystem.Controllers
@@ -95,7 +97,7 @@ namespace HINOSystem.Controllers
 
 
         [HttpPost]
-        public ActionResult Index(IFormCollection collection)
+        public async Task<ActionResult> Index(IFormCollection collection)
         {
             try
             {
@@ -114,16 +116,16 @@ namespace HINOSystem.Controllers
 
 
                 var getUser = _KB3Context.User.Where(x => x.Code == _txtUserName).FirstOrDefault();
-                if(getUser == null)
+                if (getUser == null)
                 {
                     TempData["ErrorText"] = "You Didn't have Permission to access this system.";
                     return RedirectToAction("Index", "Login");
                 }
                 else
                 {
-                    if(getUser.LastLogin < DateTime.Now.AddMonths(-2))
+                    if (getUser.LastLogin < DateTime.Now.AddMonths(-2))
                     {
-                        if(getUser.Status.ToLower() == "active")
+                        if (getUser.Status.ToLower() == "active")
                         {
                             TempData["ErrorText"] = "Your didn't login for 60 days, Please contact IT Dept.";
                             getUser.Status = "INACTIVE";
@@ -242,7 +244,7 @@ namespace HINOSystem.Controllers
                 HttpContext.Session.SetString("USER_GROUP_ID", _dataTable.Rows[0]["Group_ID"].ToString());
                 HttpContext.Session.SetString("USER_GROUP_NAME", _dataTable.Rows[0]["Group_Name"].ToString());
                 HttpContext.Session.SetString("USER_GROUP_NAMETH", _dataTable.Rows[0]["Group_NameTH"].ToString());
-            
+
                 this.fncActionLog("LOGIN", "OK", _SQL);
 
                 string _url = "~/Home";
@@ -251,8 +253,33 @@ namespace HINOSystem.Controllers
                 //if (_dataTable.Rows[0]["Group_ID"].ToString() == "3") _url = "~/UploadReceipt/UploadReceipt";
                 //if (_dataTable.Rows[0]["Group_ID"].ToString() == "4") _url = "~/Supplier/ClaimInformation";
 
-                return Redirect(_url);
+                var handler = new HttpClientHandler
+                {
+                    UseDefaultCredentials = true,
+                };
+                var _httpClient = new HttpClient(handler);
+
+                var query = HttpUtility.ParseQueryString(string.Empty);
+                query["system_name"] = "Hino Kanban System";
+                query["isLogin"] = "True";
+
+                // Build the full URI
+                var uriBuilder = new UriBuilder("http://hmmt-app07/sso_test/api/SingleSignOn/GetLogin")
+                {
+                    Query = query.ToString() // Automatically encodes the query string
+                };
+                var response = await _httpClient.GetAsync(uriBuilder.Uri);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var rawJson = await response.Content.ReadAsStringAsync();
+
+                    var parsedJson = JToken.Parse(rawJson);
+                    var prettyJson = parsedJson.ToString(Newtonsoft.Json.Formatting.Indented);
                 }
+
+                return Redirect(_url);
+            }
             catch (Exception ex)
             {
                 this.fncActionLog("LOGIN", "FAILED");
@@ -467,7 +494,7 @@ namespace HINOSystem.Controllers
 
                 DataTable _dtNewUser = _erpConnect.ExecuteSQL(_SQL_Log, skipLog: true);
 
-                if (_dtNewUser.Rows.Count <=0)
+                if (_dtNewUser.Rows.Count <= 0)
                 {
                     _SQL_Log = @"INSERT INTO [erp].[User] (
                                     [Code]

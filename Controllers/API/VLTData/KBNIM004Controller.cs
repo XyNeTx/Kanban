@@ -13,7 +13,7 @@ namespace HINOSystem.Controllers.API.Master
     {
         private readonly IConfiguration _configuration;
         private readonly BearerClass _BearerClass;
-        private readonly ActionResultClass _ActionResult;        
+        private readonly ActionResultClass _ActionResult;
         private readonly KanbanConnection _KBCN;
         private readonly PPMConnect _PPMConnect;
 
@@ -41,9 +41,9 @@ namespace HINOSystem.Controllers.API.Master
         }
 
         [HttpPost]
-        public async Task<IActionResult> ImportData (List<TB_Import_VLT> listObj)
+        public async Task<IActionResult> ImportData(List<TB_Import_VLT> listObj)
         {
-            using var _KB3Transaction = _KB3Context.Database.BeginTransaction();
+            //using var _KB3Transaction = _KB3Context.Database.BeginTransaction();
             try
             {
                 _BearerClass.Authentication(Request);
@@ -59,7 +59,7 @@ namespace HINOSystem.Controllers.API.Master
                 string Plant = HttpContext.Session.GetString("USER_PLANT")!;
                 string UserID = HttpContext.Session.GetString("USER_CODE")!;
 
-                await _KB3Context.Database.ExecuteSqlRawAsync("DELETE FROM TB_Import_VLT WHERE F_Update_By = @p0",UserID!);
+                await _KB3Context.Database.ExecuteSqlRawAsync("DELETE FROM TB_Import_VLT WHERE F_Update_By = @p0", UserID!);
 
                 await _KB3Context.Database.ExecuteSqlRawAsync("DELETE FROM TB_Import_Error WHERE F_Type = 'KBNIM004' AND F_Update_By = @p0", UserID!);
 
@@ -108,7 +108,7 @@ namespace HINOSystem.Controllers.API.Master
             }
             catch (Exception ex)
             {
-                _KB3Transaction.RollbackToSavepoint("BeforeImport");
+                //_KB3Transaction.RollbackToSavepoint("BeforeImport");
                 return StatusCode(500, new
                 {
                     status = "500",

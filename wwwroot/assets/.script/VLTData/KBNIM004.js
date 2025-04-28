@@ -120,7 +120,7 @@ $("#btnImport").on("click", async function () {
                         xSwal.error("Error !!", error.responseJSON.message);
                         return _xLib.OpenReport("/KBNIMERR", `UserID=${error.responseJSON.userid}&Type=${error.responseJSON.type}`);
                     }
-                    return xSwal.error("Error", error.responseJSON.message);
+                    return xSwal.xError(error);
                 }
             );
         }

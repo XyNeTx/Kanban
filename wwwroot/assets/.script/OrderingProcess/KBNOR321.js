@@ -528,7 +528,7 @@ async function EditTableStyle(action) {
         }
         $(this).addClass("fw-bolder");
     });
-    if (action.toLowerCase() == "preview") {
+    if (action.toLowerCase() == "preview" || action.toLowerCase() == "process") {
         //console.log(action);
         $(document).find("td[id*='Pcs']").each(function () {
             //console.log($(this));
