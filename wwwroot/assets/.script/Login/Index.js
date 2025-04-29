@@ -89,7 +89,7 @@
                 $('#txtFullDeviceName').val(result.fullComputerName);
                 $('#ddlFactory').val(result.userDetail.locationCode);
                 $('#txtDomain').val(result.domainName);
-                $('#txtIPAddress').val(result.addObj.f_IPAddress);
+                $('#txtIPAddress').val(result.ipAddress);
                 _xLib.SetCookie('plantCode', result.userDetail.locationCode);
             },
             error: async function (error) {

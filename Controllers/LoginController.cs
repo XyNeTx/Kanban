@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 using System.Data;
 using System.DirectoryServices.AccountManagement;
-using System.Web;
 
 
 namespace HINOSystem.Controllers
@@ -17,6 +16,8 @@ namespace HINOSystem.Controllers
         private readonly ERPConnection _erpConnect;
         private readonly BearerClass _BearerClass;
         private readonly KB3Context _KB3Context;
+        private readonly HttpClient _httpClient;
+
 
         private string Systems = "KB3";
         private string SystemCode = "Systems:KB3";
@@ -32,7 +33,8 @@ namespace HINOSystem.Controllers
             IHttpContextAccessor? httpContextAccessor,
             ERPConnection erpConnect,
             BearerClass bearerClass,
-            KB3Context kB3Context
+            KB3Context kB3Context,
+            HttpClient httpClient
             )
         {
             _config = configuration;
@@ -40,9 +42,11 @@ namespace HINOSystem.Controllers
             _erpConnect = erpConnect;
             _BearerClass = bearerClass;
             _KB3Context = kB3Context;
+            _httpClient = httpClient;
 
             this._DB = _config.GetValue<string>(this.SystemCode + ":Database");
         }
+
 
 
         //### Last Modify
@@ -253,22 +257,17 @@ namespace HINOSystem.Controllers
                 //if (_dataTable.Rows[0]["Group_ID"].ToString() == "3") _url = "~/UploadReceipt/UploadReceipt";
                 //if (_dataTable.Rows[0]["Group_ID"].ToString() == "4") _url = "~/Supplier/ClaimInformation";
 
-                var handler = new HttpClientHandler
+                var postData = new Dictionary<string, object>
                 {
-                    UseDefaultCredentials = true,
+                    { "System_Name", "Hino Kanban System" },
+                    { "Employee_Code", _txtUserName },
+                    { "Computer_Name", _txtDeviceName },
+                    { "Ip_Address", _txtIPAddress }
                 };
-                var _httpClient = new HttpClient(handler);
 
-                var query = HttpUtility.ParseQueryString(string.Empty);
-                query["system_name"] = "Hino Kanban System";
-                query["isLogin"] = "True";
+                string _reqUrl = "http://hmmt-app07/sso_test/api/SingleSignOn/LoggedIn";
 
-                // Build the full URI
-                var uriBuilder = new UriBuilder("http://hmmt-app07/sso_test/api/SingleSignOn/GetLogin")
-                {
-                    Query = query.ToString() // Automatically encodes the query string
-                };
-                var response = await _httpClient.GetAsync(uriBuilder.Uri);
+                var response = await _httpClient.PostAsJsonAsync(_reqUrl, postData);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -276,6 +275,11 @@ namespace HINOSystem.Controllers
 
                     var parsedJson = JToken.Parse(rawJson);
                     var prettyJson = parsedJson.ToString(Newtonsoft.Json.Formatting.Indented);
+                }
+                else
+                {
+                    var error = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine($"Error: {response.StatusCode} - {error}");
                 }
 
                 return Redirect(_url);
