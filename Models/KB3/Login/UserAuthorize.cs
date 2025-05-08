@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace KANBAN.Models.KB3.Login
 {
@@ -12,5 +13,9 @@ namespace KANBAN.Models.KB3.Login
         public string? UpdateBy { get; set; }
         public DateTime? CreateAt { get; set; }
         public string? CreateBy { get; set; }
+        [ForeignKey("User_ID")]
+        public virtual UserErp? UserErp { get; set; }
+        [ForeignKey("Menu_ID")]
+        public virtual Menu? MenuErp { get; set; }
     }
 }

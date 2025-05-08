@@ -14,5 +14,6 @@ namespace KANBAN.Models.KB3.OrderingProcess
         public string? StoreTo { get; set; }
         public string? PartNo { get; set; }
         public string? PartNoTo { get; set; }
+        public int? intRow { get; set; }
     }
 }

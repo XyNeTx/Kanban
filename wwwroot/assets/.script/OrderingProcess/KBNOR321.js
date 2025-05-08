@@ -16,6 +16,8 @@ $(document).ready(async function () {
     xSplash.hide()
 });
 
+let _ProcessAction = "";
+let _IntRow = 0;
 async function GetDropDownData() {
     let obj = {
         F_Supplier_Code: $("#inputSupplier").val(),
@@ -84,26 +86,39 @@ $("#inputPart").change(function () {
 $("#btnPrevPage").click(async function () {
     var page = parseInt($("#txtPage").val().split("/")[0]) - 1;
     if (page == 0) return;
+    _IntRow = (page-1);
     $("#txtPage").val(page.toString() + "/" + dT_PartControl.length.toString());
-    await Get_All_Data(action, parseInt(page) - 1);
+    await Get_All_Data(action, _IntRow);
     window.scrollTo(0, 0);
 });
 
 $("#btnNextPage").click(async function () {
     var page = parseInt($("#txtPage").val().split("/")[0]) + 1;
     if (page == parseInt($("#txtPage").val().split("/")[1]) + 1) return;
+    _IntRow = (page-1);
     $("#txtPage").val(page.toString() + "/" + dT_PartControl.length.toString());
-    await Get_All_Data(action, parseInt(page) - 1);
+    await Get_All_Data(action, _IntRow);
     window.scrollTo(0, 0);
 });
 
 $("#btnProcess").click(async function () {
     action = "Process";
-    await Get_All_Data("Process",0);
+    _ProcessAction = "Process";
+    _IntRow = 0;
+    await Get_All_Data("Process", _IntRow);
 })
 $("#btnPreview").click(async function () {
     action = "Preview";
-    await Get_All_Data("Preview",0);
+    _ProcessAction = "Preview";
+    _IntRow = 0;
+    await Get_All_Data("Preview", _IntRow);
+})
+
+$("#btnBlCal").click(async function () {
+    await Recalculate("Re-Calculate BL", _IntRow);
+})
+$("#btnReCal").click(async function () {
+    await Recalculate("Re-Calculate", _IntRow);
 })
 
 async function GetSelectObject(action) {
@@ -116,6 +131,7 @@ async function GetSelectObject(action) {
         F_StoreTo: $("#inputStoreTo").val(),
         F_PartFrom: $("#inputPart").val(),
         F_PartTo: $("#inputPartTo").val(),
+        intRow: _IntRow,
     }
 
     return obj;
@@ -241,12 +257,12 @@ async function Set_Data(intRow)
     for (let j = 0; j < dT_Period.length; j++) {
         try {
             var headData = dT_Header.filter(x =>
-                x.F_Supplier_Code == dT_PartControl[intRow].F_Supplier_Code &&
-                x.F_Supplier_Plant == dT_PartControl[intRow].F_Supplier_Plant &&
-                x.F_Part_No == dT_PartControl[intRow].F_Part_No &&
-                x.F_Ruibetsu == dT_PartControl[intRow].F_Ruibetsu &&
-                x.F_Store_Code == dT_PartControl[intRow].F_Store_Code &&
-                x.F_Kanban_No == dT_PartControl[intRow].F_Kanban_No &&
+                //x.F_Supplier_Code == dT_PartControl[intRow].F_Supplier_Code &&
+                //x.F_Supplier_Plant == dT_PartControl[intRow].F_Supplier_Plant &&
+                //x.F_Part_No == dT_PartControl[intRow].F_Part_No &&
+                //x.F_Ruibetsu == dT_PartControl[intRow].F_Ruibetsu &&
+                //x.F_Store_Code == dT_PartControl[intRow].F_Store_Code &&
+                //x.F_Kanban_No == dT_PartControl[intRow].F_Kanban_No &&
                 x.F_Process_Date == dT_Period[j].Date_Now &&
                 x.F_Process_Shift == (dT_Period[j].Row_Num == "1" ? "D" : "N")
             )[0];
@@ -255,37 +271,40 @@ async function Set_Data(intRow)
                 break;
             }
 
+            //console.log(headData);
+            //console.log(dT_Header);
+
             var detailData = dT_Detail.filter(x =>
-                x.F_Supplier_Code == dT_PartControl[intRow].F_Supplier_Code &&
-                x.F_Supplier_Plant == dT_PartControl[intRow].F_Supplier_Plant &&
-                x.F_Part_No == dT_PartControl[intRow].F_Part_No &&
-                x.F_Ruibetsu == dT_PartControl[intRow].F_Ruibetsu &&
-                x.F_Kanban_No == dT_PartControl[intRow].F_Kanban_No &&
-                x.F_Store_Code == dT_PartControl[intRow].F_Store_Code &&
+                //x.F_Supplier_Code == dT_PartControl[intRow].F_Supplier_Code &&
+                //x.F_Supplier_Plant == dT_PartControl[intRow].F_Supplier_Plant &&
+                //x.F_Part_No == dT_PartControl[intRow].F_Part_No &&
+                //x.F_Ruibetsu == dT_PartControl[intRow].F_Ruibetsu &&
+                //x.F_Kanban_No == dT_PartControl[intRow].F_Kanban_No &&
+                //x.F_Store_Code == dT_PartControl[intRow].F_Store_Code &&
                 x.F_Process_Date == dT_Period[j].Date_Now &&
                 x.F_Process_Shift == (dT_Period[j].Row_Num == "1" ? "D" : "N") &&
                 x.F_Process_Round == dT_Period[j].Row_Num
             )[0];
 
             var volumeData = dT_Volume.filter(x =>
-                x.F_Supplier_Code == dT_PartControl[intRow].F_Supplier_Code &&
-                x.F_Supplier_Plant == dT_PartControl[intRow].F_Supplier_Plant &&
-                x.F_Part_No == dT_PartControl[intRow].F_Part_No &&
-                x.F_Ruibetsu == dT_PartControl[intRow].F_Ruibetsu &&
-                x.F_Kanban_No == dT_PartControl[intRow].F_Kanban_No &&
-                x.F_Store_Code == dT_PartControl[intRow].F_Store_Code &&
+                //x.F_Supplier_Code == dT_PartControl[intRow].F_Supplier_Code &&
+                //x.F_Supplier_Plant == dT_PartControl[intRow].F_Supplier_Plant &&
+                //x.F_Part_No == dT_PartControl[intRow].F_Part_No &&
+                //x.F_Ruibetsu == dT_PartControl[intRow].F_Ruibetsu &&
+                //x.F_Kanban_No == dT_PartControl[intRow].F_Kanban_No &&
+                //x.F_Store_Code == dT_PartControl[intRow].F_Store_Code &&
                 x.F_Delivery_Date == dT_Period[j].Date_Now &&
                 //x.F_Process_Shift == (dT_Period[j].Row_Num == "1" ? "D" : "N") &&
                 x.F_Delivery_Round == dT_Period[j].Row_Num
             )[0];
 
             var actualData = dT_Actual_Receive.filter(x =>
-                x.F_Supplier_code == dT_PartControl[intRow].F_Supplier_Code &&
-                x.F_Supplier_Plant == dT_PartControl[intRow].F_Supplier_Plant &&
-                x.F_PART_No == dT_PartControl[intRow].F_Part_No &&
-                x.F_RUibetsu == dT_PartControl[intRow].F_Ruibetsu &&
-                // x.F_Kanban_No == dT_PartControl[intRow].F_Kanban_No &&
-                x.F_Store_Cd == dT_PartControl[intRow].F_Store_Code &&
+                //x.F_Supplier_code == dT_PartControl[intRow].F_Supplier_Code &&
+                //x.F_Supplier_Plant == dT_PartControl[intRow].F_Supplier_Plant &&
+                //x.F_PART_No == dT_PartControl[intRow].F_Part_No &&
+                //x.F_RUibetsu == dT_PartControl[intRow].F_Ruibetsu &&
+                //// x.F_Kanban_No == dT_PartControl[intRow].F_Kanban_No &&
+                //x.F_Store_Cd == dT_PartControl[intRow].F_Store_Code &&
                 x.F_Receive_Date == dT_Period[j].Date_Now
                 //x.F_Process_Shift == (dT_Period[j].Row_Num == "1" ? "D" : "N") &&
                 // x.F_Delivery_Trip == dT_Period[j].Row_Num
@@ -460,11 +479,11 @@ async function Onload() {
     return _xLib.AJAX_Get("/api/KBNOR321/Onload", obj,
         async function (success) {
             success = _xLib.JSONparseMixData(success);
-            console.log(success);
+            //console.log(success);
             $("#inputPlant").val(_xLib.GetCookie("plantCode") + ":Fac-" + _xLib.GetCookie("plantCode"));
             $("#inputProcessDateFor").val(moment(success.data[0].ProcessDate.slice(0, 10), "YYYY-MM-DD").format("DD/MM/YYYY"));
             $("#inputProcessShiftFor").val(success.data[0].ProcessShift);
-            
+            $("#inputMRP").val(`MRP : ${moment(success.data[0].ProcessDate.slice(0, 10), "YYYY-MM-DD").format("DD/MM/YYYY")}`);
         },
     )
 }
@@ -487,6 +506,30 @@ async function GetInformNews() {
 }
 
 async function Detail_Data(intRow) {
+    $("#MRP20").prop("checked", false)
+    $("#MRP-20").prop("checked", false)
+
+    $("#radioKbCut").prop("checked", false)
+    $("#lbKbCut").removeClass("text-danger");
+
+    $("#radioKbAdd").prop("checked", false)
+    $("#lbKbAdd").removeClass("text-danger");
+
+    $("#radioKbStop").prop("checked", false)
+    $("#lbKbStop").removeClass("text-danger");
+
+    $("#chkBoxOrderTable").prop("checked", false)
+    $("#lbOrderTable").removeClass("text-danger")
+
+    $("#chkBoxSliceOrder").prop("checked", false)
+    $("#lbSliceOrder").removeClass("text-danger")
+
+    $("#chkBoxRecSlice").prop("checked", false)
+    $("#lbRecSlice").removeClass("text-danger")
+
+    $("#chkBoxChgCycleTime").prop("checked", false)
+    $("#lbChgCycleTime").removeClass("text-danger")
+
     let obj = {
         F_Supplier_Code: $("#inputSupplier").val(),
         intRow: intRow
@@ -503,16 +546,68 @@ async function Detail_Data(intRow) {
             $("#readForecastMax").val(success.data[6])
             $("#readStdStock").val(success.data[7])
             $("#readMinStock").val(success.data[8])
+
+            if (parseInt(success.data[9]) > 0) {
+                $("#radioKbStop").prop("checked", true)
+                $("#lbKbStop").addClass("text-danger");
+            }
+            if (parseInt(success.data[10]) > 0) {
+                $("#radioKbAdd").prop("checked", true)
+                $("#lbKbAdd").addClass("text-danger");
+            }
+            if (parseInt(success.data[11]) > 0) {
+                $("#radioKbCut").prop("checked", true)
+                $("#lbKbCut").addClass("text-danger");
+            }
+            if (success.data[12] == "True") {
+                $("#MRP-20").prop("checked", true)
+            }
+            else if (success.data[13] == "True") {
+                $("#MRP20").prop("checked", true)
+            }
+            if (success.data[14] == "True") {
+                $("#chkBoxOrderTable").prop("checked", true)
+                $("#lbOrderTable").addClass("text-danger")
+            }
+            if (success.data[15] == "True") {
+                $("#chkBoxSliceOrder").prop("checked", true)
+                $("#lbSliceOrder").addClass("text-danger")
+            }
+            if (success.data[16] == "True") {
+                $("#chkBoxRecSlice").prop("checked", true)
+                $("#lbRecSlice").addClass("text-danger")
+            }
+            if (success.data[17] == "True") {
+                $("#chkBoxChgCycleTime").prop("checked", true)
+                $("#lbChgCycleTime").addClass("text-danger")
+            }
+
             let intCycleB = parseInt($("#readCycleTime").val().slice(3, 5));
             let intQtyBox = parseInt($("#readQtyPack").val());
-            console.log(intCycleB)
-            console.log(intQtyBox)
+            //console.log(intCycleB)
+            //console.log(intQtyBox)
             let totalLimit = Math.ceil(Math.floor((parseInt(success.data[6]) / intCycleB) / intQtyBox)) * intQtyBox;
-            console.log(totalLimit);
+            //console.log(totalLimit);
             $("#readLimitTrip").val(totalLimit)
 
             //let base = Math.floor(parseInt(success.data[6]) / intCycleB / intQtyBox);
             //let totalLimit = Math.ceil(base) * intQtyBox;
+        },
+    )
+}
+
+async function Recalculate(action,intRow) {
+    xSplash.show("Recalculating ...");
+    let obj = {
+        F_Supplier_Code: $("#inputSupplier").val(),
+        intRow: intRow,
+        action: action
+    }
+    return _xLib.AJAX_Get("/api/KBNOR321/Recalculate", obj,
+        async function (success) {
+            console.log(success);
+            await Get_All_Data(_ProcessAction, intRow);
+            xSplash.hide();
         },
     )
 }

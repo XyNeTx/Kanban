@@ -94,6 +94,20 @@ namespace KANBAN.Services.SpecialOrdering.Repository
                                     * From OPENROWSET(BULK N'{obj.F_Path_File}', SINGLE_BLOB) as PicTure ";
 
                             await _kbContext.Database.ExecuteSqlRawAsync(sql);
+
+                            sql = $@"
+                                UPDATE [E-Report].dbo.Signature
+                                SET Signature = (SELECT BulkColumn FROM OPENROWSET(BULK N'{obj.F_Path_File}', SINGLE_BLOB))
+                                WHERE Approval = '{obj.F_User_ID}';";
+
+                            await _kbContext.Database.ExecuteSqlRawAsync(sql);
+
+                            sql = $@"
+                                UPDATE [192.168.10.18].[E-Report].dbo.Signature
+                                SET Signature = (SELECT BulkColumn FROM OPENROWSET(BULK N'{obj.F_Path_File}', SINGLE_BLOB))
+                                WHERE Approval = '{obj.F_User_ID}';";
+
+                            await _kbContext.Database.ExecuteSqlRawAsync(sql);
                         }
                     }
                 }

@@ -527,16 +527,35 @@ namespace KANBAN.Controllers.API.OrderingProcess
 
                 _SQL = "exec [dbo].[sp_DT_Header] @p0,@p1,@p2,@p3,@p4,@p5,@p6,@p7,@p8,@p9,@p10,@p11,@p12";
 
-                DT_Header = _FillDT.ExecuteSQL(_SQL,
-                    Start_Date, End_Date, obj.Supplier.Substring(0, 4), obj.Supplier.Substring(5, 1),
-                    string.IsNullOrWhiteSpace(obj.PartNo) ? DBNull.Value : obj.PartNo.Substring(0, 10),
-                    string.IsNullOrWhiteSpace(obj.PartNoTo) ? DBNull.Value : obj.PartNoTo.Substring(0, 10),
-                    string.IsNullOrWhiteSpace(obj.PartNo) ? DBNull.Value : obj.PartNo.Substring(11, 2),
-                    string.IsNullOrWhiteSpace(obj.PartNoTo) ? DBNull.Value : obj.PartNoTo.Substring(11, 2),
-                    string.IsNullOrWhiteSpace(obj.Kanban) ? DBNull.Value : obj.Kanban,
-                    string.IsNullOrWhiteSpace(obj.KanbanTo) ? DBNull.Value : obj.KanbanTo,
-                    string.IsNullOrWhiteSpace(obj.Store) ? DBNull.Value : obj.Store,
-                    string.IsNullOrWhiteSpace(obj.StoreTo) ? DBNull.Value : obj.StoreTo, DBNull.Value);
+                if (obj.intRow != null)
+                {
+                    DT_Header = _FillDT.ExecuteSQL(_SQL,
+                        Start_Date, End_Date, obj.Supplier.Substring(0, 4), obj.Supplier.Substring(5, 1),
+                        DT_PartControl.Rows[obj.intRow ?? 0]["F_Part_No"].ToString().Trim(),
+                        DT_PartControl.Rows[obj.intRow ?? 0]["F_Part_No"].ToString().Trim(),
+                        DT_PartControl.Rows[obj.intRow ?? 0]["F_Ruibetsu"].ToString().Trim(),
+                        DT_PartControl.Rows[obj.intRow ?? 0]["F_Ruibetsu"].ToString().Trim(),
+                        DT_PartControl.Rows[obj.intRow ?? 0]["F_Kanban_No"].ToString().Trim(),
+                        DT_PartControl.Rows[obj.intRow ?? 0]["F_Kanban_No"].ToString().Trim(),
+                        DT_PartControl.Rows[obj.intRow ?? 0]["F_Store_Code"].ToString().Trim(),
+                        DT_PartControl.Rows[obj.intRow ?? 0]["F_Store_Code"].ToString().Trim(),
+                        DBNull.Value
+                        );
+                }
+                else
+                {
+                    DT_Header = _FillDT.ExecuteSQL(_SQL,
+                        Start_Date, End_Date, obj.Supplier.Substring(0, 4), obj.Supplier.Substring(5, 1),
+                        string.IsNullOrWhiteSpace(obj.PartNo) ? DBNull.Value : obj.PartNo.Substring(0, 10),
+                        string.IsNullOrWhiteSpace(obj.PartNoTo) ? DBNull.Value : obj.PartNoTo.Substring(0, 10),
+                        string.IsNullOrWhiteSpace(obj.PartNo) ? DBNull.Value : obj.PartNo.Substring(11, 2),
+                        string.IsNullOrWhiteSpace(obj.PartNoTo) ? DBNull.Value : obj.PartNoTo.Substring(11, 2),
+                        string.IsNullOrWhiteSpace(obj.Kanban) ? DBNull.Value : obj.Kanban,
+                        string.IsNullOrWhiteSpace(obj.KanbanTo) ? DBNull.Value : obj.KanbanTo,
+                        string.IsNullOrWhiteSpace(obj.Store) ? DBNull.Value : obj.Store,
+                        string.IsNullOrWhiteSpace(obj.StoreTo) ? DBNull.Value : obj.StoreTo, DBNull.Value);
+                }
+
 
                 if (DT_Header.Rows.Count == 0)
                 {
@@ -551,17 +570,34 @@ namespace KANBAN.Controllers.API.OrderingProcess
 
                 _SQL = "exec [dbo].[sp_DT_Detail] @p0,@p1,@p2,@p3,@p4,@p5,@p6,@p7,@p8,@p9,@p10,@p11,@p12";
 
-                DT_Detail = _FillDT.ExecuteSQL(_SQL,
-                    Start_Date, End_Date, obj.Supplier.Substring(0, 4), obj.Supplier.Substring(5, 1),
-                    string.IsNullOrWhiteSpace(obj.PartNo) ? DBNull.Value : obj.PartNo.Substring(0, 10),
-                    string.IsNullOrWhiteSpace(obj.PartNoTo) ? DBNull.Value : obj.PartNoTo.Substring(0, 10),
-                    string.IsNullOrWhiteSpace(obj.PartNo) ? DBNull.Value : obj.PartNo.Substring(11, 2),
-                    string.IsNullOrWhiteSpace(obj.PartNoTo) ? DBNull.Value : obj.PartNoTo.Substring(11, 2),
-                    string.IsNullOrWhiteSpace(obj.Kanban) ? DBNull.Value : obj.Kanban,
-                    string.IsNullOrWhiteSpace(obj.KanbanTo) ? DBNull.Value : obj.KanbanTo,
-                    string.IsNullOrWhiteSpace(obj.Store) ? DBNull.Value : obj.Store,
-                    string.IsNullOrWhiteSpace(obj.StoreTo) ? DBNull.Value : obj.StoreTo, DBNull.Value);
-
+                if (obj.intRow != null)
+                {
+                    DT_Detail = _FillDT.ExecuteSQL(_SQL,
+                        Start_Date, End_Date, obj.Supplier.Substring(0, 4), obj.Supplier.Substring(5, 1),
+                        DT_PartControl.Rows[obj.intRow ?? 0]["F_Part_No"].ToString().Trim(),
+                        DT_PartControl.Rows[obj.intRow ?? 0]["F_Part_No"].ToString().Trim(),
+                        DT_PartControl.Rows[obj.intRow ?? 0]["F_Ruibetsu"].ToString().Trim(),
+                        DT_PartControl.Rows[obj.intRow ?? 0]["F_Ruibetsu"].ToString().Trim(),
+                        DT_PartControl.Rows[obj.intRow ?? 0]["F_Kanban_No"].ToString().Trim(),
+                        DT_PartControl.Rows[obj.intRow ?? 0]["F_Kanban_No"].ToString().Trim(),
+                        DT_PartControl.Rows[obj.intRow ?? 0]["F_Store_Code"].ToString().Trim(),
+                        DT_PartControl.Rows[obj.intRow ?? 0]["F_Store_Code"].ToString().Trim(),
+                        DBNull.Value
+                        );
+                }
+                else
+                {
+                    DT_Detail = _FillDT.ExecuteSQL(_SQL,
+                        Start_Date, End_Date, obj.Supplier.Substring(0, 4), obj.Supplier.Substring(5, 1),
+                        string.IsNullOrWhiteSpace(obj.PartNo) ? DBNull.Value : obj.PartNo.Substring(0, 10),
+                        string.IsNullOrWhiteSpace(obj.PartNoTo) ? DBNull.Value : obj.PartNoTo.Substring(0, 10),
+                        string.IsNullOrWhiteSpace(obj.PartNo) ? DBNull.Value : obj.PartNo.Substring(11, 2),
+                        string.IsNullOrWhiteSpace(obj.PartNoTo) ? DBNull.Value : obj.PartNoTo.Substring(11, 2),
+                        string.IsNullOrWhiteSpace(obj.Kanban) ? DBNull.Value : obj.Kanban,
+                        string.IsNullOrWhiteSpace(obj.KanbanTo) ? DBNull.Value : obj.KanbanTo,
+                        string.IsNullOrWhiteSpace(obj.Store) ? DBNull.Value : obj.Store,
+                        string.IsNullOrWhiteSpace(obj.StoreTo) ? DBNull.Value : obj.StoreTo, DBNull.Value);
+                }
                 if (DT_Detail.Rows.Count == 0)
                 {
                     return NotFound(new
@@ -575,16 +611,34 @@ namespace KANBAN.Controllers.API.OrderingProcess
 
                 _SQL = "exec [dbo].[sp_DT_Volume] @p0,@p1,@p2,@p3,@p4,@p5,@p6,@p7,@p8,@p9,@p10,@p11,@p12";
 
-                DT_Volume = _FillDT.ExecuteSQL(_SQL,
-                    Start_Date, End_Date, obj.Supplier.Substring(0, 4), obj.Supplier.Substring(5, 1),
-                    string.IsNullOrWhiteSpace(obj.PartNo) ? DBNull.Value : obj.PartNo.Substring(0, 10),
-                    string.IsNullOrWhiteSpace(obj.PartNoTo) ? DBNull.Value : obj.PartNoTo.Substring(0, 10),
-                    string.IsNullOrWhiteSpace(obj.PartNo) ? DBNull.Value : obj.PartNo.Substring(11, 2),
-                    string.IsNullOrWhiteSpace(obj.PartNoTo) ? DBNull.Value : obj.PartNoTo.Substring(11, 2),
-                    string.IsNullOrWhiteSpace(obj.Kanban) ? DBNull.Value : obj.Kanban,
-                    string.IsNullOrWhiteSpace(obj.KanbanTo) ? DBNull.Value : obj.KanbanTo,
-                    string.IsNullOrWhiteSpace(obj.Store) ? DBNull.Value : obj.Store,
-                    string.IsNullOrWhiteSpace(obj.StoreTo) ? DBNull.Value : obj.StoreTo, DBNull.Value);
+                if (obj.intRow != null)
+                {
+                    DT_Volume = _FillDT.ExecuteSQL(_SQL,
+                        Start_Date, End_Date, obj.Supplier.Substring(0, 4), obj.Supplier.Substring(5, 1),
+                        DT_PartControl.Rows[obj.intRow ?? 0]["F_Part_No"].ToString().Trim(),
+                        DT_PartControl.Rows[obj.intRow ?? 0]["F_Part_No"].ToString().Trim(),
+                        DT_PartControl.Rows[obj.intRow ?? 0]["F_Ruibetsu"].ToString().Trim(),
+                        DT_PartControl.Rows[obj.intRow ?? 0]["F_Ruibetsu"].ToString().Trim(),
+                        DT_PartControl.Rows[obj.intRow ?? 0]["F_Kanban_No"].ToString().Trim(),
+                        DT_PartControl.Rows[obj.intRow ?? 0]["F_Kanban_No"].ToString().Trim(),
+                        DT_PartControl.Rows[obj.intRow ?? 0]["F_Store_Code"].ToString().Trim(),
+                        DT_PartControl.Rows[obj.intRow ?? 0]["F_Store_Code"].ToString().Trim(),
+                        DBNull.Value
+                        );
+                }
+                else
+                {
+                    DT_Volume = _FillDT.ExecuteSQL(_SQL,
+                        Start_Date, End_Date, obj.Supplier.Substring(0, 4), obj.Supplier.Substring(5, 1),
+                        string.IsNullOrWhiteSpace(obj.PartNo) ? DBNull.Value : obj.PartNo.Substring(0, 10),
+                        string.IsNullOrWhiteSpace(obj.PartNoTo) ? DBNull.Value : obj.PartNoTo.Substring(0, 10),
+                        string.IsNullOrWhiteSpace(obj.PartNo) ? DBNull.Value : obj.PartNo.Substring(11, 2),
+                        string.IsNullOrWhiteSpace(obj.PartNoTo) ? DBNull.Value : obj.PartNoTo.Substring(11, 2),
+                        string.IsNullOrWhiteSpace(obj.Kanban) ? DBNull.Value : obj.Kanban,
+                        string.IsNullOrWhiteSpace(obj.KanbanTo) ? DBNull.Value : obj.KanbanTo,
+                        string.IsNullOrWhiteSpace(obj.Store) ? DBNull.Value : obj.Store,
+                        string.IsNullOrWhiteSpace(obj.StoreTo) ? DBNull.Value : obj.StoreTo, DBNull.Value);
+                }
 
                 if (DT_Volume.Rows.Count == 0)
                 {
@@ -599,16 +653,34 @@ namespace KANBAN.Controllers.API.OrderingProcess
 
                 _SQL = "exec [dbo].[sp_DT_AdjustOder_Trip] @p0,@p1,@p2,@p3,@p4,@p5,@p6,@p7,@p8,@p9,@p10,@p11,@p12";
 
-                DT_AdjustOrder_Trip = _FillDT.ExecuteSQL(_SQL,
-                    Start_Date, End_Date, obj.Supplier.Substring(0, 4), obj.Supplier.Substring(5, 1),
-                    string.IsNullOrWhiteSpace(obj.PartNo) ? DBNull.Value : obj.PartNo.Substring(0, 10),
-                    string.IsNullOrWhiteSpace(obj.PartNoTo) ? DBNull.Value : obj.PartNoTo.Substring(0, 10),
-                    string.IsNullOrWhiteSpace(obj.PartNo) ? DBNull.Value : obj.PartNo.Substring(11, 2),
-                    string.IsNullOrWhiteSpace(obj.PartNoTo) ? DBNull.Value : obj.PartNoTo.Substring(11, 2),
-                    string.IsNullOrWhiteSpace(obj.Kanban) ? DBNull.Value : obj.Kanban,
-                    string.IsNullOrWhiteSpace(obj.KanbanTo) ? DBNull.Value : obj.KanbanTo,
-                    string.IsNullOrWhiteSpace(obj.Store) ? DBNull.Value : obj.Store,
-                    string.IsNullOrWhiteSpace(obj.StoreTo) ? DBNull.Value : obj.StoreTo, DBNull.Value);
+                if (obj.intRow != null)
+                {
+                    DT_AdjustOrder_Trip = _FillDT.ExecuteSQL(_SQL,
+                        Start_Date, End_Date, obj.Supplier.Substring(0, 4), obj.Supplier.Substring(5, 1),
+                        DT_PartControl.Rows[obj.intRow ?? 0]["F_Part_No"].ToString().Trim(),
+                        DT_PartControl.Rows[obj.intRow ?? 0]["F_Part_No"].ToString().Trim(),
+                        DT_PartControl.Rows[obj.intRow ?? 0]["F_Ruibetsu"].ToString().Trim(),
+                        DT_PartControl.Rows[obj.intRow ?? 0]["F_Ruibetsu"].ToString().Trim(),
+                        DT_PartControl.Rows[obj.intRow ?? 0]["F_Kanban_No"].ToString().Trim(),
+                        DT_PartControl.Rows[obj.intRow ?? 0]["F_Kanban_No"].ToString().Trim(),
+                        DT_PartControl.Rows[obj.intRow ?? 0]["F_Store_Code"].ToString().Trim(),
+                        DT_PartControl.Rows[obj.intRow ?? 0]["F_Store_Code"].ToString().Trim(),
+                        DBNull.Value
+                        );
+                }
+                else
+                {
+                    DT_AdjustOrder_Trip = _FillDT.ExecuteSQL(_SQL,
+                        Start_Date, End_Date, obj.Supplier.Substring(0, 4), obj.Supplier.Substring(5, 1),
+                        string.IsNullOrWhiteSpace(obj.PartNo) ? DBNull.Value : obj.PartNo.Substring(0, 10),
+                        string.IsNullOrWhiteSpace(obj.PartNoTo) ? DBNull.Value : obj.PartNoTo.Substring(0, 10),
+                        string.IsNullOrWhiteSpace(obj.PartNo) ? DBNull.Value : obj.PartNo.Substring(11, 2),
+                        string.IsNullOrWhiteSpace(obj.PartNoTo) ? DBNull.Value : obj.PartNoTo.Substring(11, 2),
+                        string.IsNullOrWhiteSpace(obj.Kanban) ? DBNull.Value : obj.Kanban,
+                        string.IsNullOrWhiteSpace(obj.KanbanTo) ? DBNull.Value : obj.KanbanTo,
+                        string.IsNullOrWhiteSpace(obj.Store) ? DBNull.Value : obj.Store,
+                        string.IsNullOrWhiteSpace(obj.StoreTo) ? DBNull.Value : obj.StoreTo, DBNull.Value);
+                }
 
                 if (DT_AdjustOrder_Trip.Rows.Count == 0)
                 {
@@ -623,15 +695,29 @@ namespace KANBAN.Controllers.API.OrderingProcess
 
                 _SQL = "exec [dbo].[sp_DT_Actual_Receive] @p0,@p1,@p2,@p3,@p4,@p5,@p6,@p7,@p8,@p9";
 
-                DT_Actual_Receive = _FillDT.ExecuteSQL(_SQL,
-                    Start_Date, End_Date, obj.Supplier.Substring(0, 4), obj.Supplier.Substring(5, 1),
-                    string.IsNullOrWhiteSpace(obj.PartNo) ? DBNull.Value : obj.PartNo.Substring(0, 10),
-                    string.IsNullOrWhiteSpace(obj.PartNoTo) ? DBNull.Value : obj.PartNoTo.Substring(0, 10),
-                    string.IsNullOrWhiteSpace(obj.PartNo) ? DBNull.Value : obj.PartNo.Substring(11, 2),
-                    string.IsNullOrWhiteSpace(obj.PartNoTo) ? DBNull.Value : obj.PartNoTo.Substring(11, 2),
-                    string.IsNullOrWhiteSpace(obj.Store) ? DBNull.Value : obj.Store,
-                    string.IsNullOrWhiteSpace(obj.StoreTo) ? DBNull.Value : obj.StoreTo);
-
+                if (obj.intRow != null)
+                {
+                    DT_Actual_Receive = _FillDT.ExecuteSQL(_SQL,
+                        Start_Date, End_Date, obj.Supplier.Substring(0, 4), obj.Supplier.Substring(5, 1),
+                        DT_PartControl.Rows[obj.intRow ?? 0]["F_Part_No"].ToString().Trim(),
+                        DT_PartControl.Rows[obj.intRow ?? 0]["F_Part_No"].ToString().Trim(),
+                        DT_PartControl.Rows[obj.intRow ?? 0]["F_Ruibetsu"].ToString().Trim(),
+                        DT_PartControl.Rows[obj.intRow ?? 0]["F_Ruibetsu"].ToString().Trim(),
+                        DT_PartControl.Rows[obj.intRow ?? 0]["F_Store_Code"].ToString().Trim(),
+                        DT_PartControl.Rows[obj.intRow ?? 0]["F_Store_Code"].ToString().Trim()
+                        );
+                }
+                else
+                {
+                    DT_Actual_Receive = _FillDT.ExecuteSQL(_SQL,
+                        Start_Date, End_Date, obj.Supplier.Substring(0, 4), obj.Supplier.Substring(5, 1),
+                        string.IsNullOrWhiteSpace(obj.PartNo) ? DBNull.Value : obj.PartNo.Substring(0, 10),
+                        string.IsNullOrWhiteSpace(obj.PartNoTo) ? DBNull.Value : obj.PartNoTo.Substring(0, 10),
+                        string.IsNullOrWhiteSpace(obj.PartNo) ? DBNull.Value : obj.PartNo.Substring(11, 2),
+                        string.IsNullOrWhiteSpace(obj.PartNoTo) ? DBNull.Value : obj.PartNoTo.Substring(11, 2),
+                        string.IsNullOrWhiteSpace(obj.Store) ? DBNull.Value : obj.Store,
+                        string.IsNullOrWhiteSpace(obj.StoreTo) ? DBNull.Value : obj.StoreTo);
+                }
 
                 return Ok(new
                 {

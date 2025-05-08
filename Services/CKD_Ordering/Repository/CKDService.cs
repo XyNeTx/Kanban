@@ -36,6 +36,18 @@ namespace KANBAN.Services.CKD_Ordering.Repository
             _automapService = autoMapService;
         }
 
+        public IKBNOR300 IKBNOR300
+        {
+            get
+            {
+                return new KBNOR300(_kbContext,
+                                    _BearerClass,
+                                    _PPM3Context,
+                                    _FillDT, _log,
+                                    _emailService,
+                                    _automapService);
+            }
+        }
         public IKBNOR310 IKBNOR310
         {
             get

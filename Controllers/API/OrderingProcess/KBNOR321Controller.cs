@@ -47,13 +47,13 @@ namespace HINOSystem.Controllers.API.Master
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get_All_Data(string action, string F_Supplier_Code, string? F_KanbanFrom, string? F_KanbanTo, string? F_StoreFrom, string? F_StoreTo, string? F_PartFrom, string? F_PartTo)
+        public async Task<IActionResult> Get_All_Data(string action, string F_Supplier_Code, int? IntRow, string? F_KanbanFrom, string? F_KanbanTo, string? F_StoreFrom, string? F_StoreTo, string? F_PartFrom, string? F_PartTo)
         {
             try
             {
                 await _BearerClass.CheckAuthorize();
 
-                var data = await _CKDRepo.IKBNOR321.Get_All_Data(action, F_Supplier_Code, F_KanbanFrom, F_KanbanTo, F_StoreFrom, F_StoreTo, F_PartFrom, F_PartTo);
+                var data = await _CKDRepo.IKBNOR321.Get_All_Data(action, F_Supplier_Code, IntRow, F_KanbanFrom, F_KanbanTo, F_StoreFrom, F_StoreTo, F_PartFrom, F_PartTo);
 
                 return Ok(new
                 {
@@ -80,6 +80,30 @@ namespace HINOSystem.Controllers.API.Master
                 else throw new CustomHttpException(500, ex.InnerException?.Message ?? ex.Message);
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Recalculate(string action, string F_Supplier_Code, int intRow)
+        {
+            try
+            {
+                await _BearerClass.CheckAuthorize();
+
+                await _CKDRepo.IKBNOR321.Recalculate(action, F_Supplier_Code, intRow);
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Recalculate Success",
+                });
+            }
+            catch (Exception ex)
+            {
+                if (ex is CustomHttpException) throw;
+                else throw new CustomHttpException(500, ex.InnerException?.Message ?? ex.Message);
+            }
+        }
+
         [HttpGet]
         public async Task<IActionResult> Onload(string _loginDate)
         {

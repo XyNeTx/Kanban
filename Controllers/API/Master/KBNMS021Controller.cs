@@ -1,6 +1,5 @@
 ﻿using HINOSystem.Libs;
 using HINOSystem.Models.KB3.Master;
-using KANBAN.Models.KB3.Master.ViewModel;
 using KANBAN.Services;
 using KANBAN.Services.Master.IRepository;
 using Microsoft.AspNetCore.Mvc;
@@ -44,7 +43,7 @@ namespace HINOSystem.Controllers.API.Master
                     message = "Data Found",
                     data = data.Select(x => new
                     {
-                        F_Line = x.F_Line.Trim() == "F" ? "FRAME" : x.F_Line.Trim() == "R" ? "Rear Axle" : x.F_Line.Trim() == "S" ? "Side Panel" : "Tail Gate",
+                        F_Line = x.F_Line.Trim() == "F" ? "FRAME" : x.F_Line.Trim() == "R" ? "Rear Axle" : x.F_Line.Trim() == "S" ? "Side Panel" : x.F_Line.Trim() == "T" ? "Tail Gate" : x.F_Line.Trim() == "D" ? "De Dion" : " ",
                         F_Code = x.F_Code.Trim(),
                         F_Part_No = x.F_Part_No.Trim() + "-" + x.F_Ruibetsu.Trim(),
                         F_name = x.F_name.Trim(),
@@ -57,7 +56,7 @@ namespace HINOSystem.Controllers.API.Master
             }
             catch (CustomHttpException ex)
             {
-                throw new CustomHttpException(ex.StatusCode,ex.Message);
+                throw new CustomHttpException(ex.StatusCode, ex.Message);
             }
         }
 
@@ -82,7 +81,7 @@ namespace HINOSystem.Controllers.API.Master
                     message = "Data Found",
                     data = data.Select(x => new
                     {
-                        F_Line = x.F_Line.Trim() == "F" ? "FRAME" : x.F_Line.Trim() == "R" ? "Rear Axle" : x.F_Line.Trim() == "S" ? "Side Panel" : "Tail Gate",
+                        F_Line = x.F_Line.Trim() == "F" ? "FRAME" : x.F_Line.Trim() == "R" ? "Rear Axle" : x.F_Line.Trim() == "S" ? "Side Panel" : x.F_Line.Trim() == "T" ? "Tail Gate" : x.F_Line.Trim() == "D" ? "De Dion" : " ",
                     }).Distinct().ToList()
                 });
             }
@@ -165,7 +164,7 @@ namespace HINOSystem.Controllers.API.Master
 
                 var data = await _masterRepo.IKBNMS021.CheckPairPart();
 
-                var groupData = data.GroupBy(x=> new
+                var groupData = data.GroupBy(x => new
                 {
                     x.F_Line,
                     x.F_Code,

@@ -196,6 +196,7 @@ const previewFunction = async (intRow,_command) => {
         storeTo: $("#inputStoreTo").val(),
         kanban : $("#inputKanban").val(),
         kanbanTo: $("#inputKanbanTo").val(),
+        intRow: intRow,
     }
 
     await _xLib.AJAX_Post('/api/KBNOR121/Get_All_Data', JSON.stringify(obj), async function (result) {
@@ -327,7 +328,8 @@ const addDetailToTable = async (dateSet, intRow) => {
     //console.log("Length : ", _headLength);
     //console.log("Increase : ", _increase);
 
-    for (let i = intRow; i <= _headLength; i += _increase) {
+    //for (let i = intRow; i <= _headLength; i += _increase) {
+    for (let i = intRow; i < _headLength; i++) {
         //let _header = dT_Header[i]; // Make the Object easier to access
         //console.log(_header);
         //let _headerQty = dT_Header.filter(x => x.F_Supplier_Code == $("#readSupplier").val().split("-")[0]
@@ -868,9 +870,9 @@ const sumKB = async (dateSet) => {
             _countDateSet = 0;
             $(`table tbody tr td[id*='tdR${_Row[i]}KB']`).each(function () {
                 let $Id = $(this).attr("id");
-                console.log($Id + " ID");
+                //console.log($Id + " ID");
                 let $KB = parseInt($(`#${$Id}`).text());
-                console.log($KB + " $KB");
+                //console.log($KB + " $KB");
                 let $Pcs = $KB * parseInt($("#readQtyPack").val());
                 if (isNaN($Pcs) || $Pcs === Infinity) $Pcs = 0;
                 if (isNaN($KB) || $KB === Infinity) $KB = 0;

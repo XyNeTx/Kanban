@@ -1367,6 +1367,7 @@ namespace HINOSystem.Controllers.API.Master
                             if (exist == null && (_lock == null || _lock == "0"))
                             {
                                 _KB3Context.TB_Kanban_Planning.Add(planObj);
+                                _log.WriteLogMsg($"TB_Kanban_Planning Insert To => : {JsonConvert.SerializeObject(planObj)}");
                                 await _KB3Context.SaveChangesAsync();
                             }
                             else
@@ -1374,19 +1375,19 @@ namespace HINOSystem.Controllers.API.Master
                                 if (exist != null && (_lock == "0" || _lock == null))
                                 {
                                     _KB3Context.TB_Kanban_Planning.Update(planObj);
+                                    _log.WriteLogMsg($"TB_Kanban_Planning Update To => : {JsonConvert.SerializeObject(planObj)}");
                                     await _KB3Context.SaveChangesAsync();
                                 }
                                 else
                                 {
                                     _log.WriteLogMsg($"Lock Data : {JsonConvert.SerializeObject(planObj)}");
-
                                 }
                             }
                         }
                     }
-                    _log.WriteLogMsg($" Upload Import To Kanban Planning : {JsonConvert.SerializeObject(obj)}");
                 }
                 _kb3Trans.Commit();
+                _log.WriteLogMsg($" Upload Import To Kanban Planning : {JsonConvert.SerializeObject(listObj, Formatting.Indented)}");
 
                 return Ok(new
                 {

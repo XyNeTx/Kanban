@@ -313,12 +313,12 @@
                     <thead class="text-center">
                         <tr class="text-center" id="THeadR1">
                             <th class="sticky-col" style="border:0px">
-                                <input class="form-control" value="MRP : 15/07/2024" id="inputMRP" readonly />
+                                <input class="form-control" value="MRP : 15/07/2024" id="inputMRP" readonly/>
                             </th>
                         </tr>
                         <tr class="text-center" style="border:0px" id="THeadR2">
                             <th class="sticky-col" style="border:0px">
-                                <input class="form-check-input" type="radio" name="radMRP" id="MRP-20" />
+                                <input class="form-check-input" type="radio" name="radMRP" id="MRP-20" onclick="return false;" />
                                 <label class="form-check-label" for="MRP-20" id="lbMrp-20">
                                     MRP-20%
                                 </label>
@@ -326,7 +326,7 @@
                         </tr>
                         <tr class="text-center" id="THeadR3">
                             <th class="sticky-col" style="border:0px">
-                                <input class="form-check-input" type="radio" name="radMRP" id="MRP20" />
+                                <input class="form-check-input" type="radio" name="radMRP" id="MRP20" onclick="return false;" />
                                 <label class="form-check-label" for="MRP20" id="lbMrp20">
                                     MRP+20%
                                 </label>
@@ -400,26 +400,26 @@
                     <div class="col-3">
                         <div class="row">
                             <div class="col-7" style="padding-right:5px;">
-                                <span class="text-center" id="spanProcessDate">Process Date</span>
+                                <span class="text-center fw-bolder" id="spanProcessDate">Process Date</span>
                             </div>
                             <div class="col" style="padding-left:0px;">
-                                <span class="text-center" id="spanDeliveryDate">Delivery Date</span>
+                                <span class="text-center fw-bolder" id="spanDeliveryDate">Delivery Date</span>
                             </div>
                         </div>
                     </div>
                     <div class="col-4">
                         <div class="row ms-4">
                             <div class="col-3">
-                                <input type="radio" class="form-check-input" id="radioKbStop" />
-                                <label class="form-check-label text-primary" id="lbKbStop" for="radioKbStop">Stop</label>
+                                <input type="radio" class="form-check-input" id="radioKbStop" onclick="return false;" />
+                                <label class="form-check-label text-warning fw-bolder" id="lbKbStop" for="radioKbStop">Stop</label>
                             </div>
                             <div class="col-3">
-                                <input type="radio" class="form-check-input" id="radioKbAdd" />
-                                <label class="form-check-label text-primary" id="lbKbAdd" for="radioKbAdd">Add</label>
+                                <input type="radio" class="form-check-input" id="radioKbAdd" onclick="return false;" />
+                                <label class="form-check-label text-warning fw-bolder" id="lbKbAdd" for="radioKbAdd">Add</label>
                             </div>
                             <div class="col-3">
-                                <input type="radio" class="form-check-input" id="radioKbCut" />
-                                <label class="form-check-label text-primary" id="lbKbCut" for="radioKbCut">Cut</label>
+                                <input type="radio" class="form-check-input" id="radioKbCut" onclick="return false;" />
+                                <label class="form-check-label text-warning fw-bolder" id="lbKbCut" for="radioKbCut">Cut</label>
                             </div>
                         </div>
                     </div>
@@ -436,29 +436,29 @@
                     <div class="col-3" id="divCheckBox">
                         <div class="row ms-2">
                             <div class="col-7">
-                                <input type="checkbox" class="form-check-input" id="chkBoxOrderTable" readonly />
-                                <label class="form-check-label text-primary" id="lbOrderTable" for="chkBoxOrderTable">Order Table</label>
+                                <input type="checkbox" class="form-check-input" id="chkBoxOrderTable" onclick="return false;" />
+                                <label class="form-check-label text-warning fw-bolder" id="lbOrderTable" for="chkBoxOrderTable">Order Table</label>
                             </div>
                             <div class="col">
-                                <input type="checkbox" class="form-check-input" id="chkBoxSliceOrder" readonly />
-                                <label class="form-check-label text-primary" id="lbSliceOrder" for="chkBoxSliceOrder">Slice Order</label>
+                                <input type="checkbox" class="form-check-input" id="chkBoxSliceOrder" onclick="return false;" />
+                                <label class="form-check-label text-warning fw-bolder" id="lbSliceOrder" for="chkBoxSliceOrder">Slice Order</label>
                             </div>
                         </div>
                         <div class="row ms-2">
                             <div class="col-7">
-                                <input type="checkbox" class="form-check-input" id="chkBoxChgCycleTime" readonly />
-                                <label class="form-check-label text-primary" id="lbChgCycleTime" for="chkBoxChgCycleTime">Change Cycle Time</label>
+                                <input type="checkbox" class="form-check-input" id="chkBoxChgCycleTime" onclick="return false;" />
+                                <label class="form-check-label text-warning fw-bolder" id="lbChgCycleTime" for="chkBoxChgCycleTime">Change Cycle Time</label>
                             </div>
                             <div class="col">
-                                <input type="checkbox" class="form-check-input" id="chkBoxRecSlice" readonly />
-                                <label class="form-check-label text-primary" id="lbRecSlice" for="chkBoxRecSlice">Receive Slice</label>
+                                <input type="checkbox" class="form-check-input" id="chkBoxRecSlice" onclick="return false;" />
+                                <label class="form-check-label text-warning fw-bolder" id="lbRecSlice" for="chkBoxRecSlice">Receive Slice</label>
                             </div>
                         </div>
                     </div>
                     <div class="col-3">
                         <div class="d-flex ms-4 ps-4">
                             <button type="button" class="btn btn-outline-dark btn-rounded col-2" id="btnPrevPage"><i class="fa-solid fa-backward-step"></i></button>
-                            <input type="text" class="form-control text-center col-4" id="txtPage" value="1/1" readonly>
+                            <input type="text" class="form-control text-center col-4 fw-bolder" id="txtPage" value="1/1" readonly>
                             <button type="button" class="btn btn-outline-dark btn-rounded col-2" id="btnNextPage"><i class="fa-solid fa-forward-step"></i></button>
                         </div>
                     </div>

@@ -19,6 +19,7 @@ namespace HINOSystem.Libs
         private static readonly ILogger LogSpecial;
         private static readonly ILogger LogImport;
         private static readonly ILogger LogError;
+        private static readonly ILogger LogCKD;
 
         static SerilogLibs()
         {
@@ -59,6 +60,17 @@ namespace HINOSystem.Libs
                 .WriteTo.Logger(log => log
                 .WriteTo.File(
                     @"\\hmmta-ppm\Event_Log\New_KanbanF3\New_Kanban_F3_Import_.json",
+                    outputTemplate: "{Timestamp:dd-MM-yyyy HH:mm:ss.fff zzz} [{Level}] {Message:lj}{NewLine}{NewLine}{Exception}",
+                    rollingInterval: RollingInterval.Month,
+                    shared: true,
+                    rollOnFileSizeLimit: true,
+                    fileSizeLimitBytes: 524288000))
+            .CreateLogger();
+
+            LogCKD = new LoggerConfiguration()
+                .WriteTo.Logger(log => log
+                .WriteTo.File(
+                    @"\\hmmta-ppm\Event_Log\New_KanbanF3\New_Kanban_F3_CKD_.json",
                     outputTemplate: "{Timestamp:dd-MM-yyyy HH:mm:ss.fff zzz} [{Level}] {Message:lj}{NewLine}{NewLine}{Exception}",
                     rollingInterval: RollingInterval.Month,
                     shared: true,
@@ -126,6 +138,10 @@ namespace HINOSystem.Libs
                 else if (this.Controller.ToUpper().Contains("KBNIM"))
                 {
                     LogImport.Information($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
+                }
+                else if (this.Controller.ToUpper().Contains("KBNOR3"))
+                {
+                    LogCKD.Information($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
                 }
                 else
                 {
@@ -199,6 +215,10 @@ namespace HINOSystem.Libs
                 else if (this.Controller.ToUpper().Contains("KBNIM"))
                 {
                     LogImport.Error($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
+                }
+                else if (this.Controller.ToUpper().Contains("KBNOR3"))
+                {
+                    LogCKD.Error($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
                 }
                 else
                 {
