@@ -118,7 +118,7 @@ namespace HINOSystem.Controllers.API.Master
                     status = "200",
                     response = "Success",
                     message = "Success",
-                    data = JsonConvert.SerializeObject(dt)
+                    data = JsonConvert.SerializeObject(dt, Formatting.Indented)
                 });
             }
             catch (Exception ex)

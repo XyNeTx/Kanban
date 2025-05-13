@@ -65,7 +65,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
         private static DataTable DT_AdjustOrder_Trip = new DataTable();
         private static DataTable DT_Actual_Receive = new DataTable();
 
-        public async Task<DataTable> Onload(string _loginDate)
+        public async Task<List<DataTable>> Onload(string _loginDate)
         {
             try
             {
@@ -89,7 +89,13 @@ namespace KANBAN.Services.CKD_Ordering.Repository
 
                 var dt = await _FillDT.ExecuteStoreSQLAsync("[CKD_Inhouse].[sp_getProcessDateTime]", sqlParams.ToArray());
 
-                return dt;
+                string sql = $@"SELECT F_value2, F_Value3
+                    FROM TB_MS_Parameter
+                    WHERE F_code ='CI_CKD'";
+
+                var dtParam = await _FillDT.ExecuteSQLAsync(sql);
+
+                return new List<DataTable> { dt, dtParam };
 
             }
             catch (Exception ex)

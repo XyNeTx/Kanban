@@ -106,12 +106,17 @@ $("#btnProcess").click(async function () {
     _ProcessAction = "Process";
     _IntRow = 0;
     await Get_All_Data("Process", _IntRow);
+    $("#btnReCal").prop("disabled", false);
 })
 $("#btnPreview").click(async function () {
     action = "Preview";
     _ProcessAction = "Preview";
     _IntRow = 0;
     await Get_All_Data("Preview", _IntRow);
+})
+
+$("#buttonCancel").click(async function () {
+    await CancelClicked();
 })
 
 $("#btnBlCal").click(async function () {
@@ -236,6 +241,16 @@ async function Set_Dynamic_Table()
 
 }
 
+async function CancelClicked() {
+    $("#divRead").find("input").val("");
+    if ($(".tempHead").length > 0) {
+        $(".tempHead").remove();
+        $(".tempDetail").remove();
+    }
+}
+
+let maxWidth = 0;
+
 async function Set_Data(intRow)
 {
     let keyHead = ["F_TMT_FO", "F_MRP", "F_AbNormal_Part", "F_Total", "F_Remain_LastTrip", "F_Remain_LastClear"
@@ -332,6 +347,12 @@ async function Set_Data(intRow)
                     let _idPcs = `TD_R${i}_T${dT_Period[j].Row_Num}_Pcs_${dT_Period[j].Date_Now}`;
                     let _idKB = `TD_R${i}_T${dT_Period[j].Row_Num}_KB_${dT_Period[j].Date_Now}`;
                     let _idT = `TD_R${i}_T${dT_Period[j].Row_Num}_${dT_Period[j].Date_Now}`;
+
+                    if (maxWidth < parseFloat($(`#${_idT}`).css("width")))
+                    {
+                        maxWidth = parseFloat($(`#${_idT}`).css("width"));
+                        console.log(maxWidth);
+                    }
 
                     //console.log(keyHead[i - 1]);
                     //console.log(headData[keyHead[i - 1]]);
@@ -479,11 +500,26 @@ async function Onload() {
     return _xLib.AJAX_Get("/api/KBNOR321/Onload", obj,
         async function (success) {
             success = _xLib.JSONparseMixData(success);
-            //console.log(success);
+            console.log(success);
             $("#inputPlant").val(_xLib.GetCookie("plantCode") + ":Fac-" + _xLib.GetCookie("plantCode"));
-            $("#inputProcessDateFor").val(moment(success.data[0].ProcessDate.slice(0, 10), "YYYY-MM-DD").format("DD/MM/YYYY"));
-            $("#inputProcessShiftFor").val(success.data[0].ProcessShift);
-            $("#inputMRP").val(`MRP : ${moment(success.data[0].ProcessDate.slice(0, 10), "YYYY-MM-DD").format("DD/MM/YYYY")}`);
+            $("#inputProcessDateFor").val(moment(success.data[0][0].ProcessDate.slice(0, 10), "YYYY-MM-DD").format("DD/MM/YYYY"));
+            $("#inputProcessShiftFor").val(success.data[0][0].ProcessShift);
+            $("#inputMRP").val(`MRP : ${moment(success.data[0][0].ProcessDate.slice(0, 10), "YYYY-MM-DD").format("DD/MM/YYYY")}`);
+
+            var nNextProcess = moment(new Date().toISOString().slice(0, 10), "YYYY-MM-DD").format("YYYYMMDD") + success.data[0][0].ProcessShift;
+            console.log(nNextProcess);
+
+            if (success.data[1][0].F_value2 == 0 || success.data[1][0].F_value2 == 3
+                || success.data[1][0].F_value3 == nNextProcess) {
+                $("#btnProcess").prop("disabled", true);
+                $("#btnPreview").prop("disabled", false);
+                $("#btnReCal").prop("disabled", true);
+            }
+            else {
+                $("#btnPreview").prop("disabled", false);
+                $("#btnProcess").prop("disabled", false);
+            }
+
         },
     )
 }
@@ -629,6 +665,7 @@ async function EditTableStyle(action) {
             //console.log($(this));
             $(this).css("background-color", "#C0C0C0");
             $(this).css("border-color", "#A9A9A9");
+            $(this).css("width", `${56.1458}`);
 
             let atrID = $(this).attr("id") !== undefined ? $(this).attr("id") : "";
             if (atrID.includes("R1_")) {
@@ -639,11 +676,13 @@ async function EditTableStyle(action) {
             //console.log($(this));
             $(this).css("background-color", "#C0C0C0");
             $(this).css("border-color", "#A9A9A9");
+            $(this).css("width", `${56.1458}`);
         });
         $(document).find("td").not("[id*='KB'],td[id*='Pcs']").each(function (e,t) {
             //console.log($(this));
             $(this).css("background-color", "#E0E0E0");
             $(this).css("border-color", "#A9A9A9");
+            $(this).css("width", `${56.1458}`);
             //console.log($(this).attr("id"));
             if ($(this).attr("id") === undefined) {
                 return;
@@ -686,6 +725,16 @@ async function EditTableStyle(action) {
                     $(this).addClass("bg-danger");
                 }
             }
+            if (action.toLowerCase() == "process") {
+                if (atrID.includes(`T${dT_DeliveryDate[0].F_Delivery_Trip}_` + dT_DeliveryDate[0].F_Delivery_Date) &&
+                    !atrID.includes("R1_")) {
+                    //console.log(atrID);
+                    $(this).css("background-color", "white");
+                }
+            }
         });
+
+        //let 
+
     }
 }

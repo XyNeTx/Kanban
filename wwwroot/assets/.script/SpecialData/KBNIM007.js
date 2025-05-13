@@ -387,7 +387,7 @@ getSaveObj = async () => {
     $("#tableMain").find("input").each(function () {
 
         let obj = {
-            PDS: $("#selCustomerOrder").val(),
+            PDS: $("#selCustomerOrder").val().trim(),
             IssuedDate: moment($("#inpDate").val(), "DD/MM/YYYY").format("YYYYMMDD"),
             PartNo: $("#selPartNo").val(),
             StoreCD: $("#selStoreCode").val(),

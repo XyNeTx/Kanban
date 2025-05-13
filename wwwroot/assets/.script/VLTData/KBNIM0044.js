@@ -177,6 +177,8 @@ $("#btnSimulate").on("click", function () {
     UpdateFlag("S");
 
     $("#btnPost").prop("disabled", true);
+    _xDataTable.ClearData("tableMain");
+    GetListData();
     //$("#btnDel").prop("disabled", true);
 
 });
@@ -190,6 +192,18 @@ $("#btnSimulate").on("click", function () {
 
 $("#chkSlider").on("change", function () {
     _xDataTable.ClearData("tableMain");
+    if ($(this).prop("checked")) {
+        $("#btnPost").addClass("d-none");
+        $("#btnPost").removeClass("d-block");
+        $("#btnRest").addClass("d-block");
+        $("#btnRest").removeClass("d-none");
+    }
+    else {
+        $("#btnPost").removeClass("d-none");
+        $("#btnPost").addClass("d-block");
+        $("#btnRest").removeClass("d-block");
+        $("#btnRest").addClass("d-none");
+    }
     GetListData();
 });
 
@@ -230,6 +244,9 @@ $("#btnMain").click(function () {
 
 $("#btnPost").click(function () {
     UpdateFlag("P");
+});
+$("#btnRest").click(function () {
+    UpdateFlag("R");
 });
 //$("#btnDel").click(function () {
 //    UpdateFlag("D");
@@ -286,9 +303,26 @@ async function UpdateFlag(Flag) {
             item.f_Deli_Trip = null;
         });
     }
+    else if (Flag === "R") {
+        listObj = _xDataTable.GetSelectedDataDT("#tableMain");
+        listObj.forEach(function (item) {
+            item.f_Flag = null;
+            item.f_Deli_Date = null;
+            item.f_Deli_Shift = null;
+            item.f_Deli_Trip = null;
+        });
+    }
     else if (Flag === "S") {
         let Trip = 1;
         let n = 0;
+        if ($("#chkSlider").prop("checked")) {
+            let TMP_ListObj = [];
+            for (let x = 0; x < SeqQty; x++) {
+                TMP_ListObj.push(listObj[x])
+            }
+            listObj = TMP_ListObj;
+            console.log(listObj);
+        }
         for (j = 0; j < TripShift; j++) {
             for (i = 0; i < SeqQtyPds; i++) {
                 listObj[n].f_Flag = "S";

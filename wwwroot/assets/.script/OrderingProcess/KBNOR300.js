@@ -172,12 +172,15 @@ async function Onload() {
                     $("#btnKBNOR310").removeClass("btn-success");
                     $("#btnKBNOR310").addClass("text-dark fw-bolder");
                     $("#btnKBNOR310").css("background-color", "Chocolate")
+
                     $("#btnKBNOR320").removeClass("btn-success");
                     $("#btnKBNOR320").addClass("text-dark fw-bolder");
                     $("#btnKBNOR320").css("background-color", "Chocolate")
+
                     $("#btnKBNOR321").removeClass("btn-success");
                     $("#btnKBNOR321").addClass("text-dark fw-bolder");
                     $("#btnKBNOR321").css("background-color", "Chocolate")
+
                     $("#btnKBNOR330").removeClass("btn-success");
                     $("#btnKBNOR330").addClass("text-dark fw-bolder");
                     $("#btnKBNOR330").css("background-color", "Chocolate")

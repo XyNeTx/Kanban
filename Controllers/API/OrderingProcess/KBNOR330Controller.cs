@@ -1,35 +1,7 @@
-﻿using Microsoft.AspNetCore.Http.Extensions;
-using Microsoft.AspNetCore.Mvc;
-using System.Data;
-using System;
-using System.Web;
-using System.Security.Principal;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-
-using System.Reflection.PortableExecutable;
-using System.DirectoryServices;
-using System.DirectoryServices.AccountManagement;
-using Microsoft.Net.Http.Headers;
-using System.Collections.Specialized;
-using System.Net;
-using System.DirectoryServices.ActiveDirectory;
-using System.Net.Http;
-using Microsoft.AspNetCore.Authorization;
-
-using System.Security.Claims;
-using Org.BouncyCastle.Asn1.Ocsp;
-
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-
-using System.Threading.Tasks;
-
+﻿using HINOSystem.Context;
 using HINOSystem.Libs;
-using HINOSystem.Context;
-using HINOSystem.Models.KB3.Master;
-using NPOI.SS.Formula.Functions;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace HINOSystem.Controllers.API.Master
 {
@@ -55,8 +27,6 @@ namespace HINOSystem.Controllers.API.Master
 
         }
 
-
-
         [HttpPost]
         public IActionResult initial([FromBody] string pPostData = null)
         {
@@ -74,27 +44,7 @@ namespace HINOSystem.Controllers.API.Master
                 _BearerClass.Authentication(Request);
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
-                
-
                 if (pPostData != null) _data = JsonConvert.DeserializeObject(pPostData);
-
-                //_SQL = @" EXEC [exec].[spKBNOR310] '"
-                //    + _BearerClass.Plant + @"','"
-                //    + _BearerClass.UserCode + @"','"
-                //    + _data.ProcessDate.ToString().Replace("-", "") + @"','"
-                //    + _data.ProcessShift.ToString() + @"','' ";
-
-                //_resData = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass,
-                //    pControllerName: ControllerContext.ActionDescriptor.ControllerName,
-                //    pActionName: ControllerContext.ActionDescriptor.ActionName
-                //    );
-
-                //_result = @"{
-                //    ""status"":""200"",
-                //    ""response"":""OK"",
-                //    ""message"": ""Data Found"",
-                //    ""data"": " + _resData + @"
-                //}";
 
                 _result = @"{
                     ""status"":""200"",
@@ -109,57 +59,6 @@ namespace HINOSystem.Controllers.API.Master
                 return Content(e.Message.ToString(), "application/json");
             }
         }
-
-
-
-        //[HttpPost]
-        //public IActionResult search([FromBody] string pPostData = null)
-        //{
-        //    dynamic _data = null;
-        //    string _SQL, _resData;
-        //    string _result = @"{
-        //            ""status"":""200"",
-        //            ""response"":""OK"",
-        //            ""message"": ""No data found"",
-        //            ""data"": null
-        //        }";
-
-        //    _BearerClass.Authentication(Request);
-        //    if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
-
-        //    try
-        //    {
-        //        
-
-        //        if (pPostData != null) _data = JsonConvert.DeserializeObject(pPostData);
-
-        //        _SQL = @" EXEC [exec].[spKBNOR310] '"
-        //            + _BearerClass.Plant + @"','"
-        //            + _BearerClass.UserCode + @"','"
-        //            + _data.ProcessDate.ToString().Replace("-", "") + @"','"
-        //            + _data.ProcessShift.ToString() + @"','' ";
-
-        //        _resData = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass,
-        //            pControllerName: ControllerContext.ActionDescriptor.ControllerName,
-        //            pActionName: ControllerContext.ActionDescriptor.ActionName
-        //            );
-
-        //        _result = @"{
-        //            ""status"":""200"",
-        //            ""response"":""OK"",
-        //            ""message"": ""Data Found"",
-        //            ""data"": " + _resData + @"
-        //        }";
-        //        return Content(_result, "application/json");
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        return Content(e.Message.ToString(), "application/json");
-        //    }
-        //}
-
-
-
 
     }
 }

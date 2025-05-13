@@ -197,6 +197,7 @@ const previewFunction = async (intRow,_command) => {
         kanban : $("#inputKanban").val(),
         kanbanTo: $("#inputKanbanTo").val(),
         intRow: intRow,
+        //intRow: intRow,
     }
 
     await _xLib.AJAX_Post('/api/KBNOR121/Get_All_Data', JSON.stringify(obj), async function (result) {
@@ -223,7 +224,7 @@ const previewFunction = async (intRow,_command) => {
         $("#readStoreCode").val(dT_PartControl[intRow].F_Store_Code);
         $("#readKanbanNo").val(dT_PartControl[intRow].F_Kanban_No);
         $("#readCycleTime").val(dT_Date[dT_Date.length - 1].F_Cycle.slice(0, 2) + "-" + dT_Date[dT_Date.length - 1].F_Cycle.slice(2, 4) + "-" + dT_Date[dT_Date.length - 1].F_Cycle.slice(4, 6));
-        $("#readQtyPack").val(dT_Header[intRow].F_Qty_Box);
+        //$("#readQtyPack").val(dT_Header[intRow].F_Qty_Box);
 
         $("#spanProcessDate").text(_CookieProcessDate.slice(8, 10) + "/" + _CookieProcessDate.slice(5, 7) + "/" + _CookieProcessDate.slice(0, 4));
         $("#spanDeliveryDate").text(dT_DeliveryDate[0].F_Delivery_Date.slice(6, 8) + "/" + dT_DeliveryDate[0].F_Delivery_Date.slice(4, 6) + "/" + dT_DeliveryDate[0].F_Delivery_Date.slice(0, 4));
@@ -328,8 +329,8 @@ const addDetailToTable = async (dateSet, intRow) => {
     //console.log("Length : ", _headLength);
     //console.log("Increase : ", _increase);
 
-    //for (let i = intRow; i <= _headLength; i += _increase) {
-    for (let i = intRow; i < _headLength; i++) {
+    //for (let i = intRow; i < _headLength; i += _increase) {
+    for (let i = 0; i < _headLength; i++) {
         //let _header = dT_Header[i]; // Make the Object easier to access
         //console.log(_header);
         //let _headerQty = dT_Header.filter(x => x.F_Supplier_Code == $("#readSupplier").val().split("-")[0]
