@@ -1,48 +1,99 @@
-﻿$(document).ready(function () {
+﻿$(document).ready(async function () {
 
-
-
-    const xKBNOR330 = new MasterTemplate({
-        Controller: _PAGE_,
-        Table: 'tblMaster',
-        ColumnTitle: {
-            "EN": ['Customer PO', 'Part No', 'Supplier', 'Short Name', 'Store Code', 'Kanban No.', 'Delivery Date', 'Delivery Trip', 'Qty', 'Qty KB', 'Import Type'],
-            "TH": ['Customer PO', 'Part No', 'Supplier', 'Short Name', 'Store Code', 'Kanban No.', 'Delivery Date', 'Delivery Trip', 'Qty', 'Qty KB', 'Import Type'],
-            "JP": ['Customer PO', 'Part No', 'Supplier', 'Short Name', 'Store Code', 'Kanban No.', 'Delivery Date', 'Delivery Trip', 'Qty', 'Qty KB', 'Import Type'],
-        },
-
-        ColumnValue: [
-            { "data": "F_PDS_No" },
-            { "data": "F_Part_No" },
-            { "data": "F_Supplier_CD" },
-            { "data": "F_Short_name" },
-            { "data": "F_Store_CD" },
-            { "data": "F_Kanban_No" },
-            { "data": "F_Delivery_Date" },
-            { "data": "F_Round" },
-            { "data": "F_Qty" },
-            { "data": "F_QTY_KB" },
-            { "data": "F_OrderType" }
-        ],
-        Modal: 'modalMaster',
-        Form: 'frmMaster',
-        PostData: [
-            { name: 'F_Plant', value: _PLANT_ }
-        ],
-    });
-
-    xKBNOR330.prepare();
-
-    xKBNOR330.initial(function (result) {
-        xSplash.hide();
-        //xKBNOR330.search();
-    });
-
+    await _xDataTable.InitialDataTable("#tableMain",
+        {
+            columns: [
+                { title: "Customer PO", data: "F_PDS_No" },
+                { title: "Part No", data: "F_Part_No" },
+                { title: "Supplier", data: "F_Supplier_CD" },
+                { title: "Short Name", data: "F_Short_name" },
+                { title: "Store Code", data: "F_Store_CD" },
+                { title: "Kanban No.", data: "F_Kanban_No" },
+                { title: "Delivery Date", data: "F_Delivery_Date" },
+                { title: "Delivery Trip", data: "F_Round" },
+                { title: "Qty", data: "F_Qty" },
+                { title: "Qty KB", data: "F_QTY_KB" },
+                { title: "Import Type", data: "F_OrderType" },
+            ],
+            order: [[1, "asc"]],
+            scrollCollapse: true,
+        }
+    );
+    xSplash.hide();
 
     xAjax.onClick('btnExit', function () {
         xAjax.redirect('KBNOR300');
     });
 
+    //$("#btnReport").click(function () {
+    //    $("#exampleModal").modal('show');
+    //})
+
+    //$("#btnGenerate").click(function () {
+
+    //})
+
+    //$("#exampleModal").on('show.bs.modal', async function () {
+    //    //console.log($("#exampleModal .modal-body .dataTables_scrollHead").length);
+    //    if ($("#exampleModal .modal-body .dataTables_scrollHead").length == 0) {
+    //        await _xDataTable.InitialDataTable("#tableModal",
+    //            {
+    //                columns: [
+    //                    { title: "Supplier Code", data: "F_Supplier_Code" },
+    //                    { title: "Part No", data: "F_Part_No" },
+    //                    { title: "Store Code", data: "F_Store_Code" },
+    //                    { title: "Kanban No", data: "F_Kanban_No" },
+    //                    { title: "Delivery Date", data: "F_Delivery_Date" },
+    //                    { title: "Delivery Shift", data: "F_Delivery_Shift" },
+    //                    { title: "Delivery Round", data: "F_Delivery_Round" },
+    //                    { title: "KB Qty (PCS)", data: "F_Qty" },
+    //                    { title: "CKD Remain Qty (PCS)", data: "CKD_Remain_Qty" }
+    //                ],
+    //                order: [[1, "asc"]],
+    //                scrollCollapse: true,
+    //            }
+    //        );
+    //    }
+    //});
 
 })
+
+var _dt = "";
+
+async function Generate() {
+    _xLib.AJAX_Post("/api/KBNOR330/Generate", "",
+        async function (success) {
+            success = _xLib.JSONparseMixData(success);
+            if (success.message.includes("ไม่สามารถ Generate PDS สำหรับ CKD Order ได้")) {
+                $("#exampleModal").modal('show');
+                if ($("#exampleModal .modal-body .dataTables_scrollHead").length == 0) {
+                    await _xDataTable.InitialDataTable("#tableModal",
+                        {
+                            columns: [
+                                { title: "Supplier Code", data: "F_Supplier_Code" },
+                                { title: "Part No", data: "F_Part_No" },
+                                { title: "Store Code", data: "F_Store_Code" },
+                                { title: "Kanban No", data: "F_Kanban_No" },
+                                { title: "Delivery Date", data: "F_Delivery_Date" },
+                                { title: "Delivery Shift", data: "F_Delivery_Shift" },
+                                { title: "Delivery Round", data: "F_Delivery_Round" },
+                                { title: "KB Qty (PCS)", data: "F_Qty" },
+                                { title: "CKD Remain Qty (PCS)", data: "CKD_Remain_Qty" }
+                            ],
+                            order: [[1, "asc"]],
+                            scrollCollapse: true,
+                        }
+                    );
+                }
+                _xDataTable.ClearAndAddDataDT("#tableModal", success.data);
+            }
+            else {
+                await xSwal.xSuccessAwait(success);
+            }
+        },
+        async function (error) {
+            await xSwal.xErrorAwait(error);
+        }
+    )
+}
 

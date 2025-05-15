@@ -6,5 +6,6 @@
         public IKBNOR310 IKBNOR310 { get; }
         public IKBNOR320 IKBNOR320 { get; }
         public IKBNOR321 IKBNOR321 { get; }
+        public IKBNOR330 IKBNOR330 { get; }
     }
 }

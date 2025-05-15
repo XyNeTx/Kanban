@@ -35,7 +35,7 @@
                                                 <item type="text" id="txtProcessShift" label="Process Shift :" value="@ViewData["_ShiftTitle"]?.ToString()" readonly></item>
                                             </div>
                                             <div class="col-6">
-                                                <item type="text" id="txtOrderType" label="Order Type :" value="Urgent Order" readonly></item>
+                                                <item type="text" id="txtOrderType" label="Order Type :" value="CKD-Inhouse Order" readonly></item>
                                             </div>
                                         </div>
 
@@ -69,18 +69,38 @@
                     </div>
 
                 </form>
-@*                @using (Html.BeginForm("calculateData", "KBNOR440", FormMethod.Post))
-                {
-                    <item type="submit" id="btnCalculateData" label="Generate PDS" style="width:100%"></item>
-                }*@
+
                 <div class="row">
                     <div class="col mt-4">
-                        <item type="table" id="tblMaster" label="List of Detail"></item>
+                        <table class="table table-bordered w-100" id="tableMain"></table>
                     </div>
                 </div>
 
             </div>
         </div>
+    </div>
+
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    
+    <div class="modal-dialog modal-xl">
+
+        <div class="modal-content">
+
+            <div class="modal-body">
+                <div class="row mt-2">
+                    <table class="table table-bordered w-100" id="tableModal"></table>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+
     </div>
 
 </div>

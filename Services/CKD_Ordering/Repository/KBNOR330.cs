@@ -41,7 +41,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
             _automapService = autoMapService;
         }
 
-        public async Task<DataTable> Generate()
+        public async Task<Tuple<DataTable, string>> Generate()
         {
             try
             {
@@ -65,8 +65,12 @@ namespace KANBAN.Services.CKD_Ordering.Repository
 
                 if (dt.Rows.Count > 0)
                 {
-                    throw new CustomHttpException(400,
-                        @"ไม่สามารถ Generate PDS สำหรับ CKD Order ได้
+                    //throw new CustomHttpException(400,
+                    //    @"ไม่สามารถ Generate PDS สำหรับ CKD Order ได้
+                    //    CKD Remain Qty ไม่เพียงพอต่อ Kanban Order Qty
+                    //    กรุณาแก้ไขข้อมูล จำนวน Kanban Order Qty ดังต่อไปนี้");
+
+                    return Tuple.Create(dt, @"ไม่สามารถ Generate PDS สำหรับ CKD Order ได้
                         CKD Remain Qty ไม่เพียงพอต่อ Kanban Order Qty
                         กรุณาแก้ไขข้อมูล จำนวน Kanban Order Qty ดังต่อไปนี้");
                 }
@@ -168,7 +172,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                         dt = await _FillDT.ExecuteSQLAsync(_SqlQuery);
                         if (dt.Rows.Count > 0)
                         {
-                            return dt;
+                            return Tuple.Create(dt, "Success");
                         }
                         else
                         {

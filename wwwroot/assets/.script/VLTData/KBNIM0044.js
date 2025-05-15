@@ -281,7 +281,8 @@ async function Confirm() {
     _xLib.AJAX_Post("/api/KBNIM0044/Confirm?InchargeUser=" + InchargeUser, listObj,
         async function (success) {
             await GetListData();
-            xSwal.xSuccess(success);
+            await xSwal.xSuccessAwait(success);
+            $("#exampleModal").modal('hide');
         },
         function (error) {
             xSwal.xError(error);

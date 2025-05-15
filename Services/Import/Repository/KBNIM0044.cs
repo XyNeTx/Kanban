@@ -251,7 +251,8 @@ namespace KANBAN.Services.Import.Repository
 
                 var chkData = await _kbContext.TB_Transaction.AsNoTracking()
                     .Where(x => x.F_Update_By == _BearerClass.UserCode
-                    && x.F_Type == "VLT" && x.F_Type_Spc == "Sequence")
+                    && x.F_Type == "VLT" && x.F_Type_Spc == "Sequence"
+                    && x.F_Delivery_Date == listData[0].F_Deli_Date)
                     .ToListAsync();
 
                 if (chkData.Count == listData.Count)
@@ -270,7 +271,7 @@ namespace KANBAN.Services.Import.Repository
                 }
                 else
                 {
-                    await dbTrans.RollbackAsync();
+                    //await dbTrans.RollbackAsync();
                     throw new CustomHttpException(500, "All Data Can't be Confirm Please check data again");
                 }
             }
