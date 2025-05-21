@@ -1,5 +1,6 @@
 ﻿using HINOSystem.Context;
 using HINOSystem.Libs;
+using HINOSystem.Models.KB3.Master;
 using KANBAN.Context;
 using KANBAN.Libs;
 using KANBAN.Services.SpecialOrdering.Interface;
@@ -47,7 +48,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             {
                 string sql = $@"Select F_Supplier_CD,F_Supplier_Plant, 
                         Left(F_Delivery_Date_New,6) As  F_Delivery_Date_New, 
-                        F_CusOrderType_CD 
+                        F_CusOrderType_CD , F_PDS_No
                         FROM TB_Transaction_Spc Where  F_PDS_No = '{PDSNo}' 
                         and F_Survey_Doc = '' and F_Survey_Flg = '0' ";
 
@@ -56,7 +57,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
                     sql += $" and F_Store_CD = '{StoreCD}' ";
                 }
 
-                sql += "Group By Left(F_Delivery_Date_New,6),F_Supplier_CD,F_Supplier_Plant,F_CusOrderType_CD ";
+                sql += "Group By Left(F_Delivery_Date_New,6),F_Supplier_CD,F_Supplier_Plant,F_CusOrderType_CD,F_PDS_No";
 
                 return _FillDT.ExecuteSQL(sql);
             }
@@ -751,17 +752,17 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             }
         }
 
-        public string getCycleTime(string Fac, string SuppCD, string SuppPlant, string DeliDT, string DeliTrip)
+        public async Task<string> getCycleTime(string Fac, string SuppCD, string SuppPlant, string DeliDT, string DeliTrip)
         {
             try
             {
-                string cycle = _kbContext.TB_MS_DeliveryTime
+                var cycle = await _kbContext.TB_MS_DeliveryTime
                     .Where(x => x.F_Supplier_Code == SuppCD && x.F_Supplier_Plant == SuppPlant
                     && x.F_Start_Date.CompareTo(DeliDT) <= 0 && x.F_End_Date.CompareTo(DeliDT) >= 0
-                    && x.F_Plant == Fac).FirstOrDefault().F_Cycle;
+                    && x.F_Plant == Fac).FirstOrDefaultAsync();
 
                 if (cycle == null) return "";
-                else return cycle;
+                else return cycle.F_Cycle;
             }
             catch (Exception ex)
             {

@@ -365,12 +365,12 @@ namespace KANBAN.Controllers.API.OrderReport
                 string shiftFrom = _json["shiftFrom"];
                 string shiftTo = _json["shiftTo"];
 
-                await _KB3Context.Database.ExecuteSqlRawAsync
+                int result = await _KB3Context.Database.ExecuteSqlRawAsync
                     ("INSERT INTO RPT_KBNRT_160 (Order_date, Order_shift, Order_No,Supplier, Store, Part_no, Kanban_no, Qty_pcs, Qty_kb, Box_qty, chk_ord_date,F_Status, F_Update_By, F_Host_Name,F_Delivery_Date) " +
                     "SELECT Order_Date,F_Issued_Shift, F_OrderNo,Sup, F_Delivery_Dock,Prt_No,F_kanban_No,F_Unit_Amount,Qty_KB,F_Box_Qty,chk_order_Date,F_Status,@UserName as f_Update_By, @HostName as F_host_Name,F_Delivery_Date " +
                     " FROM V_KBNRT_160_rpt WHERE F_Plant = @Plant AND (Sup >= @SupFrom AND Sup <= @SupTo) AND (F_Kanban_No >= @KBNFrom AND F_Kanban_No <= @KBNTo) " +
                     " AND ( F_Delivery_Dock >= @StoreFrom AND F_Delivery_Dock <= @StoreTo ) AND (Prt_no >= @PartFrom AND Prt_no <= @PartTo) AND (chk_Order_Date >= @OrderFrom AND chk_Order_Date <= @OrderTo) " +
-                    " AND ( F_Issued_Shift = @ShiftFrom OR F_Issued_Shift = @ShiftTo ) ",
+                    " AND ( F_Issued_Shift = @ShiftFrom OR F_Issued_Shift = @ShiftTo OR F_Issued_Shift = '') ",
                     new SqlParameter("@UserName", userName),
                     new SqlParameter("@HostName", hostName),
                     new SqlParameter("@Plant", Plant),

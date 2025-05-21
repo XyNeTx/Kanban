@@ -177,7 +177,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                     sqlQuery += Environment.NewLine + $"AND F_Kanban_No = '{arryVariable[8]}'";
                 }
 
-                DT_HeaderInProcess = _FillDT.ExecuteSQL(sqlQuery);
+                DT_HeaderInProcess = await _FillDT.ExecuteSQLAsync(sqlQuery);
 
             }
             catch (Exception ex)
@@ -206,7 +206,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                     sqlQuery += Environment.NewLine + $"AND F_Kanban_No = '{arryVariable[8]}'";
                 }
 
-                DT_DetailInProcess = _FillDT.ExecuteSQL(sqlQuery);
+                DT_DetailInProcess = await _FillDT.ExecuteSQLAsync(sqlQuery);
             }
             catch (Exception ex)
             {
@@ -231,7 +231,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                     sqlQuery += Environment.NewLine + $"AND F_Kanban_No = '{arryVariable[8]}'";
                 }
 
-                DT_KBADD = _FillDT.ExecuteSQL(sqlQuery);
+                DT_KBADD = await _FillDT.ExecuteSQLAsync(sqlQuery);
             }
             catch (Exception ex)
             {
@@ -256,7 +256,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                     sqlQuery += Environment.NewLine + $"AND F_Kanban_No = '{arryVariable[8]}'";
                 }
 
-                DT_KBCUT = _FillDT.ExecuteSQL(sqlQuery);
+                DT_KBCUT = await _FillDT.ExecuteSQLAsync(sqlQuery);
             }
             catch (Exception ex)
             {

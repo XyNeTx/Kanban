@@ -227,8 +227,10 @@ const previewFunction = async (intRow,_command) => {
         //$("#readQtyPack").val(dT_Header[intRow].F_Qty_Box);
 
         $("#spanProcessDate").text(_CookieProcessDate.slice(8, 10) + "/" + _CookieProcessDate.slice(5, 7) + "/" + _CookieProcessDate.slice(0, 4));
-        $("#spanDeliveryDate").text(dT_DeliveryDate[0].F_Delivery_Date.slice(6, 8) + "/" + dT_DeliveryDate[0].F_Delivery_Date.slice(4, 6) + "/" + dT_DeliveryDate[0].F_Delivery_Date.slice(0, 4));
 
+        if (dT_DeliveryDate.length !== 0) {
+            $("#spanDeliveryDate").text(dT_DeliveryDate[0].F_Delivery_Date.slice(6, 8) + "/" + dT_DeliveryDate[0].F_Delivery_Date.slice(4, 6) + "/" + dT_DeliveryDate[0].F_Delivery_Date.slice(0, 4));
+        }
         //$("#tableMaster").DataTable().destroy();
 
         $("#tableMaster thead tr").empty();
@@ -307,6 +309,8 @@ const previewFunction = async (intRow,_command) => {
         $("#divRead").css("visibility", "visible");
         $("#tableMaster").css("visibility", "visible");
         //console.log("Preview");
+    }, async function (error) {
+        await xSwal.xErrorAwait(error)
     });
 };
 
@@ -403,7 +407,11 @@ const addDetailToTable = async (dateSet, intRow) => {
         var _headDate = $("#THeadR1").find(`th:contains('${dateSet[_countDateSet]}')`).text().replaceAll("-", "");
         var _headYMD = _headDate.slice(4, 8) + _headDate.slice(2, 4) + _headDate.slice(0, 2);
         var _intHeadDate = parseInt(_headYMD);
-        var _intDeliveryDate = parseInt(dT_DeliveryDate[0]["F_Delivery_Date"]);
+        var _intDeliveryDate = 0;
+
+        if (dT_DeliveryDate.length != 0) {
+            _intDeliveryDate = parseInt(dT_DeliveryDate[0]["F_Delivery_Date"]);
+        }
 
         const obj = {
             CurrentDate: _headYMD.slice(0, 4) + "-" + _headYMD.slice(4, 6) + "-" + _headYMD.slice(6, 8),
@@ -654,7 +662,8 @@ const addDetailToTable = async (dateSet, intRow) => {
                 }
 
 
-                var Process_date = dT_DeliveryDate[0].F_Delivery_Date;
+                //var Process_date = dT_DeliveryDate[0].F_Delivery_Date;
+                var Process_date = moment($("#inputProcessDateFor").val(),"MM/DD/YYYY").format("YYYYMMDD"); 
                 //filter by process date, part no, supplier code, supplier plant, store code to get TMT_FO
                 var FilteredHeader = dT_Header.filter(x => x.F_Process_Date == Process_date
                     && x.F_Part_No == $("#readPartNo").val().split("-")[0]

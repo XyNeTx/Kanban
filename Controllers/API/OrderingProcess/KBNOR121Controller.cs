@@ -409,16 +409,20 @@ namespace KANBAN.Controllers.API.OrderingProcess
 
                 }
 
+                //DT_DeliveryDate = _FillDT.ExecuteSQL("exec [dbo].[sp_getDeliveryDateTrip] @p0,@p1,@p2,@p3,@p4,@p5,@p6",
+                //    Plant, obj.Supplier.Substring(0, 4), obj.Supplier.Substring(5, 1), ProcessDate.ToString("yyyyMMdd"), Proc_Shift.Substring(0, 1),
+                //    string.IsNullOrWhiteSpace(obj.Store) ? DBNull.Value : obj.Store, string.IsNullOrWhiteSpace(obj.StoreTo) ? DBNull.Value : obj.StoreTo);
+                var tmpProcessDate = ProcessDate;
 
-                DT_DeliveryDate = _FillDT.ExecuteSQL("exec [dbo].[sp_getDeliveryDateTrip] @p0,@p1,@p2,@p3,@p4,@p5,@p6",
-                    Plant, obj.Supplier.Substring(0, 4), obj.Supplier.Substring(5, 1), ProcessDate.ToString("yyyyMMdd"), Proc_Shift.Substring(0, 1),
-                    string.IsNullOrWhiteSpace(obj.Store) ? DBNull.Value : obj.Store, string.IsNullOrWhiteSpace(obj.StoreTo) ? DBNull.Value : obj.StoreTo);
-
-                if (DT_DeliveryDate.Rows.Count == 0)
+                do
                 {
+                    DT_DeliveryDate = _FillDT.ExecuteSQL("exec [dbo].[sp_getDeliveryDateTrip] @p0,@p1,@p2,@p3,@p4,@p5,@p6",
+                        Plant, obj.Supplier.Substring(0, 4), obj.Supplier.Substring(5, 1), tmpProcessDate.ToString("yyyyMMdd"), Proc_Shift.Substring(0, 1),
+                        string.IsNullOrWhiteSpace(obj.Store) ? DBNull.Value : obj.Store, string.IsNullOrWhiteSpace(obj.StoreTo) ? DBNull.Value : obj.StoreTo);
 
-                    throw new Exception("Delivery Date Not Found");
+                    tmpProcessDate = tmpProcessDate.AddDays(+1);
                 }
+                while (DT_DeliveryDate.Rows.Count == 0);
 
                 dateDelivery = DateTime.TryParseExact(DT_DeliveryDate.Rows[0]["F_Delivery_Date"].ToString(), "yyyyMMdd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime result) ? result : DateTime.Now;
                 DeliveryTrip = DT_DeliveryDate.Rows[0]["F_Delivery_Trip"].ToString().Trim();

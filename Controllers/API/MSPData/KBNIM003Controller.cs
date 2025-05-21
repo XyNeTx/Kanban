@@ -1,6 +1,7 @@
 ﻿using HINOSystem.Context;
 using HINOSystem.Libs;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
 using System.Data;
@@ -319,7 +320,7 @@ namespace HINOSystem.Controllers.API.Master
                 //''Change to Data Filter : Store Procedure
                 _SQL = "EXEC dbo.SP_IM003_FilterData '" + _BearerClass.UserCode.ToString() + "' ";
                 _KBCN.Execute(_SQL);
-
+                //await _KB3Context.Database.ExecuteSqlRawAsync(_SQL);
 
 
                 //''---- - Addition Check Data Duplicate After Filter Data : 26 / 02 / 2019 : Chirawan Add

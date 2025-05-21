@@ -29,7 +29,7 @@ namespace KANBAN.Services.SpecialOrdering.Interface
                             string Fac, string? DeliYM = "", string? DeliTrip = "", string? StoreCD = "",
                             string? FormatPDS = "");
 
-        string getCycleTime(string Fac, string SuppCD, string SuppPlant, string DeliDT, string DeliTrip);
+        Task<string> getCycleTime(string Fac, string SuppCD, string SuppPlant, string DeliDT, string DeliTrip);
         string GetDockCode(string Supp_CD, string Supp_Plant, string DeliDate, string Trip);
 
         string GetDeliveryTime(string SuppCD, string SuppPlant, string Cycle, string DeliDT, string DeliTrip);

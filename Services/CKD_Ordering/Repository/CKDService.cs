@@ -16,6 +16,8 @@ namespace KANBAN.Services.CKD_Ordering.Repository
         private readonly SerilogLibs _log;
         private readonly IEmailService _emailService;
         private readonly IAutoMapService _automapService;
+        private readonly CKDWH_Context _CKDContext;
+        private readonly CKDUSA_Context _CKDUSAContext;
 
         public CKDService(
             KB3Context kbContext,
@@ -24,7 +26,9 @@ namespace KANBAN.Services.CKD_Ordering.Repository
             FillDataTable FillDT,
             SerilogLibs log,
             IEmailService emailService,
-            IAutoMapService autoMapService
+            IAutoMapService autoMapService,
+            CKDWH_Context cKDContext,
+            CKDUSA_Context cKDUSAContext
             )
         {
             _kbContext = kbContext;
@@ -34,6 +38,8 @@ namespace KANBAN.Services.CKD_Ordering.Repository
             _log = log;
             _emailService = emailService;
             _automapService = autoMapService;
+            _CKDContext = cKDContext;
+            _CKDUSAContext = cKDUSAContext;
         }
 
         public IKBNOR300 IKBNOR300
@@ -94,6 +100,21 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                                     _FillDT, _log,
                                     _emailService,
                                     _automapService);
+            }
+        }
+        public IKBNOR360 IKBNOR360
+        {
+            get
+            {
+                return new KBNOR360(_kbContext,
+                                    _BearerClass,
+                                    _PPM3Context,
+                                    _FillDT, _log,
+                                    _emailService,
+                                    _automapService
+                                    ,_CKDContext,
+                                    _CKDUSAContext
+                                    );
             }
         }
 

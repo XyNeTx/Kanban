@@ -519,7 +519,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
                         string DeliveryDate = DT.Rows[0]["F_Delivery_DT"].ToString().Trim().Substring(0, 6);
                         string DeliveryDateFull = DT.Rows[0]["F_Delivery_DT"].ToString().Trim();
                         string DeliveryTrip = DT.Rows[0]["F_Delivery_Trip"].ToString().Trim();
-                        string Cycle = _specialLibs.getCycleTime(_BearerClass.Plant, Supp_CD, Supp_Plant, DeliveryDateFull, DeliveryTrip);
+                        string Cycle = await _specialLibs.getCycleTime(_BearerClass.Plant, Supp_CD, Supp_Plant, DeliveryDateFull, DeliveryTrip);
                         string DeliDock = getStoreCode(obj.F_Survey_Doc);
                         string DockCode = _specialLibs.GetDockCode(Supp_CD, Supp_Plant, DeliveryDate, DeliveryTrip);
                         string DeliTime = _specialLibs.GetDeliveryTime(Supp_CD, Supp_Plant, Cycle, DeliveryDate, DeliveryTrip);

@@ -14,6 +14,8 @@ namespace HINOSystem.Libs
         private readonly PPM3Context _PPM3Context;
         private readonly ProcDBContext _ProcDB;
         private readonly IHttpContextAccessor _IHttp;
+        private readonly CKDWH_Context _CKD;
+        private readonly CKDUSA_Context _CKDUSA;
 
         public FillDataTable(
             KB3Context kB3Context,
@@ -21,7 +23,9 @@ namespace HINOSystem.Libs
             IConfiguration configuration,
             PPM3Context pPM3Context,
             ProcDBContext procDB,
-            IHttpContextAccessor iHttp
+            IHttpContextAccessor iHttp,
+            CKDWH_Context cKDContext,
+            CKDUSA_Context cKDUSAContext
             )
         {
             _KB3Context = kB3Context;
@@ -30,6 +34,8 @@ namespace HINOSystem.Libs
             _PPM3Context = pPM3Context;
             _ProcDB = procDB;
             _IHttp = iHttp;
+            _CKD = cKDContext;
+            _CKDUSA = cKDUSAContext;
         }
 
         public DataTable ExecuteSQLProcDB(string sql, params object[] parameters)
@@ -114,6 +120,85 @@ namespace HINOSystem.Libs
             try
             {
                 using (SqlConnection con = new SqlConnection(_KB3Context.Database.GetConnectionString()))
+                {
+                    await con.OpenAsync(); // Open connection asynchronously
+
+                    using (SqlCommand cmd = new SqlCommand(sql, con))
+                    {
+                        cmd.CommandType = CommandType.Text;
+                        cmd.CommandTimeout = 300;
+
+                        // Add parameters to the SqlCommand
+                        for (int i = 0; i < parameters.Length; i++)
+                        {
+                            cmd.Parameters.AddWithValue("@p" + i, string.IsNullOrWhiteSpace(parameters[i]?.ToString()) ? DBNull.Value : parameters[i]);
+                        }
+
+                        using (SqlDataReader reader = await cmd.ExecuteReaderAsync()) // ExecuteReaderAsync
+                        {
+                            dt.Load(reader); // Load DataTable from reader
+                        }
+                    }
+                }
+            }
+            catch (SqlException SQLex) when (SQLex.Number == -2) // Handle timeout exception
+            {
+                throw new Exception(SQLex.Message);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
+            return dt;
+        }
+
+        public async Task<DataTable> ExecuteSQLAsyncCKDWH(string sql, params object[] parameters)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                using (SqlConnection con = new SqlConnection(_CKD.Database.GetConnectionString()))
+                {
+                    await con.OpenAsync(); // Open connection asynchronously
+
+                    using (SqlCommand cmd = new SqlCommand(sql, con))
+                    {
+                        cmd.CommandType = CommandType.Text;
+                        cmd.CommandTimeout = 300;
+
+                        // Add parameters to the SqlCommand
+                        for (int i = 0; i < parameters.Length; i++)
+                        {
+                            cmd.Parameters.AddWithValue("@p" + i, string.IsNullOrWhiteSpace(parameters[i]?.ToString()) ? DBNull.Value : parameters[i]);
+                        }
+
+                        using (SqlDataReader reader = await cmd.ExecuteReaderAsync()) // ExecuteReaderAsync
+                        {
+                            dt.Load(reader); // Load DataTable from reader
+                        }
+                    }
+                }
+            }
+            catch (SqlException SQLex) when (SQLex.Number == -2) // Handle timeout exception
+            {
+                throw new Exception(SQLex.Message);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
+            return dt;
+        }
+        public async Task<DataTable> ExecuteSQLAsyncCKDUSA(string sql, params object[] parameters)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                using (SqlConnection con = new SqlConnection(_CKDUSA.Database.GetConnectionString()))
                 {
                     await con.OpenAsync(); // Open connection asynchronously
 
@@ -358,6 +443,26 @@ namespace HINOSystem.Libs
                 "2Dev" => "[HMMT-PPM].[PPMDB]",
                 "3Dev" => "[PPMDB]",
                 _ => "[HMMTA-PPM].[PPMDB]"
+            };
+
+            return ppmConnect;
+        }
+        
+        public string kbnConnect()
+        {
+            string isDev = _IHttp.HttpContext.Request.Cookies.FirstOrDefault(x => x.Key == "isDev").Value == "1" ? "Dev" : "";
+            string plant = _IHttp.HttpContext.Request.Cookies.FirstOrDefault(x => x.Key == "plantCode").Value;
+            string cPlantDev = plant + isDev;
+
+            string ppmConnect = cPlantDev switch
+            {
+                "1" => "[HMMT-E_KANBAN].[New_Kanban_F1]",
+                "2" => "[HMMT-E_KANBAN].[New_Kanban_F2]",
+                "3" => "[HMMTA-PPM].[New_Kanban_F3]",
+                "1Dev" => "[New_Kanban_F1]",
+                "2Dev" => "[New_Kanban_F2]",
+                "3Dev" => "[New_Kanban_F3]",
+                _ => "[HMMTA-PPM].[New_Kanban_F3]"
             };
 
             return ppmConnect;

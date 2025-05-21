@@ -3,6 +3,7 @@ using HINOSystem.Libs;
 using KANBAN.Context;
 using KANBAN.Libs;
 using KANBAN.Models.KB3.UrgentOrder;
+using KANBAN.Services;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Data;
@@ -81,14 +82,8 @@ namespace KANBAN.Controllers.API.OrderingProcess
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new
-                {
-                    status = "500",
-                    response = "Internal Server Error",
-                    title = "Error",
-                    message = "Unexpected Error",
-                    error = ex.Message
-                });
+                if (ex is CustomHttpException) throw;
+                else throw new CustomHttpException(500, ex.InnerException?.Message ?? ex.Message);
             }
         }
 
@@ -167,15 +162,9 @@ namespace KANBAN.Controllers.API.OrderingProcess
             {
                 _log.WriteErrorLogMsg("Error Un-Lock PDS Urgent + " + ex.Message);
                 transaction.RollbackToSavepoint("UnlockPDS");
-                return StatusCode(500, new
-                {
-                    status = "500",
-                    response = "Internal Server Error",
-                    title = "Error",
-                    message = "Unexpected Error",
-                    error = ex.Message
-                });
 
+                if (ex is CustomHttpException) throw;
+                else throw new CustomHttpException(500, ex.InnerException?.Message ?? ex.Message);
             }
         }
 
