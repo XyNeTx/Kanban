@@ -9,7 +9,7 @@ function hideBlank() {
 function initial() {
     return xAjax.Post({
         url: 'KBNRT250/F_System_Flag',
-        then: function (result) 
+        then: function (result) {
             $.each(result.data, async function (i, v) {
                 console.log(result);
                 $("#F_FlagFrom").append($("<option>", { value: v, text: v }, "</option>"));
@@ -22,6 +22,7 @@ function initial() {
             console.error("Initial Error");
         },
     });
+
 }
 
 

@@ -93,13 +93,14 @@
     <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR140.js" />
     <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR150.js" />
     <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR150EX.js" />
+    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR360.js" />
     <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR361.js" />
     <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR710.js" />
     <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR700.js" />
     <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR300.js" />
     <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR310.js" />
     <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR370.js" />
-    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR360.js" />
+    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR360_Test.js" />
     <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR330.js" />
     <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR321.js" />
     <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR320.js" />
@@ -288,6 +289,7 @@
 	<Content Include="wwwroot\assets\.script\othercondition\KBNOC120.js" />
 	<Content Include="wwwroot\assets\.script\XLib\xlsx.full.min.js" />
 	<None Include="wwwroot\assets\.script\XLib\axios.min.js" />
+	<None Include="wwwroot\assets\.script\XLib\typescript.min.js" />
     <None Include="wwwroot\assets\adminty\bower_components\bootstrap-datepicker\bootstrap-datepicker.js" />
     <None Include="wwwroot\assets\adminty\bower_components\bootstrap-daterangepicker\daterangepicker.js" />
     <None Include="wwwroot\assets\adminty\bower_components\bootstrap\dist\css\bootstrap.min.css.map" />
@@ -2288,6 +2290,10 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Office.Interop.Excel" Version="15.0.4795.1001" />
+    <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="5.8.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="7.0.8" />
     <PackageReference Include="Microsoft.Windows.Compatibility" Version="7.0.4" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
@@ -9744,8 +9750,7 @@
     <Folder Include="wwwroot\assets\.script\DevelopMaintain\" />
     <Folder Include="wwwroot\assets\.script\Home\" />
     <Folder Include="wwwroot\assets\.script\Import\" />
-    <Folder Include="wwwroot\assets\i18n\JP\KB3\LogisticCondition\" />
-    <Folder Include="wwwroot\assets\i18n\TH\KB3\LogisticCondition\" />
+    <Folder Include="wwwroot\js\OrderingProcess\" />
     <Folder Include="wwwroot\Storage\DownloadFile\" />
     <Folder Include="wwwroot\Storage\DownloadTemp\" />
     <Folder Include="wwwroot\Storage\Image\QRCode\202406\" />
@@ -9753,6 +9758,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <TypeScriptCompile Include="wwwroot\assets\.script\OrderingProcess\KBNOR360_Test.ts" />
     <TypeScriptCompile Include="wwwroot\assets\vendor\chart.js\4.2.0_temp\index.d.ts" />
     <TypeScriptCompile Include="wwwroot\assets\vendor\chart.js\4.2.0_temp\index.umd.d.ts" />
     <TypeScriptCompile Include="wwwroot\assets\vendor\chart.js\4.2.0_temp\types.d.ts" />

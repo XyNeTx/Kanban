@@ -86,7 +86,6 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddSwaggerGen();
 
 //Add DbConnect
-builder.Services.AddScoped<DefaultConnection>();
 builder.Services.AddScoped<ERPConnection>();
 builder.Services.AddScoped<KanbanConnection>();
 builder.Services.AddScoped<CloudConnection>();
@@ -97,7 +96,6 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<cnConnect>();
 builder.Services.AddScoped<DbConnect>();
 builder.Services.AddScoped<WarrantyClaimConnect>();
-builder.Services.AddScoped<HRConnect>();
 builder.Services.AddScoped<PPMConnect>();
 
 
@@ -109,7 +107,6 @@ builder.Services.AddScoped<BearerClass>();
 builder.Services.AddScoped<EmailClass>();
 builder.Services.AddSingleton<NPOIClass>();
 builder.Services.AddSingleton<PdfSharpClass>();
-builder.Services.AddScoped<CookieClass>();
 builder.Services.AddScoped<ActionResultClass>();
 builder.Services.AddScoped<FillDataTable>();
 builder.Services.AddScoped<SerilogLibs>();

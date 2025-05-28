@@ -1,6 +1,0 @@
-{
-  "language": "EN",
-  "info": "_START_ to _END_ of _MAX_ (Pages _PAGE_/_PAGES_)",
-  "infoFiltered": "(Found _TOTAL_ records)",
-  "search": "<button type='button' class='btn btn-success' id='datatable_button_new' style='visibility:hidden;display:none;' ><i class='fas fa-plus-square'></i></button>"
-}

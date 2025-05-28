@@ -2,7 +2,8 @@
     await _xDataTable.InitialDataTable("#tblMaster",
         {
             columns: [
-                { title: `<input type='checkbox' class='chkBoxDT' id='chkAll'>`, data: null, orderable: false, width: "5%",
+                {
+                    title: `<input type='checkbox' class='chkBoxDT' id='chkAll'>`, data: null, orderable: false, width: "5%",
                     render: function (data, type, row) {
                         return "<input type='checkbox' class='chkBoxDT' data-id='" + row.F_PDS_No + "'>";
                     }
@@ -23,20 +24,24 @@
             scrollCollapse: true,
         }
     );
-
     await ListData();
-
     xSplash.hide();
-   
 })
+
+
 
 $("#btnGenerate").click(async function () {
     await GeneratePicking_Click();
 });
 
+
+
 $("#btnRegister").click(async function () {
     await Register();
 });
+
+
+
 
 
 async function ListData() {
@@ -51,6 +56,8 @@ async function ListData() {
         }
     );
 }
+
+
 
 async function Register() {
     var dataList = _xDataTable.GetSelectedDataDT("#tblMaster");
@@ -70,6 +77,8 @@ async function Register() {
     );
 }
 
+
+
 async function GeneratePicking_Click() {
     _xLib.AJAX_Post("/api/KBNOR360/GeneratePicking_Click", null,
         function (success) {
@@ -87,5 +96,7 @@ async function GeneratePicking_Click() {
             xSwal.xError(error);
         }
     );
+
+
 
 }

@@ -1,0 +1,167 @@
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+$(document).ready(function () {
+    initial = function () {
+        return __awaiter(this, void 0, void 0, function* () {
+            var tblMaster = xDataTable.Initial({
+                name: 'tblMaster',
+                dom: '<"clear">',
+                running: 0,
+                orderNo: 0,
+                columnTitle: {
+                    "EN": ['Part No', 'Kanban No.', 'Qty/Pack', 'Qty(PCS)'],
+                    "TH": ['Part No', 'Kanban No.', 'Qty/Pack', 'Qty(PCS)'],
+                    "JP": ['Part No', 'Kanban No.', 'Qty/Pack', 'Qty(PCS)'],
+                },
+                column: [
+                    { "data": "F_Part_No" },
+                    { "data": "F_Kanban_No" },
+                    { "data": "F_Box_Qty" },
+                    { "data": "F_Unit_Amount" }
+                ],
+                addnew: false,
+                rowclick: (row) => {
+                },
+                then: function (config) {
+                    //xSplash.hide();
+                }
+            });
+            var _dt = yield xAjax.ExecuteJSON({
+                data: {
+                    "Module": "[exec].[spKBNOR620]",
+                    "pUserCode": ajexHeader.UserCode,
+                    "F_Plant": ajexHeader.Plant,
+                    "F_ORDERTYPE": "S"
+                },
+            });
+            if (_dt.rows != null)
+                xDropDownList.bind('#ddlPDSNo', _dt.rows, 'F_OrderNo', 'F_OrderNo');
+            //console.log(ddlPDSNo);
+            $("#ddlPDSNo").selectpicker();
+            xSplash.hide();
+        });
+    };
+    initial();
+    xAjax.onClick('btnExit', function () {
+        ////ddlPDSNo.title = '1A24022701023';
+        //ddlPDSNo.value = '1A24022701023';
+        ////ddlPDSNo.value = '1D24022801C02';
+        ////ddlPDSNo.value = '1A24021701001';
+        xAjax.redirect('KBNOR600');
+    });
+    xAjax.onClick('btnSearch', function () {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                btnDelete.readonly = false;
+                if (ddlPDSNo.value == null || ddlPDSNo.value == undefined) {
+                    MsgBox(`Please input PDS No. Before click Search`, MsgBoxStyle.Critical);
+                    return false;
+                }
+                //### 'Check  ไม่สามารถ Cancel PDS นี้ได้ เพราะมีบาง Part No. ที่รับ Part ไปแล้ว
+                var _dt = yield xAjax.ExecuteJSON({
+                    data: {
+                        "Module": "[exec].[spKBNOR620_S1]",
+                        "F_OrderNo": ddlPDSNo.value
+                    },
+                });
+                if (_dt.rows != null) {
+                    MsgBox(`ไม่สามารถ Delete PDS นี้ได้ เพราะมีบาง Part No. ที่รับ Part ไปแล้ว!!!`, MsgBoxStyle.Critical);
+                    btnDelete.readonly = true;
+                    return false;
+                }
+                //### 'Check PDS=Cancel Last Time
+                var _dt = yield xAjax.ExecuteJSON({
+                    data: {
+                        "Module": "[exec].[spKBNOR620_S2]",
+                        "F_OrderNo": ddlPDSNo.value,
+                        "F_Plant": ajexHeader.Plant,
+                        "F_ORDERTYPE": "S"
+                    },
+                });
+                if (_dt.rows != null)
+                    MsgBox(`ไม่สามารถ Delete PDS นี้ได้ เพราะPDS นี้ถูก Delete ไปแล้ว!!!`, MsgBoxStyle.Critical);
+                var _dtChk = yield xAjax.ExecuteJSON({
+                    data: {
+                        "Module": "[exec].[spKBNOR620_S3]",
+                        "F_OrderNo": ddlPDSNo.value,
+                        "F_Plant": ajexHeader.Plant,
+                        "F_ORDERTYPE": "S"
+                    },
+                });
+                console.log(_dtChk.rows[0].F_Delivery_Date);
+                if (_dtChk.rows != null) {
+                    txtSupplierCode.value = _dtChk.rows[0].F_Supplier_Code + '-' + _dtChk.rows[0].F_Supplier_Plant;
+                    txtSupplierName.value = _dtChk.rows[0].F_name;
+                    txtDeliveryDate.value = _dtChk.rows[0].F_Delivery_Date;
+                    txtDeliveryTrip.value = _dtChk.rows[0].F_Delivery_Trip;
+                    txtStoreCode.value = _dtChk.rows[0].F_Delivery_Dock;
+                    txtStatus.value = (_dtChk.rows[0].F_Status == 'N' ? 'NORMAL - Can Delete' : (_dtChk.rows[0].F_Status == 'D' ? 'DELETED' : ''));
+                    xDataTable.bind('#tblMaster', _dtChk.rows);
+                    btnDelete.readonly = false;
+                    if (_dtChk.rows[0].F_Status == 'D')
+                        btnDelete.readonly = true;
+                }
+                if (_dtChk.rows == null)
+                    MsgBox(`Not Found data...`, MsgBoxStyle.Information);
+                xSplash.hide();
+            }
+            catch (error) { // Code to handle the error
+                xItem.progress({ id: 'prgProcess', current: 0, label: 'Process Not Complete!!! : {{##.##}} %' });
+                MsgBox("ERROR : " + error, MsgBoxStyle.Critical);
+            }
+        });
+    });
+    xAjax.onClick('btnDelete', function () {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                MsgBox(`Do you want Delete SPECIAL PDS Data?`, MsgBoxStyle.OkCancel, function () {
+                    return __awaiter(this, void 0, void 0, function* () {
+                        xItem.progress({ id: 'prgProcess', current: 5, label: 'Processing Please wait : {{##.##}} %' });
+                        yield xAjax.Execute({
+                            data: {
+                                "Module": "[exec].[spKBNOR620_CANCEL]",
+                                "@pUserCode": ajexHeader.UserCode,
+                                "@F_Plant": ajexHeader.Plant,
+                                "@F_OrderNo": ddlPDSNo.value,
+                                "@F_ORDERTYPE": 'S',
+                                "@F_Delivery_Date": ReplaceAll(txtDeliveryDate.value, '-', ''),
+                                "@F_Supplier_Code": txtSupplierCode.value.substring(0, 4),
+                                "@F_Supplier_Plant": txtSupplierCode.value.substring(5),
+                                "@F_Store_CD": txtStoreCode.value
+                            },
+                        });
+                        xItem.progress({ id: 'prgProcess', current: 100, label: 'Process Complete : {{##.##}} %' });
+                        txtStatus.value = 'DELETED';
+                        btnDelete.readonly = true;
+                        MsgBox("Delete Data Complete", MsgBoxStyle.Information);
+                    });
+                });
+            }
+            catch (error) { // Code to handle the error
+                xItem.progress({ id: 'prgProcess', current: 0, label: 'Process Not Complete!!! : {{##.##}} %' });
+                yield xAjax.Execute({
+                    data: {
+                        "Module": "[exec].[spKBNOR620_EXCEPTION]",
+                        "@pUserCode": ajexHeader.UserCode,
+                        "@F_Plant": ajexHeader.Plant,
+                        "@F_OrderNo": ddlPDSNo.value,
+                        "@F_ORDERTYPE": 'S',
+                        "@F_Delivery_Date": ReplaceAll(txtDeliveryDate.value, '-', ''),
+                        "@F_Delivery_Dock": txtDeliveryTrip.value,
+                        "@F_Supplier_Code": txtSupplierCode.value.substring(0, 4),
+                        "@F_Supplier_Plant": txtSupplierCode.value.substring(5)
+                    },
+                });
+                MsgBox("ERROR : Can not delete data.", MsgBoxStyle.Critical);
+            }
+        });
+    });
+});

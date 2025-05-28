@@ -33,7 +33,6 @@ namespace HINOSystem.Libs
     public class ActionResultClass
     {
         private readonly IConfiguration _config;
-        private readonly DefaultConnection _connection;
 
         protected IWorkbook workbook;
         protected IFormulaEvaluator formulaEvaluator;
@@ -42,12 +41,10 @@ namespace HINOSystem.Libs
         private int FormatRow = 0;
 
         public ActionResultClass(
-            IConfiguration configuration,
-            DefaultConnection defaultConnection
+            IConfiguration configuration
             )
         {
             _config = configuration;
-            _connection = defaultConnection;
         }
 
 

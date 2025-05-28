@@ -43,7 +43,6 @@ namespace KANBAN.Controllers.API.OrderReport
             _FillDT = fillDataTable;
         }
 
-
         public async Task<IActionResult> F_System_Flag()
         {
             try
@@ -89,6 +88,8 @@ namespace KANBAN.Controllers.API.OrderReport
                 return Content(ex.Message);
             }
         }
+
+
         public async Task<IActionResult> OnClickReport([FromBody] string data)
         {
             try

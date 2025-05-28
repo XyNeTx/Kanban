@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "es6",
+    "outDir": "./wwwroot/js",
+    "rootDir": "./wwwroot/assets/",
+    "strict": true,
+    "esModuleInterop": true,
+    "allowJs": true
+  },
+  "include": [
+    "wwwroot/assets/.script/**/*",
+    "wwwroot/assets/.libs/**/*"
+
+  ],
+  "exclude": [ "node_modules" ],
+  "compileOnSave": true
+}

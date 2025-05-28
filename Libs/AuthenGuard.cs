@@ -12,7 +12,6 @@ namespace HINOSystem.Libs
         private readonly ERPConnection _erpConnect;
         private readonly BearerClass _BearerClass;
         //private readonly MyExtensions _myExtensions;
-        private readonly CookieClass _cookie;
 
         private string _DB = "";
 
@@ -41,14 +40,12 @@ namespace HINOSystem.Libs
         public AuthenGuard(
             IConfiguration configuration, 
             ERPConnection erpConnect,
-            BearerClass bearerClass,
-            CookieClass cookieClass
+            BearerClass bearerClass
             )
         {
             _config = configuration;
             _erpConnect = erpConnect;
             _BearerClass = bearerClass;
-            _cookie = cookieClass; 
 
             this._DB = _config.GetValue<string>("Application:Database");
         }
