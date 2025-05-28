@@ -368,7 +368,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
             }
         }
 
-        public async Task GeneratePicking_Click()
+        public async Task<List<string>> GeneratePicking_Click()
         {
             try
             {
@@ -434,6 +434,13 @@ namespace KANBAN.Services.CKD_Ordering.Repository
 
                 await _kbContext.Database.ExecuteSqlRawAsync(_sql);
 
+                return new List<string>
+                {
+                    "Picking Process Completed Successfully!",
+                    PI_Date_RemainShelf,
+                    PI_Time_RemainShelf
+                };
+
             }
             catch (Exception ex)
             {
@@ -443,7 +450,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
             }
         }
 
-        public async Task CalculatePicking_01(DataTable parmListOfPDSNo)
+        private async Task CalculatePicking_01(DataTable parmListOfPDSNo)
         {
             try
             {
@@ -497,7 +504,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
             }
         }
 
-        public async Task calculatePickingForKanban(DataTable parmListOfPDSNo)
+        private async Task calculatePickingForKanban(DataTable parmListOfPDSNo)
         {
             try
             {
@@ -539,8 +546,8 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                 else throw new CustomHttpException(500, ex.InnerException?.Message ?? ex.Message);
             }
         }
-        
-        public async Task InterfaceCKDPDS(DataTable parmListOfPDSNo)
+
+        private async Task InterfaceCKDPDS(DataTable parmListOfPDSNo)
         {
             try
             {
@@ -597,7 +604,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
             }
         }
 
-        public async Task CalculatePicking_02()
+        private async Task CalculatePicking_02()
         {
             try
             {
@@ -641,8 +648,8 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                 if (ex is CustomHttpException) throw;
                 else throw new CustomHttpException(500, ex.InnerException?.Message ?? ex.Message);
             }
-        } 
-        public async Task CalculatePicking_01_USA(DataTable parmListOfPDSNo)
+        }
+        private async Task CalculatePicking_01_USA(DataTable parmListOfPDSNo)
         {
             try
             {
@@ -693,7 +700,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                 else throw new CustomHttpException(500, ex.InnerException?.Message ?? ex.Message);
             }
         }
-        public async Task CalculatePicking_02_USA()
+        private async Task CalculatePicking_02_USA()
         {
             try
             {
@@ -737,8 +744,8 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                 if (ex is CustomHttpException) throw;
                 else throw new CustomHttpException(500, ex.InnerException?.Message ?? ex.Message);
             }
-        } 
-        public async Task calculatePickingForKanban_USA(DataTable parmListOfPDSNo)
+        }
+        private async Task calculatePickingForKanban_USA(DataTable parmListOfPDSNo)
         {
             try
             {
@@ -781,7 +788,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                 else throw new CustomHttpException(500, ex.InnerException?.Message ?? ex.Message);
             }
         }
-        public async Task InterfaceCKDPDS_USA(DataTable parmListOfPDSNo)
+        private async Task InterfaceCKDPDS_USA(DataTable parmListOfPDSNo)
         {
             try
             {

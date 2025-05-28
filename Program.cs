@@ -196,6 +196,7 @@ app.UseAuthorization();
 app.UseCors();
 
 app.UseWebSockets();
+app.UseStatusCodePagesWithRedirects("~/Home/Index");
 
 app.MapControllerRoute(
     name: "default",

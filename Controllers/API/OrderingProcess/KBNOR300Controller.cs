@@ -27,8 +27,8 @@ namespace HINOSystem.Controllers.API.Master
             try
             {
                 await _BearerClass.CheckAuthorize();
-                var data = await _CKDRepo.IKBNOR300.GetUserAuthorizeAsync();
-                var param = await _CKDRepo.IKBNOR300.GetParameterAsync();
+                var data = await _CKDRepo.IKBNOR300_Repo.GetUserAuthorizeAsync();
+                var param = await _CKDRepo.IKBNOR300_Repo.GetParameterAsync();
 
 
                 return Ok(new

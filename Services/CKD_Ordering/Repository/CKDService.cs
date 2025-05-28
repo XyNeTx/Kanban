@@ -42,7 +42,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
             _CKDUSAContext = cKDUSAContext;
         }
 
-        public IKBNOR300 IKBNOR300
+        public IKBNOR300 IKBNOR300_Repo
         {
             get
             {
@@ -54,7 +54,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                                     _automapService);
             }
         }
-        public IKBNOR310 IKBNOR310
+        public IKBNOR310 IKBNOR310_Repo
         {
             get
             {
@@ -66,7 +66,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                                     _automapService);
             }
         }
-        public IKBNOR320 IKBNOR320
+        public IKBNOR320 IKBNOR320_Repo
         {
             get
             {
@@ -78,7 +78,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                                     _automapService);
             }
         }
-        public IKBNOR321 IKBNOR321
+        public IKBNOR321 IKBNOR321_Repo
         {
             get
             {
@@ -90,7 +90,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                                     _automapService);
             }
         }
-        public IKBNOR330 IKBNOR330
+        public IKBNOR330 IKBNOR330_Repo
         {
             get
             {
@@ -102,11 +102,26 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                                     _automapService);
             }
         }
-        public IKBNOR360 IKBNOR360
+        public IKBNOR360 IKBNOR360_Repo
         {
             get
             {
                 return new KBNOR360(_kbContext,
+                                    _BearerClass,
+                                    _PPM3Context,
+                                    _FillDT, _log,
+                                    _emailService,
+                                    _automapService
+                                    ,_CKDContext,
+                                    _CKDUSAContext
+                                    );
+            }
+        }
+        public IKBNOR361 IKBNOR361_Repo
+        {
+            get
+            {
+                return new KBNOR361(_kbContext,
                                     _BearerClass,
                                     _PPM3Context,
                                     _FillDT, _log,

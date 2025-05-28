@@ -93,6 +93,7 @@
     <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR140.js" />
     <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR150.js" />
     <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR150EX.js" />
+    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR361.js" />
     <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR710.js" />
     <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR700.js" />
     <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR300.js" />

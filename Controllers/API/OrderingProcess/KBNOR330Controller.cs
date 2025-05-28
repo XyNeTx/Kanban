@@ -29,7 +29,7 @@ namespace HINOSystem.Controllers.API.Master
             {
                 await _BearerClass.CheckAuthorize();
 
-                var tupleDT_Str = await _CKDRepo.IKBNOR330.Generate();
+                var tupleDT_Str = await _CKDRepo.IKBNOR330_Repo.Generate();
 
                 if (tupleDT_Str.Item2.Contains("ไม่สามารถ Generate PDS สำหรับ CKD Order ได้"))
                 {

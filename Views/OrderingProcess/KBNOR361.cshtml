@@ -1,0 +1,201 @@
+﻿<div class="row">
+
+    <div class="col-xl-12 col-md-12 col-sm-12">
+        <div class="card border-left-primary shadow h-100">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-8">
+                        <button type="button" class="btn btn-primary col-2" id="btnInq">
+                            <i class="fas fa-search"></i> Inquiry
+                        </button>
+                        <button type="button" class="btn btn-success col-2" id="btnNew" disabled>
+                            <i class="fas fa-plus"></i> New
+                        </button>
+                        <button type="button" class="btn btn-warning col-2" id="btnUpd">
+                            <i class="fas fa-edit"></i> Update
+                        </button>
+                        <button type="button" class="btn btn-danger col-2" id="btnDel" disabled>
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </div>
+                    <div class="col-4">
+                        <div class="d-flex  justify-content-end">
+                            <button class="btn btn-warning col-4" type="button" id="btnCancel">
+                                <i class="fas fa-cancel"></i> Cancel
+                            </button>
+                            <a class="btn btn-danger col-4" asp-controller="OrderingProcess" asp-action="KBNOR360" id="btnExit">
+                                <i class="fa-solid fa-right-from-bracket"></i> Exit
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <table class="table table-bordered w-100" id="tableMaster"></table>
+                </div>
+
+                <div class="row mt-4" id="divRowData">
+                    <div class="col-4">
+
+                        <form id ="formQueryData">
+
+                            <div class="row" >
+
+                                <div class="input-group col-12">
+                                    <label class="input-group-text col-4">Supplier Code</label>
+                                    <input type="text" class="form-select" list="DataSupList" id="Supplier_Code" name="Supplier_Code" disabled />
+                                    <datalist id="DataSupList"></datalist>
+                                </div>
+
+                            </div>
+
+                            <div class="row">
+
+                                <div class="input-group col-12">
+                                    <label class="input-group-text col-4">Kanban No</label>
+                                    <input type="text" class="form-select" list="DataKBList" id="Kanban_No" name="Kanban_No" disabled />
+                                    <datalist id="DataKBList"></datalist>
+                                </div>
+
+                            </div>
+
+                            <div class="row">
+
+                                <div class="input-group col-12">
+                                    <label class="input-group-text col-4">Store Code</label>
+                                    <input type="text" class="form-select" list="DataStoreList" id="Store_Code" name="Store_Code" disabled />
+                                    <datalist id="DataStoreList"></datalist>
+                                </div>
+
+                            </div>
+
+                            <div class="row">
+
+                                <div class="input-group col-12">
+                                    <label class="input-group-text col-4">Part No.</label>
+                                    <input type="text" class="form-select" list="DataPartList" id="Part_No" name="Part_No" disabled />
+                                    <datalist id="DataPartList"></datalist>
+                                </div>
+
+                            </div>
+
+                        </form>
+
+                        <div class="row invisible">
+
+                            <div class="input-group col-12">
+                                <label class="input-group-text">1111</label>
+                                <input type="text" class="form-control" list="1111" />
+                                <datalist id="1111"></datalist>
+                            </div>
+
+                        </div>
+
+                        <div class="row">
+
+                            <div class="input-group col-12">
+                                <label class="input-group-text col-4">Start Date</label>
+                                <input type="text" class="form-select datepicker col-8" id="Start_Date" disabled />
+                            </div>
+
+                        </div>
+
+                        <div class="row">
+
+                            <div class="input-group col-12">
+                                <label class="input-group-text col-4">Type Order</label>
+                                <input type="text" class="form-control col-6" id="Type_Order" disabled />
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <div class="col-5">
+
+                        <div class="row">
+
+                            <div class="input-group col-12">
+                                <label class="input-group-text col-3">Supplier Name</label>
+                                <input type="text" class="form-control" readonly id="readSupName"/>
+                            </div>
+
+                        </div>
+
+                        <div class="row">
+
+                            <div class="input-group col-12">
+                                <label class="input-group-text col-3">Kanban No</label>
+                                <input type="text" class="form-control col-4" readonly id="readKanban" />
+                            </div>
+
+                        </div>
+
+                        <div class="row">
+
+                            <div class="input-group col-12">
+                                <label class="input-group-text col-3">Store Code</label>
+                                <input type="text" class="form-control col-4" readonly id="readStore" />
+                            </div>
+
+                        </div>
+
+                        <div class="row">
+
+                            <div class="input-group col-12">
+                                <label class="input-group-text col-3">Part No</label>
+                                <input type="text" class="form-control" readonly id="readPartNo" />
+                            </div>
+
+                        </div>
+
+                        <div class="row">
+
+                            <div class="input-group col-12">
+                                <label class="input-group-text col-3">Part Name</label>
+                                <input type="text" class="form-control" readonly id="readPartName" />
+                            </div>
+
+                        </div>
+
+                        <div class="row">
+
+                            <div class="input-group col-12">
+                                <label class="input-group-text col-3">End Date</label>
+                                <input type="text" class="form-select col-8 datepicker" id="End_Date" disabled />
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-3">
+                        <div class="input-group col-12">
+                            <label class="input-group-text col-3">Cycle</label>
+                            <input type="text" class="form-control col-8" id="readCycle" readonly />
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row justify-content-end">
+                    <button type="button" class="btn btn-primary col-2" id="btnSave">
+                        <i class="fas fa-save"></i> Save
+                    </button>
+                    <button type="button" class="btn btn-success col-2" id="btnReport">
+                        <i class="fas fa-print"></i> Report
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+
+@using KANBAN.Libs
+@section Scripts {
+    <script type="text/javascript" src="@FileVersionHelper.VersionedScriptPath("/assets/.script/OrderingProcess/KBNOR361.js")"></script>
+}

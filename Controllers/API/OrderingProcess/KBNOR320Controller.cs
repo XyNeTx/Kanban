@@ -27,7 +27,7 @@ namespace HINOSystem.Controllers.API.Master
             try
             {
                 await _BearerClass.CheckAuthorize();
-                await _CKDRepo.IKBNOR320.completeRecalculateCKD();
+                await _CKDRepo.IKBNOR320_Repo.completeRecalculateCKD();
 
                 return Ok(new
                 {

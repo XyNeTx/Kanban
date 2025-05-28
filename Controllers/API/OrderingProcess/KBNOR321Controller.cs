@@ -29,7 +29,7 @@ namespace HINOSystem.Controllers.API.Master
             {
                 await _BearerClass.CheckAuthorize();
 
-                var data = await _CKDRepo.IKBNOR321.GetDropDownData(F_Supplier_Code, F_Store_Code);
+                var data = await _CKDRepo.IKBNOR321_Repo.GetDropDownData(F_Supplier_Code, F_Store_Code);
 
                 return Ok(new
                 {
@@ -53,7 +53,7 @@ namespace HINOSystem.Controllers.API.Master
             {
                 await _BearerClass.CheckAuthorize();
 
-                var data = await _CKDRepo.IKBNOR321.Get_All_Data(action, F_Supplier_Code, IntRow, F_KanbanFrom, F_KanbanTo, F_StoreFrom, F_StoreTo, F_PartFrom, F_PartTo);
+                var data = await _CKDRepo.IKBNOR321_Repo.Get_All_Data(action, F_Supplier_Code, IntRow, F_KanbanFrom, F_KanbanTo, F_StoreFrom, F_StoreTo, F_PartFrom, F_PartTo);
 
                 return Ok(new
                 {
@@ -88,7 +88,7 @@ namespace HINOSystem.Controllers.API.Master
             {
                 await _BearerClass.CheckAuthorize();
 
-                await _CKDRepo.IKBNOR321.Recalculate(action, F_Supplier_Code, intRow);
+                await _CKDRepo.IKBNOR321_Repo.Recalculate(action, F_Supplier_Code, intRow);
 
                 return Ok(new
                 {
@@ -111,7 +111,7 @@ namespace HINOSystem.Controllers.API.Master
             {
                 await _BearerClass.CheckAuthorize();
 
-                var dt = await _CKDRepo.IKBNOR321.Onload(_loginDate);
+                var dt = await _CKDRepo.IKBNOR321_Repo.Onload(_loginDate);
 
                 return Ok(new
                 {
@@ -135,7 +135,7 @@ namespace HINOSystem.Controllers.API.Master
             {
                 await _BearerClass.CheckAuthorize();
 
-                var data = await _CKDRepo.IKBNOR321.GetBL(strDate, Row_Num, intRow);
+                var data = await _CKDRepo.IKBNOR321_Repo.GetBL(strDate, Row_Num, intRow);
 
                 return Ok(new
                 {
@@ -159,7 +159,7 @@ namespace HINOSystem.Controllers.API.Master
             {
                 await _BearerClass.CheckAuthorize();
 
-                var data = await _CKDRepo.IKBNOR321.Detail_Data(intRow, F_Supplier_Code);
+                var data = await _CKDRepo.IKBNOR321_Repo.Detail_Data(intRow, F_Supplier_Code);
 
                 return Ok(new
                 {
@@ -183,7 +183,7 @@ namespace HINOSystem.Controllers.API.Master
             {
                 await _BearerClass.CheckAuthorize();
 
-                var data = await _CKDRepo.IKBNOR321.GetInformNews(F_Supplier_Code, F_Kanban, F_Store, F_Part);
+                var data = await _CKDRepo.IKBNOR321_Repo.GetInformNews(F_Supplier_Code, F_Kanban, F_Store, F_Part);
 
                 return Ok(new
                 {

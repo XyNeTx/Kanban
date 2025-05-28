@@ -460,7 +460,16 @@ namespace KANBAN.Services.Import.Repository
                     }
                     else
                     {
-                        throw new CustomHttpException(400, $"Opening Report ERROR");
+                        string stringError = "";
+                        for(int i = 0; i < dt.Rows.Count; i++)
+                        {
+                            stringError += dt.Rows[i].ItemArray[0].ToString() + " : " + dt.Rows[i].ItemArray[1].ToString() + " : " + dt.Rows[i].ItemArray[2].ToString() + Environment.NewLine;
+                        }
+
+                        if(stringError != "")
+                        {
+                            throw new CustomHttpException(400, stringError);
+                        }
                     }
                 }
             }
@@ -504,7 +513,16 @@ namespace KANBAN.Services.Import.Repository
                     }
                     else
                     {
-                        throw new CustomHttpException(400, $"Opening Report ERROR + {JsonConvert.SerializeObject(dt)}");
+                        string stringError = "";
+                        for (int i = 0; i < dt.Rows.Count; i++)
+                        {
+                            stringError += dt.Rows[i].ItemArray[0].ToString() + " : " + dt.Rows[i].ItemArray[1].ToString() + " : " + dt.Rows[i].ItemArray[2].ToString() + Environment.NewLine;
+                        }
+
+                        if (stringError != "")
+                        {
+                            throw new CustomHttpException(400, stringError);
+                        }
                     }
                 }
             }
@@ -548,7 +566,16 @@ namespace KANBAN.Services.Import.Repository
                     }
                     else
                     {
-                        throw new CustomHttpException(400, $"Opening Report ERROR");
+                        string stringError = "";
+                        for (int i = 0; i < dt.Rows.Count; i++)
+                        {
+                            stringError += dt.Rows[i].ItemArray[0].ToString() + " : " + dt.Rows[i].ItemArray[1].ToString() + " : " + dt.Rows[i].ItemArray[2].ToString() + Environment.NewLine;
+                        }
+
+                        if (stringError != "")
+                        {
+                            throw new CustomHttpException(400, stringError);
+                        }
                     }
                 }
             }

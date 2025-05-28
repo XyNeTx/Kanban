@@ -118,7 +118,10 @@ $("#fileIMP").change(async (e) => {
     if (inputFile.length == 0) return;
     //console.log(inputFile);
     let file = inputFile[0];
-    if (await xSwal.confirm("Are you sure?", "This action can't be undone")) await Import(file);
+    if (await xSwal.confirm("Are you sure?", "This action can't be undone"))
+    {
+        await Import(file);
+    }
 
 });
 

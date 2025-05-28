@@ -28,7 +28,7 @@ namespace HINOSystem.Controllers.API.Master
             try
             {
                 await _BearerClass.CheckAuthorize();
-                var data = await _CKDRepo.IKBNOR310.getCKD_ProcessDateTime();
+                var data = await _CKDRepo.IKBNOR310_Repo.getCKD_ProcessDateTime();
 
                 return Ok(new
                 {
@@ -51,7 +51,7 @@ namespace HINOSystem.Controllers.API.Master
             try
             {
                 await _BearerClass.CheckAuthorize();
-                await _CKDRepo.IKBNOR310.Interface();
+                await _CKDRepo.IKBNOR310_Repo.Interface();
 
                 return Ok(new
                 {

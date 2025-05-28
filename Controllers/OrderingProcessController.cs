@@ -198,6 +198,11 @@ namespace HINOSystem.Controllers
             _authenGuard.ComponentToolbar = false;
             return _authenGuard.guard(ControllerContext);
         }
+        public IActionResult KBNOR361()
+        {
+            _authenGuard.ComponentToolbar = false;
+            return _authenGuard.guard(ControllerContext);
+        }
         public IActionResult KBNOR370()
         {
             _authenGuard.ComponentToolbar = false;

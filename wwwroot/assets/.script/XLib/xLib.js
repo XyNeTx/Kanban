@@ -110,6 +110,21 @@ class DataTableLib {
         return data;
     
     }
+
+    //GetAllDataDT(id) {
+    //    if (id == undefined) return console.error("id is undefined");
+    //    if (!id.includes('#')) id = '#' + id;
+
+    //    let table = $(`${id}`).DataTable();
+    //    let data = [];
+
+    //    $(`${id} tbody`).find('input[type="checkbox"]:checked').each(function () {
+    //        data.push(table.row($(this).closest('tr')).data());
+    //    });
+
+    //    return data;
+    
+    //}
 }
 
 const _xDataTable = new DataTableLib();
@@ -839,7 +854,7 @@ const _xLib = new xLib();
     $.fn.formToJSON = async function () {
         let formData = {};
         //console.log($(this));
-        $(this).serializeArray().forEach(function (item) {
+        await $(this).serializeArray().forEach(async function (item) {
             //console.log(item);
 
             if ($(`#${item.name}`).attr("data-datepicker"))
@@ -847,11 +862,13 @@ const _xLib = new xLib();
                 item.value = moment(item.value, "DD/MM/YYYY").format("YYYYMMDD");
             }
             formData[item.name] = item.value;
+
+            return await formData;
         });
 
         //console.log(formData);
 
-        return formData;
+        return await formData;
     }
 
 
@@ -868,6 +885,24 @@ const _xLib = new xLib();
         });
         return $(this).selectpicker('refresh');
     }
+
+    $.fn.addOptionDataList = async function (arrData, objKey) {
+        var id = $(this).attr("id");
+        $(this).parent().find("input[list='" + id + "']").val("");
+        await $(this).empty();
+        await $(this).append(`<option value=''></option >`);
+        let thisElement = $(this);
+        arrData.forEach(function (each) {
+            //console.log(each[objKey]);
+            //console.log(thisElement);
+            if (each[objKey] == null || each[objKey] == undefined) {
+                thisElement.append(`<option value='${each}'>${each}</option >`);
+            }
+            else {
+                thisElement.append(`<option value='${each[objKey]}' >${each[objKey]}</option>`);
+            }
+        });
+    };
 
     $.fn.removeListSelectPicker = async function () {
         $(".btn-toolbar[role='toolbar']").addClass("d-none");

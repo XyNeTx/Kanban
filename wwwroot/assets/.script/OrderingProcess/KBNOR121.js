@@ -405,8 +405,11 @@ const addDetailToTable = async (dateSet, intRow) => {
         }
 
         var _headDate = $("#THeadR1").find(`th:contains('${dateSet[_countDateSet]}')`).text().replaceAll("-", "");
+        console.log("Head Date : ", _headDate);
         var _headYMD = _headDate.slice(4, 8) + _headDate.slice(2, 4) + _headDate.slice(0, 2);
+        console.log("_headYMD : ", _headYMD);
         var _intHeadDate = parseInt(_headYMD);
+        console.log("_intHeadDate : ", _intHeadDate);
         var _intDeliveryDate = 0;
 
         if (dT_DeliveryDate.length != 0) {
@@ -437,6 +440,8 @@ const addDetailToTable = async (dateSet, intRow) => {
         );
 
 
+        //console.log("Delivery Date : ", dateSet[_countDateSet], " == ", _CookieProcessDate);
+        console.log("_intHeadDate : ", _intHeadDate, " == ", _intDeliveryDate);
         if (_intHeadDate == _intDeliveryDate) {
             $("#THeadR1").find(`th:contains('${dateSet[_countDateSet]}')`).addClass("bg-danger");
         }
@@ -663,17 +668,17 @@ const addDetailToTable = async (dateSet, intRow) => {
 
 
                 //var Process_date = dT_DeliveryDate[0].F_Delivery_Date;
-                var Process_date = moment($("#inputProcessDateFor").val(),"MM/DD/YYYY").format("YYYYMMDD"); 
-                //filter by process date, part no, supplier code, supplier plant, store code to get TMT_FO
-                var FilteredHeader = dT_Header.filter(x => x.F_Process_Date == Process_date
-                    && x.F_Part_No == $("#readPartNo").val().split("-")[0]
-                    && x.F_Ruibetsu == $("#readPartNo").val().split("-")[1]
-                    && x.F_Supplier_Code == $("#readSupplier").val().split("-")[0]
-                    && x.F_Supplier_Plant == $("#readSupplier").val().split("-")[1]
-                    && x.F_Store_Code == $("#readStoreCode").val()
-                )
+                //var Process_date = moment($("#inputProcessDateFor").val(), "YYYY-MM-DD").add(1, 'days').format("YYYYMMDD"); 
+                ////filter by process date, part no, supplier code, supplier plant, store code to get TMT_FO
+                //var FilteredHeader = dT_Header.filter(x => x.F_Process_Date == Process_date
+                //    && x.F_Part_No == $("#readPartNo").val().split("-")[0]
+                //    && x.F_Ruibetsu == $("#readPartNo").val().split("-")[1]
+                //    && x.F_Supplier_Code == $("#readSupplier").val().split("-")[0]
+                //    && x.F_Supplier_Plant == $("#readSupplier").val().split("-")[1]
+                //    && x.F_Store_Code == $("#readStoreCode").val()
+                //)
                 //console.log("FilteredHeader : ", FilteredHeader);
-                $("#readUseDay").val(FilteredHeader[0].F_TMT_FO);
+                $("#readUseDay").val(dT_Header[0].F_TMT_FO);
 
                 //console.log(success.data);
             }
