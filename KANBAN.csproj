@@ -9,9 +9,19 @@
 
   <ItemGroup>
     <Compile Remove="wwwroot\assets\img\avatars\**" />
+    <Compile Remove="wwwroot\assets\script\**" />
+    <Compile Remove="wwwroot\Storage\**" />
     <Content Remove="wwwroot\assets\img\avatars\**" />
+    <Content Remove="wwwroot\assets\script\**" />
+    <Content Remove="wwwroot\Storage\**" />
     <EmbeddedResource Remove="wwwroot\assets\img\avatars\**" />
+    <EmbeddedResource Remove="wwwroot\assets\script\**" />
+    <EmbeddedResource Remove="wwwroot\Storage\**" />
     <None Remove="wwwroot\assets\img\avatars\**" />
+    <None Remove="wwwroot\assets\script\**" />
+    <None Remove="wwwroot\Storage\**" />
+    <TypeScriptCompile Remove="wwwroot\assets\script\**" />
+    <TypeScriptCompile Remove="wwwroot\Storage\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -61,141 +71,6 @@
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
     <Content Include="wwwroot\assets\.libs\splash\splash.css" />
-    <Content Include="wwwroot\assets\.script\DownloadData\KBNDL001.js" />
-    <Content Include="wwwroot\assets\.script\EmergencyData\KBNIM006M.js" />
-    <Content Include="wwwroot\assets\.script\EmergencyData\KBNIM006C.js" />
-    <Content Include="wwwroot\assets\.script\EmergencyData\KBNIM006.js" />
-    <Content Include="wwwroot\assets\.script\ERP\ERP01M040.js" />
-    <Content Include="wwwroot\assets\.script\ERP\ERP01M041.js" />
-    <Content Include="wwwroot\assets\.script\ERP\ERP01M030.js" />
-    <Content Include="wwwroot\assets\.script\ERP\ERP01M022.js" />
-    <Content Include="wwwroot\assets\.script\ERP\ERP01M021.js" />
-    <Content Include="wwwroot\assets\.script\ERP\ERP01M020.js" />
-    <Content Include="wwwroot\assets\.script\ERP\ERP01M011.js" />
-    <Content Include="wwwroot\assets\.script\ERP\ERP01M010.js" />
-    <Content Include="wwwroot\assets\.script\Home\Index.js" />
-    <Content Include="wwwroot\assets\.script\Login\Index.js" />
-    <Content Include="wwwroot\assets\.script\Master\KBNMS030.js" />
-    <Content Include="wwwroot\assets\.script\MonthlyForcast\KBNIM012M.js" />
-    <Content Include="wwwroot\assets\.script\MonthlyForcast\KBNIM012.js" />
-    <Content Include="wwwroot\assets\.script\MSPData\KBNIM003C.js" />
-    <Content Include="wwwroot\assets\.script\MSPData\KBNIM003CP.js" />
-    <Content Include="wwwroot\assets\.script\MSPData\KBNIM003S.js" />
-    <Content Include="wwwroot\assets\.script\MSPData\KBNIM003M.js" />
-    <Content Include="wwwroot\assets\.script\MSPData\KBNIM003.js" />
-    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR160.js" />
-    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR123.js" />
-    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR122.js" />
-    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR121.js" />
-    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR110.js" />
-    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR120.js" />
-    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR130.js" />
-    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR140.js" />
-    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR150.js" />
-    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR150EX.js" />
-    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR360.js" />
-    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR361.js" />
-    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR710.js" />
-    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR700.js" />
-    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR300.js" />
-    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR310.js" />
-    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR370.js" />
-    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR360_Test.js" />
-    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR330.js" />
-    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR321.js" />
-    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR320.js" />
-    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR640.js" />
-    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR630.js" />
-    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR620.js" />
-    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR610.js" />
-    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR600.js" />
-    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR440.js" />
-    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR450.js" />
-    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR470.js" />
-    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR460.js" />
-    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR460EX.js" />
-    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR420.js" />
-    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR410.js" />
-    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR400.js" />
-    <Content Include="wwwroot\assets\.script\OrderingProcess\KBNOR100.js" />
-    <Content Include="wwwroot\assets\.script\OtherCondition\KBNOC121.js" />
-    <Content Include="wwwroot\assets\.script\ReceiveProcess\KBNRC110.js" />
-    <Content Include="wwwroot\assets\.script\ReceiveProcess\KBNRC120.js" />
-    <Content Include="wwwroot\assets\.script\ServiceData\KBNIM001.js" />
-    <Content Include="wwwroot\assets\.script\ServiceData\KBNIM001O.js" />
-    <Content Include="wwwroot\assets\.script\ServiceData\KBNIM001M.js" />
-    <Content Include="wwwroot\assets\.script\ServiceData\KBNIM001C.js" />
-    <Content Include="wwwroot\assets\.script\SpecialData\KBNIM007C.js" />
-    <Content Include="wwwroot\assets\.script\SpecialData\KBNIM007TSR.js" />
-    <Content Include="wwwroot\assets\.script\SpecialData\KBNIM007T.js" />
-    <Content Include="wwwroot\assets\.script\SpecialData\KBNIM007.js" />
-    <Content Include="wwwroot\assets\.script\SpecialOrdering\KBNOR296.js" />
-    <Content Include="wwwroot\assets\.script\TacomaOrder\KBNIM015C.js" />
-    <Content Include="wwwroot\assets\.script\TacomaOrder\KBNIM015M.js" />
-    <Content Include="wwwroot\assets\.script\TacomaOrder\KBNIM015.js" />
-    <Content Include="wwwroot\assets\.script\Template\Action.js">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Include="wwwroot\assets\.script\Tools\KBNTL001.js" />
-    <Content Include="wwwroot\assets\.script\UrgentOrder\KBNIM014.js" />
-    <Content Include="wwwroot\assets\.script\UrgentOrder\KBNIM013EXP.js" />
-    <Content Include="wwwroot\assets\.script\UrgentOrder\KBNIM013INV.js" />
-    <Content Include="wwwroot\assets\.script\UrgentOrder\KBNIM013VAN.js" />
-    <Content Include="wwwroot\assets\.script\UrgentOrder\KBNIM014C.js" />
-    <Content Include="wwwroot\assets\.script\UrgentOrder\KBNIM007N.js" />
-    <Content Include="wwwroot\assets\.script\V2VData\KBNIM002C.js" />
-    <Content Include="wwwroot\assets\.script\V2VData\KBNIM002TR.js" />
-    <Content Include="wwwroot\assets\.script\V2VData\KBNIM002M.js" />
-    <Content Include="wwwroot\assets\.script\V2VData\KBNIM002.js" />
-    <Content Include="wwwroot\assets\.script\VLTData\KBNIM0044.js" />
-    <Content Include="wwwroot\assets\.script\VLTData\KBNIM0042.js" />
-    <Content Include="wwwroot\assets\.script\VLTData\KBNIM0043.js" />
-    <Content Include="wwwroot\assets\.script\VLTData\KBNIM004M.js" />
-    <Content Include="wwwroot\assets\.script\VLTData\KBNIM004.js" />
-    <Content Include="wwwroot\assets\.script\_HistoryLog.js" />
-    <Content Include="wwwroot\assets\.script\_Layout.js" />
-    <Content Include="wwwroot\assets\.script\LogisticCondition\KBNLC120.js" />
-    <Content Include="wwwroot\assets\.script\LogisticCondition\KBNLC130.js" />
-    <Content Include="wwwroot\assets\.script\LogisticCondition\KBNLC140.js" />
-    <Content Include="wwwroot\assets\.script\LogisticCondition\KBNLC180.js" />
-    <Content Include="wwwroot\assets\.script\LogisticCondition\KBNLC190.js" />
-    <Content Include="wwwroot\assets\.script\LogisticCondition\KBNLC200.js" />
-    <Content Include="wwwroot\assets\.script\LogisticCondition\KBNLC110.js" />
-    <Content Include="wwwroot\assets\.script\LogisticCondition\KBNLC150.js" />
-    <Content Include="wwwroot\assets\.script\Master\KBNMS001.js" />
-    <Content Include="wwwroot\assets\.script\Master\KBNMS003.js" />
-    <Content Include="wwwroot\assets\.script\Master\KBNMS004.js" />
-    <Content Include="wwwroot\assets\.script\Master\KBNMS005.js" />
-    <Content Include="wwwroot\assets\.script\Master\KBNMS006.js" />
-    <Content Include="wwwroot\assets\.script\Master\KBNMS007.js" />
-    <Content Include="wwwroot\assets\.script\Master\KBNMS008.js" />
-    <Content Include="wwwroot\assets\.script\Master\KBNMS009.js" />
-    <Content Include="wwwroot\assets\.script\Master\KBNMS010.js" />
-    <Content Include="wwwroot\assets\.script\Master\KBNMS011.js" />
-    <Content Include="wwwroot\assets\.script\Master\KBNMS012.js" />
-    <Content Include="wwwroot\assets\.script\Master\KBNMS013.js" />
-    <Content Include="wwwroot\assets\.script\Master\KBNMS014.js" />
-    <Content Include="wwwroot\assets\.script\Master\KBNMS015.js" />
-    <Content Include="wwwroot\assets\.script\Master\KBNMS016.js" />
-    <Content Include="wwwroot\assets\.script\Master\KBNMS017.js" />
-    <Content Include="wwwroot\assets\.script\Master\KBNMS018.js" />
-    <Content Include="wwwroot\assets\.script\Master\KBNMS019.js" />
-    <Content Include="wwwroot\assets\.script\Master\KBNMS020.js" />
-    <Content Include="wwwroot\assets\.script\Master\KBNMS021.js" />
-    <Content Include="wwwroot\assets\.script\Master\KBNMS022.js" />
-    <Content Include="wwwroot\assets\.script\Master\KBNMS023.js" />
-    <Content Include="wwwroot\assets\.script\Master\KBNMS024.js" />
-    <Content Include="wwwroot\assets\.script\Master\KBNMS025.js" />
-    <Content Include="wwwroot\assets\.script\Master\KBNMS027.js" />
-    <Content Include="wwwroot\assets\.script\Master\KBNMS029.js" />
-    <Content Include="wwwroot\assets\.script\Master\KBNMS028.js" />
-    <Content Include="wwwroot\assets\.script\Master\KBNMS026.js" />
-    <Content Include="wwwroot\assets\.script\Master\KBNMS002.js" />
-    <Content Include="wwwroot\assets\.script\Template\Master.js">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
     <Content Include="wwwroot\assets\adminty\bower_components\bootstrap\dist\css\bootstrap.min.css" />
     <Content Include="wwwroot\assets\adminty\bower_components\datatables.net-bs4\css\dataTables.bootstrap4.min.css" />
     <Content Include="wwwroot\assets\adminty\bower_components\datatables.net-responsive-bs4\css\responsive.bootstrap4.min.css" />
@@ -219,31 +94,6 @@
     <None Include="wwwroot\assets\.libs\class\lab.Splash\lab.Splash.js.map" />
     <None Include="wwwroot\assets\.libs\class\lab.Splash\lab.Splash.min.js" />
     <None Include="wwwroot\assets\.libs\class\lab.Splash\lab.Splash.min.js.map" />
-    <Content Include="wwwroot\assets\.script\developmaintain\KBNMT110.js" />
-    <Content Include="wwwroot\assets\.script\import\KBNIM010.js" />
-    <Content Include="wwwroot\assets\.script\orderingprocess\KBNOR200.js" />
-    <Content Include="wwwroot\assets\.script\SpecialOrdering\KBNOR210.js" />
-    <Content Include="wwwroot\assets\.script\SpecialOrdering\KBNOR210_2.js" />
-    <Content Include="wwwroot\assets\.script\SpecialOrdering\KBNOR210_3.js" />
-    <Content Include="wwwroot\assets\.script\SpecialOrdering\KBNOR210_1.js" />
-    <Content Include="wwwroot\assets\.script\SpecialOrdering\KBNOR270.js" />
-    <Content Include="wwwroot\assets\.script\SpecialOrdering\KBNOR260.js" />
-    <Content Include="wwwroot\assets\.script\SpecialOrdering\KBNOR261.js" />
-    <Content Include="wwwroot\assets\.script\SpecialOrdering\KBNOR291.js" />
-    <Content Include="wwwroot\assets\.script\SpecialOrdering\KBNOR292.js" />
-    <Content Include="wwwroot\assets\.script\SpecialOrdering\KBNOR297.js" />
-    <Content Include="wwwroot\assets\.script\SpecialOrdering\KBNOR290.js" />
-    <Content Include="wwwroot\assets\.script\SpecialOrdering\KBNOR280.js" />
-    <Content Include="wwwroot\assets\.script\SpecialOrdering\KBNOR250.js" />
-    <Content Include="wwwroot\assets\.script\SpecialOrdering\KBNOR240.js" />
-    <Content Include="wwwroot\assets\.script\SpecialOrdering\KBNOR230.js" />
-    <Content Include="wwwroot\assets\.script\specialordering\KBNOR220.js" />
-    <Content Include="wwwroot\assets\.script\specialordering\KBNOR220_1.js" />
-    <Content Include="wwwroot\assets\.script\specialordering\KBNOR220_2.js" />
-    <Content Include="wwwroot\assets\.script\SpecialOrdering\KBNOR293.js" />
-    <Content Include="wwwroot\assets\.script\SpecialOrdering\KBNOR294.js" />
-    <Content Include="wwwroot\assets\.script\SpecialOrdering\KBNOR295.js" />
-    <Content Include="wwwroot\assets\.script\XLib\xLib.js" />
     <None Include="wwwroot\assets\.libs\display\display.ListOfValues.js" />
     <None Include="wwwroot\assets\.libs\splash\splash.bundle.js" />
     <None Include="wwwroot\assets\.libs\splash\splash.bundle.js.map" />
@@ -257,39 +107,6 @@
     <None Include="wwwroot\assets\.libs\splash\splash.js.map" />
     <None Include="wwwroot\assets\.libs\splash\splash.min.js" />
     <None Include="wwwroot\assets\.libs\splash\splash.min.js.map" />
-    <Content Include="wwwroot\assets\.script\master\KBNMS005S.js" />
-    <Content Include="wwwroot\assets\.script\OrderReport\KBNRT160.js" />
-    <Content Include="wwwroot\assets\.script\OrderReport\KBNRT140.js" />
-    <Content Include="wwwroot\assets\.script\OrderReport\KBNRT110.js" />
-    <Content Include="wwwroot\assets\.script\OrderReport\KBNRT120.js" />
-    <Content Include="wwwroot\assets\.script\OrderReport\KBNRT130.js" />
-    <Content Include="wwwroot\assets\.script\OrderReport\KBNRT150.js" />
-    <Content Include="wwwroot\assets\.script\OrderReport\KBNRT170.js" />
-    <Content Include="wwwroot\assets\.script\OrderReport\KBNRT180.js" />
-    <Content Include="wwwroot\assets\.script\OrderReport\KBNRT190.js" />
-    <Content Include="wwwroot\assets\.script\OrderReport\KBNRT200.js" />
-    <Content Include="wwwroot\assets\.script\OrderReport\KBNRT210.js" />
-    <Content Include="wwwroot\assets\.script\OrderReport\KBNRT220.js" />
-    <Content Include="wwwroot\assets\.script\OrderReport\KBNRT230.js" />
-    <Content Include="wwwroot\assets\.script\OrderReport\KBNRT240.js" />
-    <Content Include="wwwroot\assets\.script\OrderReport\KBNRT250.js" />
-    <Content Include="wwwroot\assets\.script\OrderReport\KBNRT260.js" />
-    <Content Include="wwwroot\assets\.script\OrderReport\KBNRT270.js" />
-    <Content Include="wwwroot\assets\.script\OrderReport\KBNRT280.js" />
-    <Content Include="wwwroot\assets\.script\OrderReport\KBNRT296.js" />
-    <Content Include="wwwroot\assets\.script\OrderReport\KBNRT300.js" />
-    <Content Include="wwwroot\assets\.script\OrderReport\KBNRT310.js" />
-    <Content Include="wwwroot\assets\.script\ReceiveProcess\KBNRC130.js" />
-    <Content Include="wwwroot\assets\.script\ReceiveProcess\KBNRC140.js" />
-    <Content Include="wwwroot\assets\.script\ReceiveProcess\KBNRC150.js" />
-    <Content Include="wwwroot\assets\.script\ReceiveProcess\KBNRC160.js" />
-    <Content Include="wwwroot\assets\.script\ReceiveProcess\KBNRC210.js" />
-    <Content Include="wwwroot\assets\.script\ReceiveProcess\KBNRC220.js" />
-    <Content Include="wwwroot\assets\.script\urgentorder\KBNIM014SRV.js" />
-	<Content Include="wwwroot\assets\.script\othercondition\KBNOC120.js" />
-	<Content Include="wwwroot\assets\.script\XLib\xlsx.full.min.js" />
-	<None Include="wwwroot\assets\.script\XLib\axios.min.js" />
-	<None Include="wwwroot\assets\.script\XLib\typescript.min.js" />
     <None Include="wwwroot\assets\adminty\bower_components\bootstrap-datepicker\bootstrap-datepicker.js" />
     <None Include="wwwroot\assets\adminty\bower_components\bootstrap-daterangepicker\daterangepicker.js" />
     <None Include="wwwroot\assets\adminty\bower_components\bootstrap\dist\css\bootstrap.min.css.map" />
@@ -2282,6 +2099,7 @@
     <PackageReference Include="FreeSpire.Barcode" Version="6.6.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Negotiate" Version="6.0.13" />
     <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.3.0" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.15" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.15" />
@@ -2298,7 +2116,6 @@
     <PackageReference Include="Microsoft.Windows.Compatibility" Version="7.0.4" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="NPOI" Version="2.6.0" />
-    <PackageReference Include="PdfSharp" Version="1.50.5147" />
     <PackageReference Include="QRCoder" Version="1.6.0" />
     <PackageReference Include="Serilog.AspNetCore" Version="7.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.7.3" />
@@ -3056,10 +2873,6 @@
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
     <Content Update="wwwroot\assets\vendor\fontawesome-free\metadata\sponsors.yml">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Update="wwwroot\assets\vendor\fontawesome-free\package.json">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
@@ -9747,18 +9560,10 @@
 
   <ItemGroup>
     <Folder Include="Models\KB3\SpecialData\Model\" />
-    <Folder Include="wwwroot\assets\.script\DevelopMaintain\" />
-    <Folder Include="wwwroot\assets\.script\Home\" />
-    <Folder Include="wwwroot\assets\.script\Import\" />
-    <Folder Include="wwwroot\js\OrderingProcess\" />
-    <Folder Include="wwwroot\Storage\DownloadFile\" />
-    <Folder Include="wwwroot\Storage\DownloadTemp\" />
-    <Folder Include="wwwroot\Storage\Image\QRCode\202406\" />
-    <Folder Include="wwwroot\Storage\Uploads\" />
+    <Folder Include="wwwroot\js\" />
   </ItemGroup>
 
   <ItemGroup>
-    <TypeScriptCompile Include="wwwroot\assets\.script\OrderingProcess\KBNOR360_Test.ts" />
     <TypeScriptCompile Include="wwwroot\assets\vendor\chart.js\4.2.0_temp\index.d.ts" />
     <TypeScriptCompile Include="wwwroot\assets\vendor\chart.js\4.2.0_temp\index.umd.d.ts" />
     <TypeScriptCompile Include="wwwroot\assets\vendor\chart.js\4.2.0_temp\types.d.ts" />

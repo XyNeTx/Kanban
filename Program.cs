@@ -106,7 +106,6 @@ builder.Services.AddScoped<AuthenGuard>();
 builder.Services.AddScoped<BearerClass>();
 builder.Services.AddScoped<EmailClass>();
 builder.Services.AddSingleton<NPOIClass>();
-builder.Services.AddSingleton<PdfSharpClass>();
 builder.Services.AddScoped<ActionResultClass>();
 builder.Services.AddScoped<FillDataTable>();
 builder.Services.AddScoped<SerilogLibs>();

@@ -110,5 +110,3 @@ class labSplashScreen {
 }
 
 var xSplash = new labSplashScreen();
-
-//export { xSplash };

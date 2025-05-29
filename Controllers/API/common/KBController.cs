@@ -1,25 +1,6 @@
-﻿using System;
-using System.IO;
-using System.Web;
-using Microsoft.AspNetCore.Http;
-using HINOSystem.Models;
-using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
-using System.Data;
+﻿using Microsoft.AspNetCore.Mvc;
 using HINOSystem.Libs;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using Microsoft.Net.Http.Headers;
-using Microsoft.EntityFrameworkCore;
-using static System.Net.WebRequestMethods;
 using Newtonsoft.Json;
-
-
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
-using PdfSharp.Charting;
 
 
 namespace HINOSystem.Controllers.API.common

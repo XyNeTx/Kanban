@@ -1,51 +1,11 @@
-﻿using Microsoft.AspNetCore.Http.Extensions;
-using Microsoft.AspNetCore.Mvc;
-using System.Data;
-using System;
-using System.Web;
-using System.Security.Principal;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-
-using System.Reflection.PortableExecutable;
-using System.DirectoryServices;
-using System.DirectoryServices.AccountManagement;
-using Microsoft.Net.Http.Headers;
-using System.Collections.Specialized;
-using System.Net;
-using System.DirectoryServices.ActiveDirectory;
-using System.Net.Http;
-using Microsoft.AspNetCore.Authorization;
-
-using System.Security.Claims;
-using Org.BouncyCastle.Asn1.Ocsp;
+﻿using Microsoft.AspNetCore.Mvc;
 
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-
-using System.Threading.Tasks;
 
 using HINOSystem.Libs;
 using HINOSystem.Context;
-using HINOSystem.Models.KB3.Master;
-using NPOI.SS.Formula.Functions;
-using System.Dynamic;
-using Microsoft.SqlServer.Server;
-using Microsoft.VisualBasic;
-using System.Globalization;
-using Microsoft.AspNetCore.Http.HttpResults;
-
-using System.Drawing;
-using System.Diagnostics;
-using System.ComponentModel.DataAnnotations;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using PdfSharp.Charting;
-using NPOI.HPSF;
 
 using Spire.Barcode;
-using System.Web.Services.Description;
-using NuGet.Configuration;
 
 
 namespace HINOSystem.Controllers.API.Master
