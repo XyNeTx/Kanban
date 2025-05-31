@@ -77,54 +77,32 @@
                                 @*<legend><item type="checkbox" id="chkPDSNo" label="Select PDS No. : " value="1" checked></item></legend>*@
 
                                 <div class="row">
-                                    <div class="col-6">
-
-                                        <div class="row">
-                                            <div class="col-6">
-                                                <item type="select" id="itmPDS" label="PDS No. From : "></item>
-                                            </div>
-                                            <div class="col-6">
-                                                <item type="select" id="itmPDSTo" label="To :"></item>
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <div class="input-group">
+                                                <label class="input-group-text">PDS No From :</label>
+                                                <select class="form-control" id="itmPDS" name="itmPDS" data-live-search="true" style="width:100%">
+                                                    <option value="">-- Select PDS No --</option>
+                                                </select>
                                             </div>
                                         </div>
-
-                                    </div>
-                                    <div class="col">
-                                        <div class="row">
-                                            <div class="col">
-                                            </div>
-                                            <div class="col-3">
-                                                <item type="button" id="btnExit" label="Exit" style="width:100%"></item>
+                                        <div class="col-4">
+                                            <div class="input-group">
+                                                <label class="input-group-text">To :</label>
+                                                <select class="form-control" id="itmPDSTo" name="itmPDSTo" data-live-search="true" style="width:100%">
+                                                    <option value="">-- Select PDS No --</option>
+                                                </select>
                                             </div>
                                         </div>
                                     </div>
+
                                 </div>
-
-                            </fieldset>
-
-                        </div>
-                    </div>
-
-
-                    <div class="row mb-2">
-                        <div class="col">
-
-                            <fieldset class="fieldset" id="fldSupplierCode">
-                                <legend>Supplier Code : </legend>
-                                @*<legend><item type="checkbox" id="chkSupplierCode" label="Supplier Code : "></item></legend>*@
 
                                 <div class="row">
-                                    <div class="col-8">
-
-                                        <div class="row">
-                                            <div class="col-5">
-                                                <item type="select" id="itmSupplier" label="Supplier From : "></item>
-                                            </div>
-                                            <div class="col-4">
-                                                <item type="select" id="itmSupplierTo" label="To :"></item>
-                                            </div>
-                                        </div>
-
+                                    <div class="col-10">
+                                    </div>
+                                    <div class="col-2">
+                                        <item type="button" id="btnExit" label="Exit" style="width:100%"></item>
                                     </div>
                                 </div>
 
@@ -132,7 +110,6 @@
 
                         </div>
                     </div>
-
 
                 </form>
 

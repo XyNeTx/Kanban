@@ -1,38 +1,52 @@
 ﻿$(document).ready(function () {
 
-    const KBNOR370 = new MasterTemplate({
-        Controller: _PAGE_,
-        Table: 'tblMaster',
-        ColumnTitle: {
-            "EN": ['Plant', 'Parent Part', 'Ruibetsu', 'Effective Date', 'End Date'],
-            "TH": ['Plant', 'Parent Part', 'Ruibetsu', 'Effective Date', 'End Date'],
-            "JP": ['Plant', 'Parent Part', 'Ruibetsu', 'Effective Date', 'End Date'],
-        },
-        ColumnValue: [
-            { "data": "F_Plant" },
-            { "data": "F_Parent_Part" },
-            { "data": "F_Part_Name" },
-            { "data": "F_Effect_Date" },
-            { "data": "F_End_Date" }
-        ],
-        Modal: 'modalMaster',
-        Form: 'frmMaster',
-        PostData: [
-            { name: 'F_Plant', value: _PLANT_ }
-        ],
+    loadOrderType = async function () {
+        //console.log(rdoOrderType.value);
+
+        var _dt = await xAjax.ExecuteJSON({
+            data: {
+                "Module": "[exec].[spKBNOR370_INI_PDS]",
+                "pPlant": ajexHeader.Plant,
+                "F_Issued_Date": moment($("#txtProcessDate").val(), "DD/MM/YYYY").add(-1, 'days').format("YYYYMMDD"),
+                "F_Issued_Shift": $("#txtProcessShift").val().slice(0, 1) == "1" ? "D" : "N",
+            },
+        });
+        if (_dt.rows == null) MsgBox("Order data not found.", MsgBoxStyle.Information, "Information");
+
+        $('#itmPDS').empty();
+        $('#itmPDSTo').empty();
+
+        $('#itmPDS').append(`<option value="" hidden></option>`);
+        $('#itmPDSTo').append(`<option value="" hidden></option>`);
+
+        $("#itmPDS").selectpicker('refresh');
+        $("#itmPDSTo").selectpicker('refresh');
+
+        console.log(_dt);
+
+        _dt.rows.forEach(function (item) {
+            $('#itmPDS').append(`<option value="${item.F_OrderNo}">${item.F_OrderNo}</option>`);
+            $('#itmPDSTo').append(`<option value="${item.F_OrderNo}">${item.F_OrderNo}</option>`);
+        });
+
+        $("#itmPDS").selectpicker('refresh');
+        $("#itmPDSTo").selectpicker('refresh');
+
+    };
+
+    $("#itmPDS").change(function () {
+        itmPDS.value = $(this).val();
     });
 
-    KBNOR370.prepare();
 
-    KBNOR370.initial(function (result) {
-        console.log(result);
-        xDropDownList.bind('#frmCondition #itmPDS', result.data.PDSNo, 'F_OrderNo', 'F_OrderNo');
-        xDropDownList.bind('#frmCondition #itmPDSTo', result.data.PDSNo, 'F_OrderNo', 'F_OrderNo');
-        xDropDownList.bind('#frmCondition #itmSupplier', result.data.Supplier, 'SupplierCode', 'SupplierCode');
-        xDropDownList.bind('#frmCondition #itmSupplierTo', result.data.Supplier, 'SupplierCode', 'SupplierCode');
+    initial = async function () {
+        loadOrderType();
+        $("#itmPDS").selectpicker();
+        $("#itmPDSTo").selectpicker();
 
         xSplash.hide();
-    });
+    };
+    initial();
 
 
     xAjax.onClick('btnExit', async function () {
@@ -42,46 +56,22 @@
 
 
     xAjax.onClick('#btnPrintPDS', async function () {
-        //console.log($('#chkPDSNo').val());
-        //console.log($('#itmPDSFrom').val());
-        //console.log($('#itmPDSTo').val());
-        if ($('#chkPDSNo').val() == 1 && ($('#itmPDS').val() == null || $('#itmPDSTo').val() == null)) {
-            MsgBox("Please input PDS From, To before print PDS...", MsgBoxStyle.Exclamation, "Exclamation");
-            return false;
-        }
-
-        if ($('#chkSupplierCode').val() == 1 && ($('#itmSupplier').val() != '' || $('#itmSupplierTo').val() != '')) {
-            MsgBox("Please input Supplier From, To before print PDS...", MsgBoxStyle.Exclamation, "Exclamation");
-            return false;
-        }
-
-        //console.log($('#chkDeliveryDate').val());
-        //console.log($('#itmDelivery').val());
-        //console.log($('#itmDeliveryTo').val());
-        if ($('#chkDeliveryDate').val() == 1 && ($('#itmDelivery').val() == '' || $('#itmDeliveryTo').val() == '')) {
-            MsgBox("Please select Delivery Date From, To before print PDS...", MsgBoxStyle.Exclamation, "Exclamation");
-            return false;
-        }
 
         //console.log(($('#chkSupplierCode').val() == 1 ? $('#itmDelivery').val() : ''));
         //ajexHeader.Plant = '1';
         var _dt = await xAjax.ExecuteJSON({
             data: {
-                "Module": "[exec].[spKBNOR370_PDS]",
+                "Module": "[exec].[spKBNOR700_PDS_CKD]",
                 "@pUserCode": ajexHeader.UserCode,
-                "@pPlant": '1',
+                "@pPlant": ajexHeader.Plant,
                 "@pDeliveryDate": xDate.Date('yyyyMMdd', 'MM=-3'),
-                "@F_OrderNo": ($('#chkPDSNo').val() == 1 ? $('#itmPDS').val() : ''),
-                "@F_OrderNoTo": ($('#chkPDSNo').val() == 1 ? $('#itmPDSTo').val() : ''),
-                "@F_Delivery_Date": ($('#chkDeliveryDate').val() == 1 ? ReplaceAll($('#itmDelivery').val(), '-', '') : ''),
-                "@F_Delivery_DateTo": ($('#chkDeliveryDate').val() == 1 ? ReplaceAll($('#itmDeliveryTo').val(), '-', '') : '')
+                //"@F_orderType": (rdoOrderType.value == 'Special' ? 'S' : (rdoOrderType.value == 'Urgent' ? 'U' : 'N')),
+                "@F_OrderNo": itmPDS.value,
+                "@F_OrderNoTo": itmPDSTo.value,
+                //"@F_Delivery_Date": ($('#chkDeliveryDate').val() == 1 ? ReplaceAll(itmDelivery.value, '-', '') : ''),
+                //"@F_Delivery_DateTo": ($('#chkDeliveryDate').val() == 1 ? ReplaceAll(itmDeliveryTo.value, '-', '') : '')
             },
         });
-        //console.log(($('#chkPDSNo').val() == 1 ? $('#itmPDS').val() : ''));
-        //console.log(($('#chkPDSNo').val() == 1 ? $('#itmPDSTo').val() : ''));
-        //console.log(($('#chkDeliveryDate').val() == 1 ? ReplaceAll($('#itmDelivery').val(), '-', '') : ''));
-        //console.log(($('#chkDeliveryDate').val() == 1 ? ReplaceAll($('#itmDeliveryTo').val(), '-', '') : ''));
-
         if (_dt.rows == null) MsgBox("Order data not found.", MsgBoxStyle.Information, "Information");
         if (_dt.rows != null) {
             var _pds = '';
@@ -89,28 +79,41 @@
                 _pds = _pds + Trim(_dt.rows[i].F_Barcode) + ',';
             }
 
-            //console.log(_pds);
+            console.log(_pds);
+
+            //window.open(`http://hmmta-tpcap/E-Report/Report.aspx?Register=REC&PDSNoFrom=${itmPDS.value}&PDSNoTo=${itmPDSTo.value}&DateFrom=${dateFrom}&DateTo=${dateTo}`);
 
             await xAjax.Post({
-                url: 'KBNOR370/PDS_GENBARCODE',
+                url: 'KBNOR700/PDS_GENBARCODE',
                 data: {
                     'PDSNO': _pds
                 },
                 then: function (result) {
-                    console.log(result);
-
-                    var filename = location.pathname.substring(location.pathname.lastIndexOf('/') + 1) + 'PDS';
-                    //var reportUrl = "http://hmmt-app03/Reports/Pages/ReportViewer.aspx";
-
-                    window.open(
-                        _REPORTINGSERVER_ + '%2fKB3%2fKBNOR370PDS&rs:Command=Render'
-                        + '&pUserCode=' + ajexHeader.UserCode
-                        + '&OrderNo=' + ($('#chkPDSNo').val() == 1 ? $('#itmPDS').val() : '')
-                        + '&OrderNoTo=' + ($('#chkPDSNo').val() == 1 ? $('#itmPDSTo').val() : '')
-                        + '&DeliveryDate=' + ($('#chkDeliveryDate').val() == 1 ? ReplaceAll($('#itmDelivery').val(), '-', '') : '')
-                        + '&DeliveryDateTo=' + ($('#chkDeliveryDate').val() == 1 ? ReplaceAll($('#itmDeliveryTo').val(), '-', '') : '')
-                        , '_blank'
-                    );
+                    //console.log(result);
+                    if (_xLib.GetCookie('isDev') == "1") {
+                        window.open(
+                            _REPORTINGSERVER_ + '%2fKB3%2fKBNOR700PDS_X2&rs:Command=Render'
+                            + '&pUserCode=' + ajexHeader.UserCode
+                            + '&OrderNo=' + itmPDS.value
+                            + '&OrderNoTo=' + itmPDSTo.value
+                            + '&DeliveryDate=' + ($('#chkDeliveryDate').val() == 1 ? ReplaceAll(itmDelivery.value, '-', '') : '')
+                            + '&DeliveryDateTo=' + ($('#chkDeliveryDate').val() == 1 ? ReplaceAll(itmDeliveryTo.value, '-', '') : '')
+                            + '&F_Plant=' + ajexHeader.Plant
+                            , '_blank'
+                        );
+                    }
+                    else {
+                        window.open(
+                            _REPORTINGSERVER_ + '%2fKB3%2fKBNOR700PDS&rs:Command=Render'
+                            + '&pUserCode=' + ajexHeader.UserCode
+                            + '&OrderNo=' + itmPDS.value
+                            + '&OrderNoTo=' + itmPDSTo.value
+                            + '&DeliveryDate=' + ($('#chkDeliveryDate').val() == 1 ? ReplaceAll(itmDelivery.value, '-', '') : '')
+                            + '&DeliveryDateTo=' + ($('#chkDeliveryDate').val() == 1 ? ReplaceAll(itmDeliveryTo.value, '-', '') : '')
+                            + '&F_Plant=' + ajexHeader.Plant
+                            , '_blank'
+                        );
+                    }
 
                 }
             })
@@ -124,34 +127,35 @@
 
     xAjax.onClick('#btnPrintKanban', async function () {
 
-        if ($('#chkPDSNo').val() == 1 && ($('#itmPDS').val() == null || $('#itmPDSTo').val() == null)) {
-            MsgBox("Please input PDS From, To before print PDS...", MsgBoxStyle.Exclamation, "Exclamation");
-            return false;
-        }
+        //if ($('#chkPDSNo').val() == 0 && $('#chkSupplierCode').val() == 0 && $('#chkDeliveryDate').val() == 0) {
+        //    MsgBox("Please select criteria, To before print PDS...", MsgBoxStyle.Exclamation, "Exclamation");
+        //    return false;
+        //}
 
-        if ($('#chkSupplierCode').val() == 1 && ($('#itmSupplier').val() != '' || $('#itmSupplierTo').val() != '')) {
-            MsgBox("Please input Supplier From, To before print PDS...", MsgBoxStyle.Exclamation, "Exclamation");
-            return false;
-        }
+        //if ($('#chkPDSNo').val() == 1 && (itmPDS.value === undefined || itmPDS.value === undefined)) {
+        //    MsgBox("Please input PDS From, To before print PDS...", MsgBoxStyle.Exclamation, "Exclamation");
+        //    return false;
+        //}
 
-        if ($('#chkDeliveryDate').val() == 1 && ($('#itmDelivery').val() == '' || $('#itmDeliveryTo').val() == '')) {
-            MsgBox("Please select Delivery Date From, To before print PDS...", MsgBoxStyle.Exclamation, "Exclamation");
-            return false;
-        }
+        //if ($('#chkDeliveryDate').val() == 1 && (itmDelivery.value === undefined || itmDeliveryTo.value === undefined)) {
+        //    MsgBox("Please select Delivery Date From, To before print PDS...", MsgBoxStyle.Exclamation, "Exclamation");
+        //    return false;
+        //}
 
 
         if ($('#chkPrnitKanban').val() == 1) {
             MsgBox("Do you want to print with 1 KANBAN in full A4 ?", MsgBoxStyle.OkCancel, async function () {
-                printKANBAN('KBNOR370KANBANA4');
+                printKANBAN('KBNOR700KANBANA4');
             })
         } else {
-            printKANBAN('KBNOR370KANBAN');
+            printKANBAN('KBNOR700KANBAN');
         }
     });
 
 
 
-    printKANBAN = async function (pRPTNAME = 'KBNOR370KANBAN') {
+    printKANBAN = async function (pRPTNAME = 'KBNOR700KANBAN') {
+        //console.log(pRPTNAME);
         //console.log($('#chkPDSNo').val());
         //console.log($('#itmPDSFrom').val());
         //console.log($('#itmPDSTo').val());
@@ -159,22 +163,24 @@
 
         var _dtKanban = await xAjax.ExecuteJSON({
             data: {
-                "Module": "[exec].[spKBNOR370_KANBAN]",
+                "Module": "[exec].[spKBNOR700_KANBAN]",
                 "@pUserCode": ajexHeader.UserCode,
-                "@pPlant": '1',
+                "@pPlant": ajexHeader.Plant,
                 "@pDeliveryDate": xDate.Date('yyyyMMdd', 'MM=-3'),
-                "@F_OrderNo": ($('#chkPDSNo').val() == 1 ? $('#itmPDS').val() : ''),
-                "@F_OrderNoTo": ($('#chkPDSNo').val() == 1 ? $('#itmPDSTo').val() : ''),
-                "@F_Delivery_Date": ($('#chkDeliveryDate').val() == 1 ? ReplaceAll($('#itmDelivery').val(), '-', '') : ''),
-                "@F_Delivery_DateTo": ($('#chkDeliveryDate').val() == 1 ? ReplaceAll($('#itmDeliveryTo').val(), '-', '') : '')
+                //"@F_orderType": (rdoOrderType.value == 'Special' ? 'S' : (rdoOrderType.value == 'Urgent' ? 'U' : 'N')),
+                "@F_OrderNo": itmPDS.value,
+                "@F_OrderNoTo": itmPDSTo.value,
+                "@F_Delivery_Date": ($('#chkDeliveryDate').val() == 1 ? ReplaceAll(itmDelivery.value, '-', '') : ''),
+                "@F_Delivery_DateTo": ($('#chkDeliveryDate').val() == 1 ? ReplaceAll(itmDeliveryTo.value, '-', '') : '')
             },
         });
 
-
-        //console.log(_dtKanban);
+        console.log(_dtKanban);
 
         if (_dtKanban.rows == null) MsgBox("Order data not found.", MsgBoxStyle.Information, "Information");
         if (_dtKanban.rows != null) {
+
+            xSplash.show();
 
             var _pds = '', _OrderType = '', _Plant = '', _DeliveryDate = '';
             for (var i = 0; i < _dtKanban.rows.length; i++) {
@@ -185,25 +191,26 @@
                 var _page_total = Math.floor(_UnitAmount / _BoxQty);
                 var _ceil = Math.ceil(_UnitAmount / _BoxQty);
                 var _amt = _UnitAmount - (_page_total * _BoxQty);
-                //console.log('PAGE>> ' + _ceil + ' : TOTAL>> ' + _page_total);
-                //console.log('Box>> ' + _amt + ' : ALL>> ' + _UnitAmount);
 
                 var _dt = await xAjax.ExecuteJSON({
                     data: {
-                        "Module": "[exec].[spKBNOR370_KANBAN_PAGE]",
+                        "Module": "[exec].[spKBNOR700_KANBANA4]",
                         "@pUserCode": ajexHeader.UserCode,
                         "@F_OrderNo": Trim(_dtKanban.rows[i].F_OrderNO),
                         "@F_PartNO": Trim(_dtKanban.rows[i].F_PartNO),
                         "@F_Kanban_No": Trim(_dtKanban.rows[i].F_Kanban_No),
+                        "@F_Remark_KB": Trim(_dtKanban.rows[i].F_Remark_KB),
                         "@pMax": _ceil,
                         "@pBoxQty": (_amt > 0 ? _amt : '')
                     },
                 });
+                //console.log(i);
+                var _pcent = (i / _dtKanban.rows.length) * 100;
+                xItem.progress({ id: 'prgProcess', current: _pcent, label: 'Processing, Please wait : ' + i + '/' + _dtKanban.rows.length + ' ({{##.##}}) %' });
 
             }
 
-            //console.log(_dt);
-            //return false;
+            console.log(_dt);
 
             for (var i = 0; i < _dt.rows.length; i++) {
                 _OrderType = Trim(_dt.rows[i].F_Order_Type);
@@ -233,42 +240,45 @@
                 _pds = _pds + Trim(_dt.rows[i].F_Unit_Amount) + '|';
                 _pds = _pds + Trim(_dt.rows[i].F_Remark) + '|';
 
-
-                //console.log(_pds);
-
-                _pds = (_pds != '' ? _pds + ',' : _pds + '');
+                _pds = (_pds != '' ? _pds + ',@@,' : _pds + '');
+                //console.log(i);
             }
+            xItem.progress({ id: 'prgProcess', current: 100, label: 'Processing, Please wait : {{##.##}} %' });
 
-            //console.log(_pds);
 
             await xAjax.Post({
-                url: 'KBNOR370/PDS_GENQRCODE',
+                url: 'KBNOR700/PDS_GENQRCODE',
                 data: {
                     'PDSNO': _pds
                 },
                 then: function (result) {
-                    console.log(result);
+                    //console.log(result);
+                    if (_xLib.GetCookie('isDev') == "1") {
+                        return _xLib.OpenReport("/KBNOR700KANBAN_X2", `pUserCode=${ajexHeader.UserCode}` +
+                            `&OrderNo=${itmPDS.value}&OrderNoTo=${itmPDSTo.value}
+                            &DeliveryDate=${itmDelivery.value}
+                            &DeliveryDateTo=${itmDeliveryTo.value}`
+                            );
+                    }
+                    else {
 
-                    var filename = location.pathname.substring(location.pathname.lastIndexOf('/') + 1) + 'PDS';
-                    //var reportUrl = "http://hmmt-app03/Reports/Pages/ReportViewer.aspx";
-
-                    window.open(
-                        _REPORTINGSERVER_ + '%2fKB3%2f' + pRPTNAME + '&rs:Command=Render'
-                        + '&pUserCode=' + ajexHeader.UserCode
-                        + '&OrderNo=' + $('#itmPDS').val()
-                        + '&OrderNoTo=' + $('#itmPDSTo').val()
-                        + '&DeliveryDate=' + ($('#chkDeliveryDate').val() == 1 ? ReplaceAll($('#itmDelivery').val(), '-', '') : '')
-                        + '&DeliveryDateTo=' + ($('#chkDeliveryDate').val() == 1 ? ReplaceAll($('#itmDeliveryTo').val(), '-', '') : '')
-                        , '_blank'
-                    );
-
+                        window.open(
+                            _REPORTINGSERVER_ + '%2fKB3%2f' + pRPTNAME + '&rs:Command=Render'
+                            + '&pUserCode=' + ajexHeader.UserCode
+                            + '&OrderNo=' + itmPDS.value
+                            + '&OrderNoTo=' + itmPDSTo.value
+                            + '&DeliveryDate=' + ($('#chkDeliveryDate').val() == 1 ? ReplaceAll(itmDelivery.value, '-', '') : '')
+                            + '&DeliveryDateTo=' + ($('#chkDeliveryDate').val() == 1 ? ReplaceAll(itmDeliveryTo.value, '-', '') : '')
+                            , '_blank'
+                        );
+                    }
                 }
-            })
+            });
+
+            xSplash.hide();
 
         }
     }
-
-
 
 })
 
