@@ -231,6 +231,46 @@ namespace HINOSystem.Libs
 
             return dt;
         }
+        
+        public async Task<DataTable> ExecuteSQLAsyncPPMDB(string sql, params object[] parameters)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                using (SqlConnection con = new SqlConnection(_PPM3Context.Database.GetConnectionString()))
+                {
+                    await con.OpenAsync(); // Open connection asynchronously
+
+                    using (SqlCommand cmd = new SqlCommand(sql, con))
+                    {
+                        cmd.CommandType = CommandType.Text;
+                        cmd.CommandTimeout = 300;
+
+                        // Add parameters to the SqlCommand
+                        for (int i = 0; i < parameters.Length; i++)
+                        {
+                            cmd.Parameters.AddWithValue("@p" + i, string.IsNullOrWhiteSpace(parameters[i]?.ToString()) ? DBNull.Value : parameters[i]);
+                        }
+
+                        using (SqlDataReader reader = await cmd.ExecuteReaderAsync()) // ExecuteReaderAsync
+                        {
+                            dt.Load(reader); // Load DataTable from reader
+                        }
+                    }
+                }
+            }
+            catch (SqlException SQLex) when (SQLex.Number == -2) // Handle timeout exception
+            {
+                throw new Exception(SQLex.Message + " " + sql);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message + " " + sql);
+            }
+
+            return dt;
+        }
 
 
         public DataTable ExecuteSQLPPMDB(string sql, params object[] parameters)
@@ -456,10 +496,10 @@ namespace HINOSystem.Libs
 
             string ppmConnect = cPlantDev switch
             {
-                "1" => "[HMMT-E_KANBAN].[New_Kanban_F1]",
+                "1" => "[HMMT-E_KANBAN].[New_Kanban]",
                 "2" => "[HMMT-E_KANBAN].[New_Kanban_F2]",
                 "3" => "[HMMTA-PPM].[New_Kanban_F3]",
-                "1Dev" => "[New_Kanban_F1]",
+                "1Dev" => "[New_Kanban]",
                 "2Dev" => "[New_Kanban_F2]",
                 "3Dev" => "[New_Kanban_F3]",
                 _ => "[HMMTA-PPM].[New_Kanban_F3]"

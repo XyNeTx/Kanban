@@ -204,8 +204,8 @@ namespace HINOSystem.Controllers.API.Master
 
 
                 var dbObj = _KB3Context.TB_Kanban_Add.FirstOrDefault(x => x.F_Kanban_No == obj.F_Kanban_No && x.F_Plant == _BearerClass.Plant
-                && x.F_Supplier_Code == obj.F_Supplier_Code && x.F_Supplier_Plant == obj.F_Supplier_Plant && x.F_Store_Code == obj.F_Store_Code
-                && x.F_Part_No == obj.F_Part_No && x.F_Ruibetsu == obj.F_Ruibetsu);
+                    && x.F_Supplier_Code == obj.F_Supplier_Code && x.F_Supplier_Plant == obj.F_Supplier_Plant && x.F_Store_Code == obj.F_Store_Code
+                    && x.F_Part_No == obj.F_Part_No && x.F_Ruibetsu == obj.F_Ruibetsu);
 
                 if(dbObj == null)
                 {

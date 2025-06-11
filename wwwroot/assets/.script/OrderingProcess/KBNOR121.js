@@ -231,6 +231,15 @@ const previewFunction = async (intRow,_command) => {
         if (dT_DeliveryDate.length !== 0) {
             $("#spanDeliveryDate").text(dT_DeliveryDate[0].F_Delivery_Date.slice(6, 8) + "/" + dT_DeliveryDate[0].F_Delivery_Date.slice(4, 6) + "/" + dT_DeliveryDate[0].F_Delivery_Date.slice(0, 4));
         }
+        else {
+            let day = parseInt(dT_Date[0].F_Cycle.slice(2, 3)) / parseInt(dT_Date[0].F_Cycle.slice(4, 5));
+            if (day.toString().includes(".")){
+                day = Math.ceil(day)
+            }
+            let date = moment(_CookieProcessDate.slice(0, 10)).add(day, 'days').format("DD/MM/YYYY");
+            $("#spanDeliveryDate").text(date);
+            console.log("Delivery Date : ", date);
+        }
         //$("#tableMaster").DataTable().destroy();
 
         $("#tableMaster thead tr").empty();
@@ -790,6 +799,15 @@ const periodFilter = async () => {
         let deliveryDate = dT_DeliveryDate[i].F_Delivery_Date.slice(6, 8) + "-" + dT_DeliveryDate[i].F_Delivery_Date.slice(4, 6) + "-" + dT_DeliveryDate[i].F_Delivery_Date.slice(0, 4);
         let deliveryTrip = dT_DeliveryDate[i].F_Delivery_Trip;
 
+        if (deliveryDate == undefined || deliveryDate == "" || deliveryDate == null) {
+            deliveryDate = $("#spanDeliveryDate").val();
+            deliveryTrip = _CookieProcessDate.slice(10, 11);
+            let day = parseInt(dT_Date[0].F_Cycle.slice(2, 3)) / parseInt(dT_Date[0].F_Cycle.slice(4, 5));
+            if (day.toString().includes(".5")) deliveryTrip = deliveryTrip == "N" ? "D" : deliveryTrip == "D" ? "N" : deliveryTrip; // if day is 0.5 then change trip to D or N
+
+            console.log("Delivery Date is undefined, using current date : ", deliveryDate, " and trip : ", deliveryTrip);
+        }
+
         let trip = parseInt(dT_Period[0]["F_Period"]);
 
         if (_CookieLoginDate.slice(10, 11) == "N") trip = parseInt(dT_Period[0]["F_Period"]) + parseInt(dT_Period[1]["F_Period"]);
@@ -817,8 +835,8 @@ const periodFilter = async () => {
         }
         else if (_CookieLoginDate.includes("D"))
         {
-            //console.log("D");
-            //console.log(trip);
+            console.log("D");
+            console.log(trip);
             
 
             for (trip; trip > 0; trip--)
@@ -835,8 +853,8 @@ const periodFilter = async () => {
         }
         else
         {
-            //console.log("N");
-            //console.log(trip);
+            console.log("N");
+            console.log(trip);
             for (trip; trip > parseInt(dT_Period[0]["F_Period"]); trip--)
             {
                 for (let k = 2; k <= 20; k++) {
@@ -846,6 +864,19 @@ const periodFilter = async () => {
             }
         }
     }
+
+    //let deliveryDate = dT_DeliveryDate[0].F_Delivery_Date.slice(6, 8) + "-" + dT_DeliveryDate[i].F_Delivery_Date.slice(4, 6) + "-" + dT_DeliveryDate[i].F_Delivery_Date.slice(0, 4);
+    //let deliveryTrip = dT_DeliveryDate[0].F_Delivery_Trip;
+
+    //if (deliveryDate == undefined || deliveryDate == "" || deliveryDate == null) {
+    //    deliveryDate = $("#spanDeliveryDate").val();
+    //    deliveryTrip = _CookieProcessDate.slice(10, 11);
+    //    let day = parseInt(dT_Date[0].F_Cycle.slice(2, 3)) / parseInt(dT_Date[0].F_Cycle.slice(4, 5));
+    //    if (day.toString().includes(".5")) deliveryTrip = deliveryTrip == "N" ? "D" : deliveryTrip == "D" ? "N" : deliveryTrip; // if day is 0.5 then change trip to D or N
+
+    //    console.log("Delivery Date is undefined, using current date : ", deliveryDate, " and trip : ", deliveryTrip);
+    //}
+
 }
 
 const sumKB = async (dateSet) => {
@@ -914,8 +945,8 @@ const sumKB = async (dateSet) => {
         && x.F_Kanban_No == $("#readKanbanNo").val()
         && x.F_Adj_Pattern != 0
     ).forEach(function (item, i) {
-        console.log(item.F_Delivery_Date);
-        console.log(_OldDate);
+        //console.log(item.F_Delivery_Date);
+        //console.log(_OldDate);
         if (_OldDate !== item.F_Delivery_Date)
         {
             _sumPattern = 0;

@@ -49,7 +49,9 @@ namespace KANBAN.Controllers.API.OrderingProcess
             try
             {
                 await _BearerClass.CheckAuthorize();
-                string _sql = $"Exec [exec].[spKBNOR460_GetPriceZeroUrgent] '{_BearerClass.UserCode}','{_BearerClass.Data["Table"][0]["Name"]}'";
+                string _sql = $@"select * 
+                            from dbo.FN_GETPriceZeroUrgent(NULL,NULL) 
+                            Order by F_SUpplier_Code,F_SUpplier_Plant,F_OrderNO";
 
                 var _dt = _FillDT.ExecuteSQL(_sql);
 

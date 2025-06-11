@@ -17,6 +17,7 @@
         IKBNMS028 IKBNMS028 { get; }
         IKBNMS029 IKBNMS029 { get; }
         IKBNMS030 IKBNMS030 { get; }
+        IKBNMS005_Repo IKBNMS005_Repo { get; }
 
     }
 }

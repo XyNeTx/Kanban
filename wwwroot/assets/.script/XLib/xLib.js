@@ -857,9 +857,11 @@ const _xLib = new xLib();
         await $(this).serializeArray().forEach(async function (item) {
             //console.log(item);
 
-            if ($(`#${item.name}`).attr("data-datepicker"))
-            {
+            if ($(`#${item.name}`).attr("data-datepicker")) {
                 item.value = moment(item.value, "DD/MM/YYYY").format("YYYYMMDD");
+            }
+            else if ($(`#${item.name}`).attr("type") == "checkbox") {
+                item.value = $(`#${item.name}`).is(":checked") ? true : false;
             }
             formData[item.name] = item.value;
 

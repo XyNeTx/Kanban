@@ -4,235 +4,346 @@
         <div class="card border-left-primary shadow h-100">
             <div class="card-body">
 
-                <form id="frmCondition">
-                    <div class="row">
-                        <div class="col-6">
-                            <div class="row">
-                                <div class="col-6">
-                                    <item type="select" id="itmSupplier" label="Supplier"></item>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-6">
-                                    <item type="select" id="itmKanban" label="Kanban"></item>
-                                </div>
-                                <div class="col-6">
-                                    <item type="select" id="itmKanbanTo" label="To"></item>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-6">
-                                    <item type="select" id="itmStoreCode" label="Store Code"></item>
-                                </div>
-                                <div class="col-6">
-                                    <item type="select" id="itmStoreCodeTo" label="To"></item>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-6">
-                                    <item type="select" id="itmPartNo" label="Part No"></item>
-                                </div>
-                                <div class="col-6">
-                                    <item type="select" id="itmPartNoTo" label="To"></item>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-6">
-                                    <item type="date" id="itmDeliveryDate" label="Delivery Date" format="yyyy-mm-dd" default="now"></item>
-                                </div>
-                                <div class="col-6">
-                                    <item type="date" id="itmDeliveryDateTo" label="To" format="yyyy-mm-dd" default="now"></item>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="row">
-                                <div class="col">
-                                </div>
-                                <div class="col-6">
-                                    <item type="textarea" id="itmRedLine" style="background-color:lightpink;" rows="2" readonly></item>
-                                </div>
-                            </div>
-                            <div class="row mt-2">
-                                <div class="col">
-                                </div>
-                                <div class="col-6">
-                                    <item type="textarea" id="itmBlueLine" style="background-color:aqua;" rows="2" readonly></item>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-6">
-                            <fieldset class="fieldset">
-                                <legend>Status</legend>
+                <form id="frmData">
 
-                                <div class="row">
-                                    <div class="col-3">
-                                        <item type="checkbox" id="itmStatusOK" label="OK"></item>
+                    <div class="row">
+                        <div class="col-9">
+                            <div class="row">
+
+                                <div class="col-5">
+
+                                    <div class="input-group">
+                                        <span class="input-group-text col-5">Supplier</span>
+                                        <input class="form-select" type="text" list="dlSup" name="inpSup" id="inpSup" />
+                                        <datalist id="dlSup">
+                                        </datalist>
                                     </div>
-                                    <div class="col-3">
-                                        <item type="checkbox" id="itmStatusNO" label="NO"></item>
-                                    </div>
-                                    <div class="col">
-                                        <item type="checkbox" id="itmStatusST" label="Parts Shortage"></item>
-                                    </div>
+
                                 </div>
-                            </fieldset>
+
+                            </div>
+
+                            <div class="row">
+
+                                <div class="col-5">
+
+                                    <div class="input-group">
+                                        <span class="input-group-text col-5">Kanban</span>
+                                        <input class="form-select" type="text" list="dlKB" name="inpKB" id="inpKB" />
+                                        <datalist id="dlKB">
+                                        </datalist>
+                                    </div>
+
+                                </div>
+
+                                <div class="col-4">
+
+                                    <div class="input-group">
+                                        <span class="input-group-text">To</span>
+                                        <input class="form-select" type="text" list="dlKBT" name="inpKBT" id="inpKBT" />
+                                        <datalist id="dlKBT">
+                                        </datalist>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div class="row">
+
+                                <div class="col-5">
+
+                                    <div class="input-group">
+                                        <span class="input-group-text col-5">Store Code</span>
+                                        <input class="form-select" type="text" list="dlStore" name="inpStore" id="inpStore" />
+                                        <datalist id="dlStore">
+                                        </datalist>
+                                    </div>
+
+                                </div>
+
+                                <div class="col-4">
+
+                                    <div class="input-group">
+                                        <span class="input-group-text">To</span>
+                                        <input class="form-select" type="text" list="dlStoreT" name="inpStoreT" id="inpStoreT" />
+                                        <datalist id="dlStoreT">
+                                        </datalist>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div class="row">
+
+                                <div class="col-5">
+
+                                    <div class="input-group">
+                                        <span class="input-group-text col-5">Part No</span>
+                                        <input class="form-select" type="text" list="dlPart" name="inpPart" id="inpPart" />
+                                        <datalist id="dlPart">
+                                        </datalist>
+                                    </div>
+
+                                </div>
+
+                                <div class="col-4">
+
+                                    <div class="input-group">
+                                        <span class="input-group-text">To</span>
+                                        <input class="form-select" type="text" list="dlPartT" name="inpPartT" id="inpPartT" />
+                                        <datalist id="dlPartT">
+                                        </datalist>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div class="row">
+
+                                <div class="col-5">
+
+                                    <div class="input-group">
+                                        <span class="input-group-text col-5">DEL. Date FROM</span>
+                                        <input class="form-control col-11" type="text" name="inpDate" id="inpDate" />
+                                    </div>
+
+                                </div>
+
+                                <div class="col-4">
+
+                                    <div class="input-group">
+                                        <span class="input-group-text">To</span>
+                                        <input class="form-control col-11" type="text" name="inpDateT" id="inpDateT" />
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            
+
                         </div>
+
                         <div class="col">
-                            <item type="button" id="btnSearch" label="Search" style="width:100%"></item>
+
+                            <div class="row justify-content-start">
+
+                                <textarea class="form-control bg-danger text-light fw-bolder" id="txtAreaDG" rows="3" readonly>
+    Order < Average/Trip - (Average/Trip * 0.3) = RED BL < ForecastMax * SafetyStock * 0.6 = RED
+                                </textarea>
+
+                                <textarea class="form-control bg-primary text-light fw-bolder" id="txtAreaPM" rows="3" readonly>
+    Order > Average/Trip + (Average/Trip * 0.3) = BLUE BL > ForecastMax * SafetyStock * 1.4 = BLUE
+                                </textarea>
+
+                            </div>
+
+
                         </div>
-                        <div class="col">
-                            <item type="button" id="btnReport" label="Report" style="width:100%"></item>
-                        </div>
-                        <div class="col">
-                            <item type="button" id="btnCancel" label="Cancel" style="width:100%"></item>
-                        </div>
+
+
+
                     </div>
+
+                    <h5 class="mt-2"> Status </h5>
+
+                    <div class="row">
+
+                        <div class="col-1 ms-4">
+                            <input type="checkbox" class="form-check-input" id="chkOK" name="chkOK">
+                            <label class="form-check-label align-center fw-bold" for="chkOK">OK</label>
+                        </div>
+
+                        <div class="col-1">
+                            <input type="checkbox" class="form-check-input" id="chkNO" name="chkNO">
+                            <label class="form-check-label align-center fw-bold" for="chkNO">NO</label>
+                        </div>
+
+                        <div class="col-2">
+                            <input type="checkbox" class="form-check-input" id="chkPS" name="chkPS">
+                            <label class="form-check-label align-center fw-bold" for="chkPS">PARTS SHORTAGE</label>
+                        </div>
+
+                        <div class="col-1">
+                            <button type="button" class="btn btn-success col" id="btnSearch">Search</button>
+                        </div>
+
+                        <div class="col-1">
+                            <button type="button" class="btn btn-primary col" id="btnReport" disabled>Report</button>
+                        </div>
+
+                        <div class="col-1">
+                            <button type="button" class="btn btn-warning col" id="btnCancel">Cancel</button>
+                        </div>
+
+                        <div class="col-1">
+                            <a asp-controller="Home" asp-action="Index" class="btn btn-danger col" id="btnExit">Exit</a>
+                        </div>
+
+                    </div>
+
                 </form>
 
-                <div class="row mt-2">
-                    <div class="col-7">
-                        <div class="row">
-                            <div class="col-2" style="padding-left:1px;padding-right:0px;">
-                                <item type="textfloating" id="txtPartNo" label="Part NO."></item>
-                            </div>
-                            <div class="col" style="padding-left:1px;padding-right:0px;">
-                                <item type="textfloating" id="txtStoreCode" label="Store"></item>
-                            </div>
-                            <div class="col-4" style="padding-left:1px;padding-right:0px;">
-                                <item type="textfloating" id="txtPartName" label="Part Name"></item>
-                            </div>
-                            <div class="col" style="padding-left:1px;padding-right:0px;">
-                                <item type="textfloating" id="txtSupplierName" label="Supplier"></item>
-                            </div>
-                            <div class="col" style="padding-left:1px;padding-right:0px;">
-                                <item type="textfloating" id="txtKanbanNo" label="Kanban No"></item>
-                            </div>
-                            <div class="col" style="padding-left:1px;padding-right:0px;">
-                                <item type="textfloating" id="txtCycle" label="Cycle"></item>
+                <form class="mt-4" id="formReadData">
+
+                    <div class="row">
+
+                        <div class="col p-0" style="flex:0 0 10%">
+                            <div class="form-group pt-0 pb-0 ps-0 pe-1">
+                                <label class="d-flex justify-content-center">PART NO.</label>
+                                <br>
+                                <input type="text" class="form-control text-center" id="readPart" name="readPart" readonly />
                             </div>
                         </div>
-                    </div>
-                    <div class="col">
-                        <div class="row">
-                            <div class="col" style="padding-left:1px;padding-right:0px;">
-                                <item type="textfloating" id="txtQTYPack" label="QTY/Pack"></item>
-                            </div>
-                            <div class="col" style="padding-left:1px;padding-right:0px;">
-                                <item type="textfloating" id="txtForecastMax" label="Forecast/Max"></item>
-                            </div>
-                            <div class="col" style="padding-left:1px;padding-right:0px;">
-                                <item type="textfloating" id="txtCurrentUse" label="CurrentUse"></item>
-                            </div>
-                            <div class="col" style="padding-left:1px;padding-right:0px;">
-                                <item type="textfloating" id="txtAverageTrip" label="Average/Trip"></item>
-                            </div>
-                            <div class="col" style="padding-left:1px;padding-right:0px;">
-                                <item type="textfloating" id="txtSTDStock" label="STD. Stock"></item>
-                            </div>
-                            <div class="col" style="padding-left:1px;padding-right:0px;">
-                                <item type="textfloating" id="txtSafetyStock" label="SafetyStock"></item>
+
+                        <div class="col p-0" style="flex:0 0 7%">
+                            <div class="form-group pt-0 pb-0 ps-0 pe-1">
+                                <label class="d-flex justify-content-center">Store Code</label>
+                                <br>
+                                <input type="text" class="form-control text-center" id="readStore" name="readStore" readonly />
                             </div>
                         </div>
+
+                        <div class="col-2 p-0">
+                            <div class="form-group pt-0 pb-0 ps-0 pe-1">
+                                <label class="d-flex justify-content-center">PART NAME</label>
+                                <br>
+                                <input type="text" class="form-control text-center" id="readPartName" name="readPartName" readonly />
+                            </div>
+                        </div>
+
+                        <div class="col p-0" style="flex:0 0 8%">
+                            <div class="form-group pt-0 pb-0 ps-0 pe-1">
+                                <label class="d-flex justify-content-center mb-0">Supplier</label>
+                                <label class="d-flex justify-content-center">Name</label>
+                                <input type="text" class="form-control text-center" id="readSup" name="readSup" readonly />
+                            </div>
+                        </div>
+
+                        <div class="col p-0" style="flex:0 0 7%">
+                            <div class="form-group pt-0 pb-0 ps-0 pe-1">
+                                <label class="d-flex justify-content-center">Kanban No</label>
+                                <br>
+                                <input type="text" class="form-control text-center" id="readKanban" name="readKanban" readonly />
+                            </div>
+                        </div>
+
+                        <div class="col p-0" style="flex:0 0 8%">
+                            <div class="form-group pt-0 pb-0 ps-0 pe-1">
+                                <label class="d-flex justify-content-center">CYCLE</label>
+                                <br>
+                                <input type="text" class="form-control text-center" id="readCycle" name="readCycle" readonly />
+                            </div>
+                        </div>
+
+                        <div class="col p-0">
+                            <div class="form-group pt-0 pb-0 ps-0 pe-1">
+                                <label class="d-flex justify-content-center">QTY/PACK</label>
+                                <br>
+                                <input type="text" class="form-control text-center" id="readQty" name="readQty" readonly />
+                            </div>
+                        </div>
+
+                        <div class="col p-0">
+                            <div class="form-group pt-0 pb-0 ps-0 pe-1">
+                                <label class="d-flex justify-content-center">FORECAST/MAX</label>
+                                <br>
+                                <input type="text" class="form-control text-center" id="readForeMax" name="readForeMax" readonly />
+                            </div>
+                        </div>
+
+                        <div class="col p-0">
+                            <div class="form-group pt-0 pb-0 ps-0 pe-1">
+                                <label class="d-flex justify-content-center mb-0">CURRENT</label>
+                                <label class="d-flex justify-content-center">USE</label>
+                                <input type="text" class="form-control text-center" id="readCurrent" name="readCurrent" readonly />
+                            </div>
+                        </div>
+
+                        <div class="col p-0">
+                            <div class="form-group pt-0 pb-0 ps-0 pe-1">
+                                <label class="d-flex justify-content-center">AVERAGE/TRIP</label>
+                                <br>
+                                <input type="text" class="form-control text-center" id="readAvg" name="readAvg" readonly />
+                            </div>
+                        </div>
+
+                        <div class="col p-0">
+                            <div class="form-group pt-0 pb-0 ps-0 pe-1">
+                                <label class="d-flex justify-content-center">STD.STOCK</label>
+                                <br>
+                                <input type="text" class="form-control text-center" id="readStd" name="readStd" readonly />
+                            </div>
+                        </div>
+
+                        <div class="col p-0">
+                            <div class="form-group pt-0 pb-0 ps-0 pe-1">
+                                <label class="d-flex justify-content-center mb-0">SAFETY</label>
+                                <label class="d-flex justify-content-center">STOCK</label>
+                                <input type="text" class="form-control text-center" id="readSafe" name="readSafe" readonly />
+                            </div>
+                        </div>
+
                     </div>
-                </div>
+
+                </form>
 
                 <div class="row">
-                    <div class="col mt-4">
-                        <table id="tblMaster" class="display" style="width:100%"></table>
-                    </div>
-                </div>
 
-            </div>
-        </div>
-    </div>
-
-</div>
-
-
-<!-- Modal Master -->
-<div class="modal fade" id="modalMaster" tabindex="-1" aria-labelledby="modalMasterLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalMasterLabel"> @ViewData["AppName"] <span></span></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form id="frmMaster" class="needs-validation" autocomplete="off" novalidate>
-                <div class="modal-body" style="padding-left:10px;padding-top:5px;padding-right:10px;">
-
-                    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar">
-                        <div class="btn-group btn-group-sm me-2" role="group" aria-label="Toolbar">
-
-                            <button type="button" class="btn btn-success" id="btnSave" name="btnSave" onclick="onSave();" title="Save data" @(ViewData["ComponentToolbarSave"].ToString() == "true" ? "" : "disabled")>
-                                <i class="ti-save"></i>
-                            </button>
-                            <button type="button" class="btn btn-success" id="btnPrint" name="btnPrint" onclick="onPrint();" title="Print" @(ViewData["ComponentToolbarPrint"].ToString() == "true" ? "" : "disabled")>
-                                <i class="ti-printer"></i>
-                            </button>
-                            <button type="button" class="btn btn-success" id="btnExecute" name="btnExecute" onclick="onExecute()" title="Execute/Run" @(ViewData["ComponentToolbarExecute"].ToString() == "true" ? "" : "disabled")>
-                                <i class="fas fa-bolt"></i>
-                            </button>
-                            <button type="button" class="btn btn-success" id="btnDelete" name="btnDelete" onclick="onDelete();" title="Delete" @(ViewData["ComponentToolbarDelete"].ToString() == "true" ? "" : "disabled")>
-                                <i class="far fa-trash-alt"></i>
-                            </button>
-
+                    <div class="col">
+                        <div class="d-flex justify-content-start">
+                            <h6 id="h6Date" class="fw-bolder">Date ==></h6>
                         </div>
                     </div>
 
-                    <input type="hidden" class="form-control" id="_Action" name="_Action" value="POST">
-                    <div class="bg-white border rounded-3">
-                        <section class="w-100 p-2">
-                            <div class="row g-2">
-                                <div class="col-md-6">
-                                    <div class="input-group mb-3">
-                                        <label class="input-group-text" for="F_Plant">Plant</label>
-                                        <select class="form-select" id="F_Plant" name="F_Plant" value="3" required noedit></select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row g-2">
-                                <div class="col-md-6">
-                                    <div class="input-group mb-3">
-                                        <label class="input-group-text" for="F_OrderType">Order Type</label>
-                                        <input type="text" class="form-control" id="F_OrderType" name="F_OrderType" autocomplete="off" required noedit>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row g-2">
-                                <div class="col-md-6">
-                                    <div class="input-group mb-3">
-                                        <label class="input-group-text" for="F_Effect_Date">Effective Date</label>
-                                        <input type="text" class="form-control col-xl-8" id="F_Effect_Date" name="F_Effect_Date" format="yyyy-mm-dd" noedit />
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="input-group mb-3">
-                                        <label class="input-group-text" for="F_End_Date">End Date</label>
-                                        <input type="text" class="form-control" id="F_End_Date" name="F_End_Date" format="yyyy-mm-dd">
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
+                    <div class="col-6">
+                        <div class="d-flex justify-content-end">
+                            <h6 class="fw-bolder col" id="h6UpdateStock">Update Stock Last :</h6>
+                            <h6 class="fw-bolder col-4" id="h6Shift">Shift :</h6>
+                        </div>
                     </div>
 
                 </div>
-            </form>
 
-            <div class="modal-footer" style="padding-left:20px; padding-right:20px;">
-                <i class="modal-reference mr-auto">Reference Code : <i id="_REFERCODE_"></i></i>
-                @if (ViewData["UserGroupID"].ToString() == "1" || ViewData["UserGroupID"].ToString() == "2")
-                {
-                    <a href="#" data-bs-toggle="modal" data-bs-target="#ModalHistory" data-bs-remote="UserMaintenance">
-                        <i class="fas fa-scroll" title="History Log"></i>
-                    </a>
-                }
+                <div class="row mt-2">
+                    <table class="table table-bordered w-100" id="tableMain"></table>
+                </div>
+                
+                <div class="row mt-4">
+                    <div class="col d-flex justify-content-center align-items-center">
+                        <span class="fw-bolder">Status</span>
+                    </div>
+                    <div class="col-11">
+
+                        <table class="table table-bordered m-0 border-2 border-dark" id="tableStatus">
+                            <tbody>
+                                <tr>
+                                    <td class="text-center border-end border-2 border-dark fw-bolder" id="statusOK">OK</td>
+                                    <td class="text-center fw-bolder" id="statusNO">NO</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+
+                    <div class="d-flex justify-content-center">
+                        <a class="btn btn-outline-dark btn-rounded m-0" id="btnPrev" style="flex:0 0 6.5%"><i class="fa-solid fa-backward-step"></i></a>
+                            <input class="form-control text-center bg-light col-1" type="text" name="inpPage" value="1/1" id="inpPage" readonly />
+                        <a class="btn btn-outline-dark btn-rounded m-0" id="btnNext" style="flex:0 0 6.5%"><i class="fa-solid fa-forward-step"></i></a>
+                    </div>
+
+                </div>
+
             </div>
-
         </div>
     </div>
+
 </div>
 
 

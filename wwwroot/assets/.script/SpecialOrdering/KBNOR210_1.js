@@ -455,8 +455,10 @@ $("#btnSave").click(async function () {
         var objIndex = $("#tableMain").DataTable().row($(this).closest("tr")).index();
         var oldPds = $("#tableMain").DataTable().row(objIndex - 1).data().F_Delivery_DT_1;
 
-        //console.log(dataObj);
-        //console.log(oldPds);
+        console.log(dataObj);
+        console.log(oldPds);
+
+        return;
 
         let obj = {
             F_PDS_NO: dataObj.F_PO_Number,

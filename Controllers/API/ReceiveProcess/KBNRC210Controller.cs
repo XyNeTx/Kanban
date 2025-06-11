@@ -346,6 +346,16 @@ namespace KANBAN.Controllers.API.ReceiveProcess
                                 if (devQty != 0)
                                 {
                                     var header = await _KB3Context.TB_REC_HEADER.SingleOrDefaultAsync(x => x.F_OrderNo == PDSNo);
+                                    if (header == null)
+                                    {
+                                        string _result2 = @"{
+                                            ""status"":""400"",
+                                            ""response"":""OK"",
+                                            ""title"": ""Receive Special Error"",
+                                            ""message"": ""Didn't have data for this PDS No.""
+                                            }";
+                                        return Ok(_result2);
+                                    }
                                     header.F_MRN_Flag = "1";
                                     _KB3Context.TB_REC_HEADER.Update(header);
                                     pdsDetailSingle.F_Receive_amount = sumQty;
@@ -389,7 +399,20 @@ namespace KANBAN.Controllers.API.ReceiveProcess
 
                                 if (_singleReceiveAll != null)
                                 {
+                                    var header = await _KB3Context.TB_REC_HEADER.SingleOrDefaultAsync(x => x.F_OrderNo == PDSNo);
+                                    if (header == null)
+                                    {
+                                        _result = @"{
+                                            ""status"":""400"",
+                                            ""response"":""OK"",
+                                            ""title"": ""Receive Special Error"",
+                                            ""message"": ""Didn't have data for this PDS No.""
+                                            }";
+                                        return Ok(_result);
+                                    }
+
                                     _singleReceiveAll.F_Receive_amount = sumQty;
+                                    _singleReceiveAll.F_Receive_Date = DateTime.ParseExact(header.F_Delivery_Date, "yyyyMMdd", CultureInfo.InvariantCulture);
                                     _KB3Context.TB_REC_DETAIL.Update(_singleReceiveAll);
                                     _SerilogLibs.WriteLog($"Receive Seperate Part Special : UPDATE TB_REC_DEtail _singleReceiveAll : {JsonConvert.SerializeObject(_singleReceiveAll)} Line 391", UserName, HostName);
                                     string packCode = _singleReceiveAll.F_Address;
@@ -401,7 +424,7 @@ namespace KANBAN.Controllers.API.ReceiveProcess
                                     {
                                         packCode = "";
                                     }
-                                    var header = await _KB3Context.TB_REC_HEADER.SingleOrDefaultAsync(x => x.F_OrderNo == PDSNo);
+                                    //var header = await _KB3Context.TB_REC_HEADER.SingleOrDefaultAsync(x => x.F_OrderNo == PDSNo);
                                     string Receive_Local_Date = header.F_Delivery_Date;
                                     //if (_singleReceiveAll.F_Receive_Date.Value.TimeOfDay < new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 7, 30, 0).TimeOfDay)
                                     //{

@@ -68,19 +68,6 @@ Log.Logger = new LoggerConfiguration()
     .CreateLogger();
 
 
-
-//builder.Services.AddCors(options =>
-//{
-//    options.AddDefaultPolicy(builder =>
-//    {
-//        // Allow requests from any origin, method, and header
-//        builder.AllowAnyOrigin()
-//               .AllowAnyMethod()
-//               .AllowAnyHeader();
-//    });
-//});
-
-
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddSwaggerGen();

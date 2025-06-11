@@ -284,7 +284,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
                     for (int i = 0; i < dt.Rows.Count; i++)
                     {
                         sql = "Insert into TB_PO_Merge_Tmp (F_ID,F_Part_no,F_Delivery_DT_1,F_Delivery_DT_2,F_Delivery_DT_3,F_Delivery_DT_4,F_Delivery_DT_5,F_Delivery_DT_6,F_Rec_Date,F_Rec_User) " +
-                            $"SELECT  CAST(F_ID As Integer)-0.5 , 'PDS',  F_PDS_1, F_PDS_2, F_PDS_3, F_PDS_4, F_PDS_5, F_PDS_6,getDate(), {_BearerClass.UserCode} " +
+                            $"SELECT  CAST(F_ID As Integer)-0.5 , 'PDS',  F_PDS_1, F_PDS_2, F_PDS_3, F_PDS_4, F_PDS_5, F_PDS_6,getDate(),'{_BearerClass.UserCode}' " +
                             $"FROM  TB_PO_Merge_Tmp WHERE (F_Rec_User = '{_BearerClass.UserCode}' ) " +
                             $"and F_ID = '{dt.Rows[i]["F_ID"]}'";
 

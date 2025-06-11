@@ -23,6 +23,7 @@ namespace HINOSystem.Controllers.API.Master
             _CKDRepo = CKDRepo;
         }
 
+        [HttpGet]
         public async Task<IActionResult> GetDataList(string? Supplier_Code, string? Kanban_No, string? Store_Code, string? Part_No, bool IsNew)
         {
             try
@@ -46,6 +47,7 @@ namespace HINOSystem.Controllers.API.Master
             }
         }
 
+        [HttpGet]
         public async Task<IActionResult> GetSupplier(string Supplier_Code, string? Store_Code)
         {
             try
@@ -69,6 +71,7 @@ namespace HINOSystem.Controllers.API.Master
             }
         }
 
+        [HttpGet]
         public async Task<IActionResult> GetPartNo(string Part_No, string? Supplier_Code, string? Kanban_No, string? Store_Code)
         {
             try
@@ -92,6 +95,7 @@ namespace HINOSystem.Controllers.API.Master
             }
         }
 
+        [HttpGet]
         public async Task<IActionResult> GetList(string? Supplier_Code, string? Kanban_No, string? Store_Code, string? Part_No)
         {
             try
@@ -115,6 +119,7 @@ namespace HINOSystem.Controllers.API.Master
             }
         }
 
+        [HttpGet]
         public async Task<IActionResult> UpdateFlgClearModule([FromBody] List<VM_KBNOR361_Save> listObj)
         {
             try

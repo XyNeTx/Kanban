@@ -230,5 +230,18 @@ namespace KANBAN.Services.Master.Repository
             }
         }
 
+        public IKBNMS005_Repo IKBNMS005_Repo
+        {
+            get
+            {
+                return new KBNMS005_Repo(_kbContext,
+                                        _BearerClass,
+                                        _PPM3Context,
+                                        _FillDT, _log,
+                                        _emailService,
+                                        _automapService);
+            }
+        }
+
     }
 }

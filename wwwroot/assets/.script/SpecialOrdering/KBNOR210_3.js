@@ -64,7 +64,7 @@ async function LoadOrderNo() {
         },
         function (error) {
             console.error(error);
-            xSwal.error(error.responseJSON.response,error.responseJSON.message);
+            //xSwal.error(error.responseJSON.response,error.responseJSON.message);
         }
     );
 };
