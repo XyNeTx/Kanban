@@ -30,6 +30,8 @@ $(document).ready(async function () {
     $('#readStartDate').parent().addClass("mb-0");
 
     xSplash.hide();
+
+    console.log(i18nLayout);
 });
 
 async function GetSupplier() {

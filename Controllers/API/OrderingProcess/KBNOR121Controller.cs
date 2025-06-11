@@ -428,7 +428,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
                 DeliveryTrip = DT_DeliveryDate.Rows[0]["F_Delivery_Trip"].ToString().Trim();
 
                 DT_Date = _FillDT.ExecuteSQL("exec [dbo].[sp_getCycleTime] @p0,@p1,@p2,@p3",
-                                     obj.Supplier.Substring(0, 4), obj.Supplier.Substring(5, 1), Start_Date, End_Date);
+                    obj.Supplier.Substring(0, 4), obj.Supplier.Substring(5, 1), Start_Date, End_Date);
 
                 if (DT_Date.Rows.Count == 0)
                 {
@@ -721,6 +721,13 @@ namespace KANBAN.Controllers.API.OrderingProcess
                         string.IsNullOrWhiteSpace(obj.PartNoTo) ? DBNull.Value : obj.PartNoTo.Substring(11, 2),
                         string.IsNullOrWhiteSpace(obj.Store) ? DBNull.Value : obj.Store,
                         string.IsNullOrWhiteSpace(obj.StoreTo) ? DBNull.Value : obj.StoreTo);
+                }
+
+                if(DT_DeliveryDate.Rows.Count == 0)
+                {
+                    DT_DeliveryDate = _FillDT.ExecuteSQL("exec [dbo].[sp_getDeliveryDateTrip] @p0,@p1,@p2,@p3,@p4,@p5,@p6",
+                        Plant, obj.Supplier.Substring(0, 4), obj.Supplier.Substring(5, 1), ProcessDate.ToString("yyyyMMdd"), Proc_Shift.Substring(0, 1),
+                        string.IsNullOrWhiteSpace(obj.Store) ? DBNull.Value : obj.Store, string.IsNullOrWhiteSpace(obj.StoreTo) ? DBNull.Value : obj.StoreTo);
                 }
 
                 return Ok(new
