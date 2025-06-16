@@ -416,8 +416,8 @@ namespace KANBAN.Controllers.API.OrderingProcess
 
                 do
                 {
-                    DT_DeliveryDate = _FillDT.ExecuteSQL("exec [dbo].[sp_getDeliveryDateTrip] @p0,@p1,@p2,@p3,@p4,@p5,@p6",
-                        Plant, obj.Supplier.Substring(0, 4), obj.Supplier.Substring(5, 1), tmpProcessDate.ToString("yyyyMMdd"), Proc_Shift.Substring(0, 1),
+                    DT_DeliveryDate = _FillDT.ExecuteSQL("exec [dbo].[sp_getDeliveryDateTrip] @p0,@p1,@p2,@p3,@p4,@p5,@p6,@p7",
+                        Plant, obj.Supplier.Substring(0, 4), obj.Supplier.Substring(5, 1), tmpProcessDate.ToString("yyyyMMdd"), Proc_Shift.Substring(0, 1), DBNull.Value,
                         string.IsNullOrWhiteSpace(obj.Store) ? DBNull.Value : obj.Store, string.IsNullOrWhiteSpace(obj.StoreTo) ? DBNull.Value : obj.StoreTo);
 
                     tmpProcessDate = tmpProcessDate.AddDays(+1);
@@ -725,9 +725,25 @@ namespace KANBAN.Controllers.API.OrderingProcess
 
                 if(DT_DeliveryDate.Rows.Count == 0)
                 {
+
                     DT_DeliveryDate = _FillDT.ExecuteSQL("exec [dbo].[sp_getDeliveryDateTrip] @p0,@p1,@p2,@p3,@p4,@p5,@p6",
-                        Plant, obj.Supplier.Substring(0, 4), obj.Supplier.Substring(5, 1), ProcessDate.ToString("yyyyMMdd"), Proc_Shift.Substring(0, 1),
+                        Plant, obj.Supplier.Substring(0, 4), obj.Supplier.Substring(5, 1), ProcessDate.ToString("yyyyMMdd"), Proc_Shift.Substring(0, 1), DBNull.Value,
                         string.IsNullOrWhiteSpace(obj.Store) ? DBNull.Value : obj.Store, string.IsNullOrWhiteSpace(obj.StoreTo) ? DBNull.Value : obj.StoreTo);
+
+                    List<SqlParameter> sqlparams = new List<SqlParameter>
+                    {
+                        new SqlParameter("@Plant",Plant),
+                        new SqlParameter("@Supplier_Code",obj.Supplier.Substring(0, 4)),
+                        new SqlParameter("@Supplier_Plant", obj.Supplier.Substring(5, 1)),
+                        new SqlParameter("@ProcessDate",ProcessDate.ToString("yyyyMMdd")),
+                        new SqlParameter("@ProcessShift",Proc_Shift.Substring(0, 1)),
+                        new SqlParameter("@OrderType", DBNull.Value ),
+                        new SqlParameter("@Store_Code_FROM",string.IsNullOrWhiteSpace(obj.Store) ? DBNull.Value : obj.Store),
+                        new SqlParameter("@Store_Code_TO",string.IsNullOrWhiteSpace(obj.StoreTo) ? DBNull.Value : obj.StoreTo)
+
+                    };
+
+                    DT_DeliveryDate = await _FillDT.ExecuteStoreSQLAsync("[dbo].[sp_getDeliveryDateTrip]", sqlparams.ToArray());
                 }
 
                 return Ok(new

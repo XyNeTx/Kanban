@@ -27,7 +27,7 @@ $(document).ready(async function () {
     $("#inputProcessDateFor").val(_CookieProcessDate.slice(0, 10));
     $("#inputProcessShiftFor").val(_CookieProcessDate.slice(10, 11) == "D" ? "1 - Day Shift" : "2 - Night Shift");
 
-    await _xLib.AJAX_Get('/api/KBNOR121/OnLoad', { Login_Date: _CookieLoginDate , Shift: shift, Process_Date: $("#inputProcessDateFor").val() });
+    await _xLib.AJAX_Get('/api/KBNOR121/OnLoad', { Login_Date: _CookieLoginDate, Shift: $("#inputProcessShiftFor").val(), Process_Date: $("#inputProcessDateFor").val() });
 
     await _xLib.AJAX_Get('/api/KBNOR121/SupplierDropDown', '', function (result) {
         result = _xLib.JSONparseAndTrim(result);
@@ -798,6 +798,7 @@ const periodFilter = async () => {
     {
         let deliveryDate = dT_DeliveryDate[i].F_Delivery_Date.slice(6, 8) + "-" + dT_DeliveryDate[i].F_Delivery_Date.slice(4, 6) + "-" + dT_DeliveryDate[i].F_Delivery_Date.slice(0, 4);
         let deliveryTrip = dT_DeliveryDate[i].F_Delivery_Trip;
+        let deliveryShift = dT_DeliveryDate[i].F_Process_Shift;
 
         if (deliveryDate == undefined || deliveryDate == "" || deliveryDate == null) {
             deliveryDate = $("#spanDeliveryDate").val();
@@ -819,9 +820,9 @@ const periodFilter = async () => {
 
         //console.log(arr);
 
-        //console.log(parseInt($("#readCycleTime").val().slice(3, 5)));
-        //console.log(parseInt($("#readCycleTime").val().slice(6, 8)));
-        //console.log(parseInt($("#readCycleTime").val().slice(3, 5)) / parseInt($("#readCycleTime").val().slice(6, 8)) == 2);
+        console.log(parseInt($("#readCycleTime").val().slice(3, 5)));
+        console.log(parseInt($("#readCycleTime").val().slice(6, 8)));
+        console.log(parseInt($("#readCycleTime").val().slice(3, 5)) / parseInt($("#readCycleTime").val().slice(6, 8)) == 2);
 
         if ( parseInt($("#readCycleTime").val().slice(3, 5)) / parseInt($("#readCycleTime").val().slice(6, 8)) === 2 )
         {
@@ -833,26 +834,33 @@ const periodFilter = async () => {
 
             }
         }
-        else if (_CookieLoginDate.includes("D"))
+        else if (deliveryShift.includes("D"))
         {
             console.log("D");
-            console.log(trip);
-            
+            console.log(trip); 
+            let filteredPeriod = dT_Period.filter(x => x.Row_Num == "1" && x.Date_Now == dT_DeliveryDate[i].F_Delivery_Date)
+            trip = parseInt(filteredPeriod[0]["F_Period"]);
 
             for (trip; trip > 0; trip--)
             {
+                console.log(trip);
+                console.log(deliveryTrip);
+                console.log(parseInt(dT_Period[0]["F_Period"]));
                 if (deliveryTrip > parseInt(dT_Period[0]["F_Period"])) {
                     continue;
                 }
                 for (let k = 2; k <= 20; k++)
                 {
                     let _id = `tdR${k}T${trip}${deliveryDate}`;
+                    console.log(_id);
                     $(`#${_id}`).css("background-color", "#FFFFFF");
                 }
             }
         }
         else
         {
+            let filteredPeriod = dT_Period.filter(x => x.Date_Now == dT_DeliveryDate[i].F_Delivery_Date)
+            let trip = parseInt(filteredPeriod[0]["F_Period"]) + parseInt(filteredPeriod[1]["F_Period"]);
             console.log("N");
             console.log(trip);
             for (trip; trip > parseInt(dT_Period[0]["F_Period"]); trip--)
