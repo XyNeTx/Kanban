@@ -88,12 +88,12 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                 string sqlQuery = $@"EXEC [CKD_Inhouse].[sp_getProcessDateTime] '{_BearerClass.Plant}' 
                     ,'{DateTime.Now.ToString("yyyy-MM-dd")} {(_BearerClass.Shift == "1" ? "07:30:00" : "19:30:00")}' ";
 
-                var _dt = _FillDT.ExecuteSQL(sqlQuery);
+                var _dt = await _FillDT.ExecuteSQLAsync(sqlQuery);
 
-                dateProcessDate_CKD = DateTime.ParseExact(_dt.Rows[0]["ProcessDate"].ToString(), "MM/dd/yyyy h:mm:ss tt", CultureInfo.InvariantCulture);
+                dateProcessDate_CKD = DateTime.ParseExact(_dt.Rows[0]["ProcessDate"].ToString(), "M/dd/yyyy h:mm:ss tt", CultureInfo.InvariantCulture);
                 chrProcessShift_CKD = _dt.Rows[0]["ProcessShift"].ToString();
                 strProcessCycle = _dt.Rows[0]["ProcessCycleTime"].ToString();
-                dateProcessLastDate_CKD = DateTime.ParseExact(_dt.Rows[0]["LastProcessDate"].ToString(), "MM/dd/yyyy h:mm:ss tt", CultureInfo.InvariantCulture);
+                dateProcessLastDate_CKD = DateTime.ParseExact(_dt.Rows[0]["LastProcessDate"].ToString(), "M/dd/yyyy h:mm:ss tt", CultureInfo.InvariantCulture);
                 chrProcessLastShift_CKD = _dt.Rows[0]["LastProcessShift"].ToString();
 
                 return _dt;

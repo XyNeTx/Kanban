@@ -325,12 +325,12 @@ namespace KANBAN.Services.SpecialOrdering.Repository
 
                 string Delivery_Date_New = await CheckPODateStatus(obj);
 
-                var existData = _kbContext.TB_Transaction_Spc
+                var existData = await _kbContext.TB_Transaction_Spc
                     .Where(x => x.F_Part_No.Trim() + "-" + x.F_Ruibetsu.Trim() == obj.F_Part_No
                      && x.F_PDS_No.Trim() == obj.F_PDS_No && x.F_PDS_No_New.Trim() == obj.F_PDS_No_New
                      && x.F_Qty == obj.F_Qty
                      && x.F_Supplier_CD.Trim() + "-" + x.F_Supplier_Plant.Trim() == obj.F_Supplier_CD)
-                    .AsQueryable();
+                    .ToListAsync();
 
                 if (!string.IsNullOrWhiteSpace(Delivery_Date_New))
                 {
@@ -341,7 +341,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
                     existData.Where(x => x.F_Delivery_Date == obj.F_Delivery_Date);
                 }
 
-                var data = await existData.FirstOrDefaultAsync();
+                var data = existData.FirstOrDefault();
 
                 if (data == null)
                 {
@@ -353,6 +353,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
                 _kbContext.TB_Transaction_Spc.Update(data);
 
                 await _kbContext.SaveChangesAsync();
+                _log.WriteLogMsg($"TB_Transaction_Spc Update => {JsonConvert.SerializeObject(data, Formatting.Indented)}");
 
             }
             catch (Exception ex)

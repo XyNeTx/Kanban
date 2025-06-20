@@ -57,26 +57,26 @@ namespace KANBAN.Services.CKD_Ordering.Repository
 
                 string[] arryVariable = new string[] { "0", KBNOR310.dateProcessDate_CKD.ToString("yyyyMMdd"), KBNOR310.chrProcessShift_CKD };
 
-                await _kbContext.Database.ExecuteSqlRawAsync("EXEC [CKD_Inhouse].sp_ManipulateForecast {0},{1},{2}", arryVariable);
-                await _kbContext.Database.ExecuteSqlRawAsync("EXEC [CKD_Inhouse].sp_UpdateFlagWeekend {0},{1},{2}", arryVariable);
-                await _kbContext.Database.ExecuteSqlRawAsync("EXEC [CKD_Inhouse].sp_ManipulateMRP_NG {0},{1},{2}", arryVariable);
-                await _kbContext.Database.ExecuteSqlRawAsync("EXEC [CKD_Inhouse].sp_UpdateUrgentOrder {0},{1},{2}", arryVariable);
-                await _kbContext.Database.ExecuteSqlRawAsync("EXEC [CKD_Inhouse].sp_UpdatePattern {0},{1},{2}", arryVariable);
-                await _kbContext.Database.ExecuteSqlRawAsync("EXEC [CKD_Inhouse].sp_UpdateKBSTOP {0},{1},{2}", arryVariable);
+                await _kbContext.Database.ExecuteSqlRawAsync("EXEC [CKD_Inhouse].sp_ManipulateForecast {0},{1},{2}", arryVariable[0], arryVariable[1], arryVariable[2]);
+                await _kbContext.Database.ExecuteSqlRawAsync("EXEC [CKD_Inhouse].sp_UpdateFlagWeekend {0},{1},{2}", arryVariable[0], arryVariable[1], arryVariable[2]);
+                await _kbContext.Database.ExecuteSqlRawAsync("EXEC [CKD_Inhouse].sp_ManipulateMRP_NG {0},{1},{2}", arryVariable[0], arryVariable[1], arryVariable[2]);
+                await _kbContext.Database.ExecuteSqlRawAsync("EXEC [CKD_Inhouse].sp_UpdateUrgentOrder {0},{1},{2}", arryVariable[0], arryVariable[1], arryVariable[2]);
+                await _kbContext.Database.ExecuteSqlRawAsync("EXEC [CKD_Inhouse].sp_UpdatePattern {0},{1},{2}", arryVariable[0], arryVariable[1], arryVariable[2]);
+                await _kbContext.Database.ExecuteSqlRawAsync("EXEC [CKD_Inhouse].sp_UpdateKBSTOP {0},{1},{2}", arryVariable[0], arryVariable[1], arryVariable[2]);
                 await completeGetNecessaryDataTable(arryVariable);
                 await completeManipulateRemainLastTrip();
                 await completeManipulateKBAdd();
                 await completeManipulateKBCut();
                 await completeUpdateTempTable();
-                await _kbContext.Database.ExecuteSqlRawAsync("EXEC [CKD_Inhouse].sp_ManipulateLotSizing {0},{1},{2}", arryVariable);
-                await _kbContext.Database.ExecuteSqlRawAsync("EXEC [CKD_Inhouse].sp_UpdateDeliveryDate {0},{1},{2}", arryVariable);
-                await _kbContext.Database.ExecuteSqlRawAsync("EXEC [CKD_Inhouse].sp_UpdateActualOrder {0},{1},{2}", arryVariable);
-                await _kbContext.Database.ExecuteSqlRawAsync("EXEC [CKD_Inhouse].sp_UpdateReceivePlan {0},{1},{2}", arryVariable);
+                await _kbContext.Database.ExecuteSqlRawAsync("EXEC [CKD_Inhouse].sp_ManipulateLotSizing {0},{1},{2}", arryVariable[0], arryVariable[1], arryVariable[2]);
+                await _kbContext.Database.ExecuteSqlRawAsync("EXEC [CKD_Inhouse].sp_UpdateDeliveryDate {0},{1},{2}", arryVariable[0], arryVariable[1], arryVariable[2]);
+                await _kbContext.Database.ExecuteSqlRawAsync("EXEC [CKD_Inhouse].sp_UpdateActualOrder {0},{1},{2}", arryVariable[0], arryVariable[1], arryVariable[2]);
+                await _kbContext.Database.ExecuteSqlRawAsync("EXEC [CKD_Inhouse].sp_UpdateReceivePlan {0},{1},{2}", arryVariable[0], arryVariable[1], arryVariable[2]);
 
                 using (Process p = new Process())
                 {
                     p.StartInfo.FileName = "C:\\Windows\\System32\\schtasks.exe";
-                    p.StartInfo.Arguments = "/run /tn \"KB3_CKD_BL\"";  // Name of the scheduled task
+                    p.StartInfo.Arguments = "/run /tn \"KB3_BL_CKD\"";  // Name of the scheduled task
                     p.StartInfo.UseShellExecute = false;
                     p.StartInfo.CreateNoWindow = true;
                     p.StartInfo.RedirectStandardOutput = true;  // Capture output
@@ -395,11 +395,11 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                     string sqlQuery = $@"UPDATE TB_Kanban_Add
                         SET F_KB_Remain = 0, F_Status = '2'
                         WHERE F_Supplier_Code = '{DT_KBADD.Rows[iAdd]["F_Supplier_Code"].ToString().Trim()}'
-                        WHERE F_Supplier_Plant = '{DT_KBADD.Rows[iAdd]["F_Supplier_Plant"].ToString().Trim()}'
-                        WHERE F_Store_Code = '{DT_KBADD.Rows[iAdd]["F_Store_Code"].ToString().Trim()}'
-                        WHERE F_Kanban_No = '{DT_KBADD.Rows[iAdd]["F_Kanban_No"].ToString().Trim()}'
-                        WHERE F_Part_No = '{DT_KBADD.Rows[iAdd]["F_Part_No"].ToString().Trim()}'
-                        WHERE F_Ruibetsu = '{DT_KBADD.Rows[iAdd]["F_Ruibetsu"].ToString().Trim()}'
+                        AND F_Supplier_Plant = '{DT_KBADD.Rows[iAdd]["F_Supplier_Plant"].ToString().Trim()}'
+                        AND F_Store_Code = '{DT_KBADD.Rows[iAdd]["F_Store_Code"].ToString().Trim()}'
+                        AND F_Kanban_No = '{DT_KBADD.Rows[iAdd]["F_Kanban_No"].ToString().Trim()}'
+                        AND F_Part_No = '{DT_KBADD.Rows[iAdd]["F_Part_No"].ToString().Trim()}'
+                        AND F_Ruibetsu = '{DT_KBADD.Rows[iAdd]["F_Ruibetsu"].ToString().Trim()}'
                         ";
 
                     await _kbContext.Database.ExecuteSqlRawAsync(sqlQuery);
@@ -468,11 +468,11 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                     string sqlQuery = $@"UPDATE TB_Kanban_Add
                         SET F_KB_Remain = 0, F_Status = '2'
                         WHERE F_Supplier_Code = '{DT_KBCUT.Rows[iCut]["F_Supplier_Code"].ToString().Trim()}'
-                        WHERE F_Supplier_Plant = '{DT_KBCUT.Rows[iCut]["F_Supplier_Plant"].ToString().Trim()}'
-                        WHERE F_Store_Code = '{DT_KBCUT.Rows[iCut]["F_Store_Code"].ToString().Trim()}'
-                        WHERE F_Kanban_No = '{DT_KBCUT.Rows[iCut]["F_Kanban_No"].ToString().Trim()}'
-                        WHERE F_Part_No = '{DT_KBCUT.Rows[iCut]["F_Part_No"].ToString().Trim()}'
-                        WHERE F_Ruibetsu = '{DT_KBCUT.Rows[iCut]["F_Ruibetsu"].ToString().Trim()}'
+                        AND F_Supplier_Plant = '{DT_KBCUT.Rows[iCut]["F_Supplier_Plant"].ToString().Trim()}'
+                        AND F_Store_Code = '{DT_KBCUT.Rows[iCut]["F_Store_Code"].ToString().Trim()}'
+                        AND F_Kanban_No = '{DT_KBCUT.Rows[iCut]["F_Kanban_No"].ToString().Trim()}'
+                        AND F_Part_No = '{DT_KBCUT.Rows[iCut]["F_Part_No"].ToString().Trim()}'
+                        AND F_Ruibetsu = '{DT_KBCUT.Rows[iCut]["F_Ruibetsu"].ToString().Trim()}'
                         ";
 
                     await _kbContext.Database.ExecuteSqlRawAsync(sqlQuery);
@@ -532,36 +532,41 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                 using var commandEvent = new SqlCommand(sqlQuery, sqlCon, trans);
                 commandEvent.ExecuteNonQuery();
 
-                using var bulkCopy = new SqlBulkCopy(sqlCon, SqlBulkCopyOptions.Default, trans);
-                bulkCopy.DestinationTableName = "#Temp_TB_Calculate_H_CKD";
-                bulkCopy.ColumnMappings.Add("F_Supplier_Code", "F_Supplier_Code");
-                bulkCopy.ColumnMappings.Add("F_Supplier_Plant", "F_Supplier_Plant");
-                bulkCopy.ColumnMappings.Add("F_Part_No", "F_Part_No");
-                bulkCopy.ColumnMappings.Add("F_Ruibetsu", "F_Ruibetsu");
-                bulkCopy.ColumnMappings.Add("F_Store_Code", "F_Store_Code");
-                bulkCopy.ColumnMappings.Add("F_Kanban_No", "F_Kanban_No");
-                bulkCopy.ColumnMappings.Add("F_Process_Date", "F_Process_Date");
-                bulkCopy.ColumnMappings.Add("F_Process_Shift", "F_Process_Shift");
-                bulkCopy.ColumnMappings.Add("F_Remain_LastTrip", "F_Remain_LastTrip");
-                bulkCopy.ColumnMappings.Add("F_Remain_LastClear", "F_Remain_LastClear");
-                bulkCopy.ColumnMappings.Add("F_Order_Base", "F_Order_Base");
-                bulkCopy.ColumnMappings.Add("F_Lot_SizeOrder", "F_Lot_SizeOrder");
-                bulkCopy.ColumnMappings.Add("Flag_MinusOrderBase", "Flag_MinusOrderBase");
-                await bulkCopy.WriteToServerAsync(DT_HeaderInProcess);
+                using (var bulkCopy = new SqlBulkCopy(sqlCon, SqlBulkCopyOptions.Default, trans))
+                {
+                    bulkCopy.DestinationTableName = "#Temp_TB_Calculate_H_CKD";
+                    bulkCopy.ColumnMappings.Add("F_Supplier_Code", "F_Supplier_Code");
+                    bulkCopy.ColumnMappings.Add("F_Supplier_Plant", "F_Supplier_Plant");
+                    bulkCopy.ColumnMappings.Add("F_Part_No", "F_Part_No");
+                    bulkCopy.ColumnMappings.Add("F_Ruibetsu", "F_Ruibetsu");
+                    bulkCopy.ColumnMappings.Add("F_Store_Code", "F_Store_Code");
+                    bulkCopy.ColumnMappings.Add("F_Kanban_No", "F_Kanban_No");
+                    bulkCopy.ColumnMappings.Add("F_Process_Date", "F_Process_Date");
+                    bulkCopy.ColumnMappings.Add("F_Process_Shift", "F_Process_Shift");
+                    bulkCopy.ColumnMappings.Add("F_Remain_LastTrip", "F_Remain_LastTrip");
+                    bulkCopy.ColumnMappings.Add("F_Remain_LastClear", "F_Remain_LastClear");
+                    bulkCopy.ColumnMappings.Add("F_Order_Base", "F_Order_Base");
+                    bulkCopy.ColumnMappings.Add("F_Lot_SizeOrder", "F_Lot_SizeOrder");
+                    bulkCopy.ColumnMappings.Add("Flag_MinusOrderBase", "Flag_MinusOrderBase");
+                    await bulkCopy.WriteToServerAsync(DT_HeaderInProcess);
+                }
 
-                bulkCopy.DestinationTableName = "#Temp_TB_Calculate_D_CKD";
-                bulkCopy.ColumnMappings.Add("F_Supplier_Code", "F_Supplier_Code");
-                bulkCopy.ColumnMappings.Add("F_Supplier_Plant", "F_Supplier_Plant");
-                bulkCopy.ColumnMappings.Add("F_Part_No", "F_Part_No");
-                bulkCopy.ColumnMappings.Add("F_Ruibetsu", "F_Ruibetsu");
-                bulkCopy.ColumnMappings.Add("F_Store_Code", "F_Store_Code");
-                bulkCopy.ColumnMappings.Add("F_Kanban_No", "F_Kanban_No");
-                bulkCopy.ColumnMappings.Add("F_Process_Date", "F_Process_Date");
-                bulkCopy.ColumnMappings.Add("F_Process_Shift", "F_Process_Shift");
-                bulkCopy.ColumnMappings.Add("F_Process_Round", "F_Process_Round");
-                bulkCopy.ColumnMappings.Add("F_KB_CUT", "F_KB_CUT");
-                bulkCopy.ColumnMappings.Add("F_KB_ADD", "F_KB_ADD");
-                await bulkCopy.WriteToServerAsync(DT_DetailInProcess);
+                using (var bulkCopy = new SqlBulkCopy(sqlCon, SqlBulkCopyOptions.Default, trans))
+                {
+                    bulkCopy.DestinationTableName = "#Temp_TB_Calculate_D_CKD";
+                    bulkCopy.ColumnMappings.Add("F_Supplier_Code", "F_Supplier_Code");
+                    bulkCopy.ColumnMappings.Add("F_Supplier_Plant", "F_Supplier_Plant");
+                    bulkCopy.ColumnMappings.Add("F_Part_No", "F_Part_No");
+                    bulkCopy.ColumnMappings.Add("F_Ruibetsu", "F_Ruibetsu");
+                    bulkCopy.ColumnMappings.Add("F_Store_Code", "F_Store_Code");
+                    bulkCopy.ColumnMappings.Add("F_Kanban_No", "F_Kanban_No");
+                    bulkCopy.ColumnMappings.Add("F_Process_Date", "F_Process_Date");
+                    bulkCopy.ColumnMappings.Add("F_Process_Shift", "F_Process_Shift");
+                    bulkCopy.ColumnMappings.Add("F_Process_Round", "F_Process_Round");
+                    bulkCopy.ColumnMappings.Add("F_KB_CUT", "F_KB_CUT");
+                    bulkCopy.ColumnMappings.Add("F_KB_ADD", "F_KB_ADD");
+                    await bulkCopy.WriteToServerAsync(DT_DetailInProcess);
+                }
 
                 sqlQuery = $@"UPDATE H 
                     SET F_Remain_LastTrip = TEMP.F_Remain_LastTrip 

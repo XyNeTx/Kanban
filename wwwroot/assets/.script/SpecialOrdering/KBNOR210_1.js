@@ -452,14 +452,12 @@ $("#btnSave").click(async function () {
     let listObj = [];
     $("#tableMain tbody tr td").find("input[type='checkbox']:checked").each(function () {
         let dataObj = $("#tableMain").DataTable().row($(this).closest("tr")).data();
-        var objIndex = $("#tableMain").DataTable().row($(this).closest("tr")).index();
-        var oldPds = $("#tableMain").DataTable().row(objIndex - 1).data().F_Delivery_DT_1;
-
-        console.log(dataObj);
+        var objIndex = $("#tableMain").DataTable().row($(this).closest("tr")).index() - 1;// Subtract 1 to retrieve the Customer Order No from the row above the checked box.
+        var objIndexTD = $("#tableMain").DataTable().column($(this).closest("td")).index() + 2; //Add 2 to retrieve the Customer Order No, which is located three columns to the right.
+        var oldPds = $("#tableMain").DataTable().cell(objIndex, objIndexTD).data();
+        console.log(objIndex);
+        console.log(objIndexTD);
         console.log(oldPds);
-
-        return;
-
         let obj = {
             F_PDS_NO: dataObj.F_PO_Number,
             F_PDS_No_New: oldPds,

@@ -212,7 +212,7 @@ async function GetListData() {
     let obj = {
         isAll : !$("#chkSlider").prop("checked")
     };
-
+    _xDataTable.ClearData("tableMain");
     _xLib.AJAX_Get("/api/KBNIM0044/GetListData", obj,
         async function (success) {
             //success = _xLib.JSONparseMixData(success);
@@ -223,6 +223,7 @@ async function GetListData() {
             //console.log(listObjChecked);
         },
         function (error) {
+
         }
     );
 }
@@ -234,7 +235,7 @@ $("#btnMain").click(function () {
     let listCheckedBox = $("#tableMain tbody tr td input[type='checkbox']:checked");
 
 
-    if (listCheckedBox.length > changeList.length) {
+    if (listCheckedBox.length > changeList.length && !$("#chkSlider").prop("checked")) {
         return xSwal.error("Error", "Check box was over simulate data.");
     }
 
@@ -343,7 +344,13 @@ async function UpdateFlag(Flag) {
         let j = -1;
         for (let i = 0; i < listObj.length; i++) {
             if (j >= changeList.length) break;
-            if (listCheckBox[i].checked) {
+            if ($("#chkSlider").prop("checked")) {
+                listObj[i].f_Flag = null;
+                listObj[i].f_Deli_Date = null;
+                listObj[i].f_Deli_Shift = null;
+                listObj[i].f_Deli_Trip = null;
+            }
+            else if (listCheckBox[i].checked) {
                 j++;
                 listObj[i].f_Flag = "S";
                 listObj[i].f_Deli_Date = changeList[j].f_Deli_Date;
