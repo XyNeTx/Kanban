@@ -11,22 +11,17 @@
     <Compile Remove="wwwroot\assets\img\avatars\**" />
     <Compile Remove="wwwroot\assets\script\**" />
     <Compile Remove="wwwroot\js\**" />
-    <Compile Remove="wwwroot\Storage\**" />
     <Content Remove="wwwroot\assets\img\avatars\**" />
     <Content Remove="wwwroot\assets\script\**" />
     <Content Remove="wwwroot\js\**" />
-    <Content Remove="wwwroot\Storage\**" />
     <EmbeddedResource Remove="wwwroot\assets\img\avatars\**" />
     <EmbeddedResource Remove="wwwroot\assets\script\**" />
     <EmbeddedResource Remove="wwwroot\js\**" />
-    <EmbeddedResource Remove="wwwroot\Storage\**" />
     <None Remove="wwwroot\assets\img\avatars\**" />
     <None Remove="wwwroot\assets\script\**" />
     <None Remove="wwwroot\js\**" />
-    <None Remove="wwwroot\Storage\**" />
     <TypeScriptCompile Remove="wwwroot\assets\script\**" />
     <TypeScriptCompile Remove="wwwroot\js\**" />
-    <TypeScriptCompile Remove="wwwroot\Storage\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -232,6 +227,8 @@
     <None Include="wwwroot\assets\.script\OrderReport\KBNRT310.js" />
     <None Include="wwwroot\assets\.script\OtherCondition\KBNOC120.js" />
     <None Include="wwwroot\assets\.script\OtherCondition\KBNOC121.js" />
+    <None Include="wwwroot\assets\.script\OtherCondition\KBNOC150.js" />
+    <None Include="wwwroot\assets\.script\OtherCondition\KBNOC160.js" />
     <None Include="wwwroot\assets\.script\ReceiveProcess\KBNRC110.js" />
     <None Include="wwwroot\assets\.script\ReceiveProcess\KBNRC120.js" />
     <None Include="wwwroot\assets\.script\ReceiveProcess\KBNRC130.js" />
@@ -9751,6 +9748,14 @@
 
   <ItemGroup>
     <Folder Include="Models\KB3\SpecialData\Model\" />
+    <Folder Include="wwwroot\Storage\DownloadTemp\202403\" />
+    <Folder Include="wwwroot\Storage\DownloadTemp\202410\" />
+    <Folder Include="wwwroot\Storage\Uploads\202310\31\" />
+    <Folder Include="wwwroot\Storage\Uploads\202311\01\" />
+    <Folder Include="wwwroot\Storage\Uploads\202311\10\" />
+    <Folder Include="wwwroot\Storage\Uploads\202406\07\" />
+    <Folder Include="wwwroot\Storage\Uploads\202406\10\" />
+    <Folder Include="wwwroot\Storage\Uploads\202410\02\" />
   </ItemGroup>
 
   <ItemGroup>

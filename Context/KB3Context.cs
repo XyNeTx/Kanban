@@ -1,4 +1,5 @@
 ﻿using HINOSystem.Models.KB3.Master;
+using KANBAN.Models.KB3.ImportData.Model;
 using KANBAN.Models.KB3.Login;
 using KANBAN.Models.KB3.LogisticCondition;
 using KANBAN.Models.KB3.Master;
@@ -176,6 +177,28 @@ namespace HINOSystem.Context
         public DbSet<TB_Kanban_SetOrder> TB_Kanban_SetOrder { get; set; }
         public virtual DbSet<TB_Import_VHD> TB_Import_VHD { get; set; }
         public virtual DbSet<TB_Calculate_D_CKD> TB_Calculate_D_CKD { get; set; }
+
+        // KBNOC150 : Least Order List
+
+        public DbSet<RPT_KBNOC_150> RPT_KBNOC_150 { get; set; }
+        public DbSet<GetStd_KBNOC_150> GetStd_KBNOC_150 { get; set; }
+
+        // KBNOC160 : Kanban Urgent Order List
+
+        public DbSet<VW_RPT_KBNOC_160> VW_RPT_KBNOC_160 { get; set; }
+        public DbSet<RPT_KBNOC_160> RPT_KBNOC_160 { get; set; }
+
+        // KBNLC200 : History delivery time
+
+        public DbSet<TB_Import_Delivery_History> TB_Import_Delivery_History { get; set; }
+
+        //KBNIM012M : Maintenance Monthly Forecast Data
+
+        public DbSet<TB_IMPORT_FORECAST_TEMP> TB_IMPORT_FORECAST_TEMP { get; set; }
+        public DbSet<SP_IMPORT_FORECAST> SP_IMPORT_FORECAST { get; set; }
+        public DbSet<TB_Import_Data_Forecast> TB_Import_Data_Forecast { get; set; }
+        public DbSet<TB_Import_Error> TB_Import_Error { get; set; }
+
     }
 }
 

@@ -56,5 +56,8 @@ namespace KANBAN.Context
 
 
         public DbSet<T_PDS692_Header> T_PDS692_Header { get; set; }
+
+        //KBNIM012M : Maintenance Monthly Forecast Data
+        public DbSet<VW_MaxVersionForecast> VW_MaxVersionForecast { get; set; }
     }
 }

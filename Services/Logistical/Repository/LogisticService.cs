@@ -10,6 +10,7 @@ namespace KANBAN.Services.Logistical.Repository
     {
         public IKBNLC150 IKBNLC150 { get; }
         public IKBNLC190 IKBNLC190 { get; }
+        public IKBNLC200 IKBNLC200 { get; }
 
         public LogisticService(
             KB3Context kbContext,
@@ -22,6 +23,7 @@ namespace KANBAN.Services.Logistical.Repository
         {
             IKBNLC150 = new KBNLC150(kbContext, BearerClass, PPM3Context, FillDT, log, emailService);
             IKBNLC190 = new KBNLC190(kbContext, BearerClass, PPM3Context, FillDT, log, emailService);
+            IKBNLC200 = new KBNLC200(kbContext, BearerClass, PPM3Context, FillDT, log, emailService);
         }
     }
 }

@@ -1,4 +1,12 @@
-﻿<div class="row">
+﻿
+<style>
+    input.form-control{
+        width: 75%;
+        border-radius: 0;
+    }
+
+</style>
+<div class="row">
 
     <div class="col-xl-12 col-md-12 col-sm-12">
         <div class="card border-left-primary shadow h-100">
@@ -6,33 +14,47 @@
                 <form id="frmCondition">
                     <fieldset class="fieldset">
                         <legend>Search Data</legend>
-
+                        <input type="hidden" id="userId" value="@ViewData["_UserCode"]" />
                         <div class="row">
                             <div class="col-5">
                                 <div class="input-group">
-                                    <span class="input-group-text">Supplier Code From</span>
-                                    <select class="selectpicker" id="inpSupplierFrom" data-live-search="true" data-size="6">
-                                        <option value="" hidden></option>
+                                    <span class="input-group-text">Supplier Code From </span>
+                                    <select class="selectpicker" id="inpSupplierFrom" data-live-search="true" data-size="6" >
+                                        <option value="" ></option>
                                     </select>
                                 </div>
                             </div>
                             <div class="col-5">
                                 <div class="input-group">
                                     <span class="input-group-text">Supplier Code To</span>
-                                    <select class="selectpicker" id="inpSupplierTo" data-live-search="true" data-size="6">
-                                        <option value="" hidden></option>
+                                    <select class="selectpicker" id="inpSupplierTo" data-live-search="true" data-size="6" >
+                                        <option value="" ></option>
                                     </select>
                                 </div>
                             </div>
                         </div>
-
+                        
 
                         <div class="row">
                             <div class="col-5">
-                                <item type="date" id="F_DeliveryFrom" label="Delivery Date From" format="yyyy-mm-dd" default="now" readonly></item>
+                                @* <item type="date" id="F_DeliveryFrom" label="Delivery Date From" format="yyyy-mm-dd" default="now" readonly></item> *@
+                                <div class="input-group">
+                                    <span class="input-group-text">Delivery Date From</span>
+                                    <input type="text" class="datepicker form-control" id="F_DeliveryFrom" />
+                                    <span class="input-group-text event" style=" margin-left: -70px; background-color: #1abc9c; color: white"><i class="gj-icon" style="color: white">event</i></span>
+
+
+                                </div>
                             </div>
                             <div class="col-5">
-                                <item type="date" id="F_DeliveryTo" label="Delivery Date To" format="yyyy-mm-dd" default="now" readonly></item>
+                                @* <item type="date" class="datepicker form-control" id="F_DeliveryTo" label="Delivery Date To" format="yyyy-mm-dd" default="now" readonly></item> *@
+                                <div class="input-group">
+                                    <span class="input-group-text">Delivery Date To</span>
+                                    <input type="text" class="datepicker form-control" id="F_DeliveryTo" />
+                                    <span class="input-group-text event" style=" margin-left: -70px; background-color: #1abc9c; color: white"><i class="gj-icon" style="color: white">event</i></span>
+
+
+                                </div>
                             </div>
                         </div>
 
@@ -42,20 +64,20 @@
                         <legend>Condition for Report</legend>
 
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="ConditionForReport" id="flexRadioDefault1">
-                            <label class="form-check-label">
-                                MIN : Less than or Equal Minimum valus : น้อยกว่า หรือ เท่ากับ ค่า Minimum
+                            <input class="form-check-input" type="radio" name="ConditionForReport" id="flexRadioDefault1" value="MINIMUM">
+                            <label class="form-check-label" >
+                               MIN : Less than or Equal Minimum valus : น้อยกว่า หรือ เท่ากับ ค่า Minimum
                             </label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="ConditionForReport" id="flexRadioDefault2" checked>
-                            <label class="form-check-label">
+                            <input class="form-check-input" type="radio" name="ConditionForReport" id="flexRadioDefault2" value="STANDARD" checked>
+                            <label class="form-check-label" >
                                 STD : Less than Equal Standard Value : น้อยกว่า หรือ เท่ากับ ค่า Standard
                             </label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="ConditionForReport" id="flexRadioDefault2">
-                            <label class="form-check-label">
+                            <input class="form-check-input" type="radio" name="ConditionForReport" id="flexRadioDefault2" value="MAXIMUM">
+                            <label class="form-check-label" >
                                 Max : More that or Equal Maximum Value : น้อยกว่า หรือ เท่ากับ ค่า Maximum
                             </label>
                         </div>
@@ -85,3 +107,5 @@
     });
 
 </script>
+
+<script src="~/assets/.script/othercondition/kbnoc150.js"></script>

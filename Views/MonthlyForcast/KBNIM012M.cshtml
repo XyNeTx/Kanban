@@ -1,4 +1,19 @@
-﻿<div class="row">
+﻿<style>
+    input.form-control {
+        width: 75%;
+        border-radius: 0;
+    }
+
+    td.cell-editable {
+        cursor: pointer;
+        background-color: #fdfde7; /* เหลืองอ่อนแสดงว่า editable */
+    }
+
+    td.editing {
+        padding: 0 !important;
+    }
+</style>
+<div class="row">
 
     <div class="col-xl-12 col-md-12 col-sm-12">
         <div class="card border-left-primary shadow h-100">
@@ -10,19 +25,43 @@
 
                             <fieldset class="fieldset">
                                 <legend>Import File : </legend>
-
+                                <input type="hidden" id="userId" value="@ViewData["_UserCode"]" />
                                 <div class="row">
                                     <div class="col-3">
-                                        <item type="month" id="ImportMonth" label="Month" default="now"></item>
+                                        @* <item type="month" id="ImportMonth" label="Month" default="now"></item> *@
+                                        <div class="input-group">
+                                            <span class="input-group-text">Month</span>
+                                            <input type="text" class="monthPicker form-control" id="ImportMonth" style="background-color:rgb(255, 224, 192)" />
+                                            <span class="input-group-text " style=" margin-left: -30px;z-index: 1; background-color: #1abc9c; color: white"><i class="gj-icon" style="color: white">event</i></span>
+
+                                        </div>
+                                    </div>
+                                    <div class="col-2">
+                                        @* <item type="text" id="ImportVersion" label="Version"></item> *@
+                                        <div class="input-group">
+                                            <span class="input-group-text">Version</span>
+                                            <input type="text" class="form-control" id="ImportVersion" style="background-color:rgb(255, 224, 192)" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="col-2">
+                                        @* <item type="text" id="ImportRevision" label="Revision"></item> *@
+                                        <div class="input-group">
+                                            <span class="input-group-text">Revision</span>
+                                            <input type="text" class="form-control" id="ImportRevision" style="background-color:rgb(255, 224, 192)" />
+                                        </div>
                                     </div>
                                     <div class="col-3">
-                                        <item type="text" id="ImportVersion" label="Version"></item>
+                                        @* <item type="date" id="ImportDate" label="Date" format="yyyy-mm-dd" default="now"></item> *@
+                                        <div class="input-group">
+                                            <span class="input-group-text">Update Date</span>
+                                            <input type="text" class="datepicker form-control" id="ImportDate" value="@ViewData["_ProcessDate"]" readonly />
+                                            <span class="input-group-text " style=" margin-left: -70px; background-color: #1abc9c; color: white"><i class="gj-icon" style="color: white">event</i></span>
+
+                                        </div>
                                     </div>
-                                    <div class="col-3">
-                                        <item type="text" id="ImportRevision" label="Revision"></item>
-                                    </div>
-                                    <div class="col-3">
-                                        <item type="date" id="ImportDate" label="Date" format="yyyy-mm-dd" default="now"></item>
+
+                                    <div class="col-2">
+                                        @*       <button type="button" class="d-block w-75 btn btn-primary text-light" id="btnReport">Report</button> *@
                                     </div>
                                 </div>
 
@@ -33,76 +72,149 @@
 
                                 <div class="row">
                                     <div class="col-3">
-                                        <item type="month" id="ConditionMonth" label="Month" default="now"></item>
+                                        @* <item type="month" id="ConditionMonth" label="Month" default="now"></item> *@
+                                        <div class="input-group">
+                                            <span class="input-group-text">Month</span>
+                                            <input type="text" class="monthPicker form-control" id="ConditionMonth" />
+                                            <span class="input-group-text eventMonth" style=" margin-left: -30px;z-index: 1; background-color: #1abc9c; color: white"><i class="gj-icon" style="color: white">event</i></span>
+
+                                        </div>
                                     </div>
-                                    <div class="col-3">
-                                        <item type="text" id="ConditionVersion" label="Version"></item>
+                                    <div class="col-2">
+                                        <div class="input-group">
+                                            <span class="input-group-text">Version</span>
+                                            <input type="text" class=" form-control" id="ConditionVersion" style="background-color:rgb(255, 192, 255)" />
+                                        </div>
                                     </div>
-                                    <div class="col-3">
-                                        <item type="text" id="ConditionRevision" label="Revision"></item>
+                                    <div class="col-2">
+                                        <div class="input-group">
+                                            <span class="input-group-text">Revision</span>
+                                            <input type="text" class=" form-control" id="ConditionRevision" style="background-color:rgb(255, 192, 255)" />
+                                        </div>
                                     </div>
                                 </div>
 
-                                <div class="row">
+                                <div class="row mb-2">
                                     <div class="col-2">
-                                        <item type="radio" id="TypeForImport" value="ConditionDetail" label="Detail" checked></item>
+                                        @* <item type="radio" id="TypeForImport_Detail" value="ConditionDetail" label="Detail" checked></item> *@
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="importType" id="TypeForImportCondition" value="ConditionDetail" checked>
+                                            <label class="form-check-label">
+                                                Detail
+                                            </label>
+                                        </div>
                                     </div>
                                     <div class="col">
                                         <fieldset class="fieldset" id="fldConditionDetail">
                                             <div class="row">
                                                 <div class="col">
-                                                    <item type="lov" id="ConditionDetailSupplierCode" label="Supplier Code" data-controller="LOVKB3.PartList" data-value="F_Part_No:Code" data-description="F_Part_Name" class="col-2"></item>
+                                                    <div class="input-group">
+                                                        <span class="input-group-text">Supplier Code</span>
+                                                        <select class="selectpicker" id="detail_supplier" data-live-search="true" data-size="8">
+                                                            <option value=""> </option>
+                                                        </select>
+                                                        <input type="text" class="ms-2 form-control" id="detail_supplierName" style="background-color:rgb(255, 224, 192)" readonly />
+                                                    </div>
                                                 </div>
                                             </div>
+
+
                                             <div class="row">
                                                 <div class="col">
-                                                    <item type="list" id="ConditionDetailKanban" label="Kanban No." data-controller="LOVKB3.PartList" data-value="F_Part_No:Code" data-description="F_Part_Name" class="col-2"></item>
+                                                    <div class="input-group">
+                                                        <span class="input-group-text">Kanban No.</span>
+                                                        <select class="selectpicker" id="detail_Kanban" data-live-search="true" data-size="8">
+                                                            <option value=""></option>
+                                                        </select>
+                                                    </div>
                                                 </div>
                                             </div>
+
                                             <div class="row">
                                                 <div class="col">
-                                                    <item type="list" id="ConditionDetailStoreCode" label="Store Code" data-controller="LOVKB3.PartList" data-value="F_Part_No:Code" data-description="F_Part_Name" class="col-2"></item>
+                                                    <div class="input-group">
+                                                        <span class="input-group-text">Store Code</span>
+                                                        <select class="selectpicker" id="detail_StoreCode" data-live-search="true" data-size="8">
+                                                            <option value=""></option>
+                                                        </select>
+                                                    </div>
                                                 </div>
                                             </div>
+
                                             <div class="row">
                                                 <div class="col">
-                                                    <item type="lov" id="ConditionDetailPartNo" label="Part No" data-controller="LOVKB3.PartList" data-value="F_Part_No:Code" data-description="F_Part_Name" class="col-2"></item>
+                                                    <div class="input-group">
+                                                        <span class="input-group-text">Part No</span>
+                                                        <select class="selectpicker" id="detail_PartNo" data-live-search="true" data-size="8">
+                                                            <option value=""></option>
+                                                        </select>
+                                                        <input type="text" class="ms-2 form-control" id="detail_PartName" style="background-color:rgb(255, 224, 192)" readonly />
+                                                    </div>
                                                 </div>
                                             </div>
+
                                         </fieldset>
                                     </div>
                                 </div>
 
                                 <div class="row">
                                     <div class="col-2">
-                                        <item type="radio" id="TypeForImport" value="ConditionSupplier" label="Supplier"></item>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="importType" id="TypeForImportSupplier" value="ConditionSupplier">
+                                            <label class="form-check-label">
+                                                Supplier
+                                            </label>
+                                        </div>
                                     </div>
                                     <div class="col">
                                         <fieldset class="fieldset" id="fldConditionSupplier">
+
                                             <div class="row">
                                                 <div class="col">
-                                                    <item type="lov" id="ConditionSupplierSupplierCode" label="Supplier Code" data-controller="LOVKB3.PartList" data-value="F_Part_No:Code" data-description="F_Part_Name" class="col-2"></item>
+                                                    <div class="input-group">
+                                                        <span class="input-group-text">Supplier Code</span>
+                                                        <select class="selectpicker" id="supplier_supplierCode" data-live-search="true" data-size="8" disabled>
+                                                            <option value=""></option>
+                                                        </select>
+                                                        <input type="text" class="ms-2 form-control" id="supplier_supplierName" style="background-color:rgb(255, 224, 192)" readonly />
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="row">
                                                 <div class="col">
-                                                    <item type="list" id="ConditionSupplierStoreCode" label="Store Code" data-controller="LOVKB3.PartList" data-value="F_Part_No:Code" data-description="F_Part_Name" class="col-2"></item>
+                                                    <div class="input-group">
+                                                        <span class="input-group-text">Store Code</span>
+                                                        <select class="selectpicker" id="supplier_storeCode" data-live-search="true" data-size="8" disabled>
+                                                            <option value=""></option>
+                                                        </select>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </fieldset>
                                     </div>
                                 </div>
-
+                                <div class="">
+                                    <button type="button" class="btn btn-success text-light mt-2 float-end" id="btnSearch">Search Data</button>
+                                </div>
                             </fieldset>
                         </div>
                     </div>
 
                     <div class="row mt-2">
                         <div class="col">
-                            <item type="table" id="tblMaster" class="cell-border"></item>
+                            @* <item type="table" id="tblMaster" class="cell-border"></item> *@
+                            <table id="myTable" class="display " width="100%"></table>
                         </div>
                     </div>
 
+                    <div class="row justify-content-end mt-2">
+                        <div class="col-6">
+                            <button type="button" class="btn btn-dark w-25 text-light mt-2 float-end" id="btnClear">Clear</button>
+                            <button type="button" class="btn btn-primary w-25  text-light mt-2 float-end" id="btnReport">Report</button>
+                            <button type="button" class="btn btn-success w-25  text-light mt-2 float-end" id="btnSave">Save</button>
+                        </div>
+
+                    </div>
 
                     <div class="row">
                         <div class="col">
@@ -110,8 +222,14 @@
                                 <legend>Import File Data : </legend>
                                 <div class="row">
                                     <div class="col">
-                                        <item type="file" id="fileImport" filter=".txt"></item>
+                                        <div class="input-group">
+                                            <input type="file" class="form-control" id="fileImport">
+                                            <button class="btn btn-primary" type="button" id="btnFileImport">Import</button>
+                                        </div>
                                     </div>
+                                </div>
+                                <div>
+                                    <a href="~/file_temp/import_kbnim012m.xlsx" class="btn btn-primary ">Download Pattern File</a>
                                 </div>
                             </fieldset>
                         </div>
@@ -123,10 +241,25 @@
                                 <legend>Transfer Date : </legend>
                                 <div class="row">
                                     <div class="col-3">
-                                        <item type="date" id="txtTransferDateFrom" label="Transfer Date From" format="yyyy-mm-dd" default="now"></item>
+                                        @* <item type="date" id="txtTransferDateFrom" label="Transfer Date From" format="yyyy-mm-dd" default="now"></item> *@
+                                        <div class="input-group">
+                                            <span class="input-group-text">Transfer Date From</span>
+                                            <input type="text" class="datepicker form-control" id="txtTransferDateFrom" />
+                                            <span class="input-group-text event " style=" margin-left: -70px; background-color: #1abc9c; color: white"><i class="gj-icon" style="color: white">event</i></span>
+
+                                        </div>
                                     </div>
                                     <div class="col-3">
-                                        <item type="date" id="txtTransferDateTo" label="To" format="yyyy-mm-dd" default="now"></item>
+                                        @* <item type="date" id="txtTransferDateTo" label="To" format="yyyy-mm-dd" default="now"></item> *@
+                                        <div class="input-group">
+                                            <span class="input-group-text">Transfer Date To</span>
+                                            <input type="text" class="datepicker form-control" id="txtTransferDateTo" />
+                                            <span class="input-group-text  event" style=" margin-left: -70px; background-color: #1abc9c; color: white"><i class="gj-icon" style="color: white">event</i></span>
+
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <button type="button" class="btn btn-success text-light " id="btnTransfer">Transfer Date</button>
                                     </div>
                                 </div>
                             </fieldset>

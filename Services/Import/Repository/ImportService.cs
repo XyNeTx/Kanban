@@ -15,6 +15,7 @@ namespace KANBAN.Services.Import.Repository
         public IKBNIM010 KBNIM010 { get; }
         public IKBNIM011 KBNIM011 { get; }
         public IKBNIM0044 KBNIM0044 { get; }
+        public IKBNIM012M KBNIM012M { get; }
 
         public ImportService(KB3Context kbContext,
             BearerClass bearerClass,
@@ -23,7 +24,8 @@ namespace KANBAN.Services.Import.Repository
             SerilogLibs log,
             IEmailService emailService,
             ProcDBContext procDBContext,
-            IAutoMapService autoMapService)
+            IAutoMapService autoMapService,
+            ProcDBContext procContext)
         {
 
             KBNIM007 = new KBNIM007(kbContext,
@@ -71,6 +73,9 @@ namespace KANBAN.Services.Import.Repository
                 fillDT,
                 log,
                 emailService);
+
+            KBNIM012M = new KBNIM012M(kbContext, bearerClass, ppm3Context, fillDT, log, emailService, procContext);
+
         }
     }
 

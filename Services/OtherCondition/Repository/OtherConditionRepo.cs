@@ -52,5 +52,21 @@ namespace KANBAN.Services.OtherCondition.Repository
             }
         }
 
+        public IKBNOC150 IKBNOC150
+        {
+            get
+            {
+                return new KBNOC150(_kbContext, _BearerClass, _PPM3Context, _FillDT, _log, _emailService, _automapService);
+            }
+        }
+
+        public IKBNOC160 IKBNOC160
+        {
+            get
+            {
+                return new KBNOC160(_kbContext, _BearerClass, _PPM3Context, _FillDT, _log, _emailService, _automapService);
+            }
+        }
+
     }
 }

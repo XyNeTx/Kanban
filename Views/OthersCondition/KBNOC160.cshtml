@@ -1,4 +1,72 @@
-﻿<div class="row">
+﻿<style>
+    input.form-control {
+        width: 75%;
+        border-radius: 0;
+    }
+
+</style>
+<div class="row">
+
+    <div class="col-xl-12 col-md-12 col-sm-12">
+        <div class="card border-left-primary shadow h-100">
+            <div class="card-body">
+                <form id="frmCondition">
+                    <fieldset class="fieldset">
+                        <legend>Search Data</legend>
+                        <input type="hidden" id="userId" value="@ViewData["_UserCode"]" />
+                        <div class="row">
+                            <div class="col-5">
+                                <div class="input-group">
+                                    <span class="input-group-text">Supplier Code From </span>
+                                    <select class="selectpicker" id="inpSupplierFrom" data-live-search="true" data-size="6">
+                                        <option value=""></option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-5">
+                                <div class="input-group">
+                                    <span class="input-group-text">Supplier Code To</span>
+                                    <select class="selectpicker" id="inpSupplierTo" data-live-search="true" data-size="6">
+                                        <option value=""></option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-5">
+                                @* <item type="date" id="F_DeliveryFrom" label="Delivery Date From" format="yyyy-mm-dd" default="now" readonly></item> *@
+                                <div class="input-group">
+                                    <span class="input-group-text">Delivery Date From</span>
+                                    <input type="text" class="datepicker form-control" id="F_DeliveryFrom" />
+                                    <span class="input-group-text event" style=" margin-left: -70px; background-color: #1abc9c; color: white"><i class="gj-icon" style="color: white">event</i></span>
+
+                                </div>
+                            </div>
+                            <div class="col-5">
+                                @* <item type="date" id="F_DeliveryTo" label="Delivery Date To" format="yyyy-mm-dd" default="now" readonly></item> *@
+                                <div class="input-group">
+                                    <span class="input-group-text">Delivery Date To</span>
+                                    <input type="text" class="datepicker form-control" id="F_DeliveryTo" />
+                                    <span class="input-group-text event" style=" margin-left: -70px; background-color: #1abc9c; color: white"><i class="gj-icon" style="color: white">event</i></span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </fieldset>
+
+
+                    <div class="row mt-4">
+                        <div class="col d-flex justify-content-end">
+                            <a id="Print" class="btn btn-primary text-white">Print Report</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 
@@ -10,3 +78,5 @@
     });
 
 </script>
+
+<script src="~/assets/.script/othercondition/kbnoc160.js"></script>

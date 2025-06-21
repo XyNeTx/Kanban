@@ -1,51 +1,31 @@
-﻿using Microsoft.AspNetCore.Http.Extensions;
-using Microsoft.AspNetCore.Mvc;
-using System.Data;
-using System;
-using System.Web;
-using System.Security.Principal;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-
-using System.Reflection.PortableExecutable;
-using System.DirectoryServices;
-using System.DirectoryServices.AccountManagement;
-using Microsoft.Net.Http.Headers;
-using System.Collections.Specialized;
-using System.Net;
-using System.DirectoryServices.ActiveDirectory;
-using System.Net.Http;
-using Microsoft.AspNetCore.Authorization;
-
-using System.Security.Claims;
-using Org.BouncyCastle.Asn1.Ocsp;
-
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-
-using System.Threading.Tasks;
-
+﻿using HINOSystem.Context;
 using HINOSystem.Libs;
-using HINOSystem.Context;
-using HINOSystem.Models.KB3;
+using KANBAN.Models.KB3.LogisticCondition.ViewModel;
+using KANBAN.Services;
+using KANBAN.Services.Logistical.Interface;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace HINOSystem.Controllers.API.Master
 {
+    [Route("api/[controller]/[action]")]
+    [ApiController]
     public class KBNLC200Controller : Controller
     {
         private readonly IConfiguration _configuration;
         private readonly BearerClass _BearerClass;
         private readonly KanbanConnection _KBCN;
         private readonly DBConnection _ppmConnect;
-
         private readonly KB3Context _KB3Context;
+        private readonly ILogisticService _LogisticService;
+
 
         public KBNLC200Controller(
             IConfiguration configuration,
             BearerClass bearerClass,
             KanbanConnection kanbanConnection,
-            KB3Context kB3Context
+            KB3Context kB3Context,
+            ILogisticService service
             )
         {
             _configuration = configuration;
@@ -54,6 +34,7 @@ namespace HINOSystem.Controllers.API.Master
             _KB3Context = kB3Context;
 
             _ppmConnect = new DBConnection(_configuration, "ppm");
+            _LogisticService = service;
         }
 
 
@@ -132,6 +113,44 @@ namespace HINOSystem.Controllers.API.Master
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetSupplier()
+        {
+            var result = await _LogisticService.IKBNLC200.Sup_DropDown();
+            return Ok(new
+            {
+                status = "200",
+                response = "Success",
+                message = "Data has been retrieved",
+                data = result
+            });
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> Print(VM_REPORT_KBNLC200 model)
+        {
+            try
+            {
+                await _BearerClass.CheckAuthorize();
+                await _LogisticService.IKBNLC200.Print(model);
+
+                return Ok(new
+                {
+                    status = "200",
+                    response = "Success",
+                    message = "Process Success"
+                });
+            }
+            catch (Exception ex)
+            {
+
+                if (ex is CustomHttpException) throw;
+                else throw new CustomHttpException(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+       
 
     }
 }
