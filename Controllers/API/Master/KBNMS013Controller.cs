@@ -20,7 +20,6 @@ namespace HINOSystem.Controllers.API.Master
         private readonly KB3Context _KB3Context;
         private readonly FillDataTable _FillDT;
         private readonly SerilogLibs _log;
-        private readonly IEmailService _IEmail;
 
 
         private readonly string StoragePath = @"wwwroot\Storage\Uploads";

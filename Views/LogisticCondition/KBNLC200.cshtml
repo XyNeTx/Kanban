@@ -5,7 +5,7 @@
             <div class="card-body">
 
                 <form id="frmCondition">
-@*
+                    @*
                     <div class="row">
                         <div class="col-6">
                             <item type="select" id="selPlant" label="Plant" value="3" readonly></item>
@@ -17,11 +17,18 @@
 
                             <fieldset class="fieldset">
                                 <legend>Select Data</legend>
-
+                                <input type="hidden" id="userId" value="@ViewData["_UserCode"]" />
                                 <div class="row">
                                     <div class="col-2"></div>
-                                    <div class="col-3">
-                                        <item type="select" id="selSupplierFrom" label="Supplier From" value="0016-A"></item>
+                                    <div class="col-5">
+                                        <div class="row">
+                                            <div class="input-group">
+                                                <span class="input-group-text">Supplier From</span>
+                                                <select class="selectpicker" id="inpSupplierFrom" data-live-search="true" data-size="6">
+                                                    <option value=""></option>
+                                                </select>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="col">
                                         <item type="button" id="btnReport" label="Report" style="width:103px"></item>
@@ -29,8 +36,15 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-2"></div>
-                                    <div class="col-3">
-                                        <item type="select" id="selSupplierTo" label="Supplier To" value="0068-Z"></item>
+                                    <div class="col-5">
+                                        <div class="row">
+                                            <div class="input-group">
+                                                <span class="input-group-text">Supplier Code To</span>
+                                                <select class="selectpicker" id="inpSupplierTo" data-live-search="true" data-size="6">
+                                                    <option value=""></option>
+                                                </select>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -46,7 +60,7 @@
                     </div>
 
                     <div class="row" style="visibility:hidden;display:none;">
-                    @*<div class="row">*@
+                        @*<div class="row">*@
                         <div class="col mt-2">
                             <item type="table" id="tblMaster"></item>
                         </div>
