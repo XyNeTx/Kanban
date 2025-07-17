@@ -100,15 +100,18 @@ namespace KANBAN.Services.CKD_Ordering.Repository
 
         public async Task Register(List<VM_KBNOR360_Register> listObj)
         {
+            var F_Delivery_Date = "";
             try
             {
                 string _sql = "";
                 foreach (var obj in listObj)
                 {
+                    F_Delivery_Date = obj.F_Delivery_Date.Substring(6, 4) + obj.F_Delivery_Date.Substring(3, 2) + obj.F_Delivery_Date.Substring(0, 2);
                     var _dbPDS_Head = await _kbContext.TB_PDS_Header.AsNoTracking()
                         .Where(x => x.F_Plant == _BearerClass.Plant
                         && x.F_OrderType == "N"
-                        && x.F_Delivery_Date == obj.F_Delivery_Date.Replace("-", string.Empty)
+                        //&& x.F_OrderType == "C"
+                        && x.F_Delivery_Date == F_Delivery_Date
                         && x.F_OrderNo == obj.F_OrderNo
                         && x.F_Supplier_Code == obj.F_Supplier_Code.Substring(0, 4)
                         && x.F_Supplier_Plant == obj.F_Supplier_Code.Substring(5, 1)
@@ -118,9 +121,19 @@ namespace KANBAN.Services.CKD_Ordering.Repository
 
                     if (tB_REC_HEADER != null)
                     {
+                        tB_REC_HEADER.F_Approver = "";
+                        tB_REC_HEADER.F_Cancel_By = "";
+                        tB_REC_HEADER.F_Delay_Invoice_Date = "";
+                        tB_REC_HEADER.F_Type_Version = "";
+                        tB_REC_HEADER.F_Cancel_Date = DateTime.Now;
                         _kbContext.TB_REC_HEADER.Add(tB_REC_HEADER);
                         await _kbContext.SaveChangesAsync();
                         _log.WriteLogMsg($"Insert TB_REC_HEADER : {JsonConvert.SerializeObject(tB_REC_HEADER, Formatting.Indented)}");
+                    }
+                    else
+                    {
+                        continue;
+                        throw new CustomHttpException(500, "Can't Convert TB_PDS_HEADER => TB_REC_HEADER ");
                     }
 
                     var _dbPDS_Detail = await _kbContext.TB_PDS_Detail.AsNoTracking()
@@ -137,6 +150,10 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                                 await _kbContext.SaveChangesAsync();
                                 _log.WriteLogMsg($"Insert TB_REC_DETAIL : {JsonConvert.SerializeObject(tB_REC_DETAIL, Formatting.Indented)}");
                             }
+                            else
+                            {
+                                throw new CustomHttpException(500, "Can't Convert TB_PDS_DETAIL => TB_REC_DETAIL ");
+                            }
                         }
                     }
 
@@ -147,8 +164,8 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                         and V.F_Process_Date = D.F_Process_Date and V.F_PRocess_Round = D.F_Process_Round 
                         Where D.F_Supplier_Code = '{obj.F_Supplier_Code.Split("-")[0]}' 
                         and D.F_SUpplier_Plant='{obj.F_Supplier_Code.Split("-")[1]}' 
-                        and V.F_Delivery_Date ='{obj.F_Delivery_Date.Replace("-", string.Empty)}';
-                        and V.F_Delivery_Round ='{obj.F_Delivery_Trip}';
+                        and V.F_Delivery_Date ='{F_Delivery_Date}'
+                        and V.F_Delivery_Round ='{obj.F_Delivery_Trip}'
                         and V.F_Process_Date ='{KBNOR310.dateProcessDate_CKD.ToString("yyyyMMdd")}'";
 
                     if (KBNOR310.chrProcessShift_CKD == "D")
@@ -172,14 +189,14 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                         and V.F_Process_Date = H.F_Process_Date 
                         Where H.F_Supplier_Code = '{obj.F_Supplier_Code.Split("-")[0]}' 
                         and H.F_SUpplier_Plant='{obj.F_Supplier_Code.Split("-")[1]}'
-                        and V.F_Delivery_Date ='{obj.F_Delivery_Date.Replace("-", string.Empty)}' ) M
+                        and V.F_Delivery_Date ='{F_Delivery_Date}' ) M
                         LEFT OUTER JOIN (Select distinct V.F_Supplier_Code,V.F_Supplier_Plant,V.F_Part_no,V.F_Ruibetsu,V.F_Store_Code,V.F_kanban_No,V.F_Process_Date,V.F_Delivery_Date
                         From TB_Calculate_V_CKD V INNER Join TB_Calculate_H_CKD H On 
                         V.F_Supplier_Code = H.F_Supplier_Code And V.F_Supplier_Plant = H.F_Supplier_plant And V.F_part_no = H.F_Part_no
                         and V.F_Ruibetsu = H.F_Ruibetsu and V.F_Store_Code = H.F_Store_Code and V.F_kanban_NO = H.F_Kanban_NO 
                         and V.F_Process_Date = H.F_Process_Date 
                         Where H.F_Supplier_Code = '{obj.F_Supplier_Code.Split("-")[0]}' and H.F_SUpplier_Plant='{obj.F_Supplier_Code.Split("-")[1]}'
-                        and V.F_Delivery_Date ='{obj.F_Delivery_Date.Replace("-", string.Empty)}' and V.F_Lock ='0') M1 ON 
+                        and V.F_Delivery_Date ='{F_Delivery_Date}' and V.F_Lock ='0') M1 ON 
                         M.F_Supplier_Code = M1.F_Supplier_Code And M.F_Supplier_Plant = M1.F_Supplier_plant And M.F_part_no = M1.F_Part_no
                         and M.F_Ruibetsu = M1.F_Ruibetsu and M.F_Store_Code = M1.F_Store_Code and M.F_kanban_NO = M1.F_Kanban_NO 
                         and M.F_Process_Date = M1.F_Process_Date 
@@ -235,7 +252,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                 await _kbContext.Database.ExecuteSqlRawAsync(_sql);
                 _log.WriteLogMsg($"Update TB_Kanban_CUT : {_sql}");
 
-                _sql = $@"UPDATE TB_Kanban_ADD SET F_KB_Remain = F_KB_Remain - ORD.F_KB_ADD, F_Update_Date=Getdate(),F_Update_By ='{_BearerClass.UserCode}'
+                _sql = $@"UPDATE TB_Kanban_ADD SET F_KB_Remain = F_KB_Remain - ORD.F_KB_ADD, F_Update_Date=Getdate(),F_Update_By ='{_BearerClass.UserCode}',
                     F_Status = case when F_KB_Remain - ORD.F_KB_ADD <= 0 then '3' else '2' end  ,F_Start_Date = case when F_Status ='1' then '{KBNOR310.dateProcessDate_CKD.ToString("yyyyMMdd")}' else F_Start_Date end  ,
                     F_Start_Shift = case when F_Status ='1' then 'D' else F_Start_SHift end,
                     F_Finish_Date = case when F_KB_REMAIN - ORD.F_KB_ADD = 0 then '{KBNOR310.dateProcessDate_CKD.ToString("yyyyMMdd")}' 
@@ -312,7 +329,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                         AND F_OrderType = 'N'
                         AND F_Supplier_Code = '{obj.F_Supplier_Code.Split("-")[0]}'
                         AND F_Supplier_Plant = '{obj.F_Supplier_Code.Split("-")[1]}'
-                        AND F_Delivery_Date = '{obj.F_Delivery_Date.Replace("-", string.Empty)}'
+                        AND F_Delivery_Date = '{F_Delivery_Date}'
                         AND F_Delivery_Trip = '{obj.F_Delivery_Trip}'
                         AND F_OrderNo = '{obj.F_OrderNo}'
                     ";
@@ -339,7 +356,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                         AND F_OrderType = 'N'
                         AND F_Supplier_Code = '{obj.F_Supplier_Code.Split("-")[0]}'
                         AND F_Supplier_Plant = '{obj.F_Supplier_Code.Split("-")[1]}'
-                        AND F_Delivery_Date = '{obj.F_Delivery_Date.Replace("-", string.Empty)}'
+                        AND F_Delivery_Date = '{F_Delivery_Date}'
                         AND F_Delivery_Trip = '{obj.F_Delivery_Trip}'
                         AND F_OrderNo = '{obj.F_OrderNo}'
                     ";
@@ -384,7 +401,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
 
                 if (parmListOfPDSNo.Rows.Count > 0)
                 {
-                    var oPIProcess = await _FillDT.ExecuteSQLAsync("SELECT * FROM TB_PI_Control");
+                    var oPIProcess = await _FillDT.ExecuteSQLAsyncCKDWH("SELECT * FROM TB_PI_Control");
                     if(oPIProcess.Rows.Count > 0)
                     {
                         throw new CustomHttpException(400, $@"ระบบ {oPIProcess.Rows[0].ItemArray[0].ToString()} กำลังคำนวณ Picking อยู่!!! กรุณารอสักครู่ แล้วลองใหม่อีกครั้ง");
@@ -394,7 +411,6 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                     await  CalculatePicking_01(parmListOfPDSNo);
                     await _kbContext.Database.ExecuteSqlRawAsync($@"EXEC [CKD_Inhouse].SP_UpdatePDS_CKD_Picking '{PI_Date}','{PI_Time}','{KBNOR310.dateProcessDate_CKD.ToString("yyyyMMdd")}','{KBNOR310.chrProcessShift_CKD}'");
                     await CalculatePicking_02();
-
                     await _CKDContext.Database.ExecuteSqlRawAsync("EXEC SP_CKDPI_001_UnLockPickingProcess");
                 }
 
@@ -408,7 +424,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
 
                 if (parmListOfPDSNo.Rows.Count > 0)
                 {
-                    var oPIProcess = await _FillDT.ExecuteSQLAsync("SELECT * FROM TB_PI_Control");
+                    var oPIProcess = await _FillDT.ExecuteSQLAsyncCKDWH("SELECT * FROM TB_PI_Control");
                     if (oPIProcess.Rows.Count > 0)
                     {
                         throw new CustomHttpException(400, $@"ระบบ {oPIProcess.Rows[0].ItemArray[0].ToString()} กำลังคำนวณ Picking อยู่!!! กรุณารอสักครู่ แล้วลองใหม่อีกครั้ง");
@@ -429,7 +445,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                     , F_Update_Date = getdate() WHERE F_Code = 'CI_CKD';
                     UPDATE TB_MS_Parameter SET F_Value3 = '{KBNOR310.dateProcessDate_CKD.ToString("yyyyMMdd")}{KBNOR310.chrProcessShift_CKD}', F_Update_By = '{_BearerClass.UserCode}'
                     , F_Update_Date = getdate() WHERE F_Code = 'LO_CKD';
-                    UPDATE TB_MS_Parameter SET F_Value2 = '0' WHERE F_Code = 'ST_CKD;
+                    UPDATE TB_MS_Parameter SET F_Value2 = '0' WHERE F_Code = 'ST_CKD';
                     ";
 
                 await _kbContext.Database.ExecuteSqlRawAsync(_sql);
@@ -472,8 +488,8 @@ namespace KANBAN.Services.CKD_Ordering.Repository
 
                 if(DT_TempShelf.Rows.Count > 0)
                 {
-                    string PI_Date_RemainShelf = PI_Date;
-                    string PI_Time_RemainShelf = PI_Time;
+                    PI_Date_RemainShelf = PI_Date;
+                    PI_Time_RemainShelf = PI_Time;
 
                     await _CKDContext.Database.ExecuteSqlRawAsync($@"EXEC SP_CKDPI_001_New_CancelPicking 
                         '{PI_Date_RemainShelf}','{PI_Time_RemainShelf}','{_BearerClass.UserCode}'");
@@ -512,14 +528,14 @@ namespace KANBAN.Services.CKD_Ordering.Repository
 
                 for(int iTemNo = 0; iTemNo < parmListOfPDSNo.Rows.Count; iTemNo++)
                 {
-                    await _CKDContext.Database.ExecuteSqlRawAsync(@"EXEC SP_CKDPI_001_Insert_TB_PI_Gen_Summary '{0}','{1}','{2}','{3}','{4}'",
-                            PI_Date, PI_Time, PI_Shift, PI_By, parmListOfPDSNo.Rows[iTemNo][0].ToString());
+                    var test = parmListOfPDSNo.Rows[iTemNo][0].ToString();
+                    var rowAff = await _CKDContext.Database.ExecuteSqlRawAsync($@"EXEC SP_CKDPI_001_Insert_TB_PI_Gen_Summary '{PI_Date}','{PI_Time}','{PI_Shift}','{PI_By}','{parmListOfPDSNo.Rows[iTemNo][0].ToString()}'");
                 }
 
                 await _CKDContext.Database.ExecuteSqlRawAsync($@"EXEC SP_CKDPI_001_Insert_TB_PI_Gen_Temp '{PI_Date}' ,'{PI_Time}'
                     ,'{PI_By}' , '{PI_Shift}' ");
 
-                var DTM = await _FillDT.ExecuteSQLAsyncCKDWH($"SELECT * FROM FN_CKDPI_001_Get_OrderInfo('{PI_Date}','{PI_Time}'");
+                var DTM = await _FillDT.ExecuteSQLAsyncCKDWH($"SELECT * FROM FN_CKDPI_001_Get_OrderInfo('{PI_Date}','{PI_Time}')");
 
                 if(DTM.Rows.Count > 0)
                 {
@@ -608,6 +624,13 @@ namespace KANBAN.Services.CKD_Ordering.Repository
         {
             try
             {
+                string ckdDB = _BearerClass.Plant switch
+                {
+                    "3" => "[HMMTA-APP09]",
+                    "2" => "[HMMT-CKD-WH]",
+                    "1" => "[HMMT-CKD-WH]",
+                    _ => throw new CustomHttpException(400, "ไม่พบข้อมูล Plant Code ในระบบ")
+                };
                 DataTable parmListOfPDSNo = new DataTable();
                 DataTable oPIiD = new DataTable();
                 var DT = await _FillDT.ExecuteSQLAsyncCKDWH("SELECT DISTINCT F_Group_ID FROM TB_PI_New_Gen_Group");
@@ -621,10 +644,10 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                         AND P.F_Issued_Date = '{KBNOR310.dateProcessDate_CKD.ToString("yyyyMMdd")}'
                         AND P.F_Issued_Shift = '{KBNOR310.chrProcessShift_CKD}'
                         AND P.F_Supplier_Plant IN (	SELECT F_Supplier_Plant
-                            FROM [HMMT-CKD-WH].[CKD_WH_STOCK].[dbo].TB_PI_New_Gen_Group
+                            FROM {ckdDB}.[CKD_WH_STOCK].[dbo].TB_PI_New_Gen_Group
                             WHERE F_Group_ID = '{row["F_Group_ID"].ToString()}')";
 
-                    parmListOfPDSNo = await _FillDT.ExecuteSQLAsyncCKDWH(_sql);
+                    parmListOfPDSNo = await _FillDT.ExecuteSQLAsync(_sql);
 
                     if(parmListOfPDSNo.Rows.Count > 0)
                     {
@@ -760,7 +783,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                 await _CKDUSAContext.Database.ExecuteSqlRawAsync($@"EXEC SP_CKDPI_001_Insert_TB_PI_Gen_Temp '{PI_Date}' ,'{PI_Time}'
                     ,'{PI_By}' , '{PI_Shift}' ");
 
-                var DTM = await _FillDT.ExecuteSQLAsyncCKDUSA($"SELECT * FROM FN_CKDPI_001_Get_OrderInfo('{PI_Date}','{PI_Time}'");
+                var DTM = await _FillDT.ExecuteSQLAsyncCKDUSA($"SELECT * FROM FN_CKDPI_001_Get_OrderInfo('{PI_Date}','{PI_Time}')");
 
                 if (DTM.Rows.Count > 0)
                 {

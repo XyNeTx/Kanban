@@ -448,7 +448,7 @@ namespace KANBAN.Services.Import.Repository
 
                 ConvertExcelToText();
 
-                await _kbContext.Database.ExecuteSqlRawAsync("EXEC dbo.SP_IM007_IMPORT {0}", _BearerClass.UserCode);
+                //await _kbContext.Database.ExecuteSqlRawAsync("EXEC dbo.SP_IM007_IMPORT {0}", _BearerClass.UserCode);
 
                 DataTable dt = _FillDT.ExecuteSQL($"EXEC dbo.SP_IM007_IMPORT '{_BearerClass.UserCode}'");
 
@@ -597,7 +597,7 @@ namespace KANBAN.Services.Import.Repository
                     throw new CustomHttpException(400, "File not found!");
                 }
                 string nNewFile = path.Replace(".xlsx", ".txt");
-
+                _log.WriteLogMsg("path : " + path);
                 using (var workbook = new XLWorkbook(path))
                 {
                     var worksheet = workbook.Worksheets.First(); // Get the first worksheet

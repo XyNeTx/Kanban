@@ -120,6 +120,7 @@ $("#btnInterface").click(function () {
         function (success) {
             console.log(success);
             xSwal.success("Success", success.message);
+            $("#tableMain").DataTable().clear().draw();
         },
         function (error) {
             console.log(error);

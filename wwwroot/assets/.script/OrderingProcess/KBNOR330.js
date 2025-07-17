@@ -3,17 +3,20 @@
     await _xDataTable.InitialDataTable("#tableMain",
         {
             columns: [
-                { title: "Customer PO", data: "F_PDS_No" },
-                { title: "Part No", data: "F_Part_No" },
-                { title: "Supplier", data: "F_Supplier_CD" },
-                { title: "Short Name", data: "F_Short_name" },
-                { title: "Store Code", data: "F_Store_CD" },
-                { title: "Kanban No.", data: "F_Kanban_No" },
+                {
+                    title: "No", data: "", render: function (data, type, row, meta) {
+                        console.log("data:", data);
+                        console.log("type:", type);
+                        console.log("row:", row);
+                        console.log("meta:", meta);
+                        return meta.row + 1;
+                    }
+                },
+                { title: "Supplier", data: "F_Supplier_Code" },
+                { title: "Cycle Time", data: "F_Delivery_Cycle" },
                 { title: "Delivery Date", data: "F_Delivery_Date" },
-                { title: "Delivery Trip", data: "F_Round" },
-                { title: "Qty", data: "F_Qty" },
-                { title: "Qty KB", data: "F_QTY_KB" },
-                { title: "Import Type", data: "F_OrderType" },
+                { title: "Delivery Trip", data: "F_Delivery_Trip" },
+                { title: "PDS No. HMMT", data: "F_OrderNo" },
             ],
             order: [[1, "asc"]],
             scrollCollapse: true,
@@ -58,12 +61,35 @@
 
 })
 
+$("#btnGenerate").click(async function () {
+    await Generate();
+});
+
 var _dt = "";
 
 async function Generate() {
+    let percent = 0;
+
+    // ตั้งค่าจุดเริ่มต้น
+    $("#prgProcess").css("width", `0%`);
+    $("#prgProcess_label_").text(`Process : 0.00 %`);
+
+    let loading = setInterval(function () {
+        percent = Math.min(percent + 10, 95); // วิ่งจนถึง 95% ระหว่างรอ API
+        $("#prgProcess").css("width", `${percent}%`);
+        $("#prgProcess").attr("aria-valuenow", percent);
+        $("#prgProcess_label_").text(`Process : ${percent.toFixed(2)} %`);
+    }, 100);
+
     _xLib.AJAX_Post("/api/KBNOR330/Generate", "",
         async function (success) {
             success = _xLib.JSONparseMixData(success);
+
+            clearInterval(loading);
+            $("#prgProcess").css("width", `100%`);
+            $("#prgProcess").attr("aria-valuenow", 100);
+            $("#prgProcess_label_").text(`Process : 100.00 %`);
+
             if (success.message.includes("ไม่สามารถ Generate PDS สำหรับ CKD Order ได้")) {
                 $("#exampleModal").modal('show');
                 if ($("#exampleModal .modal-body .dataTables_scrollHead").length == 0) {
@@ -85,13 +111,20 @@ async function Generate() {
                         }
                     );
                 }
-                _xDataTable.ClearAndAddDataDT("#tableModal", success.data);
+                let jsonData = _xLib.JSONparseMixData(success);
+                console.log(jsonData)
+                _xDataTable.ClearAndAddDataDT("#tableModal", jsonData.data);
             }
             else {
+                let jsonData = _xLib.JSONparseMixData(success);
+                console.log(jsonData)
+                _xDataTable.ClearAndAddDataDT("#tableMain", jsonData.data);
                 await xSwal.xSuccessAwait(success);
             }
         },
         async function (error) {
+            clearInterval(loading);
+            $("#prgProcess_label_").text(`Process : Error`);
             await xSwal.xErrorAwait(error);
         }
     )

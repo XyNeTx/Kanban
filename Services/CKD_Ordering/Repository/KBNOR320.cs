@@ -58,20 +58,35 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                 string[] arryVariable = new string[] { "0", KBNOR310.dateProcessDate_CKD.ToString("yyyyMMdd"), KBNOR310.chrProcessShift_CKD };
 
                 await _kbContext.Database.ExecuteSqlRawAsync("EXEC [CKD_Inhouse].sp_ManipulateForecast {0},{1},{2}", arryVariable[0], arryVariable[1], arryVariable[2]);
+                //_log.WriteLogMsg($"Start Process sp_ManipulateForecast '{arryVariable[1]}' , '{arryVariable[2]}' ");
                 await _kbContext.Database.ExecuteSqlRawAsync("EXEC [CKD_Inhouse].sp_UpdateFlagWeekend {0},{1},{2}", arryVariable[0], arryVariable[1], arryVariable[2]);
+                //_log.WriteLogMsg($"Start Process sp_UpdateFlagWeekend '{arryVariable[1]}' , '{arryVariable[2]}' ");
                 await _kbContext.Database.ExecuteSqlRawAsync("EXEC [CKD_Inhouse].sp_ManipulateMRP_NG {0},{1},{2}", arryVariable[0], arryVariable[1], arryVariable[2]);
+                //_log.WriteLogMsg($"Start Process sp_ManipulateMRP_NG '{arryVariable[1]}' , '{arryVariable[2]}' ");
                 await _kbContext.Database.ExecuteSqlRawAsync("EXEC [CKD_Inhouse].sp_UpdateUrgentOrder {0},{1},{2}", arryVariable[0], arryVariable[1], arryVariable[2]);
+                //_log.WriteLogMsg($"Start Process sp_UpdateUrgentOrder '{arryVariable[1]}' , '{arryVariable[2]}' ");
                 await _kbContext.Database.ExecuteSqlRawAsync("EXEC [CKD_Inhouse].sp_UpdatePattern {0},{1},{2}", arryVariable[0], arryVariable[1], arryVariable[2]);
+                //_log.WriteLogMsg($"Start Process sp_UpdatePattern '{arryVariable[1]}' , '{arryVariable[2]}' ");
                 await _kbContext.Database.ExecuteSqlRawAsync("EXEC [CKD_Inhouse].sp_UpdateKBSTOP {0},{1},{2}", arryVariable[0], arryVariable[1], arryVariable[2]);
+                //_log.WriteLogMsg($"Start Process sp_UpdateKBSTOP '{arryVariable[1]}' , '{arryVariable[2]}' ");
                 await completeGetNecessaryDataTable(arryVariable);
+                //_log.WriteLogMsg($"Start Process getNecessaryDataTable '{arryVariable[1]}' , '{arryVariable[2]}' ");
                 await completeManipulateRemainLastTrip();
+                //_log.WriteLogMsg($"Start Process completeManipulateRemainLastTrip '{arryVariable[1]}' , '{arryVariable[2]}' ");
                 await completeManipulateKBAdd();
+                //_log.WriteLogMsg($"Start Process completeManipulateKBAdd '{arryVariable[1]}' , '{arryVariable[2]}' ");
                 await completeManipulateKBCut();
+                //_log.WriteLogMsg($"Start Process completeManipulateKBCut '{arryVariable[1]}' , '{arryVariable[2]}' ");
                 await completeUpdateTempTable();
+                //_log.WriteLogMsg($"Start Process completeUpdateTempTable '{arryVariable[1]}' , '{arryVariable[2]}' ");
                 await _kbContext.Database.ExecuteSqlRawAsync("EXEC [CKD_Inhouse].sp_ManipulateLotSizing {0},{1},{2}", arryVariable[0], arryVariable[1], arryVariable[2]);
+                //_log.WriteLogMsg($"Start Process sp_ManipulateLotSizing '{arryVariable[1]}' , '{arryVariable[2]}' ");
                 await _kbContext.Database.ExecuteSqlRawAsync("EXEC [CKD_Inhouse].sp_UpdateDeliveryDate {0},{1},{2}", arryVariable[0], arryVariable[1], arryVariable[2]);
+                //_log.WriteLogMsg($"Start Process sp_UpdateDeliveryDate '{arryVariable[1]}' , '{arryVariable[2]}' ");
                 await _kbContext.Database.ExecuteSqlRawAsync("EXEC [CKD_Inhouse].sp_UpdateActualOrder {0},{1},{2}", arryVariable[0], arryVariable[1], arryVariable[2]);
+                //_log.WriteLogMsg($"Start Process sp_UpdateActualOrder '{arryVariable[1]}' , '{arryVariable[2]}' ");
                 await _kbContext.Database.ExecuteSqlRawAsync("EXEC [CKD_Inhouse].sp_UpdateReceivePlan {0},{1},{2}", arryVariable[0], arryVariable[1], arryVariable[2]);
+                //_log.WriteLogMsg($"Start Process sp_UpdateReceivePlan '{arryVariable[1]}' , '{arryVariable[2]}' ");
 
                 using (Process p = new Process())
                 {
@@ -95,6 +110,9 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                     _log.WriteLogMsg("Start Process EXE: " + p.StartInfo.FileName + " Output: " + output + " Error: " + error);
                 }
 
+                await _kbContext.Database.ExecuteSqlRawAsync($@"UPDATE TB_MS_Parameter SET F_Value2 = '2', F_Value3 = '{KBNOR310.dateProcessDate_CKD.ToString("yyyyMMdd") + KBNOR310.chrProcessShift_CKD}'
+                    WHERE F_Code = 'CI_CKD';
+                    UPDATE TB_MS_Parameter SET F_Value2 = '2' WHERE F_Code = 'ST_CKD';");
 
             }
             catch (Exception ex)
@@ -126,6 +144,13 @@ namespace KANBAN.Services.CKD_Ordering.Repository
         {
             try
             {
+                string strStoreCd = _BearerClass.Plant switch
+                {
+                    "1" => "1A",
+                    "2" => "2B",
+                    "3" => "3C",
+                    _ => throw new CustomHttpException(400, "Invalid Store Code")
+                };
                 string sqlQuery = $@"IF OBJECT_ID('tempdb..#TEMP') IS NOT NULL DROP TABLE #TEMP;
                     CREATE TABLE #TEMP ( 
                     F_Prev_Date nvarchar(8), 
@@ -142,14 +167,14 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                     				, F_Date, F_Shift, F_Work, F_YM, F_Day
                     		FROM CKD_Inhouse.V_Calendar_UNPIVOT
                     		WHERE F_Work = 1
-                    		AND F_Store_cd = '3D'
+                    		AND F_Store_cd = '{strStoreCd}'
                     	) AS A
                     LEFT JOIN
                         (	SELECT	ROW_NUMBER() OVER (ORDER BY F_Store_cd) AS Row
                     				, F_Date, F_Shift, F_Work, F_YM, F_Day
                     		FROM CKD_Inhouse.V_Calendar_UNPIVOT
                 		WHERE F_Work = 1
-                		AND F_Store_cd = '3D'
+                		AND F_Store_cd = '{strStoreCd}'
                 	) AS B
                 ON A.Row = B.Row - 1
                 LEFT JOIN
@@ -157,7 +182,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                 				, F_Date, F_Shift, F_Work, F_YM, F_Day
                 		FROM CKD_Inhouse.V_Calendar_UNPIVOT
                 		WHERE F_Work = 1
-                		AND F_Store_cd = '3D'
+                		AND F_Store_cd = '{strStoreCd}'
                 	) AS C
                 ON A.Row = C.Row + 1
                 WHERE A.F_Date+A.F_Shift >= '{arryVariable[1]}{arryVariable[2]}';

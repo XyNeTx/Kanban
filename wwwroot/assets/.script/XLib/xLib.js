@@ -111,20 +111,16 @@ class DataTableLib {
     
     }
 
-    //GetAllDataDT(id) {
-    //    if (id == undefined) return console.error("id is undefined");
-    //    if (!id.includes('#')) id = '#' + id;
+    GetAllDataDT(id) {
+        if (id == undefined) return console.error("id is undefined");
+        if (!id.includes('#')) id = '#' + id;
 
-    //    let table = $(`${id}`).DataTable();
-    //    let data = [];
+        let table = $(`${id}`).DataTable();
+        let data = table.rows().data().toArray();
 
-    //    $(`${id} tbody`).find('input[type="checkbox"]:checked').each(function () {
-    //        data.push(table.row($(this).closest('tr')).data());
-    //    });
-
-    //    return data;
+        return data;
     
-    //}
+    }
 }
 
 const _xDataTable = new DataTableLib();
@@ -481,6 +477,9 @@ class xLib {
                             return errorFn(xhr, status, error)
                         }
                     }
+                    else {
+                        return errorFn(xhr, status, error)
+                    }
 
                 }
             }
@@ -558,7 +557,7 @@ class xLib {
                     }
 
                     else {
-                        //xSwal.error("Error", xhr.responseJSON.message)
+                        return errorFn(xhr, status, error)
                     }
 
                 }
@@ -634,6 +633,9 @@ class xLib {
                         if (typeof errorFn == 'function') {
                             return errorFn(xhr, status, error)
                         }
+                    }
+                    else {
+                        return errorFn(xhr, status, error)
                     }
 
                 }
@@ -712,7 +714,7 @@ class xLib {
                     }
 
                     else {
-                        xSwal.error("Error", xhr.responseJSON.message)
+                        return errorFn(xhr, status, error)
                     }
 
                 }

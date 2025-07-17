@@ -134,11 +134,21 @@ async function Confirm()
         return;
     }
 
-    await _xLib.AJAX_Post("/api/KBNIM007C/Confirm", listObj,
-        async function (success) {
-            xSwal.success("Success", "Confirm Success");
-        },
-    );
+    try {
+        await _xLib.AJAX_Post("/api/KBNIM007C/Confirm", listObj,
+            async function (success) {
+                xSwal.success("Success", "Confirm Success");
+            },
+            async function (error) {
+                console.log(error);
+                xSwal.xError(error)
+            }
+        );
+    }
+    catch (ex) {
+        console.log(ex, "Error");
+        return xSwal.error("Cant Confirm Order");
+    }
 
 }
 

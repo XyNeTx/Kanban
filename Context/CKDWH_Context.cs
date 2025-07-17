@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using static Org.BouncyCastle.Math.EC.ECCurve;
 
 namespace KANBAN.Context
@@ -10,8 +11,11 @@ namespace KANBAN.Context
         private readonly IConfiguration _config;
         private static string plantDev = "";
 
-        public CKDWH_Context(DbContextOptions<CKDWH_Context> options) : base(options)
+        public CKDWH_Context(DbContextOptions<CKDWH_Context> options, IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
+            : base(options)
         {
+            _httpContextAccessor = httpContextAccessor;
+            _config = configuration;
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

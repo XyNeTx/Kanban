@@ -414,11 +414,11 @@ const addDetailToTable = async (dateSet, intRow) => {
         }
 
         var _headDate = $("#THeadR1").find(`th:contains('${dateSet[_countDateSet]}')`).text().replaceAll("-", "");
-        console.log("Head Date : ", _headDate);
+        //console.log("Head Date : ", _headDate);
         var _headYMD = _headDate.slice(4, 8) + _headDate.slice(2, 4) + _headDate.slice(0, 2);
-        console.log("_headYMD : ", _headYMD);
+        //console.log("_headYMD : ", _headYMD);
         var _intHeadDate = parseInt(_headYMD);
-        console.log("_intHeadDate : ", _intHeadDate);
+        //console.log("_intHeadDate : ", _intHeadDate);
         var _intDeliveryDate = 0;
 
         if (dT_DeliveryDate.length != 0) {
@@ -450,7 +450,7 @@ const addDetailToTable = async (dateSet, intRow) => {
 
 
         //console.log("Delivery Date : ", dateSet[_countDateSet], " == ", _CookieProcessDate);
-        console.log("_intHeadDate : ", _intHeadDate, " == ", _intDeliveryDate);
+        //console.log("_intHeadDate : ", _intHeadDate, " == ", _intDeliveryDate);
         if (_intHeadDate == _intDeliveryDate) {
             $("#THeadR1").find(`th:contains('${dateSet[_countDateSet]}')`).addClass("bg-danger");
         }
@@ -581,10 +581,14 @@ const addDetailToTable = async (dateSet, intRow) => {
         var _Key = ["F_Adj_Pattern", "F_Qty"];
 
         _Row.forEach(function (row, i) {
-            //console.log(item[_Key[i]]);
-            //console.log("i : " + i, "Row : " + row, "Item : " + item[_Key[i]]);
-            if (item[_Key[i]] == undefined || item[_Key[i]] == 0 || item[_Key[i]] == 0) return;
+            console.log(item[_Key[i]]);
+            console.log("i : " + i, "Row : " + row, "Item : " + item[_Key[i]]);
             let _insPattern = `tdR${row}T${F_Delivery_Trip}${F_Delivery_Date}`;
+            if (row == 15 && item.F_Flag_Pattern == "1") { // if F_Flag_Pattern == 1 then set color
+                $(`#${_insPattern}`).css("color", "blue");
+                $(`#${_insPattern}`).css("font-weight", "bold");
+            }
+            if (item[_Key[i]] == undefined || item[_Key[i]] == 0 || item[_Key[i]] == 0) return;
             let _PatternKB = parseInt(item[_Key[i]]) / parseInt($("#readQtyPack").val()); // Convert Qty to KB
             _PatternKB = _PatternKB == undefined ? 0 : _PatternKB;
             if (isNaN(_PatternKB) || _PatternKB == Infinity) _PatternKB = 0;

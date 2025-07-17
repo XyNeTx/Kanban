@@ -458,7 +458,7 @@ $("#btnSave").click(async function () {
 
     let obj = await GetKanbanAddObj();
 
-    //console.log(obj);
+    console.log(obj);
 
 
     if (await xSwal.confirm("Confirm", "Do you sure to save data?")) {
@@ -539,8 +539,9 @@ function GetKanbanAddObj() {
         F_KB_Remain: $("#readAddQty").val() == "" ? 0 : $("#readAddQty").val(),
         F_KB_Add: $("#readAddQty").val() == "" ? 0 : $("#readAddQty").val(),
     }
-
-    if ($("#radAddCycle").is(":checked")) {
+    //console.log($("#radAddCycle").prop("checked"));
+    //console.log($("#radAddTrip").prop("checked"));
+    if ($("#radAddCycle").prop("checked")) {
         obj.F_KB_Add_RN = $("#inpAddTrip").val();
         obj.F_Delivery_Trip = $("#inpStartTrip").val();
 
@@ -548,8 +549,10 @@ function GetKanbanAddObj() {
             let _objId = "F_Round" + i;
             obj[_objId] = 0;
         }
+
     }
-    else if ($("#radAddTrip").is(":checked")) {
+    else if ($("#radAddTrip").prop("checked"))
+    {
         for (let i = 1; i <= parseInt($("#readCycle").val().substring(3, 5)); i++) {
             let _id = "inpTrip" + i;
             let _objId = "F_Round" + i;
@@ -566,6 +569,8 @@ function GetKanbanAddObj() {
             obj[_objId] = obj[_objId] == "" ? 0 : obj[_objId] == null ? 0 : isNaN(obj[_objId]) ? 0 : obj[_objId];
         }
     }
-
+    else {
+        return obj;
+    }
     return obj;
 }

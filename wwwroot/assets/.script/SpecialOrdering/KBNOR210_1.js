@@ -86,9 +86,9 @@ async function Initial() {
             },
 
             {
-                title: "Qty", render: function (data, type, row) {
+                title: "Qty", data: "F_Qty_1", render: function (data, type, row) {
                     if (row.F_Delivery_DT_1.includes("/")) {
-                        return row.F_Qty_1;
+                        return data
                     }
                     else {
                         return "";
@@ -118,10 +118,10 @@ async function Initial() {
             },
 
             {
-                title: "Qty", render: function (data, type, row) {
+                title: "Qty", data: "F_Qty_2", render: function (data, type, row) {
                     try {
                         if (row.F_Delivery_DT_2.includes("/")) {
-                            return row.F_Qty_2;
+                            return data
                         }
                         else {
                             return "";
@@ -155,10 +155,10 @@ async function Initial() {
             },
 
             {
-                title: "Qty", render: function (data, type, row) {
+                title: "Qty", data: "F_Qty_3", render: function (data, type, row) {
                     try {
                         if (row.F_Delivery_DT_3.includes("/")) {
-                            return row.F_Qty_3;
+                            return data
                         }
                         else {
                             return "";
@@ -192,10 +192,10 @@ async function Initial() {
             },
 
             {
-                title: "Qty", render: function (data, type, row) {
+                title: "Qty", data: "F_Qty_4", render: function (data, type, row) {
                     try {
                         if (row.F_Delivery_DT_4.includes("/")) {
-                            return row.F_Qty_4;
+                            return data
                         }
                         else {
                             return "";
@@ -229,10 +229,10 @@ async function Initial() {
             },
 
             {
-                title: "Qty", render: function (data, type, row) {
+                title: "Qty", data: "F_Qty_5", render: function (data, type, row) {
                     try {
                         if (row.F_Delivery_DT_5.includes("/")) {
-                            return row.F_Qty_5;
+                            return data
                         }
                         else {
                             return "";
@@ -266,10 +266,10 @@ async function Initial() {
             },
 
             {
-                title: "Qty", render: function (data, type, row) {
+                title: "Qty",data:"F_Qty_6" , render: function (data, type, row) {
                     try {
                         if (row.F_Delivery_DT_6.includes("/")) {
-                            return row.F_Qty_6;
+                            return data
                         }
                         else {
                             return "";
@@ -455,13 +455,19 @@ $("#btnSave").click(async function () {
         var objIndex = $("#tableMain").DataTable().row($(this).closest("tr")).index() - 1;// Subtract 1 to retrieve the Customer Order No from the row above the checked box.
         var objIndexTD = $("#tableMain").DataTable().column($(this).closest("td")).index() + 2; //Add 2 to retrieve the Customer Order No, which is located three columns to the right.
         var oldPds = $("#tableMain").DataTable().cell(objIndex, objIndexTD).data();
-        console.log(objIndex);
-        console.log(objIndexTD);
-        console.log(oldPds);
+        var mainRow = objIndex + 1;
+        var mainQtyCol = objIndexTD - 1;
+        var qtyPds = $("#tableMain").DataTable().cell(mainRow, mainQtyCol).data();
+        //console.log(objIndex);
+        // console.log(objIndexTD);
+        //console.log(oldPds);
+        //console.log(mainRow);
+        //console.log(mainQtyCol);
+        //console.log(qtyPds);
         let obj = {
             F_PDS_NO: dataObj.F_PO_Number,
             F_PDS_No_New: oldPds,
-            F_Qty: dataObj.F_Qty_1,
+            F_Qty: qtyPds,
             F_Part_No: dataObj.F_part_no,
             F_Delivery_Date: moment(dataObj.F_Delivery_DT_1, "DD/MM/YYYY").format("YYYYMMDD"),
             F_Delivery_Date_New: moment($("#inpNewDeliveryDate").val(), "DD/MM/YYYY").format("YYYYMMDD"),

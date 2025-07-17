@@ -45,13 +45,21 @@ namespace KANBAN.Services.CKD_Ordering.Repository
         {
             try
             {
+                string ckdDB = _BearerClass.Plant switch
+                {
+                    "3" => "[HMMTA-APP09]",
+                    "2" => "[HMMT-CKD-WH]",
+                    "1" => "[HMMT-CKD-WH]",
+                    _ => throw new CustomHttpException(400, "ไม่พบข้อมูล Plant Code ในระบบ")
+                };
+
                 string _SqlQuery = $@"SELECT   V.F_Supplier_Code+'-'+V.F_Supplier_Plant AS F_Supplier_Code
                     , V.F_Part_No+'-'+V.F_Ruibetsu AS F_Part_No, V.F_Store_Code, V.F_Kanban_No
                     , RIGHT(V.F_Delivery_Date,2)+'/'+SUBSTRING(V.F_Delivery_Date,5,2)+'/'+LEFT(V.F_Delivery_Date,4) AS F_Delivery_Date
                     , V.F_Delivery_Shift, V.F_Delivery_Round, V.F_Qty
                     , ISNULL(VW_PI.F_Remain_Qty, 0) AS CKD_Remain_Qty
                     FROM TB_Calculate_V_CKD V
-                    LEFT JOIN [HMMT-CKD-WH].[CKD_WH_STOCK].[dbo].[VW_PI_GetCurrentStock VW_PI]
+                    LEFT JOIN {ckdDB}.[CKD_WH_STOCK].[dbo].[VW_PI_GetCurrentStock] VW_PI
                     ON V.F_Part_No = VW_PI.F_Part_No
                     AND V.F_Ruibetsu = VW_PI.F_Ruibetsu
                     WHERE (V.F_Supplier_Code = '9999')
@@ -126,7 +134,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                     , F_send_store, F_qty_box, F_Weight, F_box_cd, F_Part_nm,  F_KD_Flag, F_STD_stock_ratio
                     , F_Cycle_A, F_cycle_B, F_cycle_C, F_Logistic_cd, F_commemt
                     , F_update, F_inputuser, F_Plant_CD, '"" & User_Logon & ""' AS F_Update_By
-                    FROM {ppmConnect}.dbo.TB_Construction
+                    FROM {ppmConnect}.dbo.T_Construction
                     WHERE F_Local_END >= CONVERT(CHAR(8),getDate(),112)
                     AND (F_supplier_cd = '9999');";
 
@@ -154,13 +162,17 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                     arryVariable.Add(new SqlParameter("@UserName", _BearerClass.UserCode));
                     arryVariable.Add(new SqlParameter("@Type_Import", "N"));
 
-                    _SqlQuery = "[CKD_Inhouse].sp_GeneratePDS";
+                    _SqlQuery = "EXEC [CKD_Inhouse].sp_GeneratePDS @ForDate_CKD, @ForShift_CKD, @UserName, @Type_Import";
 
                     using var KbTransaction = await _kbContext.Database.BeginTransactionAsync();
 
                     try
                     {
-                        await _kbContext.Database.ExecuteSqlRawAsync(_SqlQuery, arryVariable);
+                        await _kbContext.Database.ExecuteSqlRawAsync(_SqlQuery,
+                            new SqlParameter("@ForDate_CKD", KBNOR310.dateProcessDate_CKD.ToString("yyyyMMdd")),
+                            new SqlParameter("@ForShift_CKD", KBNOR310.chrProcessShift_CKD),
+                            new SqlParameter("@UserName", _BearerClass.UserCode),
+                            new SqlParameter("@Type_Import", "N"));
 
                         await KbTransaction.CommitAsync();
 

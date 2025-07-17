@@ -614,16 +614,16 @@ $("#btnConfirm").click(function () {
         function (success) {
             if (success.status == "200") {
                 $("#tableMain").DataTable().clear().draw();
-                $("#selectKanban").selectpicker("val", "");
-                $("#selectKanbanTo").selectpicker("val", "");
-                $("#selectStore").selectpicker("val", "");
-                $("#selectStoreTo").selectpicker("val", "");
-                $("#selectPart").selectpicker("val", "");
-                $("#selectPartTo").selectpicker("val", "");
+                //$("#selectKanban").selectpicker("val", "");
+                //$("#selectKanbanTo").selectpicker("val", "");
+                //$("#selectStore").selectpicker("val", "");
+                //$("#selectStoreTo").selectpicker("val", "");
+                //$("#selectPart").selectpicker("val", "");
+                //$("#selectPartTo").selectpicker("val", "");
 
-                $("#selectDelivery").val(moment(_cookieLoginDate, "YYYYMMDD").format("DD/MM/YYYY"));
-                $("#selectDeliveryTo").val(moment(_cookieLoginDate, "YYYYMMDD").format("DD/MM/YYYY"));
-                $("#selectDate").val("");
+                //$("#selectDelivery").val(moment(_cookieLoginDate, "YYYYMMDD").format("DD/MM/YYYY"));
+                //$("#selectDeliveryTo").val(moment(_cookieLoginDate, "YYYYMMDD").format("DD/MM/YYYY"));
+                //$("#selectDate").val("");
 
                 xSwal.success("Success", "Confirm Data Complete");
             }

@@ -127,7 +127,7 @@ namespace HINOSystem.Controllers.API.Master
                     .Select(x => x.F_PDS_No)
                     .ToListAsync();
 
-                await _KB3Context.Database.ExecuteSqlRawAsync($"EXEC [exec].[spKBNIM014] @p0,@p1", Plant, UserID);
+                var row = await _KB3Context.Database.ExecuteSqlRawAsync($"EXEC [exec].[spKBNIM014] @p0,@p1", Plant, UserID);
 
                 var _delList = await _KB3Context.TB_Import_EKanban_Pack.Where(x => x.F_Plant_CD == Plant && x.F_Update_By == UserID).ToListAsync();
 

@@ -120,8 +120,17 @@ namespace HINOSystem.Controllers.API.Master
             try
             {
                 await _bearer.CheckAuthorize();
+                string ProcessDate = "";
 
-                string ProcessDate = DateTime.ParseExact(_http.HttpContext.Request.Cookies["processDate"].ToString().Split("D")[0], "yyyy-MM-dd", CultureInfo.InvariantCulture).ToString("yyyyMMdd");
+                if (_http.HttpContext.Request.Cookies["processDate"].ToString().Contains("D"))
+                {
+                    ProcessDate = _http.HttpContext.Request.Cookies["processDate"].ToString().Split("D")[0];
+                }
+                else
+                {
+                    ProcessDate = _http.HttpContext.Request.Cookies["processDate"].ToString().Split("N")[0];
+                }
+
                 string ProcessShift = _http.HttpContext.Request.Cookies["processDate"].ToString().Substring(10, 1);
 
                 await _services.KBNIM007C.Confirm(listObj, ProcessDate, ProcessShift);

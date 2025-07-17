@@ -1,6 +1,5 @@
 ﻿@KANBAN_HostAddress = http://localhost:7277
 
-GET {{KANBAN_HostAddress}}/api/kbnms022/GetList
-Content-Type: application/json
+GET {{KANBAN_HostAddress}}/api/kbnoc150/GetSupplier
 
 ###

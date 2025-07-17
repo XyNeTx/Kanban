@@ -19,6 +19,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
         private readonly SerilogLibs _log;
         private readonly IEmailService _emailService;
         private readonly IAutoMapService _automapService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
         public KBNOR310
@@ -29,7 +30,8 @@ namespace KANBAN.Services.CKD_Ordering.Repository
             FillDataTable FillDT,
             SerilogLibs log,
             IEmailService emailService,
-            IAutoMapService autoMapService
+            IAutoMapService autoMapService,
+            IHttpContextAccessor httpContextAccessor
             )
         {
             _kbContext = kbContext;
@@ -39,6 +41,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
             _log = log;
             _emailService = emailService;
             _automapService = autoMapService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public static string strDateNow = DateTime.Now.ToString("yyyyMMdd");
@@ -90,11 +93,23 @@ namespace KANBAN.Services.CKD_Ordering.Repository
 
                 var _dt = await _FillDT.ExecuteSQLAsync(sqlQuery);
 
-                dateProcessDate_CKD = DateTime.ParseExact(_dt.Rows[0]["ProcessDate"].ToString(), "M/dd/yyyy h:mm:ss tt", CultureInfo.InvariantCulture);
-                chrProcessShift_CKD = _dt.Rows[0]["ProcessShift"].ToString();
-                strProcessCycle = _dt.Rows[0]["ProcessCycleTime"].ToString();
-                dateProcessLastDate_CKD = DateTime.ParseExact(_dt.Rows[0]["LastProcessDate"].ToString(), "M/dd/yyyy h:mm:ss tt", CultureInfo.InvariantCulture);
-                chrProcessLastShift_CKD = _dt.Rows[0]["LastProcessShift"].ToString();
+                //_log.WriteLogMsg($"_httpContextAccessor.HttpContext.Request.Path.Value!.ToLower(): {_httpContextAccessor.HttpContext.Request.Path.Value!.ToLower()}");
+                if(_httpContextAccessor.HttpContext.Request.Host.Value!.ToLower().Contains("localhost"))
+                {
+                    dateProcessDate_CKD = DateTime.ParseExact(_dt.Rows[0]["ProcessDate"].ToString(), "M/dd/yyyy h:mm:ss tt", CultureInfo.InvariantCulture);
+                    chrProcessShift_CKD = _dt.Rows[0]["ProcessShift"].ToString();
+                    strProcessCycle = _dt.Rows[0]["ProcessCycleTime"].ToString();
+                    dateProcessLastDate_CKD = DateTime.ParseExact(_dt.Rows[0]["LastProcessDate"].ToString(), "M/dd/yyyy h:mm:ss tt", CultureInfo.InvariantCulture);
+                    chrProcessLastShift_CKD = _dt.Rows[0]["LastProcessShift"].ToString();
+                }
+                else
+                {
+                    dateProcessDate_CKD = DateTime.ParseExact(_dt.Rows[0]["ProcessDate"].ToString(), "M/d/yyyy h:mm:ss tt", CultureInfo.InvariantCulture);
+                    chrProcessShift_CKD = _dt.Rows[0]["ProcessShift"].ToString();
+                    strProcessCycle = _dt.Rows[0]["ProcessCycleTime"].ToString();
+                    dateProcessLastDate_CKD = DateTime.ParseExact(_dt.Rows[0]["LastProcessDate"].ToString(), "M/d/yyyy h:mm:ss tt", CultureInfo.InvariantCulture);
+                    chrProcessLastShift_CKD = _dt.Rows[0]["LastProcessShift"].ToString();
+                }
 
                 return _dt;
             }

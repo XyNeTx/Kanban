@@ -35,12 +35,7 @@ builder.Services.AddDbContext<ERPContext>(options =>
 );
 builder.Services.AddDbContext<PPM3Context>();
 
-builder.Services.AddDbContext<CKDWH_Context>(opt => 
-    opt.UseSqlServer(
-        builder.Configuration.GetConnectionString("CKDWHConnection") ??
-        throw new InvalidOperationException("Connection string 'CKDWHContext' not found.")
-        )
-);
+builder.Services.AddDbContext<CKDWH_Context>();
 
 builder.Services.AddDbContext<CKDUSA_Context>(opt => 
     opt.UseSqlServer(

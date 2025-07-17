@@ -425,8 +425,8 @@ Save = async () => {
         async (success) => {
             //console.log(success);
             xSwal.success(success.response, success.message);
-            $("#selCustomerOrder").trigger("change");
-            $("#selPartNo").trigger("change");
+            //$("#selCustomerOrder").trigger("change");
+            //$("#selPartNo").trigger("change");
         }
     );
 }
