@@ -1,5 +1,6 @@
 ﻿using HINOSystem.Context;
 using HINOSystem.Libs;
+using Humanizer;
 using KANBAN.Context;
 using KANBAN.Models.KB3.OrderingProcess;
 using Microsoft.AspNetCore.Mvc;
@@ -144,9 +145,10 @@ namespace KANBAN.Controllers.API.OrderingProcess
                 SqlParameter[] sqlParameters = new SqlParameter[]
                 {
                     new SqlParameter("@Plant", Plant),
+                    new SqlParameter("@OrderType","Daily")
                 };
 
-                var dt = _FillDT.ExecuteSQL_Param("EXEC [dbo].[sp_NormalOrder_getSupplier] @Plant", sqlParameters);
+                var dt = await _FillDT.ExecuteStoreSQLAsync("[dbo].[sp_NormalOrder_getSupplier]", sqlParameters);
 
                 if (dt.Rows.Count == 0)
                 {
@@ -199,7 +201,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
                 SqlParameter[] sqlParameters = new SqlParameter[]
                 {
                     new SqlParameter("@Plant", Plant),
-                    new SqlParameter("@OrderType", DBNull.Value), // Assuming "Daily" is always required
+                    new SqlParameter("@OrderType", "Daily"), // Assuming "Daily" is always required
                     new SqlParameter("@Supplier_Code", !string.IsNullOrWhiteSpace(Supplier) ? Supplier.Substring(0, 4) : (object)DBNull.Value),
                     new SqlParameter("@Supplier_Plant", !string.IsNullOrWhiteSpace(Supplier) ? Supplier.Substring(5, 1) : (object)DBNull.Value),
                     // Add other parameters similarly if they are provided, else set to DBNull.Value
@@ -213,7 +215,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
                     new SqlParameter("@Store_Code_TO", (object) DBNull.Value)
                 };
 
-                var dt = _FillDT.ExecuteSQL_Param("EXEC [dbo].[sp_NormalOrder_getKanban] @Plant, @Supplier_Code, @Supplier_Plant, @Part_No_FROM, @Part_No_TO, @Ruibetsu_FROM, @Ruibetsu_TO, @Kanban_No_FROM, @Kanban_No_TO, @Store_Code_FROM, @Store_Code_TO, @OrderType", sqlParameters);
+                var dt = await _FillDT.ExecuteStoreSQLAsync("[dbo].[sp_NormalOrder_getKanban]", sqlParameters);
 
                 if (dt.Rows.Count == 0)
                 {
@@ -249,7 +251,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
         }
 
         [HttpGet]
-        public async Task<IActionResult> StoreDropDown()
+        public async Task<IActionResult> StoreDropDown(string? Kanban_From,string? Kanban_To)
         {
             try
             {
@@ -262,10 +264,28 @@ namespace KANBAN.Controllers.API.OrderingProcess
                     message = "Please Login First"
                 });
 
+                SqlParameter[] sqlParameters = new SqlParameter[]
+                {
+                    new SqlParameter("@Plant", Plant),
+                    new SqlParameter("@OrderType", "Daily"), // Assuming "Daily" is always required
+                    new SqlParameter("@Supplier_Code", (object)DBNull.Value),
+                    new SqlParameter("@Supplier_Plant", (object)DBNull.Value),
+                    // Add other parameters similarly if they are provided, else set to DBNull.Value
+                    new SqlParameter("@Part_No_FROM", (object)DBNull.Value),
+                    new SqlParameter("@Part_No_TO", (object) DBNull.Value),
+                    new SqlParameter("@Ruibetsu_FROM", (object) DBNull.Value),
+                    new SqlParameter("@Ruibetsu_TO", (object) DBNull.Value),
+                    new SqlParameter("@Kanban_No_FROM", !string.IsNullOrWhiteSpace(Kanban_From) ? Kanban_From : (object)DBNull.Value),
+                    new SqlParameter("@Kanban_No_TO", !string.IsNullOrWhiteSpace(Kanban_To) ? Kanban_To : (object)DBNull.Value),
+                    new SqlParameter("@Store_Code_FROM", (object) DBNull.Value),
+                    new SqlParameter("@Store_Code_TO", (object) DBNull.Value)
+                };
 
-                var dt = _FillDT.ExecuteSQL("EXEC [dbo].[sp_NormalOrder_getStoreCode] @p0,@p1,@p2,@p3,@p4,@p5,@p6,@p7,@p8,@p9,@p10,@p11",
-                    Plant, DBNull.Value, DBNull.Value, DBNull.Value, DBNull.Value, DBNull.Value, DBNull.Value, DBNull.Value, DBNull.Value, DBNull.Value, DBNull.Value,
-                    DBNull.Value);
+                var dt = await _FillDT.ExecuteStoreSQLAsync("[dbo].[sp_NormalOrder_getStoreCode]", sqlParameters);
+
+                //var dt = _FillDT.ExecuteSQL("EXEC [dbo].[sp_NormalOrder_getStoreCode] @p0,@p1,@p2,@p3,@p4,@p5,@p6,@p7,@p8,@p9,@p10,@p11",
+                //    Plant, DBNull.Value, DBNull.Value, DBNull.Value, DBNull.Value, DBNull.Value, DBNull.Value, DBNull.Value, DBNull.Value, DBNull.Value, DBNull.Value,
+                //    DBNull.Value);
 
                 if (dt.Rows.Count == 0)
                 {
@@ -314,11 +334,30 @@ namespace KANBAN.Controllers.API.OrderingProcess
                     message = "Please Login First"
                 });
 
+                SqlParameter[] sqlParameters = new SqlParameter[]
+               {
+                    new SqlParameter("@Plant", Plant),
+                    new SqlParameter("@OrderType", "Daily"), // Assuming "Daily" is always required
+                    new SqlParameter("@Supplier_Code", (object)DBNull.Value),
+                    new SqlParameter("@Supplier_Plant", (object)DBNull.Value),
+                    // Add other parameters similarly if they are provided, else set to DBNull.Value
+                    new SqlParameter("@Part_No_FROM", (object)DBNull.Value),
+                    new SqlParameter("@Part_No_TO", (object) DBNull.Value),
+                    new SqlParameter("@Ruibetsu_FROM", (object) DBNull.Value),
+                    new SqlParameter("@Ruibetsu_TO", (object) DBNull.Value),
+                    new SqlParameter("@Kanban_No_FROM", (object) DBNull.Value),
+                    new SqlParameter("@Kanban_No_TO", (object) DBNull.Value),
+                    new SqlParameter("@Store_Code_FROM", !string.IsNullOrWhiteSpace(Store_Cd_From) ? Store_Cd_From : (object)DBNull.Value),
+                    new SqlParameter("@Store_Code_TO", !string.IsNullOrWhiteSpace(Store_Cd_To) ? Store_Cd_To : (object)DBNull.Value)
+               };
 
-                var dt = _FillDT.ExecuteSQL("EXEC [dbo].[sp_NormalOrder_getPartNo] @p0,@p1,@p2,@p3,@p4,@p5,@p6,@p7,@p8,@p9,@p10,@p11",
-                    Plant, DBNull.Value, DBNull.Value, DBNull.Value, DBNull.Value, DBNull.Value, DBNull.Value, DBNull.Value, DBNull.Value,
-                    string.IsNullOrWhiteSpace(Store_Cd_From) ? DBNull.Value : Store_Cd_From, string.IsNullOrWhiteSpace(Store_Cd_To) ? DBNull.Value : Store_Cd_To,
-                    DBNull.Value);
+                var dt = await _FillDT.ExecuteStoreSQLAsync("[dbo].[sp_NormalOrder_getPartNo]", sqlParameters);
+
+
+                //var dt = _FillDT.ExecuteSQL("EXEC [dbo].[sp_NormalOrder_getPartNo] @p0,@p1,@p2,@p3,@p4,@p5,@p6,@p7,@p8,@p9,@p10,@p11",
+                //    Plant, DBNull.Value, DBNull.Value, DBNull.Value, DBNull.Value, DBNull.Value, DBNull.Value, DBNull.Value, DBNull.Value,
+                //    string.IsNullOrWhiteSpace(Store_Cd_From) ? DBNull.Value : Store_Cd_From, string.IsNullOrWhiteSpace(Store_Cd_To) ? DBNull.Value : Store_Cd_To,
+                //    DBNull.Value);
 
                 if (dt.Rows.Count == 0)
                 {
@@ -378,7 +417,6 @@ namespace KANBAN.Controllers.API.OrderingProcess
 
                     if (NoDayPreview.Rows.Count == 0)
                     {
-
                         throw new Exception("NumberOfDayToPreview Not Found");
                     }
 
@@ -399,7 +437,6 @@ namespace KANBAN.Controllers.API.OrderingProcess
 
                     if (NoDayPreview.Rows.Count == 0)
                     {
-
                         throw new Exception("NumberOfDayToPreview Not Found");
                     }
 
@@ -412,6 +449,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
                 //DT_DeliveryDate = _FillDT.ExecuteSQL("exec [dbo].[sp_getDeliveryDateTrip] @p0,@p1,@p2,@p3,@p4,@p5,@p6",
                 //    Plant, obj.Supplier.Substring(0, 4), obj.Supplier.Substring(5, 1), ProcessDate.ToString("yyyyMMdd"), Proc_Shift.Substring(0, 1),
                 //    string.IsNullOrWhiteSpace(obj.Store) ? DBNull.Value : obj.Store, string.IsNullOrWhiteSpace(obj.StoreTo) ? DBNull.Value : obj.StoreTo);
+
                 var tmpProcessDate = ProcessDate;
 
                 do
@@ -421,8 +459,8 @@ namespace KANBAN.Controllers.API.OrderingProcess
                         string.IsNullOrWhiteSpace(obj.Store) ? DBNull.Value : obj.Store, string.IsNullOrWhiteSpace(obj.StoreTo) ? DBNull.Value : obj.StoreTo);
 
                     tmpProcessDate = tmpProcessDate.AddDays(+1);
-                }
-                while (DT_DeliveryDate.Rows.Count == 0);
+                } 
+                while (DT_DeliveryDate.Rows.Count == 0 && tmpProcessDate < ProcessDate.AddDays(14));
 
                 dateDelivery = DateTime.TryParseExact(DT_DeliveryDate.Rows[0]["F_Delivery_Date"].ToString(), "yyyyMMdd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime result) ? result : DateTime.Now;
                 DeliveryTrip = DT_DeliveryDate.Rows[0]["F_Delivery_Trip"].ToString().Trim();
@@ -458,7 +496,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new Exception("Can't Get Start Date and End Date !!");
             }
         }
 
@@ -849,9 +887,9 @@ namespace KANBAN.Controllers.API.OrderingProcess
                 string PlantAndDev = Plant + IsDevelop;
                 string sourceKB = PlantAndDev switch
                 {
-                    "1" => "[hmmt-E_Kanban].[New_Kanban]",
-                    "2" => "[hmmt-E_Kanban].[New_Kanban_F2]",
-                    "3" => "[New_Kanban_F3]",
+                    "10" => "[hmmt-E_Kanban].[New_Kanban]",
+                    "20" => "[hmmt-E_Kanban].[New_Kanban_F2]",
+                    "30" => "[New_Kanban_F3]",
                     "11" => "[New_Kanban]",
                     "21" => "[New_Kanban_F2]",
                     "31" => "[New_Kanban_F3]",

@@ -1346,16 +1346,16 @@ namespace KANBAN.Services.CKD_Ordering.Repository
 
 
                             int intResult = await _kbContext.Database.ExecuteSqlRawAsync(
-                             "[CKD_Inhouse].sp_autoRecalculateBL_UpdateBL @Part_No, @Ruibetsu, @Supplier_Code, @Supplier_Plant, @Store_Code, @Kanban_No, @Process_Date, @Process_Round, @Process_Shift, @BL_Plan, @BL_Actual, @Not_Recalculate",
-                             new SqlParameter("@Part_No", DT.Rows[i]["F_Part_No"].ToString().Trim()),
-                             new SqlParameter("@Ruibetsu", DT.Rows[i]["F_Ruibetsu"].ToString().Trim()),
+                             "[CKD_Inhouse].sp_autoRecalculateBL_UpdateBL @Process_Date,@Process_Shift,@Process_Round,@Supplier_Code,@Supplier_Plant,@Part_No,@Ruibetsu,@Kanban_No,@Store_Code,@BL_Plan,@BL_Actual,@Not_Recalculate",
+                             new SqlParameter("@Process_Date", DT.Rows[i]["F_Process_Date"].ToString().Trim()),
+                             new SqlParameter("@Process_Shift", DT.Rows[i]["F_Process_Shift"].ToString().Trim()),
+                             new SqlParameter("@Process_Round", DT.Rows[i]["F_Process_Round"].ToString().Trim()),
                              new SqlParameter("@Supplier_Code", DT.Rows[i]["F_Supplier_Code"].ToString().Trim()),
                              new SqlParameter("@Supplier_Plant", DT.Rows[i]["F_Supplier_Plant"].ToString().Trim()),
-                             new SqlParameter("@Store_Code", DT.Rows[i]["F_Store_Code"].ToString().Trim()),
+                             new SqlParameter("@Part_No", DT.Rows[i]["F_Part_No"].ToString().Trim()),
+                             new SqlParameter("@Ruibetsu", DT.Rows[i]["F_Ruibetsu"].ToString().Trim()),
                              new SqlParameter("@Kanban_No", DT.Rows[i]["F_Kanban_No"].ToString().Trim()),
-                             new SqlParameter("@Process_Date", DT.Rows[i]["F_Process_Date"].ToString().Trim()),
-                             new SqlParameter("@Process_Round", DT.Rows[i]["F_Process_Round"].ToString().Trim()),
-                             new SqlParameter("@Process_Shift", DT.Rows[i]["F_Process_Shift"].ToString().Trim()),
+                             new SqlParameter("@Store_Code", DT.Rows[i]["F_Store_Code"].ToString().Trim()),
                              new SqlParameter("@BL_Plan", BlPlan),
                              new SqlParameter("@BL_Actual", BlActual),
                              new SqlParameter("@Not_Recalculate", DT.Rows[i]["F_Not_Recalculate"].ToString().Trim())

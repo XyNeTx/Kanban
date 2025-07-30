@@ -1,0 +1,49 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    <div class="container ps-0 pe-0">
+
+        <div class="card border-4 border-left-primary shadow vh-100">
+
+            <div class="card-body">
+                
+                <div class="row">
+                
+                    <div class="row justify-content-center">
+                        <input type="file" multiple class="form-control col-10" accept=".xlsx,.xls" />
+                    </div>
+                
+                </div>
+
+                <div class="row mt-4">
+
+                    <div class="col">
+
+                        <div id="divImpData" class="row justify-content-center">
+                            <button type="button" class ="btn btn-outline-primary text-center col-2 mb-2">Import Data</button>
+                            <table id="tableImpData" class="table table-bordered w-100">
+                            </table>
+                        </div>
+
+                        <div id="divOrdData" class="row justify-content-center d-none">
+                            <button type="button" class="btn btn-outline-success text-center col-2 mb-2">Order Data</button>
+                            <table id="tableOrdData" class="table table-bordered w-100">
+                            </table>
+                        </div>
+
+
+                    </div>
+
+                </div>
+                
+
+            </div>
+
+        </div>
+        
+    </div>
+}
+@section Scripts{
+    <script type="text/javascript" src="~/assets/.script/UrgentOrder/KBNIM017R.js" asp-append-version="true"></script>
+}

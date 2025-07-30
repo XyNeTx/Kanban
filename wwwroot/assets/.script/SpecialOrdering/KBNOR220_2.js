@@ -136,7 +136,8 @@ $("#btnCan").click(() => {
 $("#btnSave").click(() => {
     let listObj = [];
 
-    $("#tableMain").find("input:not([readonly])").each(function () {
+    //$("#tableMain").find("input:not([readonly])").each(function () {
+    $("#tableMain").find("input").each(function () {
         let obj = {
             POQty: $("#txtPOQty").val(),
             Survey: $("#selSurDoc").val(),

@@ -357,8 +357,17 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                 for (int iAdd = 0; iAdd < DT_KBADD.Rows.Count; iAdd++)
                 {
                     string strDeliveryDate = DT_KBADD.Rows[iAdd]["F_Delivery_Date"].ToString().Trim();
-                    string deliveryTrip = "0" + DT_KBADD.Rows[iAdd]["F_Delivery_Trip"].ToString().Trim();
-                    string strDeliveryRound = deliveryTrip.Substring(deliveryTrip.Length - 2, 2);
+                    string deliveryTrip = "";
+                    string strDeliveryRound = "";
+                    if (string.IsNullOrWhiteSpace(DT_KBADD.Rows[iAdd]["F_Delivery_Trip"].ToString().Trim()))
+                    {
+                        strDeliveryRound = "0";
+                    }
+                    else
+                    {
+                        deliveryTrip = "0" + DT_KBADD.Rows[iAdd]["F_Delivery_Trip"].ToString().Trim();
+                        strDeliveryRound = deliveryTrip.Substring(deliveryTrip.Length - 2, 2);
+                    }
                     int intKBAdd_Remain = int.Parse(DT_KBADD.Rows[iAdd]["F_KB_Remain"].ToString());
 
                     if (strDeliveryRound != "0")
@@ -456,7 +465,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                     int intKBCut_Rn = int.Parse(DT_KBCUT.Rows[iCut]["F_KB_Cut_RN"].ToString());
 
                     DV_Detail.RowFilter = $@"F_Work = 1
-                        AND F_Lot_SizeOrder = 0
+                        AND F_Lot_SizeOrder > 0
                         AND F_Supplier_Code = '{DT_KBCUT.Rows[iCut]["F_Supplier_Code"].ToString().Trim()}'
                         AND F_Supplier_Plant = '{DT_KBCUT.Rows[iCut]["F_Supplier_Plant"].ToString().Trim()}'
                         AND F_Part_No = '{DT_KBCUT.Rows[iCut]["F_Part_No"].ToString().Trim()}'
@@ -491,17 +500,16 @@ namespace KANBAN.Services.CKD_Ordering.Repository
 
                     }
                     string sqlQuery = $@"UPDATE TB_Kanban_Add
-                        SET F_KB_Remain = 0, F_Status = '2'
-                        WHERE F_Supplier_Code = '{DT_KBCUT.Rows[iCut]["F_Supplier_Code"].ToString().Trim()}'
-                        AND F_Supplier_Plant = '{DT_KBCUT.Rows[iCut]["F_Supplier_Plant"].ToString().Trim()}'
-                        AND F_Store_Code = '{DT_KBCUT.Rows[iCut]["F_Store_Code"].ToString().Trim()}'
-                        AND F_Kanban_No = '{DT_KBCUT.Rows[iCut]["F_Kanban_No"].ToString().Trim()}'
-                        AND F_Part_No = '{DT_KBCUT.Rows[iCut]["F_Part_No"].ToString().Trim()}'
-                        AND F_Ruibetsu = '{DT_KBCUT.Rows[iCut]["F_Ruibetsu"].ToString().Trim()}'
-                        ";
+                    SET F_KB_Remain = 0, F_Status = '2'
+                    WHERE F_Supplier_Code = '{DT_KBCUT.Rows[iCut]["F_Supplier_Code"].ToString().Trim()}'
+                    AND F_Supplier_Plant = '{DT_KBCUT.Rows[iCut]["F_Supplier_Plant"].ToString().Trim()}'
+                    AND F_Store_Code = '{DT_KBCUT.Rows[iCut]["F_Store_Code"].ToString().Trim()}'
+                    AND F_Kanban_No = '{DT_KBCUT.Rows[iCut]["F_Kanban_No"].ToString().Trim()}'
+                    AND F_Part_No = '{DT_KBCUT.Rows[iCut]["F_Part_No"].ToString().Trim()}'
+                    AND F_Ruibetsu = '{DT_KBCUT.Rows[iCut]["F_Ruibetsu"].ToString().Trim()}'
+                    ";
 
                     await _kbContext.Database.ExecuteSqlRawAsync(sqlQuery);
-
                 }
             }
             catch (Exception ex)

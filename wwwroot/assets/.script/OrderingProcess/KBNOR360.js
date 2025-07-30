@@ -22,6 +22,11 @@
             scrollCollapse: true,
         }
     );
+
+    xAjax.onClick('btnExit', function () {
+        xAjax.redirect('KBNOR300');
+    });
+
     await ListData();
     xSplash.hide();
 })
@@ -37,8 +42,6 @@ $("#btnGenerate").click(async function () {
 $("#btnRegister").click(async function () {
     await Register();
 });
-
-
 
 
 

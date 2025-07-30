@@ -277,6 +277,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
                         if (DTM != null)
                         {
                             _kbContext.TB_Survey_Detail.Remove(DTM);
+                            await _kbContext.SaveChangesAsync();
 
                             DTM.F_Adjust_Qty = obj.POQty;
                             DTM.F_Qty = obj.Qty.Value;

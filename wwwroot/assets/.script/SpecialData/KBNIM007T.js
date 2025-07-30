@@ -15,10 +15,10 @@
                 { title: "Child Name", data: "F_Part_Name" },
                 { title: "Order Type", data: "F_OrderType" },
             ],
-            scrollX: false,
+            scrollX: true,
             order: [[1, "asc"]],
             scrollCollapse: false,
-            scrollY: 500,
+            scrollY: 300,
         }
     );
 
@@ -544,7 +544,7 @@ Save = async () => {
         async (success) => {
             //console.log(success);
             xSwal.success(success.response, success.message);
-            $("#btnCan").click();
+            //$("#btnCan").click();
         }
     );
 }

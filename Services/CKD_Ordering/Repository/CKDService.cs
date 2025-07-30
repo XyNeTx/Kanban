@@ -137,5 +137,21 @@ namespace KANBAN.Services.CKD_Ordering.Repository
             }
         }
 
+        public IKBNOR370 IKBNOR370_Repo
+        {
+            get
+            {
+                return new KBNOR370(_kbContext,
+                                    _BearerClass,
+                                    _PPM3Context,
+                                    _FillDT, _log,
+                                    _emailService,
+                                    _automapService
+                                    , _CKDContext,
+                                    _CKDUSAContext
+                                    );
+            }
+        }
+
     }
 }

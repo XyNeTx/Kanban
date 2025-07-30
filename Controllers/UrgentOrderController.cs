@@ -73,6 +73,11 @@ namespace HINOSystem.Controllers
             //_authenGuard.ComponentToolbar = false;
             return _authenGuard.guard(ControllerContext);
         }
+        public IActionResult KBNIM017R()
+        {
+            //_authenGuard.ComponentToolbar = false;
+            return _authenGuard.guard(ControllerContext);
+        }
 
 
     }

@@ -20,7 +20,7 @@ namespace KANBAN.Services.Logistical.Repository
 
 
         public KBNLC190
-            (
+            ( 
             KB3Context kbContext,
             BearerClass BearerClass,
             PPM3Context PPM3Context,
@@ -140,7 +140,7 @@ namespace KANBAN.Services.Logistical.Repository
                 && x.F_Plant == _BearerClass.Plant && x.F_Flag == "0")
                 .ToListAsync();
 
-                if (checkImportSuccess.Count > 0)
+                if (checkImportSuccess.Count == 0)
                 {
                     //await transaction.RollbackAsync();
                     throw new Exception("Error Found, Delivery Time is not Imported");

@@ -643,7 +643,8 @@ async function Recalculate(action,intRow) {
         async function (success) {
             console.log(success);
             await Get_All_Data(_ProcessAction, intRow);
-            xSplash.hide();
+            
+            xSwal.success("Recalculate Complete !!!");
         },
     )
 }

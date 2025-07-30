@@ -52,9 +52,9 @@ namespace KANBAN.Services.SpecialOrdering.Repository
         {
             try
             {
+                await _kbContext.Database.ExecuteSqlRawAsync($"DELETE FROM [dbo].[KBNOR_450] WHERE F_Update_By='{_BearerClass.UserCode}'");
                 foreach (var obj in listObj)
                 {
-
                     await _kbContext.Database.ExecuteSqlRawAsync("EXEC [exec].[spKBNOR700_PDS] @pUserCode, @pPlant, @pDeliveryDate," +
                         "@F_orderType,@F_OrderNo,@F_OrderNoTo,@F_Supplier_Code,@F_Supplier_CodeTo,@F_Delivery_Date,@F_Delivery_DateTo,@ErrorMessage",
                         new SqlParameter("@pUserCode", _BearerClass.UserCode),
@@ -83,6 +83,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
         {
             try
             {
+                await _kbContext.Database.ExecuteSqlRawAsync($"DELETE FROM [dbo].[KBNOR_140_KB] WHERE F_Update_By='{_BearerClass.UserCode}'");
                 await _kbContext.Database.ExecuteSqlRawAsync("EXEC [exec].[spKBNOR700_KANBAN] " +
                     "@pUserCode,@pPlant,@pDeliveryDate,@F_orderType",
                     new SqlParameter("@pUserCode", _BearerClass.UserCode),

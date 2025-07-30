@@ -9,5 +9,6 @@
         public IKBNOR330 IKBNOR330_Repo { get; }
         public IKBNOR360 IKBNOR360_Repo { get; }
         public IKBNOR361 IKBNOR361_Repo { get; }
+        public IKBNOR370 IKBNOR370_Repo { get; }
     }
 }

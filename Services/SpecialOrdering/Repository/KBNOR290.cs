@@ -72,7 +72,8 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             try
             {
                 var data = await _kbContext.TB_Survey_Header
-                    .Where(h => !string.IsNullOrWhiteSpace(h.F_Survey_Doc))
+                    .Where(h => !string.IsNullOrWhiteSpace(h.F_Survey_Doc)
+                    && h.F_Status != "D")
                     .Join(_kbContext.TB_Survey_Detail
                     .Select(d => new
                     {
@@ -110,7 +111,8 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             {
                 var data = await _kbContext.TB_Survey_Header
                     .Where(x => x.F_PO_Customer == PO
-                    && x.F_Supplier_CD.Trim() + "-" + x.F_Supplier_Plant.Trim() == Supplier)
+                    && x.F_Supplier_CD.Trim() + "-" + x.F_Supplier_Plant.Trim() == Supplier
+                    && x.F_Status != "D")
                     .Join(_kbContext.TB_Survey_Detail,
                     h => new { h.F_Survey_Doc, h.F_Revise_Rev },
                     d => new { d.F_Survey_Doc, d.F_Revise_Rev },

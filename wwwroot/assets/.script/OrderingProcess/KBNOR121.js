@@ -113,8 +113,16 @@ $("#inputSupplier").change(function () {
     });
 });
 
-$("#inputKanban").change(function () {
-    _xLib.AJAX_Get('/api/KBNOR121/StoreDropDown', '', function (result) {
+$("#inputKanban, #inputKanbanTo").change(function () {
+
+    if ($("#inputKanbanTo").val() == "") {
+        $("#inputKanbanTo").val($(this).val());
+    }
+    if ($("#inputKanban").val() == "") {
+        $("#inputKanban").val($(this).val());
+    }
+
+    _xLib.AJAX_Get('/api/KBNOR121/StoreDropDown', { Kanban_From: $("#inputKanban").val(), Kanban_To: $("#inputKanbanTo").val() }, function (result) {
         result = _xLib.JSONparseAndTrim(result);
 
         $("#inputStore").empty();
@@ -130,6 +138,13 @@ $("#inputKanban").change(function () {
 
 $("#inputStore , #inputStoreTo").change(function () {
     var storeFrom = $(this).val();
+
+    if ($("#inputStoreTo").val() == "") {
+        $("#inputStoreTo").val($(this).val());
+    }
+    if ($("#inputStore").val() == "") {
+        $("#inputStore").val($(this).val());
+    }
     var storeTo = $("#inputStoreTo").val();
 
     _xLib.AJAX_Get('/api/KBNOR121/PartNoDropDown', { Store_Cd_From: storeFrom, Store_Cd_To: storeTo }, function (result) {
@@ -144,6 +159,15 @@ $("#inputStore , #inputStoreTo").change(function () {
             $("#inputPartTo").append(new Option(item.F_Part_No, item.F_Part_No));
         });
     });
+});
+
+$("#inputPart , #inputPartTo").change(function () {
+    if ($("#inputPartTo").val() == "") {
+        $("#inputPartTo").val($(this).val());
+    }
+    if ($("#inputPart").val() == "") {
+        $("#inputPart").val($(this).val());
+    }
 });
 
 $("#btnPreview").click(async function () {
@@ -798,8 +822,7 @@ const periodFilter = async () => {
     if (_command == "Preview") return;
     let arr = [];
 
-    for (let i = 0; i < dT_DeliveryDate.length; i++)
-    {
+    for (let i = 0; i < dT_DeliveryDate.length; i++) {
         let deliveryDate = dT_DeliveryDate[i].F_Delivery_Date.slice(6, 8) + "-" + dT_DeliveryDate[i].F_Delivery_Date.slice(4, 6) + "-" + dT_DeliveryDate[i].F_Delivery_Date.slice(0, 4);
         let deliveryTrip = dT_DeliveryDate[i].F_Delivery_Trip;
         let deliveryShift = dT_DeliveryDate[i].F_Process_Shift;
@@ -828,49 +851,57 @@ const periodFilter = async () => {
         console.log(parseInt($("#readCycleTime").val().slice(6, 8)));
         console.log(parseInt($("#readCycleTime").val().slice(3, 5)) / parseInt($("#readCycleTime").val().slice(6, 8)) == 2);
 
-        if ( parseInt($("#readCycleTime").val().slice(3, 5)) / parseInt($("#readCycleTime").val().slice(6, 8)) === 2 )
-        {
+        if (parseInt($("#readCycleTime").val().slice(3, 5)) / parseInt($("#readCycleTime").val().slice(6, 8)) === 2) {
             for (let i = 0; i < arr.length; i++) {
                 for (let k = 2; k <= 20; k++) {
                     let _id = `tdR${k}T${arr[i].deliveryTrip}${arr[i].deliveryDate}`;
                     $(`#${_id}`).css("background-color", "#FFFFFF");
                 }
-
             }
         }
-        else if (deliveryShift.includes("D"))
-        {
-            console.log("D");
-            console.log(trip); 
-            let filteredPeriod = dT_Period.filter(x => x.Row_Num == "1" && x.Date_Now == dT_DeliveryDate[i].F_Delivery_Date)
-            trip = parseInt(filteredPeriod[0]["F_Period"]);
+        else if (parseInt($("#readCycleTime").val().slice(3, 5)) / parseInt($("#readCycleTime").val().slice(6, 8)) === 1) {
 
-            for (trip; trip > 0; trip--)
+            if (deliveryShift.includes("D") && _CookieProcessDate.slice(10, 11) == "D")
             {
+                console.log("D");
                 console.log(trip);
-                console.log(deliveryTrip);
-                console.log(parseInt(dT_Period[0]["F_Period"]));
-                if (deliveryTrip > parseInt(dT_Period[0]["F_Period"])) {
-                    continue;
-                }
-                for (let k = 2; k <= 20; k++)
-                {
-                    let _id = `tdR${k}T${trip}${deliveryDate}`;
-                    console.log(_id);
-                    $(`#${_id}`).css("background-color", "#FFFFFF");
+                let filteredPeriod = dT_Period.filter(x => x.Row_Num == "1" && x.Date_Now == dT_DeliveryDate[i].F_Delivery_Date)
+                trip = parseInt(filteredPeriod[0]["F_Period"]);
+
+                for (trip; trip > 0; trip--) {
+                    console.log(trip);
+                    console.log(deliveryTrip);
+                    console.log(parseInt(dT_Period[0]["F_Period"]));
+                    if (deliveryTrip > parseInt(dT_Period[0]["F_Period"])) {
+                        continue;
+                    }
+                    for (let k = 2; k <= 20; k++) {
+                        let _id = `tdR${k}T${trip}${deliveryDate}`;
+                        console.log(_id);
+                        $(`#${_id}`).css("background-color", "#FFFFFF");
+                    }
                 }
             }
-        }
-        else
-        {
-            let filteredPeriod = dT_Period.filter(x => x.Date_Now == dT_DeliveryDate[i].F_Delivery_Date)
-            let trip = parseInt(filteredPeriod[0]["F_Period"]) + parseInt(filteredPeriod[1]["F_Period"]);
-            console.log("N");
-            console.log(trip);
-            for (trip; trip > parseInt(dT_Period[0]["F_Period"]); trip--)
+
+            else if (deliveryShift.includes("N") && _CookieProcessDate.slice(10, 11) == "N")
             {
+                let filteredPeriod = dT_Period.filter(x => x.Date_Now == dT_DeliveryDate[i].F_Delivery_Date)
+                let trip = parseInt(filteredPeriod[0]["F_Period"]) + parseInt(filteredPeriod[1]["F_Period"]);
+                console.log("N");
+                console.log(trip);
+                for (trip; trip > parseInt(dT_Period[0]["F_Period"]); trip--) {
+                    for (let k = 2; k <= 20; k++) {
+                        let _id = `tdR${k}T${trip}${deliveryDate}`;
+                        $(`#${_id}`).css("background-color", "#FFFFFF");
+                    }
+                }
+            }
+
+        }
+        else {
+            for (let i = 0; i < arr.length; i++) {
                 for (let k = 2; k <= 20; k++) {
-                    let _id = `tdR${k}T${trip}${deliveryDate}`;
+                    let _id = `tdR${k}T${arr[i].deliveryTrip}${arr[i].deliveryDate}`;
                     $(`#${_id}`).css("background-color", "#FFFFFF");
                 }
             }

@@ -235,6 +235,12 @@
         //console.log($('#itmPDSTo').val());
         //console.log(xDate.Date('yyyyMMdd', 'MM=-3'));
 
+        let isDeleted = await DeleteKBNOR_140_KB();
+        console.log(isDeleted);
+        if (isDeleted !== true) {
+            return xSwal.error("Can't Delete Previous Data");
+        }
+
         var _dtKanban = await xAjax.ExecuteJSON({
             data: {
                 "Module": "[exec].[spKBNOR700_KANBAN]",
@@ -367,3 +373,14 @@ xAjax.onChange('#rdoOrderTypeUrgent', async function () {
     loadOrderType();
 });
 
+async function DeleteKBNOR_140_KB() {
+    let isDel = false;
+    await _xLib.AJAX_Post(`/xapi/DeleteKBNOR_140_KB`, '',
+        function (success) {
+            console.log(success);
+            isDel = true;
+        }
+    );
+
+    return isDel;
+}
