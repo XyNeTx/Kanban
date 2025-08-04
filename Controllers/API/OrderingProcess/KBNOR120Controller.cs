@@ -226,7 +226,9 @@ namespace KANBAN.Controllers.API.OrderingProcess
                 _Log.WriteLog("Interface NG Data : " + _SQL,UserCode,_BearerClass.Device);
 
                 _SQL = $@"Select distinct F_Supplier_Code, F_Supplier_Plant, F_Store_Code, F_Kanban_No ,F_Part_No, F_Ruibetsu 
-                         From TB_Calculate_H  Where (F_Process_Date = '{sDate}')  Order by 1,2,3,4,5,6"; //and F_Supplier_Code <> '9999' and F_Supplier_Code <> '9995'
+                        From TB_Calculate_H  Where (F_Process_Date = '{sDate}') 
+                        and F_Supplier_Code <> '9999' and F_Supplier_Code <> '9995'
+                        Order by 1,2,3,4,5,6";
 
                 var _DT = _FillDT.ExecuteSQL(_SQL);
 
@@ -316,7 +318,8 @@ namespace KANBAN.Controllers.API.OrderingProcess
 
                 string _SQL = $@"SELECT distinct F_Supplier_Code,F_Supplier_plant,F_PART_no,F_Ruibetsu,F_Kanban_No,F_Store_Code 
                                 FROM TB_CALCULATE_D  WHERE F_Process_Shift ='N' and F_Process_Date=@p0 
-                                 Order by 1,2,3,4,5,6"; //and F_Supplier_Code <> '9999' and F_Supplier_Code <>'9995'
+                                and F_Supplier_Code <> '9999' and F_Supplier_Code <>'9995'
+                                Order by 1,2,3,4,5,6"; 
 
                 var _DT = _FillDT.ExecuteSQL(_SQL,sDate);
 

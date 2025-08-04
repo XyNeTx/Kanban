@@ -9,5 +9,6 @@ namespace KANBAN.Context
 
         public DbSet<T_System_Control> T_System_Control { get; set; }
         public DbSet<T_Transaction_D_> T_Transaction_D_ { get; set; }
+        public DbSet<T_Convert_FG_THPS_PEFF> T_Convert_FG_THPS_PEFF { get; set; }
     }
 }

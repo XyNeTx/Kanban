@@ -18,6 +18,8 @@ using KANBAN.Services.OtherCondition.IRepository;
 using KANBAN.Services.OtherCondition.Repository;
 using KANBAN.Services.SpecialOrdering.Interface;
 using KANBAN.Services.SpecialOrdering.Repository;
+using KANBAN.Services.UrgentOrder.IRepository;
+using KANBAN.Services.UrgentOrder.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Serilog;
@@ -101,6 +103,7 @@ builder.Services.AddScoped<ISpecialOrderingServices, SpecialOrderingServices>();
 builder.Services.AddScoped<IMasterRepo, MasterRepo>();
 builder.Services.AddScoped<ICKDService, CKDService>();
 builder.Services.AddScoped<IOtherConditionRepo, OtherConditionRepo>();
+builder.Services.AddScoped<IUrgentRepo,UrgentRepo>();
 builder.Services.AddHttpClient();
 
 builder.Services.AddAutoMapper

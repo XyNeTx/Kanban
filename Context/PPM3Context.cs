@@ -54,6 +54,8 @@ namespace KANBAN.Context
         public DbSet<T_Receive_Local> T_Receive_Local { get; set; }
         public DbSet<T_Supplier_MS> T_Supplier_MS { get; set; }
         public DbSet<T_Construction> T_Construction { get; set; }
+        public DbSet<T_Parent_part> T_Parent_part { get; set; }
+        public DbSet<T_Parents_child> T_Parents_child { get; set; }
 
     }
 }

@@ -11,7 +11,7 @@
                 <div class="row">
                 
                     <div class="row justify-content-center">
-                        <input type="file" multiple class="form-control col-10" accept=".xlsx,.xls" />
+                        <input type="file" id="inpFiles" multiple class="form-control col-10" accept=".xlsx,.xls" />
                     </div>
                 
                 </div>
@@ -21,13 +21,13 @@
                     <div class="col">
 
                         <div id="divImpData" class="row justify-content-center">
-                            <button type="button" class ="btn btn-outline-primary text-center col-2 mb-2">Import Data</button>
+                            <button type="button" id="btnImp" class="btn btn-outline-primary text-center col-2 mb-2">Import Data</button>
                             <table id="tableImpData" class="table table-bordered w-100">
                             </table>
                         </div>
 
                         <div id="divOrdData" class="row justify-content-center d-none">
-                            <button type="button" class="btn btn-outline-success text-center col-2 mb-2">Order Data</button>
+                            <button type="button" id="btnOrd" class="btn btn-outline-success text-center col-2 mb-2">Order Data</button>
                             <table id="tableOrdData" class="table table-bordered w-100">
                             </table>
                         </div>
