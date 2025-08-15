@@ -8,29 +8,29 @@
 
     xAjax.onClick('#btnPrintPDS', async function () {
         xSplash.show("Generate PDS Data");
-        //let data = [];
-        //$("#itmPDS option").each((i, e) => {
-        //    if ($(e).val() >= $("#itmPDS").val() && $(e).val() <= $("#itmPDSTo").val()) {
-        //        let obj = {
-        //            F_OrderNO: $(e).val()//.replace(/_N|_U/g, "")
-        //        }
-        //        data.push(obj);
-        //    }
-        //});
+        let data = [];
+        $("#itmPDS option").each((i, e) => {
+            if ($(e).val() >= $("#itmPDS").val() && $(e).val() <= $("#itmPDSTo").val()) {
+                let obj = {
+                    F_OrderNO: $(e).val()//.replace(/_N|_U/g, "")
+                }
+                data.push(obj);
+            }
+        });
 
-        let obj = {
-            F_OrderNO: $("#itmPDS").val(),
-            F_OrderNO_To: $("#itmPDSTo").val()
-        }
+        //let obj = {
+        //    F_OrderNO: $("#itmPDS").val(),
+        //    F_OrderNO_To: $("#itmPDSTo").val()
+        //}
 
         if ($("#itmPDS").val() == "" || $("#itmPDSTo").val() == "") {
             xSwal.error("Please Select PO No.");
             return;
         }
 
-        console.log(obj);
+        console.log(data);
 
-        _xLib.AJAX_Post(`/api/KBNOR370/Preview`, obj,
+        _xLib.AJAX_Post(`/api/KBNOR370/Preview`, data,
             async (success) => {
                 console.log(success);
                 //let link = `http://hmmta-tpcap/E-Report/Report.aspx?Register=REC&PDSNoFrom=${data[0].F_OrderNO.replace(/_N|_U/g, "")}&PDSNoTo=${data[data.length - 1].F_OrderNO.replace(/_N|_U/g, "")}&DateFrom=2024-07-01&DateTo=2999-12-31`;
@@ -41,7 +41,7 @@
                 success.data.forEach((e) => {
                     console.log(e);
                     let obj = {
-                        F_OrderNO: e
+                        F_OrderNO: e.trim()
                     }
                     pdsToGen.push(obj);
                 })
@@ -55,8 +55,8 @@
                             window.open(
                                 _REPORTINGSERVER_ + '%2fKB3%2fKBNOR700PDS_X2&rs:Command=Render'
                                 + '&pUserCode=' + ajexHeader.UserCode
-                                + '&OrderNo=' + obj.F_OrderNO.replace(/_N|_U/g, "")
-                                + '&OrderNoTo=' + obj.F_OrderNO_To.replace(/_N|_U/g, "")
+                                + '&OrderNo=' + data[0].F_OrderNO.replace(/_N|_U/g, "")
+                                + '&OrderNoTo=' + data[data.length - 1].F_OrderNO.replace(/_N|_U/g, "")
                                 + '&DeliveryDate=' + ''
                                 + '&DeliveryDateTo=' + ''
                                 + '&F_Plant=' + ajexHeader.Plant
@@ -67,8 +67,8 @@
                             window.open(
                                 _REPORTINGSERVER_ + '%2fKB3%2fKBNOR700PDS&rs:Command=Render'
                                 + '&pUserCode=' + ajexHeader.UserCode
-                                + '&OrderNo=' + obj.F_OrderNO.replace(/_N|_U/g, "")
-                                + '&OrderNoTo=' + obj.F_OrderNO_To.replace(/_N|_U/g, "")
+                                + '&OrderNo=' + data[0].F_OrderNO.replace(/_N|_U/g, "")
+                                + '&OrderNoTo=' + data[data.length - 1].F_OrderNO.replace(/_N|_U/g, "")
                                 + '&DeliveryDate=' + ''
                                 + '&DeliveryDateTo=' + ''
                                 + '&F_Plant=' + ajexHeader.Plant
@@ -89,12 +89,18 @@
 
     xAjax.onClick('#btnPrintKanban', async function () {
 
-        let PDSNoFrom = $("#itmPDS").val().replace(/_N|_U/g, "")
-        let PDSNoTo = $("#itmPDSTo").val().replace(/_N|_U/g, "")
+        let PDSNoFrom = $("#itmPDS").val().trim().replace(/_N|_U/g, "")
+        let PDSNoTo = $("#itmPDSTo").val().trim().replace(/_N|_U/g, "")
 
         if (PDSNoFrom == "" || PDSNoTo == "") {
             xSwal.error("Error!!!", "Please select PDS No.");
             return;
+        }
+
+        let isDeleted = await DeleteKBNOR_140_KB();
+        console.log(isDeleted);
+        if (isDeleted !== true) {
+            return xSwal.error("Can't Delete Previous Data");
         }
 
         let _pdsAll = '';
@@ -108,6 +114,7 @@
                 "@pUserCode": ajexHeader.UserCode,
                 "@pPlant": ajexHeader.Plant,
                 "@pDeliveryDate": xDate.Date('yyyyMMdd', 'MM=-3'),
+                "@F_orderType": null,
                 //"@F_orderType": j == 0 ? "N" : "U",
                 "@F_OrderNo": PDSNoFrom,
                 "@F_OrderNoTo": PDSNoTo
@@ -135,6 +142,7 @@
                         "@F_OrderNo": Trim(_dtKanban.rows[i].F_OrderNO),
                         "@F_PartNO": Trim(_dtKanban.rows[i].F_PartNO),
                         "@F_Kanban_No": Trim(_dtKanban.rows[i].F_Kanban_No),
+                        "@F_Remark_KB": Trim(_dtKanban.rows[i].F_Remark_KB),
                         "@pMax": _ceil,
                         "@pBoxQty": (_amt > 0 ? _amt : '')
                     },
@@ -224,6 +232,7 @@ async function ExGetPDS(){
                 $("#itmPDS").append(`<option value='${e.f_OrderNo}_${e.f_OrderType}'>${e.f_OrderNo}</option>`);
                 $("#itmPDSTo").append(`<option value='${e.f_OrderNo}_${e.f_OrderType}'>${e.f_OrderNo}</option>`);
             });
+            //$("#itmPDS").
             $(".selectpicker").selectpicker("refresh");
             xSplash.hide();
         }
@@ -232,3 +241,15 @@ async function ExGetPDS(){
 }
 
 
+
+async function DeleteKBNOR_140_KB() {
+    let isDel = false;
+    await _xLib.AJAX_Post(`/xapi/DeleteKBNOR_140_KB`, '',
+        function (success) {
+            console.log(success);
+            isDel = true;
+        }
+    );
+
+    return isDel;
+}

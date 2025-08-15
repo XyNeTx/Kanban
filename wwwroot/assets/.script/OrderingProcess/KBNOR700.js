@@ -128,6 +128,12 @@
             return false;
         }
 
+        let isDeleted = await DeleteKBNOR_450();
+        console.log(isDeleted);
+        if (isDeleted !== true) {
+            return xSwal.error("Can't Delete Previous Data");
+        }
+
         //console.log(($('#chkSupplierCode').val() == 1 ? $('#itmDelivery').val() : ''));
         //ajexHeader.Plant = '1';
         var _dt = await xAjax.ExecuteJSON({
@@ -376,6 +382,17 @@ xAjax.onChange('#rdoOrderTypeUrgent', async function () {
 async function DeleteKBNOR_140_KB() {
     let isDel = false;
     await _xLib.AJAX_Post(`/xapi/DeleteKBNOR_140_KB`, '',
+        function (success) {
+            console.log(success);
+            isDel = true;
+        }
+    );
+
+    return isDel;
+}
+async function DeleteKBNOR_450() {
+    let isDel = false;
+    await _xLib.AJAX_Post(`/xapi/DeleteKBNOR_450`, '',
         function (success) {
             console.log(success);
             isDel = true;

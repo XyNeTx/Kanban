@@ -3,7 +3,7 @@
     $("#txtUserName").prop('readonly', true);
     $("#txtProcessDate").prop('disabled', true);
     $("#ddlShift").prop('disabled', true);
-
+    //requestHostName();
     const formAuthentication = {
         "txtUserName": "20223983",
         "txtProcessDate": "2023-09-08",
@@ -153,3 +153,12 @@ $("#btnSubmit").click(function () {
     });
 
 });
+
+
+//function requestHostName() {
+//    window.chrome.webview.postMessage("get-hostname");
+//}
+
+//window.addEventListener("message", function (event) {
+//    console.log("Received message from webview: ", event.data);
+//});

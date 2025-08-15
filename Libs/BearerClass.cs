@@ -239,6 +239,43 @@ namespace HINOSystem.Libs
 
             return _version;
         }
-
     }
 }
+
+
+//Action
+//:
+//"KBNOR321"
+//Authorization
+//:
+//"Bearer 0xB4AB01FA1A07D98234CA8CB30226A662"
+//Controller
+//:
+//"OrderingProcess"
+//Device
+//:
+//"HM23-44-018"
+//IPAddress
+//:
+//"172.20.5.34"
+//LOV
+//:
+//""
+//Plant
+//:
+//"3"
+//ProcessDate
+//:
+//"05/08/2025"
+//Records
+//:
+//""
+//Shift
+//:
+//"1"
+//UserCode
+//:
+//"20234111"
+//title
+//:
+//"Maintenance CKD In-House Order"

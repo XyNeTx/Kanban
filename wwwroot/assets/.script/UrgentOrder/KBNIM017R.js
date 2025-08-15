@@ -1,5 +1,4 @@
-﻿
-$(document).ready(async function () {
+﻿$(document).ready(async function () {
     $(".btn-toolbar").remove();
 
     await _xDataTable.InitialDataTable("#tableImpData",
@@ -14,18 +13,18 @@ $(document).ready(async function () {
                         return meta.row + 1;
                     }
                 },
-                { title: "Part No", data: "Part No", width: "17%" },
-                { title: "Sebango", data: "Sebango", width: "12%" },
-                { title: "Part Name", data: "Part Name", width: "24%" },
-                { title: "Unit Price", data: "Unit Price(รวม VAT)", width: "10%" },
+                { title: "Part No", data: "L1", width: "17%" },
+                { title: "Sebango", data: "V1", width: "12%" },
+                { title: "Part Name", data: "M1", width: "24%" },
+                { title: "Packs", data: "N1", width: "10%" },
                 {
-                    title: "Delivery Qty", data: "Delivery Qty.", width: "10%", render: function (data, type, row) {
-                        console.log("row[Delivery Qty]", row["Delivery Qty."]);
-                        return row["Delivery Qty."] ? row["Delivery Qty."] : row.Packs * row["Lot Size"];
-                    }
+                    title: "Delivery Qty", data: "O1", width: "10%"/*, render: function (data, type, row) {*/
+                        //console.log("row[Delivery Qty]", row["Delivery Qty."]);
+                        //return row["Delivery Qty."] ? row["Delivery Qty."] : row.Packs * row["Lot Size"];
+                    //}
                 },
-                { title: "Packs", data: "Packs", width: "10%" },
-                { title: "Lot Size", data: "Lot Size", width: "10%" },
+                { title: "Unit Price", data: "P1", width: "10%" },
+                //{ title: "Lot Size", data: "Lot Size", width: "10%" },
             ],
             order: [[0, "asc"]],
             scrollCollapse: false,
@@ -120,6 +119,10 @@ $("#btnImp").click(async function () {
 $("#inpFiles").change(async function (e) {
     xSplash.show("Processing file...");
     let _arrData = [];
+    let _headers = ["A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1", "I1", "J1", "K1", "L1", "M1", "N1", "O1", "P1", "Q1", "R1", "S1", "T1", "U1", "V1", "W1", "X1", "Y1", "Z1"
+        , "AA1", "AB1", "AC1", "AD1", "AE1", "AF1", "AG1", "AH1", "AI1", "AJ1", "AK1", "AL1", "AM1", "AN1", "AO1", "AP1", "AQ1", "AR1", "AS1", "AT1", "AU1", "AV1", "AW1", "AX1"];
+
+
     for (let i = 0; i < e.target.files.length; i++)
     {
         let file = e.target.files[i];
@@ -128,28 +131,66 @@ $("#inpFiles").change(async function (e) {
         var sheetName = workbook.SheetNames[0]; // Assuming you want the first sheet
         var worksheet = workbook.Sheets[sheetName];
         var range = XLSX.utils.decode_range(worksheet['!ref']);
-        range.s.r = 1; // Start from the second row to skip headers
-        range.e.r = range.e.r; // Keep the end row the same
+        range.s.r = 0; // Start from the second row to skip headers
+        range.e.r = range.e.r + 1; // Keep the end row the same
         worksheet['!ref'] = XLSX.utils.encode_range(range); // Update the range to exclude the first row
-        for (let cell in worksheet) {
+        console.log(worksheet);
+
+        for (let i = Object.keys(worksheet).length - 1; i >= 0; i--) {
+            //for (let cell in worksheet) {
+            let cell = Object.keys(worksheet)[i];
+            console.log(cell);
             if (cell[0] === '!') continue; // Skip metadata cells
             //console.log("cell:", cell, "value:", worksheet[cell].v);
+            let match = cell.match(/^([A-Z]+)([0-9]+)$/);
+            let col = "";
+            let row = 0;
+            if (match) {
+                col = match[1]; // column part (e.g., "AA")
+                row = parseInt(match[2]) + 1; // row part as number (e.g., 10)
+            }
+            let newCell = col + row.toString();
             if (worksheet[cell].v !== undefined) {
+                console.log("cell" + cell);
+                console.log("newCell" + newCell);
+                if (worksheet[cell].v === undefined) worksheet[cell].v = ""; // Ensure all cells have a value
                 let cellValue = worksheet[cell].w;
-                workbook.Sheets[sheetName][cell].v = cellValue.replace(/[\u200B-\u200D\uFEFF]/g, '');
-                if (worksheet[cell].v === undefined) worksheet[cell].v = ''; // Ensure all cells have a value
+                console.log(worksheet[cell]);
+                console.log(worksheet[newCell]);
+                //if (workbook.Sheets[sheetName][newCell].v === undefined) return;
+                if (worksheet[newCell] === undefined) {
+                    worksheet[newCell] = {
+                        w: worksheet[cell].w.replace(/[\u200B-\u200D\uFEFF']/g, ''),
+                        t: worksheet[cell].t.replace(/[\u200B-\u200D\uFEFF']/g, ''),
+                        v: worksheet[cell].w.replace(/[\u200B-\u200D\uFEFF']/g, '')
+                    }
+                }
+                else {
+                    worksheet[newCell].w = cellValue.replace(/[\u200B-\u200D\uFEFF']/g, '');
+                    worksheet[newCell].v = cellValue.replace(/[\u200B-\u200D\uFEFF']/g, '');
+                }
             }
         }
+        _headers.forEach(x => {
+            worksheet[x] = {
+                w: x,
+                v: x,
+                t: 's'
+            }
+        });
+        //return console.log("workbook.Sheets[sheetName] => ", workbook.Sheets[sheetName]);
         let _jsonData = XLSX.utils.sheet_to_json(worksheet);
         console.log("file:", file.name, "_jsonData:", _jsonData);
         _arrData.push(..._jsonData); // Spread operator to flatten the array
-        console.log("_arrData:", _arrData);
+        //return console.log("_arrData:", _arrData);
     }
     await GetOrdData(_arrData); // Call the function to get order data for each file
     await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for all files to be read
     _xDataTable.ClearAndAddDataDT("#tableImpData", _arrData);
     xSplash.hide();
 });
+
+const isNumeric = (n) => !isNaN(n);
 
 async function GetOrdData(impData) {
     xSplash.show("Loading order data...");

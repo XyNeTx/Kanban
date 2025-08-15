@@ -3,7 +3,7 @@
     public interface IKBNOR320
     {
 
-        Task completeRecalculateCKD();
+        Task completeRecalculateCKD(string[]? arryVariable);
 
     }
 }

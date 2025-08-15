@@ -48,7 +48,14 @@ namespace KANBAN.Controllers.API.UrgentOrder
                     x.F_Name_Order,
                     x.F_Qty,
                     x.F_PDS_No,
-                })
+                }).OrderBy(x=>x.F_PDS_No)
+                .ThenBy(x=>x.F_Supplier_CD)
+                .ThenBy(x=>x.F_Part_No)
+                .ThenBy(x=>x.F_Kanban_No)
+                .ThenBy(x=>x.F_Store_CD)
+                .ThenBy(x=>x.F_Delivery_Date)
+                .ThenBy(x=>x.F_Part_Order)
+                .ThenBy(x=>x.F_Store_Order)
             });
 
         }

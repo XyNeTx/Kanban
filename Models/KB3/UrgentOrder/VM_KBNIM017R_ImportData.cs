@@ -8,7 +8,7 @@ namespace KANBAN.Models.KB3.UrgentOrder
 {
     public class VM_KBNIM017R_ImportData
     {
-        [JsonPropertyName("Delivery Qty.")]
+        [JsonPropertyName("O1")]
         [Required(ErrorMessage = "Delivery Qty. is required.")]
         public int DeliveryQty { get; set; }
 
@@ -16,30 +16,38 @@ namespace KANBAN.Models.KB3.UrgentOrder
         public string? LastPrint { get; set; }
 
         [JsonPropertyName("Lot Size")]
-        [Required(ErrorMessage = "Lot Size is required.")]
-        public int LotSize { get; set; }
+        //[Required(ErrorMessage = "Lot Size is required.")]
+        public int? LotSize { get; set; }
 
         [JsonPropertyName("No")]
         public int? No { get; set; }
 
-        [JsonPropertyName("Packs")]
+        [JsonPropertyName("N1")]
         [Required(ErrorMessage = "Packs is required.")]
         public int Packs { get; set; }
 
-        [JsonPropertyName("Part Name")]
+        [JsonPropertyName("M1")]
         [Required(ErrorMessage = "Part Name is required.")]
         public string PartName { get; set; }
 
-        [JsonPropertyName("Part No")]
+        [JsonPropertyName("A1")]
+        [Required(ErrorMessage = "PDS No is required.")]
+        public string PDS_No { get; set; }
+
+        [JsonPropertyName("L1")]
         [Required(ErrorMessage = "Part No is required.")]
         public string PartNo { get; set; }
 
-        [JsonPropertyName("Sebango")]
+        [JsonPropertyName("V1")]
         [Required(ErrorMessage = "Sebango is required.")]
         public string Sebango { get; set; }
 
-        [JsonPropertyName("Unit Price(รวม VAT)")]
+        [JsonPropertyName("P1")]
         [Required(ErrorMessage = "Unit Price is required.")]
         public float UnitPrice { get; set; }
+
+        [JsonPropertyName("F1")]
+        [Required(ErrorMessage = "Sebango is required.")]
+        public string DeliveryDate { get; set; }
     }
 }

@@ -49,13 +49,16 @@ namespace KANBAN.Services.CKD_Ordering.Repository
 
 
 
-        public async Task completeRecalculateCKD()
+        public async Task completeRecalculateCKD(string[]? arryVariable)
         {
             try
             {
-                await _kbContext.Database.ExecuteSqlRawAsync("UPDATE TB_MS_Parameter SET F_Value2 = '3' WHERE F_Code = 'CI_CKD'");
 
-                string[] arryVariable = new string[] { "0", KBNOR310.dateProcessDate_CKD.ToString("yyyyMMdd"), KBNOR310.chrProcessShift_CKD };
+                if(arryVariable == null || arryVariable.Length <= 3)
+                {
+                    await _kbContext.Database.ExecuteSqlRawAsync("UPDATE TB_MS_Parameter SET F_Value2 = '3' WHERE F_Code = 'CI_CKD'");
+                    arryVariable = new string[] { "0", KBNOR310.dateProcessDate_CKD.ToString("yyyyMMdd"), KBNOR310.chrProcessShift_CKD };
+                }
 
                 await _kbContext.Database.ExecuteSqlRawAsync("EXEC [CKD_Inhouse].sp_ManipulateForecast {0},{1},{2}", arryVariable[0], arryVariable[1], arryVariable[2]);
                 //_log.WriteLogMsg($"Start Process sp_ManipulateForecast '{arryVariable[1]}' , '{arryVariable[2]}' ");
@@ -88,32 +91,34 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                 await _kbContext.Database.ExecuteSqlRawAsync("EXEC [CKD_Inhouse].sp_UpdateReceivePlan {0},{1},{2}", arryVariable[0], arryVariable[1], arryVariable[2]);
                 //_log.WriteLogMsg($"Start Process sp_UpdateReceivePlan '{arryVariable[1]}' , '{arryVariable[2]}' ");
 
-                using (Process p = new Process())
+                if(arryVariable.Length == 3)
                 {
-                    p.StartInfo.FileName = "C:\\Windows\\System32\\schtasks.exe";
-                    p.StartInfo.Arguments = "/run /tn \"KB3_BL_CKD\"";  // Name of the scheduled task
-                    p.StartInfo.UseShellExecute = false;
-                    p.StartInfo.CreateNoWindow = true;
-                    p.StartInfo.RedirectStandardOutput = true;  // Capture output
-                    p.StartInfo.RedirectStandardError = true;  // Capture errors too
+                    using (Process p = new Process())
+                    {
+                        p.StartInfo.FileName = "C:\\Windows\\System32\\schtasks.exe";
+                        p.StartInfo.Arguments = "/run /tn \"KB3_BL_CKD\"";  // Name of the scheduled task
+                        p.StartInfo.UseShellExecute = false;
+                        p.StartInfo.CreateNoWindow = true;
+                        p.StartInfo.RedirectStandardOutput = true;  // Capture output
+                        p.StartInfo.RedirectStandardError = true;  // Capture errors too
 
-                    p.Start();
+                        p.Start();
 
-                    // Read output and error streams asynchronously
-                    string output = await p.StandardOutput.ReadToEndAsync();
-                    string error = await p.StandardError.ReadToEndAsync();
+                        // Read output and error streams asynchronously
+                        string output = await p.StandardOutput.ReadToEndAsync();
+                        string error = await p.StandardError.ReadToEndAsync();
 
-                    // Wait for the process to exit asynchronously
-                    await p.WaitForExitAsync();
+                        // Wait for the process to exit asynchronously
+                        await p.WaitForExitAsync();
 
-                    // Log both the output and any error that occurred
-                    _log.WriteLogMsg("Start Process EXE: " + p.StartInfo.FileName + " Output: " + output + " Error: " + error);
+                        // Log both the output and any error that occurred
+                        _log.WriteLogMsg("Start Process EXE: " + p.StartInfo.FileName + " Output: " + output + " Error: " + error);
+
+                        await _kbContext.Database.ExecuteSqlRawAsync($@"UPDATE TB_MS_Parameter SET F_Value2 = '2', F_Value3 = '{KBNOR310.dateProcessDate_CKD.ToString("yyyyMMdd") + KBNOR310.chrProcessShift_CKD}'
+                            WHERE F_Code = 'CI_CKD';
+                            UPDATE TB_MS_Parameter SET F_Value2 = '2' WHERE F_Code = 'ST_CKD';");
+                    }
                 }
-
-                await _kbContext.Database.ExecuteSqlRawAsync($@"UPDATE TB_MS_Parameter SET F_Value2 = '2', F_Value3 = '{KBNOR310.dateProcessDate_CKD.ToString("yyyyMMdd") + KBNOR310.chrProcessShift_CKD}'
-                    WHERE F_Code = 'CI_CKD';
-                    UPDATE TB_MS_Parameter SET F_Value2 = '2' WHERE F_Code = 'ST_CKD';");
-
             }
             catch (Exception ex)
             {
@@ -149,7 +154,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                     "1" => "1A",
                     "2" => "2B",
                     "3" => "3C",
-                    _ => throw new CustomHttpException(400, "Invalid Store Code")
+                    _ => "3C"
                 };
                 string sqlQuery = $@"IF OBJECT_ID('tempdb..#TEMP') IS NOT NULL DROP TABLE #TEMP;
                     CREATE TABLE #TEMP ( 
@@ -198,8 +203,8 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                     sqlQuery += Environment.NewLine + $"AND F_Supplier_Plant = '{arryVariable[4]}'";
                     sqlQuery += Environment.NewLine + $"AND F_Part_No = '{arryVariable[5]}'";
                     sqlQuery += Environment.NewLine + $"AND F_Ruibetsu = '{arryVariable[6]}'";
-                    sqlQuery += Environment.NewLine + $"AND F_Store_Code = '{arryVariable[7]}'";
-                    sqlQuery += Environment.NewLine + $"AND F_Kanban_No = '{arryVariable[8]}'";
+                    sqlQuery += Environment.NewLine + $"AND F_Kanban_No = '{arryVariable[7]}'";
+                    sqlQuery += Environment.NewLine + $"AND F_Store_Code = '{arryVariable[8]}'";
                 }
 
                 DT_HeaderInProcess = await _FillDT.ExecuteSQLAsync(sqlQuery);
@@ -227,8 +232,8 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                     sqlQuery += Environment.NewLine + $"AND F_Supplier_Plant = '{arryVariable[4]}'";
                     sqlQuery += Environment.NewLine + $"AND F_Part_No = '{arryVariable[5]}'";
                     sqlQuery += Environment.NewLine + $"AND F_Ruibetsu = '{arryVariable[6]}'";
-                    sqlQuery += Environment.NewLine + $"AND F_Store_Code = '{arryVariable[7]}'";
-                    sqlQuery += Environment.NewLine + $"AND F_Kanban_No = '{arryVariable[8]}'";
+                    sqlQuery += Environment.NewLine + $"AND F_Kanban_No = '{arryVariable[7]}'";
+                    sqlQuery += Environment.NewLine + $"AND F_Store_Code = '{arryVariable[8]}'";
                 }
 
                 DT_DetailInProcess = await _FillDT.ExecuteSQLAsync(sqlQuery);
@@ -248,12 +253,12 @@ namespace KANBAN.Services.CKD_Ordering.Repository
 
                 if (arryVariable.Length > 3)
                 {
-                    sqlQuery += Environment.NewLine + $"AND F_Supplier_Code = '{arryVariable[3]}'";
+                    sqlQuery += Environment.NewLine + $"WHERE F_Supplier_Code = '{arryVariable[3]}'";
                     sqlQuery += Environment.NewLine + $"AND F_Supplier_Plant = '{arryVariable[4]}'";
                     sqlQuery += Environment.NewLine + $"AND F_Part_No = '{arryVariable[5]}'";
                     sqlQuery += Environment.NewLine + $"AND F_Ruibetsu = '{arryVariable[6]}'";
-                    sqlQuery += Environment.NewLine + $"AND F_Store_Code = '{arryVariable[7]}'";
-                    sqlQuery += Environment.NewLine + $"AND F_Kanban_No = '{arryVariable[8]}'";
+                    sqlQuery += Environment.NewLine + $"AND F_Kanban_No = '{arryVariable[7]}'";
+                    sqlQuery += Environment.NewLine + $"AND F_Store_Code = '{arryVariable[8]}'";
                 }
 
                 DT_KBADD = await _FillDT.ExecuteSQLAsync(sqlQuery);
@@ -273,12 +278,12 @@ namespace KANBAN.Services.CKD_Ordering.Repository
 
                 if (arryVariable.Length > 3)
                 {
-                    sqlQuery += Environment.NewLine + $"AND F_Supplier_Code = '{arryVariable[3]}'";
+                    sqlQuery += Environment.NewLine + $"WHERE F_Supplier_Code = '{arryVariable[3]}'";
                     sqlQuery += Environment.NewLine + $"AND F_Supplier_Plant = '{arryVariable[4]}'";
                     sqlQuery += Environment.NewLine + $"AND F_Part_No = '{arryVariable[5]}'";
                     sqlQuery += Environment.NewLine + $"AND F_Ruibetsu = '{arryVariable[6]}'";
-                    sqlQuery += Environment.NewLine + $"AND F_Store_Code = '{arryVariable[7]}'";
-                    sqlQuery += Environment.NewLine + $"AND F_Kanban_No = '{arryVariable[8]}'";
+                    sqlQuery += Environment.NewLine + $"AND F_Kanban_No = '{arryVariable[7]}'";
+                    sqlQuery += Environment.NewLine + $"AND F_Store_Code = '{arryVariable[8]}'";
                 }
 
                 DT_KBCUT = await _FillDT.ExecuteSQLAsync(sqlQuery);

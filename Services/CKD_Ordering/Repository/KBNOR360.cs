@@ -499,6 +499,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                         AND H.F_Issued_Shift = '{KBNOR310.chrProcessShift_CKD}' 
                         AND H.F_OrderType = 'U'
                         AND H.F_OrderNo LIKE '%UT%'
+                        AND H.F_Status = 'N'
                         AND H.F_Supplier_Code ='9999'";
 
                     DT = await _FillDT.ExecuteSQLAsync(_sql);

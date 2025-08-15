@@ -44,6 +44,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
             _httpContextAccessor = httpContextAccessor;
         }
 
+        public static DateTime DateLogin;
         public static string strDateNow = DateTime.Now.ToString("yyyyMMdd");
 
         public static DateTime dateProcessDate_CKD { get; set; }
@@ -88,8 +89,10 @@ namespace KANBAN.Services.CKD_Ordering.Repository
         {
             try
             {
+                string strDateLogin = _httpContextAccessor.HttpContext.Request.Cookies.FirstOrDefault(x => x.Key == "loginDate").Value.ToString();
+                DateLogin = DateTime.ParseExact(strDateLogin.Replace("N", string.Empty).Replace("D", string.Empty), "yyyy-MM-dd",null);
                 string sqlQuery = $@"EXEC [CKD_Inhouse].[sp_getProcessDateTime] '{_BearerClass.Plant}' 
-                    ,'{DateTime.Now.ToString("yyyy-MM-dd")} {(_BearerClass.Shift == "1" ? "07:30:00" : "19:30:00")}' ";
+                    ,'{DateLogin.ToString("yyyy-MM-dd")} {(_BearerClass.Shift == "1" ? "07:30:00" : "19:30:00")}' ";
 
                 var _dt = await _FillDT.ExecuteSQLAsync(sqlQuery);
 

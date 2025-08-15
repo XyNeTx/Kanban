@@ -119,7 +119,7 @@ namespace HINOSystem.Controllers.API.Master
             }
         }
 
-        [HttpGet]
+        [HttpPost]
         public async Task<IActionResult> UpdateFlgClearModule([FromBody] List<VM_KBNOR361_Save> listObj)
         {
             try

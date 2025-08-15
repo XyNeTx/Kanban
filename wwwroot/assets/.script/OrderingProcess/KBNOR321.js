@@ -10,6 +10,10 @@ let dT_Volume = [];
 let action = "";
 
 $(document).ready(async function () {
+    $("#chkBoxSliceOrder").parent().addClass("d-none");
+    $("#chkBoxRecSlice").parent().addClass("d-none");
+    $("#chkBoxChgCycleTime").parent().addClass("d-none");
+    $("#chkBoxOrderTable").parent().addClass("d-none");
     await Onload();
     await GetDropDownData();
     //await Find_StartEnd_Date();
@@ -460,7 +464,7 @@ async function Set_Data(intRow)
         x.F_Ruibetsu == dT_PartControl[intRow].F_Ruibetsu &&
         x.F_Store_Code == dT_PartControl[intRow].F_Store_Code &&
         x.F_Kanban_No == dT_PartControl[intRow].F_Kanban_No &&
-        x.F_Process_Date == moment($("#inputProcessDateFor").val(), "DD/MM/YYYY").format("YYYYMMDD") &&
+        x.F_Process_Date == dT_DeliveryDate[0].F_Delivery_Date &&
         x.F_Process_Shift == $("#inputProcessShiftFor").val()
     )[0];
 
@@ -650,7 +654,7 @@ async function Recalculate(action,intRow) {
 }
 
 async function EditTableStyle(action) {
-    var processDate = moment($("#inputProcessDateFor").val(), "DD/MM/YYYY").format("YYYYMMDD");
+    var processDate = moment($("#spanDeliveryDate").text(), "DD/MM/YYYY").format("YYYYMMDD");
     $(document).find("th[id*='thDate']").each(function () {
         if ($(this).attr("id").includes(processDate)) {
             $(this).addClass("bg-warning");
@@ -734,6 +738,36 @@ async function EditTableStyle(action) {
                 }
             }
         });
+
+        let _processDate = moment($("#inputProcessDateFor").val(), "DD/MM/YYYY").format("YYYYMMDD");
+        let _processShift = $("#inputProcessShiftFor").val();
+
+        var detailData = dT_Detail.filter(x =>
+            //x.F_Supplier_Code == dT_PartControl[intRow].F_Supplier_Code &&
+            //x.F_Supplier_Plant == dT_PartControl[intRow].F_Supplier_Plant &&
+            //x.F_Part_No == dT_PartControl[intRow].F_Part_No &&
+            //x.F_Ruibetsu == dT_PartControl[intRow].F_Ruibetsu &&
+            //x.F_Kanban_No == dT_PartControl[intRow].F_Kanban_No &&
+            //x.F_Store_Code == dT_PartControl[intRow].F_Store_Code &&
+            x.F_Process_Date == _processDate &&
+            x.F_Process_Shift == _processShift &&
+            x.F_Process_Round == _processShift == "D" ? "1" : "2"
+        )[0];
+
+
+        console.log(_processDate);
+        console.log(_processShift);
+        console.log(detailData);
+
+        if (detailData.F_KB_CutADD > 0) {
+            $("#radioKbAdd").prop("checked", true);
+        }
+        else if (detailData.F_KB_CutADD < 0) {
+            $("#radioKbCut").prop("checked", true);
+        }
+        if (!detailData.F_NON_STOP) {
+            $("#radioKbStop").prop("checked", true);
+        }
 
         //let 
 

@@ -19,6 +19,8 @@ namespace KANBAN.Services.CKD_Ordering.Repository
         private readonly CKDWH_Context _CKDContext;
         private readonly CKDUSA_Context _CKDUSAContext;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly HttpClient _httpClient;
+        private readonly IKBNOR320 _kBNOR320;
 
         public CKDService(
             KB3Context kbContext,
@@ -30,7 +32,9 @@ namespace KANBAN.Services.CKD_Ordering.Repository
             IAutoMapService autoMapService,
             CKDWH_Context cKDContext,
             CKDUSA_Context cKDUSAContext,
-            IHttpContextAccessor httpContextAccessor
+            IHttpContextAccessor httpContextAccessor,
+            HttpClient httpClient,
+            IKBNOR320 kBNOR320
             )
         {
             _kbContext = kbContext;
@@ -43,6 +47,8 @@ namespace KANBAN.Services.CKD_Ordering.Repository
             _CKDContext = cKDContext;
             _CKDUSAContext = cKDUSAContext;
             _httpContextAccessor = httpContextAccessor;
+            _httpClient = httpClient;
+            _kBNOR320 = kBNOR320;
         }
 
         public IKBNOR300 IKBNOR300_Repo
@@ -91,7 +97,10 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                                     _PPM3Context,
                                     _FillDT, _log,
                                     _emailService,
-                                    _automapService);
+                                    _automapService,
+                                    _httpClient,
+                                    _httpContextAccessor,
+                                    _kBNOR320);
             }
         }
         public IKBNOR330 IKBNOR330_Repo

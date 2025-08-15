@@ -154,6 +154,28 @@ namespace KANBAN.Controllers
                 throw new CustomHttpException(500, ex.Message);
             }
         }
+        
+        [HttpPost]
+        public async Task<IActionResult> DeleteKBNOR_450()
+        {
+            try
+            {
+                await _BearerClass.CheckAuthorize();
+
+                await _KB3Context.Database.ExecuteSqlRawAsync($"DELETE FROM [dbo].[KBNOR_450] WHERE F_Update_By='{_BearerClass.UserCode}'");
+                
+                return Ok(new
+                {
+                    status = "200",
+                    response = "OK",
+                    message = "Success",
+                });
+            }
+            catch (Exception ex)
+            {
+                throw new CustomHttpException(500, ex.Message);
+            }
+        }
 
     }
 }

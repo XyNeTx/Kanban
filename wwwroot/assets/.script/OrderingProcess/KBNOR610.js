@@ -90,8 +90,10 @@
                     "F_ORDERTYPE": "N"
                 },
             });
-            if (_dt.rows != null) MsgBox(`ไม่สามารถ Delete PDS นี้ได้ เพราะPDS นี้ถูก Delete ไปแล้ว!!!`, MsgBoxStyle.Critical);
-
+            if (_dt.rows != null) {
+                MsgBox(`ไม่สามารถ Delete PDS นี้ได้ เพราะPDS นี้ถูก Delete ไปแล้ว!!!`, MsgBoxStyle.Critical);
+                btnDelete.readonly = true;
+            }
 
 
             //console.log(ddlPDSNo.value.substring(10, 11));
@@ -102,7 +104,10 @@
                         "F_Document_No": ddlPDSNo.value
                     },
                 });
-                if (_dt.rows != null) MsgBox(`ไม่สามารถ Delete PDS นี้ได้ เพราะ PDS นี้ทาง CKD ได้ทำการ Picking ชิ้นส่วนเรียบร้อยแล้ว`, MsgBoxStyle.Critical);
+                if (_dt.rows != null) {
+                    MsgBox(`ไม่สามารถ Delete PDS นี้ได้ เพราะ PDS นี้ทาง CKD ได้ทำการ Picking ชิ้นส่วนเรียบร้อยแล้ว`, MsgBoxStyle.Critical);
+                    btnDelete.readonly = true;
+                }
             }
 
 

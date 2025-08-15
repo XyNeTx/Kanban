@@ -23,7 +23,9 @@ namespace KANBAN.Services.CKD_Ordering.Repository
         private readonly SerilogLibs _log;
         private readonly IEmailService _emailService;
         private readonly IAutoMapService _automapService;
-
+        private readonly HttpClient _httpClient;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IKBNOR320 _kbnor320Repo;
 
         public KBNOR321
             (
@@ -33,7 +35,10 @@ namespace KANBAN.Services.CKD_Ordering.Repository
             FillDataTable FillDT,
             SerilogLibs log,
             IEmailService emailService,
-            IAutoMapService autoMapService
+            IAutoMapService autoMapService,
+            HttpClient httpClient,
+            IHttpContextAccessor httpContextAccessor,
+            IKBNOR320 kbnor320Repo
             )
         {
             _kbContext = kbContext;
@@ -43,6 +48,9 @@ namespace KANBAN.Services.CKD_Ordering.Repository
             _log = log;
             _emailService = emailService;
             _automapService = autoMapService;
+            _httpClient = httpClient;
+            _httpContextAccessor = httpContextAccessor;
+            _kbnor320Repo = kbnor320Repo;
         }
 
         public static DateTime DateLogin;
@@ -316,7 +324,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                         new SqlParameter("@Supplier_Plant",F_Supplier_Code.Split("-")[1]),
                         new SqlParameter("@Shift",ShiftLogin),
                         new SqlParameter("@UserName",_BearerClass.UserCode),
-                        new SqlParameter("@Date",DateTime.Now.ToString("yyyyMMdd"))
+                        new SqlParameter("@Date",DateLogin.ToString("yyyyMMdd"))
                     };
 
                     DT = await _FillDT.ExecuteStoreSQLAsync("[CKD_Inhouse].[sp_NumberOfDayToSearch]", sqlParams);
@@ -330,7 +338,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                     new SqlParameter("@Plant",_BearerClass.Plant),
                     new SqlParameter("@Supplier_Code",F_Supplier_Code.Split("-")[0]),
                     new SqlParameter("@Supplier_Plant",F_Supplier_Code.Split("-")[1]),
-                    new SqlParameter("@ProcessDate",DateTime.Now.ToString("yyyyMMdd")),
+                    new SqlParameter("@ProcessDate",DateLogin.ToString("yyyyMMdd")),
                     new SqlParameter("@ProcessShift",ShiftLogin)
                 };
 
@@ -602,6 +610,24 @@ namespace KANBAN.Services.CKD_Ordering.Repository
         {
             try
             {
+                var tb_ms_param = await _kbContext.TB_MS_Parameter.AsNoTracking()
+                    .Where(x => x.F_Code == "ST").FirstOrDefaultAsync();
+
+                if(tb_ms_param.F_Value2 == 5)
+                {
+                    throw new CustomHttpException(400, "กำลัง Generate PDS for Normal Order Data ไม่สามารถ Re-Calculate ได้");
+                }
+
+                var tb_pds = await _kbContext.TB_PDS_Header.AsNoTracking()
+                    .Where(x => x.F_OrderType == "N").ToListAsync();
+
+                if(tb_pds.Count > 0)
+                {
+                    throw new CustomHttpException(400, "ขณะนี้ Generate PDS for Normal Order Data ไปแล้ว \n กรุณา Generate PDS for Normal Order Data อีกครั้ง ");
+                }
+
+                await CompleteReculateCKD(intRow.Value);
+
                 await Find_StartEnd_Date(action, F_Supplier_Code);
                 await Set_All_Data(action, F_Supplier_Code, null, intRow, null, null, null, null, null);
             }
@@ -703,10 +729,10 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                     WHERE F_Supplier_Code = '{F_Supplier_Code.Split("-")[0]}' 
                     AND F_Supplier_Plant = '{F_Supplier_Code.Split("-")[1]}'
                     AND F_Store_Code = '{DT_PartControl.Rows[intRow]["F_Store_Code"].ToString().Trim()}'
-                    AND F_Kanban_No = '{DT_PartControl.Rows[intRow]["F_Kanban_No"].ToString().Trim().Substring(1, 3)}'
+                    AND F_Kanban_No = '{DT_PartControl.Rows[intRow]["F_Kanban_No"].ToString().Trim()}'
                     AND F_Part_No = '{DT_PartControl.Rows[intRow]["F_Part_No"].ToString().Trim()}'
                     AND F_Ruibetsu = '{DT_PartControl.Rows[intRow]["F_Ruibetsu"].ToString().Trim()}'
-                    AND F_Process_Date = '{DateLogin}'
+                    AND F_Process_Date = '{DateLogin.ToString("yyyyMMdd")}'
                     AND F_Process_Shift = '{ShiftLogin}'
                     GROUP BY F_Supplier_Code, F_Supplier_Plant, F_Store_Code, F_Part_No, F_Ruibetsu,
                     F_Kanban_No, F_Process_Date, F_Process_Shift, F_NON_STOP
@@ -1194,7 +1220,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                                         BLPlan_Solution = "BL = ( BF + In(Rec) ) + Urgent \n";
                                         BlPlan = (Last_BL_Plan + InRec) + int.Parse(DT.Rows[i]["F_Urgent_Order"].ToString());
                                         BLPlan_Solution = $@"{BLPlan_Solution} BLPlan : {BlPlan.ToString()}
-                                    = ({Last_BL_Plan.ToString()} + {InRec.ToString()}) + {DT.Rows[i]["F_Urgent_Order"].ToString()}";
+                                            = ({Last_BL_Plan.ToString()} + {InRec.ToString()}) + {DT.Rows[i]["F_Urgent_Order"].ToString()}";
 
                                         BlActual = (Last_BL_Actual + InActual);
                                         BLActual_Solution = $@"BLActual : {BlActual} = ({Last_BL_Actual} + {InActual})";
@@ -1204,7 +1230,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                                             BLPlan_Solution = "BL = (BF + In(Rec)) - MRP + Urgent \n";
                                             BlPlan = (Last_BL_Plan + InRec) - int.Parse(DT.Rows[i]["F_MRP"].ToString()) + int.Parse(DT.Rows[i]["F_Urgent_Order"].ToString());
                                             BLPlan_Solution = $@"{BLPlan_Solution} BLPlan : {BlPlan} = ({Last_BL_Plan} + {InRec}) - 
-                                    {DT.Rows[i]["F_MRP"].ToString()} + {DT.Rows[i]["F_Urgent_Order"].ToString()}";
+                                                {DT.Rows[i]["F_MRP"].ToString()} + {DT.Rows[i]["F_Urgent_Order"].ToString()}";
 
                                             BlActual = (Last_BL_Actual + InActual) - int.Parse(DT.Rows[i]["F_MRP"].ToString());
                                             BLActual_Solution = $@"BLActual : {BlActual} = ({Last_BL_Actual} + {InActual}) - {DT.Rows[i]["F_MRP"].ToString()}";
@@ -1346,19 +1372,19 @@ namespace KANBAN.Services.CKD_Ordering.Repository
 
 
                             int intResult = await _kbContext.Database.ExecuteSqlRawAsync(
-                             "[CKD_Inhouse].sp_autoRecalculateBL_UpdateBL @Process_Date,@Process_Shift,@Process_Round,@Supplier_Code,@Supplier_Plant,@Part_No,@Ruibetsu,@Kanban_No,@Store_Code,@BL_Plan,@BL_Actual,@Not_Recalculate",
-                             new SqlParameter("@Process_Date", DT.Rows[i]["F_Process_Date"].ToString().Trim()),
-                             new SqlParameter("@Process_Shift", DT.Rows[i]["F_Process_Shift"].ToString().Trim()),
-                             new SqlParameter("@Process_Round", DT.Rows[i]["F_Process_Round"].ToString().Trim()),
-                             new SqlParameter("@Supplier_Code", DT.Rows[i]["F_Supplier_Code"].ToString().Trim()),
-                             new SqlParameter("@Supplier_Plant", DT.Rows[i]["F_Supplier_Plant"].ToString().Trim()),
-                             new SqlParameter("@Part_No", DT.Rows[i]["F_Part_No"].ToString().Trim()),
-                             new SqlParameter("@Ruibetsu", DT.Rows[i]["F_Ruibetsu"].ToString().Trim()),
-                             new SqlParameter("@Kanban_No", DT.Rows[i]["F_Kanban_No"].ToString().Trim()),
-                             new SqlParameter("@Store_Code", DT.Rows[i]["F_Store_Code"].ToString().Trim()),
-                             new SqlParameter("@BL_Plan", BlPlan),
-                             new SqlParameter("@BL_Actual", BlActual),
-                             new SqlParameter("@Not_Recalculate", DT.Rows[i]["F_Not_Recalculate"].ToString().Trim())
+                                "[CKD_Inhouse].sp_autoRecalculateBL_UpdateBL @Process_Date,@Process_Shift,@Process_Round,@Supplier_Code,@Supplier_Plant,@Part_No,@Ruibetsu,@Kanban_No,@Store_Code,@BL_Plan,@BL_Actual,@Not_Recalculate",
+                                new SqlParameter("@Process_Date", DT.Rows[i]["F_Process_Date"].ToString().Trim()),
+                                new SqlParameter("@Process_Shift", DT.Rows[i]["F_Process_Shift"].ToString().Trim()),
+                                new SqlParameter("@Process_Round", DT.Rows[i]["F_Process_Round"].ToString().Trim()),
+                                new SqlParameter("@Supplier_Code", DT.Rows[i]["F_Supplier_Code"].ToString().Trim()),
+                                new SqlParameter("@Supplier_Plant", DT.Rows[i]["F_Supplier_Plant"].ToString().Trim()),
+                                new SqlParameter("@Part_No", DT.Rows[i]["F_Part_No"].ToString().Trim()),
+                                new SqlParameter("@Ruibetsu", DT.Rows[i]["F_Ruibetsu"].ToString().Trim()),
+                                new SqlParameter("@Kanban_No", DT.Rows[i]["F_Kanban_No"].ToString().Trim()),
+                                new SqlParameter("@Store_Code", DT.Rows[i]["F_Store_Code"].ToString().Trim()),
+                                new SqlParameter("@BL_Plan", BlPlan),
+                                new SqlParameter("@BL_Actual", BlActual),
+                                new SqlParameter("@Not_Recalculate", DT.Rows[i]["F_Not_Recalculate"].ToString().Trim())
                             );
 
 
@@ -1480,6 +1506,59 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                 _log.WriteErrorLogMsg(ex.ToString());
                 if (ex is CustomHttpException) throw;
                 else throw new CustomHttpException(500, ex.InnerException.Message ?? ex.Message);
+            }
+        }
+
+
+        private async Task<bool> CompleteReculateCKD(int intRow)
+        {
+            try
+            {
+                var postData = new string[]
+                {
+                    "1",
+                    DateLogin.ToString("yyyyMMdd"),
+                    ShiftLogin,
+                    DT_PartControl.Rows[intRow]["F_Supplier_Code"].ToString().Trim(),
+                    DT_PartControl.Rows[intRow]["F_Supplier_Plant"].ToString().Trim(),
+                    DT_PartControl.Rows[intRow]["F_Part_No"].ToString().Trim(),
+                    DT_PartControl.Rows[intRow]["F_Ruibetsu"].ToString().Trim(),
+                    DT_PartControl.Rows[intRow]["F_Kanban_No"].ToString().Trim(),
+                    DT_PartControl.Rows[intRow]["F_Store_Code"].ToString().Trim(),
+                };
+
+                await _kbnor320Repo.completeRecalculateCKD(postData);
+
+                return true; // Successfully completed the recalculation
+
+                //string hostName = _httpContextAccessor.HttpContext.Request.Host.Value ?? "localhost:7277";
+                //string _reqUrl = "http://" + hostName + "/api/KBNOR320/Calculate";
+
+                //_log.WriteLogMsg("CompleteReculateCKD index => " + intRow + " " + _reqUrl + " " + string.Join(",", postData));
+                //var response = await _httpClient.PostAsJsonAsync(_reqUrl, postData);
+                //_log.WriteLogMsg(await response.Content.ReadAsStringAsync());
+                //if (response.IsSuccessStatusCode)
+                //{
+                //    var rawJson = await response.Content.ReadAsStringAsync();
+
+                //    var parsedJson = JToken.Parse(rawJson);
+                //    var prettyJson = parsedJson.ToString(Newtonsoft.Json.Formatting.Indented);
+
+                //    return true; // Successfully logged in
+                //}
+                //else
+                //{
+                //    var error = await response.Content.ReadAsStringAsync();
+                //    _log.WriteErrorLogMsg("CompleteReculateCKD Not Complete index => " + intRow + " " + error);
+                //    //Console.WriteLine($"Error: {response.StatusCode} - {error}");
+                //    throw new CustomHttpException((int)response.StatusCode, $"Failed to log in: {error}");
+                //}
+            }
+            catch (Exception ex)
+            {
+                _log.WriteErrorLogMsg("CompleteReculateCKD Not Complete index => " + intRow + " " + ex.ToString());
+                if (ex is CustomHttpException) throw;
+                else throw new CustomHttpException(500, ex.InnerException?.Message ?? ex.Message);
             }
         }
 

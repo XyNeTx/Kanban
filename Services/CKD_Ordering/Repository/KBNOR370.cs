@@ -55,33 +55,56 @@ namespace KANBAN.Services.CKD_Ordering.Repository
 
         private readonly string StoragePath = @"wwwroot\Storage\Image\Barcode";
 
-        public async Task<List<string>> Preview(VM_Post_KBNOR261 obj)
+        public async Task<List<string>> Preview(List<VM_Post_KBNOR261> listobj)
         {
             try
             {
                 List<string> resultList = new List<string>();
                 await _kbContext.Database.ExecuteSqlRawAsync($"DELETE FROM [dbo].[KBNOR_450] WHERE F_Update_By='{_BearerClass.UserCode}'");
-                
-                string OrderNO = obj.F_OrderNO.Split("_")[0];
-                string OrderNO_To = obj.F_OrderNO_To.Split("_")[0];
-                string OrderType = obj.F_OrderNO.Split("_")[1];
 
-                var sqlParams = new List<SqlParameter>
+                DataTable _dt = new DataTable();
+
+                foreach (var obj in listobj)
                 {
-                    new SqlParameter("@pUserCode", _BearerClass.UserCode),
-                    new SqlParameter("@pPlant", _BearerClass.Plant),
-                    new SqlParameter("@pDeliveryDate", ""),
-                    new SqlParameter("@F_orderType", OrderType),
-                    new SqlParameter("@F_OrderNo", OrderNO),
-                    new SqlParameter("@F_OrderNoTo", OrderNO_To),
-                    new SqlParameter("@F_Supplier_Code", ""),
-                    new SqlParameter("@F_Supplier_CodeTo", ""),
-                    new SqlParameter("@F_Delivery_Date", ""),
-                    new SqlParameter("@F_Delivery_DateTo", ""),
-                    new SqlParameter("@ErrorMessage", "")
-                };
+                    string OrderNO = obj.F_OrderNO.Split("_")[0];
+                    //string OrderNO_To = obj.F_OrderNO_To.Split("_")[0];
+                    string OrderType = obj.F_OrderNO.Split("_")[1];
 
-                var _dt = await _FillDT.ExecuteStoreSQLAsync("[exec].[spKBNOR700_PDS]",sqlParams.ToArray());
+
+                    var sqlParams = new List<SqlParameter>
+                    {
+                        new SqlParameter("@pUserCode", _BearerClass.UserCode),
+                        new SqlParameter("@pPlant", _BearerClass.Plant),
+                        new SqlParameter("@pDeliveryDate", ""),
+                        new SqlParameter("@F_orderType", OrderType),
+                        new SqlParameter("@F_OrderNo", OrderNO),
+                        new SqlParameter("@F_OrderNoTo", OrderNO),
+                        new SqlParameter("@F_Supplier_Code", ""),
+                        new SqlParameter("@F_Supplier_CodeTo", ""),
+                        new SqlParameter("@F_Delivery_Date", ""),
+                        new SqlParameter("@F_Delivery_DateTo", ""),
+                        new SqlParameter("@ErrorMessage", "")
+                    };
+
+                    var _dt2 = await _FillDT.ExecuteStoreSQLAsync("[exec].[spKBNOR700_PDS]",sqlParams.ToArray());
+
+                    if (_dt2.Rows.Count > 0)
+                    {
+                        if (_dt.Columns.Count == 0)
+                        {
+                            foreach (DataColumn dc in _dt2.Columns)
+                            {
+                                _dt.Columns.Add(dc.ColumnName, dc.DataType);
+                            }
+                        }
+
+                        foreach (DataRow _dr in _dt2.Rows)
+                        {
+                            _dt.ImportRow(_dr);
+                        }
+                    }
+                }
+
                 foreach(DataRow dr in _dt.Rows)
                 {
                     resultList.Add(dr["F_Barcode"].ToString());
@@ -181,7 +204,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
             {
                 foreach(var obj in listObj)
                 {
-                    string _f = obj.F_OrderNO;
+                    string _f = obj.F_OrderNO.Trim();
 
                     string _path = Path.Combine(StoragePath, DateTime.Now.ToString("yyyyMM"));
                     if (!Directory.Exists(_path)) Directory.CreateDirectory(_path);

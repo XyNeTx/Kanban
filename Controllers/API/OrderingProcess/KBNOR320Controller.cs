@@ -22,12 +22,15 @@ namespace HINOSystem.Controllers.API.Master
         }
 
         [HttpPost]
-        public async Task<IActionResult> Calculate()
+        public async Task<IActionResult> Calculate(string[]? arryVariable)
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
-                await _CKDRepo.IKBNOR320_Repo.completeRecalculateCKD();
+                if(arryVariable == null || arryVariable?.Length == 0)
+                {
+                    await _BearerClass.CheckAuthorize();
+                }
+                await _CKDRepo.IKBNOR320_Repo.completeRecalculateCKD(arryVariable);
 
                 return Ok(new
                 {

@@ -49,11 +49,17 @@ namespace KANBAN.Services.UrgentOrder.Repository
             try
             {
                 var addList = new List<TB_Transaction_TMP>();
-                string PDSNo = "TR"+ DateTime.Now.ToString("yyyyMMddHHmmssffff");
+                string PDSNo = listObj[0].PDS_No;
+                var Delivery_Date = DateTime.ParseExact(listObj[0].DeliveryDate, "M/dd/yyyy", null);
                 foreach (var obj in listObj) {
 
                     var T_Convert_FG_THPS_PEFF = await _InvenContext.T_Convert_FG_THPS_PEFF.AsNoTracking()
-                        .Where(x => x.F_Fg_Part_no == obj.PartNo).FirstOrDefaultAsync();
+                        .Where(x => x.F_Fg_Part_no.Trim() == obj.PartNo.Trim()).FirstOrDefaultAsync();
+
+                    if(T_Convert_FG_THPS_PEFF == null)
+                    {
+                        throw new CustomHttpException(404, $"Convert FG THPS not found for {obj.PartNo}");
+                    }
 
                     var T_Parent_Part = await _PPM3Context.T_Parent_part.AsNoTracking()
                         //.FirstOrDefaultAsync();
@@ -81,10 +87,14 @@ namespace KANBAN.Services.UrgentOrder.Repository
                             && x.F_Ruibetsu == T_Child_Part.F_Ch_ruibetsu
                             && x.F_Store_cd == T_Child_Part.F_ch_store_cd).FirstOrDefaultAsync();
 
+                        int Qty = int.Parse(Math.Ceiling(((obj.DeliveryQty * T_Child_Part.F_Use_pieces.Value) * 0.2)).ToString());
+                        Qty += (obj.DeliveryQty * T_Child_Part.F_Use_pieces.Value);
+
+
                         var addObj = new TB_Transaction_TMP
                         {
                             F_Type = "Urgent",
-                            F_Type_Spc = "Truck",
+                            F_Type_Spc = "",
                             F_Plant = _BearerClass.Plant[0],
                             F_PDS_No = PDSNo,
                             F_PDS_Issued_Date = DateTime.Now.ToString("yyyyMMdd"),
@@ -99,12 +109,12 @@ namespace KANBAN.Services.UrgentOrder.Repository
                             F_Ruibetsu_Order = T_Parent_Part.F_Ruibetsu,
                             F_Store_Order = T_Parent_Part.F_store_cd,
                             F_Name_Order = T_Parent_Part.F_name,
-                            F_Qty = obj.DeliveryQty * T_Child_Part.F_Use_pieces.Value,
+                            F_Qty = Qty,
                             F_Qty_Level1 = T_Child_Part.F_Use_pieces.Value,
                             F_Seq_No = " ",
                             F_Seq_Type = " ",
                             F_Cut_Flag = ' ',
-                            F_Delivery_Date = DateTime.Now.AddDays(7).ToString("yyyyMMdd"),
+                            F_Delivery_Date = Delivery_Date.ToString("yyyyMMdd"),
                             F_Adv_Deli_Date = "",
                             F_OrderType = 'U',
                             F_Country = "",
@@ -141,7 +151,7 @@ namespace KANBAN.Services.UrgentOrder.Repository
                     {
                         T_Child_Parent_List = await _PPM3Context.T_Parents_child
                             .AsNoTracking()
-                            .Where(x => x.F_parent_part == T_Parent_Part.F_Parent_part
+                            .Where(x => x.F_parent_part.Trim() == T_Parent_Part.F_Parent_part.Trim()
                             && x.F_Ruibetsu == T_Parent_Part.F_Ruibetsu
                             && x.F_store_cd == T_Parent_Part.F_store_cd
                             && x.F_ch_store_cd.StartsWith("0")
@@ -149,7 +159,7 @@ namespace KANBAN.Services.UrgentOrder.Repository
 
                         if (T_Child_Parent_List != null)
                         {
-                            var childList = await GetChildPartBOM(T_Child_Parent_List, T_Parent_Part, PDSNo, obj.DeliveryQty, BOM_Level);
+                            var childList = await GetChildPartBOM(T_Child_Parent_List, T_Parent_Part, PDSNo, obj.DeliveryQty, BOM_Level, Delivery_Date.ToString("yyyyMMdd"));
                             addList.AddRange(childList);
                         }
                         BOM_Level++;
@@ -176,6 +186,8 @@ namespace KANBAN.Services.UrgentOrder.Repository
                     //}
 
                 }
+                await _kbContext.AddRangeAsync(addList);
+                await _kbContext.SaveChangesAsync();
                 return addList;
             }
             catch (Exception ex)
@@ -184,7 +196,7 @@ namespace KANBAN.Services.UrgentOrder.Repository
                 throw new CustomHttpException(500, ex.Message);
             }
         }
-        private async Task<List<TB_Transaction_TMP>> GetChildPartBOM(T_Parents_child T_Parents_Child, T_Parent_part T_Parent_Part, string PDSNo,int DeliveryQty, int level)
+        private async Task<List<TB_Transaction_TMP>> GetChildPartBOM(T_Parents_child T_Parents_Child, T_Parent_part T_Parent_Part, string PDSNo,int DeliveryQty, int level,string Delivery_Date)
         {
             try
             {
@@ -215,10 +227,13 @@ namespace KANBAN.Services.UrgentOrder.Repository
                         throw new CustomHttpException(500, "Construction Not Found");
                     }
 
+                    int Qty = int.Parse(Math.Ceiling(((DeliveryQty * T_Child_Part.F_Use_pieces.Value) * 0.2)).ToString());
+                    Qty += (DeliveryQty * T_Child_Part.F_Use_pieces.Value);
+
                     var addObj = new TB_Transaction_TMP
                     {
                         F_Type = "Urgent",
-                        F_Type_Spc = "Truck",
+                        F_Type_Spc = "",
                         F_Plant = _BearerClass.Plant[0],
                         F_PDS_No = PDSNo,
                         F_PDS_Issued_Date = DateTime.Now.ToString("yyyyMMdd"),
@@ -229,16 +244,16 @@ namespace KANBAN.Services.UrgentOrder.Repository
                         F_Part_Name = T_Constuction.F_Part_nm,
                         F_Qty_Pack = 1,
                         F_Part_Code = " ",
-                        F_Part_Order = T_Child_Name.F_Part_no,
-                        F_Ruibetsu_Order = T_Child_Name.F_Ruibetsu,
-                        F_Store_Order = T_Child_Name.F_Store_cd,
-                        F_Name_Order = T_Child_Name.F_Part_nm,
-                        F_Qty = DeliveryQty * T_Child_Part.F_Use_pieces.Value,
+                        F_Part_Order = T_Parent_Part.F_Parent_part,
+                        F_Ruibetsu_Order = T_Parent_Part.F_Ruibetsu,
+                        F_Store_Order = T_Parent_Part.F_store_cd,
+                        F_Name_Order = T_Parent_Part.F_name,
+                        F_Qty = Qty,
                         F_Qty_Level1 = T_Child_Part.F_Use_pieces.Value,
                         F_Seq_No = " ",
                         F_Seq_Type = " ",
                         F_Cut_Flag = ' ',
-                        F_Delivery_Date = DateTime.Now.AddDays(7).ToString("yyyyMMdd"),
+                        F_Delivery_Date = Delivery_Date,
                         F_Adv_Deli_Date = "",
                         F_OrderType = 'U',
                         F_Country = "",

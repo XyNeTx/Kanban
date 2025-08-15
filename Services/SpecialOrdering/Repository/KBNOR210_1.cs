@@ -327,9 +327,9 @@ namespace KANBAN.Services.SpecialOrdering.Repository
 
                 var existData = await _kbContext.TB_Transaction_Spc
                     .Where(x => x.F_Part_No.Trim() + "-" + x.F_Ruibetsu.Trim() == obj.F_Part_No
-                     && x.F_PDS_No.Trim() == obj.F_PDS_No && x.F_PDS_No_New.Trim() == obj.F_PDS_No_New
-                     && x.F_Qty == obj.F_Qty
-                     && x.F_Supplier_CD.Trim() + "-" + x.F_Supplier_Plant.Trim() == obj.F_Supplier_CD)
+                    && x.F_PDS_No.Trim() == obj.F_PDS_No && x.F_PDS_No_New.Trim() == obj.F_PDS_No_New
+                    && x.F_Qty == obj.F_Qty
+                    && x.F_Supplier_CD.Trim() + "-" + x.F_Supplier_Plant.Trim() == obj.F_Supplier_CD)
                     .ToListAsync();
 
                 if (!string.IsNullOrWhiteSpace(Delivery_Date_New))

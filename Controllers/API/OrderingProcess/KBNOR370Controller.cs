@@ -27,11 +27,11 @@ namespace HINOSystem.Controllers.API.Master
         }
 
         [HttpPost]
-        public async Task<IActionResult> Preview(VM_Post_KBNOR261 obj)
+        public async Task<IActionResult> Preview(List<VM_Post_KBNOR261> listobj)
         {
             await _BearerClass.CheckAuthorize();
 
-            var result = await _CKDRepo.IKBNOR370_Repo.Preview(obj);
+            var result = await _CKDRepo.IKBNOR370_Repo.Preview(listobj);
 
             return Ok(new
             {

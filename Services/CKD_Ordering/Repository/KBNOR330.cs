@@ -133,7 +133,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                     , F_incre_cut, F_Safety_Stk, F_ratio, F_Send_class, F_send_supplier, F_send_plant
                     , F_send_store, F_qty_box, F_Weight, F_box_cd, F_Part_nm,  F_KD_Flag, F_STD_stock_ratio
                     , F_Cycle_A, F_cycle_B, F_cycle_C, F_Logistic_cd, F_commemt
-                    , F_update, F_inputuser, F_Plant_CD, '"" & User_Logon & ""' AS F_Update_By
+                    , F_update, F_inputuser, F_Plant_CD, '{_BearerClass.UserCode}' AS F_Update_By
                     FROM {ppmConnect}.dbo.T_Construction
                     WHERE F_Local_END >= CONVERT(CHAR(8),getDate(),112)
                     AND (F_supplier_cd = '9999');";
@@ -174,16 +174,21 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                             new SqlParameter("@UserName", _BearerClass.UserCode),
                             new SqlParameter("@Type_Import", "N"));
 
-                        await KbTransaction.CommitAsync();
+                        var headerData = await _kbContext.TB_PDS_Header.AsNoTracking()
+                            .Where(x => x.F_OrderType == "N" && x.F_Supplier_Code == "9999")
+                            .ToListAsync();
+                       
+                        if (headerData.Count > 0)
+                        {
+                            await KbTransaction.CommitAsync();
 
-                        _SqlQuery = $@"SELECT DISTINCT F_Supplier_Code+'-'+F_Supplier_Plant COLLATE DATABASE_DEFAULT AS F_Supplier_Code
+                            _SqlQuery = $@"SELECT DISTINCT F_Supplier_Code+'-'+F_Supplier_Plant COLLATE DATABASE_DEFAULT AS F_Supplier_Code
                             , F_Delivery_Cycle, F_Delivery_Date, F_Delivery_Trip, F_OrderNo
                             From TB_PDS_HEADER
                             Where F_OrderType='N' and (F_Supplier_Code='9999')";
 
-                        dt = await _FillDT.ExecuteSQLAsync(_SqlQuery);
-                        if (dt.Rows.Count > 0)
-                        {
+                            dt = await _FillDT.ExecuteSQLAsync(_SqlQuery);
+
                             return Tuple.Create(dt, "Success");
                         }
                         else
@@ -195,7 +200,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                     {
                         await KbTransaction.RollbackAsync();
                         _log.WriteErrorLogMsg(ex.Message);
-                        throw new CustomHttpException(400, "Error Sub : frmKBNOR_330 [CKD_Inhouse].sp_GeneratePDS");
+                        throw new CustomHttpException(400, ex.Message + " Error Sub : frmKBNOR_330 [CKD_Inhouse].sp_GeneratePDS ");
                     }
 
                 }

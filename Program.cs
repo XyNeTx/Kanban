@@ -104,6 +104,7 @@ builder.Services.AddScoped<IMasterRepo, MasterRepo>();
 builder.Services.AddScoped<ICKDService, CKDService>();
 builder.Services.AddScoped<IOtherConditionRepo, OtherConditionRepo>();
 builder.Services.AddScoped<IUrgentRepo,UrgentRepo>();
+builder.Services.AddScoped<IKBNOR320, KBNOR320>();
 builder.Services.AddHttpClient();
 
 builder.Services.AddAutoMapper
