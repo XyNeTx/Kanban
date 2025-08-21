@@ -335,7 +335,7 @@ namespace HINOSystem.Libs
 
             _s = @"[" + _s + @"]";
             string filePath = @"wwwroot\assets\template\Menu\" + ViewData["UserCode"] + ".json";
-            System.IO.File.WriteAllText(filePath, _s);              // Write the JSON data to the file
+            //System.IO.File.WriteAllText(filePath, _s);              // Write the JSON data to the file
 
 
             ViewData["_MENUFOCUS_"] = _MENUFOCUS_;

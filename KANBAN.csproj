@@ -275,7 +275,7 @@
     <Content Include="wwwroot\assets\.script\Tools\KBNTL001.js" />
     <Content Include="wwwroot\assets\.script\UrgentOrder\KBNIM007N.js" />
     <Content Include="wwwroot\assets\.script\UrgentOrder\KBNIM013EXP.js" />
-    <Content Include="wwwroot\assets\.script\UrgentOrder\KBNIM013INV.js" />
+    <Content Include="wwwroot\assets\.script\UrgentOrder\KBNIM013_INV.js" />
     <Content Include="wwwroot\assets\.script\UrgentOrder\KBNIM013VAN.js" />
     <Content Include="wwwroot\assets\.script\UrgentOrder\KBNIM014.js" />
     <Content Include="wwwroot\assets\.script\UrgentOrder\KBNIM014C.js" />

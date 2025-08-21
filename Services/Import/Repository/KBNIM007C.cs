@@ -80,9 +80,9 @@ namespace KANBAN.Services.Import.Repository
             try
             {
                 string sql = $@"Select Distinct rtrim(T.F_Update_By) +':' 
-                    + rtrim(U.F_User_Name) as F_Update_By From TB_TRANSACTION_TMP
-                    T INNER JOIN TB_USER U ON T.F_Update_By = U.F_User_ID  
-                     Where (T.F_Type='Special' or T.F_TYPE ='Trial' ) ";
+                    + rtrim(U.Name) as F_Update_By From TB_TRANSACTION_TMP
+                    T INNER JOIN erp.[User] U ON T.F_Update_By = U.Code  
+                    Where (T.F_Type='Special' or T.F_TYPE ='Trial' ) ";
 
                 if (!string.IsNullOrEmpty(DeliDateFrom) && !string.IsNullOrEmpty(DeliDateTo))
                 {

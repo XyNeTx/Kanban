@@ -7,6 +7,7 @@ using KANBAN.Models.PPM3;
 using KANBAN.Services.Automapper.Interface;
 using KANBAN.Services.UrgentOrder.IRepository;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace KANBAN.Services.UrgentOrder.Repository
 {
@@ -103,7 +104,7 @@ namespace KANBAN.Services.UrgentOrder.Repository
                             F_Ruibetsu = T_Constuction.F_Ruibetsu,
                             F_Kanban_No = "0" + T_Constuction.F_Sebango,
                             F_Part_Name = T_Constuction.F_Part_nm,
-                            F_Qty_Pack = short.Parse(obj.Packs.ToString()),
+                            F_Qty_Pack = T_Constuction.F_qty_box.Value,
                             F_Part_Code = " ",
                             F_Part_Order = T_Parent_Part.F_Parent_part,
                             F_Ruibetsu_Order = T_Parent_Part.F_Ruibetsu,
@@ -145,7 +146,6 @@ namespace KANBAN.Services.UrgentOrder.Repository
 
                     int BOM_Level = 2;
 
-                    //List<T_Parents_child> T_Child_Parent_List = new List<T_Parents_child>();
                     T_Parents_child T_Child_Parent_List = new T_Parents_child();
                     do
                     {
@@ -165,29 +165,10 @@ namespace KANBAN.Services.UrgentOrder.Repository
                         BOM_Level++;
                     }
                     while (T_Child_Parent_List == null && BOM_Level <= 4);
-                    //while (T_Child_Parent_List.Count > 0 && BOM_Level <= 4);
-
-                    //while (T_Child_Parent_List == null && BOM_Level <= 4)
-                    //{
-                    //    T_Child_Parent_List = await _PPM3Context.T_Parents_child
-                    //        .AsNoTracking()
-                    //        .Where(x => x.F_parent_part == T_Parent_Part.F_Parent_part
-                    //        && x.F_Ruibetsu == T_Parent_Part.F_Ruibetsu
-                    //        && x.F_store_cd == T_Parent_Part.F_store_cd
-                    //        && x.F_ch_store_cd.StartsWith("0")
-                    //        ).FirstOrDefaultAsync();
-
-                    //    if (T_Child_Parent_List != null)
-                    //    {
-                    //        var childList = await GetChildPartBOM(T_Child_Parent_List, T_Parent_Part, PDSNo, obj.DeliveryQty, BOM_Level);
-                    //        addList.AddRange(childList);
-                    //    }
-                    //    BOM_Level++;
-                    //}
-
                 }
                 await _kbContext.AddRangeAsync(addList);
                 await _kbContext.SaveChangesAsync();
+                _log.WriteLogMsg("INSERT INTO TB_Transaction_TMP => " + JsonConvert.SerializeObject(addList, Formatting.Indented));
                 return addList;
             }
             catch (Exception ex)
@@ -242,7 +223,7 @@ namespace KANBAN.Services.UrgentOrder.Repository
                         F_Ruibetsu = T_Constuction.F_Ruibetsu,
                         F_Kanban_No = "0" + T_Constuction.F_Sebango,
                         F_Part_Name = T_Constuction.F_Part_nm,
-                        F_Qty_Pack = 1,
+                        F_Qty_Pack = T_Constuction.F_qty_box.Value,
                         F_Part_Code = " ",
                         F_Part_Order = T_Parent_Part.F_Parent_part,
                         F_Ruibetsu_Order = T_Parent_Part.F_Ruibetsu,

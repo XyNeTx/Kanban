@@ -1,0 +1,123 @@
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    <div class="container ps-0 pe-0">
+
+        <div class="card border-4 border-left-primary shadow">
+
+            <div class="card-body">
+
+                <div class="row">
+                
+                    <div class="col-6">
+
+                        <table class="table table-bordered w-100" id="tableHeader">
+
+                        </table>
+
+                    </div>
+
+                    <div style="margin-top: auto;" class="col-6">
+                        @* <div class="align-self-baseline"> *@
+
+                            <div class="row">
+
+                                <div class="col-3">
+                                    <input type="radio" id="radSelAll" name="radSelect" value="all" checked />
+                                    <label for="radSelAll">Select All</label>
+                                </div>
+
+                                <div class="col-3">
+                                    <input type="radio" id="radUnSel" name="radSelect" value="none" />
+                                    <label for="radUnSel">Unselect All</label>
+                                </div>
+
+                            </div>
+
+                            <div class="row">
+                                <button type="button" id="btnSearch" class="btn btn-outline-dark col-3">Search</button>
+                            </div>
+
+                        @* </div> *@
+
+                    </div>
+
+                </div>
+
+                <div class="row mt-4">
+
+                    <div class="col-12">
+                        
+                        <table class="table table-bordered w-100" id="tableDetail">
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+                <div class="row mt-2">
+
+                    <div class="col-3">
+                        <input type="radio" id="radSelAll2" name="radSelect2" value="all" />
+                        <label for="radSelAll2">Select All</label>
+                    </div>
+
+                    <div class="col-3">
+                        <input type="radio" id="radUnSel2" name="radSelect2" value="none" />
+                        <label for="radUnSel2">Unselect All</label>
+                    </div>
+
+                </div>
+
+                <div class="row mt-2">
+
+                    <div class="col-3">
+                        <span class="fw-bolder">GENERATE PDS : </span>
+                    </div>
+                    
+                    <div class="col-3">
+                        <input type="radio" id="rad2PDS" name="radPDS" value="2" checked />
+                        <label class="fw-bolder" for="rad2PDS">2 PDS (Include Remain Qty)</label>
+                    </div>
+
+                    <div class="col-3">
+                        <input type="radio" id="rad1PDS" name="radPDS" value="1" />
+                        <label class="fw-bolder" for="rad1PDS">1 PDS</label>
+                    </div>
+
+                </div>
+
+                <div class="row mt-2">
+                    <div class="col-3">
+                        <input type="checkbox" id="chkChangeDeliDate" />
+                        <label class="fw-bolder" for="chkChangeDeliDate">Change Delivery Date</label>
+                    </div>
+                    <div class="col-3">
+                        <input type="text" id="txtDeliDate" class="form-control datepicker" readonly />
+                    </div>
+                    <div class="col-6">
+                        <div class="row">
+                            <button type="button" id="btnDel" class="btn btn-danger justify-content-center d-flex col-3">Delete</button>
+                            <button type="button" id="btnInf" class="btn btn-success justify-content-center d-flex col-3">Interface Data</button>
+                            <a asp-controller="Home" asp-action="Index" class="btn btn-warning justify-content-center d-flex col-3">Exit</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+        
+    </div>
+}
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            // Initialize the page or bind events here
+            xSplash.hide();
+        });
+    </script>
+    <script type="text/javascript" src="~/assets/.script/UrgentOrder/KBNIM013_INV.js" asp-append-version="true"></script>
+}

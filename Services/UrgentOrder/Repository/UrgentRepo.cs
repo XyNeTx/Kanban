@@ -54,5 +54,19 @@ namespace KANBAN.Services.UrgentOrder.Repository
             }
         }
 
+        public IKBNIM013_INV IKBNIM013_INV_Repo
+        {
+            get
+            {
+                return new KBNIM013_INV(_kbContext,
+                                        _BearerClass,
+                                        _PPM3Context,
+                                        _InvenContext,
+                                        _FillDT, _log,
+                                        _emailService,
+                                        _automapService);
+            }
+        }
+
     }
 }

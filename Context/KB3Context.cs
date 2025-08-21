@@ -11,6 +11,7 @@ using KANBAN.Models.KB3.ReportOrder;
 using KANBAN.Models.KB3.SpecialOrdering;
 using KANBAN.Models.KB3.UrgentOrder;
 using KANBAN.Models.KB3.VLT;
+using KANBAN.Models.PPM;
 using Microsoft.EntityFrameworkCore;
 using TB_MS_PartOrder = HINOSystem.Models.KB3.Master.TB_MS_PartOrder;
 
@@ -198,7 +199,6 @@ namespace HINOSystem.Context
         public DbSet<SP_IMPORT_FORECAST> SP_IMPORT_FORECAST { get; set; }
         public DbSet<TB_Import_Data_Forecast> TB_Import_Data_Forecast { get; set; }
         public DbSet<TB_Import_Error> TB_Import_Error { get; set; }
-
     }
 }
 
