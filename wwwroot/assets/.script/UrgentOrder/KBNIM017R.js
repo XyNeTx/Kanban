@@ -206,3 +206,13 @@ async function GetOrdData(impData) {
     //console.log("_dt:", _dt);
     return xSplash.hide();
 }
+
+
+async function ImportFile(e) {
+    let file = e.target.files[i];
+
+    var workbook = XLSX.read(await file.arrayBuffer(), { type: 'array' });
+    var sheetName = workbook.SheetNames[0];
+    var worksheet = workbook.Sheets[sheetName];
+    let _jsonData = XLSX.utils.sheet_to_json(worksheet);
+}

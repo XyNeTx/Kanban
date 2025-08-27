@@ -3,3 +3,20 @@
 GET {{KANBAN_HostAddress}}/api/kbnoc150/GetSupplier
 
 ###
+
+GET {{KANBAN_HostAddress}}/xapi/GetLoginDate
+
+###
+
+GET {{KANBAN_HostAddress}}/xapi/GetAuthorizeProgram
+
+###
+
+POST {{KANBAN_HostAddress}}/xapi/DeleteKBNOR_140_KB
+
+###
+
+@dateShift=20250821D
+GET {{KANBAN_HostAddress}}/xapi/GetProcessDate?dateShift={{dateShift}}
+
+###

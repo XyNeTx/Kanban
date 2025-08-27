@@ -1529,7 +1529,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
 
         private async Task re_Calculate_Trail(string start_date, string end_date, int _intRow)
         {
-            using var _KB3Transaction = _KB3Context.Database.BeginTransaction();
+            //using var _KB3Transaction = _KB3Context.Database.BeginTransaction();
             try
             {
                 DateTime dateLast_Trip = new DateTime();
@@ -1586,17 +1586,24 @@ namespace KANBAN.Controllers.API.OrderingProcess
                     string BLPlan_Solution, BLActual_Solution = "";
                     DataRow DR_Receive, DR_Adjust = null;
 
-                    _KB3Transaction.CreateSavepoint("BL_Solution");
+                    //_KB3Transaction.CreateSavepoint("BL_Solution");
                     for (int i = 0; i < DT.Rows.Count; i++)
                     {
                         BLPlan_Solution = "";
                         BLActual_Solution = "";
+                        Console.WriteLine("i => " +i);
 
                         if (i > 0)
                         {
                             if (DT.Rows[i]["F_Process_Round"].ToString() == DT.Rows[i - 1]["F_Process_Round"].ToString()
                                 && DT.Rows[i]["F_Process_Date"].ToString() == DT.Rows[i - 1]["F_Process_Date"].ToString())
                             {
+
+                                Console.WriteLine(DT.Rows[i]["F_Process_Round"].ToString());
+                                Console.WriteLine(DT.Rows[i - 1]["F_Process_Round"].ToString());
+                                Console.WriteLine(DT.Rows[i]["F_Process_Date"].ToString());
+                                Console.WriteLine(DT.Rows[i-1]["F_Process_Date"].ToString());
+
                                 dateDelivery = DateTime.TryParseExact(DT.Rows[i]["F_Process_Date"].ToString(), "yyyyMMdd", CultureInfo.InvariantCulture, DateTimeStyles.None, out dateDelivery) ? dateDelivery : new DateTime();
 
                                 if (dateDelivery == new DateTime())
@@ -1609,6 +1616,13 @@ namespace KANBAN.Controllers.API.OrderingProcess
                                             DT_PartControl.Rows[_intRow]["F_Supplier_Code"].ToString(), DT_PartControl.Rows[_intRow]["F_Supplier_Plant"].ToString(),
                                             DT_PartControl.Rows[_intRow]["F_Part_No"].ToString(), DT_PartControl.Rows[_intRow]["F_Ruibetsu"].ToString(),
                                             DT_PartControl.Rows[_intRow]["F_Kanban_No"].ToString(), DT_PartControl.Rows[_intRow]["F_Store_Code"].ToString());
+
+                                //_execSQL = @$"exec [dbo].[sp_autoRecalculateBL_First] '{dateDelivery.AddDays(-1).ToString("yyyyMMdd")}',
+                                //            '{DT_PartControl.Rows[_intRow]["F_Supplier_Code"].ToString()}','{DT_PartControl.Rows[_intRow]["F_Supplier_Plant"].ToString()}',
+                                //            '{DT_PartControl.Rows[_intRow]["F_Part_No"].ToString()}','{DT_PartControl.Rows[_intRow]["F_Ruibetsu"].ToString()}',
+                                //            '{DT_PartControl.Rows[_intRow]["F_Kanban_No"].ToString()}','{DT_PartControl.Rows[_intRow]["F_Store_Code"].ToString()}'
+                                //            ";
+                                //DT_LastBL = _FillDT.ExecuteSQL(_execSQL);
 
                                 if (DT_LastBL.Rows.Count > 0)
                                 {
@@ -1883,12 +1897,12 @@ namespace KANBAN.Controllers.API.OrderingProcess
                             }
                         }
                     }
-                    _KB3Transaction.Commit();
+                    //_KB3Transaction.Commit();
                 }
             }
             catch (Exception ex)
             {
-                _KB3Transaction.Rollback();
+                //_KB3Transaction.Rollback();
                 throw new Exception(ex.Message);
             }
 

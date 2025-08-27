@@ -126,6 +126,10 @@ $("#btnInf").click(async function () {
     await InterfaceDataToTransactionTMP();
 })
 
+$("#btnDel").click(async function () {
+    await Delete();
+})
+
 async function GetList_Header() {
 
     _xLib.AJAX_Get("/api/KBNIM013_INV/GetList_Header","",
@@ -183,10 +187,26 @@ async function InterfaceDataToTransactionTMP() {
         async function (successMsg) {
             xSwal.xSuccess(successMsg);
             await GetList_Header();
+            await GetList_Detail();
         },
         function (errorObj) {
             xSwal.xError(errorObj);
         }
     );
 
+}
+
+async function Delete() {
+    var selectedDetail = _xDataTable.GetSelectedDataDT("tableDetail");
+
+    await _xLib.AJAX_Post("/api/KBNIM013_INV/Delete", selectedDetail,
+        async function (successMsg) {
+            xSwal.xSuccess(successMsg);
+            await GetList_Header();
+            await GetList_Detail();
+        },
+        function (errorObj) {
+            xSwal.xError(errorObj);
+        }
+    );
 }

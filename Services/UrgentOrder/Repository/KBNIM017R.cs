@@ -86,7 +86,19 @@ namespace KANBAN.Services.UrgentOrder.Repository
                         var T_Constuction = await _PPM3Context.T_Construction.AsNoTracking()
                             .Where(x => x.F_Part_no == T_Child_Part.F_Child_part
                             && x.F_Ruibetsu == T_Child_Part.F_Ch_ruibetsu
-                            && x.F_Store_cd == T_Child_Part.F_ch_store_cd).FirstOrDefaultAsync();
+                            && x.F_Store_cd == T_Child_Part.F_ch_store_cd
+                            ).FirstOrDefaultAsync();
+
+                        if (T_Constuction == null)
+                        {
+                            throw new CustomHttpException(500, "Construction Not Found");
+                        }
+                        if(T_Constuction.F_Store_cd == "RM")
+                        {
+                            continue;
+                        }
+
+
 
                         int Qty = int.Parse(Math.Ceiling(((obj.DeliveryQty * T_Child_Part.F_Use_pieces.Value) * 0.2)).ToString());
                         Qty += (obj.DeliveryQty * T_Child_Part.F_Use_pieces.Value);
@@ -198,14 +210,13 @@ namespace KANBAN.Services.UrgentOrder.Repository
                         && x.F_Ruibetsu == T_Child_Part.F_Ch_ruibetsu
                         && x.F_Store_cd == T_Child_Part.F_ch_store_cd).FirstOrDefaultAsync();
 
-                    var T_Child_Name = await _PPM3Context.T_Construction.AsNoTracking()
-                        .Where(x => x.F_Part_no.Trim() == T_Parents_Child.F_Child_part.Trim()
-                        && x.F_Ruibetsu == T_Parents_Child.F_Ch_ruibetsu
-                        && x.F_Store_cd == T_Parents_Child.F_ch_store_cd).FirstOrDefaultAsync();
-
-                    if(T_Child_Name == null || T_Constuction == null)
+                    if(T_Constuction == null)
                     {
                         throw new CustomHttpException(500, "Construction Not Found");
+                    }
+                    if(T_Constuction.F_Store_cd == "RM")
+                    {
+                        continue;
                     }
 
                     int Qty = int.Parse(Math.Ceiling(((DeliveryQty * T_Child_Part.F_Use_pieces.Value) * 0.2)).ToString());

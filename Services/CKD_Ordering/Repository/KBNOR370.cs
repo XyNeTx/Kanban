@@ -100,7 +100,10 @@ namespace KANBAN.Services.CKD_Ordering.Repository
 
                         foreach (DataRow _dr in _dt2.Rows)
                         {
-                            _dt.ImportRow(_dr);
+                            if( !_dt.AsEnumerable().Any(r => r.Field<string>("F_Barcode") == _dr["F_Barcode"].ToString()))
+                            {
+                                _dt.ImportRow(_dr);
+                            }
                         }
                     }
                 }
@@ -205,15 +208,18 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                 foreach(var obj in listObj)
                 {
                     string _f = obj.F_OrderNO.Trim();
+                    string _f2 = _f.Substring(0, _f.Length - 1);
 
                     string _path = Path.Combine(StoragePath, DateTime.Now.ToString("yyyyMM"));
                     if (!Directory.Exists(_path)) Directory.CreateDirectory(_path);
+                    string _saveFile = Path.Combine(StoragePath, DateTime.Now.ToString("yyyyMM"), _f2+ ".png");
                     BarcodeSettings _setting = new BarcodeSettings();
                     _setting.Type = BarCodeType.Code128;
                     _setting.Data = _f;
                     BarCodeGenerator _barcode = new BarCodeGenerator(_setting);
-                    _barcode.GenerateImage().Save(_path + @"/" + _f + @".png");
+                    _barcode.GenerateImage().Save(_saveFile);
                 }
+
             }
             catch (Exception ex)
             {

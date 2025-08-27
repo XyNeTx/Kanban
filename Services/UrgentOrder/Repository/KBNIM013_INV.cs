@@ -224,4 +224,29 @@ public class KBNIM013_INV : IKBNIM013_INV
         }
     }
 
+    public async Task Delete(List<VM_KBNIM013_INV> listObj)
+    {
+        try
+        {
+            foreach(var obj in listObj)
+            {
+                string sqlQ = @$"
+                    UPDATE [HMMT-PPM].[SaleOrder].dbo.T_TPCAP_Delivery_List_Declare
+                        SET F_Flag='9'
+                    WHERE (F_Declare_No = '{obj.F_Declare_No}'
+                        AND F_Part_No = '{obj.F_Part_No.Replace("-",string.Empty)}'
+                        AND F_Flag ='1')
+                    ";
+
+                int rowAffect = await _kbContext.Database.ExecuteSqlRawAsync(sqlQ);
+                _log.WriteLogMsg("UPDATE (DELETE) TO T_TPCAP_Delivery_List_Declare => " + sqlQ);
+            }
+        }
+        catch (Exception ex)
+        {
+            if (ex is CustomHttpException) throw;
+            throw new CustomHttpException(500, ex.InnerException?.Message ?? ex.Message);
+        }
+    }
+
 }

@@ -57,5 +57,17 @@ namespace HINOSystem.Controllers.API.Master
             });
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Delete(List<VM_KBNIM013_INV> listObj)
+        {
+            await _BearerClass.CheckAuthorize();
+            await _UrgentRepo.IKBNIM013_INV_Repo.Delete(listObj);
+            return Ok(new
+            {
+                status = "200",
+                message = "Delete Data Complete !!"
+            });
+        }
+
     }
 }

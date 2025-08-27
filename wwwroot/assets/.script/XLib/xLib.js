@@ -467,7 +467,7 @@ class xLib {
                             return xSwal.ErrorHTML("Error", _error)
                         }
 
-                        return xSwal.error("Error", xhr.responseJSON.message)
+                        //return xSwal.error("Error", xhr.responseJSON.message)
                     }
 
                     // error was return by developer catch it
@@ -624,7 +624,7 @@ class xLib {
                             return xSwal.ErrorHTML("Error", _error)
                         }
 
-                        return xSwal.error("Error", xhr.responseJSON.message)
+                        //return xSwal.error("Error", xhr.responseJSON.message)
                     }
 
                     // error was return by developer catch it
