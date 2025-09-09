@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 using QRCoder;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Security.Claims;
 
 namespace KANBAN.Services.Master.Repository
 {
@@ -24,6 +25,7 @@ namespace KANBAN.Services.Master.Repository
         private readonly SerilogLibs _log;
         private readonly IEmailService _emailService;
         private readonly IAutoMapService _automapService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
         public KBNMS009
@@ -35,6 +37,7 @@ namespace KANBAN.Services.Master.Repository
             SerilogLibs log,
             IEmailService emailService,
             IAutoMapService autoMapService
+            , IHttpContextAccessor httpContextAccessor
             )
         {
             _kbContext = kbContext;
@@ -44,6 +47,7 @@ namespace KANBAN.Services.Master.Repository
             _log = log;
             _emailService = emailService;
             _automapService = autoMapService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         //public string strDate = DateTime.Now.ToString("yyyyMMdd");
@@ -54,8 +58,8 @@ namespace KANBAN.Services.Master.Repository
             try
             {
                 var data = await _PPM3Context.T_Construction
-                    .Where(x => x.F_Store_cd.StartsWith(_BearerClass.Plant)
-                    //.Where(x=>x.F_Store_cd.StartsWith(_BearerClass.Plant)
+                    .Where(x => x.F_Store_cd.StartsWith(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value)
+                    //.Where(x=>x.F_Store_cd.StartsWith(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value)
                     && x.F_Local_Str.CompareTo(strDate) <= 0 && x.F_Local_End.CompareTo(strDate) >= 0)
                     .OrderBy(x => x.F_supplier_cd).ThenBy(x => x.F_plant)
                     .AsNoTracking().ToListAsync();
@@ -80,11 +84,11 @@ namespace KANBAN.Services.Master.Repository
         {
             try
             {
-                await _kbContext.Database.ExecuteSqlRawAsync($"DELETE FROM TB_MS_Print_Replace_KB WHERE F_Update_By = '{_BearerClass.UserCode}'");
+                await _kbContext.Database.ExecuteSqlRawAsync($"DELETE FROM TB_MS_Print_Replace_KB WHERE F_Update_By = '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}'");
 
                 // Step 1: Retrieve T_Construction data from _PPM3Context
                 var Tcon = await _PPM3Context.T_Construction
-                    .Where(x => x.F_Store_cd.StartsWith(_BearerClass.Plant) // Adjust this filter as necessary
+                    .Where(x => x.F_Store_cd.StartsWith(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value) // Adjust this filter as necessary
                         && (x.F_supplier_cd.Trim() + "-" + x.F_plant.ToString()) == Supplier)
                     .AsNoTracking()
                     .ToListAsync();
@@ -111,7 +115,7 @@ namespace KANBAN.Services.Master.Repository
                         F_Supply_Code = y.F_Supply_Code.Trim(),
                         F_Number = 0,
                         F_Update_Date = DateTime.Now,
-                        F_Update_By = _BearerClass.UserCode // Adjust as necessary
+                        F_Update_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value // Adjust as necessary
                     }).ToList();
 
                 // Step 4: Add the filtered data to _kbContext and save changes
@@ -145,7 +149,7 @@ namespace KANBAN.Services.Master.Repository
                         && x.F_Store_Code == obj.F_Store_Code
                         && x.F_Kanban_No == obj.F_Kanban_No
                         && x.F_Supply_Code == obj.F_Supply_Code
-                        && x.F_Update_By == _BearerClass.UserCode)
+                        && x.F_Update_By == _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value)
                         .FirstOrDefaultAsync();
 
                     if (updateObj != null)
@@ -173,9 +177,9 @@ namespace KANBAN.Services.Master.Repository
         {
             try
             {
-                await _kbContext.Database.ExecuteSqlRawAsync($"DELETE FROM TB_MS_Print_Replace_KB_TMP WHERE F_Update_By = '{_BearerClass.UserCode}'");
+                await _kbContext.Database.ExecuteSqlRawAsync($"DELETE FROM TB_MS_Print_Replace_KB_TMP WHERE F_Update_By = '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}'");
                 var selectData = await _kbContext.TB_MS_Print_Replace_KB
-                    .Where(x => x.F_Update_By == _BearerClass.UserCode
+                    .Where(x => x.F_Update_By == _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value
                     && x.F_Number > 0)
                     .ToListAsync();
 
@@ -246,7 +250,7 @@ namespace KANBAN.Services.Master.Repository
                                 var objTmp = new TB_MS_Print_Replace_KB_TMP
                                 {
                                     F_Running = i,
-                                    F_Plant = _BearerClass.Plant,
+                                    F_Plant = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value,
                                     F_Supplier_Code = dt.Rows[0]["F_supplier_cd"].ToString(),
                                     F_Supplier_Plant = dt.Rows[0]["F_plant"].ToString(),
                                     F_Supplier_Name = dt.Rows[0]["F_name"].ToString(),
@@ -263,7 +267,7 @@ namespace KANBAN.Services.Master.Repository
                                     F_Page = i,
                                     F_Page_Total = intNum1,
                                     F_Update_date = DateTime.Now,
-                                    F_Update_By = _BearerClass.UserCode
+                                    F_Update_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value
                                 };
 
 
@@ -271,7 +275,7 @@ namespace KANBAN.Services.Master.Repository
                                 await _kbContext.SaveChangesAsync();
 
                                 await _kbContext.TB_MS_Print_Replace_KB_TMP
-                                    .Where(x => x.F_Update_By == _BearerClass.UserCode
+                                    .Where(x => x.F_Update_By == _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value
                                     && x.F_Running <= intNum1
                                     && x.F_Supplier_Code == obj.F_Supplier_Code
                                     && x.F_Supplier_Plant == obj.F_Supplier_Plant
@@ -287,7 +291,7 @@ namespace KANBAN.Services.Master.Repository
                     else if (intNum1 < intNum2)
                     {
                         await _kbContext.TB_MS_Print_Replace_KB_TMP
-                            .Where(x => x.F_Update_By == _BearerClass.UserCode
+                            .Where(x => x.F_Update_By == _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value
                             && x.F_Running > intNum1
                             && x.F_Supplier_Code == obj.F_Supplier_Code
                             && x.F_Supplier_Plant == obj.F_Supplier_Plant
@@ -300,7 +304,7 @@ namespace KANBAN.Services.Master.Repository
 
                         _log.WriteLogMsg($@"Delete TB_MS_Print_Replace_KB_TMP 
                             _kbContext.TB_MS_Print_Replace_KB_TMP
-                            .Where(x => x.F_Update_By == _BearerClass.UserCode
+                            .Where(x => x.F_Update_By == _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value
                             && x.F_Running > intNum1
                             && x.F_Supplier_Code == obj.F_Supplier_Code
                             && x.F_Supplier_Plant == obj.F_Supplier_Plant
@@ -311,7 +315,7 @@ namespace KANBAN.Services.Master.Repository
                             && x.F_Supply_Code == obj.F_Supply_Code");
 
                         await _kbContext.TB_MS_Print_Replace_KB_TMP
-                            .Where(x => x.F_Update_By == _BearerClass.UserCode
+                            .Where(x => x.F_Update_By == _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value
                             && x.F_Running <= intNum1
                             && x.F_Supplier_Code == obj.F_Supplier_Code
                             && x.F_Supplier_Plant == obj.F_Supplier_Plant
@@ -324,7 +328,7 @@ namespace KANBAN.Services.Master.Repository
 
                         _log.WriteLogMsg($@"Update TB_MS_Print_Replace_KB_TMP
                             _kbContext.TB_MS_Print_Replace_KB_TMP
-                            .Where(x => x.F_Update_By == _BearerClass.UserCode
+                            .Where(x => x.F_Update_By == _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value
                             && x.F_Running <= intNum1
                             && x.F_Supplier_Code == obj.F_Supplier_Code
                             && x.F_Supplier_Plant == obj.F_Supplier_Plant
@@ -377,7 +381,7 @@ namespace KANBAN.Services.Master.Repository
                                 var objTmp = new TB_MS_Print_Replace_KB_TMP
                                 {
                                     F_Running = i,
-                                    F_Plant = _BearerClass.Plant,
+                                    F_Plant = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value,
                                     F_Supplier_Code = dt.Rows[0]["F_supplier_cd"].ToString(),
                                     F_Supplier_Plant = dt.Rows[0]["F_plant"].ToString(),
                                     F_Supplier_Name = dt.Rows[0]["F_name"].ToString(),
@@ -394,7 +398,7 @@ namespace KANBAN.Services.Master.Repository
                                     F_Page = i,
                                     F_Page_Total = intNum1,
                                     F_Update_date = DateTime.Now,
-                                    F_Update_By = _BearerClass.UserCode
+                                    F_Update_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value
                                 };
                                 _kbContext.TB_MS_Print_Replace_KB_TMP.Add(objTmp);
                                 _log.WriteLogMsg($"Insert TB_MS_Print_Replace_KB_TMP {JsonConvert.SerializeObject(objTmp)}");
@@ -407,12 +411,12 @@ namespace KANBAN.Services.Master.Repository
                     }
                 }
 
-                sql = $@"DELETE TB_MS_Print_Replace_KB_TMP WHERE F_Update_By = '{_BearerClass.UserCode}'
+                sql = $@"DELETE TB_MS_Print_Replace_KB_TMP WHERE F_Update_By = '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}'
                     AND RTRIM(F_Supplier_Code) + RTRIM(F_Supplier_Plant) + RTRIM(F_Store_Code) COLLATE DATABASE_DEFAULT + 
                     RTRIM(F_Kanban_No) + RTRIM(F_Part_No) + RTRIM(F_Ruibetsu) + RTRIM(F_Supply_Code) 
                     IN (Select RTRIM(F_Supplier_Code) + RTRIM(F_Supplier_Plant) + RTRIM(F_Store_Code) COLLATE DATABASE_DEFAULT + 
                     RTRIM(F_Kanban_No) + RTRIM(F_Part_No) + RTRIM(F_Ruibetsu) + RTRIM(F_Supply_Code) 
-                    From TB_MS_Print_Replace_KB WHERE F_Update_By = '{_BearerClass.UserCode}' AND F_Number = 0 ) ";
+                    From TB_MS_Print_Replace_KB WHERE F_Update_By = '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}' AND F_Number = 0 ) ";
 
                 await _kbContext.Database.ExecuteSqlRawAsync(sql);
                 _log.WriteLogMsg($"Delete TB_MS_Print_Replace_KB_TMP {sql}");
@@ -431,7 +435,7 @@ namespace KANBAN.Services.Master.Repository
             try
             {
                 var dataList = await _kbContext.TB_MS_Print_Replace_KB_TMP
-                    .Where(x => x.F_Update_By == _BearerClass.UserCode)
+                    .Where(x => x.F_Update_By == _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value)
                     .ToListAsync();
 
                 var directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "QRCode");

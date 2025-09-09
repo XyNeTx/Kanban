@@ -16,6 +16,7 @@ namespace KANBAN.Services.OtherCondition.Repository
         private readonly SerilogLibs _log;
         private readonly IEmailService _emailService;
         private readonly IAutoMapService _automapService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public OtherConditionRepo(
             KB3Context kbContext,
@@ -24,7 +25,8 @@ namespace KANBAN.Services.OtherCondition.Repository
             FillDataTable FillDT,
             SerilogLibs log,
             IEmailService emailService,
-            IAutoMapService autoMapService
+            IAutoMapService autoMapService,
+            IHttpContextAccessor httpContextAccessor
             )
         {
             _kbContext = kbContext;
@@ -34,13 +36,15 @@ namespace KANBAN.Services.OtherCondition.Repository
             _log = log;
             _emailService = emailService;
             _automapService = autoMapService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public IKBNOC120 IKBNOC120
         {
             get
             {
-                return new KBNOC120(_kbContext, _BearerClass, _PPM3Context, _FillDT, _log, _emailService, _automapService);
+                return new KBNOC120(_kbContext, _BearerClass, _PPM3Context, _FillDT, _log, _emailService, _automapService,
+                                    _httpContextAccessor);
             }
         }
 
@@ -48,7 +52,8 @@ namespace KANBAN.Services.OtherCondition.Repository
         {
             get
             {
-                return new KBNOC121(_kbContext, _BearerClass, _PPM3Context, _FillDT, _log, _emailService, _automapService);
+                return new KBNOC121(_kbContext, _BearerClass, _PPM3Context, _FillDT, _log, _emailService, _automapService,
+                                    _httpContextAccessor);
             }
         }
 
@@ -56,7 +61,8 @@ namespace KANBAN.Services.OtherCondition.Repository
         {
             get
             {
-                return new KBNOC150(_kbContext, _BearerClass, _PPM3Context, _FillDT, _log, _emailService, _automapService);
+                return new KBNOC150(_kbContext, _BearerClass, _PPM3Context, _FillDT, _log, _emailService, _automapService,
+                                    _httpContextAccessor);
             }
         }
 
@@ -64,7 +70,7 @@ namespace KANBAN.Services.OtherCondition.Repository
         {
             get
             {
-                return new KBNOC160(_kbContext, _BearerClass, _PPM3Context, _FillDT, _log, _emailService, _automapService);
+                return new KBNOC160(_kbContext, _BearerClass, _PPM3Context, _FillDT, _log, _emailService, _automapService, _httpContextAccessor);
             }
         }
 

@@ -1,16 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
-using HINOSystem.Models;
-using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.Data;
-using Microsoft.AspNetCore.Html;
 //using System.Net.Mail;
 using System.Net;
 //using EASendMail;
-using Microsoft.AspNetCore.Hosting.Server;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using System.Net.Mail;
-using System.Text;
 using HINOSystem.Libs;
 
 namespace HINOSystem.Controllers.API

@@ -17,9 +17,7 @@ class libDataTable {
         var _orderColumn = (pConfig.order != undefined ? pConfig.order : 0);
 
         for (var c = 0; c < _column.length; c++) {
-            if (_i18n.Language == 'EN') _column[c].title = (pConfig.columnTitle.EN[c] != undefined ? pConfig.columnTitle.EN[c] : '');
-            if (_i18n.Language == 'TH') _column[c].title = (pConfig.columnTitle.TH[c] != undefined ? pConfig.columnTitle.TH[c] : (pConfig.columnTitle.EN[c] != undefined ? pConfig.columnTitle.EN[c] : ''));
-            if (_i18n.Language == 'JP') _column[c].title = (pConfig.columnTitle.JP[c] != undefined ? pConfig.columnTitle.JP[c] : (pConfig.columnTitle.EN[c] != undefined ? pConfig.columnTitle.EN[c] : ''));
+            _column[c].title = (pConfig.columnTitle.EN[c] != undefined ? pConfig.columnTitle.EN[c] : ''); 
         }
 
         //console.log(pConfig.dom);
@@ -118,20 +116,20 @@ class libDataTable {
             "select": true,
             "lengthMenu": _lengthMenu,
             "pageLength": _pageLength,
-            "language": {
-                url: assets + 'vendor/datatables/i18n/' + (_i18n.Language == '' ? 'EN' : _i18n.Language) + '.json'
-            },
+            //"language": {
+            //    //url: assets + 'vendor/datatables/i18n/' + (_i18n.Language == '' ? 'EN' : _i18n.Language) + '.json'
+            //},
             "data": pConfig.data,
             "order": _order,
             "columns": _column,
             "dom": _dom,
-            "buttons": [
-                'copy',
-                xDataTableExport.printCSV(_ar),
-                xDataTableExport.printXLS(_ar),
-                xDataTableExport.printPDF(_ar),
-                xDataTableExport.ButtonPrint
-            ],
+            //"buttons": [
+            //    'copy',
+            //    //xDataTableExport.printCSV(_ar),
+            //    //xDataTableExport.printXLS(_ar),
+            //    //xDataTableExport.printPDF(_ar),
+            //    //xDataTableExport.ButtonPrint
+            //],
             "columnDefs": null,
             "fixedColumns": {
                 left: _freezeleft,
@@ -153,10 +151,10 @@ class libDataTable {
                 }
 
                 //### Callback after draw
-                if (pConfig.then != undefined && typeof (pConfig.then) == 'function') {
-                    pConfig.then(settings);
-                    _dataTable.columns.adjust();
-                }
+                //if (pConfig.then != undefined && typeof (pConfig.then) == 'function') {
+                //    pConfig.then(settings);
+                //    _dataTable.columns.adjust();
+                //}
 
 
                 //console.log($('.dt-body-right currency').html());

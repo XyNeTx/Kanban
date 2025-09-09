@@ -1,19 +1,19 @@
 ﻿$(document).ready(async function () {
-
+    xSplash.show();
     $("#txtUserName").prop('readonly', true);
     $("#txtProcessDate").prop('disabled', true);
     $("#ddlShift").prop('disabled', true);
     //requestHostName();
-    const formAuthentication = {
-        "txtUserName": "20223983",
-        "txtProcessDate": "2023-09-08",
-        "ddlFactory": "2",
-        "ddlShift": "D",
-        "txtDomain": "D",
-        "txtDeviceName": "D",
-        "txtFullDeviceName": "D",
-        "txtIPAddress": "D",
-    }
+    // const formAuthentication = {
+    //     "txtUserName": "20223983",
+    //     "txtProcessDate": "2023-09-08",
+    //     "ddlFactory": "2",
+    //     "ddlShift": "D",
+    //     "txtDomain": "D",
+    //     "txtDeviceName": "D",
+    //     "txtFullDeviceName": "D",
+    //     "txtIPAddress": "D",
+    // }
 
     $(".date-picker").datepicker({
         uiLibrary: 'bootstrap5',
@@ -23,27 +23,25 @@
         showRightIcon: false
     });
 
-    $(".date-picker").parent().find("button").prop("disabled", true);
+    // $(".date-picker").parent().find("button").prop("disabled", true);
 
-    initTheme = function () {
-        setCookie('UI_ExpandIcon', 'style2');
-        setCookie('UI_Header', 'theme1');
-        setCookie('UI_HeaderBrand', 'theme1');
-        setCookie('UI_IconColor', 'st6');
-        setCookie('UI_Layout', 'theme1');
-        setCookie('UI_LinkColor', 'theme5');
-        setCookie('UI_MenuColor', 'theme6');
-        setCookie('UI_MenuIcon', 'style4');
-        setCookie('UI_SideBar', 'shrink');
-    }
+    // initTheme = function () {
+    //     setCookie('UI_ExpandIcon', 'style2');
+    //     setCookie('UI_Header', 'theme1');
+    //     setCookie('UI_HeaderBrand', 'theme1');
+    //     setCookie('UI_IconColor', 'st6');
+    //     setCookie('UI_Layout', 'theme1');
+    //     setCookie('UI_LinkColor', 'theme5');
+    //     setCookie('UI_MenuColor', 'theme6');
+    //     setCookie('UI_MenuIcon', 'style4');
+    //     setCookie('UI_SideBar', 'shrink');
+    // }
 
-    await (_xLib.GetCookie("isDev") == null || _xLib.GetCookie("isDev") == "")
+    await (_xLib.GetCookie("isDev") == null || _xLib.GetCookie("isDev") == "" || _xLib.GetCookie("isDev") == "null"|| _xLib.GetCookie("isDev") == undefined)
         ? _xLib.SetCookie("isDev", 0) : null;
 
     initial = async function () {
-        xSplash.show();
-
-        initTheme();
+        // initTheme();
 
         //axios.get('http://hmmt-app07/sso_test/api/SingleSignOn/GetLogin', {
         //    params: {
@@ -91,6 +89,7 @@
                 $('#txtDomain').val(result.domainName);
                 $('#txtIPAddress').val(result.ipAddress);
                 _xLib.SetCookie('plantCode', result.userDetail.locationCode);
+
             },
             error: async function (error) {
                 console.log(error);
@@ -119,6 +118,7 @@
 
 
     await initial();
+    xSplash.hide();
 
     let iSpy = 0;
     $('#imgHINOLogo').on('click', function (e) {
@@ -136,29 +136,57 @@
         }
     });
 
-    xSplash.hide();
-
 });
 
-$("#btnSubmit").click(function () {
-    $("#formAuthentication").one('submit', function (e) {
+$("#btnSubmit").click(async function () {
+    $("#formAuthentication").one('submit', async function (e) {
         e.preventDefault();
         var processDate = moment($('#txtProcessDate').val(), "DD/MM/YYYY").format("YYYY-MM-DD");
         var shift = $("#ddlShift").val() == 1 ? "D" : "N";
-        document.cookie = `loginDate=${processDate}${shift}`;
+        _xLib.SetCookie('loginDate', processDate+shift);
+        _xLib.SetCookie('isDev', _xLib.GetCookie("isDev"));
         _xLib.SetCookie('plantCode', $('#ddlFactory').val());
+
+        sessionStorage.setItem("loginDate", processDate+shift);
+        sessionStorage.setItem("shift", $("#ddlShift").val());
+        sessionStorage.setItem("isDev", _xLib.GetCookie("isDev"));
+        sessionStorage.setItem("plantCode", $('#ddlFactory').val());
+
         $("#ddlShift").prop('disabled', false);
         $("#txtProcessDate").prop('disabled', false);
-        $(this).submit();
+        let isGen = await GenerateJWTToken();
+        if (isGen) {
+            $(this).submit();
+        }
+        else {
+            window.location.reload();
+        }
     });
 
 });
 
+async function GenerateJWTToken() {
+    var obj = {
+        UserCode: $('#txtUserName').val(),
+        Factory: $('#ddlFactory').val(),
+        Device: $('#txtDeviceName').val(),
+        IpAddress: $('#txtIPAddress').val(),
+    }
+    return await _xLib.AJAX_PostNoHeader("/api/login/GenerateJWTToken", obj,
+        async function (success) {
+            console.log(success.token);
+            localStorage.setItem("TOKEN", success.token);
+            sessionStorage.setItem("UserCode", obj.UserCode);
+            sessionStorage.setItem("Factory", obj.Factory);
+            sessionStorage.setItem("Device", obj.Device);
+            sessionStorage.setItem("IpAddress", obj.IpAddress);
+            Headers = { 'Authorization': `Bearer ${success.token}` };
 
-//function requestHostName() {
-//    window.chrome.webview.postMessage("get-hostname");
-//}
-
-//window.addEventListener("message", function (event) {
-//    console.log("Received message from webview: ", event.data);
-//});
+            return true;
+        },
+        async function (error) {
+            xSwal.error("Login Failed");
+            return false;
+        }
+    );
+}

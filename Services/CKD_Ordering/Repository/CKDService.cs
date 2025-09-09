@@ -60,7 +60,8 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                                     _PPM3Context,
                                     _FillDT, _log,
                                     _emailService,
-                                    _automapService);
+                                    _automapService,
+                                    _httpContextAccessor);
             }
         }
         public IKBNOR310 IKBNOR310_Repo
@@ -85,7 +86,8 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                                     _PPM3Context,
                                     _FillDT, _log,
                                     _emailService,
-                                    _automapService);
+                                    _automapService,
+                                    _httpContextAccessor);
             }
         }
         public IKBNOR321 IKBNOR321_Repo
@@ -112,7 +114,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                                     _PPM3Context,
                                     _FillDT, _log,
                                     _emailService,
-                                    _automapService);
+                                    _automapService, _httpContextAccessor);
             }
         }
         public IKBNOR360 IKBNOR360_Repo
@@ -126,7 +128,8 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                                     _emailService,
                                     _automapService
                                     ,_CKDContext,
-                                    _CKDUSAContext
+                                    _CKDUSAContext,
+                                    _httpContextAccessor
                                     );
             }
         }
@@ -141,7 +144,8 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                                     _emailService,
                                     _automapService
                                     ,_CKDContext,
-                                    _CKDUSAContext
+                                    _CKDUSAContext,
+                                    _httpContextAccessor
                                     );
             }
         }
@@ -157,7 +161,8 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                                     _emailService,
                                     _automapService
                                     , _CKDContext,
-                                    _CKDUSAContext
+                                    _CKDUSAContext,
+                                    _httpContextAccessor
                                     );
             }
         }

@@ -11,6 +11,7 @@ using KANBAN.Services.Import.Interface;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Data;
+using System.Security.Claims;
 
 namespace KANBAN.Services.Import.Repository
 {
@@ -23,6 +24,7 @@ namespace KANBAN.Services.Import.Repository
         private readonly SerilogLibs _log;
         private readonly IEmailService _emailService;
         private readonly IAutoMapService _automapService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
         public KBNIM007T
@@ -233,7 +235,7 @@ namespace KANBAN.Services.Import.Repository
                         {ppm}.dbo.T_Construction
                         Where substring(F_CKD_STR,1,6) <='{YM}' 
                         and substring(F_CKD_END,1,6) >='{YM}' 
-                        and F_Store_CD like '{_BearerClass.Plant}%' 
+                        and F_Store_CD like '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value}%' 
                         Order by F_Store_Cd ";
 
                     DataTable dt = _FillDT.ExecuteSQL(query);
@@ -559,7 +561,7 @@ namespace KANBAN.Services.Import.Repository
                             {
                                 F_Type = "Trial",
                                 F_Type_Spc = obj.TypeSpc,
-                                F_Plant = _BearerClass.Plant[0],
+                                F_Plant = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value[0],
                                 F_PDS_No = obj.PO,
                                 F_PDS_Issued_Date = obj.IssuedDate,
                                 F_Store_CD = obj.CompStoreCD,
@@ -590,7 +592,7 @@ namespace KANBAN.Services.Import.Repository
                                 F_Safty_Stock = 0,
                                 F_Part_Refer = string.Empty,
                                 F_Ruibetsu_Refer = string.Empty,
-                                F_Update_By = _BearerClass.UserCode,
+                                F_Update_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value,
                                 F_Update_Date = DateTime.Now,
                                 F_Remark = string.Empty,
                                 F_Parent_Level2 = string.Empty,
@@ -611,11 +613,11 @@ namespace KANBAN.Services.Import.Repository
                         }
                         else
                         {
-                            await _kbContext.Database.ExecuteSqlRawAsync("Exec dbo.SP_IM007_FilterData {0}", _BearerClass.UserCode);
+                            await _kbContext.Database.ExecuteSqlRawAsync("Exec dbo.SP_IM007_FilterData {0}", _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value);
 
                             await _kbContext.Database.ExecuteSqlRawAsync($@"Exec dbo.SP_IM005_TRIAL 
                                 '{obj.PO}','TRIAL','{obj.IssuedDate}','{obj.ParentPartNo}','{obj.ParentStore}',
-                                '{obj.DeliveryDate}','{obj.Qty}','{obj.Trip}','{obj.TypeSpc[0]}','{_BearerClass.UserCode}' ");
+                                '{obj.DeliveryDate}','{obj.Qty}','{obj.Trip}','{obj.TypeSpc[0]}','{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}' ");
 
                             var checkData = await _kbContext.TB_Transaction_TMP
                                 .Where(x => x.F_Type == "Trial"
@@ -678,7 +680,7 @@ namespace KANBAN.Services.Import.Repository
                             {
                                 F_Type = "Trial",
                                 F_Type_Spc = obj.TypeSpc,
-                                F_Plant = _BearerClass.Plant[0],
+                                F_Plant = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value[0],
                                 F_PDS_No = obj.PO,
                                 F_PDS_Issued_Date = obj.IssuedDate,
                                 F_Store_CD = obj.CompStoreCD,
@@ -709,7 +711,7 @@ namespace KANBAN.Services.Import.Repository
                                 F_Safty_Stock = 0,
                                 F_Part_Refer = string.Empty,
                                 F_Ruibetsu_Refer = string.Empty,
-                                F_Update_By = _BearerClass.UserCode,
+                                F_Update_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value,
                                 F_Update_Date = DateTime.Now,
                                 F_Remark = string.Empty,
                                 F_Parent_Level2 = string.Empty,
@@ -732,11 +734,11 @@ namespace KANBAN.Services.Import.Repository
                         }
                         else
                         {
-                            await _kbContext.Database.ExecuteSqlRawAsync("Exec dbo.SP_IM007_FilterData {0}", _BearerClass.UserCode);
+                            await _kbContext.Database.ExecuteSqlRawAsync("Exec dbo.SP_IM007_FilterData {0}", _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value);
 
                             await _kbContext.Database.ExecuteSqlRawAsync($@"Exec dbo.SP_IM005_TRIAL 
                                 '{obj.PO}','TRIAL','{obj.IssuedDate}','{obj.ParentPartNo}','{obj.ParentStore}',
-                                '{obj.DeliveryDate}','{obj.Qty}','{obj.Trip}','{obj.TypeSpc[0]}','{_BearerClass.UserCode}' ");
+                                '{obj.DeliveryDate}','{obj.Qty}','{obj.Trip}','{obj.TypeSpc[0]}','{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}' ");
 
                             var checkData = await _kbContext.TB_Transaction_TMP
                                 .Where(x => x.F_Type == "Trial"
@@ -831,13 +833,13 @@ namespace KANBAN.Services.Import.Repository
                     }
                 }
 
-                await _kbContext.Database.ExecuteSqlRawAsync($"Delete From TB_Import_Trial Where F_Update_BY='{_BearerClass.UserCode}'");
+                await _kbContext.Database.ExecuteSqlRawAsync($"Delete From TB_Import_Trial Where F_Update_BY='{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}'");
 
-                await _kbContext.Database.ExecuteSqlRawAsync($"Delete From TB_Import_Error Where F_Update_BY='{_BearerClass.UserCode}' and F_Type='TRIAL'");
+                await _kbContext.Database.ExecuteSqlRawAsync($"Delete From TB_Import_Error Where F_Update_BY='{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}' and F_Type='TRIAL'");
 
-                await _kbContext.Database.ExecuteSqlRawAsync($"EXEC dbo.SP_IM005_IMPORT '{_BearerClass.UserCode}' , '{TypeSpc}'");
+                await _kbContext.Database.ExecuteSqlRawAsync($"EXEC dbo.SP_IM005_IMPORT '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}' , '{TypeSpc}'");
 
-                DataTable dt = _FillDT.ExecuteSQL($"EXEC dbo.SP_IM005_IMPORT '{_BearerClass.UserCode}' , '{TypeSpc}'");
+                DataTable dt = _FillDT.ExecuteSQL($"EXEC dbo.SP_IM005_IMPORT '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}' , '{TypeSpc}'");
 
                 if (dt.Rows.Count > 0)
                 {
@@ -851,9 +853,9 @@ namespace KANBAN.Services.Import.Repository
                     }
                 }
 
-                await _kbContext.Database.ExecuteSqlRawAsync($"exec dbo.SP_IM007_FilterData '{_BearerClass.UserCode}'");
+                await _kbContext.Database.ExecuteSqlRawAsync($"exec dbo.SP_IM007_FilterData '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}'");
 
-                await _kbContext.Database.ExecuteSqlRawAsync($"Exec dbo.SP_IM005_IMPORT_TRIAL '{_BearerClass.UserCode}'");
+                await _kbContext.Database.ExecuteSqlRawAsync($"Exec dbo.SP_IM005_IMPORT_TRIAL '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}'");
 
             }
             catch (Exception ex)

@@ -1,29 +1,7 @@
-﻿using Microsoft.AspNetCore.Http.Extensions;
-using Microsoft.AspNetCore.Mvc;
-using System.Data;
-using System;
-using System.Web;
-using System.Security.Principal;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using System.Reflection.PortableExecutable;
-using System.DirectoryServices;
-using System.DirectoryServices.AccountManagement;
-using Microsoft.Net.Http.Headers;
-using System.Collections.Specialized;
-using System.Net;
-using System.DirectoryServices.ActiveDirectory;
+﻿using Microsoft.AspNetCore.Mvc;
 using HINOSystem.Libs;
-using Newtonsoft.Json.Linq;
-using System.Net.Http;
 using Microsoft.AspNetCore.Authorization;
 
-using System.Security.Claims;
-using Org.BouncyCastle.Asn1.Ocsp;
-using NPOI.OpenXmlFormats.Dml.Chart;
-using System.Security.Policy;
-using NPOI.OpenXmlFormats.Wordprocessing;
-using NuGet.Common;
 
 
 namespace HINOSystem.Controllers
@@ -46,8 +24,8 @@ namespace HINOSystem.Controllers
             ILogger<HomeController> logger,
             IConfiguration configuration,
             IHttpContextAccessor? httpContextAccessor,
-            DbConnect dbConnect, 
-            AuthenGuard authenGuard, 
+            DbConnect dbConnect,
+            AuthenGuard authenGuard,
             WarrantyClaimConnect wrtConnect,
             BearerClass bearerClass
             )
@@ -63,45 +41,52 @@ namespace HINOSystem.Controllers
             _wrtConnect = wrtConnect;
         }
 
-
+        [Authorize(Policy = "KBNLC110")]
         public IActionResult KBNLC110()
         {
-            return _authenGuard.guard(ControllerContext);
+            return View();
         }
 
+        [Authorize(Policy = "KBNLC120")]
         public IActionResult KBNLC120()
         {
-            return _authenGuard.guard(ControllerContext);
+            return View();
         }
 
+        [Authorize(Policy = "KBNLC130")]
         public IActionResult KBNLC130()
         {
-            return _authenGuard.guard(ControllerContext);
+            return View();
         }
 
+        [Authorize(Policy = "KBNLC140")]
         public IActionResult KBNLC140()
         {
-            return _authenGuard.guard(ControllerContext);
+            return View();
         }
 
+        [Authorize(Policy = "KBNLC150")]
         public IActionResult KBNLC150()
         {
-            return _authenGuard.guard(ControllerContext);
+            return View();
         }
 
+        [Authorize(Policy = "KBNLC180")]
         public IActionResult KBNLC180()
         {
-            return _authenGuard.guard(ControllerContext);
+            return View();
         }
 
+        [Authorize(Policy = "KBNLC190")]
         public IActionResult KBNLC190()
         {
-            return _authenGuard.guard(ControllerContext);
+            return View();
         }
 
+        [Authorize(Policy = "KBNLC200")]
         public IActionResult KBNLC200()
         {
-            return _authenGuard.guard(ControllerContext);
+            return View();
         }
 
 

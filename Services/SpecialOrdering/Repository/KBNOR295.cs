@@ -6,6 +6,7 @@ using KANBAN.Models.KB3.SpecialOrdering;
 using KANBAN.Services.SpecialOrdering.Interface;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Security.Claims;
 
 namespace KANBAN.Services.SpecialOrdering.Repository
 {
@@ -18,6 +19,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
         private readonly FillDataTable _FillDT;
         private readonly SerilogLibs _log;
         private readonly IEmailService _emailService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
         public KBNOR295
@@ -27,7 +29,8 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             PPM3Context PPM3Context,
             FillDataTable FillDT,
             SerilogLibs log,
-            IEmailService emailService
+            IEmailService emailService,
+            IHttpContextAccessor httpContextAccessor
             )
         {
             _kbContext = kbContext;
@@ -36,6 +39,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             _FillDT = FillDT;
             _log = log;
             _emailService = emailService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public string LoadContactList()
@@ -72,7 +76,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
 
                 foreach (var obj in listObj)
                 {
-                    obj.F_RecUser = _BearerClass.UserCode;
+                    obj.F_RecUser = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value;
                     obj.F_RecDate = DateTime.Now;
 
                     string sql = $"Select * From TB_MS_SpcApprover Where F_User_ID = '{obj.F_User_ID}'";

@@ -1,15 +1,11 @@
-﻿using Azure;
-using HINOSystem.Context;
+﻿using HINOSystem.Context;
 using HINOSystem.Libs;
 using KANBAN.Context;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using NPOI.HSSF.UserModel;
 using System.Data;
-using System.Net.NetworkInformation;
 
 namespace KANBAN.Controllers.API.OrderReport
 {

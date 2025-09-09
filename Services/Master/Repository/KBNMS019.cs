@@ -10,6 +10,7 @@ using KANBAN.Services.Automapper.Interface;
 using KANBAN.Services.Master.IRepository;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Security.Claims;
 
 namespace KANBAN.Services.Master.Repository
 {
@@ -22,6 +23,7 @@ namespace KANBAN.Services.Master.Repository
         private readonly SerilogLibs _log;
         private readonly IEmailService _emailService;
         private readonly IAutoMapService _autoMap;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
         public KBNMS019
@@ -32,7 +34,8 @@ namespace KANBAN.Services.Master.Repository
             FillDataTable FillDT,
             SerilogLibs log,
             IEmailService emailService,
-            IAutoMapService autoMap
+            IAutoMapService autoMap,
+            IHttpContextAccessor httpContextAccessor
             )
         {
             _kbContext = kbContext;
@@ -42,6 +45,7 @@ namespace KANBAN.Services.Master.Repository
             _log = log;
             _emailService = emailService;
             _autoMap = autoMap;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         private readonly string strDateNow = DateTime.Now.ToString("yyyyMMdd");
@@ -74,7 +78,7 @@ namespace KANBAN.Services.Master.Repository
             {
                 var data = await _kbContext.TB_MS_MAXAREA
                     .AsNoTracking()
-                    .Where(x => x.F_Plant == _BearerClass.Plant)
+                    .Where(x => x.F_Plant == _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value)
                     .ToListAsync();
 
                 return data.DistinctBy(x => new
@@ -119,7 +123,7 @@ namespace KANBAN.Services.Master.Repository
                     .AsNoTracking()
                     .Where(x => x.F_Local_Str.CompareTo(strDateNow) <= 0
                     && x.F_Local_End.CompareTo(strDateNow) >= 0
-                    && x.F_Store_cd.StartsWith(_BearerClass.Plant)).ToListAsync();
+                    && x.F_Store_cd.StartsWith(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value)).ToListAsync();
 
                 return data;
             }
@@ -136,7 +140,7 @@ namespace KANBAN.Services.Master.Repository
             {
                 var data = await _kbContext.TB_MS_MAXAREA
                     .AsNoTracking()
-                    .Where(x => x.F_Plant == _BearerClass.Plant
+                    .Where(x => x.F_Plant == _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value
                     && x.F_Supplier_Code + "-" + x.F_Supplier_Plant == SupplierCode)
                     .ToListAsync();
 
@@ -171,7 +175,7 @@ namespace KANBAN.Services.Master.Repository
             try
             {
                 var data = await _kbContext.TB_MS_MAXAREA.AsNoTracking()
-                    .FirstOrDefaultAsync(x => x.F_Plant == _BearerClass.Plant
+                    .FirstOrDefaultAsync(x => x.F_Plant == _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value
                     && x.F_Supplier_Code + "-" + x.F_Supplier_Plant == SupplierCode
                     && x.F_Part_No + "-" + x.F_Ruibetsu == PartNo
                     && x.F_Kanban_No == KanbanNo && x.F_Store_CD == StoreCode);
@@ -203,7 +207,7 @@ namespace KANBAN.Services.Master.Repository
                     AND M.F_Ruibetsu = C.F_Ruibetsu collate Thai_CI_AS 
                     AND M.F_Store_CD = C.F_Store_cd collate Thai_CI_AS 
                     AND M.F_Kanban_No = C.F_Sebango collate Thai_CI_AS 
-                    WHERE M.F_Plant = '{_BearerClass.Plant}' ";
+                    WHERE M.F_Plant = '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value}' ";
 
                 if (!string.IsNullOrWhiteSpace(SupplierCode))
                 {
@@ -277,17 +281,17 @@ namespace KANBAN.Services.Master.Repository
                     {
                         TB_MS_MAXAREA addObj = new TB_MS_MAXAREA
                         {
-                            F_Create_By = _BearerClass.UserCode,
+                            F_Create_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value,
                             F_Create_Date = DateTime.Now,
                             F_Kanban_No = obj.F_KanbanNo,
                             F_Max_Trip = obj.F_Max_Trip,
                             F_Part_No = obj.F_PartNo.Split("-")[0],
                             F_Ruibetsu = obj.F_PartNo.Split("-")[1],
-                            F_Plant = _BearerClass.Plant,
+                            F_Plant = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value,
                             F_Store_CD = obj.F_StoreCD,
                             F_Supplier_Code = obj.F_Supplier.Split("-")[0],
                             F_Supplier_Plant = obj.F_Supplier.Split("-")[1],
-                            F_Update_By = _BearerClass.UserCode,
+                            F_Update_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value,
                             F_Update_Date = DateTime.Now,
                         };
 
@@ -313,7 +317,7 @@ namespace KANBAN.Services.Master.Repository
                         existObj.F_Ruibetsu = obj.F_PartNo.Split('-')[1];
                         existObj.F_Store_CD = obj.F_StoreCD;
                         existObj.F_Kanban_No = obj.F_KanbanNo;
-                        existObj.F_Update_By = _BearerClass.UserCode;
+                        existObj.F_Update_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value;
                         existObj.F_Update_Date = DateTime.Now;
 
                         await _kbContext.TB_MS_MAXAREA.AddAsync(existObj);

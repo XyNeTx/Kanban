@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Data;
 using System.Globalization;
+using System.Security.Claims;
 
 namespace KANBAN.Services.CKD_Ordering.Repository
 {
@@ -91,7 +92,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
 
                 var sqlParams = new List<SqlParameter>
                 {
-                    new SqlParameter("@Plant",_BearerClass.Plant),
+                    new SqlParameter("@Plant",_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value),
                     new SqlParameter("@getDate",DateLogin)
                 };
 
@@ -138,7 +139,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
         {
             try
             {
-                string Dy_Store = _BearerClass.Plant switch
+                string Dy_Store = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value switch
                 {
                     "1" => "1D",
                     "2" => "2D",
@@ -148,7 +149,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
 
                 SqlParameter[] parameters = new SqlParameter[]
                 {
-                    new SqlParameter("@Plant", _BearerClass.Plant),
+                    new SqlParameter("@Plant", _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value),
                     new SqlParameter("@Store_Code_FROM", Dy_Store),
                     new SqlParameter("@Store_Code_TO", Dy_Store),
                 };
@@ -177,7 +178,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
             {
                 SqlParameter[] parameters = new SqlParameter[]
                 {
-                    new SqlParameter("@Plant", _BearerClass.Plant),
+                    new SqlParameter("@Plant", _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value),
                     new SqlParameter("@OrderType", "Daily"),
                 };
 
@@ -212,7 +213,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
             {
                 SqlParameter[] parameters = new SqlParameter[]
                 {
-                    new SqlParameter("@Plant", _BearerClass.Plant),
+                    new SqlParameter("@Plant", _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value),
                     new SqlParameter("@OrderType", "Daily"),
                 };
 
@@ -247,7 +248,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
             {
                 SqlParameter[] parameters = new SqlParameter[]
                 {
-                    new SqlParameter("@Plant", _BearerClass.Plant),
+                    new SqlParameter("@Plant", _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value),
                     new SqlParameter("@OrderType", "Daily"),
                 };
 
@@ -288,7 +289,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
         {
             try
             {
-                string Dy_Store = _BearerClass.Plant switch
+                string Dy_Store = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value switch
                 {
                     "1" => "1D",
                     "2" => "2D",
@@ -302,7 +303,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                 {
                     sqlParams = new SqlParameter[]
                     {
-                        new SqlParameter("@Plant",_BearerClass.Plant),
+                        new SqlParameter("@Plant",_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value),
                         new SqlParameter("@Supplier_Code",F_Supplier_Code.Split("-")[0]),
                         new SqlParameter("@Supplier_Plant",F_Supplier_Code.Split("-")[1]),
                         new SqlParameter("@Store_Code",Dy_Store),
@@ -319,11 +320,11 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                 {
                     sqlParams = new SqlParameter[]
                     {
-                        new SqlParameter("@Plant",_BearerClass.Plant),
+                        new SqlParameter("@Plant",_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value),
                         new SqlParameter("@Supplier_Code",F_Supplier_Code.Split("-")[0]),
                         new SqlParameter("@Supplier_Plant",F_Supplier_Code.Split("-")[1]),
                         new SqlParameter("@Shift",ShiftLogin),
-                        new SqlParameter("@UserName",_BearerClass.UserCode),
+                        new SqlParameter("@UserName",_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value),
                         new SqlParameter("@Date",DateLogin.ToString("yyyyMMdd"))
                     };
 
@@ -335,7 +336,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
 
                 sqlParams = new SqlParameter[]
                 {
-                    new SqlParameter("@Plant",_BearerClass.Plant),
+                    new SqlParameter("@Plant",_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value),
                     new SqlParameter("@Supplier_Code",F_Supplier_Code.Split("-")[0]),
                     new SqlParameter("@Supplier_Plant",F_Supplier_Code.Split("-")[1]),
                     new SqlParameter("@ProcessDate",DateLogin.ToString("yyyyMMdd")),
@@ -372,11 +373,11 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                 // Initialize parameters outside the loop
                 sqlParams = new SqlParameter[]
                 {
-                    new SqlParameter("@Plant", _BearerClass.Plant),
+                    new SqlParameter("@Plant", _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value),
                     new SqlParameter("@Supplier_Code", F_Supplier_Code.Split("-")[0]),
                     new SqlParameter("@Supplier_Plant", F_Supplier_Code.Split("-").Length > 1 ? F_Supplier_Code.Split("-")[1] : ""),
                     new SqlParameter("@dateNow", DBNull.Value), // Placeholder value
-                    new SqlParameter("@UserName", _BearerClass.UserCode),
+                    new SqlParameter("@UserName", _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value),
                 };
                 var DT_Temp = await _FillDT.ExecuteStoreSQLAsync("sp_findPeriod", sqlParams);
 
@@ -387,11 +388,11 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                 {
                     sqlParams = new SqlParameter[]
                     {
-                        new SqlParameter("@Plant", _BearerClass.Plant),
+                        new SqlParameter("@Plant", _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value),
                         new SqlParameter("@Supplier_Code", F_Supplier_Code.Split("-")[0]),
                         new SqlParameter("@Supplier_Plant", F_Supplier_Code.Split("-").Length > 1 ? F_Supplier_Code.Split("-")[1] : ""),
                         new SqlParameter("@dateNow", DT_Date.Rows[i]["F_Date"].ToString().Trim()), // Placeholder value
-                        new SqlParameter("@UserName", _BearerClass.UserCode),
+                        new SqlParameter("@UserName", _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value),
                     };
 
                     DT_Temp = await _FillDT.ExecuteStoreSQLAsync("sp_findPeriod", sqlParams);
@@ -648,7 +649,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
 
                 var sqlParams = new List<SqlParameter>
                 {
-                    new SqlParameter("@Plant",_BearerClass.Plant),
+                    new SqlParameter("@Plant",_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value),
                     new SqlParameter("@Supplier_Code",F_Supplier_Code.Split("-")[0]),
                     new SqlParameter("@Supplier_Plant",F_Supplier_Code.Split("-")[1]),
                     new SqlParameter("@Part_No",DT_PartControl.Rows[intRow]["F_Part_No"].ToString().Trim()),
@@ -702,7 +703,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                 string lineName = _dt.Rows[0]["F_Address"].ToString().Trim();
 
                 var stMaxArea = await _kbContext.TB_MS_MaxArea_Stock.AsNoTracking()
-                    .Where(x => x.F_Plant == _BearerClass.Plant
+                    .Where(x => x.F_Plant == _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value
                     && x.F_Supplier_Cd == DT_PartControl.Rows[intRow]["F_Supplier_Code"].ToString().Trim()
                     && x.F_Supplier_Plant == DT_PartControl.Rows[intRow]["F_Supplier_Plant"].ToString().Trim()
                     && x.F_Part_No == DT_PartControl.Rows[intRow]["F_Part_No"].ToString().Trim()
@@ -751,7 +752,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                 }
 
                 sql = $@"SELECT * FROM TB_Kanban_SetOrder
-                    WHERE F_Plant = '{_BearerClass.Plant}'
+                    WHERE F_Plant = '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value}'
                     AND F_Supplier_Code = '{F_Supplier_Code.Split("-")[0]}'
                     AND F_Supplier_Plant = '{F_Supplier_Code.Split("-")[1]}'
                     AND F_Part_No = '{DT_PartControl.Rows[intRow]["F_Part_No"].ToString().Trim()}'
@@ -803,7 +804,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                     FROM 
                     (   SELECT COUNT(*) AS Slide_Order 
                         FROM TB_Slide_Order
-                        WHERE F_Plant = '{_BearerClass.Plant}'
+                        WHERE F_Plant = '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value}'
                         AND F_Supplier_CD = '{F_Supplier_Code.Split("-")[0]}'
                         AND F_Supplier_Plant = '{F_Supplier_Code.Split("-")[1]}'
                         AND F_Store_CD = '{DT_PartControl.Rows[intRow]["F_Store_Code"].ToString().Trim()}'
@@ -812,7 +813,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                     ) A CROSS JOIN
                     (   SELECT COUNT(*) AS Slide_Order_Part
                         FROM TB_Slide_Order_Part
-                        WHERE F_Plant = '{_BearerClass.Plant}'
+                        WHERE F_Plant = '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value}'
                         AND F_Supplier_CD = '{F_Supplier_Code.Split("-")[0]}'
                         AND F_Supplier_Plant = '{F_Supplier_Code.Split("-")[1]}'
                         AND F_Store_CD = '{DT_PartControl.Rows[intRow]["F_Store_Code"].ToString().Trim()}'
@@ -836,7 +837,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                     FROM
                     (   SELECT COUNT(*) AS Rec_Slide_Order
                     FROM TB_Slide_Order
-                    WHERE F_Plant = '{_BearerClass.Plant}'
+                    WHERE F_Plant = '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value}'
                     AND F_Supplier_CD = '{F_Supplier_Code.Split("-")[0]}'
                     AND F_Supplier_Plant = '{F_Supplier_Code.Split("-")[1]}'
                     AND F_Store_CD = '{DT_PartControl.Rows[intRow]["F_Store_Code"].ToString().Trim()}'
@@ -845,7 +846,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                     ) A CROSS JOIN
                     (   SELECT COUNT(*) AS Rec_Slide_Order_Part
                         FROM TB_Slide_Order_Part
-                        WHERE F_Plant = '{_BearerClass.Plant}'
+                        WHERE F_Plant = '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value}'
                         AND F_Supplier_CD = '{F_Supplier_Code.Split("-")[0]}'
                         AND F_Supplier_Plant = '{F_Supplier_Code.Split("-")[1]}'
                         AND F_Store_CD = '{DT_PartControl.Rows[intRow]["F_Store_Code"].ToString().Trim()}'
@@ -1052,7 +1053,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                     start_Date = DateTime.Now.ToString("yyyyMMdd");
                 }
 
-                string Dynamic_Store = _BearerClass.Plant switch
+                string Dynamic_Store = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value switch
                 {
                     "1" => "1A",
                     "2" => "2B",
@@ -1062,7 +1063,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
 
                 var sqlParams = new List<SqlParameter>
                 {
-                    new SqlParameter("@Plant",_BearerClass.Plant),
+                    new SqlParameter("@Plant",_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value),
                     new SqlParameter("@Supplier_Code",DT_PartControl.Rows[RowIndex]["F_Supplier_Code"].ToString().Trim()),
                     new SqlParameter("@Supplier_Plant",DT_PartControl.Rows[RowIndex]["F_Supplier_Plant"].ToString().Trim()),
                     new SqlParameter("@Store_Code",Dynamic_Store),

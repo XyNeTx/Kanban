@@ -2,12 +2,15 @@
 using KANBAN.Models.KB3.CKD_Ordering;
 using KANBAN.Services;
 using KANBAN.Services.CKD_Ordering.IRepository;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
 namespace HINOSystem.Controllers.API.Master
 {
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("/api/[controller]/[action]")]
     public class KBNOR360Controller : ControllerBase
     {
@@ -28,7 +31,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
                 await _CKDRepo.IKBNOR310_Repo.getCKD_ProcessDateTime();
 
                 return Ok(new
@@ -51,7 +54,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
 
                 var data = await _CKDRepo.IKBNOR360_Repo.List_Data();
 
@@ -75,7 +78,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
 
                 await _CKDRepo.IKBNOR360_Repo.Register(listObj);
 
@@ -98,7 +101,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
 
                 var data = await _CKDRepo.IKBNOR360_Repo.GeneratePicking_Click();
 

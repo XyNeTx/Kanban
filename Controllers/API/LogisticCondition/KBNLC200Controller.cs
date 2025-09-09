@@ -3,13 +3,17 @@ using HINOSystem.Libs;
 using KANBAN.Models.KB3.LogisticCondition.ViewModel;
 using KANBAN.Services;
 using KANBAN.Services.Logistical.Interface;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Security.Claims;
 
 namespace HINOSystem.Controllers.API.Master
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class KBNLC200Controller : Controller
     {
         private readonly IConfiguration _configuration;
@@ -46,7 +50,7 @@ namespace HINOSystem.Controllers.API.Master
             string _SQL = "";
             try
             {
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
                 _SQL = @" EXEC [exec].[spTB_MS_FACTORY] ";
@@ -82,7 +86,7 @@ namespace HINOSystem.Controllers.API.Master
             string _SQL = "";
             try
             {
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
                 _json = JsonConvert.DeserializeObject(pData);
@@ -92,7 +96,7 @@ namespace HINOSystem.Controllers.API.Master
                             , '"+ _json.Period + @"'
                             , '"+ _json.SupplierFrom + @"'
                             , '"+ _json.SupplierTo + @"'
-                            , '" + _BearerClass.UserCode.ToString() + @"'
+                            , '" + User.FindFirst(ClaimTypes.UserData).Value.ToString() + @"'
                             ";
                 
                 string _jsonData = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
@@ -132,7 +136,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
                 await _LogisticService.IKBNLC200.Print(model);
 
                 return Ok(new

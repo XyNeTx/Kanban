@@ -1,16 +1,17 @@
 ﻿using HINOSystem.Context;
 using HINOSystem.Libs;
 using KANBAN.Context;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using System.Diagnostics;
+using System.Security.Claims;
 
 namespace KANBAN.Controllers.API.OrderingProcess
 {
     [Route("api/[controller]/[action]")]
-    [ApiController]
+    [ApiController][Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class KBNOR120Controller : ControllerBase
     {
         private readonly IConfiguration _configuration;
@@ -60,7 +61,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
         {
             try
             {
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401) return Unauthorized(new
                 {
                     status = "401",
@@ -70,8 +71,8 @@ namespace KANBAN.Controllers.API.OrderingProcess
                 });
 
                 Txt_Shift = (Shift.Substring(0,1) == "1") ? "Day" : "Night";
-                UserCode = _BearerClass.UserCode;
-                Plant = _BearerClass.Plant;
+                UserCode = User.FindFirst(ClaimTypes.UserData).Value;
+                Plant = User.FindFirst(ClaimTypes.Locality).Value;
 
                 return Ok(new
                 {
@@ -101,7 +102,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
             try
             {
 
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401) return Unauthorized(new
                 {
                     status = "401",
@@ -171,7 +172,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
                     await p.WaitForExitAsync();
 
                     // Log both the output and any error that occurred
-                    _Log.WriteLog("Start Process EXE: " + p.StartInfo.FileName + " Output: " + output + " Error: " + error, UserCode, _BearerClass.Device);
+                    _Log.WriteLog("Start Process EXE: " + p.StartInfo.FileName + " Output: " + output + " Error: " + error, UserCode, User.FindFirst(ClaimTypes.WindowsDeviceClaim).Value);
                 }
 
             }
@@ -189,7 +190,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
             try
             {
                 ProcessCount = 0;
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401) return Unauthorized(new
                 {
                     status = "401",
@@ -205,7 +206,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
                 sDate = sDate.Replace("-", string.Empty);
 
                 _KB3Transaction.CreateSavepoint("BeforeProcessOrder");
-                _Log.WriteLog("Start Process Calculate Normal ON : "+sDate, UserCode, _BearerClass.Device);
+                _Log.WriteLog("Start Process Calculate Normal ON : "+sDate, UserCode, User.FindFirst(ClaimTypes.WindowsDeviceClaim).Value);
 
                 string _SQL = $@"INSERT INTO TB_KANBAN_NG(F_Process_Date, F_Process_Shift, 
                         F_Plant, F_Refer_Doc, F_Part_No, F_Ruibetsu, f_Qty, F_Supplier_Code, F_Supplier_Plant 
@@ -223,7 +224,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
 
                 await _KB3Context.Database.ExecuteSqlRawAsync(_SQL);
 
-                _Log.WriteLog("Interface NG Data : " + _SQL,UserCode,_BearerClass.Device);
+                _Log.WriteLog("Interface NG Data : " + _SQL,UserCode,User.FindFirst(ClaimTypes.WindowsDeviceClaim).Value);
 
                 _SQL = $@"Select distinct F_Supplier_Code, F_Supplier_Plant, F_Store_Code, F_Kanban_No ,F_Part_No, F_Ruibetsu 
                         From TB_Calculate_H  Where (F_Process_Date = '{sDate}') 
@@ -244,7 +245,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
                     });
                 }
 
-                _Log.WriteLog("Get Data Calculate_H : " + _DT.Rows.Count + " Records | " + _SQL, UserCode, _BearerClass.Device);
+                _Log.WriteLog("Get Data Calculate_H : " + _DT.Rows.Count + " Records | " + _SQL, UserCode, User.FindFirst(ClaimTypes.WindowsDeviceClaim).Value);
 
                 for(int i = 0; i < _DT.Rows.Count; i++)
                 {
@@ -256,11 +257,11 @@ namespace KANBAN.Controllers.API.OrderingProcess
                     ProcessCount = decimal.Round(((decimal)i / _DT.Rows.Count) * 90.00m,2, MidpointRounding.AwayFromZero);
                 }
 
-                _Log.WriteLog("End Process Calculate Normal ON : " + sDate, UserCode, _BearerClass.Device);
+                _Log.WriteLog("End Process Calculate Normal ON : " + sDate, UserCode, User.FindFirst(ClaimTypes.WindowsDeviceClaim).Value);
 
                 await _KB3Context.Database.ExecuteSqlRawAsync("EXEC dbo.SP_CALCULATE_OTHER_CONDITION @p0", sDate);
 
-                _Log.WriteLog("End Process Calculate Other Condition : " + sDate, UserCode, _BearerClass.Device);
+                _Log.WriteLog("End Process Calculate Other Condition : " + sDate, UserCode, User.FindFirst(ClaimTypes.WindowsDeviceClaim).Value);
 
                 ProcessCount = 100;
 
@@ -296,7 +297,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
             try
             {
                 ProcessCount = 0;
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401) return Unauthorized(new
                 {
                     status = "401",
@@ -312,7 +313,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
                 sDate = sDate.Replace("-", string.Empty);
 
                 _KB3Transaction.CreateSavepoint("BeforeProcessOrderNight");
-                _Log.WriteLog("Start Process Order for Night Shift ON : " + sDate, UserCode, _BearerClass.Device);
+                _Log.WriteLog("Start Process Order for Night Shift ON : " + sDate, UserCode, User.FindFirst(ClaimTypes.WindowsDeviceClaim).Value);
 
                 var sEndDate = _KB3Context.Database.SqlQueryRaw<string>($"select dbo.FN_GET14Day('{sDate}') AS VALUE").FirstOrDefault();
 
@@ -380,7 +381,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
 
                 ProcessCount = 100.00m;
 
-                _Log.WriteLog("Process Completed All NIGHT SHIFT : " + sDate, UserCode, _BearerClass.Device);
+                _Log.WriteLog("Process Completed All NIGHT SHIFT : " + sDate, UserCode, User.FindFirst(ClaimTypes.WindowsDeviceClaim).Value);
                 _KB3Transaction.Commit();
 
                 return Ok(new

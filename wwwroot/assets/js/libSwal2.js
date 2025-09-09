@@ -107,8 +107,8 @@ class libSwal {
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
-            cancelButtonText: i18nLayout.modal.button.close,
-            confirmButtonText: i18nLayout.modal.button.save,
+            cancelButtonText: "Close",
+            confirmButtonText: "OK",
         }).then((result) => {
             //console.log(result);
             if (result.isConfirmed) {
@@ -131,8 +131,8 @@ class libSwal {
             showConfirmButton: false,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
-            cancelButtonText: i18nLayout.modal.button.close,
-            confirmButtonText: i18nLayout.modal.button.save,
+            cancelButtonText: "Close",
+            confirmButtonText: "OK",
             timer: 5000
         }).then((result) => {
             if (pCallback != null) pCallback(result);
@@ -186,7 +186,7 @@ class libSwal {
             } else {
                 return result;
             }
-            
+
         });
     }
 

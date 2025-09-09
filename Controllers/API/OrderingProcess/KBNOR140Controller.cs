@@ -1,14 +1,16 @@
 ﻿using HINOSystem.Context;
 using HINOSystem.Libs;
 using KANBAN.Context;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Security.Claims;
 
 namespace KANBAN.Controllers.API.OrderingProcess
 {
     [Route("api/[controller]/[action]")]
-    [ApiController]
+    [ApiController][Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class KBNOR140Controller : ControllerBase
     {
         private readonly BearerClass _BearerClass;
@@ -51,7 +53,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
                 var data = _FillDT.ExecuteSQL("SELECT   distinct   F_OrderNo,substring(F_OrderNo,3,9) " +
                     "as F_OrderNO1  FROM  TB_PDS_HEADER " +
                     $"WHERE  F_OrderType = '{type}' " +
-                    $"AND F_Plant='{_BearerClass.Plant}' " +
+                    $"AND F_Plant='{User.FindFirst(ClaimTypes.Locality).Value}' " +
                     $"Order by  F_OrderNo ");
 
                 return Ok(new

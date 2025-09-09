@@ -2,6 +2,8 @@
 using KANBAN.Models.KB3.SpecialOrdering;
 using KANBAN.Services;
 using KANBAN.Services.SpecialOrdering.Interface;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Data;
@@ -10,6 +12,7 @@ namespace KANBAN.Controllers.API.SpecialOrdering
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class KBNOR240Controller : ControllerBase
     {
         private readonly ISpecialOrderingServices _services;
@@ -29,7 +32,7 @@ namespace KANBAN.Controllers.API.SpecialOrdering
         {
             try
             {
-                await _bearer.CheckAuthorize();
+                
                 DataTable data = _specialLibs.GetSurveyHeaderDownload();
                 return Ok(new
                 {
@@ -50,7 +53,7 @@ namespace KANBAN.Controllers.API.SpecialOrdering
         {
             try
             {
-                await _bearer.CheckAuthorize();
+                
                 foreach (var item in listObj)
                 {
                     await _services.IKBNOR240.DownloadClicked(item.F_Survey_Doc);

@@ -1,12 +1,15 @@
 ﻿using HINOSystem.Libs;
 using KANBAN.Models.KB3;
 using KANBAN.Services.Import.Interface;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KANBAN.Controllers.API.Import
 {
     [Route("api/[controller]/[action]")]
-    [ApiController]
+    [ApiController][Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize]
     public class KBNIM010Controller : ControllerBase
     {
         private readonly IImportService _service;
@@ -20,7 +23,7 @@ namespace KANBAN.Controllers.API.Import
         }
 
         [HttpGet]
-        public IActionResult Onload(string date,string shift)
+        public IActionResult Onload(string date, string shift)
         {
             try
             {
@@ -34,7 +37,7 @@ namespace KANBAN.Controllers.API.Import
                     });
                 }
 
-                if (_service.KBNIM010.Check_Holiday(date,shift))
+                if (_service.KBNIM010.Check_Holiday(date, shift))
                 {
                     return StatusCode(404, new
                     {
@@ -65,7 +68,7 @@ namespace KANBAN.Controllers.API.Import
         }
 
         [HttpGet]
-        public IActionResult ListData(string date,string shift)
+        public IActionResult ListData(string date, string shift)
         {
             try
             {

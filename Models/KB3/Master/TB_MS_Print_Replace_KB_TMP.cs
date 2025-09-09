@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Drawing;
 
 namespace KANBAN.Models.KB3.Master
 {

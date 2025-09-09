@@ -1,5 +1,3 @@
-using KANBAN.Models.KB3.UrgentOrder;
-using KANBAN.Services.UrgentOrder.IRepository;
 using KANBAN.Models.PPM;
 
 namespace KANBAN.Services.UrgentOrder.IRepository

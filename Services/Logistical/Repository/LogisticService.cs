@@ -18,12 +18,13 @@ namespace KANBAN.Services.Logistical.Repository
             PPM3Context PPM3Context,
             FillDataTable FillDT,
             SerilogLibs log,
-            IEmailService emailService
+            IEmailService emailService,
+            IHttpContextAccessor httpContextAccessor
             )
         {
-            IKBNLC150 = new KBNLC150(kbContext, BearerClass, PPM3Context, FillDT, log, emailService);
-            IKBNLC190 = new KBNLC190(kbContext, BearerClass, PPM3Context, FillDT, log, emailService);
-            IKBNLC200 = new KBNLC200(kbContext, BearerClass, PPM3Context, FillDT, log, emailService);
+            IKBNLC150 = new KBNLC150(kbContext, BearerClass, PPM3Context, FillDT, log, emailService, httpContextAccessor);
+            IKBNLC190 = new KBNLC190(kbContext, BearerClass, PPM3Context, FillDT, log, emailService, httpContextAccessor);
+            IKBNLC200 = new KBNLC200(kbContext, BearerClass, PPM3Context, FillDT, log, emailService, httpContextAccessor);
         }
     }
 }

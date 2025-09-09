@@ -1,16 +1,13 @@
-﻿using HINOSystem.Context;
-using HINOSystem.Libs;
-using KANBAN.Models.KB3.Receive_Process;
+﻿using HINOSystem.Libs;
 using KANBAN.Models.KB3.SpecialOrdering;
 using KANBAN.Services.CKD_Ordering.IRepository;
-using KANBAN.Services.CKD_Ordering.Repository;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using Spire.Barcode;
 
 namespace HINOSystem.Controllers.API.Master
 {
-    [ApiController]
+    [ApiController][Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("/api/[controller]/[action]")]
     public class KBNOR370Controller : ControllerBase
     {
@@ -29,7 +26,7 @@ namespace HINOSystem.Controllers.API.Master
         [HttpPost]
         public async Task<IActionResult> Preview(List<VM_Post_KBNOR261> listobj)
         {
-            await _BearerClass.CheckAuthorize();
+            
 
             var result = await _CKDRepo.IKBNOR370_Repo.Preview(listobj);
 
@@ -46,7 +43,7 @@ namespace HINOSystem.Controllers.API.Master
         [HttpGet]
         public async Task<IActionResult> PreviewKB()
         {
-            await _BearerClass.CheckAuthorize();
+            
             await _CKDRepo.IKBNOR370_Repo.PreviewKB();
             return Ok(new
             {
@@ -60,7 +57,7 @@ namespace HINOSystem.Controllers.API.Master
         [HttpGet]
         public async Task<IActionResult> GetPDS()
         {
-            await _BearerClass.CheckAuthorize();
+            
             var data = await _CKDRepo.IKBNOR370_Repo.GetPDS();
             
             return Ok(new
@@ -80,7 +77,7 @@ namespace HINOSystem.Controllers.API.Master
         [HttpPost]
         public async Task<IActionResult> PDS_GENBARCODE(List<VM_Post_KBNOR261> listObj)
         {
-            await _BearerClass.CheckAuthorize();
+            
             await _CKDRepo.IKBNOR370_Repo.PDS_GENBARCODE(listObj);
             
             return Ok(new

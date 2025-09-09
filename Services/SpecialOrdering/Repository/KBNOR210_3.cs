@@ -6,6 +6,7 @@ using KANBAN.Models.KB3.SpecialOrdering;
 using KANBAN.Services.SpecialOrdering.Interface;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Security.Claims;
 
 namespace KANBAN.Services.SpecialOrdering.Repository
 {
@@ -17,6 +18,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
         private readonly FillDataTable _FillDT;
         private readonly SerilogLibs _log;
         private readonly IEmailService _emailService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
         public KBNOR210_3
@@ -26,7 +28,8 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             PPM3Context PPM3Context,
             FillDataTable FillDT,
             SerilogLibs log,
-            IEmailService emailService
+            IEmailService emailService,
+            IHttpContextAccessor httpContextAccessor
             )
         {
             _kbContext = kbContext;
@@ -35,6 +38,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             _FillDT = FillDT;
             _log = log;
             _emailService = emailService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<List<TB_Transaction_Spc>> LoadOrderNo()
@@ -133,7 +137,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
                         existData.F_Work_Code = "";
                         existData.F_Dept_Use = "";
                         existData.F_Update_Date = DateTime.Now;
-                        existData.F_Update_By = _BearerClass.UserCode;
+                        existData.F_Update_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value;
 
                         _kbContext.Update(existData);
 

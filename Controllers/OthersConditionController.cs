@@ -1,7 +1,6 @@
-﻿using HINOSystem.Models;
-using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
+﻿using Microsoft.AspNetCore.Mvc;
 using HINOSystem.Libs;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HINOSystem.Controllers
 {
@@ -29,35 +28,40 @@ namespace HINOSystem.Controllers
             _wrtConnect = wrtConnect;
         }
 
-
+        [Authorize(Policy = "KBNOC110")]
         public IActionResult KBNOC110()
         {
-            return _authenGuard.guard(ControllerContext);
+            return View();
         }
 
+        [Authorize(Policy = "KBNOC120")]
         public IActionResult KBNOC120()
         {
-            return _authenGuard.guard(ControllerContext);
+            return View();
         }
 
+        [Authorize(Policy = "KBNOC121")]
         public IActionResult KBNOC121()
         {
-            return _authenGuard.guard(ControllerContext);
+            return View();
         }
 
+        [Authorize(Policy = "KBNOC140")]
         public IActionResult KBNOC140()
         {
-            return _authenGuard.guard(ControllerContext);
+            return View();
         }
 
+        [Authorize(Policy = "KBNOC150")]
         public IActionResult KBNOC150()
         {
-            return _authenGuard.guard(ControllerContext);
+            return View();
         }
 
+        [Authorize(Policy = "KBNOC160")]
         public IActionResult KBNOC160()
         {
-            return _authenGuard.guard(ControllerContext);
+            return View();
         }
 
 

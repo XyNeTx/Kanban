@@ -7,6 +7,7 @@ using KANBAN.Services.SpecialOrdering.Interface;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Data;
+using System.Security.Claims;
 
 namespace KANBAN.Services.SpecialOrdering.Repository
 {
@@ -20,6 +21,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
         private readonly SerilogLibs _log;
         private readonly IEmailService _email;
         private readonly ISpecialLibs _spcLib;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
         public KBNOR220
@@ -30,7 +32,8 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             FillDataTable FillDT,
             SerilogLibs log,
             ISpecialLibs spcLib,
-            IEmailService email
+            IEmailService email,
+            IHttpContextAccessor httpContextAccessor
             )
         {
             _kbContext = kbContext;
@@ -40,21 +43,22 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             _log = log;
             _spcLib = spcLib;
             _email = email;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public DataTable GetTransactionSPCNOSurvey(string Fac, string? PDSNo, string? PDSDate, string? Mode = null)
         {
             try
             {
-                string sql = $@"Select TRN.F_PDS_No, '' As F_Issued_Date,F_Store_CD,F_Dept_Use, 
-                        F_Acc_Dr, F_Acc_Cr,F_Work_Code,F_Remark,F_Remark2,F_Remark3 
-                        ,Upper(F_Remark_KB) as F_Remark_KB,F_CustomerOrder_Type,F_CusOrderType_CD 
-                        FROM TB_Transaction_Spc TRN Left outer join 
-                        ( Select F_PDS_No,Count(*) As Cnt 
-                        FROM TB_Transaction_Spc 
-                        Where F_Survey_Flg = '0' and F_Survey_Doc = '' and F_PDS_NO <> '' 
-                        and F_Delivery_Date_New = '' and F_Qty <> 0 
-                        Group by F_PDS_No ) PDS on TRN.F_PDS_No = PDS.F_PDS_No 
+                string sql = $@"Select TRN.F_PDS_No, '' As F_Issued_Date,F_Store_CD,F_Dept_Use,
+                        F_Acc_Dr, F_Acc_Cr,F_Work_Code,F_Remark,F_Remark2,F_Remark3
+                        ,Upper(F_Remark_KB) as F_Remark_KB,F_CustomerOrder_Type,F_CusOrderType_CD
+                        FROM TB_Transaction_Spc TRN Left outer join
+                        ( Select F_PDS_No,Count(*) As Cnt
+                        FROM TB_Transaction_Spc
+                        Where F_Survey_Flg = '0' and F_Survey_Doc = '' and F_PDS_NO <> ''
+                        and F_Delivery_Date_New = '' and F_Qty <> 0
+                        Group by F_PDS_No ) PDS on TRN.F_PDS_No = PDS.F_PDS_No
                         Where F_Survey_Flg = '0' and F_Survey_Doc = '' and TRN.F_PDS_NO <> '' and F_Qty <> 0 ";
 
                 if (!string.IsNullOrWhiteSpace(Fac))
@@ -123,8 +127,8 @@ namespace KANBAN.Services.SpecialOrdering.Repository
 
         public DataTable GetACCOUNTMS(string ProcessDT)
         {
-            string sql = $@"Select F_Acc_CD FROM  V_T_Account_MS 
-                        Where  (ISNULL(F_Start_Date, '') <= '{ProcessDT}' ) 
+            string sql = $@"Select F_Acc_CD FROM  V_T_Account_MS
+                        Where  (ISNULL(F_Start_Date, '') <= '{ProcessDT}' )
                         AND (ISNULL(F_End_Date, '') >= '{ProcessDT}' )";
 
             var _dt = _FillDT.ExecuteSQL(sql);
@@ -165,7 +169,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
         {
             try
             {
-                var dt = GetTransactionSPCNOSurvey(_BearerClass.Plant, null, null, null);
+                var dt = GetTransactionSPCNOSurvey(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value, null, null, null);
                 if (dt.Rows.Count == 0)
                 {
                     throw new CustomHttpException(404, "Data not found");
@@ -189,7 +193,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             {
                 foreach (var data in dataList)
                 {
-                    var _dt = GetTransactionSPCNOSurvey(_BearerClass.Plant, data.F_PDS_No, data.F_Issued_Date, "Check");
+                    var _dt = GetTransactionSPCNOSurvey(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value, data.F_PDS_No, data.F_Issued_Date, "Check");
                     if (_dt.Rows.Count > 0)
                     {
                         throw new CustomHttpException(400, "Please input data for generate survey!");
@@ -235,7 +239,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
                             SupCD = DTSUP.Rows[j]["F_Supplier_CD"].ToString().Trim();
                             SupPlant = DTSUP.Rows[j]["F_Supplier_Plant"].ToString().Trim();
                             DeliDT = DTSUP.Rows[j]["F_Delivery_Date_new"].ToString().Trim().Substring(0, 6);
-                            MaxID = _spcLib.getMaxSurveyID(PDSNo, _BearerClass.Plant);
+                            MaxID = _spcLib.getMaxSurveyID(PDSNo, _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value);
                             NextID = MaxID + 1;
                             SurveyDoc = PDSNo.Trim() + "/" + _spcLib.FormatNumber(NextID);
                             DelayDate = _spcLib.GetDelayDate(now);
@@ -251,33 +255,33 @@ namespace KANBAN.Services.SpecialOrdering.Repository
                                     _ => ""
                                 };
 
-                                string sql = $@"Insert TB_Survey_Header 
-                                    (   F_Survey_Doc, F_PO_Customer, F_Issued_Date 
-                                    , F_Supplier_CD, F_Supplier_Plant , F_Delivery_Date, F_Delivery_Trip, F_Cycle_Time 
-                                    , F_Issue_By, F_Issue_Tel, F_Issue_Fax, F_Issue_Mail 
-                                    , F_Acc_Dr, F_Acc_Cr, F_Dept_Code, F_WK_Code, F_Factory_Code 
-                                    , F_Delay_Date, F_Remark, F_Remark2, F_Remark3, F_Remark_KB 
-                                    , F_CustomerOrder_Type 
-                                    , F_Status, F_Upload_Flg, F_Create_By, F_Create_Date) 
-                                    Select  '{SurveyDoc}' , F_PDS_No, '{now}' 
-                                    , Case When Len(F_Supplier_CD) < 5 Then 
-                                     LTrim(F_Supplier_CD) Else LTrim(F_Supplier_CD) 
-                                    End F_Supplier_CD, F_Supplier_Plant 
-                                    , '' as F_Delivery_Date, F_Round, F_Cycle_Time 
-                                    , '{DTIssue.Rows[0]["F_User_Name"].ToString().Trim()}' 
-                                    , '{DTIssue.Rows[0]["F_Telephone"].ToString().Trim()}' 
-                                    , '{DTIssue.Rows[0]["F_Fax"].ToString().Trim()}' 
-                                    , '{DTIssue.Rows[0]["F_Email"].ToString().Trim()}' 
-                                    , F_Acc_Dr, F_Acc_Cr, F_Dept_Use, F_Work_Code, F_Plant 
-                                    , '{DelayDate}' , RTrim(F_Remark)+'{strCusOrderDetails}' 
-                                    , RTrim(F_Remark2), Rtrim(F_Remark3), RTrim(F_Remark_KB)  
-                                    , '{CustomerOrderType}' AS F_CustomerOrder_Type 
-                                    , 'N','0','{_BearerClass.UserCode}', getdate()  
-                                    From TB_Transaction_Spc 
+                                string sql = $@"Insert TB_Survey_Header
+                                    (   F_Survey_Doc, F_PO_Customer, F_Issued_Date
+                                    , F_Supplier_CD, F_Supplier_Plant , F_Delivery_Date, F_Delivery_Trip, F_Cycle_Time
+                                    , F_Issue_By, F_Issue_Tel, F_Issue_Fax, F_Issue_Mail
+                                    , F_Acc_Dr, F_Acc_Cr, F_Dept_Code, F_WK_Code, F_Factory_Code
+                                    , F_Delay_Date, F_Remark, F_Remark2, F_Remark3, F_Remark_KB
+                                    , F_CustomerOrder_Type
+                                    , F_Status, F_Upload_Flg, F_Create_By, F_Create_Date)
+                                    Select  '{SurveyDoc}' , F_PDS_No, '{now}'
+                                    , Case When Len(F_Supplier_CD) < 5 Then
+                                     LTrim(F_Supplier_CD) Else LTrim(F_Supplier_CD)
+                                    End F_Supplier_CD, F_Supplier_Plant
+                                    , '' as F_Delivery_Date, F_Round, F_Cycle_Time
+                                    , '{DTIssue.Rows[0]["F_User_Name"].ToString().Trim()}'
+                                    , '{DTIssue.Rows[0]["F_Telephone"].ToString().Trim()}'
+                                    , '{DTIssue.Rows[0]["F_Fax"].ToString().Trim()}'
+                                    , '{DTIssue.Rows[0]["F_Email"].ToString().Trim()}'
+                                    , F_Acc_Dr, F_Acc_Cr, F_Dept_Use, F_Work_Code, F_Plant
+                                    , '{DelayDate}' , RTrim(F_Remark)+'{strCusOrderDetails}'
+                                    , RTrim(F_Remark2), Rtrim(F_Remark3), RTrim(F_Remark_KB)
+                                    , '{CustomerOrderType}' AS F_CustomerOrder_Type
+                                    , 'N','0','{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}', getdate()
+                                    From TB_Transaction_Spc
                                     Where F_PDS_No = '{PDSNo}' and F_Supplier_CD = '{SupCD}'
-                                    and F_Supplier_Plant = '{SupPlant}' and F_Process_Plant  = '{_BearerClass.Plant}' 
-                                    and F_Delivery_Date_New like '{DeliDT}%'   
-                                    and F_Survey_Doc   = '' and F_Survey_Flg = '0' and F_Qty > 0 
+                                    and F_Supplier_Plant = '{SupPlant}' and F_Process_Plant  = '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value}'
+                                    and F_Delivery_Date_New like '{DeliDT}%'
+                                    and F_Survey_Doc   = '' and F_Survey_Flg = '0' and F_Qty > 0
                                     Group by F_PDS_No,F_Supplier_CD, F_Supplier_Plant, F_Cycle_Time,
                                     F_Acc_Dr, F_Acc_Cr, F_Dept_Use, F_Work_Code, F_Plant, F_Remark,F_Remark2,F_Remark3,F_Remark_KB,F_Round
                                     ";
@@ -285,7 +289,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
                                 await _kbContext.Database.ExecuteSqlRawAsync(sql);
                                 _log.WriteLogMsg($"Insert TB_Survey_Header : {SurveyDoc} | Query : {sql} ");
 
-                                var DTD = _spcLib.GetTransactionSPCDetail(PDSNo, PDSDate, SupCD, SupPlant, _BearerClass.Plant, DeliDT, StoreCD);
+                                var DTD = _spcLib.GetTransactionSPCDetail(PDSNo, PDSDate, SupCD, SupPlant, _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value, DeliDT, StoreCD);
 
                                 if (DTD.Rows.Count > 0)
                                 {
@@ -297,16 +301,16 @@ namespace KANBAN.Services.SpecialOrdering.Repository
                                         string Ruibetsu = DTD.Rows[k]["F_Ruibetsu"].ToString().Trim();
                                         string DeliveryDate = DTD.Rows[k]["F_Delivery_Date_New"].ToString().Trim();
 
-                                        sql = $@"Insert TB_Survey_Detail 
-                                            ( F_Survey_Doc, F_PO_Customer,F_No, F_Part_No, F_Part_Name,F_Ruibetsu, F_Kanban_No, F_Store_Code, F_Package, F_Qty,F_Adjust_Qty,F_Delivery_Date) 
-                                            Select  '{SurveyDoc}' , F_PDS_No, '{M}' ,F_Part_No,F_Part_Name,F_Ruibetsu,F_Kanban_No,F_Store_CD,F_Qty_Pack, Sum(F_Qty),Sum(F_Qty), F_Delivery_Date_NEW 
-                                            From TB_Transaction_Spc 
+                                        sql = $@"Insert TB_Survey_Detail
+                                            ( F_Survey_Doc, F_PO_Customer,F_No, F_Part_No, F_Part_Name,F_Ruibetsu, F_Kanban_No, F_Store_Code, F_Package, F_Qty,F_Adjust_Qty,F_Delivery_Date)
+                                            Select  '{SurveyDoc}' , F_PDS_No, '{M}' ,F_Part_No,F_Part_Name,F_Ruibetsu,F_Kanban_No,F_Store_CD,F_Qty_Pack, Sum(F_Qty),Sum(F_Qty), F_Delivery_Date_NEW
+                                            From TB_Transaction_Spc
                                             Where F_PDS_No = '{PDSNo}' and F_Supplier_CD = '{SupCD}'
-                                            and F_Supplier_Plant  = '{SupPlant}' and F_Process_Plant  = '{_BearerClass.Plant}'
-                                            and F_Delivery_Date_New like '{DeliveryDate}%' 
-                                            and F_Survey_Doc   = '' and F_Survey_Flg = '0' and F_Qty > 0 
-                                            and F_Store_cd = '{StoreCD}' 
-                                            and F_Part_No   = '{PartNo}' and F_Ruibetsu = '{Ruibetsu}' 
+                                            and F_Supplier_Plant  = '{SupPlant}' and F_Process_Plant  = '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value}'
+                                            and F_Delivery_Date_New like '{DeliveryDate}%'
+                                            and F_Survey_Doc   = '' and F_Survey_Flg = '0' and F_Qty > 0
+                                            and F_Store_cd = '{StoreCD}'
+                                            and F_Part_No   = '{PartNo}' and F_Ruibetsu = '{Ruibetsu}'
                                             Group by F_PDS_No,F_Part_No,F_Part_Name,F_Ruibetsu,F_Kanban_No,F_Store_CD,F_Qty_Pack,F_Delivery_Date_NEW ";
 
                                         await _kbContext.Database.ExecuteSqlRawAsync(sql);
@@ -315,13 +319,13 @@ namespace KANBAN.Services.SpecialOrdering.Repository
                                     }
                                 }
 
-                                sql = $@"Select F_Survey_Doc,F_Part_no,F_Ruibetsu,F_Status,F_Delivery_Date 
-                                    ,ROW_NUMBER() OVER(PARTITION BY F_Survey_Doc Order by F_Delivery_Date,F_Part_No,F_Ruibetsu) As ROWID 
-                                    From TB_Survey_Detail 
-                                    Where F_PO_Customer = '{PDSNo.Trim()}' 
-                                    and F_Survey_Doc = '{SurveyDoc.Trim()}' 
-                                    and F_Qty > 0 
-                                    Group by F_Survey_Doc,F_Delivery_Date,F_Part_no,F_Ruibetsu,F_Status 
+                                sql = $@"Select F_Survey_Doc,F_Part_no,F_Ruibetsu,F_Status,F_Delivery_Date
+                                    ,ROW_NUMBER() OVER(PARTITION BY F_Survey_Doc Order by F_Delivery_Date,F_Part_No,F_Ruibetsu) As ROWID
+                                    From TB_Survey_Detail
+                                    Where F_PO_Customer = '{PDSNo.Trim()}'
+                                    and F_Survey_Doc = '{SurveyDoc.Trim()}'
+                                    and F_Qty > 0
+                                    Group by F_Survey_Doc,F_Delivery_Date,F_Part_no,F_Ruibetsu,F_Status
                                     Order by F_Delivery_Date,F_Part_no,F_Ruibetsu ";
 
                                 var DTS = _FillDT.ExecuteSQL(sql);
@@ -330,38 +334,38 @@ namespace KANBAN.Services.SpecialOrdering.Repository
                                 {
                                     for (k = 0; k < DTS.Rows.Count; k++)
                                     {
-                                        sql = $@"Update TB_Survey_Detail Set F_No = '{DTS.Rows[k]["ROWID"].ToString().Trim()}' 
-                                            , F_Unit_Price = {CheckPriceOrder(DTS.Rows[k]["F_Part_no"].ToString(), DTS.Rows[k]["F_Ruibetsu"].ToString(), DTS.Rows[k]["F_Delivery_Date"].ToString(), StoreCD, SupCD)} 
-                                            Where F_PO_Customer = '{PDSNo.Trim()}' 
-                                            and F_Survey_Doc = '{DTS.Rows[k]["F_Survey_Doc"].ToString().Trim()}' 
-                                            and F_Part_no = '{DTS.Rows[k]["F_Part_no"].ToString().Trim()}' 
-                                            and F_Ruibetsu = '{DTS.Rows[k]["F_Ruibetsu"].ToString().Trim()}' 
+                                        sql = $@"Update TB_Survey_Detail Set F_No = '{DTS.Rows[k]["ROWID"].ToString().Trim()}'
+                                            , F_Unit_Price = {CheckPriceOrder(DTS.Rows[k]["F_Part_no"].ToString(), DTS.Rows[k]["F_Ruibetsu"].ToString(), DTS.Rows[k]["F_Delivery_Date"].ToString(), StoreCD, SupCD)}
+                                            Where F_PO_Customer = '{PDSNo.Trim()}'
+                                            and F_Survey_Doc = '{DTS.Rows[k]["F_Survey_Doc"].ToString().Trim()}'
+                                            and F_Part_no = '{DTS.Rows[k]["F_Part_no"].ToString().Trim()}'
+                                            and F_Ruibetsu = '{DTS.Rows[k]["F_Ruibetsu"].ToString().Trim()}'
                                             and F_Delivery_Date = '{DTS.Rows[k]["F_Delivery_Date"].ToString().Trim()}' ";
 
                                         await _kbContext.Database.ExecuteSqlRawAsync(sql);
                                     }
                                 }
 
-                                sql = $@"Update TB_Transaction_Spc  Set F_Survey_Doc = '{SurveyDoc}', 
-                                    F_Survey_ID = '{NextID}', F_Survey_Flg = '1', 
-                                    F_Update_By = '{_BearerClass.UserCode}',  
-                                    F_Update_Date = getdate() 
-                                    Where F_PDS_No = '{PDSNo}' 
+                                sql = $@"Update TB_Transaction_Spc  Set F_Survey_Doc = '{SurveyDoc}',
+                                    F_Survey_ID = '{NextID}', F_Survey_Flg = '1',
+                                    F_Update_By = '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}',
+                                    F_Update_Date = getdate()
+                                    Where F_PDS_No = '{PDSNo}'
                                     and F_Supplier_CD = '{SupCD}'
                                     and F_Supplier_Plant = '{SupPlant}'
-                                    and F_Process_Plant = '{_BearerClass.Plant}'
+                                    and F_Process_Plant = '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value}'
                                     and F_Delivery_Date_New like '{DeliDT}%'
                                     and F_Survey_Doc = ''
                                     and F_Survey_Flg = '0'
-                                    and F_Store_CD   = '{StoreCD}' 
-                                    and F_OrderType = 'S' 
+                                    and F_Store_CD   = '{StoreCD}'
+                                    and F_OrderType = 'S'
                                     ";
 
                                 await _kbContext.Database.ExecuteSqlRawAsync(sql);
                                 _log.WriteLogMsg($"Update TB_Transaction_Spc : {SurveyDoc} | Query : {sql} ");
 
-                                sql = $@"Select F_SURVEY_Doc FROM fnSURVEYNOTPRICE_SPC() 
-                                    Where F_SURVEY_Doc = '{SurveyDoc}' 
+                                sql = $@"Select F_SURVEY_Doc FROM fnSURVEYNOTPRICE_SPC()
+                                    Where F_SURVEY_Doc = '{SurveyDoc}'
                                     GROUP BY  F_SURVEY_Doc ORDER BY F_Survey_Doc ";
 
                                 var DT = _FillDT.ExecuteSQL(sql);
@@ -429,18 +433,18 @@ namespace KANBAN.Services.SpecialOrdering.Repository
                     sWKCode = obj.F_Work_Code.Trim().ToUpper();
                 }
 
-                string _sql = $@"UPDATE TB_Transaction_Spc Set F_Acc_Dr = '{obj.F_Acc_Dr}', 
-                    F_Acc_Cr = '{obj.F_Acc_Cr}', F_Dept_Use = '{obj.F_Dept_Use}', 
-                    F_Work_Code = '{sWKCode}', F_Remark = '{obj.F_Remark}', 
-                    F_Remark2 = '{obj.F_Remark2}', F_Remark3 = '{obj.F_Remark3}', 
-                    F_Remark_KB = '{obj.F_Remark_KB}', F_CustomerOrder_Type = '{obj.F_CustomerOrder_Type}', 
-                    F_CusOrderType_CD = '{obj.F_CusOrderType_CD}',  
-                    F_Update_By = '{_BearerClass.UserCode}', 
-                    F_Update_Date = getdate() 
-                    Where F_PDS_No = '{obj.F_PDS_No}' 
-                    and F_Survey_Doc = '' and F_Survey_Flg = '0' 
-                    and F_Store_CD = '{obj.F_Store_CD}' 
-                    and F_Process_Plant = '{_BearerClass.Plant}' ";
+                string _sql = $@"UPDATE TB_Transaction_Spc Set F_Acc_Dr = '{obj.F_Acc_Dr}',
+                    F_Acc_Cr = '{obj.F_Acc_Cr}', F_Dept_Use = '{obj.F_Dept_Use}',
+                    F_Work_Code = '{sWKCode}', F_Remark = '{obj.F_Remark}',
+                    F_Remark2 = '{obj.F_Remark2}', F_Remark3 = '{obj.F_Remark3}',
+                    F_Remark_KB = '{obj.F_Remark_KB}', F_CustomerOrder_Type = '{obj.F_CustomerOrder_Type}',
+                    F_CusOrderType_CD = '{obj.F_CusOrderType_CD}',
+                    F_Update_By = '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}',
+                    F_Update_Date = getdate()
+                    Where F_PDS_No = '{obj.F_PDS_No}'
+                    and F_Survey_Doc = '' and F_Survey_Flg = '0'
+                    and F_Store_CD = '{obj.F_Store_CD}'
+                    and F_Process_Plant = '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value}' ";
 
                 await _kbContext.Database.ExecuteSqlRawAsync(_sql);
                 _log.WriteLogMsg($"Update TB_Transaction_Spc : {obj.F_PDS_No} | Query : {_sql} ");
@@ -506,7 +510,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
         {
             try
             {
-                return _kbContext.TB_MS_Operator.Any(x => x.F_User_ID == _BearerClass.UserCode);
+                return _kbContext.TB_MS_Operator.Any(x => x.F_User_ID == _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value);
             }
             catch (Exception ex)
             {
@@ -519,10 +523,10 @@ namespace KANBAN.Services.SpecialOrdering.Repository
         {
             try
             {
-                string sql = $@"Select F_SPRICE 
-                    From [HMMT-PPM].[PPMDB_TOTAL].dbo.[T_Unit_Price] 
-                    Where F_Part_no = '{PartNo}' and F_Ruibetsu = '{Ruibetsu}' 
-                    and (F_TC_Str <= '{DeliveryDate}' and F_TC_End >= '{DeliveryDate}') 
+                string sql = $@"Select F_SPRICE
+                    From [HMMT-PPM].[PPMDB_TOTAL].dbo.[T_Unit_Price]
+                    Where F_Part_no = '{PartNo}' and F_Ruibetsu = '{Ruibetsu}'
+                    and (F_TC_Str <= '{DeliveryDate}' and F_TC_End >= '{DeliveryDate}')
                     and F_Supplier_cd = '{SupCD}' ";
 
                 var _dt = _FillDT.ExecuteSQL(sql);

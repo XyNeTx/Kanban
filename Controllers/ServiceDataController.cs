@@ -1,7 +1,6 @@
-﻿using HINOSystem.Models;
-using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
+﻿using Microsoft.AspNetCore.Mvc;
 using HINOSystem.Libs;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HINOSystem.Controllers
 {
@@ -15,9 +14,9 @@ namespace HINOSystem.Controllers
 
 
         public ServiceDataController(
-            ILogger<HomeController> logger, 
-            DbConnect dbConnect, 
-            AuthenGuard authenGuard, 
+            ILogger<HomeController> logger,
+            DbConnect dbConnect,
+            AuthenGuard authenGuard,
             WarrantyClaimConnect wrtConnect
             )
         {
@@ -31,29 +30,31 @@ namespace HINOSystem.Controllers
             this._conn = _dbConnect.GetConncetionString();
         }
 
-
+        [Authorize(Policy = "KBNIM001")]
         public IActionResult KBNIM001()
         {
             //_authenGuard.ComponentToolbar = false;
-            return _authenGuard.guard(ControllerContext);
+            return View();
         }
-
+        [Authorize(Policy = "KBNIM001M")]
         public IActionResult KBNIM001M()
         {
             //_authenGuard.ComponentToolbar = false;
-            return _authenGuard.guard(ControllerContext);
+            return View();
         }
 
+        [Authorize(Policy = "KBNIM001C")]
         public IActionResult KBNIM001C()
         {
             //_authenGuard.ComponentToolbar = false;
-            return _authenGuard.guard(ControllerContext);
+            return View();
         }
 
+        [Authorize(Policy = "KBNIM001O")]
         public IActionResult KBNIM001O()
         {
             //_authenGuard.ComponentToolbar = false;
-            return _authenGuard.guard(ControllerContext);
+            return View();
         }
 
 

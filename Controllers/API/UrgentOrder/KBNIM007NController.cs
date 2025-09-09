@@ -2,6 +2,8 @@
 using HINOSystem.Libs;
 using KANBAN.Context;
 using KANBAN.Models.KB3.UrgentOrder;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -11,6 +13,7 @@ using System.Data;
 namespace HINOSystem.Controllers.API.Master
 {
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/[controller]/[action]")]
 
     public class KBNIM007NController : ControllerBase
@@ -58,7 +61,7 @@ namespace HINOSystem.Controllers.API.Master
             string _SQL = "";
             try
             {
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
                 if (pData != null) _json = JsonConvert.DeserializeObject(pData);
@@ -86,7 +89,7 @@ namespace HINOSystem.Controllers.API.Master
         [HttpGet]
         public async Task<IActionResult> Inquiry()
         {
-            _BearerClass.Authentication(Request);
+            _BearerClass.Authentication();
 
             if (_BearerClass.Status == 401) return Unauthorized(new
             {
@@ -141,7 +144,7 @@ namespace HINOSystem.Controllers.API.Master
         [HttpPost]
         public async Task<IActionResult> Update(VM_KBNIM007N_OK obj)
         {
-            _BearerClass.Authentication(Request);
+            _BearerClass.Authentication();
 
             if (_BearerClass.Status == 401) return Unauthorized(new
             {
@@ -216,7 +219,7 @@ namespace HINOSystem.Controllers.API.Master
         [HttpPost]
         public async Task<IActionResult> Delete(TB_Transaction_TMP obj)
         {
-            _BearerClass.Authentication(Request);
+            _BearerClass.Authentication();
 
             if (_BearerClass.Status == 401) return Unauthorized(new
             {
@@ -264,7 +267,7 @@ namespace HINOSystem.Controllers.API.Master
         [HttpGet]
         public async Task<IActionResult> OrderNoSelected(string F_PDS_No)
         {
-            _BearerClass.Authentication(Request);
+            _BearerClass.Authentication();
 
             if (_BearerClass.Status == 401) return Unauthorized(new
             {
@@ -330,7 +333,7 @@ namespace HINOSystem.Controllers.API.Master
         [HttpGet]
         public async Task<IActionResult> GenPDSNo()
         {
-            _BearerClass.Authentication(Request);
+            _BearerClass.Authentication();
 
             if (_BearerClass.Status == 401) return Unauthorized(new
             {
@@ -357,7 +360,7 @@ namespace HINOSystem.Controllers.API.Master
         [HttpGet]
         public async Task<IActionResult> GetSupplier()
         {
-            _BearerClass.Authentication(Request);
+            _BearerClass.Authentication();
 
             if (_BearerClass.Status == 401) return Unauthorized(new
             {
@@ -408,7 +411,7 @@ namespace HINOSystem.Controllers.API.Master
         [HttpGet]
         public async Task<IActionResult> GetSupplierDetail(string F_Supplier_Cd, string F_ProcessDate)
         {
-            _BearerClass.Authentication(Request);
+            _BearerClass.Authentication();
 
             if (_BearerClass.Status == 401) return Unauthorized(new
             {
@@ -510,7 +513,7 @@ namespace HINOSystem.Controllers.API.Master
         [HttpGet]
         public async Task<IActionResult> GetPartNo(string? F_Supplier_Cd = null)
         {
-            _BearerClass.Authentication(Request);
+            _BearerClass.Authentication();
 
             if (_BearerClass.Status == 401) return Unauthorized(new
             {
@@ -576,7 +579,7 @@ namespace HINOSystem.Controllers.API.Master
         [HttpGet]
         public async Task<IActionResult> PartNoChanged(string? F_Supplier_Cd = null, string? F_Part_No = null, string? F_Kanban_No = null)
         {
-            _BearerClass.Authentication(Request);
+            _BearerClass.Authentication();
 
             if (_BearerClass.Status == 401) return Unauthorized(new
             {
@@ -679,7 +682,7 @@ namespace HINOSystem.Controllers.API.Master
         [HttpPost]
         public async Task<IActionResult> OKClicked(VM_KBNIM007N_OK obj)
         {
-            _BearerClass.Authentication(Request);
+            _BearerClass.Authentication();
 
             if (_BearerClass.Status == 401) return Unauthorized(new
             {
@@ -732,7 +735,7 @@ namespace HINOSystem.Controllers.API.Master
         [HttpGet]
         public async Task<IActionResult> AllDataWasSaved(string? F_PDS_No = null)
         {
-            _BearerClass.Authentication(Request);
+            _BearerClass.Authentication();
 
             if (_BearerClass.Status == 401) return Unauthorized(new
             {

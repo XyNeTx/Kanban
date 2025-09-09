@@ -2,12 +2,10 @@
 using HINOSystem.Libs;
 using KANBAN.Context;
 using KANBAN.Models.KB3.ReportOrder;
-using MathNet.Numerics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using NPOI.SS.Formula.Functions;
 namespace KANBAN.Controllers.API.OrderReport
 {
     public class KBNRT210Controller : Controller

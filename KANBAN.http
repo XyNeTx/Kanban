@@ -1,4 +1,5 @@
 ﻿@KANBAN_HostAddress = http://localhost:7277
+@
 
 GET {{KANBAN_HostAddress}}/api/kbnoc150/GetSupplier
 
@@ -19,4 +20,15 @@ POST {{KANBAN_HostAddress}}/xapi/DeleteKBNOR_140_KB
 @dateShift=20250821D
 GET {{KANBAN_HostAddress}}/xapi/GetProcessDate?dateShift={{dateShift}}
 
+###
+
+@userCode=20234111
+@factory=3
+POST {{KANBAN_HostAddress}}/api/Login/GenerateJWTToken?userCode={{userCode}}&Factory={{factory}}
+
+###
+
+@tokenString=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjIwMjM0MTExIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZSI6IlNpdHRoaXBvcm4gUG9sbWFydCIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6IlNpdHRoaXBvcm5fUEBoaW5vdGhhaWxhbmQuY29tIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbG9jYWxpdHkiOiIzIiwibmJmIjoxNzU2NDYxNzM5LCJleHAiOjE3NTY1NDgxMzl9.HIHmiAvn-QtDozcxYUybfCKvUdtIHkNxmZshYhB7uvA
+GET {{KANBAN_HostAddress}}/api/login/getUserDetail?tokenString={{tokenString}}
+  Authorization: Bearer {{tokenString}}
 ###

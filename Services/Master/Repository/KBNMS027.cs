@@ -9,6 +9,7 @@ using KANBAN.Services.Automapper.Interface;
 using KANBAN.Services.Master.IRepository;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Security.Claims;
 
 namespace KANBAN.Services.Master.Repository
 {
@@ -22,6 +23,7 @@ namespace KANBAN.Services.Master.Repository
         private readonly SerilogLibs _log;
         private readonly IEmailService _emailService;
         private readonly IAutoMapService _automapService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
         public KBNMS027
@@ -32,7 +34,8 @@ namespace KANBAN.Services.Master.Repository
             FillDataTable FillDT,
             SerilogLibs log,
             IEmailService emailService,
-            IAutoMapService autoMapService
+            IAutoMapService autoMapService,
+            IHttpContextAccessor httpContextAccessor
             )
         {
             _kbContext = kbContext;
@@ -42,6 +45,7 @@ namespace KANBAN.Services.Master.Repository
             _log = log;
             _emailService = emailService;
             _automapService = autoMapService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public static string strDateNow = DateTime.Now.ToString("yyyyMMdd");
@@ -184,7 +188,7 @@ namespace KANBAN.Services.Master.Repository
                         F_Supplier_CD = obj.F_Supplier_CD.Split("-")[0],
                         F_Supplier_Plant = obj.F_Supplier_CD.Split("-")[1],
                         F_name = obj.F_name,
-                        F_Update_By = _BearerClass.UserCode,
+                        F_Update_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value,
                         F_Update_Date = DateTime.Now
                     };
 
@@ -197,14 +201,14 @@ namespace KANBAN.Services.Master.Repository
                     var data = await _kbContext.TB_MS_Matching_Supplier
                         .Where(x => x.F_Supplier_CD.Trim() + "-" + x.F_Supplier_Plant.Trim() == obj.F_Supplier_CD + "-" + obj.F_Supplier_Plant)
                         .ExecuteUpdateAsync(set => set.SetProperty(x => x.F_short_Logistic, obj.F_Short_Logistic)
-                        .SetProperty(x => x.F_Update_By, _BearerClass.UserCode)
+                        .SetProperty(x => x.F_Update_By, _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value)
                         .SetProperty(x => x.F_Update_Date, DateTime.Now));
 
                     _log.WriteLogMsg($@"UPDATE TB_MS_Matching_Supplier
                         _kbContext.TB_MS_Matching_Supplier
                         .Where(x=>x.F_Supplier_CD + ""-"" + x.F_Supplier_Plant == {obj.F_Supplier_CD})
                         .ExecuteUpdateAsync(set=>set.SetProperty(x=>x.F_short_Logistic,{obj.F_Short_Logistic})
-                        .SetProperty(x => x.F_Update_By, {_BearerClass.UserCode})
+                        .SetProperty(x => x.F_Update_By, {_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value})
                         .SetProperty(x => x.F_Update_Date, {DateTime.Now}))
                         ");
                 }

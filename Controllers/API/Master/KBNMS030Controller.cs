@@ -2,11 +2,13 @@
 using KANBAN.Models.KB3.Master;
 using KANBAN.Services;
 using KANBAN.Services.Master.IRepository;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HINOSystem.Controllers.API.Master
 {
-    [ApiController]
+    [ApiController][Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/[controller]/[action]")]
     public class KBNMS030Controller : ControllerBase
     {
@@ -27,7 +29,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
 
                 var data = await _MasterRepo.IKBNMS030.GetListData(F_Line_ID, F_Description, F_Customer);
 
@@ -50,7 +52,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
 
                 var data = listObj.FirstOrDefault();
 

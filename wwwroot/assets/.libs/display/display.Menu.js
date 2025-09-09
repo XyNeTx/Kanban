@@ -20,15 +20,15 @@ $(document).ready(function () {
     if (_lv5 != undefined) $('li[data-focus=active]').parent().parent().parent().parent().parent().parent().parent().parent().parent().parent().attr('class', 'pcoded-hasmenu pcoded-trigger');
 
 
-    if (_CONTROLLER_ + _PAGE_ != 'HomeIndex')
-        if (document.getElementById(_CONTROLLER_ + _PAGE_) != null) $('#mCSB_1_container').attr('style', 'position: relative; top: -' + document.getElementById(_CONTROLLER_ + _PAGE_).offsetTop + 'px; left: 0px; width: 100%;');
+    //if (_CONTROLLER_ + _PAGE_ != 'HomeIndex')
+    //    if (document.getElementById(_CONTROLLER_ + _PAGE_) != null) $('#mCSB_1_container').attr('style', 'position: relative; top: -' + document.getElementById(_CONTROLLER_ + _PAGE_).offsetTop + 'px; left: 0px; width: 100%;');
 
 
-    if (_MENUFOCUS_ != '') {
-        $('#' + _CONTROLLER_ + _MENUFOCUS_).attr('data-focus', 'active');
-        $('#' + _CONTROLLER_ + _MENUFOCUS_).attr('class', 'active');
-        //console.log(_CONTROLLER_ + _MENUFOCUS_);
-    }
+    //if (_MENUFOCUS_ != '') {
+    //    $('#' + _CONTROLLER_ + _MENUFOCUS_).attr('data-focus', 'active');
+    //    $('#' + _CONTROLLER_ + _MENUFOCUS_).attr('class', 'active');
+    //    //console.log(_CONTROLLER_ + _MENUFOCUS_);
+    //}
 
 });
 

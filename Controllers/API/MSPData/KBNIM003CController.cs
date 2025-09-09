@@ -1,7 +1,8 @@
 ﻿using HINOSystem.Context;
 using HINOSystem.Libs;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -11,6 +12,7 @@ using System.Data;
 namespace HINOSystem.Controllers.API.Master
 {
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/[controller]/[action]")]
     public class KBNIM003CController : ControllerBase
     {
@@ -50,7 +52,7 @@ namespace HINOSystem.Controllers.API.Master
         [HttpGet]
         public async Task<IActionResult> Search()
         {
-            _BearerClass.Authentication(Request);
+            _BearerClass.Authentication();
 
             if (_BearerClass.Status == 401) return Unauthorized(new
             {
@@ -104,7 +106,7 @@ namespace HINOSystem.Controllers.API.Master
         [HttpPost]
         public async Task<IActionResult> Confirm(List<object> listObj)
         {
-            _BearerClass.Authentication(Request);
+            _BearerClass.Authentication();
 
             if (_BearerClass.Status == 401) return Unauthorized(new
             {

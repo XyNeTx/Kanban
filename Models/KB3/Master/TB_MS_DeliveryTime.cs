@@ -2,7 +2,6 @@
 {
     using Microsoft.EntityFrameworkCore;
     using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
 
     [PrimaryKey(nameof(F_Plant),nameof(F_Supplier_Code),nameof(F_Supplier_Plant),nameof(F_Cycle),nameof(F_Start_Date),nameof(F_Delivery_Trip))]
     public class TB_MS_DeliveryTime

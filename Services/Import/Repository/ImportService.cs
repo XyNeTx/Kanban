@@ -25,7 +25,9 @@ namespace KANBAN.Services.Import.Repository
             IEmailService emailService,
             ProcDBContext procDBContext,
             IAutoMapService autoMapService,
-            ProcDBContext procContext)
+            ProcDBContext procContext,
+            IHttpContextAccessor httpContextAccessor
+            )
         {
 
             KBNIM007 = new KBNIM007(kbContext,
@@ -34,7 +36,8 @@ namespace KANBAN.Services.Import.Repository
                 fillDT,
                 log,
                 emailService,
-                autoMapService);
+                autoMapService,
+                httpContextAccessor);
 
 
             KBNIM010 = new KBNIM010(kbContext,
@@ -42,7 +45,8 @@ namespace KANBAN.Services.Import.Repository
             ppm3Context,
             fillDT,
             log,
-            emailService);
+            emailService,
+                httpContextAccessor);
 
             KBNIM011 = new KBNIM011(kbContext,
             bearerClass,
@@ -72,9 +76,11 @@ namespace KANBAN.Services.Import.Repository
                 ppm3Context,
                 fillDT,
                 log,
-                emailService);
+                emailService,
+                httpContextAccessor);
 
-            KBNIM012M = new KBNIM012M(kbContext, bearerClass, ppm3Context, fillDT, log, emailService, procContext);
+            KBNIM012M = new KBNIM012M(kbContext, bearerClass, ppm3Context, fillDT, log, emailService, procContext,
+                httpContextAccessor);
 
         }
     }

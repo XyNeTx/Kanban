@@ -1,6 +1,4 @@
-﻿using System.Data;
-
-namespace KANBAN.Services.SpecialOrdering.Interface
+﻿namespace KANBAN.Services.SpecialOrdering.Interface
 {
     public interface IKBNOR210
     {

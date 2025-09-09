@@ -7,6 +7,7 @@ using KANBAN.Services.CKD_Ordering.IRepository;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
+using System.Security.Claims;
 
 namespace KANBAN.Services.CKD_Ordering.Repository
 {
@@ -19,6 +20,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
         private readonly SerilogLibs _log;
         private readonly IEmailService _emailService;
         private readonly IAutoMapService _automapService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
         public KBNOR330
@@ -29,7 +31,8 @@ namespace KANBAN.Services.CKD_Ordering.Repository
             FillDataTable FillDT,
             SerilogLibs log,
             IEmailService emailService,
-            IAutoMapService autoMapService
+            IAutoMapService autoMapService,
+            IHttpContextAccessor httpContextAccessor
             )
         {
             _kbContext = kbContext;
@@ -39,13 +42,14 @@ namespace KANBAN.Services.CKD_Ordering.Repository
             _log = log;
             _emailService = emailService;
             _automapService = autoMapService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<Tuple<DataTable, string>> Generate()
         {
             try
             {
-                string ckdDB = _BearerClass.Plant switch
+                string ckdDB = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value switch
                 {
                     "3" => "[HMMTA-APP09]",
                     "2" => "[HMMT-CKD-WH]",
@@ -90,7 +94,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                         FROM TB_PDS_HEADER
                         WHERE (F_Supplier_Code = '9999')
                         AND F_OrderType = 'N'
-                        AND F_Update_By = '{_BearerClass.UserCode}'
+                        AND F_Update_By = '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}'
                         AND SUBSTRING(F_OrderNo,11,1) = 'C'
                     ) H
                     ON D.F_OrderNo = H.F_OrderNo";
@@ -100,7 +104,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                 _SqlQuery = $@"DELETE FROM TB_PDS_HEADER
                     WHERE (F_Supplier_Code = '9999')
                     AND F_OrderType = 'N'
-                    AND F_Update_By = '{_BearerClass.UserCode}'
+                    AND F_Update_By = '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}'
                     AND SUBSTRING(F_OrderNo,11,1) = 'C';";
 
                 await _kbContext.Database.ExecuteSqlRawAsync(_SqlQuery);
@@ -108,7 +112,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                 _SqlQuery = $@"DELETE FROM TB_PDS_CKD_Picking
                     WHERE (F_Supplier_Code = '9999') 
                     AND F_OrderType = 'N'
-                    AND F_Update_By = '{_BearerClass.UserCode}'
+                    AND F_Update_By = '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}'
                     AND CONVERT(CHAR(8),F_Issued_Date,112) = '{KBNOR310.dateProcessDate_CKD.ToString("yyyyMMdd")}' 
                     AND F_Issued_Shift = '{KBNOR310.chrProcessShift_CKD}'
                     AND SUBSTRING(F_OrderNo,11,1) = 'C';";
@@ -118,7 +122,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                 string ppmConnect = _FillDT.ppmConnect();
 
                 _SqlQuery = $@"DELETE FROM TMP_Construction
-                    WHERE F_Update_By = '{_BearerClass.UserCode}'
+                    WHERE F_Update_By = '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}'
                     INSERT INTO TMP_Construction 
                     (	
                         F_Part_no, F_Ruibetsu, F_Store_cd, F_subcontract, F_TC_Str, F_TC_End
@@ -133,7 +137,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                     , F_incre_cut, F_Safety_Stk, F_ratio, F_Send_class, F_send_supplier, F_send_plant
                     , F_send_store, F_qty_box, F_Weight, F_box_cd, F_Part_nm,  F_KD_Flag, F_STD_stock_ratio
                     , F_Cycle_A, F_cycle_B, F_cycle_C, F_Logistic_cd, F_commemt
-                    , F_update, F_inputuser, F_Plant_CD, '{_BearerClass.UserCode}' AS F_Update_By
+                    , F_update, F_inputuser, F_Plant_CD, '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}' AS F_Update_By
                     FROM {ppmConnect}.dbo.T_Construction
                     WHERE F_Local_END >= CONVERT(CHAR(8),getDate(),112)
                     AND (F_supplier_cd = '9999');";
@@ -159,7 +163,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                 {
                     arryVariable.Add(new SqlParameter("@ForDate_CKD", KBNOR310.dateProcessDate_CKD.ToString("yyyyMMdd")));
                     arryVariable.Add(new SqlParameter("@ForShift_CKD", KBNOR310.chrProcessShift_CKD));
-                    arryVariable.Add(new SqlParameter("@UserName", _BearerClass.UserCode));
+                    arryVariable.Add(new SqlParameter("@UserName", _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value));
                     arryVariable.Add(new SqlParameter("@Type_Import", "N"));
 
                     _SqlQuery = "EXEC [CKD_Inhouse].sp_GeneratePDS @ForDate_CKD, @ForShift_CKD, @UserName, @Type_Import";
@@ -171,7 +175,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                         await _kbContext.Database.ExecuteSqlRawAsync(_SqlQuery,
                             new SqlParameter("@ForDate_CKD", KBNOR310.dateProcessDate_CKD.ToString("yyyyMMdd")),
                             new SqlParameter("@ForShift_CKD", KBNOR310.chrProcessShift_CKD),
-                            new SqlParameter("@UserName", _BearerClass.UserCode),
+                            new SqlParameter("@UserName", _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value),
                             new SqlParameter("@Type_Import", "N"));
 
                         var headerData = await _kbContext.TB_PDS_Header.AsNoTracking()

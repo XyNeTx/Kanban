@@ -64,8 +64,8 @@ namespace KANBAN.Controllers.API.OrderReport
                 var supplierDB = await _KB3Context.TB_MS_PartOrder.Where(x => x.F_Start_Date.CompareTo(date) <= 0 && x.F_End_Date.CompareTo(date) >= 0)
                     .Select(x => new
                     {
-                        Sup_CD = x.F_Supplier_Cd.Trim() + '-' + x.F_Supplier_Plant.ToString().Trim(),
-                    }).OrderBy(x => x.Sup_CD).Distinct().ToListAsync();
+                        Sup_CD = x.F_Supplier_Cd.Trim() + "-" + x.F_Supplier_Plant,
+                    }).OrderBy(x => x.Sup_CD)/*.Distinct()*/.ToListAsync();
 
                 var kanbanDB = await _KB3Context.TB_MS_PartOrder.Where(x => x.F_Start_Date.CompareTo(date) <= 0 && x.F_End_Date.CompareTo(date) >= 0)
                     .Select(x => new

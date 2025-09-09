@@ -2,11 +2,14 @@
 using KANBAN.Models.KB3.Master.ViewModel;
 using KANBAN.Services;
 using KANBAN.Services.Master.IRepository;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HINOSystem.Controllers.API.Master
 {
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("/api/[controller]/[action]")]
     public class KBNMS020Controller : ControllerBase
     {
@@ -27,7 +30,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
 
                 var data = await _masterRepo.IKBNMS020.GetDropDownList(F_Supplier, F_KanbanNo, F_StoreCD, F_PartNo);
 
@@ -73,7 +76,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
 
                 var data = await _masterRepo.IKBNMS020.GetSupplierName(F_Supplier, F_StoreCD);
 
@@ -108,7 +111,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
 
                 var data = await _masterRepo.IKBNMS020.GetDropDownList(F_Supplier, F_KanbanNo, F_StoreCD, F_PartNo);
 
@@ -135,7 +138,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
 
                 var data = await _masterRepo.IKBNMS020.GetDropDownList(F_Supplier, F_KanbanNo, F_StoreCD, F_PartNo);
 
@@ -162,7 +165,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
 
                 await _masterRepo.IKBNMS020.Save(listObj, action);
 
@@ -185,7 +188,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
 
                 var data = await _masterRepo.IKBNMS020.GetListData(F_Supplier, F_KanbanNo, F_StoreCD, F_PartNo);
 

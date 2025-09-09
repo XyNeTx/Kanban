@@ -1,4 +1,5 @@
 ﻿using HINOSystem.Libs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KANBAN.Controllers
@@ -14,9 +15,10 @@ namespace KANBAN.Controllers
             _authenGuard.ComponentToolbar = true;
         }
 
+        [Authorize(Policy = "KBNIM010")]
         public IActionResult KBNIM010()
         {
-            return _authenGuard.guard(ControllerContext);
+            return View();
         }
     }
 }

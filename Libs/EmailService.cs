@@ -4,6 +4,7 @@ using KANBAN.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
 using System.Net.Mail;
+using System.Security.Claims;
 
 namespace KANBAN.Libs
 {
@@ -398,7 +399,7 @@ namespace KANBAN.Libs
                 if (sumSurvey != "")
                 {
                     string sumEmail = "";
-                    string _sql = $"Select F_User_name,F_Email From  TB_MS_Operator Where F_User_ID ='{_bearerClass.UserCode}'";
+                    string _sql = $"Select F_User_name,F_Email From  TB_MS_Operator Where F_User_ID ='{_http.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}'";
 
                     var _dt = _FillDT.ExecuteSQL(_sql);
 
@@ -502,7 +503,7 @@ namespace KANBAN.Libs
         {
             try
             {
-                var ObjUserName = await _KB3Context.User.Where(x => x.Code.Trim() == _bearerClass.UserCode).Select(x => new
+                var ObjUserName = await _KB3Context.User.Where(x => x.Code.Trim() == _http.HttpContext.User.FindFirst(ClaimTypes.UserData).Value).Select(x => new
                 {
                     Name = (x.Title_ID == 1 ? "Ms. " : x.Title_ID == 3 ? "Mr. " : "Mrs. ") + x.Name + " " + x.Surname,
                 }).FirstOrDefaultAsync();
@@ -510,7 +511,7 @@ namespace KANBAN.Libs
                 string UserName = ObjUserName!.Name;
 
                 MailMessage myMail = new MailMessage();
-                var dt = _FillDT.ExecuteSQL($"Select F_User_name,F_Email From  TB_MS_Operator Where F_User_ID ='{_bearerClass.UserCode}'");
+                var dt = _FillDT.ExecuteSQL($"Select F_User_name,F_Email From  TB_MS_Operator Where F_User_ID ='{_http.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}'");
 
                 var dtSpcApp = _FillDT.ExecuteSQL($"Select F_Email From  TB_MS_SpcApprover Where F_User_ID ='{approver}'");
                 var smtpClient = new SmtpClient("156.71.5.8");

@@ -1,11 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Data;
-
-using Newtonsoft.Json;
-using System.Globalization;
 
 using HINOSystem.Context;
-using HINOSystem.Controllers;
 using HINOSystem.Libs;
 
 namespace KANBAN.Controllers
@@ -64,8 +59,8 @@ namespace KANBAN.Controllers
             {
                 //    //_SQL = @" EXEC [exec].[spKBNOR440_EXCEPTION]
                 //    //        '" + _data.OrderType.ToString() + @"',
-                //    //        '" + _BearerClass.Plant + @"',
-                //    //        '" + _BearerClass.UserCode + @"' ";
+                //    //        '" + User.FindFirst(ClaimTypes.Locality).Value + @"',
+                //    //        '" + User.FindFirst(ClaimTypes.UserData).Value + @"' ";
                 //    //_KBCN.Execute(_SQL, pUser: _BearerClass,
                 //    //            pControllerName: ControllerContext.ActionDescriptor.ControllerName,
                 //    //            pActionName: ControllerContext.ActionDescriptor.ActionName

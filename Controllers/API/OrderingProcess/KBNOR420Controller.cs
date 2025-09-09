@@ -3,6 +3,7 @@ using HINOSystem.Libs;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Data;
+using System.Security.Claims;
 
 namespace HINOSystem.Controllers.API.Master
 {
@@ -42,7 +43,7 @@ namespace HINOSystem.Controllers.API.Master
                     ""data"": null
                 }";
 
-            _BearerClass.Authentication(Request);
+            _BearerClass.Authentication();
             if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
             try
@@ -87,7 +88,7 @@ namespace HINOSystem.Controllers.API.Master
                     ""data"": null
                 }";
 
-            _BearerClass.Authentication(Request);
+            _BearerClass.Authentication();
             if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
             try
@@ -98,8 +99,8 @@ namespace HINOSystem.Controllers.API.Master
 
                 _SQL = @" EXEC [exec].[spKBNOR420_CAL02] 
                     '" + _data.OrderType.ToString() + @"',
-                    '" + _BearerClass.Plant + @"',
-                    '" + _BearerClass.UserCode + @"',
+                    '" + User.FindFirst(ClaimTypes.Locality).Value + @"',
+                    '" + User.FindFirst(ClaimTypes.UserData).Value + @"',
                     '' ";
                 DataTable _dtM1 = _KBCN.ExecuteSQL(_SQL, pUser: _BearerClass,
                     pControllerName: ControllerContext.ActionDescriptor.ControllerName,
@@ -115,8 +116,8 @@ namespace HINOSystem.Controllers.API.Master
 
                         _SQL = @" EXEC [exec].[spKBNOR420_CAL02_S] 
                             '" + _data.OrderType.ToString() + @"',
-                            '" + _BearerClass.Plant + @"',
-                            '" + _BearerClass.UserCode + @"',
+                            '" + User.FindFirst(ClaimTypes.Locality).Value + @"',
+                            '" + User.FindFirst(ClaimTypes.UserData).Value + @"',
                             '" + _dtM1.Rows[i]["F_Store_Cd"].ToString() + @"',
                             '" + _dtM1.Rows[i]["F_Supplier_Cd"].ToString() + @"',
                             '" + _dtM1.Rows[i]["F_Supplier_Plant"].ToString() + @"',
@@ -139,8 +140,8 @@ namespace HINOSystem.Controllers.API.Master
                         //===Update Volume
                         _SQL = @" EXEC [exec].[spKBNOR420_CAL02_U] 
                             '" + _data.OrderType.ToString() + @"',
-                            '" + _BearerClass.Plant + @"',
-                            '" + _BearerClass.UserCode + @"',
+                            '" + User.FindFirst(ClaimTypes.Locality).Value + @"',
+                            '" + User.FindFirst(ClaimTypes.UserData).Value + @"',
                             '" + _dtM1.Rows[i]["F_Store_Cd"].ToString() + @"',
                             '" + _dtM1.Rows[i]["F_Supplier_CD"].ToString() + @"',
                             '" + _dtM1.Rows[i]["F_Supplier_Plant"].ToString() + @"',
@@ -168,8 +169,8 @@ namespace HINOSystem.Controllers.API.Master
                 //Delete TB_ORDER AND Update F_Reg_Flg=2==>1
                 _SQL = @" EXEC [exec].[spKBNOR420_EXCEPTION]
                     '" + _data.OrderType.ToString() + @"',
-                    '" + _BearerClass.Plant + @"',
-                    '" + _BearerClass.UserCode + @"' ";
+                    '" + User.FindFirst(ClaimTypes.Locality).Value + @"',
+                    '" + User.FindFirst(ClaimTypes.UserData).Value + @"' ";
                 _KBCN.Execute(_SQL, pUser: _BearerClass,
                             pControllerName: ControllerContext.ActionDescriptor.ControllerName,
                             pActionName: ControllerContext.ActionDescriptor.ActionName
@@ -199,7 +200,7 @@ namespace HINOSystem.Controllers.API.Master
                     ""data"": null
                 }";
 
-            _BearerClass.Authentication(Request);
+            _BearerClass.Authentication();
             if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
             try
@@ -210,8 +211,8 @@ namespace HINOSystem.Controllers.API.Master
 
                 _SQL = @" EXEC [exec].[spKBNOR420_CAL10] 
                     '" + _data.OrderType.ToString() + @"',
-                    '" + _BearerClass.Plant + @"',
-                    '" + _BearerClass.UserCode + @"',
+                    '" + User.FindFirst(ClaimTypes.Locality).Value + @"',
+                    '" + User.FindFirst(ClaimTypes.UserData).Value + @"',
                     '' ";
                 DataTable _dtChk = _KBCN.ExecuteSQL(_SQL, pUser: _BearerClass,
                     pControllerName: ControllerContext.ActionDescriptor.ControllerName,
@@ -226,8 +227,8 @@ namespace HINOSystem.Controllers.API.Master
 
                         _SQL = @" EXEC [exec].[spKBNOR420_CAL10_S] 
                             '" + _data.OrderType.ToString() + @"',
-                            '" + _BearerClass.Plant + @"',
-                            '" + _BearerClass.UserCode + @"',
+                            '" + User.FindFirst(ClaimTypes.Locality).Value + @"',
+                            '" + User.FindFirst(ClaimTypes.UserData).Value + @"',
                             '" + _dtChk.Rows[i]["F_Supplier_Cd"].ToString() + @"',
                             '" + _dtChk.Rows[i]["F_Supplier_Plant"].ToString() + @"',
                             '" + _dtChk.Rows[i]["F_Delivery_Date"].ToString() + @"',
@@ -242,8 +243,8 @@ namespace HINOSystem.Controllers.API.Master
                         {
                             _SQL = @" EXEC [exec].[spKBNOR420_CAL10_U] 
                                 '" + _data.OrderType.ToString() + @"',
-                                '" + _BearerClass.Plant + @"',
-                                '" + _BearerClass.UserCode + @"',
+                                '" + User.FindFirst(ClaimTypes.Locality).Value + @"',
+                                '" + User.FindFirst(ClaimTypes.UserData).Value + @"',
                                 '" + _dtChk.Rows[i]["F_Supplier_Cd"].ToString() + @"',
                                 '" + _dtChk.Rows[i]["F_Supplier_Plant"].ToString() + @"',
                                 '" + _dtChk.Rows[i]["F_Delivery_Trip"].ToString() + @"',
@@ -271,8 +272,8 @@ namespace HINOSystem.Controllers.API.Master
                 //Delete TB_ORDER AND Update F_Reg_Flg=2==>1
                 _SQL = @" EXEC [exec].[spKBNOR420_EXCEPTION]
                     '" + _data.OrderType.ToString() + @"',
-                    '" + _BearerClass.Plant + @"',
-                    '" + _BearerClass.UserCode + @"' ";
+                    '" + User.FindFirst(ClaimTypes.Locality).Value + @"',
+                    '" + User.FindFirst(ClaimTypes.UserData).Value + @"' ";
                 _KBCN.Execute(_SQL, pUser: _BearerClass,
                             pControllerName: ControllerContext.ActionDescriptor.ControllerName,
                             pActionName: ControllerContext.ActionDescriptor.ActionName
@@ -302,7 +303,7 @@ namespace HINOSystem.Controllers.API.Master
                     ""data"": null
                 }";
 
-            _BearerClass.Authentication(Request);
+            _BearerClass.Authentication();
             if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
             try
@@ -313,8 +314,8 @@ namespace HINOSystem.Controllers.API.Master
 
                 _SQL = @" EXEC [exec].[spKBNOR420_CAL11] 
                     '" + _data.OrderType.ToString() + @"',
-                    '" + _BearerClass.Plant + @"',
-                    '" + _BearerClass.UserCode + @"',
+                    '" + User.FindFirst(ClaimTypes.Locality).Value + @"',
+                    '" + User.FindFirst(ClaimTypes.UserData).Value + @"',
                     '' ";
                 DataTable _dtChk = _KBCN.ExecuteSQL(_SQL, pUser: _BearerClass,
                     pControllerName: ControllerContext.ActionDescriptor.ControllerName,
@@ -334,8 +335,8 @@ namespace HINOSystem.Controllers.API.Master
 
                             _SQL = @" EXEC [exec].[spKBNOR420_CAL11_U] 
                                 '" + _data.OrderType.ToString() + @"',
-                                '" + _BearerClass.Plant + @"',
-                                '" + _BearerClass.UserCode + @"',
+                                '" + User.FindFirst(ClaimTypes.Locality).Value + @"',
+                                '" + User.FindFirst(ClaimTypes.UserData).Value + @"',
                                 '" + _Detail + @"',
                                 '" + _Key + @"',
                                 '' ";
@@ -355,8 +356,8 @@ namespace HINOSystem.Controllers.API.Master
                     //nDetail = Mid(nDetail, 1, Len(nDetail) - 1)
                     _SQL = @" EXEC [exec].[spKBNOR420_CAL11_U] 
                         '" + _data.OrderType.ToString() + @"',
-                        '" + _BearerClass.Plant + @"',
-                        '" + _BearerClass.UserCode + @"',
+                        '" + User.FindFirst(ClaimTypes.Locality).Value + @"',
+                        '" + User.FindFirst(ClaimTypes.UserData).Value + @"',
                         '" + _Detail + @"',
                         '" + _Key + @"',
                         '' ";
@@ -379,8 +380,8 @@ namespace HINOSystem.Controllers.API.Master
                 //Delete TB_ORDER AND Update F_Reg_Flg=2==>1
                 _SQL = @" EXEC [exec].[spKBNOR420_EXCEPTION]
                     '" + _data.OrderType.ToString() + @"',
-                    '" + _BearerClass.Plant + @"',
-                    '" + _BearerClass.UserCode + @"' ";
+                    '" + User.FindFirst(ClaimTypes.Locality).Value + @"',
+                    '" + User.FindFirst(ClaimTypes.UserData).Value + @"' ";
                 _KBCN.Execute(_SQL, pUser: _BearerClass,
                             pControllerName: ControllerContext.ActionDescriptor.ControllerName,
                             pActionName: ControllerContext.ActionDescriptor.ActionName

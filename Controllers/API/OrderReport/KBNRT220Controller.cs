@@ -4,12 +4,7 @@ using KANBAN.Context;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using NPOI.HSSF.UserModel;
-using NPOI.SS.Formula.Functions;
-using NuGet.LibraryModel;
-using Org.BouncyCastle.Crypto.Tls;
 using System.Data;
-using System.Globalization;
 
 namespace KANBAN.Controllers.API.OrderReport
 {

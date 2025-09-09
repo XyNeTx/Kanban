@@ -1,7 +1,6 @@
 ﻿using KANBAN.Models.KB3.CKD_Ordering;
 using KANBAN.Models.KB3.Receive_Process;
 using KANBAN.Models.PPM3;
-using System.Data;
 
 namespace KANBAN.Services.CKD_Ordering.IRepository
 {

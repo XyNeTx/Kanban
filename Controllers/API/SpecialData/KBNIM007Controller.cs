@@ -1,18 +1,18 @@
-﻿using HINOSystem.Context;
-using HINOSystem.Libs;
+﻿using HINOSystem.Libs;
 using KANBAN.Models.KB3.SpecialData.ViewModel;
 using KANBAN.Models.KB3.SpecialOrdering;
 using KANBAN.Services;
 using KANBAN.Services.Import.Interface;
-using KANBAN.Services.SpecialOrdering.Interface;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 //using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HINOSystem.Controllers.API.Master
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class KBNIM007Controller : ControllerBase
     {
         private readonly IImportService _services;
@@ -29,7 +29,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _bearer.CheckAuthorize();
+                
 
                 var result = await _services.KBNIM007.GetPO(YM);
 
@@ -53,7 +53,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _bearer.CheckAuthorize();
+                
 
                 var result = _services.KBNIM007.SetCalendar(YM, StoreCD);
 
@@ -76,7 +76,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _bearer.CheckAuthorize();
+                
 
                 var result = _services.KBNIM007.GetStoreCD(YM, PO, isNew);
 
@@ -99,7 +99,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _bearer.CheckAuthorize();
+                
 
                 var result = _services.KBNIM007.GetPartNo(YM, PO, StoreCD, isNew);
 
@@ -122,7 +122,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _bearer.CheckAuthorize();
+                
 
                 var result = _services.KBNIM007.PartNoSelected(YM, PO, StoreCD, PartNo, isNew);
 
@@ -145,7 +145,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _bearer.CheckAuthorize();
+                
 
                 var result = _services.KBNIM007.ListDataTable(PO, PartNo);
 
@@ -168,7 +168,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _bearer.CheckAuthorize();
+                
 
                 var result = await _services.KBNIM007.ListCalendar(YM, PO, StoreCD, PartNo);
 
@@ -202,7 +202,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _bearer.CheckAuthorize();
+                
                 await _services.KBNIM007.Save(listObj, action);
 
                 return Ok(new
@@ -223,7 +223,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _bearer.CheckAuthorize();
+                
                 await _services.KBNIM007.Import(obj);
 
                 return Ok(new
@@ -244,7 +244,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _bearer.CheckAuthorize();
+                
                 await _services.KBNIM007.ImportSCP(obj, BackDate);
 
                 return Ok(new
@@ -265,7 +265,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _bearer.CheckAuthorize();
+                
                 await _services.KBNIM007.ImportIPMS(obj, BackDate);
 
                 return Ok(new

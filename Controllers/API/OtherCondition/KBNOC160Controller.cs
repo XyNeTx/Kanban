@@ -2,13 +2,15 @@
 using KANBAN.Models.KB3.OtherCondition.ViewModel;
 using KANBAN.Services;
 using KANBAN.Services.OtherCondition.IRepository;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KANBAN.Controllers.API.OtherCondition
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class KBNOC160Controller : ControllerBase
     {
         private readonly BearerClass _BearerClass;
@@ -25,7 +27,7 @@ namespace KANBAN.Controllers.API.OtherCondition
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
                 await _otherConditionRepo.IKBNOC160.Print(model);
 
                 return Ok(new

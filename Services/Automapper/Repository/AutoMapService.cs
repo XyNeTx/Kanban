@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using KANBAN.Services.Automapper;
 using KANBAN.Services.Automapper.Interface;
 
 namespace KANBAN.Services.Automapper.Repository

@@ -2,13 +2,16 @@
 using HINOSystem.Libs;
 using KANBAN.Libs;
 using KANBAN.Models.ERP;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using System.Data;
+using System.Security.Claims;
 
 namespace HINOSystem.Controllers.API.Master
 {
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/[controller]/[action]")]
     public class KBNOR460Controller : ControllerBase
     {
@@ -63,7 +66,7 @@ namespace HINOSystem.Controllers.API.Master
                     ""data"": null
                 }";
 
-            _BearerClass.Authentication(Request);
+            _BearerClass.Authentication();
             if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
             try
@@ -72,8 +75,8 @@ namespace HINOSystem.Controllers.API.Master
 
                 _SQL = @" EXEC [exec].[spKBNOR460_INITIAL] 
                     'U',
-                    '" + _BearerClass.Plant + @"',
-                    '" + _BearerClass.UserCode + @"',
+                    '" + User.FindFirst(ClaimTypes.Locality).Value + @"',
+                    '" + User.FindFirst(ClaimTypes.UserData).Value + @"',
                     '' ";
                 string _jsPDSNo = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName: ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
 
@@ -99,7 +102,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401)
                 {
                     return Unauthorized(new
@@ -113,7 +116,7 @@ namespace HINOSystem.Controllers.API.Master
 
 
                 string nDetail = "";
-                string User_Logon = _BearerClass.UserCode;
+                string User_Logon = User.FindFirst(ClaimTypes.UserData).Value;
                 obj.ProcessShift = obj.ProcessShift == "D" ? "1 : Day Shift" : "2 : Night Shift";
 
                 string _sql = $"Select Distinct H.F_Supplier_Code +'-' + H.F_SUpplier_plant as F_Supplier,rtrim(S.F_SHort_name)+' : '+S.F_Name as F_Supplier_name, " +

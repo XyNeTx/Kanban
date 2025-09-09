@@ -1,6 +1,8 @@
 $(document).ready(function () {
+    $("#txtProcessDate").val($("#nr_Date").text());
+    $("#txtProcessShift").val($("#nr_Shift").text());
     checkProgramAuthorize();
-   
+
 
 });
 
@@ -26,11 +28,11 @@ function checkProgramAuthorize() {
     _xLib.AJAX_Get("/xapi/GetAuthorizeProgram", null,
         async (success) => {
             success = _xLib.JSONparseMixData(success);
-            console.log(success);
+            //console.log(success);
             $(".card-body").find("button").each(function (e) {
                 let id = $(this).attr("id");
                 //console.log($(this).attr("id"));
-                console.log(success.data.some(x => id == "btn" + x.F_Menu_ID));
+                //console.log(success.data.some(x => id == "btn" + x.F_Menu_ID));
                 !success.data.some(x => id == "btn" + x.F_Menu_ID) ? $(this).prop("disabled", true) : $(this).prop("disabled", false);
             });
             xSplash.hide();

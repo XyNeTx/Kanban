@@ -9,10 +9,9 @@ using KANBAN.Services.CKD_Ordering.IRepository;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using Spire.Barcode;
 using System.Data;
-using System.Text;
+using System.Security.Claims;
 
 namespace KANBAN.Services.CKD_Ordering.Repository
 {
@@ -27,6 +26,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
         private readonly IAutoMapService _automapService;
         private readonly CKDWH_Context _CKDContext;
         private readonly CKDUSA_Context _CKDUSAContext;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
         public KBNOR370
@@ -39,7 +39,8 @@ namespace KANBAN.Services.CKD_Ordering.Repository
             IEmailService emailService,
             IAutoMapService autoMapService,
             CKDWH_Context CKDContext,
-            CKDUSA_Context CKDUSAContext
+            CKDUSA_Context CKDUSAContext,
+            IHttpContextAccessor httpContextAccessor
             )
         {
             _kbContext = kbContext;
@@ -51,6 +52,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
             _automapService = autoMapService;
             _CKDContext = CKDContext;
             _CKDUSAContext = CKDUSAContext;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         private readonly string StoragePath = @"wwwroot\Storage\Image\Barcode";
@@ -60,7 +62,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
             try
             {
                 List<string> resultList = new List<string>();
-                await _kbContext.Database.ExecuteSqlRawAsync($"DELETE FROM [dbo].[KBNOR_450] WHERE F_Update_By='{_BearerClass.UserCode}'");
+                await _kbContext.Database.ExecuteSqlRawAsync($"DELETE FROM [dbo].[KBNOR_450] WHERE F_Update_By='{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}'");
 
                 DataTable _dt = new DataTable();
 
@@ -73,8 +75,8 @@ namespace KANBAN.Services.CKD_Ordering.Repository
 
                     var sqlParams = new List<SqlParameter>
                     {
-                        new SqlParameter("@pUserCode", _BearerClass.UserCode),
-                        new SqlParameter("@pPlant", _BearerClass.Plant),
+                        new SqlParameter("@pUserCode", _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value),
+                        new SqlParameter("@pPlant", _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value),
                         new SqlParameter("@pDeliveryDate", ""),
                         new SqlParameter("@F_orderType", OrderType),
                         new SqlParameter("@F_OrderNo", OrderNO),
@@ -126,19 +128,19 @@ namespace KANBAN.Services.CKD_Ordering.Repository
         {
             try
             {
-                await _kbContext.Database.ExecuteSqlRawAsync($"DELETE FROM [dbo].[KBNOR_140_KB] WHERE F_Update_By='{_BearerClass.UserCode}'");
-                
+                await _kbContext.Database.ExecuteSqlRawAsync($"DELETE FROM [dbo].[KBNOR_140_KB] WHERE F_Update_By='{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}'");
+
                 await _kbContext.Database.ExecuteSqlRawAsync("EXEC [exec].[spKBNOR700_KANBAN] " +
                     "@pUserCode,@pPlant,@pDeliveryDate,@F_orderType",
-                    new SqlParameter("@pUserCode", _BearerClass.UserCode),
-                    new SqlParameter("@pPlant", _BearerClass.Plant),
+                    new SqlParameter("@pUserCode", _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value),
+                    new SqlParameter("@pPlant", _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value),
                     new SqlParameter("@pDeliveryDate", DateTime.Now.AddMonths(-3).ToString("yyyyMMdd")),
                     new SqlParameter("@F_orderType", "U")
                     );
                 await _kbContext.Database.ExecuteSqlRawAsync("EXEC [exec].[spKBNOR700_KANBAN] " +
                     "@pUserCode,@pPlant,@pDeliveryDate,@F_orderType",
-                    new SqlParameter("@pUserCode", _BearerClass.UserCode),
-                    new SqlParameter("@pPlant", _BearerClass.Plant),
+                    new SqlParameter("@pUserCode", _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value),
+                    new SqlParameter("@pPlant", _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value),
                     new SqlParameter("@pDeliveryDate", DateTime.Now.AddMonths(-3).ToString("yyyyMMdd")),
                     new SqlParameter("@F_orderType", "N")
                     );
@@ -154,7 +156,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
         {
             try
             {
-                //string FacCD = _BearerClass.Plant switch
+                //string FacCD = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value switch
                 //{
                 //    "1" => "9Z",
                 //    "2" => "8Z",
@@ -165,7 +167,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                 string dateMonthN_3 = DateTime.Now.AddMonths(-3).ToString("yyyyMMdd");
 
                 var data = await _kbContext.TB_REC_HEADER
-                    .Where(x => x.F_Plant == _BearerClass.Plant[0]
+                    .Where(x => x.F_Plant == _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value[0]
                     //&& x.F_OrderNo.StartsWith(FacCD))
                     && (x.F_Supplier_Code == "9999" || x.F_Supplier_Code == "9995")
                     && (x.F_OrderType == 'N' || x.F_OrderType == 'U')

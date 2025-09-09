@@ -28,7 +28,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
 
                 if (isNew)
                 {
@@ -113,7 +113,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
 
                 var data = await _masterRepo.IKBNMS015.SupplierChanged(SupplierCode, StoreCode);
 
@@ -136,7 +136,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
 
                 if (IsNew)
                 {
@@ -172,7 +172,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
                 await _masterRepo.IKBNMS015.Save(listObj, action);
                 return Ok(new
                 {
@@ -192,7 +192,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
                 var data = await _masterRepo.IKBNMS015.GetListData(PartNo, SupplierCode, Kanban, StoreCode);
                 return Ok(new
                 {

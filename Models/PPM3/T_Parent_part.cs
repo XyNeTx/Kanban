@@ -1,5 +1,4 @@
-﻿using KANBAN.Models.PPM3;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace KANBAN.Models.PPM3
 {

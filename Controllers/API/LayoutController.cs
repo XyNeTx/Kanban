@@ -1,28 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
-using HINOSystem.Models;
-using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
-using System.Data;
+﻿using Microsoft.AspNetCore.Mvc;
 using HINOSystem.Libs;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json;
 using System.Reflection;
-
-
-using System;
-using System.IO;
-using System.Web;
-using Microsoft.AspNetCore.Http;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Net.Http.Headers;
-using Microsoft.EntityFrameworkCore;
-using static System.Net.WebRequestMethods;
-
-
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
 
 namespace HINOSystem.Controllers.API
 {

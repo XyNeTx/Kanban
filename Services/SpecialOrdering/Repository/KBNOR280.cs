@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Data;
 using System.Globalization;
+using System.Security.Claims;
 
 namespace KANBAN.Services.SpecialOrdering.Repository
 {
@@ -23,6 +24,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
         private readonly IEmailService _emailService;
         private readonly ISpecialLibs _specialLibs;
         private readonly IAutoMapService _automapService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
         public KBNOR280
@@ -34,7 +36,8 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             SerilogLibs log,
             IEmailService emailService,
             ISpecialLibs specialLibs,
-            IAutoMapService autoMapService
+            IAutoMapService autoMapService,
+            IHttpContextAccessor httpContextAccessor
             )
         {
             _kbContext = kbContext;
@@ -45,6 +48,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             _emailService = emailService;
             _specialLibs = specialLibs;
             _automapService = autoMapService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
 
@@ -81,7 +85,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             try
             {
                 string _sql = $@"Select F_Status From TB_Survey_Header 
-                    Where F_Factory_code  in ('{_BearerClass.Plant}') 
+                    Where F_Factory_code  in ('{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value}') 
                     and F_Status not in ('N','D') and F_PDS_Flg = '0' ";
 
                 DataTable dt = _FillDT.ExecuteSQL(_sql);
@@ -134,7 +138,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
                         {
                             objRecHead.F_Transportor = "";
                         }
-                        objRecHead.F_Plant = _BearerClass.Plant[0];
+                        objRecHead.F_Plant = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value[0];
                         objRecHead.F_Flg_Epro = '9';
                         objRecHead.F_Status = 'C';
                         objRecHead.F_Approver = " ";
@@ -201,7 +205,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
         {
             try
             {
-                string FacCD = _BearerClass.Plant switch
+                string FacCD = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value switch
                 {
                     "1" => "9Z",
                     "2" => "8Z",
@@ -211,7 +215,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
 
                 var data = await _kbContext.TB_REC_HEADER
                     .Where(x => x.F_OrderType == 'S'
-                    && x.F_Plant == _BearerClass.Plant[0]
+                    && x.F_Plant == _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value[0]
                     && x.F_OrderNo.StartsWith(FacCD))
                     .ToListAsync();
 
@@ -237,7 +241,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
         {
             try
             {
-                string FacCD = _BearerClass.Plant switch
+                string FacCD = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value switch
                 {
                     "1" => "9Z",
                     "2" => "8Z",
@@ -247,7 +251,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
 
                 var data = await _kbContext.TB_REC_HEADER
                     .Where(x => x.F_OrderType == 'S'
-                    && x.F_Plant == _BearerClass.Plant[0]
+                    && x.F_Plant == _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value[0]
                     && x.F_OrderNo.StartsWith(FacCD)
                     && x.F_Issued_Date!.Value.Year == int.Parse(YM.Substring(0, 4))
                     && x.F_Issued_Date!.Value.Month == int.Parse(YM.Substring(4, 2))
@@ -277,7 +281,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
         {
             try
             {
-                string FacCD = _BearerClass.Plant switch
+                string FacCD = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value switch
                 {
                     "1" => "9Z",
                     "2" => "8Z",
@@ -287,7 +291,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
 
                 var data = await _kbContext.TB_REC_HEADER
                     .Where(x => x.F_OrderType == 'S'
-                    && x.F_Plant == _BearerClass.Plant[0]
+                    && x.F_Plant == _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value[0]
                     && x.F_OrderNo.StartsWith(FacCD))
                     .OrderBy(x => x.F_PO_Customer)
                     .ToListAsync();
@@ -322,7 +326,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             {
                 string _sql = $@"SELECT H.F_OrderNo, H.F_PO_Customer, H.F_Plant, H.F_OrderType, '0'+H.F_Supplier_Code As F_Supplier_Code , H.F_Supplier_Plant, Convert(varchar(11),CAST(H.F_Delivery_Date As Datetime),103) As F_Delivery_Date, H.F_Delivery_Trip, '('+H.F_Delivery_Time+')' As F_Delivery_Time, 
                     Convert(varchar(11),F_Issued_Date,103) As F_Issued_Date,H.F_Delivery_Cycle, H.F_Delivery_Dock, H.F_Dock_Code, D.F_No,D.F_Part_No, D.F_Ruibetsu, Replace(D.F_Part_Name,',',' ') As F_Part_Name, D.F_Kanban_No, 
-                    D.F_Box_Qty, D.F_Unit_Amount, H.F_Remark, H.F_Remark_KB,H.F_Vat,S.F_short_name, replace(S.F_name,',',' ') As F_name,'{_BearerClass.UserCode}' As F_Update_By, 
+                    D.F_Box_Qty, D.F_Unit_Amount, H.F_Remark, H.F_Remark_KB,H.F_Vat,S.F_short_name, replace(S.F_name,',',' ') As F_name,'{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}' As F_Update_By, 
                     H.F_Remark2,H.F_Remark3,D.F_Address,Left(F_Approver,8) As F_Approver,H.F_Transportor,H.F_Collect_Date,H.F_Collect_Time, 
                     H.F_Type_Version,H.F_OrderNo_Old,H.F_Dept, H.F_DR,H.F_WK_Code 
                     FROM  TB_REC_HEADER AS H INNER JOIN TB_REC_DETAIL AS D ON H.F_OrderNo = D.F_OrderNo 
@@ -330,7 +334,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
                     AND H.F_Supplier_Plant COLLATE Thai_CS_AI = S.F_Plant_cd AND H.F_Delivery_Dock COLLATE Thai_CS_AI = S.F_Store_cd 
                     WHERE  S.F_TC_Str COLLATE Thai_CS_AI <=H.F_Delivery_Date AND  S.F_TC_End  COLLATE Thai_CS_AI >=H.F_Delivery_Date 
                     AND H.F_OrderType = 'S' 
-                    AND H.F_Plant in ('{_BearerClass.Plant}') ";
+                    AND H.F_Plant in ('{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value}') ";
 
                 if (!string.IsNullOrWhiteSpace(PONoFrom) && !string.IsNullOrWhiteSpace(PONoFrom))
                 {

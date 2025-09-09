@@ -1,12 +1,15 @@
 ﻿using HINOSystem.Libs;
 using KANBAN.Services;
 using KANBAN.Services.Master.IRepository;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
 namespace HINOSystem.Controllers.API.Master
 {
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("/api/[controller]/[action]")]
     public class KBNMS012Controller : ControllerBase
     {
@@ -27,7 +30,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
                 var data = await _masterRepo.IKBNMS012.GetDropDown(F_Supplier_Code, F_Kanban_No, F_Store_Cd, F_Part_No);
 
                 return Ok(new
@@ -68,7 +71,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
                 var data = await _masterRepo.IKBNMS012.GetSupplierDetail(F_Supplier_Code);
 
                 return Ok(new
@@ -91,7 +94,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
                 var data = await _masterRepo.IKBNMS012.Search(F_Supplier_Code, F_Kanban_No, F_Store_Cd, F_Part_No);
 
                 return Ok(new
@@ -114,7 +117,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
                 var data = await _masterRepo.IKBNMS012.FindDetail(F_Supplier_Code, F_Kanban_No, F_Store_Cd, F_Part_No);
 
                 return Ok(new

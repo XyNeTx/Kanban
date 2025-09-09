@@ -3,14 +3,18 @@ using HINOSystem.Libs;
 using KANBAN.Context;
 using KANBAN.Models.KB3.UrgentOrder;
 using KANBAN.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Security.Claims;
 
 namespace HINOSystem.Controllers.API.ServiceData
 {
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/[controller]/[action]")]
     public class KBNIM001Controller : ControllerBase
     {
@@ -54,7 +58,7 @@ namespace HINOSystem.Controllers.API.ServiceData
         [HttpPost]
         public async Task<IActionResult> ImportData(List<TB_Import_Service> listObj)
         {
-            await _BearerClass.CheckAuthorize();
+            
 
             if (_BearerClass.Status == 401) return Unauthorized(new
             {
@@ -80,7 +84,7 @@ namespace HINOSystem.Controllers.API.ServiceData
                         each.F_Ruibetsu = each.F_Part_No.Substring(10, 2);
                         each.F_Part_No = each.F_Part_No.Substring(0, 10);
                     }
-                    each.F_Update_By = _BearerClass.UserCode;
+                    each.F_Update_By = User.FindFirst(ClaimTypes.UserData).Value;
                 }
 
 
@@ -112,7 +116,7 @@ namespace HINOSystem.Controllers.API.ServiceData
         [HttpGet]
         public async Task<IActionResult> AfterImported(string advDate)
         {
-            await _BearerClass.CheckAuthorize();
+            
 
             if (_BearerClass.Status == 401) return Unauthorized(new
             {
@@ -125,14 +129,14 @@ namespace HINOSystem.Controllers.API.ServiceData
             using var _KB3Transaction = _KB3Context.Database.BeginTransaction();
             try
             {
-                var execute = await _KB3Context.Database.ExecuteSqlRawAsync($"Exec dbo.SP_IM001_IMPORT_SRV '{_BearerClass.Plant}','{_BearerClass.UserCode}',{advDate}");
+                var execute = await _KB3Context.Database.ExecuteSqlRawAsync($"Exec dbo.SP_IM001_IMPORT_SRV '{User.FindFirst(ClaimTypes.Locality).Value}','{User.FindFirst(ClaimTypes.UserData).Value}',{advDate}");
 
-                var delInt = await _KB3Context.Database.ExecuteSqlRawAsync($"DELETE FROM TB_Import_Service WHERE F_Update_By = '{_BearerClass.UserCode}'");
+                var delInt = await _KB3Context.Database.ExecuteSqlRawAsync($"DELETE FROM TB_Import_Service WHERE F_Update_By = '{User.FindFirst(ClaimTypes.UserData).Value}'");
 
                 await _KB3Transaction.CommitAsync();
 
                 var error = await _KB3Context.Database.SqlQueryRaw<int>("SELECT COUNT(*) AS VALUE FROM TB_IMPORT_ERROR WHERE F_UPDATE_BY = @User and F_Type = @TypeImport",
-                    new SqlParameter("@User", _BearerClass.UserCode),
+                    new SqlParameter("@User", User.FindFirst(ClaimTypes.UserData).Value),
                     new SqlParameter("@TypeImport", "KBNIM001")).FirstOrDefaultAsync();
 
                 if (error > 0)

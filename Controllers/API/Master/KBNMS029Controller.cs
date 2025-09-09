@@ -2,11 +2,14 @@
 using HINOSystem.Models.KB3.Master;
 using KANBAN.Services;
 using KANBAN.Services.Master.IRepository;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace HINOSystem.Controllers.API.Master
 {
-    [ApiController]
+    [ApiController][Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("/api/[controller]/[action]")]
     public class KBNMS029Controller : ControllerBase
     {
@@ -27,9 +30,9 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
 
-                string Plant = _BearerClass.Plant;
+                string Plant = User.FindFirst(ClaimTypes.Locality).Value;
 
                 var data = await _masterRepo.IKBNMS029.GetListData(Plant, DockCode);
 
@@ -53,7 +56,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
 
                 var data = await _masterRepo.IKBNMS029.GetDockCode();
 
@@ -78,7 +81,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
 
                 await _masterRepo.IKBNMS029.Save(listObj, action);
 

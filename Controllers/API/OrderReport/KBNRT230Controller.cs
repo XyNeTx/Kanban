@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Data;
-using System.Data.SqlClient;
 
 namespace KANBAN.Controllers.API.OrderReport
 {

@@ -1,5 +1,4 @@
 ﻿using KANBAN.Models.KB3.OtherCondition.ViewModel;
-using KANBAN.Models.KB3.Receive_Process;
 
 namespace KANBAN.Services.OtherCondition.IRepository
 {

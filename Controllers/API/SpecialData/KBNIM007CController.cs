@@ -1,10 +1,10 @@
-﻿using HINOSystem.Context;
-using HINOSystem.Libs;
+﻿using HINOSystem.Libs;
 using KANBAN.Models.KB3.SpecialData.ViewModel;
 using KANBAN.Services;
 using KANBAN.Services.Import.Interface;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using System.Globalization;
 //using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -12,6 +12,7 @@ namespace HINOSystem.Controllers.API.Master
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class KBNIM007CController : ControllerBase
     {
         private readonly IImportService _services;
@@ -30,7 +31,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _bearer.CheckAuthorize();
+                
 
                 var result = _services.KBNIM007C.GetPDS(DeliDateFrom, DeliDateTo);
                 return Ok(new
@@ -52,7 +53,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _bearer.CheckAuthorize();
+                
 
                 var result = _services.KBNIM007C.GetUser(DeliDateFrom, DeliDateTo);
                 return Ok(new
@@ -74,7 +75,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _bearer.CheckAuthorize();
+                
 
                 var result = _services.KBNIM007C.GetListData(DeliDateFrom, DeliDateTo, PDSNo, User);
                 return Ok(new
@@ -96,7 +97,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _bearer.CheckAuthorize();
+                
 
                 string ProcessDate = DateTime.ParseExact(_http.HttpContext.Request.Cookies["processDate"].ToString().Split("D")[0], "yyyy-MM-dd", CultureInfo.InvariantCulture).ToString("yyyyMMdd");
 
@@ -119,7 +120,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _bearer.CheckAuthorize();
+                
                 string ProcessDate = "";
 
                 if (_http.HttpContext.Request.Cookies["processDate"].ToString().Contains("D"))

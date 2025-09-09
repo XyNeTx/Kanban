@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Data;
+using System.Security.Claims;
 //using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HINOSystem.Controllers.API.Master
@@ -53,8 +54,8 @@ namespace HINOSystem.Controllers.API.Master
             string _SQL = "";
             try
             {
-                _BearerClass.Authentication(Request);
-                var user = _BearerClass.UserCode.ToString();
+                _BearerClass.Authentication();
+                var user = User.FindFirst(ClaimTypes.UserData).Value.ToString();
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
                 if (pData != null) _json = JsonConvert.DeserializeObject(pData);
@@ -291,10 +292,10 @@ namespace HINOSystem.Controllers.API.Master
             {
 
                 string _result = "";
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 string UserName = HttpContext.Session.GetString("USER_ID");
                 string HostName = HttpContext.Session.GetString("USER_DEVICENAME");
-                var user = _BearerClass.UserCode.ToString();
+                var user = User.FindFirst(ClaimTypes.UserData).Value.ToString();
                 string Plant = HttpContext.Request.Cookies["plantCode"].ToString();
                 if (Plant.ToString() == "3")
                 {

@@ -1,6 +1,4 @@
 ﻿using AutoMapper;
-using KANBAN.Models.KB3.Receive_Process;
-using KANBAN.Models.KB3.SpecialOrdering;
 
 namespace KANBAN.Services.Automapper
 {

@@ -7,6 +7,7 @@ using KANBAN.Services.Automapper.Interface;
 using KANBAN.Services.Master.IRepository;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Security.Claims;
 
 namespace KANBAN.Services.Master.Repository
 {
@@ -19,6 +20,7 @@ namespace KANBAN.Services.Master.Repository
         private readonly SerilogLibs _log;
         private readonly IEmailService _emailService;
         private readonly IAutoMapService _autoMap;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
         public KBNMS029
@@ -29,7 +31,8 @@ namespace KANBAN.Services.Master.Repository
             FillDataTable FillDT,
             SerilogLibs log,
             IEmailService emailService,
-            IAutoMapService autoMap
+            IAutoMapService autoMap,
+            IHttpContextAccessor httpContextAccessor
             )
         {
             _kbContext = kbContext;
@@ -39,6 +42,7 @@ namespace KANBAN.Services.Master.Repository
             _log = log;
             _emailService = emailService;
             _autoMap = autoMap;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         private readonly string strDateNow = DateTime.Now.ToString("yyyyMMdd");
@@ -130,11 +134,11 @@ namespace KANBAN.Services.Master.Repository
                         throw new CustomHttpException(400, "Can't Insert Data. Data was exist in System");
                     }
 
-                    firstObj.F_Plant = _BearerClass.Plant;
+                    firstObj.F_Plant = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value;
                     firstObj.F_Create_Date = DateTime.Now;
-                    firstObj.F_Create_By = _BearerClass.UserCode;
+                    firstObj.F_Create_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value;
                     firstObj.F_Update_Date = DateTime.Now;
-                    firstObj.F_Update_By = _BearerClass.UserCode;
+                    firstObj.F_Update_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value;
                     await _kbContext.TB_MS_Dock_Code.AddAsync(firstObj);
                     logMessage = "INSERT INTO TB_MS_Dock_Code => " + JsonConvert.SerializeObject(firstObj);
                 }
@@ -151,7 +155,7 @@ namespace KANBAN.Services.Master.Repository
                     _kbContext.TB_MS_Dock_Code.Attach(existObj);
                     existObj.F_End_Date = firstObj.F_End_Date;
                     existObj.F_Update_Date = DateTime.Now;
-                    existObj.F_Update_By = _BearerClass.UserCode;
+                    existObj.F_Update_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value;
 
                     _kbContext.TB_MS_Dock_Code.Update(existObj);
                     logMessage = "UPDATE TO TB_MS_Dock_Code AFTER => " + JsonConvert.SerializeObject(existObj);

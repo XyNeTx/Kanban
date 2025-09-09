@@ -4,15 +4,19 @@ using HINOSystem.Models.KB3.Master;
 using KANBAN.Context;
 using KANBAN.Libs;
 using KANBAN.Models.KB3.Master;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Data;
+using System.Security.Claims;
 
 namespace HINOSystem.Controllers.API.Master
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class KBNMS006Controller : ControllerBase
     {
         private readonly BearerClass _BearerClass;
@@ -52,7 +56,7 @@ namespace HINOSystem.Controllers.API.Master
             try
             {
 
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401)
                 {
                     return Unauthorized(new
@@ -114,7 +118,7 @@ namespace HINOSystem.Controllers.API.Master
             try
             {
 
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401)
                 {
                     return Unauthorized(new
@@ -179,7 +183,7 @@ namespace HINOSystem.Controllers.API.Master
             try
             {
 
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401)
                 {
                     return Unauthorized(new
@@ -243,7 +247,7 @@ namespace HINOSystem.Controllers.API.Master
             try
             {
 
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401)
                 {
                     return Unauthorized(new
@@ -310,7 +314,7 @@ namespace HINOSystem.Controllers.API.Master
             try
             {
 
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401)
                 {
                     return Unauthorized(new
@@ -383,7 +387,7 @@ namespace HINOSystem.Controllers.API.Master
             try
             {
 
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401)
                 {
                     return Unauthorized(new
@@ -460,7 +464,7 @@ namespace HINOSystem.Controllers.API.Master
             try
             {
 
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401)
                 {
                     return Unauthorized(new
@@ -775,7 +779,7 @@ namespace HINOSystem.Controllers.API.Master
             }
             catch (Exception ex)
             {
-                _log.WriteErrorLog(ex.Message, _BearerClass.UserCode, _BearerClass.Device);
+                _log.WriteErrorLog(ex.Message, User.FindFirst(ClaimTypes.UserData).Value, User.FindFirst(ClaimTypes.WindowsDeviceClaim).Value);
                 throw new Exception(ex.Message);
             }
         }
@@ -785,7 +789,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401)
                 {
                     return Unauthorized(new
@@ -806,16 +810,16 @@ namespace HINOSystem.Controllers.API.Master
                 {
                     dbObj.F_Supply_Code = obj.F_Supply_Code;
                     dbObj.F_Address = obj.F_Address;
-                    dbObj.F_Update_By = _BearerClass.UserCode;
+                    dbObj.F_Update_By = User.FindFirst(ClaimTypes.UserData).Value;
                     dbObj.F_Update_Date = DateTime.Now;
 
                     _KB3Context.TB_MS_Kanban.Update(dbObj);
                 }
                 else
                 {
-                    obj.F_Update_By = _BearerClass.UserCode;
+                    obj.F_Update_By = User.FindFirst(ClaimTypes.UserData).Value;
                     obj.F_Update_Date = DateTime.Now;
-                    obj.F_Create_By = _BearerClass.UserCode;
+                    obj.F_Create_By = User.FindFirst(ClaimTypes.UserData).Value;
                     obj.F_Create_Date = DateTime.Now;
                     _KB3Context.TB_MS_Kanban.Add(obj);
                 }
@@ -848,7 +852,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401)
                 {
                     return Unauthorized(new
@@ -909,15 +913,15 @@ namespace HINOSystem.Controllers.API.Master
                     dbObj.F_Delivery_Trip = obj.F_Delivery_Trip;
                     dbObj.F_New_Qty = obj.F_New_Qty;
                     dbObj.F_Update_Date = DateTime.Now;
-                    dbObj.F_Update_By = _BearerClass.UserCode;
+                    dbObj.F_Update_By = User.FindFirst(ClaimTypes.UserData).Value;
                     _KB3Context.TB_Kanban_Chg_Qty.Add(dbObj);
                 }
                 else
                 {
                     obj.F_Status = "0";
-                    obj.F_Create_By = _BearerClass.UserCode;
+                    obj.F_Create_By = User.FindFirst(ClaimTypes.UserData).Value;
                     obj.F_Create_Date = DateTime.Now;
-                    obj.F_Update_By = _BearerClass.UserCode;
+                    obj.F_Update_By = User.FindFirst(ClaimTypes.UserData).Value;
                     obj.F_Update_Date = DateTime.Now;
                     _KB3Context.TB_Kanban_Chg_Qty.Add(obj);
                 }
@@ -954,7 +958,7 @@ namespace HINOSystem.Controllers.API.Master
             try
             {
 
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401)
                 {
                     return Unauthorized(new
@@ -984,7 +988,7 @@ namespace HINOSystem.Controllers.API.Master
 
                 dbObj.F_Status = "1";
                 dbObj.F_Update_Date = DateTime.Now;
-                dbObj.F_Update_By = _BearerClass.UserCode;
+                dbObj.F_Update_By = User.FindFirst(ClaimTypes.UserData).Value;
 
                 _KB3Context.TB_Kanban_Chg_Qty.Update(dbObj);
                 await _KB3Context.SaveChangesAsync();
@@ -1017,7 +1021,7 @@ namespace HINOSystem.Controllers.API.Master
             try
             {
 
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401)
                 {
                     return Unauthorized(new
@@ -1047,7 +1051,7 @@ namespace HINOSystem.Controllers.API.Master
 
                 dbObj.F_Status = "0";
                 dbObj.F_Update_Date = DateTime.Now;
-                dbObj.F_Update_By = _BearerClass.UserCode;
+                dbObj.F_Update_By = User.FindFirst(ClaimTypes.UserData).Value;
 
                 _KB3Context.TB_Kanban_Chg_Qty.Update(dbObj);
                 await _KB3Context.SaveChangesAsync();
@@ -1079,7 +1083,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401)
                 {
                     return Unauthorized(new
@@ -1139,15 +1143,15 @@ namespace HINOSystem.Controllers.API.Master
                     dbObj.F_Delivery_Date = obj.F_Delivery_Date;
                     dbObj.F_Delivery_Trip = obj.F_Delivery_Trip;
                     dbObj.F_Update_Date = DateTime.Now;
-                    dbObj.F_Update_By = _BearerClass.UserCode;
+                    dbObj.F_Update_By = User.FindFirst(ClaimTypes.UserData).Value;
                     _KB3Context.TB_Kanban_Stop.Add(dbObj);
                 }
                 else
                 {
                     obj.F_Status = "0";
-                    obj.F_Create_By = _BearerClass.UserCode;
+                    obj.F_Create_By = User.FindFirst(ClaimTypes.UserData).Value;
                     obj.F_Create_Date = DateTime.Now;
-                    obj.F_Update_By = _BearerClass.UserCode;
+                    obj.F_Update_By = User.FindFirst(ClaimTypes.UserData).Value;
                     obj.F_Update_Date = DateTime.Now;
                     _KB3Context.TB_Kanban_Stop.Add(obj);
                 }
@@ -1182,7 +1186,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401)
                 {
                     return Unauthorized(new
@@ -1212,7 +1216,7 @@ namespace HINOSystem.Controllers.API.Master
 
                 dbObj.F_Status = "1";
                 dbObj.F_Update_Date = DateTime.Now;
-                dbObj.F_Update_By = _BearerClass.UserCode;
+                dbObj.F_Update_By = User.FindFirst(ClaimTypes.UserData).Value;
 
                 _KB3Context.TB_Kanban_Stop.Update(dbObj);
                 await _KB3Context.SaveChangesAsync();
@@ -1246,7 +1250,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401)
                 {
                     return Unauthorized(new
@@ -1276,7 +1280,7 @@ namespace HINOSystem.Controllers.API.Master
 
                 dbObj.F_Status = "0";
                 dbObj.F_Update_Date = DateTime.Now;
-                dbObj.F_Update_By = _BearerClass.UserCode;
+                dbObj.F_Update_By = User.FindFirst(ClaimTypes.UserData).Value;
 
                 _KB3Context.TB_Kanban_Stop.Update(dbObj);
                 await _KB3Context.SaveChangesAsync();
@@ -1311,7 +1315,7 @@ namespace HINOSystem.Controllers.API.Master
             try
             {
 
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401)
                 {
                     return Unauthorized(new
@@ -1372,15 +1376,15 @@ namespace HINOSystem.Controllers.API.Master
                     dbObj.F_KB_Cut_RN = obj.F_KB_Cut_RN;
                     dbObj.F_KB_Remain = obj.F_KB_Cut;
                     dbObj.F_Update_Date = DateTime.Now;
-                    dbObj.F_Update_By = _BearerClass.UserCode;
+                    dbObj.F_Update_By = User.FindFirst(ClaimTypes.UserData).Value;
                     _KB3Context.TB_Kanban_Cut.Add(dbObj);
                 }
                 else
                 {
                     obj.F_Status = "0";
-                    obj.F_Create_By = _BearerClass.UserCode;
+                    obj.F_Create_By = User.FindFirst(ClaimTypes.UserData).Value;
                     obj.F_Create_Date = DateTime.Now;
-                    obj.F_Update_By = _BearerClass.UserCode;
+                    obj.F_Update_By = User.FindFirst(ClaimTypes.UserData).Value;
                     obj.F_Update_Date = DateTime.Now;
                     obj.F_KB_Remain = obj.F_KB_Cut;
                     _KB3Context.TB_Kanban_Cut.Add(obj);
@@ -1416,7 +1420,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401)
                 {
                     return Unauthorized(new
@@ -1446,7 +1450,7 @@ namespace HINOSystem.Controllers.API.Master
 
                 dbObj.F_Status = "1";
                 dbObj.F_Update_Date = DateTime.Now;
-                dbObj.F_Update_By = _BearerClass.UserCode;
+                dbObj.F_Update_By = User.FindFirst(ClaimTypes.UserData).Value;
 
                 _KB3Context.TB_Kanban_Cut.Update(dbObj);
                 await _KB3Context.SaveChangesAsync();
@@ -1480,7 +1484,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401)
                 {
                     return Unauthorized(new
@@ -1510,7 +1514,7 @@ namespace HINOSystem.Controllers.API.Master
 
                 dbObj.F_Status = "0";
                 dbObj.F_Update_Date = DateTime.Now;
-                dbObj.F_Update_By = _BearerClass.UserCode;
+                dbObj.F_Update_By = User.FindFirst(ClaimTypes.UserData).Value;
 
                 _KB3Context.TB_Kanban_Cut.Update(dbObj);
                 await _KB3Context.SaveChangesAsync();

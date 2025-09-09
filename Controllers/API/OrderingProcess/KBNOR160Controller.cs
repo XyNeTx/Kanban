@@ -2,16 +2,18 @@
 using HINOSystem.Libs;
 using KANBAN.Context;
 using KANBAN.Models.KB3.OrderingProcess;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Data;
+using System.Security.Claims;
 
 namespace KANBAN.Controllers.API.OrderingProcess
 {
     [Route("api/[controller]/[action]")]
-    [ApiController]
+    [ApiController][Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class KBNOR160Controller : ControllerBase
     {
         private readonly IConfiguration _configuration;
@@ -53,7 +55,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
         [HttpGet]
         public async Task<IActionResult> List_Data(string? conditionDate = null, string? MRPRadio = null)
         {
-            _BearerClass.Authentication(Request);
+            _BearerClass.Authentication();
 
             if (_BearerClass.Status == 401) return Unauthorized(new
             {
@@ -64,8 +66,8 @@ namespace KANBAN.Controllers.API.OrderingProcess
             });
             try
             {
-                string UserID = _BearerClass.UserCode;
-                string Plant = _BearerClass.Plant;
+                string UserID = User.FindFirst(ClaimTypes.UserData).Value;
+                string Plant = User.FindFirst(ClaimTypes.Locality).Value;
 
                 if(conditionDate == null)
                 {
@@ -122,7 +124,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
         public async Task<IActionResult> ImportData(List<TB_Import_UpdMRP_FG> listObj)
         {
             using var _KB3Transaction = _KB3Context.Database.BeginTransaction();
-            _BearerClass.Authentication(Request);
+            _BearerClass.Authentication();
             if(_BearerClass.Status == 401) return Unauthorized(new
             {
                 status = "401",
@@ -130,8 +132,8 @@ namespace KANBAN.Controllers.API.OrderingProcess
                 title = "Unauthorized",
                 message = "Please Login First"
             });
-            string UserID = _BearerClass.UserCode;
-            string Plant = _BearerClass.Plant;
+            string UserID = User.FindFirst(ClaimTypes.UserData).Value;
+            string Plant = User.FindFirst(ClaimTypes.Locality).Value;
 
             try
             {

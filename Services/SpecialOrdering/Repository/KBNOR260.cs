@@ -8,6 +8,7 @@ using KANBAN.Services.Automapper.Interface;
 using KANBAN.Services.SpecialOrdering.Interface;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Security.Claims;
 
 namespace KANBAN.Services.SpecialOrdering.Repository
 {
@@ -21,6 +22,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
         private readonly IEmailService _emailService;
         private readonly ISpecialLibs _specialLibs;
         private readonly IAutoMapService _automapService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
         public KBNOR260
@@ -32,7 +34,8 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             SerilogLibs log,
             IEmailService emailService,
             ISpecialLibs specialLibs,
-            IAutoMapService autoMapService
+            IAutoMapService autoMapService,
+            IHttpContextAccessor httpContextAccessor
             )
         {
             _kbContext = kbContext;
@@ -43,6 +46,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             _emailService = emailService;
             _specialLibs = specialLibs;
             _automapService = autoMapService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public string GetApproverList()
@@ -67,7 +71,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
         {
             try
             {
-                string FacCD = _BearerClass.Plant switch
+                string FacCD = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value switch
                 {
                     "1" => "9Z",
                     "2" => "8Z",
@@ -110,7 +114,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             {
                 string sPDS = "";
                 string sql = "";
-                string FacCD = _BearerClass.Plant switch
+                string FacCD = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value switch
                 {
                     "1" => "9Z",
                     "2" => "8Z",
@@ -136,7 +140,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
                     await _kbContext.Database.ExecuteSqlRawAsync($"Delete From TB_PDS_Approve Where F_OrderNo = '{obj.F_OrderNo}'");
 
                     sql = $@"Insert into TB_PDS_Approve (F_OrderNo, F_Approver, F_Send_Date, F_RecUser) 
-                        Values ('{obj.F_OrderNo}', '{obj.F_Approver}', GetDate(), '{_BearerClass.UserCode}')";
+                        Values ('{obj.F_OrderNo}', '{obj.F_Approver}', GetDate(), '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}')";
 
                     await _kbContext.Database.ExecuteSqlRawAsync(sql);
 
@@ -151,7 +155,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
 
                 await _emailService.SendEmailApprover(sPDS, listObj[0].F_Approver.Split(":")[0]);
                 await _kbContext.Database.ExecuteSqlRawAsync($"Update TB_PDS_Approve Set F_Send_Mail_Flag = '1' " +
-                    $"  Where F_Send_Mail_Flag = '0' and F_Approver like '{_BearerClass.UserCode}%'");
+                    $"  Where F_Send_Mail_Flag = '0' and F_Approver like '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}%'");
 
             }
             catch (Exception ex)

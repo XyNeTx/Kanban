@@ -8,6 +8,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
 using System.Diagnostics;
+using System.Security.Claims;
 
 namespace KANBAN.Services.CKD_Ordering.Repository
 {
@@ -20,6 +21,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
         private readonly SerilogLibs _log;
         private readonly IEmailService _emailService;
         private readonly IAutoMapService _automapService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public KBNOR320
             (
@@ -29,7 +31,8 @@ namespace KANBAN.Services.CKD_Ordering.Repository
             FillDataTable FillDT,
             SerilogLibs log,
             IEmailService emailService,
-            IAutoMapService autoMapService
+            IAutoMapService autoMapService,
+            IHttpContextAccessor httpContextAccessor
             )
         {
             _kbContext = kbContext;
@@ -39,6 +42,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
             _log = log;
             _emailService = emailService;
             _automapService = autoMapService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public static string strDateNow = DateTime.Now.ToString("yyyyMMdd");
@@ -149,7 +153,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
         {
             try
             {
-                string strStoreCd = _BearerClass.Plant switch
+                string strStoreCd = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value switch
                 {
                     "1" => "1A",
                     "2" => "2B",

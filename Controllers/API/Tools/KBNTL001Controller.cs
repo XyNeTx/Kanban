@@ -47,7 +47,7 @@ namespace HINOSystem.Controllers.API.Master
             try
             {
                 
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
                 dynamic _json = JsonConvert.DeserializeObject(pData);
@@ -153,7 +153,7 @@ namespace HINOSystem.Controllers.API.Master
             try
             {
                 
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
                 dynamic _json = JsonConvert.DeserializeObject(pData);
@@ -204,7 +204,7 @@ namespace HINOSystem.Controllers.API.Master
             try
             {
                 
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
                 dynamic _json = JsonConvert.DeserializeObject(pData);
@@ -252,7 +252,7 @@ namespace HINOSystem.Controllers.API.Master
             string _SQL = "", _result = "";
             try
             {
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
                 dynamic _json = JsonConvert.DeserializeObject(pData);
@@ -295,7 +295,7 @@ namespace HINOSystem.Controllers.API.Master
             string _SQL = "", _result = "";
             try
             {
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
                 dynamic _json = JsonConvert.DeserializeObject(pData);

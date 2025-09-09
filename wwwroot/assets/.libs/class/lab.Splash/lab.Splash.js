@@ -27,12 +27,12 @@ class labSplashScreen {
     }
 
     hide = function (pCallback = null) {
-        $('input[data-inputmask="number"]').each(function () {
-            $(this).val(MaskNumber($(this).val()));
-        })
-        $('input[data-inputmask="currency"]').each(function () {
-            $(this).val(MaskCurrency($(this).val()));
-        })
+        // $('input[data-inputmask="number"]').each(function () {
+        //     $(this).val(MaskNumber($(this).val()));
+        // })
+        // $('input[data-inputmask="currency"]').each(function () {
+        //     $(this).val(MaskCurrency($(this).val()));
+        // })
 
         //$('.theme-loader').fadeOut('slow', function () {
         //    //console.log('xXx');

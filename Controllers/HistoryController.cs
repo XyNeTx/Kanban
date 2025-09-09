@@ -19,7 +19,7 @@ namespace HINOSystem.Controllers
         #region MyViews
         public IActionResult Index()
         {
-            return _authenGuard.guard(ControllerContext);
+            return View();
         }
 
 

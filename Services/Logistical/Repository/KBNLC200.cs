@@ -5,7 +5,7 @@ using KANBAN.Libs;
 using KANBAN.Models.KB3.LogisticCondition.ViewModel;
 using KANBAN.Services.Logistical.Interface;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
+using System.Security.Claims;
 
 namespace KANBAN.Services.Logistical.Repository
 {
@@ -17,6 +17,7 @@ namespace KANBAN.Services.Logistical.Repository
         private readonly FillDataTable _FillDT;
         private readonly SerilogLibs _log;
         private readonly IEmailService _emailService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
         public KBNLC200
@@ -26,7 +27,8 @@ namespace KANBAN.Services.Logistical.Repository
             PPM3Context PPM3Context,
             FillDataTable FillDT,
             SerilogLibs log,
-            IEmailService emailService
+            IEmailService emailService,
+            IHttpContextAccessor httpContextAccessor
             )
         {
             _kbContext = kbContext;
@@ -35,6 +37,7 @@ namespace KANBAN.Services.Logistical.Repository
             _FillDT = FillDT;
             _log = log;
             _emailService = emailService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
        
@@ -54,8 +57,8 @@ namespace KANBAN.Services.Logistical.Repository
         {
             try
             {
-                var userID = _BearerClass.UserCode;
-                var plant_CTL = _BearerClass.Plant;
+                var userID = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value;
+                var plant_CTL = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value;
 
                 await _kbContext.Database.ExecuteSqlRawAsync($"DELETE FROM [HMMTA-PPM].[NEW_KANBAN_F3].[DBO].TB_Import_Delivery_History WHERE F_Update_By = '{userID}' ");
 

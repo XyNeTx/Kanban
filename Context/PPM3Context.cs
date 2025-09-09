@@ -1,5 +1,4 @@
-﻿using HINOSystem.Context;
-using KANBAN.Models.KB3.Receive_Process;
+﻿using KANBAN.Models.KB3.Receive_Process;
 using KANBAN.Models.PPM3;
 using Microsoft.EntityFrameworkCore;
 

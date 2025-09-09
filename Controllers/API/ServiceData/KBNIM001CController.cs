@@ -6,15 +6,19 @@ using KANBAN.Models.KB3.ServiceData.ViewModel;
 using KANBAN.Models.KB3.UrgentOrder;
 using KANBAN.Services;
 using KANBAN.Services.Automapper.Interface;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Globalization;
+using System.Security.Claims;
 //using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HINOSystem.Controllers.API.ServiceData
 {
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/[controller]/[action]")]
     public class KBNIM001CController : ControllerBase
     {
@@ -62,7 +66,7 @@ namespace HINOSystem.Controllers.API.ServiceData
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
 
                 var data = await _KB3Context.TB_Transaction_TMP
                     .AsNoTracking()
@@ -106,7 +110,7 @@ namespace HINOSystem.Controllers.API.ServiceData
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
                 string nText = "";
 
                 string sqlQ = $@"select T.F_PDS_NO From TB_Transaction_TMP T INNER JOIN
@@ -180,14 +184,14 @@ namespace HINOSystem.Controllers.API.ServiceData
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
 
                 var sqlQ = $@"Update TB_Transaction_TMP set F_Cycle_Time = S.F_Cycle 
                     From TB_Transaction_TMP T INNER JOIN TB_MS_DeliveryTime S ON T.F_Supplier_Cd collate Thai_CI_AS = S.F_Supplier_Code 
                     and T.F_Supplier_Plant collate Thai_CI_AS = S.F_Supplier_Plant 
                     and T.F_Delivery_Date >= S.F_Start_Date
                     and T.F_Delivery_Date <= S.F_End_Date 
-                    Where T.F_Type='SRV' and T.F_Plant ='{_BearerClass.Plant}' ";
+                    Where T.F_Type='SRV' and T.F_Plant ='{User.FindFirst(ClaimTypes.Locality).Value}' ";
 
                 await _KB3Context.Database.ExecuteSqlRawAsync(sqlQ);
 
@@ -222,7 +226,7 @@ namespace HINOSystem.Controllers.API.ServiceData
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
 
                 await _KB3Context.Database.ExecuteSqlRawAsync("Update TB_TRANSACTION_TMP set F_Inventory_Flg ='0' Where F_Type='SRV'");
 
@@ -270,7 +274,7 @@ namespace HINOSystem.Controllers.API.ServiceData
                         addTransaction.F_Survey_Doc = "";
                         addTransaction.F_Freight = "";
                         addTransaction.F_Update_Date = DateTime.Now;
-                        addTransaction.F_Update_By = _BearerClass.UserCode;
+                        addTransaction.F_Update_By = User.FindFirst(ClaimTypes.UserData).Value;
 
                         await _KB3Context.TB_Transaction.AddAsync(addTransaction);
                         _KB3Context.TB_Transaction_TMP.Remove(singleTMP);

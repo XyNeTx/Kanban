@@ -39,7 +39,10 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             IEmailService emailService,
             ISpecialLibs specialLibs,
             ProcDBContext procDBContext,
-            IAutoMapService autoMapService)
+            IAutoMapService autoMapService,
+            ProcWebContext procWebContext,
+            IHttpContextAccessor httpContextAccessor
+            )
         {
 
             IKBNOR210 = new KBNOR210(kbContext,
@@ -47,49 +50,49 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             ppm3Context,
             fillDT,
             log,
-            emailService);
+            emailService,httpContextAccessor);
 
             IKBNOR210_1 = new KBNOR210_1(kbContext,
             bearerClass,
             ppm3Context,
             fillDT,
             log,
-            emailService);
+            emailService, httpContextAccessor);
 
             IKBNOR210_2 = new KBNOR210_2(kbContext,
             bearerClass,
             ppm3Context,
             fillDT,
             log,
-            emailService);
+            emailService, httpContextAccessor);
 
             IKBNOR210_3 = new KBNOR210_3(kbContext,
             bearerClass,
             ppm3Context,
             fillDT,
             log,
-            emailService);
+            emailService, httpContextAccessor);
 
             IKBNOR293 = new KBNOR293(kbContext,
             bearerClass,
             ppm3Context,
             fillDT,
             log,
-            emailService);
+            emailService, httpContextAccessor);
 
             IKBNOR294 = new KBNOR294(kbContext,
             bearerClass,
             ppm3Context,
             fillDT,
             log,
-            emailService);
+            emailService, httpContextAccessor);
 
             IKBNOR295 = new KBNOR295(kbContext,
             bearerClass,
             ppm3Context,
             fillDT,
             log,
-            emailService);
+            emailService, httpContextAccessor);
 
             IKBNOR296 = new KBNOR296(kbContext,
             bearerClass,
@@ -104,7 +107,9 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             fillDT,
             log,
             specialLibs,
-            emailService
+            emailService,
+            httpContextAccessor
+
             );
 
             IKBNOR220_1 = new KBNOR220_1(kbContext,
@@ -114,7 +119,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             log,
             emailService,
             specialLibs,
-            this);
+            this, httpContextAccessor);
 
             IKBNOR220_2 = new KBNOR220_2(kbContext,
             bearerClass,
@@ -122,7 +127,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             fillDT,
             log,
             emailService,
-            specialLibs
+            specialLibs, httpContextAccessor
             );
 
             IKBNOR230 = new KBNOR230(kbContext,
@@ -132,7 +137,8 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             log,
             emailService,
             specialLibs,
-            procDBContext
+            procDBContext,
+            procWebContext, httpContextAccessor
             );
 
             IKBNOR240 = new KBNOR240(kbContext,
@@ -141,7 +147,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             fillDT,
             log,
             emailService,
-            specialLibs
+            specialLibs, httpContextAccessor
             );
 
             IKBNOR250 = new KBNOR250(kbContext,
@@ -150,9 +156,9 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             fillDT,
             log,
             emailService,
-            specialLibs
+            specialLibs, httpContextAccessor
             );
-            
+
             IKBNOR260 = new KBNOR260(kbContext,
             bearerClass,
             ppm3Context,
@@ -160,9 +166,9 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             log,
             emailService,
             specialLibs,
-            autoMapService
+            autoMapService, httpContextAccessor
             );
-            
+
             IKBNOR261 = new KBNOR261(kbContext,
             bearerClass,
             ppm3Context,
@@ -170,9 +176,9 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             log,
             emailService,
             specialLibs,
-            autoMapService
+            autoMapService, httpContextAccessor
             );
-            
+
             IKBNOR270 = new KBNOR270(kbContext,
             bearerClass,
             ppm3Context,
@@ -180,7 +186,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             log,
             emailService,
             specialLibs,
-            autoMapService
+            autoMapService, httpContextAccessor
             );
 
             IKBNOR280 = new KBNOR280(kbContext,
@@ -190,7 +196,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             log,
             emailService,
             specialLibs,
-            autoMapService
+            autoMapService, httpContextAccessor
             );
 
             IKBNOR290 = new KBNOR290(kbContext,
@@ -201,7 +207,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             emailService,
             specialLibs
             );
-            
+
             IKBNOR292 = new KBNOR292(kbContext,
             bearerClass,
             ppm3Context,
@@ -209,7 +215,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             log,
             emailService,
             specialLibs,
-            autoMapService
+            autoMapService, httpContextAccessor
             );
 
             IKBNOR297 = new KBNOR297(kbContext,

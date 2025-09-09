@@ -5,6 +5,7 @@ using KANBAN.Libs;
 using KANBAN.Services.Import.Interface;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Security.Claims;
 
 namespace KANBAN.Services.Import.Repository
 {
@@ -16,6 +17,7 @@ namespace KANBAN.Services.Import.Repository
         private readonly FillDataTable _fillDT;
         private readonly SerilogLibs _log;
         private readonly IEmailService _emailService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
         public KBNIM010
@@ -25,7 +27,8 @@ namespace KANBAN.Services.Import.Repository
             PPM3Context ppm3Context,
             FillDataTable fillDT,
             SerilogLibs log,
-            IEmailService emailService
+            IEmailService emailService,
+            IHttpContextAccessor httpContextAccessor
             )
         {
             _kbContext = kbContext;
@@ -34,6 +37,7 @@ namespace KANBAN.Services.Import.Repository
             _fillDT = fillDT;
             _log = log;
             _emailService = emailService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public bool Check_Holiday(string date, string shfit)
@@ -105,24 +109,24 @@ namespace KANBAN.Services.Import.Repository
                 _log.WriteLogMsg("KBNIM010 | Confirm Import Data | Start Confirm All Import Data");
 
                 await _kbContext.Database.ExecuteSqlRawAsync($"Update TB_MS_Parameter " +
-                    $"Set F_Value2='1',F_Update_Date=getdate(), F_Update_By='{_bearerClass.UserCode}' " +
+                    $"Set F_Value2='1',F_Update_Date=getdate(), F_Update_By='{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}' " +
                     $",F_Value3= '{date.Substring(6, 4) + date.Substring(3, 2) + date.Substring(0, 2) + shift}' " +
                     $" Where F_Code = N'CI' AND F_Value2='0' ");
 
                 await _kbContext.Database.ExecuteSqlRawAsync($"Update TB_MS_Parameter " +
-                    $"Set F_Value2='1',F_Update_Date=getdate(), F_Update_By='{_bearerClass.UserCode}' " +
+                    $"Set F_Value2='1',F_Update_Date=getdate(), F_Update_By='{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}' " +
                     $",F_Value3= '{date.Substring(6, 4) + date.Substring(3, 2) + date.Substring(0, 2) + shift}' " +
                     $" Where F_Code = N'CI_CKD' AND F_Value2='0' ");
 
                 _log.WriteLogMsg("KBNIM010 | Confirm All Update from TB_MS_Parameter Set F_Value2='1' | " +
                     "Update TB_MS_Parameter " +
-                    $"Set F_Value2='1',F_Update_Date=getdate(), F_Update_By='{_bearerClass.UserCode}' " +
+                    $"Set F_Value2='1',F_Update_Date=getdate(), F_Update_By='{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}' " +
                     $",F_Value3= '{date.Substring(6, 4) + date.Substring(3, 2) + date.Substring(0, 2) + shift}' " +
                     $" Where F_Code = N'CI' AND F_Value2='0' ");
 
                 _log.WriteLogMsg("KBNIM010 | Confirm All Update from TB_MS_Parameter Set F_Value2='1' | " +
                     "Update TB_MS_Parameter " +
-                    $"Set F_Value2='1',F_Update_Date=getdate(), F_Update_By='{_bearerClass.UserCode}' " +
+                    $"Set F_Value2='1',F_Update_Date=getdate(), F_Update_By='{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}' " +
                     $",F_Value3= '{date.Substring(6, 4) + date.Substring(3, 2) + date.Substring(0, 2) + shift}' " +
                     $" Where F_Code = N'CI_CKD' AND F_Value2='0' ");
 

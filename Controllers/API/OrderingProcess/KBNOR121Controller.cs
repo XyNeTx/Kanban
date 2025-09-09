@@ -1,19 +1,22 @@
 ﻿using HINOSystem.Context;
 using HINOSystem.Libs;
-using Humanizer;
 using KANBAN.Context;
 using KANBAN.Models.KB3.OrderingProcess;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Data;
 using System.Globalization;
+using System.Security.Claims;
 
 namespace KANBAN.Controllers.API.OrderingProcess
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class KBNOR121Controller : ControllerBase
     {
         private readonly IConfiguration _configuration;
@@ -90,7 +93,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
         {
             try
             {
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401) return Unauthorized(new
                 {
                     status = "401",
@@ -101,8 +104,8 @@ namespace KANBAN.Controllers.API.OrderingProcess
 
                 Proc_Shift = (Shift.Substring(0, 1) == "1") ? "Day" : "Night";
                 Login_Shift = (Login_Date.Substring(10, 1) == "D") ? "Day" : "Night";
-                UserCode = _BearerClass.UserCode;
-                Plant = _BearerClass.Plant;
+                UserCode = User.FindFirst(ClaimTypes.UserData).Value;
+                Plant = User.FindFirst(ClaimTypes.Locality).Value;
                 ProcessDate = DateTime.ParseExact(Process_Date, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
                 LoginDate = DateTime.ParseExact(Login_Date.Substring(0, 10), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
 
@@ -133,7 +136,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
         {
             try
             {
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401) return Unauthorized(new
                 {
                     status = "401",
@@ -189,7 +192,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
         {
             try
             {
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401) return Unauthorized(new
                 {
                     status = "401",
@@ -255,7 +258,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
         {
             try
             {
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401) return Unauthorized(new
                 {
                     status = "401",
@@ -325,7 +328,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
         {
             try
             {
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401) return Unauthorized(new
                 {
                     status = "401",
@@ -396,7 +399,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
         {
             try
             {
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401) throw new Exception("Unauthorized");
 
                 if (obj.Action == "Preview")
@@ -506,7 +509,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
         {
             try
             {
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401) return Unauthorized(new
                 {
                     status = "401",
@@ -822,7 +825,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
         {
             try
             {
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401) return Unauthorized(new
                 {
                     status = "401",
@@ -1257,7 +1260,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
         {
             try
             {
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401) return Unauthorized(new
                 {
                     status = "401",
@@ -1320,7 +1323,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
         {
             try
             {
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401) return Unauthorized(new
                 {
                     status = "401",

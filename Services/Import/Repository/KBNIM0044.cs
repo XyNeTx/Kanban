@@ -8,6 +8,7 @@ using KANBAN.Services.Import.Interface;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Security.Claims;
 
 namespace KANBAN.Services.Import.Repository
 {
@@ -19,6 +20,7 @@ namespace KANBAN.Services.Import.Repository
         private readonly FillDataTable _FillDT;
         private readonly SerilogLibs _log;
         private readonly IEmailService _emailService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
         public KBNIM0044
@@ -28,7 +30,8 @@ namespace KANBAN.Services.Import.Repository
             PPM3Context PPM3Context,
             FillDataTable FillDT,
             SerilogLibs log,
-            IEmailService emailService
+            IEmailService emailService,
+            IHttpContextAccessor httpContextAccessor
             )
         {
             _kbContext = kbContext;
@@ -37,6 +40,7 @@ namespace KANBAN.Services.Import.Repository
             _FillDT = FillDT;
             _log = log;
             _emailService = emailService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<int> SaveImportData(List<VM_KBNIM0044> listData)
@@ -79,7 +83,7 @@ namespace KANBAN.Services.Import.Repository
                         F_Seq = data.F_Seq,
                         F_PartCode = data.F_PartCode,
                         F_Parent_Part = getParentPart!.F_Part_No + "-" + getParentPart.F_Ruibetsu,
-                        F_Update_By = _BearerClass.UserCode,
+                        F_Update_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value,
                         F_Update_Date = DateTime.Now
                     };
 
@@ -197,7 +201,7 @@ namespace KANBAN.Services.Import.Repository
                     vltData.F_Deli_Date = data.F_Deli_Date;
                     vltData.F_Deli_Shift = data.F_Deli_Shift;
                     vltData.F_Deli_Trip = data.F_Deli_Trip + sumDeliveryTrip;
-                    vltData.F_Update_By = _BearerClass.UserCode;
+                    vltData.F_Update_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value;
                     vltData.F_Update_Date = DateTime.Now;
 
 
@@ -225,13 +229,13 @@ namespace KANBAN.Services.Import.Repository
             try
             {
                 await _kbContext.Database.ExecuteSqlRawAsync($@"exec [exec].[spKBNIM044_Confirm] @sPlant,@User",
-                    new SqlParameter("@sPlant", _BearerClass.Plant),
-                    new SqlParameter("@User", _BearerClass.UserCode));
+                    new SqlParameter("@sPlant", _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value),
+                    new SqlParameter("@User", _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value));
 
-                _log.WriteLogMsg($@"exec [exec].[spKBNIM044_Confirm] '{_BearerClass.Plant}' , '{_BearerClass.UserCode}' ");
+                _log.WriteLogMsg($@"exec [exec].[spKBNIM044_Confirm] '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value}' , '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}' ");
 
                 //var simDataList = await _kbContext.TB_Import_VHD
-                //    .Where(x => x.F_Flag == "S" && x.F_Update_By == _BearerClass.UserCode)
+                //    .Where(x => x.F_Flag == "S" && x.F_Update_By == _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value)
                 //    .ToListAsync();
 
                 string LogMsg = "";
@@ -239,7 +243,7 @@ namespace KANBAN.Services.Import.Repository
                 foreach (var sim in listData)
                 {
                     sim.F_Flag = "C";
-                    sim.F_Update_By = _BearerClass.UserCode;
+                    sim.F_Update_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value;
                     sim.F_Update_Date = DateTime.Now;
 
                 }
@@ -250,7 +254,7 @@ namespace KANBAN.Services.Import.Repository
                 _log.WriteLogMsg(LogMsg);
 
                 var chkData = await _kbContext.TB_Transaction.AsNoTracking()
-                    .Where(x => x.F_Update_By == _BearerClass.UserCode
+                    .Where(x => x.F_Update_By == _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value
                     && x.F_Type == "VLT" && x.F_Type_Spc == "Sequence"
                     && x.F_Delivery_Date == listData[0].F_Deli_Date)
                     .ToListAsync();

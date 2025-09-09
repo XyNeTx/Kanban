@@ -1,12 +1,14 @@
 ﻿using HINOSystem.Libs;
 using KANBAN.Services;
 using KANBAN.Services.CKD_Ordering.IRepository;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
 namespace HINOSystem.Controllers.API.Master
 {
-    [ApiController]
+    [ApiController][Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("/api/[controller]/[action]")]
     public class KBNOR330Controller : ControllerBase
     {
@@ -27,7 +29,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
 
                 var tupleDT_Str = await _CKDRepo.IKBNOR330_Repo.Generate();
 

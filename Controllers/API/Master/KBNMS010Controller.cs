@@ -1,15 +1,18 @@
 ﻿using HINOSystem.Context;
 using HINOSystem.Libs;
-using HINOSystem.Models.KB3.Master;
 using KANBAN.Context;
 using KANBAN.Models.KB3.Master;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Security.Claims;
 
 namespace HINOSystem.Controllers.API.Master
 {
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/[controller]/[action]")]
     public class KBNMS010Controller : ControllerBase
     {
@@ -54,7 +57,7 @@ namespace HINOSystem.Controllers.API.Master
             string _SQL = "";
             try
             {
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
                 
@@ -83,7 +86,7 @@ namespace HINOSystem.Controllers.API.Master
         public async Task<IActionResult> Get_StoreCode(string? F_YM = null, bool? IsInquiry = false)
         {
             
-            _BearerClass.Authentication(Request);
+            _BearerClass.Authentication();
 
             if (_BearerClass.Status == 401) return Unauthorized(new
             {
@@ -117,7 +120,7 @@ namespace HINOSystem.Controllers.API.Master
 
                 else
                 {
-                    var data = await _PPM3Context.T_Construction.Where(x => x.F_Store_cd.StartsWith(_BearerClass.Plant))
+                    var data = await _PPM3Context.T_Construction.Where(x => x.F_Store_cd.StartsWith(User.FindFirst(ClaimTypes.Locality).Value))
                         .Select(x => new { F_Store_cd = x.F_Store_cd.Trim() }).ToListAsync();
 
                     data = data.DistinctBy(x => x.F_Store_cd).OrderBy(x => x.F_Store_cd).ToList();
@@ -149,7 +152,7 @@ namespace HINOSystem.Controllers.API.Master
         public async Task<IActionResult> GetCalendarData(string F_YM, string F_Store_cd)
         {
             
-            _BearerClass.Authentication(Request);
+            _BearerClass.Authentication();
 
             if (_BearerClass.Status == 401) return Unauthorized(new
             {
@@ -198,7 +201,7 @@ namespace HINOSystem.Controllers.API.Master
             try
             {
 
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if(_BearerClass.Status == 401)
                 {
                     return StatusCode(401, new
@@ -209,12 +212,12 @@ namespace HINOSystem.Controllers.API.Master
                     });
                 }
 
-                var storeList = await _PPM3Context.T_Construction.Where(x => x.F_Store_cd.StartsWith(_BearerClass.Plant))
+                var storeList = await _PPM3Context.T_Construction.Where(x => x.F_Store_cd.StartsWith(User.FindFirst(ClaimTypes.Locality).Value))
                         .Select(x => new { F_Store_cd = x.F_Store_cd.Trim() }).ToListAsync();
 
                 storeList = storeList.DistinctBy(x => x.F_Store_cd).OrderBy(x => x.F_Store_cd).ToList();
                 
-                string defaultStore = _BearerClass.Plant switch
+                string defaultStore = User.FindFirst(ClaimTypes.Locality).Value switch
                 {
                     "1" => "1A",
                     "2" => "2B",
@@ -245,9 +248,9 @@ namespace HINOSystem.Controllers.API.Master
                         var addData = new TB_Calendar();
                         addData = JsonConvert.DeserializeObject<TB_Calendar>(JsonConvert.SerializeObject(data)); // <--- Copy Data from Default Store --
                         addData.F_Store_cd = store.F_Store_cd;
-                        addData.F_Create_By = _BearerClass.UserCode;
+                        addData.F_Create_By = User.FindFirst(ClaimTypes.UserData).Value;
                         addData.F_Create_Date = DateTime.Now;
-                        addData.F_Update_By = _BearerClass.UserCode;
+                        addData.F_Update_By = User.FindFirst(ClaimTypes.UserData).Value;
                         addData.F_Update_Date = DateTime.Now;
                         addList.Add(addData);
                     }
@@ -284,7 +287,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             
 
-            _BearerClass.Authentication(Request);
+            _BearerClass.Authentication();
 
             if (_BearerClass.Status == 401) return Unauthorized(new
             {
@@ -308,14 +311,14 @@ namespace HINOSystem.Controllers.API.Master
                     });
                 }
 
-                obj.F_Create_By = _BearerClass.UserCode;
+                obj.F_Create_By = User.FindFirst(ClaimTypes.UserData).Value;
                 obj.F_Create_Date = DateTime.Now;
-                obj.F_Update_By = _BearerClass.UserCode;
+                obj.F_Update_By = User.FindFirst(ClaimTypes.UserData).Value;
                 obj.F_Update_Date = DateTime.Now;
 
                 _KB3Context.TB_Calendar.Add(obj);
                 await _KB3Context.SaveChangesAsync();
-                _Log.WriteLog($"Action : Save | Database : TB_Calendar | F_YM : {obj.F_YM} | F_Store_cd : {obj.F_Store_cd}",_BearerClass.UserCode,_BearerClass.Device);
+                _Log.WriteLog($"Action : Save | Database : TB_Calendar | F_YM : {obj.F_YM} | F_Store_cd : {obj.F_Store_cd}",User.FindFirst(ClaimTypes.UserData).Value,User.FindFirst(ClaimTypes.WindowsDeviceClaim).Value);
 
                 return Ok(new
                 {
@@ -343,7 +346,7 @@ namespace HINOSystem.Controllers.API.Master
         public async Task<IActionResult> Update(TB_Calendar obj)
         {
             
-            _BearerClass.Authentication(Request);
+            _BearerClass.Authentication();
 
             if (_BearerClass.Status == 401) return Unauthorized(new
             {
@@ -370,14 +373,14 @@ namespace HINOSystem.Controllers.API.Master
                     });
                 }
                 
-                obj.F_Update_By = _BearerClass.UserCode;
+                obj.F_Update_By = User.FindFirst(ClaimTypes.UserData).Value;
                 obj.F_Update_Date = DateTime.Now;
 
                 _KB3Context.TB_Calendar.Update(obj);
                 await _KB3Context.SaveChangesAsync();
                 _KB3Transaction.Commit();
 
-                _Log.WriteLog($"Action : Update | Database : TB_Calendar | F_YM : {obj.F_YM} | F_Store_cd : {obj.F_Store_cd}", _BearerClass.UserCode, _BearerClass.Device);
+                _Log.WriteLog($"Action : Update | Database : TB_Calendar | F_YM : {obj.F_YM} | F_Store_cd : {obj.F_Store_cd}", User.FindFirst(ClaimTypes.UserData).Value, User.FindFirst(ClaimTypes.WindowsDeviceClaim).Value);
 
                 return Ok(new
                 {
@@ -405,7 +408,7 @@ namespace HINOSystem.Controllers.API.Master
         public async Task<IActionResult> Delete(TB_Calendar obj)
         {
             
-            _BearerClass.Authentication(Request);
+            _BearerClass.Authentication();
 
             if (_BearerClass.Status == 401) return Unauthorized(new
             {
@@ -436,7 +439,7 @@ namespace HINOSystem.Controllers.API.Master
                 await _KB3Context.SaveChangesAsync();
                 _KB3Transaction.Commit();
 
-                _Log.WriteLog($"Action : Delete | Database : TB_Calendar | F_YM : {obj.F_YM} | F_Store_cd : {obj.F_Store_cd}", _BearerClass.UserCode, _BearerClass.Device);
+                _Log.WriteLog($"Action : Delete | Database : TB_Calendar | F_YM : {obj.F_YM} | F_Store_cd : {obj.F_Store_cd}", User.FindFirst(ClaimTypes.UserData).Value, User.FindFirst(ClaimTypes.WindowsDeviceClaim).Value);
 
                 return Ok(new
                 {

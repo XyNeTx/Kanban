@@ -1,31 +1,8 @@
-﻿using System.Net.Mail;
-using System.Net;
-using System.Text;
-using Microsoft.AspNetCore.Http.Extensions;
-using Microsoft.AspNetCore.Mvc;
-using System.Data;
-using System;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using System.Reflection.PortableExecutable;
-using System.DirectoryServices;
-using System.DirectoryServices.AccountManagement;
-using Microsoft.Net.Http.Headers;
-using System.Collections.Specialized;
-using System.DirectoryServices.ActiveDirectory;
-using System.IO;
-using System;
-using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json.Linq;
-using System.Security.Policy;
-using NPOI.SS.UserModel;
+﻿using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 
 using System.Globalization;
 //using Microsoft.Office.Interop.Excel;
-using NPOI.OpenXmlFormats.Spreadsheet;
-using NPOI.SS.Formula.Functions;
-using NPOI.XSSF.Streaming.Values;
 
 namespace HINOSystem.Libs
 {

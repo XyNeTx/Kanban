@@ -11,7 +11,6 @@ using KANBAN.Models.KB3.ReportOrder;
 using KANBAN.Models.KB3.SpecialOrdering;
 using KANBAN.Models.KB3.UrgentOrder;
 using KANBAN.Models.KB3.VLT;
-using KANBAN.Models.PPM;
 using Microsoft.EntityFrameworkCore;
 using TB_MS_PartOrder = HINOSystem.Models.KB3.Master.TB_MS_PartOrder;
 

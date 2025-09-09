@@ -20,11 +20,11 @@
         xSplash.text('Preparing...');
 
         var _addnew = false;
-        if (_PERMISSION_.new) {
-            _addnew = (config) => {
-                this.edit();
-            };
-        }
+        //if (_PERMISSION_.new) {
+        //    _addnew = (config) => {
+        //        this.edit();
+        //    };
+        //}
 
         this.tblMaster = xDataTable.Initial({
             name: this.TableName,

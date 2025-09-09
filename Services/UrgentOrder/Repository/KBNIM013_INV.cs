@@ -4,11 +4,11 @@ using KANBAN.Context;
 using KANBAN.Libs;
 using KANBAN.Models.KB3.UrgentOrder;
 using KANBAN.Models.PPM;
-using KANBAN.Models.PPM3;
 using KANBAN.Services.Automapper.Interface;
 using KANBAN.Services.UrgentOrder.IRepository;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Security.Claims;
 
 namespace KANBAN.Services.UrgentOrder.Repository;
 
@@ -22,6 +22,7 @@ public class KBNIM013_INV : IKBNIM013_INV
     private readonly SerilogLibs _log;
     private readonly IEmailService _emailService;
     private readonly IAutoMapService _automapService;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
 
     public KBNIM013_INV
@@ -50,7 +51,7 @@ public class KBNIM013_INV : IKBNIM013_INV
     {
         try
         {
-            if (_BearerClass.Plant == "3")
+            if (_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value == "3")
             {
                 var _dt = await _FillDT.ExecuteSQLAsync
                 (@" SELECT F_Declare_No, F_Pds_No, F_Delivery_Date
@@ -64,7 +65,7 @@ public class KBNIM013_INV : IKBNIM013_INV
 
                 return JsonConvert.SerializeObject(_dt, Formatting.Indented);
             }
-            else if (_BearerClass.Plant == "1")
+            else if (_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value == "1")
             {
                 var _dt = await _FillDT.ExecuteSQLAsync
                 (@" SELECT F_Declare_No, F_Pds_No, F_Delivery_Date
@@ -163,7 +164,7 @@ public class KBNIM013_INV : IKBNIM013_INV
                 {
                     F_Type = "Urgent",
                     F_Type_Spc = "INVENTORY",
-                    F_Plant = _BearerClass.Plant[0],
+                    F_Plant = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value[0],
                     F_PDS_No = obj.F_Declare_No,
                     F_PDS_Issued_Date = DateTime.Now.ToString("yyyyMMdd"),
                     F_Store_CD = T_Constuction.F_Store_cd,
@@ -194,7 +195,7 @@ public class KBNIM013_INV : IKBNIM013_INV
                     F_Safty_Stock = 0,
                     F_Part_Refer = "",
                     F_Ruibetsu_Refer = "",
-                    F_Update_By = _BearerClass.UserCode,
+                    F_Update_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value,
                     F_Update_Date = DateTime.Now,
                     F_Remark = obj.F_Declare_No + ":" + obj.F_Pds_No,
                     F_Parent_Level2 = "",

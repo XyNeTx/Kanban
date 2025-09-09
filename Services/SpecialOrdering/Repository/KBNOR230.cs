@@ -7,6 +7,7 @@ using KANBAN.Services.SpecialOrdering.Interface;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Data;
+using System.Security.Claims;
 
 namespace KANBAN.Services.SpecialOrdering.Repository
 {
@@ -20,6 +21,8 @@ namespace KANBAN.Services.SpecialOrdering.Repository
         private readonly IEmailService _emailService;
         private readonly ISpecialLibs _specialLibs;
         private readonly ProcDBContext _procDBContext;
+        private readonly ProcWebContext _procWebContext;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
         public KBNOR230
@@ -31,7 +34,9 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             SerilogLibs log,
             IEmailService emailService,
             ISpecialLibs specialLibs,
-            ProcDBContext procDBContext
+            ProcDBContext procDBContext,
+            ProcWebContext procWebContext,
+            IHttpContextAccessor httpContextAccessor
             )
         {
             _kbContext = kbContext;
@@ -42,6 +47,8 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             _emailService = emailService;
             _specialLibs = specialLibs;
             _procDBContext = procDBContext;
+            _procWebContext = procWebContext;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         private async Task ClearSurveyZero()
@@ -54,12 +61,12 @@ namespace KANBAN.Services.SpecialOrdering.Repository
                 _kbContext.TB_Survey_Detail.RemoveRange(delList);
                 await _kbContext.SaveChangesAsync();
 
-                string _sql = @"Delete From TB_Survey_Header 
+                string _sql = @"Delete From TB_Survey_Header
                     Where F_Survey_Doc in ( Select H.F_Survey_Doc
-                    from TB_Survey_Header H left outer join 
-                    ( Select F_Survey_Doc From TB_Survey_Detail 
-                    Group by F_Survey_Doc ) D 
-                    on H.F_Survey_Doc = D.F_Survey_Doc 
+                    from TB_Survey_Header H left outer join
+                    ( Select F_Survey_Doc From TB_Survey_Detail
+                    Group by F_Survey_Doc ) D
+                    on H.F_Survey_Doc = D.F_Survey_Doc
                     Where Isnull(D.F_Survey_Doc,'') = '' ) ";
 
                 await _kbContext.Database.ExecuteSqlRawAsync(_sql);
@@ -80,7 +87,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
 
                 await _kbContext.Database.ExecuteSqlRawAsync("EXEC SP_UPDATEPRICESURVEY");
 
-                var dt = _specialLibs.GetSurveyHeaderUpload("N", _BearerClass.Plant, "", "0");
+                var dt = _specialLibs.GetSurveyHeaderUpload("N", _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value, "", "0");
 
                 return JsonConvert.SerializeObject(dt);
             }
@@ -117,35 +124,43 @@ namespace KANBAN.Services.SpecialOrdering.Repository
                             $@"DELETE FROM TB_Survey_Detail
                             WHERE F_Survey_Doc = '{SurveyDoc}'");
 
-                        sql = $@"Update TB_Survey_Detail Set F_Revise_Rev = {ReviseRev} 
+                        await _procWebContext.Database.ExecuteSqlRawAsync(
+                            $@"DELETE FROM TB_Survey_Header
+                            WHERE F_Survey_Doc = '{SurveyDoc}'");
+
+                        await _procWebContext.Database.ExecuteSqlRawAsync(
+                            $@"DELETE FROM TB_Survey_Detail
+                            WHERE F_Survey_Doc = '{SurveyDoc}'");
+
+                        sql = $@"Update TB_Survey_Detail Set F_Revise_Rev = {ReviseRev}
                                     Where F_Survey_Doc = '{SurveyDoc}' ";
 
                         await _kbContext.Database.ExecuteSqlRawAsync(sql);
                         _log.WriteLogMsg("Update TB_Survey_Detail " + sql);
 
-                        sql = $@"Update TB_Survey_Header Set F_Revise_Rev = {ReviseRev} 
-                                    ,F_Upload_Flg = '1' , F_Status = 'N', F_Resend = {ReviseRev} 
+                        sql = $@"Update TB_Survey_Header Set F_Revise_Rev = {ReviseRev}
+                                    ,F_Upload_Flg = '1' , F_Status = 'N', F_Resend = {ReviseRev}
                                     Where F_Survey_Doc = '{SurveyDoc}' and (F_Upload_Flg = '0' Or F_Upload_Flg = '1') ";
 
                         await _kbContext.Database.ExecuteSqlRawAsync(sql);
                         _log.WriteLogMsg("Update TB_Survey_Header " + sql);
 
-                        sql = $@"Insert into {procDBConnect}.dbo.[TB_Survey_Header] 
-                            (F_Survey_Doc, F_PO_Customer, F_Issued_Date, F_Supplier_CD, F_Supplier_Plant, F_Delivery_Date, F_Delivery_Trip, F_Cycle_Time,F_Acc_Dr, F_Acc_Cr, 
-                            F_Dept_Code, F_WK_Code, F_Factory_Code, F_Confirm_Date, F_Delay_Date, F_Status,F_Remark, F_Remark2,F_Remark3,F_Remark_KB,F_Upload_Flg, F_Upload_By, F_Upload_Date,  
-                            F_Download_Flg,F_Download_By,F_Revise_Rev,F_Issue_By,F_Issue_Tel,F_Issue_Fax,F_Issue_Mail) 
-                            Select F_Survey_Doc, F_PO_Customer, F_Issued_Date, '0'+Ltrim(F_Supplier_CD), F_Supplier_Plant, F_Delivery_Date, F_Delivery_Trip, F_Cycle_Time,F_Acc_Dr, F_Acc_Cr, 
-                            F_Dept_Code, F_WK_Code, F_Factory_Code, F_Confirm_Date, F_Delay_Date, F_Status, F_Remark,F_Remark2,F_Remark3, F_Remark_KB,'1' As F_Upload_Flg, '{_BearerClass.UserCode}' As F_Upload_By, getDate(), 
-                            '0' As F_Download_Flg,'' AS F_Download_By, {ReviseRev} AS F_Resend,F_Issue_By,F_Issue_Tel,F_Issue_Fax,F_Issue_Mail 
+                        sql = $@"Insert into {procDBConnect}.dbo.[TB_Survey_Header]
+                            (F_Survey_Doc, F_PO_Customer, F_Issued_Date, F_Supplier_CD, F_Supplier_Plant, F_Delivery_Date, F_Delivery_Trip, F_Cycle_Time,F_Acc_Dr, F_Acc_Cr,
+                            F_Dept_Code, F_WK_Code, F_Factory_Code, F_Confirm_Date, F_Delay_Date, F_Status,F_Remark, F_Remark2,F_Remark3,F_Remark_KB,F_Upload_Flg, F_Upload_By, F_Upload_Date,
+                            F_Download_Flg,F_Download_By,F_Revise_Rev,F_Issue_By,F_Issue_Tel,F_Issue_Fax,F_Issue_Mail)
+                            Select F_Survey_Doc, F_PO_Customer, F_Issued_Date, '0'+Ltrim(F_Supplier_CD), F_Supplier_Plant, F_Delivery_Date, F_Delivery_Trip, F_Cycle_Time,F_Acc_Dr, F_Acc_Cr,
+                            F_Dept_Code, F_WK_Code, F_Factory_Code, F_Confirm_Date, F_Delay_Date, F_Status, F_Remark,F_Remark2,F_Remark3, F_Remark_KB,'1' As F_Upload_Flg, '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}' As F_Upload_By, getDate(),
+                            '0' As F_Download_Flg,'' AS F_Download_By, {ReviseRev} AS F_Resend,F_Issue_By,F_Issue_Tel,F_Issue_Fax,F_Issue_Mail
                             From TB_Survey_Header Where F_Survey_Doc = '{SurveyDoc}' and F_Status <> 'D' ";
 
                         await _kbContext.Database.ExecuteSqlRawAsync(sql);
                         _log.WriteLogMsg("Insert into TB_Survey_Header " + sql);
 
-                        sql = $@"Insert into {procDBConnect}.dbo.[TB_Survey_Detail] 
-                            ( F_Survey_Doc, F_Revise_Rev,F_PO_Customer,F_No, F_Part_No, F_Part_Name,F_Ruibetsu, F_Kanban_No, F_Store_Code, F_Package, F_Qty,F_Adjust_Qty,F_Delivery_Date) 
-                            Select  F_Survey_Doc, {ReviseRev} AS F_Revise_Rev, F_PO_Customer, F_No, F_Part_No, F_Part_Name,F_Ruibetsu, F_Kanban_No, F_Store_Code, F_Package, F_Qty,F_Adjust_Qty,F_Delivery_Date 
-                            From TB_Survey_Detail 
+                        sql = $@"Insert into {procDBConnect}.dbo.[TB_Survey_Detail]
+                            ( F_Survey_Doc, F_Revise_Rev,F_PO_Customer,F_No, F_Part_No, F_Part_Name,F_Ruibetsu, F_Kanban_No, F_Store_Code, F_Package, F_Qty,F_Adjust_Qty,F_Delivery_Date)
+                            Select  F_Survey_Doc, {ReviseRev} AS F_Revise_Rev, F_PO_Customer, F_No, F_Part_No, F_Part_Name,F_Ruibetsu, F_Kanban_No, F_Store_Code, F_Package, F_Qty,F_Adjust_Qty,F_Delivery_Date
+                            From TB_Survey_Detail
                             Where F_Survey_Doc = '{SurveyDoc}' ";
 
                         await _kbContext.Database.ExecuteSqlRawAsync(sql);
@@ -154,13 +169,13 @@ namespace KANBAN.Services.SpecialOrdering.Repository
                     }
                 }
 
-                var DT = _specialLibs.GetSurveyHeaderUpload("D", _BearerClass.Plant, "", "0");
+                var DT = _specialLibs.GetSurveyHeaderUpload("D", _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value, "", "0");
 
                 if (DT.Rows.Count > 0)
                 {
                     foreach (DataRow dr in DT.Rows)
                     {
-                        string _sql = $@"Select F_Upload_Flg AS VALUE From {procDBConnect}.dbo.[TB_Survey_Header] 
+                        string _sql = $@"Select F_Upload_Flg AS VALUE From {procDBConnect}.dbo.[TB_Survey_Header]
                             Where F_Survey_Doc = '{dr["F_Survey_Doc"].ToString()}' ";
 
                         string UploadStatus = _kbContext.Database.SqlQueryRaw<string>(_sql).FirstOrDefault();
@@ -179,8 +194,8 @@ namespace KANBAN.Services.SpecialOrdering.Repository
 
                         await _kbContext.Database.ExecuteSqlRawAsync(_sql);
 
-                        _sql = $@"Update TB_Survey_Header Set F_Upload_Flg = '1' 
-                            Where F_Survey_Doc = '{dr["F_Survey_Doc"].ToString()}' 
+                        _sql = $@"Update TB_Survey_Header Set F_Upload_Flg = '1'
+                            Where F_Survey_Doc = '{dr["F_Survey_Doc"].ToString()}'
                             and  F_Status = 'D' ";
 
                         await _kbContext.Database.ExecuteSqlRawAsync(_sql);

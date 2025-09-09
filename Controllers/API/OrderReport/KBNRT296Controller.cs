@@ -1,8 +1,6 @@
 ﻿using HINOSystem.Context;
 using HINOSystem.Libs;
 using KANBAN.Context;
-using KANBAN.Models.Proc_DB;
-using MathNet.Numerics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;

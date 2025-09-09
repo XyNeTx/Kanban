@@ -4,9 +4,7 @@ using KANBAN.Context;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using NPOI.HSSF.UserModel;
 using System.Data;
-using System.Diagnostics;
 
 namespace KANBAN.Controllers.API.OrderReport
 {

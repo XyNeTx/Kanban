@@ -1,10 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
-using System.Web;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Http.Extensions;
-using System.Collections;
 using HINOSystem.Libs;
 
 namespace HINOSystem.Controllers.erp
@@ -27,63 +21,63 @@ namespace HINOSystem.Controllers.erp
         #region MyViews
         public IActionResult ERP01M010()
         {
-            return _authenGuard.guard(ControllerContext);
+            return View();
         }
         public IActionResult ERP01M011()
         {
-            return _authenGuard.guard(ControllerContext);
+            return View();
         }
         public IActionResult ERP01M020()
         {
-            return _authenGuard.guard(ControllerContext);
+            return View();
         }
         public IActionResult ERP01M021()
         {
-            return _authenGuard.guard(ControllerContext);
+            return View();
         }
         public IActionResult ERP01M022()
         {
-            return _authenGuard.guard(ControllerContext);
+            return View();
         }
         public IActionResult ERP01M030()
         {
-            return _authenGuard.guard(ControllerContext);
+            return View();
         }
         public IActionResult ERP01M040()
         {
-            return _authenGuard.guard(ControllerContext);
+            return View();
         }
         public IActionResult ERP01M041()
         {
-            return _authenGuard.guard(ControllerContext);
+            return View();
         }
 
 
         public IActionResult UserGroups()
         {
 
-            return _authenGuard.guard(ControllerContext);
+            return View();
         }
         public IActionResult MenuGroups()
         {
 
-            return _authenGuard.guard(ControllerContext);
+            return View();
         }
         
         public IActionResult Groups()
         {
 
-            return _authenGuard.guard(ControllerContext);
+            return View();
         }
 
         public IActionResult Menus()
         {
-            return _authenGuard.guard(ControllerContext);
+            return View();
         }
 
         public IActionResult Users()
         {
-            return _authenGuard.guard(ControllerContext);
+            return View();
         }
         #endregion
 

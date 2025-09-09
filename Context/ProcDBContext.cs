@@ -1,6 +1,4 @@
-﻿using HINOSystem.Context;
-using KANBAN.Models.Proc_DB;
-using Microsoft.AspNetCore.Http;
+﻿using KANBAN.Models.Proc_DB;
 using Microsoft.EntityFrameworkCore;
 
 namespace KANBAN.Context

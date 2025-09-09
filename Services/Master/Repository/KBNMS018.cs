@@ -6,6 +6,7 @@ using KANBAN.Libs;
 using KANBAN.Services.Automapper.Interface;
 using KANBAN.Services.Master.IRepository;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace KANBAN.Services.Master.Repository
 {
@@ -18,6 +19,7 @@ namespace KANBAN.Services.Master.Repository
         private readonly SerilogLibs _log;
         private readonly IEmailService _emailService;
         private readonly IAutoMapService _autoMap;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
         public KBNMS018
@@ -28,7 +30,8 @@ namespace KANBAN.Services.Master.Repository
             FillDataTable FillDT,
             SerilogLibs log,
             IEmailService emailService,
-            IAutoMapService autoMap
+            IAutoMapService autoMap,
+            IHttpContextAccessor httpContextAccessor
             )
         {
             _kbContext = kbContext;
@@ -38,6 +41,7 @@ namespace KANBAN.Services.Master.Repository
             _log = log;
             _emailService = emailService;
             _autoMap = autoMap;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         private readonly string strDateNow = DateTime.Now.ToString("yyyyMMdd");
@@ -48,7 +52,7 @@ namespace KANBAN.Services.Master.Repository
             try
             {
                 var data = await _kbContext.TB_MS_Heijunka.AsNoTracking()
-                    .Where(x => x.F_Plant == _BearerClass.Plant).ToListAsync();
+                    .Where(x => x.F_Plant == _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value).ToListAsync();
 
                 if (!string.IsNullOrWhiteSpace(CycleB))
                 {
@@ -71,7 +75,7 @@ namespace KANBAN.Services.Master.Repository
             try
             {
                 var existObj = await _kbContext.TB_MS_Heijunka.AsNoTracking()
-                    .Where(x => x.F_CycleB == obj.F_CycleB && x.F_Plant == _BearerClass.Plant)
+                    .Where(x => x.F_CycleB == obj.F_CycleB && x.F_Plant == _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value)
                     .FirstOrDefaultAsync();
 
                 if (action == "del" && existObj != null)
@@ -84,18 +88,18 @@ namespace KANBAN.Services.Master.Repository
                     obj.F_CycleB = existObj.F_CycleB;
                     obj.F_Create_Date = existObj.F_Create_Date;
                     obj.F_Create_By = existObj.F_Create_By;
-                    obj.F_Update_By = _BearerClass.UserCode;
+                    obj.F_Update_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value;
                     obj.F_Update_Date = DateTime.Now;
                     _kbContext.TB_MS_Heijunka.Attach(obj);
                     _kbContext.Entry(obj).State = EntityState.Modified;
                 }
                 else
                 {
-                    obj.F_Plant = _BearerClass.Plant;
-                    obj.F_Create_By = _BearerClass.UserCode;
+                    obj.F_Plant = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value;
+                    obj.F_Create_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value;
                     obj.F_Create_Date = DateTime.Now;
                     obj.F_Update_Date = DateTime.Now;
-                    obj.F_Update_By = _BearerClass.UserCode;
+                    obj.F_Update_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value;
 
                     _kbContext.TB_MS_Heijunka.Add(obj);
                 }

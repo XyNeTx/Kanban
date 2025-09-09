@@ -1,13 +1,15 @@
 ﻿using HINOSystem.Libs;
 using KANBAN.Models.KB3.UrgentOrder;
 using KANBAN.Services.UrgentOrder.IRepository;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KANBAN.Controllers.API.UrgentOrder
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class KBNIM017RController : ControllerBase
     {
         private readonly BearerClass _BearerClass;
@@ -26,7 +28,7 @@ namespace KANBAN.Controllers.API.UrgentOrder
         [HttpPost]
         public async Task<IActionResult> ImportToOrder(List<VM_KBNIM017R_ImportData> listObj)
         {
-            await _BearerClass.CheckAuthorize();
+            
 
             var result = await _UrgentRepo.IKBNIM017R_Repo.GetUrgentOrders(listObj);
 

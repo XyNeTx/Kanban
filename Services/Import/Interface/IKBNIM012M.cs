@@ -1,9 +1,7 @@
 ﻿using KANBAN.Models.KB3.ImportData.Model;
 using KANBAN.Models.KB3.ImportData.ViewModel;
 using KANBAN.Models.KB3.Receive_Process;
-using KANBAN.Models.KB3.ReportOrder;
 using KANBAN.Models.Proc_DB;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 
 namespace KANBAN.Services.Import.Interface
 {

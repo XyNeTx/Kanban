@@ -1,12 +1,12 @@
 ﻿using HINOSystem.Context;
 using HINOSystem.Libs;
-using HINOSystem.Models.KB3.Master;
 using KANBAN.Context;
 using KANBAN.Libs;
 using KANBAN.Services.SpecialOrdering.Interface;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Data;
+using System.Security.Claims;
 
 namespace KANBAN.Services.SpecialOrdering.Repository
 {
@@ -18,6 +18,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
         private readonly FillDataTable _FillDT;
         private readonly SerilogLibs _log;
         private readonly IEmailService _emailService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
         public SpecialLibs
@@ -27,7 +28,8 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             PPM3Context PPM3Context,
             FillDataTable FillDT,
             SerilogLibs log,
-            IEmailService emailService
+            IEmailService emailService,
+            IHttpContextAccessor httpContextAccessor
             )
         {
             _kbContext = kbContext;
@@ -36,6 +38,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             _FillDT = FillDT;
             _log = log;
             _emailService = emailService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public string FormatPDSWHNo = "FZYYMMW######";
@@ -74,7 +77,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             {
                 string sql = $@"Select F_User_Name,F_Telephone,F_Fax,F_Email 
                         FROM  TB_Ms_Operator 
-                        Where F_User_ID = '{_BearerClass.UserCode}' ";
+                        Where F_User_ID = '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}' ";
 
                 return _FillDT.ExecuteSQL(sql);
             }
@@ -518,7 +521,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
                     (Select Top 1 F_Name From {ppmDBConnect}.dbo.[T_Supplier_MS] Where F_Supplier_CD collate Thai_CI_AS = Substring(H.F_Supplier_CD,2,4) and 
                     F_Plant_CD collate Thai_CI_AS  = H.F_Supplier_Plant order by F_Name DESC ) As F_Name 
                     FROM {procDBConnect}.dbo.TB_Survey_Header H 
-                    Where H.F_Download_Flg = '1' and H.F_Factory_Code  in ('{_BearerClass.Plant}')";
+                    Where H.F_Download_Flg = '1' and H.F_Factory_Code  in ('{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value}')";
 
                 return _FillDT.ExecuteSQL(_sql);
             }

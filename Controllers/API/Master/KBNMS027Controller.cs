@@ -2,12 +2,14 @@
 using KANBAN.Models.KB3.Master.ViewModel;
 using KANBAN.Services;
 using KANBAN.Services.Master.IRepository;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HINOSystem.Controllers.API.Master
 {
     [Route("api/[controller]/[action]")]
-    [ApiController]
+    [ApiController][Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class KBNMS027Controller : ControllerBase
     {
         private readonly BearerClass _BearerClass;
@@ -27,7 +29,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
 
                 var data = await _masterRepo.IKBNMS027.GetShortLogistic();
 
@@ -55,7 +57,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
 
                 var data = await _masterRepo.IKBNMS027.GetShortName();
 
@@ -83,7 +85,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
                 var data = await _masterRepo.IKBNMS027.GetListData(F_Short_Logistic);
                 return Ok(new
                 {
@@ -104,7 +106,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
                 var data = await _masterRepo.IKBNMS027.SupOrderSelected(F_Short_Name);
 
                 return Ok(new
@@ -130,7 +132,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
                 await _masterRepo.IKBNMS027.Save(listObj, action);
                 return Ok(new
                 {

@@ -2,12 +2,15 @@
 using KANBAN.Models.KB3.SpecialOrdering;
 using KANBAN.Services;
 using KANBAN.Services.SpecialOrdering.Interface;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KANBAN.Controllers.API.SpecialOrdering
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class KBNOR220_1Controller : ControllerBase
     {
 
@@ -25,7 +28,7 @@ namespace KANBAN.Controllers.API.SpecialOrdering
         {
             try
             {
-                await _bearerClass.CheckAuthorize();
+                
 
                 var data = _services.IKBNOR220_1.LoadSurveyDoc(surveyDoc,mode);
 
@@ -42,7 +45,7 @@ namespace KANBAN.Controllers.API.SpecialOrdering
         {
             try
             {
-                await _bearerClass.CheckAuthorize();
+                
 
                 await _services.IKBNOR220_1.Save(isDel, listModel);
 

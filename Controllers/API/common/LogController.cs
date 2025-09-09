@@ -1,38 +1,8 @@
-﻿using Microsoft.AspNetCore.Http.Extensions;
-using Microsoft.AspNetCore.Mvc;
-using System.Data;
-using System;
-using System.Web;
-using System.Security.Principal;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-
-using System.Reflection.PortableExecutable;
-using System.DirectoryServices;
-using System.DirectoryServices.AccountManagement;
-using Microsoft.Net.Http.Headers;
-using System.Collections.Specialized;
-using System.Net;
-using System.DirectoryServices.ActiveDirectory;
-using System.Net.Http;
-using Microsoft.AspNetCore.Authorization;
-
-using System.Security.Claims;
-using Org.BouncyCastle.Asn1.Ocsp;
-
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-
-using System.Threading.Tasks;
-
+﻿using HINOSystem.Context;
 using HINOSystem.Libs;
-using HINOSystem.Context;
-using HINOSystem.Models.KB3.Master;
-using NPOI.SS.Formula.Functions;
-using System.Dynamic;
-using static System.Net.Mime.MediaTypeNames;
-using static Org.BouncyCastle.Math.EC.ECCurve;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using System.Security.Claims;
 
 namespace HINOSystem.Controllers.API.Master
 {
@@ -42,7 +12,7 @@ namespace HINOSystem.Controllers.API.Master
         private readonly BearerClass _BearerClass;
         private readonly SerilogLibs _Serilog;
         private readonly KanbanConnection _KBCN;
-
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly KB3Context _KB3Context;
 
         private string _logName = "";
@@ -53,7 +23,8 @@ namespace HINOSystem.Controllers.API.Master
             BearerClass bearerClass,
             KanbanConnection kanbanConnection,
             KB3Context kB3Context,
-            SerilogLibs serilogLibs
+            SerilogLibs serilogLibs,
+            IHttpContextAccessor httpContextAccessor
             )
         {
             _configuration = configuration;
@@ -61,6 +32,7 @@ namespace HINOSystem.Controllers.API.Master
             _KBCN = kanbanConnection;
             _KB3Context = kB3Context;
             _Serilog = serilogLibs;
+            _httpContextAccessor = httpContextAccessor;
 
         }
 
@@ -93,7 +65,7 @@ namespace HINOSystem.Controllers.API.Master
 
                 if (pPostData != null) _data = JsonConvert.DeserializeObject(pPostData);
 
-                //_Serilog.WriteLog(_data.message.ToString(), _BearerClass.UserCode, _BearerClass.Device);
+                //_Serilog.WriteLog(_data.message.ToString(), _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value, _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.WindowsDeviceClaim).Value);
                 string _name = _data.name.ToString();
                 string _level = "Information";
 
@@ -114,9 +86,9 @@ namespace HINOSystem.Controllers.API.Master
                 }
 
                 _logTemplate = _logTemplate.ToUpper();
-                _logTemplate = _logTemplate.Replace("{USERNAME}", _BearerClass.UserCode);
-                _logTemplate = _logTemplate.Replace("{DEVICE}", _BearerClass.Device);
-                _logTemplate = _logTemplate.Replace("{IPADDRESS}", _BearerClass.IPAddress);
+                _logTemplate = _logTemplate.Replace("{USERNAME}", _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value);
+                _logTemplate = _logTemplate.Replace("{DEVICE}", _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.WindowsDeviceClaim).Value);
+                _logTemplate = _logTemplate.Replace("{IPADDRESS}", _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Dns).Value);
                 _logTemplate = _logTemplate.Replace("{LEVEL}", _level);
                 _logTemplate = _logTemplate.Replace("{TIMESTAMP}", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"));
                 _logTemplate = _logTemplate.Replace("{MESSAGE}", _data.message.ToString());

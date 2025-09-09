@@ -9,6 +9,7 @@ using KANBAN.Services.Automapper.Interface;
 using KANBAN.Services.Master.IRepository;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Security.Claims;
 
 namespace KANBAN.Services.Master.Repository
 {
@@ -21,6 +22,7 @@ namespace KANBAN.Services.Master.Repository
         private readonly SerilogLibs _log;
         private readonly IEmailService _emailService;
         private readonly IAutoMapService _automapService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
         public KBNMS016
@@ -31,7 +33,8 @@ namespace KANBAN.Services.Master.Repository
             FillDataTable FillDT,
             SerilogLibs log,
             IEmailService emailService,
-            IAutoMapService autoMapService
+            IAutoMapService autoMapService,
+            IHttpContextAccessor httpContextAccessor
             )
         {
             _kbContext = kbContext;
@@ -41,6 +44,7 @@ namespace KANBAN.Services.Master.Repository
             _log = log;
             _emailService = emailService;
             _automapService = autoMapService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public static string strDateNow = DateTime.Now.ToString("yyyyMMdd");
@@ -75,7 +79,7 @@ namespace KANBAN.Services.Master.Repository
                     AND P.F_Store_Cd = S.F_Store_cd collate Thai_CI_AS 
                     AND C.F_Local_Str <= convert(char(8),getdate(),112) 
                     AND C.F_Local_End >= convert(char(8),getdate(),112) 
-                    WHERE P.F_Plant = '{_BearerClass.Plant}' ";
+                    WHERE P.F_Plant = '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value}' ";
 
                 if (!string.IsNullOrWhiteSpace(F_Supplier_Cd))
                 {
@@ -129,7 +133,7 @@ namespace KANBAN.Services.Master.Repository
                 var data = await _PPM3Context.T_Construction.AsNoTracking()
                     .Where(x => x.F_Local_Str.CompareTo(strDateNow) <= 0
                     && x.F_Local_End.CompareTo(strDateNow) >= 0
-                    && x.F_Store_cd.StartsWith(_BearerClass.Plant)).ToListAsync();
+                    && x.F_Store_cd.StartsWith(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value)).ToListAsync();
 
                 if (!string.IsNullOrWhiteSpace(F_Supplier_Cd))
                 {
@@ -172,7 +176,7 @@ namespace KANBAN.Services.Master.Repository
                     && x.F_Plant_cd == F_Supplier_Plant[0]
                     && x.F_TC_Str.CompareTo(strDateNow) <= 0
                     && x.F_TC_End.CompareTo(strDateNow) >= 0
-                    && x.F_Store_cd.StartsWith(_BearerClass.Plant)).FirstOrDefaultAsync();
+                    && x.F_Store_cd.StartsWith(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value)).FirstOrDefaultAsync();
 
                 return data;
 
@@ -193,7 +197,7 @@ namespace KANBAN.Services.Master.Repository
                     && x.F_Ruibetsu == F_Ruibetsu
                     && x.F_Local_Str.CompareTo(strDateNow) <= 0
                     && x.F_Local_End.CompareTo(strDateNow) >= 0
-                    && x.F_Store_cd.StartsWith(_BearerClass.Plant)).ToListAsync();
+                    && x.F_Store_cd.StartsWith(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value)).ToListAsync();
 
                 return data?.FirstOrDefault();
 
@@ -210,7 +214,7 @@ namespace KANBAN.Services.Master.Repository
             try
             {
                 var data = await _kbContext.TB_MS_PairOrder.AsNoTracking()
-                    .Where(x => x.F_Plant == _BearerClass.Plant).ToListAsync();
+                    .Where(x => x.F_Plant == _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value).ToListAsync();
 
                 if (!string.IsNullOrWhiteSpace(F_Supplier_Cd))
                 {
@@ -277,9 +281,9 @@ namespace KANBAN.Services.Master.Repository
                     }
                     else
                     {
-                        obj.F_Create_By = _BearerClass.UserCode;
+                        obj.F_Create_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value;
                         obj.F_Create_Date = DateTime.Now;
-                        obj.F_Update_By = _BearerClass.UserCode;
+                        obj.F_Update_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value;
                         obj.F_Update_Date = DateTime.Now;
 
                         await _kbContext.TB_MS_PairOrder.AddAsync(obj);
@@ -294,7 +298,7 @@ namespace KANBAN.Services.Master.Repository
 
                         obj.F_Create_By = existObj.F_Create_By;
                         obj.F_Create_Date = existObj.F_Create_Date;
-                        obj.F_Update_By = _BearerClass.UserCode;
+                        obj.F_Update_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value;
                         obj.F_Update_Date = DateTime.Now;
 
                         _kbContext.TB_MS_PairOrder.Attach(obj);

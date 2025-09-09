@@ -7,11 +7,14 @@ using Newtonsoft.Json;
 using HINOSystem.Libs;
 using HINOSystem.Context;
 using KANBAN.Context;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 //using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HINOSystem.Controllers.API.Master
 {
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/[controller]/[action]")]
     public class KBNIM014CController : ControllerBase
     {
@@ -60,7 +63,7 @@ namespace HINOSystem.Controllers.API.Master
             string _SQL = "";
             try
             {
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
                 if (pData != null) _json = JsonConvert.DeserializeObject(pData);
@@ -89,7 +92,7 @@ namespace HINOSystem.Controllers.API.Master
         public async Task<IActionResult> search(string? F_PDS_NO = null,bool chkDeliveryDate = false, string? F_DeliveryFrom = null , string? F_DeliveryTo = null)
         {
             string _SQL = "";
-            _BearerClass.Authentication(Request);
+            _BearerClass.Authentication();
 
             if (_BearerClass.Status == 401) return Unauthorized(new
             {
@@ -139,7 +142,7 @@ namespace HINOSystem.Controllers.API.Master
         [HttpPost]
         public async Task<IActionResult> Save([FromBody] object _obj)
         {
-            _BearerClass.Authentication(Request);
+            _BearerClass.Authentication();
 
             if (_BearerClass.Status == 401) return Unauthorized(new
             {

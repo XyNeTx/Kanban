@@ -53,8 +53,13 @@ async function Onload() {
     await _xLib.AJAX_Get("/api/KBNOR310/Onload", null,
         async function (success) {
             success = _xLib.JSONparseMixData(success);
-            //console.log(success);
+            console.log(success);
             processDate = moment(success.data[0].ProcessDate.slice(0, 10), "YYYY-MM-DD").format("YYYYMMDD") + success.data[0].ProcessShift;
+            $("#txtProcessDate").val(moment(success.data[0].ProcessDate.slice(0, 10), "YYYY-MM-DD").format("DD/MM/YYYY"));
+            $("#txtProcessShift").val(success.data[0].CurrentShift == "D" ? "1-Day Shift" : "2-Night Shift");
+            $("#txtProcessDateLast").val(moment(success.data[0].LastProcessDate.slice(0, 10), "YYYY-MM-DD").format("DD/MM/YYYY"));
+            $("#txtProcessShiftLast").val(success.data[0].LastProcessShift == "D" ? "1-Day Shift" : "2-Night Shift");
+            //sessionStorage.setItem("loginDate", processDate);
             console.log(processDate);
         }
     );
@@ -69,7 +74,7 @@ async function Onload() {
                     $(item).prop("disabled", true)
                 }
             });
-           
+
             switch (success.param[1].f_Value2) {
                 case 0: {
                     if (success.param[0].f_Value3 === processDate) {

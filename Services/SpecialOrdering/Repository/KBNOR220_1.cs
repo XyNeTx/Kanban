@@ -6,6 +6,7 @@ using KANBAN.Models.KB3.SpecialOrdering;
 using KANBAN.Services.SpecialOrdering.Interface;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Security.Claims;
 
 namespace KANBAN.Services.SpecialOrdering.Repository
 {
@@ -20,6 +21,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
         private readonly IEmailService _emailService;
         private readonly ISpecialLibs _specialLibs;
         private readonly ISpecialOrderingServices _services;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public KBNOR220_1
             (
@@ -30,7 +32,8 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             SerilogLibs log,
             IEmailService emailService,
             ISpecialLibs specialLibs,
-            ISpecialOrderingServices services
+            ISpecialOrderingServices services,
+            IHttpContextAccessor httpContextAccessor
             )
         {
             _kbContext = kbContext;
@@ -41,13 +44,14 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             _emailService = emailService;
             _specialLibs = specialLibs;
             _services = services;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public string LoadSurveyDoc(string? surveyDoc, string? mode)
         {
             try
             {
-                var _dt = _specialLibs.GetSurveyHeader(_BearerClass.Plant, surveyDoc, "0", mode);
+                var _dt = _specialLibs.GetSurveyHeader(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value, surveyDoc, "0", mode);
 
                 return JsonConvert.SerializeObject(_dt);
 
@@ -107,7 +111,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
                         exModel.F_Remark3 = model.F_Remark3;
                         exModel.F_Remark_KB = model.F_Remark_KB;
                         exModel.F_CustomerOrder_Type = model.F_CustomerOrder_Type;
-                        exModel.F_Update_By = _BearerClass.UserCode;
+                        exModel.F_Update_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value;
                         exModel.F_Update_Date = DateTime.Now;
 
                         _kbContext.Update(exModel);
@@ -130,7 +134,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
                         }
 
                         exModel.F_Status = "D";
-                        exModel.F_Update_By = _BearerClass.UserCode;
+                        exModel.F_Update_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value;
                         exModel.F_Update_Date = DateTime.Now;
 
                         _kbContext.Update(exModel);

@@ -2,7 +2,6 @@
 {
     using Microsoft.EntityFrameworkCore;
     using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
 
     [PrimaryKey(nameof(F_Plant),nameof(F_Shift))]
     public class TB_MS_CTL

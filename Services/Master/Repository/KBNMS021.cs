@@ -7,6 +7,7 @@ using KANBAN.Services.Automapper.Interface;
 using KANBAN.Services.Master.IRepository;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Security.Claims;
 
 namespace KANBAN.Services.Master.Repository
 {
@@ -19,6 +20,7 @@ namespace KANBAN.Services.Master.Repository
         private readonly SerilogLibs _log;
         private readonly IEmailService _emailService;
         private readonly IAutoMapService _automapService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
         public KBNMS021
@@ -29,7 +31,8 @@ namespace KANBAN.Services.Master.Repository
             FillDataTable FillDT,
             SerilogLibs log,
             IEmailService emailService,
-            IAutoMapService autoMapService
+            IAutoMapService autoMapService,
+            IHttpContextAccessor httpContextAccessor
             )
         {
             _kbContext = kbContext;
@@ -39,6 +42,7 @@ namespace KANBAN.Services.Master.Repository
             _log = log;
             _emailService = emailService;
             _automapService = autoMapService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<List<TB_MS_PartCode>> GetListDataTables(string? Line, string? PartCode, string? PartNo)
@@ -142,10 +146,10 @@ namespace KANBAN.Services.Master.Repository
 
                     if (listObj[0] != null)
                     {
-                        listObj[0].F_Create_By = _BearerClass.UserCode;
+                        listObj[0].F_Create_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value;
                         listObj[0].F_Create_Date = DateTime.Now;
                         listObj[0].F_Update_Date = DateTime.Now;
-                        listObj[0].F_Update_By = _BearerClass.UserCode;
+                        listObj[0].F_Update_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value;
 
                         await _kbContext.TB_MS_PartCode.AddAsync(listObj[0]);
                         _log.WriteLogMsg($"Insert TB_MS_PartCode : {JsonConvert.SerializeObject(listObj[0])}");
@@ -181,7 +185,7 @@ namespace KANBAN.Services.Master.Repository
                         {
                             obj.F_Bridge = item.F_Bridge;
                             obj.F_Detail = item.F_Detail;
-                            obj.F_Update_By = _BearerClass.UserCode;
+                            obj.F_Update_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value;
                             obj.F_Update_Date = DateTime.Now;
 
                             _kbContext.TB_MS_PartCode.Update(obj);

@@ -10,6 +10,7 @@ using KANBAN.Services.Automapper.Interface;
 using KANBAN.Services.Master.IRepository;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Security.Claims;
 
 namespace KANBAN.Services.Master.Repository
 {
@@ -22,6 +23,7 @@ namespace KANBAN.Services.Master.Repository
         private readonly SerilogLibs _log;
         private readonly IEmailService _emailService;
         private readonly IAutoMapService _automapService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
         public KBNMS015
@@ -32,7 +34,8 @@ namespace KANBAN.Services.Master.Repository
             FillDataTable FillDT,
             SerilogLibs log,
             IEmailService emailService,
-            IAutoMapService autoMapService
+            IAutoMapService autoMapService,
+            IHttpContextAccessor httpContextAccessor
             )
         {
             _kbContext = kbContext;
@@ -42,6 +45,7 @@ namespace KANBAN.Services.Master.Repository
             _log = log;
             _emailService = emailService;
             _automapService = autoMapService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public static string strDateNow = DateTime.Now.ToString("yyyyMMdd");
@@ -51,7 +55,7 @@ namespace KANBAN.Services.Master.Repository
             try
             {
                 var data = await _PPM3Context.T_Construction
-                    .Where(x => x.F_Store_cd.StartsWith(_BearerClass.Plant)
+                    .Where(x => x.F_Store_cd.StartsWith(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value)
                     && x.F_Local_Str.CompareTo(strDateNow) <= 0
                     && x.F_Local_End.CompareTo(strDateNow) >= 0).ToListAsync();
 
@@ -87,7 +91,7 @@ namespace KANBAN.Services.Master.Repository
             try
             {
                 var data = await _kbContext.TB_MS_Label
-                    .Where(x => x.F_Plant == _BearerClass.Plant)
+                    .Where(x => x.F_Plant == _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value)
                     .ToListAsync();
 
                 if (!string.IsNullOrWhiteSpace(Supplier))
@@ -126,7 +130,7 @@ namespace KANBAN.Services.Master.Repository
                     .Where(x => x.F_supplier_cd + "-" + x.F_Plant_cd == SupplierCode
                     && x.F_TC_Str.CompareTo(strDateNow) <= 0
                     && x.F_TC_End.CompareTo(strDateNow) >= 0
-                    && x.F_Store_cd.StartsWith(_BearerClass.Plant)).ToListAsync();
+                    && x.F_Store_cd.StartsWith(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value)).ToListAsync();
 
                 if (!string.IsNullOrWhiteSpace(StoreCode))
                 {
@@ -149,7 +153,7 @@ namespace KANBAN.Services.Master.Repository
             {
                 var data = await _PPM3Context.T_Construction
                     .Where(x => x.F_Part_no.Trim() + "-" + x.F_Ruibetsu == PartNo
-                    && x.F_Store_cd.StartsWith(_BearerClass.Plant)
+                    && x.F_Store_cd.StartsWith(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value)
                     && x.F_Local_Str.CompareTo(strDateNow) <= 0
                     && x.F_Local_End.CompareTo(strDateNow) >= 0).ToListAsync();
 
@@ -262,13 +266,13 @@ namespace KANBAN.Services.Master.Repository
                     TB_MS_Label addObj = new TB_MS_Label
                     {
                         F_Color = obj.F_Color,
-                        F_Create_By = _BearerClass.UserCode,
+                        F_Create_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value,
                         F_Create_Date = DateTime.Now,
-                        F_Update_By = _BearerClass.UserCode,
+                        F_Update_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value,
                         F_Update_Date = DateTime.Now,
                         F_Cycle = obj.F_Cycle,
                         F_Kanban_No = obj.F_Kanban_No,
-                        F_Plant = _BearerClass.Plant,
+                        F_Plant = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value,
                         F_Supplier_Cd = obj.F_Supplier_Code.Split("-")[0],
                         F_Supplier_Plant = obj.F_Supplier_Code.Split("-")[1],
                         F_End_Date = obj.F_End_Date,
@@ -297,7 +301,7 @@ namespace KANBAN.Services.Master.Repository
                     updObj.F_Color = obj.F_Color;
                     updObj.F_End_Date = obj.F_End_Date;
                     updObj.F_Text = obj.F_Description;
-                    updObj.F_Update_By = _BearerClass.UserCode;
+                    updObj.F_Update_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value;
                     updObj.F_Update_Date = DateTime.Now;
 
                     _kbContext.TB_MS_Label.Update(updObj);
@@ -317,7 +321,7 @@ namespace KANBAN.Services.Master.Repository
                            .Where(x => x.F_Supplier_Cd + "-" + x.F_Supplier_Plant == each.F_Supplier_Code
                            && x.F_Kanban_No == obj.F_Kanban_No && x.F_Store_Code == each.F_Store_Code
                            && x.F_Part_No.Trim() + "-" + x.F_Ruibetsu == each.F_Part_No
-                           && x.F_Plant == _BearerClass.Plant
+                           && x.F_Plant == _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value
                            && x.F_Start_Date == obj.F_Start_Date
                            && x.F_End_Date == obj.F_End_Date
                            ).ToListAsync();
@@ -382,13 +386,13 @@ namespace KANBAN.Services.Master.Repository
                         TB_MS_Label addObj = new TB_MS_Label
                         {
                             F_Color = each.F_Color,
-                            F_Create_By = _BearerClass.UserCode,
+                            F_Create_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value,
                             F_Create_Date = DateTime.Now,
-                            F_Update_By = _BearerClass.UserCode,
+                            F_Update_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value,
                             F_Update_Date = DateTime.Now,
                             F_Cycle = cycle,
                             F_Kanban_No = each.F_Kanban_No,
-                            F_Plant = _BearerClass.Plant,
+                            F_Plant = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value,
                             F_Supplier_Cd = each.F_Supplier_Code.Split("-")[0],
                             F_Supplier_Plant = each.F_Supplier_Code.Split("-")[1],
                             F_End_Date = each.F_End_Date,
@@ -453,10 +457,10 @@ namespace KANBAN.Services.Master.Repository
                     ON K.F_Supplier_Cd = S.F_supplier_cd COLLATE SQL_Latin1_General_CP1_CI_AI 
                     AND K.F_Supplier_Plant = S.F_Plant_cd COLLATE SQL_Latin1_General_CP1_CI_AI 
                     AND K.F_Store_Code = S.F_Store_cd collate Thai_CI_AS 
-                    WHERE K.F_Plant = '{_BearerClass.Plant}' 
+                    WHERE K.F_Plant = '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value}' 
                     AND S.F_TC_Str <= convert(char(8),getdate(),112) 
                     AND S.F_TC_End >= convert(char(8),getdate(),112) 
-                    AND S.F_store_cd LIKE '{_BearerClass.Plant}%' ";
+                    AND S.F_store_cd LIKE '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value}%' ";
 
                     if (!string.IsNullOrWhiteSpace(PartNo))
                     {

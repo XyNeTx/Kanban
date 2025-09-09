@@ -25,12 +25,12 @@
         xSplash.text('PREPARING');
 
         var _addnew = false;
-        if (_PERMISSION_.new) {
-            _addnew = (config) => {
-                this.edit();
-            };
-            if (typeof (pCallback) === 'function' && this.edit() == undefined) _addnew = false;
-        }
+        //if (_PERMISSION_.new) {
+        //    _addnew = (config) => {
+        //        this.edit();
+        //    };
+        //    if (typeof (pCallback) === 'function' && this.edit() == undefined) _addnew = false;
+        //}
 
         //console.log('xxx'+this.edit());
 

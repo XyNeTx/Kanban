@@ -1,6 +1,4 @@
-﻿using KANBAN.Models.KB3.SpecialOrdering;
-using Microsoft.EntityFrameworkCore;
-using System.Data;
+﻿using System.Data;
 
 namespace KANBAN.Services.SpecialOrdering.Interface
 {

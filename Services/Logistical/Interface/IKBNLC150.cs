@@ -1,6 +1,4 @@
 ﻿using KANBAN.Models.KB3.LogisticCondition;
-using KANBAN.Models.KB3.ReportOrder;
-using Microsoft.AspNetCore.Mvc;
 
 namespace KANBAN.Services.Logistical.Interface
 {

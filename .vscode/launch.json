@@ -1,0 +1,47 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": ".NET Stalker (Minimal)",
+            "type": "stalker",
+            "request": "launch",
+            "vars": {
+                "framework": "net7.0",
+                "projectDir": "${workspaceFolder}",
+                "projectName": "KANBAN"
+            },
+            "project": "${var:projectDir}/${var:projectName}.csproj",
+            "process": "${var:projectDir}/bin/Debug/${var:framework}/${var:projectName}",
+            "cwd": "${var:projectDir}",
+            "url": "http://localhost:7277",
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            }
+        },
+
+        {
+            "name": ".NET Stalker (Debug w/ Edge)",
+            "type": "stalker",
+            "request": "launch",
+            "vars": {
+                "framework": "net7.0",
+                "projectDir": "${workspaceFolder}",
+                "projectName": "KANBAN"
+            },
+            "project": "${var:projectDir}/${var:projectName}.csproj",
+            "process": "${var:projectDir}/bin/Debug/${var:framework}/${var:projectName}",
+            "cwd": "${var:projectDir}",
+            "url": "http://localhost:7277",
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            },
+            "webRoot": "${var:projectDir}/wwwroot",
+            "attachOptions": {
+                "action": "debugWithEdge"
+            }
+        }
+    ]
+}

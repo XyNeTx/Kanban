@@ -1,4 +1,5 @@
 ﻿using HINOSystem.Libs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KANBAN.Controllers
@@ -12,9 +13,10 @@ namespace KANBAN.Controllers
             _authenGuard = authenGuard;
         }
 
+        [Authorize(Policy = "KBNMT110")]
         public IActionResult KBNMT110()
         {
-            return _authenGuard.guard(ControllerContext);
+            return View();
         }
     }
 }

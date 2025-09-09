@@ -3,15 +3,19 @@ using HINOSystem.Libs;
 using KANBAN.Context;
 using KANBAN.Libs;
 using KANBAN.Models.KB3.Master;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Data;
+using System.Security.Claims;
 
 namespace HINOSystem.Controllers.API.Master
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class KBNMS007Controller : ControllerBase
     {
         private readonly BearerClass _BearerClass;
@@ -48,7 +52,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401)
                 {
                     return Unauthorized(new
@@ -115,7 +119,7 @@ namespace HINOSystem.Controllers.API.Master
                     });
                 }
                 
-                var dbObj = _KB3Context.TB_Kanban_Add.Where(x=>x.F_Plant == _BearerClass.Plant).AsNoTracking().AsQueryable();
+                var dbObj = _KB3Context.TB_Kanban_Add.Where(x=>x.F_Plant == User.FindFirst(ClaimTypes.Locality).Value).AsNoTracking().AsQueryable();
 
                 if (!string.IsNullOrWhiteSpace(F_Kanban_No))
                 {
@@ -167,7 +171,7 @@ namespace HINOSystem.Controllers.API.Master
             try
             {
 
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401)
                 {
                     return Unauthorized(new
@@ -203,16 +207,16 @@ namespace HINOSystem.Controllers.API.Master
                 }
 
 
-                var dbObj = _KB3Context.TB_Kanban_Add.FirstOrDefault(x => x.F_Kanban_No == obj.F_Kanban_No && x.F_Plant == _BearerClass.Plant
+                var dbObj = _KB3Context.TB_Kanban_Add.FirstOrDefault(x => x.F_Kanban_No == obj.F_Kanban_No && x.F_Plant == User.FindFirst(ClaimTypes.Locality).Value
                     && x.F_Supplier_Code == obj.F_Supplier_Code && x.F_Supplier_Plant == obj.F_Supplier_Plant && x.F_Store_Code == obj.F_Store_Code
                     && x.F_Part_No == obj.F_Part_No && x.F_Ruibetsu == obj.F_Ruibetsu);
 
                 if(dbObj == null)
                 {
                     obj.F_Status = "0";
-                    obj.F_Create_By = _BearerClass.UserCode;
+                    obj.F_Create_By = User.FindFirst(ClaimTypes.UserData).Value;
                     obj.F_Create_Date = DateTime.Now;
-                    obj.F_Update_By = _BearerClass.UserCode;
+                    obj.F_Update_By = User.FindFirst(ClaimTypes.UserData).Value;
                     obj.F_Update_Date = DateTime.Now;
                     obj.F_Start_Date = "";
                     obj.F_Start_Shift = "";
@@ -230,7 +234,7 @@ namespace HINOSystem.Controllers.API.Master
                     obj.F_KB_Remain = dbObj.F_KB_Remain;
                     dbObj = obj;
                     dbObj.F_Status = "0";
-                    dbObj.F_Update_By = _BearerClass.UserCode;
+                    dbObj.F_Update_By = User.FindFirst(ClaimTypes.UserData).Value;
                     dbObj.F_Update_Date = DateTime.Now;
                     dbObj.F_Start_Date = "";
                     dbObj.F_Start_Shift = "";
@@ -270,7 +274,7 @@ namespace HINOSystem.Controllers.API.Master
             try
             {
 
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if(_BearerClass.Status == 401)
                 {
                     return Unauthorized(new
@@ -283,7 +287,7 @@ namespace HINOSystem.Controllers.API.Master
                 }
 
                 var dbObj = _KB3Context.TB_Kanban_Add.FirstOrDefault(x => x.F_Kanban_No == obj.F_Kanban_No 
-                && x.F_Plant == _BearerClass.Plant && x.F_Part_No == obj.F_Part_No && x.F_Ruibetsu == obj.F_Ruibetsu
+                && x.F_Plant == User.FindFirst(ClaimTypes.Locality).Value && x.F_Part_No == obj.F_Part_No && x.F_Ruibetsu == obj.F_Ruibetsu
                 && x.F_Supplier_Code == obj.F_Supplier_Code && x.F_Supplier_Plant == obj.F_Supplier_Plant && x.F_Store_Code == obj.F_Store_Code);
 
                 if (dbObj == null)
@@ -300,7 +304,7 @@ namespace HINOSystem.Controllers.API.Master
                 dbObj.F_Status = "1";
                 dbObj.F_KB_Remain = dbObj.F_KB_Add;
                 dbObj.F_Update_Date = DateTime.Now;
-                dbObj.F_Update_By = _BearerClass.UserCode;
+                dbObj.F_Update_By = User.FindFirst(ClaimTypes.UserData).Value;
                 _KB3Context.TB_Kanban_Add.Update(dbObj);
                 await _KB3Context.SaveChangesAsync();
                 _log.WriteLogMsg($"KBNMS007 : Start | Obj : {JsonConvert.SerializeObject(dbObj)}");
@@ -333,7 +337,7 @@ namespace HINOSystem.Controllers.API.Master
             try
             {
 
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401)
                 {
                     return Unauthorized(new
@@ -346,7 +350,7 @@ namespace HINOSystem.Controllers.API.Master
                 }
 
                 var dbObj = _KB3Context.TB_Kanban_Add.FirstOrDefault(x => x.F_Kanban_No == obj.F_Kanban_No
-                && x.F_Plant == _BearerClass.Plant && x.F_Part_No == obj.F_Part_No && x.F_Ruibetsu == obj.F_Ruibetsu
+                && x.F_Plant == User.FindFirst(ClaimTypes.Locality).Value && x.F_Part_No == obj.F_Part_No && x.F_Ruibetsu == obj.F_Ruibetsu
                 && x.F_Supplier_Code == obj.F_Supplier_Code && x.F_Supplier_Plant == obj.F_Supplier_Plant && x.F_Store_Code == obj.F_Store_Code);
 
                 if (dbObj == null)
@@ -362,7 +366,7 @@ namespace HINOSystem.Controllers.API.Master
 
                 dbObj.F_Status = "0";
                 dbObj.F_Update_Date = DateTime.Now;
-                dbObj.F_Update_By = _BearerClass.UserCode;
+                dbObj.F_Update_By = User.FindFirst(ClaimTypes.UserData).Value;
                 _KB3Context.TB_Kanban_Add.Update(dbObj);
                 await _KB3Context.SaveChangesAsync();
                 _log.WriteLogMsg($"KBNMS007 : Stop | Obj : {JsonConvert.SerializeObject(dbObj)}");

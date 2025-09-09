@@ -2,23 +2,27 @@
 using KANBAN.Models.KB3.SpecialOrdering;
 using KANBAN.Services;
 using KANBAN.Services.SpecialOrdering.Interface;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
+using System.Security.Claims;
 
 namespace KANBAN.Controllers.API.SpecialOrdering
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class KBNOR280Controller : ControllerBase
     {
         private readonly ISpecialOrderingServices _services;
         private readonly BearerClass _bearer;
+        private readonly IHttpContextAccessor _http;
 
-        public KBNOR280Controller(ISpecialOrderingServices services, BearerClass bearer)
+        public KBNOR280Controller(ISpecialOrderingServices services, BearerClass bearer,IHttpContextAccessor http)
         {
             _services = services;
             _bearer = bearer;
+            _http = http;
         }
 
         [HttpGet]
@@ -26,9 +30,9 @@ namespace KANBAN.Controllers.API.SpecialOrdering
         {
             try
             {
-                await _bearer.CheckAuthorize();
+                
 
-                string FacCD = _bearer.Plant switch
+                string FacCD = _http.HttpContext.User.FindFirst(ClaimTypes.Locality).Value switch
                 {
                     "1" => "9Z",
                     "2" => "8Y",
@@ -51,7 +55,7 @@ namespace KANBAN.Controllers.API.SpecialOrdering
         {
             try
             {
-                await _bearer.CheckAuthorize();
+                
                 await _services.IKBNOR280.Register(listObj);
 
                 return Ok(new { status = "200", response = "Success", message = "Registration PDS No. Complete." });
@@ -70,7 +74,7 @@ namespace KANBAN.Controllers.API.SpecialOrdering
         {
             try
             {
-                await _bearer.CheckAuthorize();
+                
 
                 var data = await _services.IKBNOR280.GetSupplier();
 
@@ -96,7 +100,7 @@ namespace KANBAN.Controllers.API.SpecialOrdering
         {
             try
             {
-                await _bearer.CheckAuthorize();
+                
 
                 var data = await _services.IKBNOR280.GetPO(IssuedYM);
 
@@ -122,7 +126,7 @@ namespace KANBAN.Controllers.API.SpecialOrdering
         {
             try
             {
-                await _bearer.CheckAuthorize();
+                
 
                 var data = await _services.IKBNOR280.GetPDS(POFrom, POTo);
 
@@ -149,7 +153,7 @@ namespace KANBAN.Controllers.API.SpecialOrdering
         {
             try
             {
-                await _bearer.CheckAuthorize();
+                
                 var data = _services.IKBNOR280.ExportData(PONoFrom, PONoTo, PDSNoFrom, PDSNoTo, SupplierFrom, SupplierTo, DeliveryFrom, DeliveryTo);
 
                 return Ok(new { status = "200", response = "Success", message = "Data Found", data = data });

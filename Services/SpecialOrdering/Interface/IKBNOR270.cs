@@ -1,6 +1,4 @@
-﻿using KANBAN.Models.KB3.Receive_Process;
-using KANBAN.Models.KB3.SpecialOrdering;
-using System.Data.SqlTypes;
+﻿using KANBAN.Models.KB3.SpecialOrdering;
 
 namespace KANBAN.Services.SpecialOrdering.Interface
 {

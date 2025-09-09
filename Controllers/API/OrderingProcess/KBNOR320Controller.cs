@@ -1,11 +1,13 @@
 ﻿using HINOSystem.Libs;
 using KANBAN.Services;
 using KANBAN.Services.CKD_Ordering.IRepository;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HINOSystem.Controllers.API.Master
 {
-    [ApiController]
+    [ApiController][Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("/api/[controller]/[action]")]
     public class KBNOR320Controller : ControllerBase
     {
@@ -28,7 +30,7 @@ namespace HINOSystem.Controllers.API.Master
             {
                 if(arryVariable == null || arryVariable?.Length == 0)
                 {
-                    await _BearerClass.CheckAuthorize();
+                    
                 }
                 await _CKDRepo.IKBNOR320_Repo.completeRecalculateCKD(arryVariable);
 

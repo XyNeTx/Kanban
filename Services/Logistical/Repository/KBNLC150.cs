@@ -6,6 +6,7 @@ using KANBAN.Models.KB3.LogisticCondition;
 using KANBAN.Services.Logistical.Interface;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Security.Claims;
 
 namespace KANBAN.Services.Logistical.Repository
 {
@@ -17,6 +18,7 @@ namespace KANBAN.Services.Logistical.Repository
         private readonly FillDataTable _FillDT;
         private readonly SerilogLibs _log;
         private readonly IEmailService _emailService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
         public KBNLC150
@@ -26,7 +28,8 @@ namespace KANBAN.Services.Logistical.Repository
             PPM3Context PPM3Context,
             FillDataTable FillDT,
             SerilogLibs log,
-            IEmailService emailService
+            IEmailService emailService,
+            IHttpContextAccessor httpContextAccessor
             )
         {
             _kbContext = kbContext;
@@ -35,6 +38,7 @@ namespace KANBAN.Services.Logistical.Repository
             _FillDT = FillDT;
             _log = log;
             _emailService = emailService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public static string publicYM = "";
@@ -49,7 +53,7 @@ namespace KANBAN.Services.Logistical.Repository
                 string _sql = $"SELECT Distinct  F_Plant, F_YM, F_Rev " +
                     $" FROM  TB_Import_Delivery " +
                     $"WHERE  F_YM='{YM}' " +
-                    $"AND  F_Plant='{_BearerClass.Plant}' " +
+                    $"AND  F_Plant='{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value}' " +
                     $"Order by F_Rev ";
 
                 publicYM = YM;
@@ -65,7 +69,7 @@ namespace KANBAN.Services.Logistical.Repository
                 //List<object> list = new List<object>();
                 //object obj = new
                 //{
-                //    F_Plant = _BearerClass.Plant,
+                //    F_Plant = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value,
                 //    F_YM = YM,
                 //    F_Rev = 0
                 //};
@@ -89,10 +93,10 @@ namespace KANBAN.Services.Logistical.Repository
             {
                 string _sql = "";
 
-                await _kbContext.Database.ExecuteSqlRawAsync($"Delete From KBNLC_150 Where F_Import_By='{_BearerClass.UserCode}'");
+                await _kbContext.Database.ExecuteSqlRawAsync($"Delete From KBNLC_150 Where F_Import_By='{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}'");
 
                 await _kbContext.Database.ExecuteSqlRawAsync($"Delete From TB_Import_Error Where" +
-                    $" F_Update_BY='{_BearerClass.UserCode}'AND F_Type='IDT' ");
+                    $" F_Update_BY='{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}'AND F_Type='IDT' ");
 
                 int i = 2;
 
@@ -104,7 +108,7 @@ namespace KANBAN.Services.Logistical.Repository
                     {
                         _sql = $"Insert into TB_IMPORT_ERROR(F_PDS_CD, F_Row, F_Field, F_Remark, F_Update_By, F_Update_Date, F_Type)values(" +
                             $"'F_YM','{i}','{obj.F_YM}','ProductinYM<>Screen', " +
-                            $"'{_BearerClass.UserCode}',getdate(),'IDT')";
+                            $"'{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}',getdate(),'IDT')";
 
                         await _kbContext.Database.ExecuteSqlRawAsync(_sql);
                     }
@@ -119,7 +123,7 @@ namespace KANBAN.Services.Logistical.Repository
                     {
                         _sql = $"Insert into TB_IMPORT_ERROR(F_PDS_CD, F_Row, F_Field, F_Remark, F_Update_By, F_Update_Date, F_Type)values(" +
                             $"'F_Short_Logistic','{i}','{obj.F_Short_Logistic}','Supplier not found', " +
-                            $"'{_BearerClass.UserCode}',getdate(),'IDT')";
+                            $"'{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}',getdate(),'IDT')";
 
                         await _kbContext.Database.ExecuteSqlRawAsync(_sql);
                     }
@@ -131,7 +135,7 @@ namespace KANBAN.Services.Logistical.Repository
 
                 _sql = $"SELECT F_Plant, F_YM, F_Rev, F_Delivery_Trip, F_Dock_Cd, F_short_Logistic, F_Import_By, F_Error " +
                     $" FROM VW_CheckImport_Delivery  Where F_YM='{publicYM}' and F_Rev='{publicRev}' " +
-                    $" and F_Plant='{_BearerClass.Plant}'";
+                    $" and F_Plant='{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value}'";
 
                 var dt2 = _FillDT.ExecuteSQL(_sql);
                 string _error = "";
@@ -150,7 +154,7 @@ namespace KANBAN.Services.Logistical.Repository
 
                 processBar = 50;
 
-                _sql = $"Select * from TB_IMPORT_ERROR Where F_Update_BY='{_BearerClass.UserCode}' AND F_Type='IDT'";
+                _sql = $"Select * from TB_IMPORT_ERROR Where F_Update_BY='{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}' AND F_Type='IDT'";
 
                 var dt3 = _FillDT.ExecuteSQL(_sql);
                 if (dt3.Rows.Count > 0)
@@ -171,7 +175,7 @@ namespace KANBAN.Services.Logistical.Repository
                         obj.F_Supplier_Code = dt4.Rows[0]["F_Supplier_CD"].ToString();
                         obj.F_Supplier_Plant = dt4.Rows[0]["F_Supplier_Plant"].ToString();
                         obj.F_Supplier_Name = dt4.Rows[0]["F_short_name"].ToString();
-                        obj.F_Import_By = _BearerClass.UserCode;
+                        obj.F_Import_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value;
                         obj.F_Import_Date = DateTime.Now;
                         obj.F_Remark = obj.F_Remark == null ? "" : obj.F_Remark;
                     }
@@ -191,10 +195,10 @@ namespace KANBAN.Services.Logistical.Repository
                     $"F_Supplier_Name, F_Arrival_Sup, F_Depart_Sup, F_Arrival_HMMT, F_Depart_HMMT, F_Cycle_Time, F_Remark, F_Import_By, F_Import_Date, " +
                     $"Case When F_Supplier_Code='9999' Then '2' Else '0' End F_Flag " +
                     $"FROM   KBNLC_150 L " +
-                    $"WHERE F_Plant ='{_BearerClass.Plant}' " +
+                    $"WHERE F_Plant ='{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value}' " +
                     $"AND F_YM = '{publicYM}' " +
                     $"AND F_Rev = '{publicRev}' " +
-                    $"AND F_Import_By= '{_BearerClass.UserCode}' ";
+                    $"AND F_Import_By= '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}' ";
 
                 await _kbContext.Database.ExecuteSqlRawAsync(_sql);
 
@@ -204,7 +208,7 @@ namespace KANBAN.Services.Logistical.Repository
                 {
                     string revPrevious = "";
                     _sql = $"Select Distinct Top 1  F_Plant, F_YM, F_Rev  From   TB_Import_Delivery  " +
-                        $"WHERE F_Plant ='{_BearerClass.Plant}' AND F_YM = '{publicYM}' " +
+                        $"WHERE F_Plant ='{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value}' AND F_YM = '{publicYM}' " +
                         $"AND F_Rev<'{publicRev}' Order by F_Rev Desc ";
 
                     var dt5 = _FillDT.ExecuteSQL(_sql);
@@ -219,14 +223,14 @@ namespace KANBAN.Services.Logistical.Repository
                     }
 
                     _sql = $"UPDATE TB_Import_Delivery SET  F_Flag='2' " +
-                        $" Where F_YM = '{_BearerClass.Plant}' AND F_Rev = '{publicRev}' " +
+                        $" Where F_YM = '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value}' AND F_Rev = '{publicRev}' " +
                         $"AND F_YM+F_Plant+convert(char,F_Delivery_Trip)+F_Dock_Cd+F_Truck_Card IN " +
                         $"(Select I.F_YM+I.F_Plant+convert(char,I.F_Delivery_Trip)+I.F_Dock_Cd+I.F_Truck_Card " +
                         $" FROM TB_Import_Delivery I INNER JOIN TB_Import_Delivery D ON I.F_YM=D.F_YM AND I.F_Plant=D.F_Plant " +
                         $"AND I.F_Delivery_Trip=D.F_Delivery_Trip AND I.F_Dock_Cd=D.F_Dock_Cd AND I.F_Truck_Card=D.F_Truck_Card " +
                         $"AND I.F_Arrival_Sup=D.F_Arrival_Sup AND I.F_Depart_Sup=D.F_Depart_Sup AND I.F_Arrival_HMMT=D.F_Arrival_HMMT " +
                         $"AND I.F_Depart_HMMT=D.F_Depart_HMMT AND I.F_Cycle_Time=D.F_Cycle_Time " +
-                        $"WHERE I.F_Plant = '{_BearerClass.Plant}' " +
+                        $"WHERE I.F_Plant = '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value}' " +
                         $"AND I.F_YM = '{publicYM}' " +
                         $"AND I.F_Rev='{revPrevious}' " +
                         $"AND D.F_Rev = '{publicRev}' AND I.F_Flag='2' ) ";
@@ -236,14 +240,14 @@ namespace KANBAN.Services.Logistical.Repository
                     _log.WriteLogMsg("Import TB_Import_Delivery | SQL : " + _sql);
 
                     _sql = $"UPDATE TB_Import_Delivery SET  F_Flag='5' " +
-                        $" Where F_YM = '{_BearerClass.Plant}' AND F_Rev = '{publicRev}' " +
+                        $" Where F_YM = '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value}' AND F_Rev = '{publicRev}' " +
                         $"AND F_YM+F_Plant+convert(char,F_Delivery_Trip)+F_Dock_Cd+F_Truck_Card IN " +
                         $"(Select I.F_YM+I.F_Plant+convert(char,I.F_Delivery_Trip)+I.F_Dock_Cd+I.F_Truck_Card " +
                         $"FROM TB_Import_Delivery I INNER JOIN TB_Import_Delivery D ON I.F_YM=D.F_YM AND I.F_Plant=D.F_Plant " +
                         $"AND I.F_Delivery_Trip=D.F_Delivery_Trip AND I.F_Dock_Cd=D.F_Dock_Cd AND I.F_Truck_Card=D.F_Truck_Card " +
                         $"AND I.F_Arrival_Sup=D.F_Arrival_Sup AND I.F_Depart_Sup=D.F_Depart_Sup AND I.F_Arrival_HMMT=D.F_Arrival_HMMT " +
                         $"AND I.F_Depart_HMMT=D.F_Depart_HMMT AND I.F_Cycle_Time=D.F_Cycle_Time  " +
-                        $"WHERE I.F_Plant ='{_BearerClass.Plant}' AND I.F_YM = '{publicYM}' " +
+                        $"WHERE I.F_Plant ='{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value}' AND I.F_YM = '{publicYM}' " +
                         $"AND I.F_Rev='{revPrevious}' AND D.F_Rev = '{publicRev}' AND I.F_Flag='5' ) ";
 
                     await _kbContext.Database.ExecuteSqlRawAsync(_sql);
@@ -263,7 +267,7 @@ namespace KANBAN.Services.Logistical.Repository
             }
             catch (Exception ex)
             {
-                string _sql = $"DELETE  FROM TB_Import_Delivery WHERE F_YM='{publicYM}' AND F_Rev='{publicRev}' AND F_Plant='{_BearerClass.Plant}'";
+                string _sql = $"DELETE  FROM TB_Import_Delivery WHERE F_YM='{publicYM}' AND F_Rev='{publicRev}' AND F_Plant='{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value}'";
                 await _kbContext.Database.ExecuteSqlRawAsync(_sql);
                 _log.WriteLogMsg("Import Delivery Time Table Error | SQL : " + _sql);
                 processBar = 0;

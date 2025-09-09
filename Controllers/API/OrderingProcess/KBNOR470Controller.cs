@@ -4,6 +4,8 @@ using KANBAN.Context;
 using KANBAN.Libs;
 using KANBAN.Models.KB3.UrgentOrder;
 using KANBAN.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Data;
@@ -12,7 +14,7 @@ using System.Globalization;
 namespace KANBAN.Controllers.API.OrderingProcess
 {
     [Route("api/[controller]/[action]")]
-    [ApiController]
+    [ApiController][Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class KBNOR470Controller : ControllerBase
     {
         private readonly BearerClass _BearerClass;
@@ -48,7 +50,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
                 string _sql = $@"select * 
                             from dbo.FN_GETPriceZeroUrgent(NULL,NULL) 
                             Order by F_SUpplier_Code,F_SUpplier_Plant,F_OrderNO";
@@ -96,7 +98,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
             try
             {
                 transaction.CreateSavepoint("UnlockPDS");
-                await _BearerClass.CheckAuthorize();
+                
 
                 string CookieProcDate = Request.Cookies["processDate"].ToString();
                 string ProcessDate = DateTime.TryParseExact(CookieProcDate.Substring(0, 10), "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dt) ? dt.ToString("dd/MM/yyyy") : DateTime.Now.ToString("dd/MM/yyyy");

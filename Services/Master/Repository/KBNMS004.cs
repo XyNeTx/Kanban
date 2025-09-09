@@ -10,6 +10,7 @@ using KANBAN.Services.Automapper.Interface;
 using KANBAN.Services.Master.IRepository;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Security.Claims;
 
 namespace KANBAN.Services.Master.Repository
 {
@@ -22,6 +23,7 @@ namespace KANBAN.Services.Master.Repository
         private readonly SerilogLibs _log;
         private readonly IEmailService _emailService;
         private readonly IAutoMapService _automapService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
         public KBNMS004
@@ -32,7 +34,8 @@ namespace KANBAN.Services.Master.Repository
             FillDataTable FillDT,
             SerilogLibs log,
             IEmailService emailService,
-            IAutoMapService autoMapService
+            IAutoMapService autoMapService,
+            IHttpContextAccessor httpContextAccessor
             )
         {
             _kbContext = kbContext;
@@ -42,6 +45,7 @@ namespace KANBAN.Services.Master.Repository
             _log = log;
             _emailService = emailService;
             _automapService = autoMapService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public string strDate = DateTime.Now.ToString("yyyyMMdd");
@@ -59,7 +63,7 @@ namespace KANBAN.Services.Master.Repository
                     var data = await _PPM3Context.T_Construction.AsNoTracking()
                         .Where(x => x.F_Local_Str.CompareTo(stringDate) <= 0
                         && x.F_Local_End.CompareTo(stringDate) >= 0
-                        && x.F_Store_cd.StartsWith(_BearerClass.Plant))
+                        && x.F_Store_cd.StartsWith(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value))
                         .ToListAsync();
 
                     if (!string.IsNullOrWhiteSpace(kanban))
@@ -113,7 +117,7 @@ namespace KANBAN.Services.Master.Repository
                     var MsPartSpecial = await _kbContext.TB_MS_PartSpecial.AsNoTracking()
                         .Where(x=>x.F_Start_Date.CompareTo(stringDate) <= 0
                         && x.F_End_Date.CompareTo(stringDate) >= 0
-                        && x.F_Plant == _BearerClass.Plant)
+                        && x.F_Plant == _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value)
                         .ToListAsync();
 
                     if(!string.IsNullOrWhiteSpace(kanban))
@@ -263,7 +267,7 @@ namespace KANBAN.Services.Master.Repository
                     .Where(x => x.F_supplier_cd + "-" + x.F_Plant_cd == supplier
                     && x.F_TC_Str.CompareTo(strDate) <= 0
                     && x.F_TC_End.CompareTo(strDate) >= 0
-                    && x.F_Store_cd.StartsWith(_BearerClass.Plant))
+                    && x.F_Store_cd.StartsWith(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value))
                     .ToListAsync();
 
                 if(!string.IsNullOrWhiteSpace(storecd))
@@ -294,7 +298,7 @@ namespace KANBAN.Services.Master.Repository
                     .Where(x => x.F_Part_no.Trim() + "-" + x.F_Ruibetsu == partno
                     && x.F_Local_Str!.Trim().CompareTo(strDate) <= 0
                     && x.F_Local_End!.Trim().CompareTo(strDate) >= 0
-                    && x.F_Store_cd.StartsWith(_BearerClass.Plant))
+                    && x.F_Store_cd.StartsWith(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value))
                     .ToListAsync();
 
                 if (!string.IsNullOrWhiteSpace(supplier))
@@ -368,10 +372,10 @@ namespace KANBAN.Services.Master.Repository
                         F_Type_Special = obj.TypeOrder,
                         F_Start_Date = obj.StartDate,
                         F_End_Date = obj.EndDate,
-                        F_Plant = _BearerClass.Plant,
-                        F_Create_By = _BearerClass.UserCode,
+                        F_Plant = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value,
+                        F_Create_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value,
                         F_Create_Date = DateTime.Now,
-                        F_Update_By = _BearerClass.UserCode,
+                        F_Update_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value,
                         F_Update_Date = DateTime.Now,
                         F_Cycle = obj.Cycle.Replace("-", string.Empty),
                     });
@@ -386,11 +390,11 @@ namespace KANBAN.Services.Master.Repository
                         && x.F_Part_No + "-" + x.F_Ruibetsu == obj.PartNo
                         && x.F_Supplier_Cd + "-" + x.F_Supplier_Plant == obj.Supplier
                         && x.F_Start_Date == obj.StartDate
-                        && x.F_Plant == _BearerClass.Plant)
+                        && x.F_Plant == _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value)
                         .ExecuteUpdateAsync(x => x.SetProperty(x => x.F_Cycle, obj.Cycle.Replace("-", string.Empty))
                         .SetProperty(x => x.F_Type_Special, obj.TypeOrder)
                         .SetProperty(x => x.F_End_Date, obj.EndDate)
-                        .SetProperty(x => x.F_Update_By, _BearerClass.UserCode)
+                        .SetProperty(x => x.F_Update_By, _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value)
                         .SetProperty(x => x.F_Update_Date, DateTime.Now));
 
                     _log.WriteLogMsg("Update TB_MS_PartSpecial Data : " + JsonConvert.SerializeObject(obj));
@@ -404,7 +408,7 @@ namespace KANBAN.Services.Master.Repository
                             && x.F_Part_No + "-" + x.F_Ruibetsu == each.PartNo
                             && x.F_Supplier_Cd + "-" + x.F_Supplier_Plant == each.Supplier
                             && x.F_Start_Date == each.StartDate
-                            && x.F_Plant == _BearerClass.Plant)
+                            && x.F_Plant == _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value)
                             .ExecuteDeleteAsync();
 
                         _log.WriteLogMsg("Delete TB_MS_PartSpecial Data : " + JsonConvert.SerializeObject(each));

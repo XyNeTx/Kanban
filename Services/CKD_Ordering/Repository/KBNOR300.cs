@@ -7,6 +7,7 @@ using KANBAN.Services.Automapper.Interface;
 using KANBAN.Services.CKD_Ordering.IRepository;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
+using System.Security.Claims;
 
 namespace KANBAN.Services.CKD_Ordering.Repository
 {
@@ -19,6 +20,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
         private readonly SerilogLibs _log;
         private readonly IEmailService _emailService;
         private readonly IAutoMapService _automapService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
         public KBNOR300
@@ -29,7 +31,8 @@ namespace KANBAN.Services.CKD_Ordering.Repository
             FillDataTable FillDT,
             SerilogLibs log,
             IEmailService emailService,
-            IAutoMapService autoMapService
+            IAutoMapService autoMapService,
+            IHttpContextAccessor httpContextAccessor
             )
         {
             _kbContext = kbContext;
@@ -39,6 +42,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
             _log = log;
             _emailService = emailService;
             _automapService = autoMapService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public static string strDateNow = DateTime.Now.ToString("yyyyMMdd");
@@ -50,7 +54,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                 var UserAuth = await _kbContext.UserAuthorize.AsNoTracking()
                     //.Include(x => x.UserErp)
                     //.Include(x => x.MenuErp)
-                    .Where(x => x.UserErp.Code == _BearerClass.UserCode
+                    .Where(x => x.UserErp.Code == _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value
                     && x.MenuErp.i18n.StartsWith("KBNOR3")
                     && x.MenuErp.i18n != "KBNOR300")
                     .Select(x => x.MenuErp.i18n ?? null)

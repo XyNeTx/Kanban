@@ -8,6 +8,7 @@ using KANBAN.Services.Automapper.Interface;
 using KANBAN.Services.Master.IRepository;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Security.Claims;
 
 namespace KANBAN.Services.Master.Repository
 {
@@ -20,6 +21,7 @@ namespace KANBAN.Services.Master.Repository
         private readonly SerilogLibs _log;
         private readonly IEmailService _emailService;
         private readonly IAutoMapService _autoMap;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
         public KBNMS028
@@ -30,7 +32,8 @@ namespace KANBAN.Services.Master.Repository
             FillDataTable FillDT,
             SerilogLibs log,
             IEmailService emailService,
-            IAutoMapService autoMap
+            IAutoMapService autoMap,
+            IHttpContextAccessor httpContextAccessor
             )
         {
             _kbContext = kbContext;
@@ -40,6 +43,7 @@ namespace KANBAN.Services.Master.Repository
             _log = log;
             _emailService = emailService;
             _autoMap = autoMap;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<List<TB_Import_Delivery>> GetDockCode()
@@ -48,7 +52,7 @@ namespace KANBAN.Services.Master.Repository
             {
                 var data = await _kbContext.TB_Import_Delivery
                     .AsNoTracking()
-                    .Where(x => x.F_Plant == _BearerClass.Plant)
+                    .Where(x => x.F_Plant == _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value)
                     .ToListAsync();
 
                 return data.DistinctBy(x => x.F_Dock_Cd).OrderBy(x => x.F_Dock_Cd).ToList();
@@ -83,7 +87,7 @@ namespace KANBAN.Services.Master.Repository
             {
                 var data = _kbContext.TB_MS_Remark_DocSheet
                     .AsNoTracking()
-                    .Where(x => x.F_Plant == _BearerClass.Plant)
+                    .Where(x => x.F_Plant == _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value)
                     .OrderBy(x => x.F_Plant).ThenBy(x => x.F_Dock_Cd)
                     .ThenBy(x => x.F_short_Logistic1).ThenBy(x => x.F_Remark1)
                     .AsEnumerable();
@@ -119,8 +123,8 @@ namespace KANBAN.Services.Master.Repository
 
                     else
                     {
-                        obj.F_Plant = _BearerClass.Plant;
-                        obj.F_Update_By = _BearerClass.UserCode;
+                        obj.F_Plant = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value;
+                        obj.F_Update_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value;
                         obj.F_Update_Date = DateTime.Now;
                         await _kbContext.TB_MS_Remark_DocSheet.AddAsync(obj);
                         _log.WriteLogMsg("INSERT INTO TB_MS_Remark_DocSheet => " + JsonConvert.SerializeObject(obj));
@@ -135,7 +139,7 @@ namespace KANBAN.Services.Master.Repository
                         _log.WriteLogMsg("Updating TB_MS_Remark_DocSheet Before => " + JsonConvert.SerializeObject(existObj));
 
                         existObj = obj;
-                        existObj.F_Update_By = _BearerClass.UserCode;
+                        existObj.F_Update_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value;
                         existObj.F_Update_Date = DateTime.Now;
                         _kbContext.TB_MS_Remark_DocSheet.Update(existObj);
 

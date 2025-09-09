@@ -1,14 +1,15 @@
 ﻿using HINOSystem.Libs;
 using KANBAN.Models.KB3.SpecialOrdering;
 using KANBAN.Services.SpecialOrdering.Interface;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Globalization;
 
 namespace KANBAN.Controllers.API.SpecialOrder
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class KBNOR210_2Controller : ControllerBase
     {
         private readonly ISpecialOrderingServices _services;

@@ -1,6 +1,4 @@
-﻿using System.Data;
-
-namespace KANBAN.Services.Import.Interface
+﻿namespace KANBAN.Services.Import.Interface
 {
     public interface IKBNIM010
     {

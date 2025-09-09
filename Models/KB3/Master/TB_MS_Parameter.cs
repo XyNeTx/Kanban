@@ -1,7 +1,6 @@
 ﻿namespace HINOSystem.Models.KB3.Master
 {
     using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
 
 
     public class TB_MS_Parameter

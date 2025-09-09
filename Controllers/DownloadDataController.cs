@@ -1,7 +1,6 @@
-﻿using HINOSystem.Models;
-using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
+﻿using Microsoft.AspNetCore.Mvc;
 using HINOSystem.Libs;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HINOSystem.Controllers
 {
@@ -18,9 +17,9 @@ namespace HINOSystem.Controllers
 
 
         public DownloadDataController(
-            ILogger<HomeController> logger, 
-            DbConnect dbConnect, 
-            AuthenGuard authenGuard, 
+            ILogger<HomeController> logger,
+            DbConnect dbConnect,
+            AuthenGuard authenGuard,
             WarrantyClaimConnect wrtConnect
             )
         {
@@ -36,9 +35,10 @@ namespace HINOSystem.Controllers
         }
 
 
+        [Authorize(Policy = "KBNDL001")]
         public IActionResult KBNDL001()
         {
-            return _authenGuard.guard(ControllerContext);
+            return View();
         }
 
 

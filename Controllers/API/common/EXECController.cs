@@ -43,15 +43,7 @@ namespace HINOSystem.Controllers.API.Master
 
             try
             {
-                if (_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
-                {
-                    return StatusCode(_BearerClass.Status, new
-                    {
-                        status = _BearerClass.Status,
-                        response = _BearerClass.Response,
-                        message = _BearerClass.Message
-                    });
-                }
+                
                 if (pPostData != null) _data = JsonConvert.DeserializeObject(pPostData);
 
                 string _spName = "";
@@ -118,15 +110,7 @@ namespace HINOSystem.Controllers.API.Master
                 }";
             try
             {
-                if (_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
-                {
-                    return StatusCode(_BearerClass.Status, new
-                    {
-                        status = _BearerClass.Status,
-                        response = _BearerClass.Response,
-                        message = _BearerClass.Message
-                    });
-                }
+                
                 if (pPostData != null) _data = JsonConvert.DeserializeObject(pPostData);
 
                 string _spName = "";
@@ -197,15 +181,7 @@ namespace HINOSystem.Controllers.API.Master
                 }";
             try
             {
-                if (_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
-                {
-                    return StatusCode(_BearerClass.Status, new
-                    {
-                        status = _BearerClass.Status,
-                        response = _BearerClass.Response,
-                        message = _BearerClass.Message
-                    });
-                }
+
                 if (pPostData != null) _data = JsonConvert.DeserializeObject(pPostData);
 
                 string _spName = "";
@@ -263,15 +239,7 @@ namespace HINOSystem.Controllers.API.Master
                 }";
             try
             {
-                if (_BearerClass.CheckAuthen() == 401 || _BearerClass.CheckAuthen() == 403)
-                {
-                    return StatusCode(_BearerClass.Status, new
-                    {
-                        status = _BearerClass.Status,
-                        response = _BearerClass.Response,
-                        message = _BearerClass.Message
-                    });
-                }
+                
                 if (pPostData != null) _data = JsonConvert.DeserializeObject(pPostData);
 
                 string _spName = "";

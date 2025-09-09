@@ -4,6 +4,7 @@ using KANBAN.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Security.Claims;
 
 namespace KANBAN.Controllers
 {
@@ -104,17 +105,19 @@ namespace KANBAN.Controllers
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
 
-                string query = $@"	SELECT 
-	                DISTINCT 
-	                M.i18n AS F_Menu_ID
-	                FROM [erp].[UserAuthorize] UA 
-	                INNER JOIN [erp].[User] U 
+
+                string query = $@"	SELECT
+	                DISTINCT
+	                M.i18n AS F_Menu_ID,
+                    M.Name AS F_Menu_Name
+	                FROM [erp].[UserAuthorize] UA
+	                INNER JOIN [erp].[User] U
 	                ON U._ID = UA.User_ID
 	                INNER JOIN [erp].[Menu] M
 	                ON M._ID = UA.Menu_ID
-	                WHERE U.Code = '{_BearerClass.UserCode}'";
+	                WHERE U.Code = '{_Http.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}'
+                    AND M.i18n NOT LIKE 'ERP%'";
 
                 var data = _FillDT.ExecuteSQL(query);
 
@@ -131,16 +134,16 @@ namespace KANBAN.Controllers
                 throw new CustomHttpException(500, ex.Message);
             }
         }
-        
-        
+
+
         [HttpPost]
         public async Task<IActionResult> DeleteKBNOR_140_KB()
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
 
-                await _KB3Context.Database.ExecuteSqlRawAsync($"DELETE FROM [dbo].[KBNOR_140_KB] WHERE F_Update_By='{_BearerClass.UserCode}'");
+
+                await _KB3Context.Database.ExecuteSqlRawAsync($"DELETE FROM [dbo].[KBNOR_140_KB] WHERE F_Update_By='{_Http.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}'");
 
                 return Ok(new
                 {
@@ -154,16 +157,16 @@ namespace KANBAN.Controllers
                 throw new CustomHttpException(500, ex.Message);
             }
         }
-        
+
         [HttpPost]
         public async Task<IActionResult> DeleteKBNOR_450()
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
 
-                await _KB3Context.Database.ExecuteSqlRawAsync($"DELETE FROM [dbo].[KBNOR_450] WHERE F_Update_By='{_BearerClass.UserCode}'");
-                
+
+                await _KB3Context.Database.ExecuteSqlRawAsync($"DELETE FROM [dbo].[KBNOR_450] WHERE F_Update_By='{_Http.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}'");
+
                 return Ok(new
                 {
                     status = "200",

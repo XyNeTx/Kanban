@@ -2,11 +2,14 @@
 using KANBAN.Models.KB3.Master.ViewModel;
 using KANBAN.Services;
 using KANBAN.Services.Master.IRepository;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace HINOSystem.Controllers.API.Master
 {
-    [ApiController]
+    [ApiController][Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("/api/[controller]/[action]")]
     public class KBNMS019Controller : ControllerBase
     {
@@ -27,7 +30,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
                 if (isNew)
                 {
                     var data = await _masterRepo.IKBNMS019.GetSupplierNew();
@@ -73,7 +76,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
                 if (isNew)
                 {
                     var data = await _masterRepo.IKBNMS019.GetPartNew();
@@ -84,7 +87,7 @@ namespace HINOSystem.Controllers.API.Master
                         response = "Success",
                         message = "Data Found",
                         data = data
-                            .Where(x => x.F_Store_cd.StartsWith(_BearerClass.Plant)
+                            .Where(x => x.F_Store_cd.StartsWith(User.FindFirst(ClaimTypes.Locality).Value)
                             && x.F_supplier_cd + "-" + x.F_plant == F_Supplier)
                             .Select(x => new
                             {
@@ -104,7 +107,7 @@ namespace HINOSystem.Controllers.API.Master
                         message = "Data Found",
                         data = data
                             .Where(x => x.F_Supplier_Code + "-" + x.F_Supplier_Plant == F_Supplier
-                            && x.F_Plant == _BearerClass.Plant)
+                            && x.F_Plant == User.FindFirst(ClaimTypes.Locality).Value)
                             .Select(x => new
                             {
                                 F_Part_No = x.F_Part_No + "-" + x.F_Ruibetsu
@@ -125,7 +128,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
                 if (isNew)
                 {
                     var data = await _masterRepo.IKBNMS019.GetPartNew();
@@ -142,7 +145,7 @@ namespace HINOSystem.Controllers.API.Master
                         message = "Data Found",
                         data = data
                             .Where(x => x.F_supplier_cd + "-" + x.F_plant == F_Supplier
-                            && x.F_Store_cd.StartsWith(_BearerClass.Plant))
+                            && x.F_Store_cd.StartsWith(User.FindFirst(ClaimTypes.Locality).Value))
                             .Select(x => new
                             {
                                 F_Store_Code = x.F_Store_cd
@@ -166,7 +169,7 @@ namespace HINOSystem.Controllers.API.Master
                         message = "Data Found",
                         data = data
                             .Where(x => x.F_Supplier_Code + "-" + x.F_Supplier_Plant == F_Supplier
-                            && x.F_Plant == _BearerClass.Plant)
+                            && x.F_Plant == User.FindFirst(ClaimTypes.Locality).Value)
                             .Select(x => new
                             {
                                 F_Store_Code = x.F_Store_CD
@@ -187,7 +190,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
                 if (isNew)
                 {
                     var data = await _masterRepo.IKBNMS019.GetPartNew();
@@ -254,7 +257,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
 
                 var data = await _masterRepo.IKBNMS019.GetPartName(F_PartNo);
 
@@ -279,7 +282,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
                 var data = await _masterRepo.IKBNMS019.GetMaxTrip(F_Supplier, F_PartNo, F_StoreCD, F_KanbanNo);
 
                 return Ok(new
@@ -302,7 +305,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
 
                 var data = await _masterRepo.IKBNMS019.GetListMaxArea(F_Supplier, F_PartNo, F_StoreCD, F_KanbanNo);
 
@@ -328,7 +331,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
 
                 await _masterRepo.IKBNMS019.Save(listObj, action);
 

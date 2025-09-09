@@ -3,16 +3,20 @@ using HINOSystem.Libs;
 using KANBAN.Context;
 using KANBAN.Libs;
 using KANBAN.Models.KB3.Master;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Data;
 using System.Globalization;
+using System.Security.Claims;
 
 namespace HINOSystem.Controllers.API.Master
 {
 
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/[controller]/[action]")]
     public class KBNMS008Controller : ControllerBase
     {
@@ -52,7 +56,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401)
                 {
                     return Unauthorized(new
@@ -66,7 +70,7 @@ namespace HINOSystem.Controllers.API.Master
 
                 var dbObj = _KB3Context.TB_MS_PartOrder.Where(x => x.F_Start_Date.CompareTo(yyyyMMdd) <= 0
                     && x.F_End_Date.CompareTo(yyyyMMdd) >= 0 && x.F_Type_Order.Trim() == "Pattern"
-                    && x.F_Store_Code.StartsWith(_BearerClass.Plant))
+                    && x.F_Store_Code.StartsWith(User.FindFirst(ClaimTypes.Locality).Value))
                     .ToList();
 
                 if (dbObj.Count == 0)
@@ -109,7 +113,7 @@ namespace HINOSystem.Controllers.API.Master
             try
             {
 
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401)
                 {
                     return Unauthorized(new
@@ -123,11 +127,11 @@ namespace HINOSystem.Controllers.API.Master
 
                 var name = _PPM3Context.T_Supplier_MS.Where(x => x.F_supplier_cd == supplier.Substring(0, 4) &&
                     x.F_Plant_cd == supplier[5] && x.F_TC_Str.CompareTo(yyyyMMdd) <= 0 && x.F_TC_End.CompareTo(yyyyMMdd) >= 0
-                    && x.F_Store_cd.StartsWith(_BearerClass.Plant)).AsNoTracking().AsQueryable();
+                    && x.F_Store_cd.StartsWith(User.FindFirst(ClaimTypes.Locality).Value)).AsNoTracking().AsQueryable();
 
                 var cycle = _KB3Context.TB_MS_DeliveryTime.AsNoTracking().Where(x => x.F_Supplier_Code == supplier.Substring(0, 4) &&
                         x.F_Supplier_Plant == supplier[5].ToString() && x.F_Start_Date.CompareTo(yyyyMMdd) <= 0 && x.F_End_Date.CompareTo(yyyyMMdd) >= 0
-                        && x.F_Plant.StartsWith(_BearerClass.Plant)).AsQueryable();
+                        && x.F_Plant.StartsWith(User.FindFirst(ClaimTypes.Locality).Value)).AsQueryable();
 
                 if (!string.IsNullOrWhiteSpace(store) && (!string.IsNullOrWhiteSpace(storeTo)))
                 {
@@ -177,7 +181,7 @@ namespace HINOSystem.Controllers.API.Master
             try
             {
 
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401)
                 {
                     return Unauthorized(new
@@ -190,7 +194,7 @@ namespace HINOSystem.Controllers.API.Master
                 };
 
                 var kanban = _KB3Context.TB_MS_PartOrder.Where(x => x.F_Start_Date.CompareTo(yyyyMMdd) <= 0
-                && x.F_End_Date.CompareTo(yyyyMMdd) >= 0 && x.F_Store_Code.StartsWith(_BearerClass.Plant)
+                && x.F_End_Date.CompareTo(yyyyMMdd) >= 0 && x.F_Store_Code.StartsWith(User.FindFirst(ClaimTypes.Locality).Value)
                 && x.F_Type_Order.Trim() == "Pattern").OrderBy(x => x.F_Kanban_No).AsQueryable();
 
                 if (!string.IsNullOrWhiteSpace(supplier))
@@ -245,7 +249,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401)
                 {
                     return Unauthorized(new
@@ -258,7 +262,7 @@ namespace HINOSystem.Controllers.API.Master
                 }
 
                 var store = _KB3Context.TB_MS_PartOrder.Where(x => x.F_Start_Date.CompareTo(yyyyMMdd) <= 0
-                        && x.F_End_Date!.CompareTo(yyyyMMdd) >= 0 && x.F_Store_Code.StartsWith(_BearerClass.Plant)
+                        && x.F_End_Date!.CompareTo(yyyyMMdd) >= 0 && x.F_Store_Code.StartsWith(User.FindFirst(ClaimTypes.Locality).Value)
                         && x.F_Type_Order!.Trim() == "Pattern").AsQueryable();
 
                 if (!string.IsNullOrWhiteSpace(supplier))
@@ -316,7 +320,7 @@ namespace HINOSystem.Controllers.API.Master
             try
             {
 
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401)
                 {
                     return Unauthorized(new
@@ -329,7 +333,7 @@ namespace HINOSystem.Controllers.API.Master
                 };
 
                 var part = _KB3Context.TB_MS_PartOrder.Where(x => x.F_Start_Date.CompareTo(yyyyMMdd) <= 0
-                                       && x.F_End_Date.CompareTo(yyyyMMdd) >= 0 && x.F_Store_Code.StartsWith(_BearerClass.Plant)
+                                       && x.F_End_Date.CompareTo(yyyyMMdd) >= 0 && x.F_Store_Code.StartsWith(User.FindFirst(ClaimTypes.Locality).Value)
                                                               && x.F_Type_Order.Trim() == "Pattern").AsQueryable();
 
                 if (!string.IsNullOrWhiteSpace(supplier))
@@ -450,7 +454,7 @@ namespace HINOSystem.Controllers.API.Master
             }
 
             var dbObj = _KB3Context.TB_MS_PartOrder.Where(x => x.F_Start_Date.CompareTo(yyyyMMdd) <= 0
-                         && x.F_End_Date.CompareTo(yyyyMMdd) >= 0 && x.F_Store_Code.StartsWith(_BearerClass.Plant)
+                         && x.F_End_Date.CompareTo(yyyyMMdd) >= 0 && x.F_Store_Code.StartsWith(User.FindFirst(ClaimTypes.Locality).Value)
                          && x.F_Type_Order.Trim() == "Pattern").AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(supplier))
@@ -514,7 +518,7 @@ namespace HINOSystem.Controllers.API.Master
                 string periodDay = "";
                 string periodNight = "";
 
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401)
                 {
                     return Unauthorized(new
@@ -543,12 +547,12 @@ namespace HINOSystem.Controllers.API.Master
                     });
                 }
 
-                var storecode = _BearerClass.Plant switch
+                var storecode = User.FindFirst(ClaimTypes.Locality).Value switch
                 {
                     "1" => "1A",
                     "2" => "2B",
                     "3" => "3C",
-                    _ => _BearerClass.Plant
+                    _ => User.FindFirst(ClaimTypes.Locality).Value
                 };
 
                 int dd = int.Parse(obj.F_Delivery_Date.Substring(6, 2));
@@ -597,9 +601,9 @@ namespace HINOSystem.Controllers.API.Master
                         string _cycleB = cycle.Select(x => x.F_Cycle).FirstOrDefault().Substring(2, 2);
                         sql = "exec [dbo].[sp_findPeriod] @p0,@p1,@p2,@p3,@p4,@p5";
                         var periodData = _FillDT.ExecuteSQL(sql,
-                            _BearerClass.Plant, obj.F_Supplier_Code,
+                            User.FindFirst(ClaimTypes.Locality).Value, obj.F_Supplier_Code,
                             obj.F_Supplier_Plant, obj.F_Delivery_Date,
-                            _BearerClass.UserCode, _cycleB);
+                            User.FindFirst(ClaimTypes.UserData).Value, _cycleB);
 
                         periodDay = JsonConvert.SerializeObject(periodData.Rows[0]["F_Period"]);
                     }
@@ -608,9 +612,9 @@ namespace HINOSystem.Controllers.API.Master
                         string _cycleB = cycle.Select(x => x.F_Cycle).FirstOrDefault().Substring(2, 2);
                         sql = "exec [dbo].[sp_findPeriod] @p0,@p1,@p2,@p3,@p4,@p5";
                         var periodData = _FillDT.ExecuteSQL(sql,
-                            _BearerClass.Plant, obj.F_Supplier_Code,
+                            User.FindFirst(ClaimTypes.Locality).Value, obj.F_Supplier_Code,
                             obj.F_Supplier_Plant, obj.F_Delivery_Date,
-                            _BearerClass.UserCode, _cycleB);
+                            User.FindFirst(ClaimTypes.UserData).Value, _cycleB);
 
                         periodNight = JsonConvert.SerializeObject(periodData.Rows[1]["F_Period"]);
                     }
@@ -678,7 +682,7 @@ namespace HINOSystem.Controllers.API.Master
                                 x.F_Store_Code == DT_PartControl.Rows[i]["F_Store_Code"].ToString().Trim() &&
                                 x.F_Part_No == DT_PartControl.Rows[i]["F_Part_No"].ToString().Trim() &&
                                 x.F_Ruibetsu == DT_PartControl.Rows[i]["F_Ruibetsu"].ToString().Trim() &&
-                                x.F_Delivery_Date == obj.F_Delivery_Date && x.F_Plant == _BearerClass.Plant).ToList();
+                                x.F_Delivery_Date == obj.F_Delivery_Date && x.F_Plant == User.FindFirst(ClaimTypes.Locality).Value).ToList();
 
                         if (TMP_Planning.Count == 0)
                         {
@@ -688,7 +692,7 @@ namespace HINOSystem.Controllers.API.Master
                                 $", F_Trip1, F_Trip2, F_Trip3, F_Trip4, F_Trip5, F_Trip6, F_Trip7, F_Trip8, F_Trip9, F_Trip10 " +
                                 $", F_Trip11, F_Trip12, F_Trip13, F_Trip14, F_Trip15, F_Trip16, F_Trip17, F_Trip18, F_Trip19, F_Trip20 " +
                                 $", F_Trip21, F_Trip22, F_Trip23, F_Trip24, F_Trip25, F_Trip26, F_Trip27, F_Trip28, F_Trip29, F_Trip30 " +
-                                $", F_Trip31, F_Trip32, F_Create_Date, F_Create_By) SELECT '{_BearerClass.Plant}' AS F_Plant " +
+                                $", F_Trip31, F_Trip32, F_Create_Date, F_Create_By) SELECT '{User.FindFirst(ClaimTypes.Locality).Value}' AS F_Plant " +
                                 $", '{obj.F_Delivery_Date}' AS F_Delivery_Date  , RTRIM(C.F_supplier_cd) AS F_Supplier_Code " +
                                 $", RTRIM(C.F_plant) AS F_Supplier_Plant " +
                                 $", RTRIM(C.F_Store_cd) AS F_Store_Code " +
@@ -716,7 +720,7 @@ namespace HINOSystem.Controllers.API.Master
                                 $", '{obj.F_Trip29}' AS F_Trip29 , '{obj.F_Trip30}' AS F_Trip30" +
                                 $", '{obj.F_Trip31}' AS F_Trip31 , '{obj.F_Trip32}' AS F_Trip32" +
                                 $", '{DateTime.Now}' AS F_Create_Date " +
-                                $", '{_BearerClass.UserCode}' AS F_Create_By " +
+                                $", '{User.FindFirst(ClaimTypes.UserData).Value}' AS F_Create_By " +
                                 $"FROM {ppmConnect}.[dbo].[T_Construction] C  " +
                                 $"INNER JOIN TB_MS_PartOrder P " +
                                 $"ON C.F_supplier_cd = P.F_Supplier_Cd collate Thai_CI_AS " +
@@ -762,7 +766,7 @@ namespace HINOSystem.Controllers.API.Master
                             x.F_Part_No == obj.F_Part_No &&
                             x.F_Ruibetsu == obj.F_Ruibetsu &&
                             x.F_Delivery_Date == obj.F_Delivery_Date &&
-                            x.F_Plant == _BearerClass.Plant).ToList();
+                            x.F_Plant == User.FindFirst(ClaimTypes.Locality).Value).ToList();
 
 
                     if (TMP_Planning.Count == 0)
@@ -773,7 +777,7 @@ namespace HINOSystem.Controllers.API.Master
                             $", F_Trip1, F_Trip2, F_Trip3, F_Trip4, F_Trip5, F_Trip6, F_Trip7, F_Trip8, F_Trip9, F_Trip10 " +
                             $", F_Trip11, F_Trip12, F_Trip13, F_Trip14, F_Trip15, F_Trip16, F_Trip17, F_Trip18, F_Trip19, F_Trip20 " +
                             $", F_Trip21, F_Trip22, F_Trip23, F_Trip24, F_Trip25, F_Trip26, F_Trip27, F_Trip28, F_Trip29, F_Trip30 " +
-                            $", F_Trip31, F_Trip32, F_Create_Date, F_Create_By) SELECT '{_BearerClass.Plant}' AS F_Plant " +
+                            $", F_Trip31, F_Trip32, F_Create_Date, F_Create_By) SELECT '{User.FindFirst(ClaimTypes.Locality).Value}' AS F_Plant " +
                             $", '{obj.F_Delivery_Date}' AS F_Delivery_Date  , RTRIM(C.F_supplier_cd) AS F_Supplier_Code " +
                             $", RTRIM(C.F_plant) AS F_Supplier_Plant " +
                             $", RTRIM(C.F_Store_cd) AS F_Store_Code " +
@@ -801,7 +805,7 @@ namespace HINOSystem.Controllers.API.Master
                             $", '{obj.F_Trip29}' AS F_Trip29 , '{obj.F_Trip30}' AS F_Trip30" +
                             $", '{obj.F_Trip31}' AS F_Trip31 , '{obj.F_Trip32}' AS F_Trip32" +
                             $", '{DateTime.Now}' AS F_Create_Date " +
-                            $", '{_BearerClass.UserCode}' AS F_Create_By " +
+                            $", '{User.FindFirst(ClaimTypes.UserData).Value}' AS F_Create_By " +
                             $"FROM {ppmConnect}.[dbo].[T_Construction] C  " +
                             $"INNER JOIN TB_MS_PartOrder P " +
                             $"ON C.F_supplier_cd = P.F_Supplier_Cd collate Thai_CI_AS " +
@@ -846,12 +850,12 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                var storecode = _BearerClass.Plant switch
+                var storecode = User.FindFirst(ClaimTypes.Locality).Value switch
                 {
                     "1" => "1A",
                     "2" => "2B",
                     "3" => "3C",
-                    _ => _BearerClass.Plant
+                    _ => User.FindFirst(ClaimTypes.Locality).Value
                 };
                 string dateDelivery = obj.F_Delivery_Date;
                 DateTime last_Date = DateTime.ParseExact(dateDelivery, "yyyyMMdd", CultureInfo.InvariantCulture);
@@ -946,7 +950,7 @@ namespace HINOSystem.Controllers.API.Master
                         $"SET F_Last_Order = '{Last_Order}' " +
                         $",F_FC_Max = '{Forcasst3Shift}' " +
                         $",F_Order_Diff = '{DiffLast}' " +
-                        $"WHERE F_Plant = '{_BearerClass.Plant}' " +
+                        $"WHERE F_Plant = '{User.FindFirst(ClaimTypes.Locality).Value}' " +
                         $"AND F_Delivery_Date = '{dateDelivery}' " +
                         $"AND F_Supplier_Code = '{DT_PartControl.Rows[i]["F_Supplier_Cd"].ToString().Trim()}' " +
                         $"AND F_Supplier_Plant = '{DT_PartControl.Rows[i]["F_Supplier_Plant"].ToString().Trim()}' " +
@@ -975,7 +979,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401)
                 {
                     return Unauthorized(new
@@ -989,9 +993,9 @@ namespace HINOSystem.Controllers.API.Master
 
                 DateTime dateNow = DateTime.ParseExact(selDate, "yyyyMMdd", CultureInfo.InvariantCulture);
 
-                var dbObj = _KB3Context.TMP_Planning_Order.Where(x => x.F_Plant == _BearerClass.Plant
+                var dbObj = _KB3Context.TMP_Planning_Order.Where(x => x.F_Plant == User.FindFirst(ClaimTypes.Locality).Value
                     && x.F_Delivery_Date == dateNow.ToString("yyyyMMdd")
-                    && x.F_Store_Code.StartsWith(_BearerClass.Plant)).AsQueryable();
+                    && x.F_Store_Code.StartsWith(User.FindFirst(ClaimTypes.Locality).Value)).AsQueryable();
 
                 if (!string.IsNullOrWhiteSpace(supplier))
                 {
@@ -1051,7 +1055,7 @@ namespace HINOSystem.Controllers.API.Master
             try
             {
 
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401)
                 {
                     return Unauthorized(new
@@ -1065,7 +1069,7 @@ namespace HINOSystem.Controllers.API.Master
 
                 foreach (var obj in listObj)
                 {
-                    var dbObj = _KB3Context.TMP_Planning_Order.Where(x => x.F_Plant == _BearerClass.Plant
+                    var dbObj = _KB3Context.TMP_Planning_Order.Where(x => x.F_Plant == User.FindFirst(ClaimTypes.Locality).Value
                             && x.F_Delivery_Date == obj.F_Delivery_Date
                             //&& x.F_Store_Code == obj.F_Store_Code
                             && x.F_Supplier_Code == obj.F_Supplier_Code
@@ -1087,7 +1091,7 @@ namespace HINOSystem.Controllers.API.Master
 
                     obj.F_Create_By = dbObj.F_Create_By;
                     obj.F_Create_Date = dbObj.F_Create_Date;
-                    obj.F_Update_By = _BearerClass.UserCode;
+                    obj.F_Update_By = User.FindFirst(ClaimTypes.UserData).Value;
                     obj.F_Update_Date = DateTime.Now;
 
                     _KB3Context.TMP_Planning_Order.Update(obj);
@@ -1183,7 +1187,7 @@ namespace HINOSystem.Controllers.API.Master
             try
             {
 
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401)
                 {
                     return Unauthorized(new
@@ -1195,8 +1199,8 @@ namespace HINOSystem.Controllers.API.Master
                     });
                 }
 
-                var existList = _KB3Context.TMP_Planning_Order.Where(x => x.F_Plant == _BearerClass.Plant
-                                   //&& x.F_Create_By == _BearerClass.UserCode
+                var existList = _KB3Context.TMP_Planning_Order.Where(x => x.F_Plant == User.FindFirst(ClaimTypes.Locality).Value
+                                   //&& x.F_Create_By == User.FindFirst(ClaimTypes.UserData).Value
                                    && x.F_Supplier_Code == listObj[0].F_Supplier_Code
                                    && x.F_Supplier_Plant == listObj[0].F_Supplier_Plant
                                    ).ToList();
@@ -1205,14 +1209,14 @@ namespace HINOSystem.Controllers.API.Master
                 await _KB3Context.SaveChangesAsync();
 
                 var dbObj = _KB3Context.TB_MS_PartOrder.Where(x => x.F_Start_Date.CompareTo(yyyyMMdd) <= 0
-                         && x.F_End_Date.CompareTo(yyyyMMdd) >= 0 && x.F_Store_Code.StartsWith(_BearerClass.Plant)
+                         && x.F_End_Date.CompareTo(yyyyMMdd) >= 0 && x.F_Store_Code.StartsWith(User.FindFirst(ClaimTypes.Locality).Value)
                          && x.F_Type_Order.Trim() == "Pattern").AsNoTracking().AsQueryable();
 
                 int lastList = listObj.Count - 1;
 
                 foreach (var each in listObj)
                 {
-                    each.F_Create_By = _BearerClass.UserCode;
+                    each.F_Create_By = User.FindFirst(ClaimTypes.UserData).Value;
                     each.F_Create_Date = DateTime.Now;
                 }
 
@@ -1300,8 +1304,8 @@ namespace HINOSystem.Controllers.API.Master
                     });
                 }
 
-                var listObj = _KB3Context.TMP_Planning_Order.Where(x => x.F_Plant == _BearerClass.Plant
-                                   && x.F_Create_By == _BearerClass.UserCode).ToList();
+                var listObj = _KB3Context.TMP_Planning_Order.Where(x => x.F_Plant == User.FindFirst(ClaimTypes.Locality).Value
+                                   && x.F_Create_By == User.FindFirst(ClaimTypes.UserData).Value).ToList();
 
                 foreach (var obj in listObj)
                 {

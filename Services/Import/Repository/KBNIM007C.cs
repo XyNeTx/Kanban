@@ -3,14 +3,13 @@ using HINOSystem.Libs;
 using KANBAN.Context;
 using KANBAN.Libs;
 using KANBAN.Models.KB3.SpecialData.ViewModel;
-using KANBAN.Models.KB3.SpecialOrdering;
 using KANBAN.Services.Automapper.Interface;
 using KANBAN.Services.Import.Interface;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Data;
 using System.Globalization;
+using System.Security.Claims;
 
 namespace KANBAN.Services.Import.Repository
 {
@@ -23,6 +22,7 @@ namespace KANBAN.Services.Import.Repository
         private readonly SerilogLibs _log;
         private readonly IEmailService _emailService;
         private readonly IAutoMapService _automapService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
         public KBNIM007C
@@ -155,7 +155,7 @@ namespace KANBAN.Services.Import.Repository
                 string sql = $@"Update TB_Transaction_TMP set F_Cycle_Time = S.F_Cycle 
                     From TB_Transaction_TMP T INNER JOIN TB_MS_DeliveryTime S ON T.F_Supplier_Cd collate Thai_CI_AS = S.F_Supplier_Code  
                     and T.F_Supplier_Plant collate Thai_CI_AS = S.F_Supplier_Plant 
-                    Where (T.F_Type='Special' or T.F_Type='Trial') and T.F_Plant = '{_BearerClass.Plant}'
+                    Where (T.F_Type='Special' or T.F_Type='Trial') and T.F_Plant = '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value}'
                     and S.F_Start_Date <='{ProcessDate}' and S.F_End_Date >='{ProcessDate}'";
 
                 await _kbContext.Database.ExecuteSqlRawAsync(sql);
@@ -204,7 +204,7 @@ namespace KANBAN.Services.Import.Repository
                     C.F_workCd_D21, C.F_workCd_N21, C.F_workCd_D22, C.F_workCd_N22, C.F_workCd_D23, C.F_workCd_N23, C.F_workCd_D24, C.F_workCd_N24, 
                     C.F_workCd_D25, C.F_workCd_N25, C.F_workCd_D26, C.F_workCd_N26, C.F_workCd_D27, C.F_workCd_N27, C.F_workCd_D28, C.F_workCd_N28, 
                     c.F_workCd_D29, c.F_workCd_N29, c.F_workCd_D30, c.F_workCd_N30, c.F_workCd_D31, c.F_workCd_N31,C.F_Store_cd , C.F_YM 
-                    FROM  TB_Transaction_TMP AS T INNER JOIN TB_Calendar AS C ON C.F_YM ='{ProcessDate.Substring(0, 6)}' 
+                    FROM  TB_Transaction_TMP AS T INNER JOIN TB_Calendar AS C ON C.F_YM ='{ProcessDate.Replace("-",string.Empty).Substring(0, 6)}' 
                     AND T.F_Store_CD = C.F_Store_cd collate Thai_CI_AS 
                     WHERE (T.F_Type='Special' or T.F_Type = 'Trial') and F_PDS_NO='{obj.F_PDS_No}' 
                     and F_PDS_Issued_Date = '{IssuedDate}' and T.F_ORDERTYPE='N' ";
@@ -243,7 +243,7 @@ namespace KANBAN.Services.Import.Repository
                         SELECT     F_Type,F_Type_Spc, F_Plant, F_PDS_No, F_PDS_Issued_Date, F_Store_CD, F_Part_No, F_Ruibetsu, F_Kanban_No, F_Part_Name, F_Qty_Pack, F_Part_Order, 
                         F_Ruibetsu_Order, F_Store_Order, F_Name_Order, F_Qty,F_Qty_LEvel1, F_Seq_No, F_Seq_Type, F_Delivery_Date, F_Adv_Deli_Date, F_OrderType, F_Country, 
                         '1' as F_Reg_Flg, F_Inventory_Flg, F_Supplier_CD, F_Supplier_Plant, F_Cycle_Time, F_Safty_Stock, F_Part_Refer, F_Ruibetsu_Refer, 
-                        '{_BearerClass.UserCode}' as F_Update_By, getdate() as F_Update_Date,'' as F_Process_By,'' as F_Process_Date, F_Remark,'' as F_HMMT_PDS,F_Survey_Doc,F_Parent_Level2, F_Qty_Level2, F_Parent_Level3, F_Qty_Level3, F_Parent_Level4, F_Qty_Level4,case when F_round = 0 then 1 else F_round end F_Round 
+                        '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}' as F_Update_By, getdate() as F_Update_Date,'' as F_Process_By,'' as F_Process_Date, F_Remark,'' as F_HMMT_PDS,F_Survey_Doc,F_Parent_Level2, F_Qty_Level2, F_Parent_Level3, F_Qty_Level3, F_Parent_Level4, F_Qty_Level4,case when F_round = 0 then 1 else F_round end F_Round 
                         FROM TB_Transaction_TMP 
                         Where (F_Type='Special' or F_TYPE ='Trial' ) and F_PDS_NO='{obj.F_PDS_No}' 
                         and F_PDS_Issued_Date = '{IssuedDate}' 
@@ -262,10 +262,10 @@ namespace KANBAN.Services.Import.Repository
 
                     _log.WriteLogMsg("Delete Data from TB_Transaction_TMP | SQL : " + sql);
 
-                    await _kbContext.TB_Transaction.Where(x=>x.F_Type == "Special" || x.F_Type == "Trial"
+                    await _kbContext.TB_Transaction.Where(x=>(x.F_Type == "Special" || x.F_Type == "Trial")
                         && x.F_PDS_Issued_Date == IssuedDate && x.F_PDS_No == obj.F_PDS_No
                         && x.F_Delivery_Date == DeliveryDate)
-                        .ExecuteUpdateAsync(x=>x.SetProperty(x=>x.F_Process_Date, ProcessDate)
+                        .ExecuteUpdateAsync(x=>x.SetProperty(x=>x.F_Process_Date, ProcessDate.Replace("-",string.Empty))
                         .SetProperty(x => x.F_Process_Shift, ProcessShift[0]));
 
                     _log.WriteLogMsg("Update Process Date and Shift to TB_Transaction Process Date = " + ProcessDate + " Process Shift = " + ProcessShift);

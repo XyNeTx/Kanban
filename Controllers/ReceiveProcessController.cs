@@ -1,7 +1,6 @@
-﻿using HINOSystem.Models;
-using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
+﻿using Microsoft.AspNetCore.Mvc;
 using HINOSystem.Libs;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HINOSystem.Controllers
 {
@@ -29,44 +28,51 @@ namespace HINOSystem.Controllers
             _wrtConnect = wrtConnect;
         }
 
-
+        [Authorize(Policy = "KBNRC110")]
         public IActionResult KBNRC110()
         {
-            return _authenGuard.guard(ControllerContext);
+            return View();
         }
 
+        [Authorize(Policy = "KBNRC120")]
         public IActionResult KBNRC120()
         {
-            return _authenGuard.guard(ControllerContext);
+            return View();
         }
 
+        [Authorize(Policy = "KBNRC210")]
         public IActionResult KBNRC210()
         {
-            return _authenGuard.guard(ControllerContext);
+            return View();
         }
 
+        [Authorize(Policy = "KBNRC130")]
         public IActionResult KBNRC130()
         {
-            return _authenGuard.guard(ControllerContext);
+            return View();
         }
+        [Authorize(Policy = "KBNRC140")]
         public IActionResult KBNRC140()
         {
-            return _authenGuard.guard(ControllerContext);
+            return View();
         }
 
+        [Authorize(Policy = "KBNRC150")]
         public IActionResult KBNRC150()
         {
-            return _authenGuard.guard(ControllerContext);
+            return View();
         }
 
+        [Authorize(Policy = "KBNRC160")]
         public IActionResult KBNRC160()
         {
-            return _authenGuard.guard(ControllerContext);
+            return View();
         }
 
+        [Authorize(Policy = "KBNRC220")]
         public IActionResult KBNRC220()
         {
-            return _authenGuard.guard(ControllerContext);
+            return View();
         }
 
     }

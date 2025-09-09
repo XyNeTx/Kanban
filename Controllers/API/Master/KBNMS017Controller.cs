@@ -5,13 +5,17 @@ using KANBAN.Context;
 using KANBAN.Libs;
 using KANBAN.Services;
 using KANBAN.Services.Automapper.Interface;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Security.Claims;
 
 namespace HINOSystem.Controllers.API.Master
 {
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("/api/[controller]/[action]")]
     public class KBNMS017Controller : ControllerBase
     {
@@ -52,10 +56,10 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
 
                 var data = await _kbContext.TB_MS_RatioAddress.AsNoTracking()
-                    .Where(x => x.F_Plant == _BearerClass.Plant).ToListAsync();
+                    .Where(x => x.F_Plant == User.FindFirst(ClaimTypes.Locality).Value).ToListAsync();
 
                 if (!string.IsNullOrWhiteSpace(F_Part_No))
                 {
@@ -89,7 +93,7 @@ namespace HINOSystem.Controllers.API.Master
             try
             {
                 string logMsg = "";
-                await _BearerClass.CheckAuthorize();
+                
 
                 var obj = listObj.FirstOrDefault();
 
@@ -112,7 +116,7 @@ namespace HINOSystem.Controllers.API.Master
                 var T_Con = await _PPM3Context.T_Construction.AsNoTracking()
                     .Where(x => x.F_Local_Str.CompareTo(strDateNow) <= 0
                     && x.F_Local_End.CompareTo(strDateNow) >= 0
-                    && x.F_Store_cd.StartsWith(_BearerClass.Plant)).ToListAsync();
+                    && x.F_Store_cd.StartsWith(User.FindFirst(ClaimTypes.Locality).Value)).ToListAsync();
 
                 if (!string.IsNullOrWhiteSpace(obj.F_Part_No))
                 {
@@ -133,7 +137,7 @@ namespace HINOSystem.Controllers.API.Master
                 if (action.ToLower() == "new")
                 {
                     var listExObj = await _kbContext.TB_MS_RatioAddress.AsNoTracking()
-                    .Where(x => x.F_Plant == _BearerClass.Plant).ToListAsync();
+                    .Where(x => x.F_Plant == User.FindFirst(ClaimTypes.Locality).Value).ToListAsync();
 
                     if (!string.IsNullOrWhiteSpace(obj.F_Part_No))
                     {
@@ -147,8 +151,8 @@ namespace HINOSystem.Controllers.API.Master
 
                     if (listExObj.Count == 0)
                     {
-                        obj.F_Create_By = _BearerClass.UserCode;
-                        obj.F_Update_By = _BearerClass.UserCode;
+                        obj.F_Create_By = User.FindFirst(ClaimTypes.UserData).Value;
+                        obj.F_Update_By = User.FindFirst(ClaimTypes.UserData).Value;
                         obj.F_Create_Date = DateTime.Now;
                         obj.F_Update_Date = DateTime.Now;
                         obj.F_Ratio2 = obj.F_Ratio2 == 0 ? null : obj.F_Ratio2;
@@ -164,7 +168,7 @@ namespace HINOSystem.Controllers.API.Master
                 else if (action.ToLower() == "upd")
                 {
                     var listExObj = await _kbContext.TB_MS_RatioAddress.AsNoTracking()
-                    .Where(x => x.F_Plant == _BearerClass.Plant).ToListAsync();
+                    .Where(x => x.F_Plant == User.FindFirst(ClaimTypes.Locality).Value).ToListAsync();
 
                     if (!string.IsNullOrWhiteSpace(obj.F_Part_No))
                     {
@@ -182,7 +186,7 @@ namespace HINOSystem.Controllers.API.Master
 
                         obj.F_Create_By = listExObj[0].F_Create_By;
                         obj.F_Create_Date = listExObj[0].F_Create_Date;
-                        obj.F_Update_By = _BearerClass.UserCode;
+                        obj.F_Update_By = User.FindFirst(ClaimTypes.UserData).Value;
                         obj.F_Update_Date = DateTime.Now;
                         obj.F_Ratio2 = obj.F_Ratio2 == 0 ? null : obj.F_Ratio2;
                         obj.F_Ratio3 = obj.F_Ratio3 == 0 ? null : obj.F_Ratio3;
@@ -201,7 +205,7 @@ namespace HINOSystem.Controllers.API.Master
                     foreach (var item in listObj)
                     {
                         var delObj = await _kbContext.TB_MS_RatioAddress
-                            .FirstOrDefaultAsync(x => x.F_Plant == _BearerClass.Plant
+                            .FirstOrDefaultAsync(x => x.F_Plant == User.FindFirst(ClaimTypes.Locality).Value
                             && x.F_Part_No == obj.F_Part_No
                             && x.F_Ruibetsu == obj.F_Ruibetsu
                             && x.F_Store_Cd == obj.F_Store_Cd);
@@ -240,11 +244,11 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
                 if (action.ToLower() == "new")
                 {
                     var data = await _PPM3Context.T_Construction.AsNoTracking()
-                        .Where(x => x.F_Plant_CD == _BearerClass.Plant[0]
+                        .Where(x => x.F_Plant_CD == User.FindFirst(ClaimTypes.Locality).Value[0]
                         && x.F_Local_Str.CompareTo(strDateNow) <= 0
                         && x.F_Local_End.CompareTo(strDateNow) >= 0)
                         .ToListAsync();
@@ -278,7 +282,7 @@ namespace HINOSystem.Controllers.API.Master
                 {
 
                     var data = await _kbContext.TB_MS_RatioAddress.AsNoTracking()
-                        .Where(x => x.F_Plant == _BearerClass.Plant).ToListAsync();
+                        .Where(x => x.F_Plant == User.FindFirst(ClaimTypes.Locality).Value).ToListAsync();
 
                     if (!string.IsNullOrWhiteSpace(F_Part_No))
                     {
@@ -317,10 +321,10 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
 
                 var PartName = await _PPM3Context.T_Construction.AsNoTracking()
-                    .FirstOrDefaultAsync(x => x.F_Plant_CD == _BearerClass.Plant[0]
+                    .FirstOrDefaultAsync(x => x.F_Plant_CD == User.FindFirst(ClaimTypes.Locality).Value[0]
                     && x.F_Local_Str.CompareTo(strDateNow) <= 0
                     && x.F_Local_End.CompareTo(strDateNow) >= 0
                     && x.F_Part_no.Trim() == F_Part_No

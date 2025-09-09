@@ -19,7 +19,7 @@ namespace HINOSystem.Controllers.KBN
         #region MyViews
         public IActionResult Home()
         {
-            return _authenGuard.guard(ControllerContext);
+            return View();
         }
 
 

@@ -2,7 +2,8 @@
 using KANBAN.Models.KB3.SpecialOrdering;
 using KANBAN.Services;
 using KANBAN.Services.SpecialOrdering.Interface;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -10,6 +11,7 @@ namespace KANBAN.Controllers.API.SpecialOrdering
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class KBNOR250Controller : ControllerBase
     {
         private readonly ISpecialOrderingServices _services;
@@ -26,7 +28,7 @@ namespace KANBAN.Controllers.API.SpecialOrdering
         {
             try
             {
-                await _bearer.CheckAuthorize();
+                
 
                 var data = _services.IKBNOR250.GetSurveyNoPDS(fac, SurveyDoc, DeliveryDT, DeliYM);
 
@@ -43,7 +45,7 @@ namespace KANBAN.Controllers.API.SpecialOrdering
         {
             try
             {
-                await _bearer.CheckAuthorize();
+                
 
                 var data = _services.IKBNOR250.CheckPriceAndPackageFlag(SurveyDoc);
 
@@ -60,7 +62,7 @@ namespace KANBAN.Controllers.API.SpecialOrdering
         {
             try
             {
-                await _bearer.CheckAuthorize();
+                
 
                 await _services.IKBNOR250.Refresh();
 
@@ -77,7 +79,7 @@ namespace KANBAN.Controllers.API.SpecialOrdering
         {
             try
             {
-                await _bearer.CheckAuthorize();
+                
 
                 await _services.IKBNOR250.Generate(listObj, DeliYM);
 
@@ -94,7 +96,7 @@ namespace KANBAN.Controllers.API.SpecialOrdering
         {
             try
             {
-                await _bearer.CheckAuthorize();
+                
 
                 await _services.IKBNOR250.Unlock(listObj);
 

@@ -3,13 +3,17 @@ using HINOSystem.Libs;
 using KANBAN.Context;
 using KANBAN.Libs;
 using KANBAN.Models.KB3.Login;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace KANBAN.Controllers.API.DevelopMaintain
 {
     [Route("api/[controller]/[action]")]
-    [ApiController]
+    [ApiController][Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize]
     public class KBNMT110Controller : ControllerBase
     {
 
@@ -19,7 +23,7 @@ namespace KANBAN.Controllers.API.DevelopMaintain
         private readonly FillDataTable _FillDT;
         private readonly SerilogLibs _log;
         private readonly IEmailService _emailService;
-
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public KBNMT110Controller
             (
@@ -28,7 +32,8 @@ namespace KANBAN.Controllers.API.DevelopMaintain
             PPM3Context PPM3Context,
             FillDataTable FillDT,
             SerilogLibs log,
-            IEmailService emailService
+            IEmailService emailService,
+            IHttpContextAccessor httpContextAccessor
             )
         {
             _kbContext = kbContext;
@@ -37,6 +42,7 @@ namespace KANBAN.Controllers.API.DevelopMaintain
             _FillDT = FillDT;
             _log = log;
             _emailService = emailService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public List<Int64?> parentList = new List<Int64?>();
@@ -68,7 +74,9 @@ namespace KANBAN.Controllers.API.DevelopMaintain
                     })
                     .ToListAsync();
 
-                if (_BearerClass.UserCode != "20234111")
+                var code = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value;
+
+                if (_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value != "20234111")
                 {
                     data = data.Where(x => !x.remark.ToLower().StartsWith("erp")
                         && !x.remark.Contains(": Configuration")
@@ -252,9 +260,9 @@ namespace KANBAN.Controllers.API.DevelopMaintain
                         User_ID = item.User_ID,
                         Menu_ID = item.Menu_ID,
                         Remark = item.Remark,
-                        CreateBy = _BearerClass.UserCode,
+                        CreateBy = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value,
                         CreateAt = DateTime.Now,
-                        UpdateBy = _BearerClass.UserCode,
+                        UpdateBy = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value,
                         UpdateAt = DateTime.Now
                     };
 
@@ -319,9 +327,9 @@ namespace KANBAN.Controllers.API.DevelopMaintain
                     User_ID = (long)User_ID!,
                     Menu_ID = (long)parent,
                     Remark = menu.Name,
-                    CreateBy = _BearerClass.UserCode,
+                    CreateBy = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value,
                     CreateAt = DateTime.Now,
-                    UpdateBy = _BearerClass.UserCode,
+                    UpdateBy = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value,
                     UpdateAt = DateTime.Now
                 };
 

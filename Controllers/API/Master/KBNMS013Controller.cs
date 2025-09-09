@@ -2,15 +2,17 @@
 using HINOSystem.Libs;
 using HINOSystem.Models.KB3.Master;
 using KANBAN.Context;
-using KANBAN.Libs;
 using KANBAN.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Security.Claims;
 
 namespace HINOSystem.Controllers.API.Master
 {
-    [ApiController]
+    [ApiController][Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/[controller]/[action]")]
     public class KBNMS013Controller : ControllerBase
     {
@@ -49,7 +51,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401)
                 {
                     return Unauthorized();
@@ -145,7 +147,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401)
                 {
                     return Unauthorized();
@@ -156,7 +158,7 @@ namespace HINOSystem.Controllers.API.Master
                     var supplier = _PPM3Context.T_Construction
                         .Where(x => x.F_Local_Str.CompareTo(now) <= 0
                         && x.F_Local_End.CompareTo(now) >= 0
-                        && x.F_Store_cd.StartsWith(_BearerClass.Plant)).AsQueryable();
+                        && x.F_Store_cd.StartsWith(User.FindFirst(ClaimTypes.Locality).Value)).AsQueryable();
 
                     if (!string.IsNullOrWhiteSpace(kanban))
                     {
@@ -193,7 +195,7 @@ namespace HINOSystem.Controllers.API.Master
                     var supplier = _KB3Context.TB_MS_PartOrder
                         .Where(x => x.F_Start_Date.CompareTo(now) <= 0
                             && x.F_End_Date.CompareTo(now) >= 0
-                            && x.F_Plant == _BearerClass.Plant[0].ToString()).AsQueryable();
+                            && x.F_Plant == User.FindFirst(ClaimTypes.Locality).Value[0].ToString()).AsQueryable();
 
                     if (!string.IsNullOrWhiteSpace(kanban))
                     {
@@ -241,7 +243,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401)
                 {
                     return Unauthorized();
@@ -252,7 +254,7 @@ namespace HINOSystem.Controllers.API.Master
                     var kanban = _PPM3Context.T_Construction
                         .Where(x => x.F_Local_Str.CompareTo(now) <= 0
                         && x.F_Local_End.CompareTo(now) >= 0
-                        && x.F_Store_cd.StartsWith(_BearerClass.Plant)).AsQueryable();
+                        && x.F_Store_cd.StartsWith(User.FindFirst(ClaimTypes.Locality).Value)).AsQueryable();
 
                     if (!string.IsNullOrWhiteSpace(supplier))
                     {
@@ -289,7 +291,7 @@ namespace HINOSystem.Controllers.API.Master
                     var kanban = _KB3Context.TB_MS_PartOrder
                         .Where(x => x.F_Start_Date.CompareTo(now) <= 0
                             && x.F_End_Date.CompareTo(now) >= 0
-                            && x.F_Plant == _BearerClass.Plant[0].ToString()).AsQueryable();
+                            && x.F_Plant == User.FindFirst(ClaimTypes.Locality).Value[0].ToString()).AsQueryable();
 
                     if (!string.IsNullOrWhiteSpace(supplier))
                     {
@@ -338,7 +340,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401)
                 {
                     return Unauthorized();
@@ -349,7 +351,7 @@ namespace HINOSystem.Controllers.API.Master
                     var store = _PPM3Context.T_Construction
                         .Where(x => x.F_Local_Str.CompareTo(now) <= 0
                                 && x.F_Local_End.CompareTo(now) >= 0
-                                && x.F_Store_cd.StartsWith(_BearerClass.Plant)).AsQueryable();
+                                && x.F_Store_cd.StartsWith(User.FindFirst(ClaimTypes.Locality).Value)).AsQueryable();
 
                     if (!string.IsNullOrWhiteSpace(supplier))
                     {
@@ -384,7 +386,7 @@ namespace HINOSystem.Controllers.API.Master
                     var store = _KB3Context.TB_MS_PartOrder
                         .Where(x => x.F_Start_Date.CompareTo(now) <= 0
                                 && x.F_End_Date.CompareTo(now) >= 0
-                                && x.F_Plant == _BearerClass.Plant[0].ToString()).AsQueryable();
+                                && x.F_Plant == User.FindFirst(ClaimTypes.Locality).Value[0].ToString()).AsQueryable();
 
                     if (!string.IsNullOrWhiteSpace(supplier))
                     {
@@ -434,7 +436,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401)
                 {
                     return Unauthorized();
@@ -445,7 +447,7 @@ namespace HINOSystem.Controllers.API.Master
                     var partNo = _PPM3Context.T_Construction
                         .Where(x => x.F_Local_Str.CompareTo(now) <= 0
                                 && x.F_Local_End.CompareTo(now) >= 0
-                                && x.F_Store_cd.StartsWith(_BearerClass.Plant)).AsQueryable();
+                                && x.F_Store_cd.StartsWith(User.FindFirst(ClaimTypes.Locality).Value)).AsQueryable();
 
                     if (!string.IsNullOrWhiteSpace(supplier))
                     {
@@ -480,7 +482,7 @@ namespace HINOSystem.Controllers.API.Master
                     var partNo = _KB3Context.TB_MS_PartOrder
                         .Where(x => x.F_Start_Date.CompareTo(now) <= 0
                                 && x.F_End_Date.CompareTo(now) >= 0
-                                && x.F_Plant == _BearerClass.Plant[0].ToString()).AsQueryable();
+                                && x.F_Plant == User.FindFirst(ClaimTypes.Locality).Value[0].ToString()).AsQueryable();
 
                     if (!string.IsNullOrWhiteSpace(supplier))
                     {
@@ -529,7 +531,7 @@ namespace HINOSystem.Controllers.API.Master
             try
             {
 
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401)
                 {
                     return Unauthorized();
@@ -538,7 +540,7 @@ namespace HINOSystem.Controllers.API.Master
                 var partDetail = _PPM3Context.T_Construction
                     .Where(x => x.F_Local_Str.CompareTo(now) <= 0
                             && x.F_Local_End.CompareTo(now) >= 0
-                            && x.F_Store_cd.StartsWith(_BearerClass.Plant)
+                            && x.F_Store_cd.StartsWith(User.FindFirst(ClaimTypes.Locality).Value)
                             && x.F_Cycle_A == '1'
                             && x.F_Part_no.Trim() + "-" + x.F_Ruibetsu == partNo).AsQueryable();
 
@@ -597,7 +599,7 @@ namespace HINOSystem.Controllers.API.Master
             try
             {
 
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401)
                 {
                     return Unauthorized();
@@ -631,7 +633,7 @@ namespace HINOSystem.Controllers.API.Master
                     {
                         if (action == "update")
                         {
-                            partOrder.F_Update_By = _BearerClass.UserCode;
+                            partOrder.F_Update_By = User.FindFirst(ClaimTypes.UserData).Value;
                             partOrder.F_Update_Date = DateTime.Now;
                             partOrder.F_End_Date = obj.F_End_Date;
                             partOrder.F_PDS_Group = obj.F_PDS_Group;
@@ -664,9 +666,9 @@ namespace HINOSystem.Controllers.API.Master
                             });
                         }
 
-                        obj.F_Create_By = _BearerClass.UserCode;
+                        obj.F_Create_By = User.FindFirst(ClaimTypes.UserData).Value;
                         obj.F_Create_Date = DateTime.Now;
-                        obj.F_Update_By = _BearerClass.UserCode;
+                        obj.F_Update_By = User.FindFirst(ClaimTypes.UserData).Value;
                         obj.F_Update_Date = DateTime.Now;
                         _KB3Context.TB_MS_PartOrder.Add(obj);
                         _log.WriteLogMsg($"TB_MS_PartOrder(Save) Insert : {JsonConvert.SerializeObject(obj)}");

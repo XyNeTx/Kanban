@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using KANBAN.Models.KB3.Master;
+﻿using KANBAN.Models.KB3.Master;
 using Microsoft.EntityFrameworkCore;
 
 namespace KANBAN.Context;

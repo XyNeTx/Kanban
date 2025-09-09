@@ -1,13 +1,15 @@
 ﻿using HINOSystem.Libs;
-using HINOSystem.Models.KB3.Master;
 using KANBAN.Models.KB3.CKD_Ordering;
 using KANBAN.Services;
 using KANBAN.Services.CKD_Ordering.IRepository;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HINOSystem.Controllers.API.Master
 {
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("/api/[controller]/[action]")]
     public class KBNOR361Controller : ControllerBase
     {
@@ -28,7 +30,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
 
                 var data = await _CKDRepo.IKBNOR361_Repo.GetDataList(Supplier_Code, Kanban_No, Store_Code, Part_No, IsNew);
 
@@ -52,7 +54,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
 
                 var data = await _CKDRepo.IKBNOR361_Repo.GetSupplier(Supplier_Code, Store_Code);
 
@@ -76,7 +78,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
 
                 var data = await _CKDRepo.IKBNOR361_Repo.GetPartNo(Part_No, Supplier_Code, Kanban_No, Store_Code);
 
@@ -100,7 +102,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
 
                 var data = await _CKDRepo.IKBNOR361_Repo.GetList(Supplier_Code, Kanban_No, Store_Code, Part_No);
 
@@ -124,7 +126,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
 
                 await _CKDRepo.IKBNOR361_Repo.UpdateFlgClearModule(listObj);
 

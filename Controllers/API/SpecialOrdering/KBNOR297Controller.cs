@@ -1,7 +1,8 @@
 ﻿using HINOSystem.Libs;
 using KANBAN.Services;
 using KANBAN.Services.SpecialOrdering.Interface;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -9,6 +10,7 @@ namespace KANBAN.Controllers.API.SpecialOrdering
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class KBNOR297Controller : ControllerBase
     {
         private readonly ISpecialOrderingServices _services;
@@ -25,7 +27,7 @@ namespace KANBAN.Controllers.API.SpecialOrdering
         {
             try
             {
-                await _bearer.CheckAuthorize();
+                
                 var result = _services.IKBNOR297.GenReportExcel(CustOrderNo);
                 return Ok(new { status = "200", response = "Success", message = "Data Found", data = result });
             }
@@ -41,7 +43,7 @@ namespace KANBAN.Controllers.API.SpecialOrdering
             try
             {
 
-                await _bearer.CheckAuthorize();
+                
                 var data = _services.IKBNOR297.GetCustomerPO(DeliYM);
 
                 return Ok(new { status = "200", response = "Success", message = "Data Found", data = data });
@@ -57,7 +59,7 @@ namespace KANBAN.Controllers.API.SpecialOrdering
         {
             try
             {
-                await _bearer.CheckAuthorize();
+                
                 var result = _services.IKBNOR297.GetListAllPDSDetail(CustOrderNo);
                 var data = JsonConvert.SerializeObject(result);
 

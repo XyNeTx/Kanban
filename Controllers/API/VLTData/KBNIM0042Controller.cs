@@ -2,16 +2,19 @@
 using HINOSystem.Libs;
 using KANBAN.Context;
 using KANBAN.Models.KB3.VLT;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using NPOI.SS.Formula.Functions;
 using System.Data;
+using System.Security.Claims;
 
 namespace HINOSystem.Controllers.API.Master
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class KBNIM0042Controller : ControllerBase
     {
         private readonly IConfiguration _configuration;
@@ -56,7 +59,7 @@ namespace HINOSystem.Controllers.API.Master
             string _SQL = "";
             try
             {
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
                 if (pData != null) _json = JsonConvert.DeserializeObject(pData);
@@ -86,7 +89,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401) return Unauthorized(new
                 {
                     status = "401",
@@ -134,7 +137,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401) return Unauthorized(new
                 {
                     status = "401",
@@ -144,28 +147,28 @@ namespace HINOSystem.Controllers.API.Master
                 });
 
                 DataTable Frame = _FillDT.ExecuteSQL("EXEC [exec].[spKBNIM0042_GetSeq] @p0,@p1,@p2,@p3"
-                    , _BearerClass.Plant, "VLT", F_Customer_Cd, "Frame");
+                    , User.FindFirst(ClaimTypes.Locality).Value, "VLT", F_Customer_Cd, "Frame");
                 
                 DataTable Dedion = _FillDT.ExecuteSQL("EXEC [exec].[spKBNIM0042_GetSeq] @p0,@p1,@p2,@p3"
-                    , _BearerClass.Plant, "VLT", F_Customer_Cd, "DEDION");
+                    , User.FindFirst(ClaimTypes.Locality).Value, "VLT", F_Customer_Cd, "DEDION");
                 
                 DataTable TG = _FillDT.ExecuteSQL("EXEC [exec].[spKBNIM0042_GetSeq] @p0,@p1,@p2,@p3"
-                    , _BearerClass.Plant, "VLT", F_Customer_Cd, "Tail Gate");
+                    , User.FindFirst(ClaimTypes.Locality).Value, "VLT", F_Customer_Cd, "Tail Gate");
 
                 DataTable RR = _FillDT.ExecuteSQL("EXEC [exec].[spKBNIM0042_GetSeq] @p0,@p1,@p2,@p3"
-                    ,_BearerClass.Plant,"VLT",F_Customer_Cd,"RR Axle");
+                    ,User.FindFirst(ClaimTypes.Locality).Value,"VLT",F_Customer_Cd,"RR Axle");
 
                 DataTable FrameCKD = _FillDT.ExecuteSQL("EXEC [exec].[spKBNIM0042_GetSeq_CKD] @p0,@p1,@p2,@p3"
-                    , _BearerClass.Plant, "VLT", F_Customer_Cd, "Frame");
+                    , User.FindFirst(ClaimTypes.Locality).Value, "VLT", F_Customer_Cd, "Frame");
                 
                 DataTable DedionCKD = _FillDT.ExecuteSQL("EXEC [exec].[spKBNIM0042_GetSeq_CKD] @p0,@p1,@p2,@p3"
-                    , _BearerClass.Plant, "VLT", F_Customer_Cd, "DEDION");
+                    , User.FindFirst(ClaimTypes.Locality).Value, "VLT", F_Customer_Cd, "DEDION");
                 
                 DataTable TGCKD = _FillDT.ExecuteSQL("EXEC [exec].[spKBNIM0042_GetSeq_CKD] @p0,@p1,@p2,@p3"
-                    , _BearerClass.Plant, "VLT", F_Customer_Cd, "Tail Gate");
+                    , User.FindFirst(ClaimTypes.Locality).Value, "VLT", F_Customer_Cd, "Tail Gate");
 
                 DataTable RRCKD = _FillDT.ExecuteSQL("EXEC [exec].[spKBNIM0042_GetSeq_CKD] @p0,@p1,@p2,@p3"
-                    , _BearerClass.Plant,"VLT",F_Customer_Cd,"RR Axle");
+                    , User.FindFirst(ClaimTypes.Locality).Value,"VLT",F_Customer_Cd,"RR Axle");
 
 
 
@@ -218,7 +221,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401) return Unauthorized(new
                 {
                     status = "401",
@@ -228,10 +231,10 @@ namespace HINOSystem.Controllers.API.Master
                 });
 
                 DataTable EndSeq = _FillDT.ExecuteSQL("EXEC [exec].[spKBNIM0042_GetEndSeq] @p0,@p1,@p2,@p3,@p4",
-                    _BearerClass.Plant,"VLT",F_Customer_Cd,F_Part_Type,F_Remain_Unit);
+                    User.FindFirst(ClaimTypes.Locality).Value,"VLT",F_Customer_Cd,F_Part_Type,F_Remain_Unit);
 
                 DataTable EndSeqCKD = _FillDT.ExecuteSQL("EXEC [exec].[spKBNIM0042_GetEndSeq_CKD] @p0,@p1,@p2,@p3,@p4",
-                                       _BearerClass.Plant, "VLT", F_Customer_Cd, F_Part_Type, F_Remain_Unit);
+                                       User.FindFirst(ClaimTypes.Locality).Value, "VLT", F_Customer_Cd, F_Part_Type, F_Remain_Unit);
 
                 if (EndSeq.Rows.Count == 0 && EndSeqCKD.Rows.Count == 0)
                     return NotFound(new
@@ -277,7 +280,7 @@ namespace HINOSystem.Controllers.API.Master
             {
                 _KB3Transaction.CreateSavepoint("BeforeConfirm");
 
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401) return Unauthorized(new
                 {
                     status = "401",
@@ -287,7 +290,7 @@ namespace HINOSystem.Controllers.API.Master
                 });
 
                 var _Sql = $@"EXEC [exec].[spKBNIM0042_CONFIRM] 
-                        '{_BearerClass.Plant}','{_BearerClass.UserCode}','VLT',
+                        '{User.FindFirst(ClaimTypes.Locality).Value}','{User.FindFirst(ClaimTypes.UserData).Value}','VLT',
                         '{obj.F_Customer_Cd}','{obj.F_Part_Type}','{obj.F_Delivery_Date}',
                         '{obj.F_Start_Jig}','{obj.F_End_Jig}','{obj.F_Start_Jig_CKD}','{obj.F_End_Jig_CKD}'";
 

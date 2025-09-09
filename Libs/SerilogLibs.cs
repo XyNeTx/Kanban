@@ -1,4 +1,5 @@
 ﻿using Serilog;
+using System.Security.Claims;
 using ILogger = Serilog.ILogger;
 
 namespace HINOSystem.Libs
@@ -125,27 +126,27 @@ namespace HINOSystem.Libs
 
                 if (this.Controller.ToUpper().Contains("KBNMS"))
                 {
-                    LogMaster.Information($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
+                    LogMaster.Information($"{logMessage} | message : {Message} | username : {_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value} | hostname : {_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.WindowsDeviceClaim).Value}");
                 }
                 else if (this.Action.ToUpper().Contains("CAL") && this.Controller.ToLower().Contains("kbnor121"))
                 {
-                    LogBL.Information($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
+                    LogBL.Information($"{logMessage} | message : {Message} | username : {_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value} | hostname : {_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.WindowsDeviceClaim).Value}");
                 }
                 else if (this.Controller.ToUpper().Contains("KBNOR2"))
                 {
-                    LogSpecial.Information($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
+                    LogSpecial.Information($"{logMessage} | message : {Message} | username : {_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value} | hostname : {_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.WindowsDeviceClaim).Value}");
                 }
                 else if (this.Controller.ToUpper().Contains("KBNIM"))
                 {
-                    LogImport.Information($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
+                    LogImport.Information($"{logMessage} | message : {Message} | username : {_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value} | hostname : {_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.WindowsDeviceClaim).Value}");
                 }
                 else if (this.Controller.ToUpper().Contains("KBNOR3"))
                 {
-                    LogCKD.Information($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
+                    LogCKD.Information($"{logMessage} | message : {Message} | username : {_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value} | hostname : {_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.WindowsDeviceClaim).Value}");
                 }
                 else
                 {
-                    Log.Information($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
+                    Log.Information($"{logMessage} | message : {Message} | username : {_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value} | hostname : {_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.WindowsDeviceClaim).Value}");
                 }
             }
             catch (Exception ex)
@@ -165,25 +166,25 @@ namespace HINOSystem.Libs
 
                 //if (this.Controller.ToUpper().Contains("KBNMS"))
                 //{
-                //    LogMaster.Error($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
+                //    LogMaster.Error($"{logMessage} | message : {Message} | username : {_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value} | hostname : {_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.WindowsDeviceClaim).Value}");
                 //}
                 //else if (this.Action.ToUpper().Contains("CAL") && this.Controller.ToLower().Contains("kbnor121"))
                 //{
-                //    LogBL.Error($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
+                //    LogBL.Error($"{logMessage} | message : {Message} | username : {_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value} | hostname : {_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.WindowsDeviceClaim).Value}");
                 //}
                 //else if (this.Controller.ToUpper().Contains("KBNOR2"))
                 //{
-                //    LogSpecial.Error($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
+                //    LogSpecial.Error($"{logMessage} | message : {Message} | username : {_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value} | hostname : {_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.WindowsDeviceClaim).Value}");
                 //}
                 //else if (this.Controller.ToUpper().Contains("KBNIM"))
                 //{
-                //    LogImport.Error($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
+                //    LogImport.Error($"{logMessage} | message : {Message} | username : {_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value} | hostname : {_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.WindowsDeviceClaim).Value}");
                 //}
                 //else
                 //{
-                //    Log.Error($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
+                //    Log.Error($"{logMessage} | message : {Message} | username : {_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value} | hostname : {_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.WindowsDeviceClaim).Value}");
                 //}
-                LogError.Error($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
+                LogError.Error($"{logMessage} | message : {Message} | username : {_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value} | hostname : {_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.WindowsDeviceClaim).Value}");
             }
             catch (Exception ex)
             {
@@ -202,27 +203,27 @@ namespace HINOSystem.Libs
 
                 if (this.Controller.ToUpper().Contains("KBNMS"))
                 {
-                    LogMaster.Error($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
+                    LogMaster.Error($"{logMessage} | message : {Message} | username : {_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value} | hostname : {_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.WindowsDeviceClaim).Value}");
                 }
                 else if (this.Action.ToUpper().Contains("CAL") && this.Controller.ToLower().Contains("kbnor121"))
                 {
-                    LogBL.Error($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
+                    LogBL.Error($"{logMessage} | message : {Message} | username : {_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value} | hostname : {_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.WindowsDeviceClaim).Value}");
                 }
                 else if (this.Controller.ToUpper().Contains("KBNOR2"))
                 {
-                    LogSpecial.Error($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
+                    LogSpecial.Error($"{logMessage} | message : {Message} | username : {_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value} | hostname : {_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.WindowsDeviceClaim).Value}");
                 }
                 else if (this.Controller.ToUpper().Contains("KBNIM"))
                 {
-                    LogImport.Error($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
+                    LogImport.Error($"{logMessage} | message : {Message} | username : {_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value} | hostname : {_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.WindowsDeviceClaim).Value}");
                 }
                 else if (this.Controller.ToUpper().Contains("KBNOR3"))
                 {
-                    LogCKD.Error($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
+                    LogCKD.Error($"{logMessage} | message : {Message} | username : {_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value} | hostname : {_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.WindowsDeviceClaim).Value}");
                 }
                 else
                 {
-                    Log.Error($"{logMessage} | message : {Message} | username : {_bearerClass.UserCode} | hostname : {_bearerClass.Device}");
+                    Log.Error($"{logMessage} | message : {Message} | username : {_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value} | hostname : {_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.WindowsDeviceClaim).Value}");
                 }
             }
             catch (Exception ex)

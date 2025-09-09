@@ -1,9 +1,9 @@
 ﻿using HINOSystem.Libs;
-using KANBAN.Models.KB3.OtherCondition.Model;
 using KANBAN.Models.KB3.OtherCondition.ViewModel;
 using KANBAN.Services;
 using KANBAN.Services.OtherCondition.IRepository;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
 
@@ -11,6 +11,7 @@ namespace KANBAN.Controllers.API.OtherCondition
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class KBNOC121Controller : ControllerBase
     {
         private readonly BearerClass _BearerClass;
@@ -28,7 +29,7 @@ namespace KANBAN.Controllers.API.OtherCondition
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
 
                 var result = await _otherConditionRepo.IKBNOC121.GetSupplier();
 
@@ -55,7 +56,7 @@ namespace KANBAN.Controllers.API.OtherCondition
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
 
                 var result = await _otherConditionRepo.IKBNOC121.GetStore(SupplierCD);
 
@@ -82,7 +83,7 @@ namespace KANBAN.Controllers.API.OtherCondition
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
 
                 var result = await _otherConditionRepo.IKBNOC121.GetPartNo(SupplierCD, StoreCD);
 
@@ -109,7 +110,7 @@ namespace KANBAN.Controllers.API.OtherCondition
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
 
                 await _otherConditionRepo.IKBNOC121.Save(ListVMObj, action);
 
@@ -132,7 +133,7 @@ namespace KANBAN.Controllers.API.OtherCondition
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
 
                 var result = await _otherConditionRepo.IKBNOC121.GetListData(SupplierCD, StoreCD, PartNo);
 

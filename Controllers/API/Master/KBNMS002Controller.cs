@@ -3,6 +3,7 @@ using HINOSystem.Libs;
 using HINOSystem.Models.KB3.Master;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Security.Claims;
 
 namespace HINOSystem.Controllers.API.Master
 {
@@ -37,7 +38,7 @@ namespace HINOSystem.Controllers.API.Master
             string _SQL = "";
             try
             {
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
 
@@ -70,13 +71,13 @@ namespace HINOSystem.Controllers.API.Master
             string _SQL = "";
             try
             {
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
 
                 _json = JsonConvert.DeserializeObject(pData);
 
-                _SQL = @" EXEC [exec].[spKBNMS002_SEARCH] '" + _BearerClass.Plant + "' ";
+                _SQL = @" EXEC [exec].[spKBNMS002_SEARCH] '" + User.FindFirst(ClaimTypes.Locality).Value + "' ";
                 string _jsonData = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName: ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
 
 
@@ -104,7 +105,7 @@ namespace HINOSystem.Controllers.API.Master
             string _SQL = "";
             try
             {
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
                 string[] _F = Request.Form["F_Parent_Part_Name"].ToString().Split("-");
@@ -119,14 +120,14 @@ namespace HINOSystem.Controllers.API.Master
 
 
                 TB_MS_OldPart _TB_MS_OldPart = new TB_MS_OldPart();
-                _TB_MS_OldPart.F_Plant = _BearerClass.Plant;
+                _TB_MS_OldPart.F_Plant = User.FindFirst(ClaimTypes.Locality).Value;
                 _TB_MS_OldPart.F_Parent_Part = _F_Parent_Part;
                 _TB_MS_OldPart.F_Ruibetsu = _F_Ruibetsu;
                 _TB_MS_OldPart.F_Part_Name = Request.Form["F_Part_Name"].ToString();
                 _TB_MS_OldPart.F_Store_Cd = Request.Form["F_Store_Cd"].ToString();
                 _TB_MS_OldPart.F_Start_Date = Request.Form["F_Start_Date"].ToString().Replace("-", "");
                 _TB_MS_OldPart.F_End_Date = Request.Form["F_End_Date"].ToString().Replace("-", "");
-                _TB_MS_OldPart.F_Update_By = _BearerClass.UserCode.ToString();
+                _TB_MS_OldPart.F_Update_By = User.FindFirst(ClaimTypes.UserData).Value.ToString();
                 _TB_MS_OldPart.F_Update_Date = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss"));
                 _KB3Context.TB_MS_OldPart.Add(_TB_MS_OldPart);
                 _KB3Context.SaveChanges();
@@ -160,7 +161,7 @@ namespace HINOSystem.Controllers.API.Master
                     }";
             try
             {
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
 
@@ -170,14 +171,14 @@ namespace HINOSystem.Controllers.API.Master
 
                 _SQL = @"
                     UPDATE [dbo].[TB_MS_OldPart]
-                    SET F_Plant= '" + _BearerClass.Plant.ToString().Trim() + @"'
+                    SET F_Plant= '" + User.FindFirst(ClaimTypes.Locality).Value.ToString().Trim() + @"'
                         ,F_Parent_Part= '" + _F_Parent_Part + @"'
                         ,F_Ruibetsu= '" + _F_Ruibetsu + @"'
                         ,F_Part_Name= '" + Request.Form["F_Part_Name"].ToString() + @"'
                         ,F_Store_Cd= '" + _BearerClass.Records.F_Store_Cd.ToString().Trim() + @"'
                         ,F_Start_Date= '" + Request.Form["F_Start_Date"].ToString().Replace("-", "") + @"'
                         ,F_End_Date= '" + Request.Form["F_End_Date"].ToString().Replace("-", "") + @"'
-                        ,F_Update_By= '" + _BearerClass.UserCode + @"'
+                        ,F_Update_By= '" + User.FindFirst(ClaimTypes.UserData).Value + @"'
                         ,F_Update_Date= '" + DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss")) + @"'
                     WHERE 1=1
                     AND F_Plant= '" + _BearerClass.Records.F_Plant.ToString().Trim() + @"'
@@ -217,7 +218,7 @@ namespace HINOSystem.Controllers.API.Master
                     }";
             try
             {
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
 

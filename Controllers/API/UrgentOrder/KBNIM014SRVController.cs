@@ -2,6 +2,8 @@
 using HINOSystem.Libs;
 using KANBAN.Context;
 using KANBAN.Models.KB3.UrgentOrder;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -11,6 +13,7 @@ namespace KANBAN.Controllers.API.UrgentOrder
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     
     public class KBNIM014SRVController : ControllerBase
     {
@@ -59,7 +62,7 @@ namespace KANBAN.Controllers.API.UrgentOrder
         {
             try
             {
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
 
                 if (_BearerClass.Status == 401) return Unauthorized(new
                 {
@@ -153,7 +156,7 @@ namespace KANBAN.Controllers.API.UrgentOrder
         {
             try
             {
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
 
                 if (_BearerClass.Status == 401) return Unauthorized(new
                 {

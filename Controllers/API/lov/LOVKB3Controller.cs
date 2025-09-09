@@ -1,12 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-using HINOSystem.Models;
-using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
-using System.Data;
+﻿using Microsoft.AspNetCore.Mvc;
 using HINOSystem.Libs;
-using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
-using Microsoft.IdentityModel.Tokens;
 
 namespace HINOSystem.Controllers.API.lov
 {
@@ -49,7 +43,7 @@ namespace HINOSystem.Controllers.API.lov
             string _SQL = "";
             try
             {
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
                 _SQL = @"
@@ -89,7 +83,7 @@ namespace HINOSystem.Controllers.API.lov
             string _SQL = "";
             try
             {
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
                 _SQL = @"
@@ -130,7 +124,7 @@ namespace HINOSystem.Controllers.API.lov
             string _SQL = "";
             try
             {
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
                 _SQL = @"
@@ -171,7 +165,7 @@ namespace HINOSystem.Controllers.API.lov
             string _SQL = "";
             try
             {
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
                 _SQL = @"

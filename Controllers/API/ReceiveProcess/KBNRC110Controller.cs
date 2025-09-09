@@ -7,6 +7,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Data;
+using System.Security.Claims;
 //using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HINOSystem.Controllers.API.Master
@@ -22,6 +23,7 @@ namespace HINOSystem.Controllers.API.Master
         private readonly KB3Context _KB3Context;
         private readonly SerilogLibs _Serilog;
         private readonly ProcDBContext _ProcDBContext;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
         private readonly string StoragePath = @"wwwroot\Storage\Uploads";
@@ -35,7 +37,8 @@ namespace HINOSystem.Controllers.API.Master
             PPM3Context pPM3Context,
             KB3Context kB3Context,
             SerilogLibs serilogLibs,
-            ProcDBContext procDB
+            ProcDBContext procDB,
+            IHttpContextAccessor httpContextAccessor
             )
         {
             _configuration = configuration;
@@ -47,6 +50,7 @@ namespace HINOSystem.Controllers.API.Master
             _PPM3Context = pPM3Context;
             _Serilog = serilogLibs;
             _ProcDBContext = procDB;
+            _httpContextAccessor = httpContextAccessor;
         }
 
 
@@ -57,8 +61,8 @@ namespace HINOSystem.Controllers.API.Master
             string _SQL = "";
             try
             {
-                _BearerClass.Authentication(Request);
-                var user = _BearerClass.UserCode.ToString();
+                _BearerClass.Authentication();
+                var user = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value.ToString();
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
                 if (pData != null) _json = JsonConvert.DeserializeObject(pData);
@@ -353,8 +357,8 @@ namespace HINOSystem.Controllers.API.Master
         public async Task<bool> InsToRecLocal(string PDSNo)
         {
 
-            _BearerClass.Authentication(Request);
-            var user = _BearerClass.UserCode.ToString();
+            _BearerClass.Authentication();
+            var user = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value.ToString();
             try
             {
                 if (PDSNo != null)
@@ -411,7 +415,7 @@ namespace HINOSystem.Controllers.API.Master
 
                 string UserName = HttpContext.Session.GetString("USER_ID");
                 string HostName = HttpContext.Session.GetString("USER_DEVICENAME");
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 string dateTime = DateTime.Now.ToString("yyyyMMdd");
                 string RecCd = "K" + dateTime.Substring(2, 2);
                 if (dateTime.Substring(4, 2) == "10")

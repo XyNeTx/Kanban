@@ -1,16 +1,16 @@
 ﻿using HINOSystem.Context;
 using HINOSystem.Libs;
-using HINOSystem.Models.KB3.Master;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
-using SkiaSharp;
 using System.Globalization;
 
 namespace HINOSystem.Controllers.API.Master
 {
     [Route("api/[controller]/[action]")]
-    [ApiController]
+    [ApiController][Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize]
     public class KBNOR100Controller : ControllerBase
     {
         private readonly IConfiguration _configuration;

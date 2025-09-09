@@ -10,6 +10,7 @@ using KANBAN.Services.Automapper.Interface;
 using KANBAN.Services.Master.IRepository;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Security.Claims;
 
 namespace KANBAN.Services.Master.Repository
 {
@@ -22,6 +23,7 @@ namespace KANBAN.Services.Master.Repository
         private readonly SerilogLibs _log;
         private readonly IEmailService _emailService;
         private readonly IAutoMapService _autoMap;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
         public KBNMS020
@@ -32,7 +34,8 @@ namespace KANBAN.Services.Master.Repository
             FillDataTable FillDT,
             SerilogLibs log,
             IEmailService emailService,
-            IAutoMapService autoMap
+            IAutoMapService autoMap,
+            IHttpContextAccessor httpContextAccessor
             )
         {
             _kbContext = kbContext;
@@ -42,6 +45,7 @@ namespace KANBAN.Services.Master.Repository
             _log = log;
             _emailService = emailService;
             _autoMap = autoMap;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         private readonly string strDateNow = DateTime.Now.ToString("yyyyMMdd");
@@ -53,7 +57,7 @@ namespace KANBAN.Services.Master.Repository
                 var data = await _PPM3Context.T_Construction.AsNoTracking()
                     .Where(x => x.F_Local_Str.CompareTo(strDateNow) <= 0
                     && x.F_Local_End.CompareTo(strDateNow) >= 0
-                    && x.F_Store_cd.StartsWith(_BearerClass.Plant))
+                    && x.F_Store_cd.StartsWith(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value))
                     .ToListAsync();
 
                 if (!string.IsNullOrWhiteSpace(F_Supplier))
@@ -91,7 +95,7 @@ namespace KANBAN.Services.Master.Repository
                     .Where(x => x.F_supplier_cd + "-" + x.F_Plant_cd == F_Supplier
                     && x.F_TC_Str.CompareTo(strDateNow) <= 0
                     && x.F_TC_End.CompareTo(strDateNow) >= 0
-                    && x.F_Store_cd.StartsWith(_BearerClass.Plant))
+                    && x.F_Store_cd.StartsWith(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value))
                     .ToListAsync();
 
                 if (!string.IsNullOrWhiteSpace(F_StoreCD))
@@ -115,7 +119,7 @@ namespace KANBAN.Services.Master.Repository
             {
                 var obj = listObj.FirstOrDefault();
                 var existObj = await _kbContext.TB_MS_MaxArea_Stock.AsNoTracking()
-                    .Where(x => x.F_Plant == _BearerClass.Plant
+                    .Where(x => x.F_Plant == _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value
                     && x.F_Part_No.Trim() + "-" + x.F_Ruibetsu == obj.F_PartNo
                     && x.F_Supplier_Cd + "-" + x.F_Supplier_Plant == obj.F_Supplier
                     && x.F_Kanban_No == obj.F_KanbanNo && x.F_Store_Cd == obj.F_StoreCD)
@@ -129,7 +133,7 @@ namespace KANBAN.Services.Master.Repository
                 {
                     if (existObj == null)
                     {
-                        string sql = $"exec sp_getSTDStock '{_BearerClass.Plant}'" +
+                        string sql = $"exec sp_getSTDStock '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value}'" +
                             $",'{obj.F_Supplier.Split("-")[0]}'" +
                             $",'{obj.F_Supplier.Split("-")[1]}'" +
                             $",'{obj.F_PartNo.Split("-")[0]}'" +
@@ -151,16 +155,16 @@ namespace KANBAN.Services.Master.Repository
 
                         TB_MS_MaxArea_Stock addObj = new TB_MS_MaxArea_Stock
                         {
-                            F_Create_By = _BearerClass.UserCode,
+                            F_Create_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value,
                             F_Create_Date = DateTime.Now,
-                            F_Update_By = _BearerClass.UserCode,
+                            F_Update_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value,
                             F_Update_Date = DateTime.Now,
                             F_Kanban_No = obj.F_KanbanNo,
                             F_Part_No = obj.F_PartNo.Split("-")[0],
                             F_Ruibetsu = obj.F_PartNo.Split("-")[1],
                             F_Supplier_Cd = obj.F_Supplier.Split("-")[0],
                             F_Supplier_Plant = obj.F_Supplier.Split('-')[1],
-                            F_Plant = _BearerClass.Plant,
+                            F_Plant = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value,
                             F_Store_Cd = obj.F_StoreCD,
                             F_Max_Area = obj.F_Max_Area,
                             F_STD_Stock = STD_Stock,
@@ -182,7 +186,7 @@ namespace KANBAN.Services.Master.Repository
                     {
                         logMessage = "UPDATE TO TB_MS_MaxArea_Stock BEFORE => " + JsonConvert.SerializeObject(existObj);
 
-                        string sql = $"exec sp_getSTDStock '{_BearerClass.Plant}'" +
+                        string sql = $"exec sp_getSTDStock '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value}'" +
                             $",'{obj.F_Supplier.Split("-")[0]}'" +
                             $",'{obj.F_Supplier.Split("-")[1]}'" +
                             $",'{obj.F_PartNo.Split("-")[0]}'" +
@@ -206,7 +210,7 @@ namespace KANBAN.Services.Master.Repository
 
                         existObj.F_Max_Area = obj.F_Max_Area;
                         existObj.F_STD_Stock = STD_Stock;
-                        existObj.F_Update_By = _BearerClass.UserCode;
+                        existObj.F_Update_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value;
                         existObj.F_Update_Date = DateTime.Now;
 
                         _kbContext.Update(existObj);
@@ -221,7 +225,7 @@ namespace KANBAN.Services.Master.Repository
                     foreach (var each in listObj)
                     {
                         var delObj = await _kbContext.TB_MS_MaxArea_Stock.AsNoTracking()
-                            .Where(x => x.F_Plant == _BearerClass.Plant
+                            .Where(x => x.F_Plant == _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value
                             && x.F_Part_No.Trim() + "-" + x.F_Ruibetsu == each.F_PartNo
                             && x.F_Supplier_Cd + "-" + x.F_Supplier_Plant == each.F_Supplier
                             && x.F_Kanban_No == each.F_KanbanNo && x.F_Store_Cd == each.F_StoreCD)
@@ -316,7 +320,7 @@ namespace KANBAN.Services.Master.Repository
                     {
                         decimal STD_Stock = 0.0m;
 
-                        string sql = $"exec sp_getSTDStock '{_BearerClass.Plant}'" +
+                        string sql = $"exec sp_getSTDStock '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value}'" +
                                     $",'{dt.Rows[i]["F_Supplier"].ToString().Split("-")[0]}'" +
                                     $",'{dt.Rows[i]["F_Supplier"].ToString().Split("-")[1]}'" +
                                     $",'{dt.Rows[i]["F_PartNo"].ToString().Split("-")[0]}'" +

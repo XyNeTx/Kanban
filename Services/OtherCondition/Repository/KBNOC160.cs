@@ -6,6 +6,7 @@ using KANBAN.Models.KB3.OtherCondition.ViewModel;
 using KANBAN.Services.Automapper.Interface;
 using KANBAN.Services.OtherCondition.IRepository;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace KANBAN.Services.OtherCondition.Repository
 {
@@ -18,6 +19,7 @@ namespace KANBAN.Services.OtherCondition.Repository
         private readonly SerilogLibs _log;
         private readonly IEmailService _emailService;
         private readonly IAutoMapService _automapService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
         public KBNOC160
@@ -28,7 +30,8 @@ namespace KANBAN.Services.OtherCondition.Repository
             FillDataTable FillDT,
             SerilogLibs log,
             IEmailService emailService,
-            IAutoMapService autoMapService
+            IAutoMapService autoMapService,
+            IHttpContextAccessor httpContextAccessor
             )
         {
             _kbContext = kbContext;
@@ -38,14 +41,15 @@ namespace KANBAN.Services.OtherCondition.Repository
             _log = log;
             _emailService = emailService;
             _automapService = autoMapService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task Print(VM_REPORT_KBNOC160 model)
         {
             try
             {
-                var userID = _BearerClass.UserCode;
-                var plant_CTL = _BearerClass.Plant;
+                var userID = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value;
+                var plant_CTL = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value;
 
                 await _kbContext.Database.ExecuteSqlRawAsync($"DELETE FROM [HMMTA-PPM].[NEW_KANBAN_F3].[DBO].RPT_KBNOC_160 WHERE F_Update_By = '{userID}' ");
 

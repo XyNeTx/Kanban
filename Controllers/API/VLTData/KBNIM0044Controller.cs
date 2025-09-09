@@ -3,6 +3,8 @@ using KANBAN.Models.KB3.Master;
 using KANBAN.Models.KB3.VLT;
 using KANBAN.Services;
 using KANBAN.Services.Import.Interface;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 //using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -10,6 +12,7 @@ namespace HINOSystem.Controllers.API.Master
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class KBNIM0044Controller : ControllerBase
     {
         private readonly BearerClass _BearerClass;
@@ -29,7 +32,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
 
                 var RowAffected = await _importRepo.KBNIM0044.SaveImportData(listData);
 
@@ -51,7 +54,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
 
                 var data = await _importRepo.KBNIM0044.GetDataList(isAll);
 
@@ -89,7 +92,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
 
                 await _importRepo.KBNIM0044.UpdateFlag(listObj, shift);
 
@@ -111,7 +114,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
 
                 await _importRepo.KBNIM0044.Confirm(listData, InchargeUser);
 

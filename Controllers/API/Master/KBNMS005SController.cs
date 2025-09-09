@@ -2,15 +2,19 @@
 using HINOSystem.Libs;
 using KANBAN.Context;
 using KANBAN.Models.KB3.Master;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Data;
+using System.Security.Claims;
 
 namespace KANBAN.Controllers.API.Master
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class KBNMS005SController : ControllerBase
     {
         private readonly IConfiguration _configuration;
@@ -52,7 +56,7 @@ namespace KANBAN.Controllers.API.Master
             try
             {
 
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401) return Unauthorized(new
                 {
                     status = "401",
@@ -66,7 +70,7 @@ namespace KANBAN.Controllers.API.Master
                 if (IsCmdNew)
                 {
                     var data = _KB3Context.TB_MS_PartOrder
-                        .Where(x => x.F_Start_Date.CompareTo(now) <= 0 && x.F_End_Date.CompareTo(now) >= 0 && x.F_Store_Code.StartsWith(_BearerClass.Plant))
+                        .Where(x => x.F_Start_Date.CompareTo(now) <= 0 && x.F_End_Date.CompareTo(now) >= 0 && x.F_Store_Code.StartsWith(User.FindFirst(ClaimTypes.Locality).Value))
                         .Select(x => new
                         {
                             F_Supplier_Code = x.F_Supplier_Cd + "-" + x.F_Supplier_Plant
@@ -88,7 +92,7 @@ namespace KANBAN.Controllers.API.Master
                 else
                 {
                     var data = _KB3Context.TB_BL_SET
-                        .Where(x => x.F_Store_Cd.StartsWith(_BearerClass.Plant))
+                        .Where(x => x.F_Store_Cd.StartsWith(User.FindFirst(ClaimTypes.Locality).Value))
                         .Select(x => new
                         {
                             F_Supplier_Code = x.F_Sup_Cd + "-" + x.F_Sup_Plant
@@ -127,7 +131,7 @@ namespace KANBAN.Controllers.API.Master
             try
             {
 
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401) return Unauthorized(new
                 {
                     status = "401",
@@ -142,7 +146,7 @@ namespace KANBAN.Controllers.API.Master
                 if (IsCmdNew)
                 {
                     var data = _KB3Context.TB_MS_PartOrder
-                        .Where(x => x.F_Start_Date.CompareTo(now) <= 0 && x.F_End_Date.CompareTo(now) >= 0 && x.F_Store_Code.StartsWith(_BearerClass.Plant))
+                        .Where(x => x.F_Start_Date.CompareTo(now) <= 0 && x.F_End_Date.CompareTo(now) >= 0 && x.F_Store_Code.StartsWith(User.FindFirst(ClaimTypes.Locality).Value))
                         .Select(x => new
                         {
                             F_Store_Code = x.F_Store_Code.Trim(),
@@ -161,7 +165,7 @@ namespace KANBAN.Controllers.API.Master
                         var Supplier_Name = _PPM3Context.T_Supplier_MS
                             .Where(x => x.F_supplier_cd == Supplier_Code && x.F_Plant_cd == Sup_Plant
                                 && x.F_TC_Str.CompareTo(now) <= 0 && x.F_TC_End.CompareTo(now) >= 0
-                                && x.F_Store_cd.StartsWith(_BearerClass.Plant))
+                                && x.F_Store_cd.StartsWith(User.FindFirst(ClaimTypes.Locality).Value))
                             .Select(x => new
                             {
                                 F_name = "(" + x.F_short_name.Trim() + ") " + x.F_name.Trim()
@@ -185,7 +189,7 @@ namespace KANBAN.Controllers.API.Master
                 else
                 {
                     var data = _KB3Context.TB_BL_SET
-                        .Where(x => x.F_Store_Cd.StartsWith(_BearerClass.Plant))
+                        .Where(x => x.F_Store_Cd.StartsWith(User.FindFirst(ClaimTypes.Locality).Value))
                         .Select(x => new
                         {
                             F_Store_Code = x.F_Store_Cd.Trim(),
@@ -203,7 +207,7 @@ namespace KANBAN.Controllers.API.Master
                         var Supplier_Name = _PPM3Context.T_Supplier_MS
                             .Where(x => x.F_supplier_cd == Supplier_Code && x.F_Plant_cd == Sup_Plant
                                 && x.F_TC_Str.CompareTo(now) <= 0 && x.F_TC_End.CompareTo(now) >= 0
-                                && x.F_Store_cd.StartsWith(_BearerClass.Plant))
+                                && x.F_Store_cd.StartsWith(User.FindFirst(ClaimTypes.Locality).Value))
                             .Select(x => new
                             {
                                 F_name = "(" + x.F_short_name.Trim() + ") " + x.F_name.Trim()
@@ -244,7 +248,7 @@ namespace KANBAN.Controllers.API.Master
             try
             {
                 //
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401) return Unauthorized(new
                 {
                     status = "401",
@@ -297,7 +301,7 @@ namespace KANBAN.Controllers.API.Master
             try
             {
 
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401) return Unauthorized(new
                 {
                     status = "401",
@@ -375,7 +379,7 @@ namespace KANBAN.Controllers.API.Master
             try
             {
 
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401) return Unauthorized(new
                 {
                     status = "401",
@@ -395,7 +399,7 @@ namespace KANBAN.Controllers.API.Master
                         && each.F_BL != 0 && existed == null)
                     {
                         each.F_Sebango = each.F_Sebango.Substring(1, 3);
-                        each.F_Update_By = _BearerClass.UserCode;
+                        each.F_Update_By = User.FindFirst(ClaimTypes.UserData).Value;
                         each.F_Update_Date = DateTime.Now;
                         _KB3Context.TB_BL_SET.Add(each);
                         _KB3Context.SaveChanges();
@@ -403,14 +407,14 @@ namespace KANBAN.Controllers.API.Master
                         if (each.F_Sup_Cd == "9999")
                         {
                             await _KB3Context.Database.ExecuteSqlRawAsync("EXEC [CKD_Inhouse].sp_setStockBalance @p0,@p1,@p2,@p3,@p4,@p5,@p6,@p7,@p8,@p9,@p10"
-                            , _BearerClass.Plant, each.F_Sup_Cd, each.F_Sup_Plant, each.F_Part_No, each.F_Ruibetsu, KanbanNo, each.F_Store_Cd
-                            , each.F_Date, each.F_Shift, each.F_BL, _BearerClass.UserCode);
+                            , User.FindFirst(ClaimTypes.Locality).Value, each.F_Sup_Cd, each.F_Sup_Plant, each.F_Part_No, each.F_Ruibetsu, KanbanNo, each.F_Store_Cd
+                            , each.F_Date, each.F_Shift, each.F_BL, User.FindFirst(ClaimTypes.UserData).Value);
                         }
                         else
                         {
                             await _KB3Context.Database.ExecuteSqlRawAsync("EXEC [dbo].sp_setStockBalance @p0,@p1,@p2,@p3,@p4,@p5,@p6,@p7,@p8,@p9,@p10"
-                            , _BearerClass.Plant, each.F_Sup_Cd, each.F_Sup_Plant, each.F_Part_No, each.F_Ruibetsu, KanbanNo, each.F_Store_Cd
-                            , each.F_Date, each.F_Shift, each.F_BL, _BearerClass.UserCode);
+                            , User.FindFirst(ClaimTypes.Locality).Value, each.F_Sup_Cd, each.F_Sup_Plant, each.F_Part_No, each.F_Ruibetsu, KanbanNo, each.F_Store_Cd
+                            , each.F_Date, each.F_Shift, each.F_BL, User.FindFirst(ClaimTypes.UserData).Value);
                         }
                     }
                     else if (existed != null)
@@ -418,7 +422,7 @@ namespace KANBAN.Controllers.API.Master
                         existed.F_BL = each.F_BL;
                         existed.F_BL_Kanban = each.F_BL_Kanban;
                         existed.F_Bl_PCS = each.F_Bl_PCS;
-                        existed.F_Update_By = _BearerClass.UserCode;
+                        existed.F_Update_By = User.FindFirst(ClaimTypes.UserData).Value;
                         existed.F_Update_Date = DateTime.Now;
                         _KB3Context.TB_BL_SET.Update(existed);
                         _KB3Context.SaveChanges();
@@ -426,22 +430,22 @@ namespace KANBAN.Controllers.API.Master
                         if (each.F_Sup_Cd == "9999")
                         {
                             await _KB3Context.Database.ExecuteSqlRawAsync("EXEC [CKD_Inhouse].sp_setStockBalance @p0,@p1,@p2,@p3,@p4,@p5,@p6,@p7,@p8,@p9,@p10"
-                            , _BearerClass.Plant, each.F_Sup_Cd, each.F_Sup_Plant, each.F_Part_No, each.F_Ruibetsu, KanbanNo, each.F_Store_Cd
-                            , each.F_Date, each.F_Shift, each.F_BL, _BearerClass.UserCode);
+                            , User.FindFirst(ClaimTypes.Locality).Value, each.F_Sup_Cd, each.F_Sup_Plant, each.F_Part_No, each.F_Ruibetsu, KanbanNo, each.F_Store_Cd
+                            , each.F_Date, each.F_Shift, each.F_BL, User.FindFirst(ClaimTypes.UserData).Value);
                         }
                         else
                         {
                             await _KB3Context.Database.ExecuteSqlRawAsync("EXEC [dbo].sp_setStockBalance @p0,@p1,@p2,@p3,@p4,@p5,@p6,@p7,@p8,@p9,@p10"
-                            , _BearerClass.Plant, each.F_Sup_Cd, each.F_Sup_Plant, each.F_Part_No, each.F_Ruibetsu, KanbanNo, each.F_Store_Cd
-                            , each.F_Date, each.F_Shift, each.F_BL, _BearerClass.UserCode);
+                            , User.FindFirst(ClaimTypes.Locality).Value, each.F_Sup_Cd, each.F_Sup_Plant, each.F_Part_No, each.F_Ruibetsu, KanbanNo, each.F_Store_Cd
+                            , each.F_Date, each.F_Shift, each.F_BL, User.FindFirst(ClaimTypes.UserData).Value);
                         }
                     }
 
                     string _logData = JsonConvert.SerializeObject(each);
-                    _Log.WriteLog(_logData, _BearerClass.UserCode, _BearerClass.Device);
+                    _Log.WriteLog(_logData, User.FindFirst(ClaimTypes.UserData).Value, User.FindFirst(ClaimTypes.WindowsDeviceClaim).Value);
                 }
 
-                await _KB3Context.Database.ExecuteSqlRawAsync($"Exec [exec].spKBNMS005S_UPD_D '{_BearerClass.Plant}','{ListObj[0].F_Date}','{ListObj[0].F_Shift}','{ListObj[0].F_Sup_Cd + "-" + ListObj[0].F_Sup_Plant}','{ListObj[0].F_Store_Cd}'");
+                await _KB3Context.Database.ExecuteSqlRawAsync($"Exec [exec].spKBNMS005S_UPD_D '{User.FindFirst(ClaimTypes.Locality).Value}','{ListObj[0].F_Date}','{ListObj[0].F_Shift}','{ListObj[0].F_Sup_Cd + "-" + ListObj[0].F_Sup_Plant}','{ListObj[0].F_Store_Cd}'");
 
 
                 _KB3Transaction.Commit();
@@ -475,7 +479,7 @@ namespace KANBAN.Controllers.API.Master
             try
             {
 
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401) return Unauthorized(new
                 {
                     status = "401",
@@ -504,23 +508,23 @@ namespace KANBAN.Controllers.API.Master
 
                 _KB3Context.TB_BL_SET_HISTORY_DELETE.Add(_DelObj);
                 string _logData = JsonConvert.SerializeObject(_DelObj);
-                _Log.WriteLog("INSERT TB_BL_SET_HISTORY_DELETE | " + _logData, _BearerClass.UserCode, _BearerClass.Device);
+                _Log.WriteLog("INSERT TB_BL_SET_HISTORY_DELETE | " + _logData, User.FindFirst(ClaimTypes.UserData).Value, User.FindFirst(ClaimTypes.WindowsDeviceClaim).Value);
 
                 _KB3Context.TB_BL_SET.Remove(existed);
                 _logData = JsonConvert.SerializeObject(existed);
-                _Log.WriteLog("DELETE TB_BL_SET | " + _logData, _BearerClass.UserCode, _BearerClass.Device);
+                _Log.WriteLog("DELETE TB_BL_SET | " + _logData, User.FindFirst(ClaimTypes.UserData).Value, User.FindFirst(ClaimTypes.WindowsDeviceClaim).Value);
 
                 _KB3Context.SaveChanges();
 
                 if (existed.F_Sup_Cd == "9999" || existed.F_Sup_Cd == "9995")
                 {
                     await _KB3Context.Database.ExecuteSqlRawAsync("EXEC [CKD_Inhouse].sp_set_StockBalance_Delete @p0,@p1,@p2,@p3,@p4,@p5,@p6,@p7,@p8,@p9",
-                        _BearerClass.Plant, Obj.F_Sup_Cd, Obj.F_Sup_Plant, Obj.F_Part_No, Obj.F_Ruibetsu, Obj.F_Sebango, Obj.F_Store_Cd, Obj.F_Date, Obj.F_Shift, _BearerClass.UserCode);
+                        User.FindFirst(ClaimTypes.Locality).Value, Obj.F_Sup_Cd, Obj.F_Sup_Plant, Obj.F_Part_No, Obj.F_Ruibetsu, Obj.F_Sebango, Obj.F_Store_Cd, Obj.F_Date, Obj.F_Shift, User.FindFirst(ClaimTypes.UserData).Value);
                 }
                 else await _KB3Context.Database.ExecuteSqlRawAsync("EXEC [dbo].sp_set_StockBalance_Delete @p0,@p1,@p2,@p3,@p4,@p5,@p6,@p7,@p8,@p9",
-                        _BearerClass.Plant, Obj.F_Sup_Cd, Obj.F_Sup_Plant, Obj.F_Part_No, Obj.F_Ruibetsu, Obj.F_Sebango, Obj.F_Store_Cd, Obj.F_Date, Obj.F_Shift, _BearerClass.UserCode);
+                        User.FindFirst(ClaimTypes.Locality).Value, Obj.F_Sup_Cd, Obj.F_Sup_Plant, Obj.F_Part_No, Obj.F_Ruibetsu, Obj.F_Sebango, Obj.F_Store_Cd, Obj.F_Date, Obj.F_Shift, User.FindFirst(ClaimTypes.UserData).Value);
 
-                _Log.WriteLog("Update TB_Calculate_D : Flag_Chg_BL_Stock ", _BearerClass.UserCode, _BearerClass.Device);
+                _Log.WriteLog("Update TB_Calculate_D : Flag_Chg_BL_Stock ", User.FindFirst(ClaimTypes.UserData).Value, User.FindFirst(ClaimTypes.WindowsDeviceClaim).Value);
 
                 _KB3Transaction.Commit();
 

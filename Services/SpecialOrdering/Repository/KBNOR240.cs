@@ -4,6 +4,7 @@ using KANBAN.Context;
 using KANBAN.Libs;
 using KANBAN.Services.SpecialOrdering.Interface;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace KANBAN.Services.SpecialOrdering.Repository
 {
@@ -16,6 +17,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
         private readonly SerilogLibs _log;
         private readonly IEmailService _emailService;
         private readonly ISpecialLibs _specialLibs;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
         public KBNOR240
@@ -26,7 +28,8 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             FillDataTable FillDT,
             SerilogLibs log,
             IEmailService emailService,
-            ISpecialLibs specialLibs
+            ISpecialLibs specialLibs,
+            IHttpContextAccessor httpContextAccessor
             )
         {
             _kbContext = kbContext;
@@ -36,6 +39,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             _log = log;
             _emailService = emailService;
             _specialLibs = specialLibs;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public string procDBConnect;
@@ -53,7 +57,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
                     F_Approve_Mobile = L.F_Approve_Mobile, 
                     F_Approve_Position = L.F_Approve_Position, 
                     F_Approve_Dept = L.F_Approve_Dept, 
-                    F_Update_Date = getDate() , F_Update_By = '{_BearerClass.UserCode}' 
+                    F_Update_Date = getDate() , F_Update_By = '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}' 
                     From (Select F_Survey_Doc,F_Revise_Rev,F_Confirm_Date,F_Status,F_Remark_Delivery,F_Approve_Name,F_Approve_Mobile,F_Approve_Position,F_Approve_Dept 
                     From {procDBConnect}.dbo.TB_Survey_Header Where F_Download_Flg = '1') L 
                     inner join TB_Survey_Header on L.F_Survey_Doc collate Thai_CI_AS = TB_Survey_Header.F_Survey_Doc 
@@ -79,7 +83,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
                 _log.WriteLogMsg("Update Date TB_Survey_Detail " + _sql);
 
                 _sql = $@"Update {procDBConnect}.dbo.TB_Survey_Header 
-                    Set F_Download_Flg = '2', F_Download_By = '{_BearerClass.UserCode}'
+                    Set F_Download_Flg = '2', F_Download_By = '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}'
                     , F_Download_Date = getDate() 
                     Where F_Survey_Doc = '{SurveyDoc}' and F_Download_Flg = '1' ";
 

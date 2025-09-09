@@ -1,6 +1,8 @@
 ﻿using HINOSystem.Context;
 using HINOSystem.Libs;
 using KANBAN.Models.KB3.VLT;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 //using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -8,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 namespace HINOSystem.Controllers.API.Master
 {
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/[controller]/[action]")]
     public class KBNIM004Controller : ControllerBase
     {
@@ -46,7 +49,7 @@ namespace HINOSystem.Controllers.API.Master
             //using var _KB3Transaction = _KB3Context.Database.BeginTransaction();
             try
             {
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
 
                 if (_BearerClass.Status == 401) return Unauthorized(new
                 {

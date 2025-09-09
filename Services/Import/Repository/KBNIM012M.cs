@@ -11,6 +11,7 @@ using KANBAN.Models.Proc_DB;
 using KANBAN.Services.Import.Interface;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
+using System.Security.Claims;
 using System.Text;
 
 namespace KANBAN.Services.Import.Repository
@@ -24,6 +25,7 @@ namespace KANBAN.Services.Import.Repository
         private readonly SerilogLibs _log;
         private readonly IEmailService _emailService;
         private readonly ProcDBContext _procDBContext;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
         public KBNIM012M
@@ -34,7 +36,8 @@ namespace KANBAN.Services.Import.Repository
             FillDataTable FillDT,
             SerilogLibs log,
             IEmailService emailService,
-            ProcDBContext procContext
+            ProcDBContext procContext,
+            IHttpContextAccessor httpContextAccessor
             )
         {
             _kbContext = kbContext;
@@ -44,6 +47,7 @@ namespace KANBAN.Services.Import.Repository
             _log = log;
             _emailService = emailService;
             _procDBContext = procContext;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<LoadMonthlyForecast> FormLoadKBNIM012M(string database)
@@ -251,8 +255,8 @@ namespace KANBAN.Services.Import.Repository
             try
             {
 
-                var userID = _BearerClass.UserCode;
-                var sPlant = _BearerClass.Plant;
+                var userID = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value;
+                var sPlant = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value;
 
                 await _kbContext.Database.ExecuteSqlRawAsync($"DELETE FROM TB_IMPORT_FORECAST_TEMP WHERE F_Update_By = '{userID}'");
 
@@ -423,8 +427,8 @@ namespace KANBAN.Services.Import.Repository
         {
             try
             {
-                var userID = _BearerClass.UserCode;
-                var sPlant = _BearerClass.Plant;
+                var userID = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value;
+                var sPlant = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value;
 
                 string nDeliAdv = "";
                 int nCount = int.Parse(sDeliveryDate.Substring(6, 2));
@@ -549,8 +553,8 @@ namespace KANBAN.Services.Import.Repository
             using var transaction = await _kbContext.Database.BeginTransactionAsync();
             try
             {
-                var userID = _BearerClass.UserCode;
-                var sPlant = _BearerClass.Plant;
+                var userID = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value;
+                var sPlant = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value;
 
                 string nError = "";
                 string nDate = "";
@@ -652,8 +656,8 @@ namespace KANBAN.Services.Import.Repository
           
             try
             {
-                var userID = _BearerClass.UserCode;
-                var sPlant = _BearerClass.Plant;
+                var userID = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value;
+                var sPlant = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value;
 
                 await _kbContext.Database.ExecuteSqlRawAsync($"DELETE FROM [HMMTA-PPM].[NEW_KANBAN_F3].[DBO].RPT_KBNIM_012M WHERE F_Update_By = '{userID}'");
 
@@ -776,8 +780,8 @@ namespace KANBAN.Services.Import.Repository
                 string nameOnly = System.IO.Path.GetFileNameWithoutExtension(fileName);
                 string extension = System.IO.Path.GetExtension(fileName);
 
-                var userID = _BearerClass.UserCode;
-                var sPlant = _BearerClass.Plant;
+                var userID = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value;
+                var sPlant = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value;
                 string type_Import = "FORECAST";
 
                 await _kbContext.Database.ExecuteSqlRawAsync($"DELETE FROM TB_Import_Data_Forecast WHERE F_Update_BY = '{userID}'");

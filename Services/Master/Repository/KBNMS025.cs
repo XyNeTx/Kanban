@@ -9,6 +9,7 @@ using KANBAN.Services.Master.IRepository;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Globalization;
+using System.Security.Claims;
 
 namespace KANBAN.Services.Master.Repository
 {
@@ -21,6 +22,7 @@ namespace KANBAN.Services.Master.Repository
         private readonly SerilogLibs _log;
         private readonly IEmailService _emailService;
         private readonly IAutoMapService _automapService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
         public KBNMS025
@@ -31,7 +33,8 @@ namespace KANBAN.Services.Master.Repository
             FillDataTable FillDT,
             SerilogLibs log,
             IEmailService emailService,
-            IAutoMapService autoMapService
+            IAutoMapService autoMapService,
+            IHttpContextAccessor httpContextAccessor
             )
         {
             _kbContext = kbContext;
@@ -41,6 +44,7 @@ namespace KANBAN.Services.Master.Repository
             _log = log;
             _emailService = emailService;
             _automapService = autoMapService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public string strDateNow = DateTime.Now.ToString("yyyyMMdd");
@@ -51,7 +55,7 @@ namespace KANBAN.Services.Master.Repository
             {
                 var data = await _kbContext.TB_MS_LPSupplier
                     .AsNoTracking()
-                    .Where(x => x.F_Plant == _BearerClass.Plant
+                    .Where(x => x.F_Plant == _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value
                     && x.F_Start_Date.CompareTo(strDateNow) <= 0
                     && x.F_End_Date.CompareTo(strDateNow) >= 0)
                     .ToListAsync();
@@ -89,7 +93,7 @@ namespace KANBAN.Services.Master.Repository
                 {
                     var data = await _kbContext.TB_MS_LPSupplier
                         .AsNoTracking()
-                        .Where(x => x.F_Plant == _BearerClass.Plant
+                        .Where(x => x.F_Plant == _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value
                         && x.F_Start_Date.CompareTo(strDateNow) <= 0
                         && x.F_End_Date.CompareTo(strDateNow) >= 0)
                         .ToListAsync();
@@ -157,7 +161,7 @@ namespace KANBAN.Services.Master.Repository
                 {
                     var data = await _kbContext.TB_MS_LPSupplier
                         .AsNoTracking()
-                        .Where(x => x.F_Plant == _BearerClass.Plant
+                        .Where(x => x.F_Plant == _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value
                         && x.F_Start_Date.CompareTo(strDateNow) <= 0
                         && x.F_End_Date.CompareTo(strDateNow) >= 0
                         && x.F_Truck_Type.Trim() == TruckType)
@@ -216,7 +220,7 @@ namespace KANBAN.Services.Master.Repository
             {
                 var data = await _kbContext.TB_MS_LPSupplier
                     .AsNoTracking()
-                    .Where(x => x.F_Plant == _BearerClass.Plant
+                    .Where(x => x.F_Plant == _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value
                     && x.F_Start_Date.CompareTo(strDateNow) <= 0
                     && x.F_End_Date.CompareTo(strDateNow) >= 0)
                     .Join(_kbContext.TB_MS_TruckType,
@@ -279,7 +283,7 @@ namespace KANBAN.Services.Master.Repository
 
                     var data = await _kbContext.TB_MS_LPSupplier
                         .AsNoTracking()
-                        .Where(x => x.F_Plant == _BearerClass.Plant
+                        .Where(x => x.F_Plant == _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value
                         && x.F_Logistic == obj.f_Logistic
                         && x.F_Truck_Type == obj.f_Truck_Type
                         && x.F_Start_Date.CompareTo(strDateNow) <= 0
@@ -293,11 +297,11 @@ namespace KANBAN.Services.Master.Repository
 
                     var addObj = new TB_MS_LPSupplier
                     {
-                        F_Create_By = _BearerClass.UserCode,
+                        F_Create_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value,
                         F_Create_Date = DateTime.Now,
-                        F_Update_By = _BearerClass.UserCode,
+                        F_Update_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value,
                         F_Update_Date = DateTime.Now,
-                        F_Plant = _BearerClass.Plant,
+                        F_Plant = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value,
                         F_End_Date = obj.f_End_Date,
                         F_Logistic = obj.f_Logistic,
                         F_Start_Date = obj.f_Start_Date,
@@ -313,7 +317,7 @@ namespace KANBAN.Services.Master.Repository
                 {
                     var data = await _kbContext.TB_MS_LPSupplier
                         .AsNoTracking()
-                        .Where(x => x.F_Plant == _BearerClass.Plant
+                        .Where(x => x.F_Plant == _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value
                         && x.F_Logistic == obj.f_Logistic
                         && x.F_Truck_Type == obj.f_Truck_Type
                         && x.F_Start_Date.CompareTo(strDateNow) <= 0
@@ -326,13 +330,13 @@ namespace KANBAN.Services.Master.Repository
                         throw new CustomHttpException(400, "Data Didn't Exist in System");
                     }
 
-                    await _kbContext.TB_MS_LPSupplier.Where(x => x.F_Plant == _BearerClass.Plant
+                    await _kbContext.TB_MS_LPSupplier.Where(x => x.F_Plant == _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value
                         && x.F_Logistic == obj.f_Logistic
                         && x.F_Start_Date == obj.f_Start_Date)
                         .ExecuteUpdateAsync(set => set.SetProperty(x => x.F_End_Date, obj.f_End_Date)
                         .SetProperty(x => x.F_Truck_Type, obj.f_Truck_Type)
                         .SetProperty(x => x.F_Weight, obj.F_Weight)
-                        .SetProperty(x => x.F_Update_By, _BearerClass.UserCode)
+                        .SetProperty(x => x.F_Update_By, _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value)
                         .SetProperty(x => x.F_Update_Date, DateTime.Now));
 
                     _log.WriteLogMsg("UPDATE TB_MS_LPSupplier " + JsonConvert.SerializeObject(obj));
@@ -342,7 +346,7 @@ namespace KANBAN.Services.Master.Repository
                 {
                     foreach (var each in listObj)
                     {
-                        await _kbContext.TB_MS_LPSupplier.Where(x => x.F_Plant == _BearerClass.Plant
+                        await _kbContext.TB_MS_LPSupplier.Where(x => x.F_Plant == _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value
                             && x.F_Logistic == each.f_Logistic
                             && x.F_Start_Date == each.f_Start_Date
                             && x.F_End_Date == each.f_End_Date

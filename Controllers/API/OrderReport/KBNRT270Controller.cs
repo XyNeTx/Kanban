@@ -2,9 +2,7 @@
 using HINOSystem.Libs;
 using KANBAN.Context;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using NPOI.HSSF.UserModel;
 using System.Data;
 
 namespace KANBAN.Controllers.API.OrderReport

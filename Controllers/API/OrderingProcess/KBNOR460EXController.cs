@@ -2,6 +2,7 @@
 using HINOSystem.Libs;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Security.Claims;
 
 namespace HINOSystem.Controllers.API.Master
 {
@@ -47,7 +48,7 @@ namespace HINOSystem.Controllers.API.Master
                     ""data"": null
                 }";
 
-            _BearerClass.Authentication(Request);
+            _BearerClass.Authentication();
             if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
             try
@@ -56,15 +57,15 @@ namespace HINOSystem.Controllers.API.Master
 
                 _SQL = @" EXEC [exec].[spKBNOR460EX_INI_PDS] 
                     'U',
-                    '" + _BearerClass.Plant + @"',
-                    '" + _BearerClass.UserCode + @"',
+                    '" + User.FindFirst(ClaimTypes.Locality).Value + @"',
+                    '" + User.FindFirst(ClaimTypes.UserData).Value + @"',
                     '' ";
                 string _jsPDSNo = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName: ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
 
                 _SQL = @" EXEC [exec].[spKBNOR460EX_INI_SUPPLIER] 
                     'U',
-                    '" + _BearerClass.Plant + @"',
-                    '" + _BearerClass.UserCode + @"',
+                    '" + User.FindFirst(ClaimTypes.Locality).Value + @"',
+                    '" + User.FindFirst(ClaimTypes.UserData).Value + @"',
                     '' ";
                 string _jsSupplier = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName: ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
 
@@ -100,7 +101,7 @@ namespace HINOSystem.Controllers.API.Master
                     ""data"": null
                 }";
 
-            _BearerClass.Authentication(Request);
+            _BearerClass.Authentication();
             if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
             try

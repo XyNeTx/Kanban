@@ -1,14 +1,10 @@
 ﻿using HINOSystem.Context;
 using HINOSystem.Libs;
 using KANBAN.Context;
-using KANBAN.Models.KB3.ReportOrder;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Newtonsoft.Json;
-using NuGet.Packaging;
-using NuGet.Protocol;
 
 namespace KANBAN.Controllers.API.OrderReport
 {
@@ -83,7 +79,7 @@ namespace KANBAN.Controllers.API.OrderReport
             {
                 if (data != null)
                 {
-                    _BearerClass.Authentication(Request);
+                    _BearerClass.Authentication();
                     dynamic _json = JsonConvert.DeserializeObject(data);
                     string monthFrom = _json["monthFrom"];
                     string monthTo = _json["monthTo"];

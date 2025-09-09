@@ -1,7 +1,6 @@
-﻿using HINOSystem.Models;
-using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
+﻿using Microsoft.AspNetCore.Mvc;
 using HINOSystem.Libs;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HINOSystem.Controllers
 {
@@ -15,9 +14,9 @@ namespace HINOSystem.Controllers
 
 
         public TacomaOrderController(
-            ILogger<HomeController> logger, 
-            DbConnect dbConnect, 
-            AuthenGuard authenGuard, 
+            ILogger<HomeController> logger,
+            DbConnect dbConnect,
+            AuthenGuard authenGuard,
             WarrantyClaimConnect wrtConnect
             )
         {
@@ -31,23 +30,24 @@ namespace HINOSystem.Controllers
             this._conn = _dbConnect.GetConncetionString();
         }
 
-
+        [Authorize(Policy = "KBNIM015")]
         public IActionResult KBNIM015()
         {
             //_authenGuard.ComponentToolbar = false;
-            return _authenGuard.guard(ControllerContext);
+            return View();
         }
 
+        [Authorize(Policy = "KBNIM015M")]
         public IActionResult KBNIM015M()
         {
             //_authenGuard.ComponentToolbar = false;
-            return _authenGuard.guard(ControllerContext);
+            return View();
         }
-
+        [Authorize(Policy = "KBNIM015C")]
         public IActionResult KBNIM015C()
         {
             //_authenGuard.ComponentToolbar = false;
-            return _authenGuard.guard(ControllerContext);
+            return View();
         }
 
 

@@ -1,5 +1,4 @@
-﻿using DocumentFormat.OpenXml.Office2013.Word;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace KANBAN.Models.KB3.ImportData.Model
 {

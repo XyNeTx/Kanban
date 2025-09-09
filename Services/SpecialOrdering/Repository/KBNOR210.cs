@@ -5,6 +5,7 @@ using KANBAN.Libs;
 using KANBAN.Services.SpecialOrdering.Interface;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Security.Claims;
 
 namespace KANBAN.Services.SpecialOrdering.Repository
 {
@@ -16,6 +17,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
         private readonly FillDataTable _FillDT;
         private readonly SerilogLibs _log;
         private readonly IEmailService _emailService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
         public KBNOR210
@@ -25,7 +27,8 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             PPM3Context PPM3Context,
             FillDataTable FillDT,
             SerilogLibs log,
-            IEmailService emailService
+            IEmailService emailService,
+            IHttpContextAccessor httpContextAccessor
             )
         {
             _kbContext = kbContext;
@@ -34,6 +37,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             _FillDT = FillDT;
             _log = log;
             _emailService = emailService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         //public int progressBar = 0;
@@ -42,7 +46,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
         {
             try
             {
-                var dt = _FillDT.ExecuteSQL($"EXEC [exec].spKBNOR210_SEARCH '{_BearerClass.Plant}','{_BearerClass.UserCode}'");
+                var dt = _FillDT.ExecuteSQL($"EXEC [exec].spKBNOR210_SEARCH '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value}','{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}'");
 
                 if (dt.Rows.Count == 0)
                 {
@@ -61,7 +65,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
         {
             try
             {
-                await _kbContext.Database.ExecuteSqlRawAsync($"EXEC [exec].spKBNOR210_INF '{_BearerClass.Plant}','{_BearerClass.UserCode}'");
+                await _kbContext.Database.ExecuteSqlRawAsync($"EXEC [exec].spKBNOR210_INF '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value}','{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}'");
             }
             catch (Exception ex)
             {
@@ -75,7 +79,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             {
 
                 int count = await _kbContext.Database.ExecuteSqlRawAsync($@"SELECT * From TB_Import_Error
-                        WHERE F_Type = 'KBNOR210' and F_Update_By = '{_BearerClass.UserCode}' ");
+                        WHERE F_Type = 'KBNOR210' and F_Update_By = '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}' ");
 
                 if (count > 0)
                 {

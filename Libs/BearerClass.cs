@@ -1,11 +1,7 @@
 ﻿//using Microsoft.Office.Interop.Excel;
 using KANBAN.Services;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NPOI.SS.UserModel;
-using System.Data;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace HINOSystem.Libs
 {
@@ -55,101 +51,32 @@ namespace HINOSystem.Libs
 
         }
 
-        public dynamic Authentication(HttpRequest pRequest)
+        public dynamic Authentication()
         {
-            if (pRequest == null)
-            {
-                this.Status = 403;
-                this.Response = "FORBIDDEN";
-                this.Message = "Unauthorized with the header request not found.";
-
-                return JObject.Parse(@"{
-                                    ""status"":""403"",
-                                    ""response"":""FORBIDDEN"",
-                                    ""message"": ""Unauthorized with the header request not found.""
-                                }"
-                );
-            }
-            //_KBCN.Plant = (_KBCN.Plant.ToString() == "" ? pRequest.Headers["Plant"].ToString() : _KBCN.Plant);
-            DataTable _dt = _KBCN.ExecuteSQL("SELECT * FROM [erp].[User] WHERE Token = '" + pRequest.Headers["Authorization"].ToString().Replace("Bearer ", "") + "' ", skipLog: true);
-            if (_dt.Rows.Count <= 0)
-            {
-                this.Status = 401;
-                this.Response = "UNAUTHORIZED";
-                this.Message = "Unauthorized";
-
-                this.Result = JObject.Parse(@"{
-                                        ""status"":""401"",
-                                        ""response"":""UNAUTHORIZED"",
-                                        ""message"": ""Unauthorized with the authorization token is not found.""
-                                    }"
-                );
-
-                return this.Result;
-            }
-
-            DataRow _dr = _dt.Rows[0];
-            JObject _BearerClass = JObject.Parse(JsonConvert.SerializeObject(_dr));
-
             this.Status = 200;
-            this.Token = pRequest.Headers.Authorization.ToString().Replace("Bearer ", "");
-            this.UserCode = pRequest.Headers["UserCode"].ToString();
-            this.Device = pRequest.Headers["Device"].ToString();
-            this.IPAddress = pRequest.Headers["IPAddress"].ToString();
-            this.Plant = pRequest.Headers["Plant"].ToString();
-            this.ProcessDate = pRequest.Headers["ProcessDate"].ToString();
-            this.Shift = pRequest.Headers["Shift"].ToString();
-            this.ControllerName = pRequest.Headers["Controller"].ToString();
-            this.ActionName = pRequest.Headers["Action"].ToString();
-            this.Records = JsonConvert.DeserializeObject((pRequest.Headers["Records"].ToString() == "" ? "{}" : pRequest.Headers["Records"].ToString()));
-            this.LOV = pRequest.Headers["LOV"].ToString();
-            this.Data = JObject.Parse(JsonConvert.SerializeObject(_dr));
+            this.Token = _http.HttpContext.Request.Headers.Authorization.ToString().Replace("Bearer ", "");
+            this.UserCode = _http.HttpContext.Request.Headers["UserCode"].ToString();
+            this.Device = _http.HttpContext.Request.Headers["Device"].ToString();
+            this.IPAddress = _http.HttpContext.Request.Headers["IPAddress"].ToString();
+            this.Plant = _http.HttpContext.Request.Headers["Plant"].ToString();
+            this.ProcessDate = _http.HttpContext.Request.Headers["ProcessDate"].ToString();
+            this.Shift = _http.HttpContext.Request.Headers["Shift"].ToString();
+            this.ControllerName = _http.HttpContext.Request.Headers["Controller"].ToString();
+            this.ActionName = _http.HttpContext.Request.Headers["Action"].ToString();
 
-            Int64 UserID = _dr.Table.Rows[0].Field<Int64>("_ID");
-            string sql = "SELECT * FROM [erp].[UserAuthorize] WHERE User_ID = " + UserID + " AND Remark LIKE '%" + this.ActionName + "%' ";
-            _dt = _KBCN.ExecuteSQL(sql, skipLog: true);
-
-            if (_dt == null || _dt.Rows.Count <= 0)
-            {
-                this.Status = 403;
-                this.Response = "FORBIDDEN";
-                this.Message = "You are not allowed to access this page.";
-
-                this.Result = JObject.Parse(@"{
-                                        ""status"":""403"",
-                                        ""response"":""FORBIDDEN"",
-                                        ""message"": ""You are not allowed to access this page.""
-                                    }"
-                );
-
-                return this.Result;
-            }
-
-            _http.HttpContext.Response.Headers["Authorization"] = "Bearer " + this.Token;
-            _http.HttpContext.Session.SetString("TOKEN", this.Token);
             return this;
         }
 
         public int CheckAuthen()
         {
-            this.Authentication(_http.HttpContext.Request);
-            if (this.Status == 401)
-            {
-                throw new CustomHttpException(401, "Unauthorized");
-            }
-            else if (this.Status == 403)
-            {
-                throw new CustomHttpException(403, "Forbidden");
-            }
-            _http.HttpContext.Response.Headers["Authorization"] = "Bearer " + this.Token;
-            _http.HttpContext.Session.SetString("TOKEN", this.Token);
+            this.Authentication();
 
             return this.Status;
         }
 
         public async Task CheckAuthorize()
         {
-            this.Authentication(_http.HttpContext.Request);
+            this.Authentication();
             if (this.Status == 401)
             {
                 throw new CustomHttpException(401, "Unauthorized");
@@ -158,9 +85,6 @@ namespace HINOSystem.Libs
             {
                 throw new CustomHttpException(403, "Forbidden");
             }
-
-            _http.HttpContext.Response.Headers["Authorization"] = "Bearer " + this.Token;
-            _http.HttpContext.Session.SetString("TOKEN", this.Token);
 
             await Task.CompletedTask;
         }
@@ -175,54 +99,6 @@ namespace HINOSystem.Libs
                 _ => "3C",
             };
         }
-
-        public string Encrypt(string clearText)
-        {
-            string EncryptionKey = _config.GetValue<string>("Application:EncryptionKey").ToString();
-            byte[] clearBytes = Encoding.Unicode.GetBytes(clearText);
-            using (Aes encryptor = Aes.Create())
-            {
-                Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(EncryptionKey, new byte[] { 0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d, 0x65, 0x64, 0x76, 0x65, 0x64, 0x65, 0x76 });
-                encryptor.Key = pdb.GetBytes(32);
-                encryptor.IV = pdb.GetBytes(16);
-                using (MemoryStream ms = new MemoryStream())
-                {
-                    using (CryptoStream cs = new CryptoStream(ms, encryptor.CreateEncryptor(), CryptoStreamMode.Write))
-                    {
-                        cs.Write(clearBytes, 0, clearBytes.Length);
-                        cs.Close();
-                    }
-                    clearText = Convert.ToBase64String(ms.ToArray());
-                }
-            }
-            return clearText;
-        }
-
-
-
-        public string Decrypt(string cipherText)
-        {
-            string EncryptionKey = _config.GetValue<string>("Application:EncryptionKey").ToString();
-            cipherText = cipherText.Replace(" ", "+");
-            byte[] cipherBytes = Convert.FromBase64String(cipherText);
-            using (Aes encryptor = Aes.Create())
-            {
-                Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(EncryptionKey, new byte[] { 0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d, 0x65, 0x64, 0x76, 0x65, 0x64, 0x65, 0x76 });
-                encryptor.Key = pdb.GetBytes(32);
-                encryptor.IV = pdb.GetBytes(16);
-                using (MemoryStream ms = new MemoryStream())
-                {
-                    using (CryptoStream cs = new CryptoStream(ms, encryptor.CreateDecryptor(), CryptoStreamMode.Write))
-                    {
-                        cs.Write(cipherBytes, 0, cipherBytes.Length);
-                        cs.Close();
-                    }
-                    cipherText = Encoding.Unicode.GetString(ms.ToArray());
-                }
-            }
-            return cipherText;
-        }
-
 
         public string versions()
         {
@@ -241,41 +117,3 @@ namespace HINOSystem.Libs
         }
     }
 }
-
-
-//Action
-//:
-//"KBNOR321"
-//Authorization
-//:
-//"Bearer 0xB4AB01FA1A07D98234CA8CB30226A662"
-//Controller
-//:
-//"OrderingProcess"
-//Device
-//:
-//"HM23-44-018"
-//IPAddress
-//:
-//"172.20.5.34"
-//LOV
-//:
-//""
-//Plant
-//:
-//"3"
-//ProcessDate
-//:
-//"05/08/2025"
-//Records
-//:
-//""
-//Shift
-//:
-//"1"
-//UserCode
-//:
-//"20234111"
-//title
-//:
-//"Maintenance CKD In-House Order"

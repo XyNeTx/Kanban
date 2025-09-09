@@ -2,15 +2,18 @@
 using HINOSystem.Libs;
 using KANBAN.Context;
 using KANBAN.Models.KB3.UrgentOrder;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Data;
+using System.Security.Claims;
 //using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HINOSystem.Controllers.API.Master
 {
-    [ApiController]
+    [ApiController][Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/[controller]/[action]")]
     public class KBNIM014Controller : ControllerBase
     {
@@ -23,6 +26,7 @@ namespace HINOSystem.Controllers.API.Master
         private readonly KB3Context _KB3Context;
         private readonly SerilogLibs _Log;
         private readonly FillDataTable _FillDT;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
         private readonly string StoragePath = @"wwwroot\Storage\Uploads";
@@ -36,7 +40,8 @@ namespace HINOSystem.Controllers.API.Master
             KB3Context kB3Context,
             PPM3Context pPM3Context,
             SerilogLibs serilogLibs,
-            FillDataTable fillDataTable
+            FillDataTable fillDataTable,
+            IHttpContextAccessor httpContextAccessor
             )
         {
             _configuration = configuration;
@@ -48,6 +53,7 @@ namespace HINOSystem.Controllers.API.Master
             _PPM3Context = pPM3Context;
             _Log = serilogLibs;
             _FillDT = fillDataTable;
+            _httpContextAccessor = httpContextAccessor;
         }
 
 
@@ -55,7 +61,7 @@ namespace HINOSystem.Controllers.API.Master
         public async Task<IActionResult> ImportSave(TB_Import_EKanban_Pack obj)
         {
 
-            _BearerClass.Authentication(Request);
+            _BearerClass.Authentication();
             if (_BearerClass.Status == 401) return Unauthorized(new
             {
                 status = "401",
@@ -63,12 +69,15 @@ namespace HINOSystem.Controllers.API.Master
                 title = "Unauthorized",
                 message = "Please Login First"
             });
+            
+            string UserID = HttpContext.Session.GetString("USER_CODE");
+            string Plant = HttpContext.Session.GetString("USER_PLANT");
 
             try
             {
 
-                string UserID = HttpContext.Session.GetString("USER_CODE");
-                string Plant = HttpContext.Session.GetString("USER_PLANT");
+                //string UserID = HttpContext.Session.GetString("USER_CODE");
+                //string Plant = HttpContext.Session.GetString("USER_PLANT");
 
                 obj.F_Plant_CD = Plant;
                 obj.F_Update_By = UserID;
@@ -88,6 +97,10 @@ namespace HINOSystem.Controllers.API.Master
             }
             catch (Exception ex)
             {
+                var _delList = await _KB3Context.TB_Import_EKanban_Pack.Where(x => x.F_Plant_CD == Plant && x.F_Update_By == UserID).ToListAsync();
+
+                _KB3Context.RemoveRange(_delList);
+                _KB3Context.SaveChanges();
                 return StatusCode(500, new
                 {
                     status = "500",
@@ -103,7 +116,7 @@ namespace HINOSystem.Controllers.API.Master
         public async Task<IActionResult> AfterImported()
         {
 
-            _BearerClass.Authentication(Request);
+            _BearerClass.Authentication();
 
             if (_BearerClass.Status == 401) return Unauthorized(new
             {
@@ -123,7 +136,7 @@ namespace HINOSystem.Controllers.API.Master
                 _KB3Transaction.CreateSavepoint("Start_AfterImported");
 
                 var ImportList = await _KB3Context.TB_Import_EKanban_Pack.AsNoTracking()
-                    .Where(x => x.F_Update_By == _BearerClass.UserCode && x.F_Update_Date.Value.Date == DateTime.Now.Date)
+                    .Where(x => x.F_Update_By == _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value && x.F_Update_Date.Value.Date == DateTime.Now.Date)
                     .Select(x => x.F_PDS_No)
                     .ToListAsync();
 
@@ -173,7 +186,7 @@ namespace HINOSystem.Controllers.API.Master
                     });
                 }
 
-                _Log.WriteLog("KBNIM014 AfterImported ", UserID, _BearerClass.Device);
+                _Log.WriteLog("KBNIM014 AfterImported ", UserID, _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.WindowsDeviceClaim).Value);
 
                 return Ok(new
                 {

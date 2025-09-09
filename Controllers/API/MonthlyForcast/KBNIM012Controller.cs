@@ -3,16 +3,18 @@ using HINOSystem.Libs;
 using KANBAN.Context;
 using KANBAN.Libs;
 using KANBAN.Models.KB3;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Data;
-using System.Globalization;
+using System.Security.Claims;
 //using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HINOSystem.Controllers.API.Master
 {
-    [ApiController]
+    [ApiController][Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/[controller]/[action]")]
     public class KBNIM012Controller : ControllerBase
     {
@@ -51,7 +53,7 @@ namespace HINOSystem.Controllers.API.Master
             try
             {
 
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if(_BearerClass.Status == 401)
                 {
                     return StatusCode(401, new
@@ -105,7 +107,7 @@ namespace HINOSystem.Controllers.API.Master
             try
             {
 
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if(_BearerClass.Status == 401)
                 {
                     return StatusCode(401, new
@@ -149,7 +151,7 @@ namespace HINOSystem.Controllers.API.Master
             try
             {
 
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401)
                 {
                     return StatusCode(401, new
@@ -199,7 +201,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401)
                 {
                     return StatusCode(401, new
@@ -260,7 +262,7 @@ namespace HINOSystem.Controllers.API.Master
             try
             {
 
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401)
                 {
                     return StatusCode(401, new
@@ -334,7 +336,7 @@ namespace HINOSystem.Controllers.API.Master
             try
             {
 
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401)
                 {
                     return StatusCode(401, new
@@ -382,7 +384,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401)
                 {
                     return StatusCode(401, new
@@ -432,7 +434,7 @@ namespace HINOSystem.Controllers.API.Master
             try
             {
 
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401)
                 {
                     return StatusCode(401, new
@@ -485,7 +487,7 @@ namespace HINOSystem.Controllers.API.Master
             try
             {
 
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401)
                 {
                     return StatusCode(401, new
@@ -575,7 +577,7 @@ namespace HINOSystem.Controllers.API.Master
             try
             {
 
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401)
                 {
                     return StatusCode(401, new
@@ -641,7 +643,7 @@ namespace HINOSystem.Controllers.API.Master
             try
             {
 
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401)
                 {
                     return StatusCode(401, new
@@ -680,7 +682,7 @@ namespace HINOSystem.Controllers.API.Master
                 //if(Ver.ToUpper() == "CONFIRM")
                 //{
                 //    _sql = $"Select * From TB_IMport_Forecast Where F_Version <> 'C' and F_production_date ='{YM}' and F_revision_no = '{Rev}' " +
-                //        $" and F_Store_Cd like '{_BearerClass.Plant}%' ";
+                //        $" and F_Store_Cd like '{User.FindFirst(ClaimTypes.Locality).Value}%' ";
                 //    var dt = _FillDT.ExecuteSQL(_sql);
 
                 //    _sql = $"UPDATE TB_IMPORT_FORECAST Set F_Version ='C',F_Amount_M = 0,F_Amount_MD1=0,F_Amount_MD2=0,F_Amount_MD3=0,F_Amount_MD4=0,F_Amount_MD5=0 " +
@@ -689,10 +691,10 @@ namespace HINOSystem.Controllers.API.Master
                 //        $",F_Amount_MD16=0,F_Amount_MD17=0,F_Amount_MD18=0,F_Amount_MD19=0,F_Amount_MD20=0 " +
                 //        $",F_Amount_MD21=0,F_Amount_MD22=0,F_Amount_MD23=0,F_Amount_MD24=0,F_Amount_MD25=0 " +
                 //        $",F_Amount_MD26=0,F_Amount_MD27=0,F_Amount_MD28=0,F_Amount_MD29=0,F_Amount_MD30=0,F_Amount_MD31=0 " +
-                //        $",F_Import_By='{_BearerClass.UserCode}',F_Import_Date=getdate() " +
+                //        $",F_Import_By='{User.FindFirst(ClaimTypes.UserData).Value}',F_Import_Date=getdate() " +
                 //        $"Where F_Version <>'C' and F_production_date ='{YM}' " +
                 //        $"and F_revision_no='{Rev}' " +
-                //        $"and F_Store_Cd like '{_BearerClass.UserCode}%' ";
+                //        $"and F_Store_Cd like '{User.FindFirst(ClaimTypes.UserData).Value}%' ";
 
                 //    await _KB3Context.Database.ExecuteSqlRawAsync(_sql);
                 //    _log.WriteLogMsg($"Update Forecast Confirm | SQL : {_sql}");
@@ -724,7 +726,7 @@ namespace HINOSystem.Controllers.API.Master
                 //    $" 0 as F_Amount_MD4, 0 as F_Amount_MD5, 0 as F_Amount_MD6, 0 as F_Amount_MD7, 0 as F_Amount_MD8, 0 as F_Amount_MD9, 0 as F_Amount_MD10, 0 as F_Amount_MD11, " +
                 //    $" 0 as F_Amount_MD12, 0 as F_Amount_MD13, 0 as F_Amount_MD14, 0 as F_Amount_MD15, 0 as F_Amount_MD16, 0 as F_Amount_MD17, 0 as F_Amount_MD18, 0 as F_Amount_MD19, " +
                 //    $" 0 as F_Amount_MD20, 0 as F_Amount_MD21, 0 as F_Amount_MD22, 0 as F_Amount_MD23, 0 as F_Amount_MD24, 0 as F_Amount_MD25, 0 as F_Amount_MD26, 0 as F_Amount_MD27, " +
-                //    $" 0 as F_Amount_MD28, 0 as F_Amount_MD29, 0 as F_Amount_MD30, 0 as F_Amount_MD31, 0 as F_unit_price, 0 as F_amount, F.F_Fac, F.F_Flag_Update, '{_BearerClass.UserCode}' as F_Import_By, " +
+                //    $" 0 as F_Amount_MD28, 0 as F_Amount_MD29, 0 as F_Amount_MD30, 0 as F_Amount_MD31, 0 as F_unit_price, 0 as F_amount, F.F_Fac, F.F_Flag_Update, '{User.FindFirst(ClaimTypes.UserData).Value}' as F_Import_By, " +
                 //    $" getdate() as F_Import_Date,'1' as F_Flag_Ckd " +
                 //    $" from TB_IMPORT_FOrecast F INNER JOIN dbo.FN_GetNewPart('{YM}') P ON F.F_Part_No collate Thai_CI_AS = P.F_PART_NO " +
                 //    $" and F.F_Ruibetsu collate Thai_CI_AS= P.F_Ruibetsu and Substring(F.F_Supplier_Code collate Thai_CI_AS,2,4) = P.F_Supplier_Code " +
@@ -745,7 +747,7 @@ namespace HINOSystem.Controllers.API.Master
                 string LastOrder = _KB3Context.Database.SqlQueryRaw<string>("Select substring(F_Value3,1,8) AS Value From TB_MS_Parameter Where F_Code = 'LO' ").FirstOrDefault();
 
                 _sql = $"Update TB_MS_Parameter set F_Value2 ='1',F_Value3='{LastOrder}' " +
-                    $",F_Update_Date=Getdate(),F_Update_By='{_BearerClass.UserCode}' Where F_Code ='FO' ";
+                    $",F_Update_Date=Getdate(),F_Update_By='{User.FindFirst(ClaimTypes.UserData).Value}' Where F_Code ='FO' ";
 
                 await _KB3Context.Database.ExecuteSqlRawAsync(_sql);
 
@@ -785,7 +787,7 @@ namespace HINOSystem.Controllers.API.Master
             try
             {
 
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401)
                 {
                     return StatusCode(401, new
@@ -919,7 +921,7 @@ namespace HINOSystem.Controllers.API.Master
         [HttpGet]
         public async Task<IActionResult> InterfaceN1(string Txt_ProdYM,string Txt_ProdYM_Next)
         {
-            _BearerClass.Authentication(Request);
+            _BearerClass.Authentication();
             if (_BearerClass.Status == 401)
             {
                 return StatusCode(401, new

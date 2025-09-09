@@ -1,6 +1,5 @@
 ﻿using HINOSystem.Context;
 using HINOSystem.Libs;
-using HINOSystem.Models.KB3.Master;
 using KANBAN.Context;
 using KANBAN.Libs;
 using KANBAN.Models.KB3.OtherCondition.Model;
@@ -10,6 +9,7 @@ using KANBAN.Services.Automapper.Interface;
 using KANBAN.Services.OtherCondition.IRepository;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Security.Claims;
 using TB_MS_PartOrder = HINOSystem.Models.KB3.Master.TB_MS_PartOrder;
 
 namespace KANBAN.Services.OtherCondition.Repository
@@ -23,6 +23,7 @@ namespace KANBAN.Services.OtherCondition.Repository
         private readonly SerilogLibs _log;
         private readonly IEmailService _emailService;
         private readonly IAutoMapService _automapService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
         public KBNOC120
@@ -33,7 +34,8 @@ namespace KANBAN.Services.OtherCondition.Repository
             FillDataTable FillDT,
             SerilogLibs log,
             IEmailService emailService,
-            IAutoMapService autoMapService
+            IAutoMapService autoMapService,
+            IHttpContextAccessor httpContextAccessor
             )
         {
             _kbContext = kbContext;
@@ -43,6 +45,7 @@ namespace KANBAN.Services.OtherCondition.Repository
             _log = log;
             _emailService = emailService;
             _automapService = autoMapService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<List<TB_MS_PartOrder>> GetSupplier(string? StoreCD)
@@ -51,7 +54,7 @@ namespace KANBAN.Services.OtherCondition.Repository
             {
                 string strDate = DateTime.Now.ToString("yyyyMMdd");
 
-                var data = await _kbContext.TB_MS_PartOrder.Where(x=>x.F_Store_Code.StartsWith(_BearerClass.Plant)
+                var data = await _kbContext.TB_MS_PartOrder.Where(x=>x.F_Store_Code.StartsWith(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value)
                     && x.F_Start_Date.CompareTo(strDate) <= 0 && x.F_End_Date.CompareTo(strDate) >= 0)
                     .OrderBy(x=>x.F_Supplier_Cd.Trim() + "-" + x.F_Supplier_Plant.Trim()).ToListAsync();
 
@@ -113,8 +116,8 @@ namespace KANBAN.Services.OtherCondition.Repository
                     F_Store_CD = VMObj.StoreCD,
                     F_Slide_Date = VMObj.SlideDateTo,
                     F_Slide_Trip = int.Parse(VMObj.TripNext),
-                    F_Plant = _BearerClass.Plant,
-                    F_Update_By = _BearerClass.UserCode,
+                    F_Plant = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value,
+                    F_Update_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value,
                     F_Update_Date = DateTime.Now,
                     F_Keep_Order = VMObj.IsSlideOrder ? "1" : "0",
                 };
@@ -181,7 +184,7 @@ namespace KANBAN.Services.OtherCondition.Repository
 
                 if (action.ToLower() == "new")
                 {
-                    var IsExisted = await _kbContext.TB_Slide_Order_Part.AnyAsync(x => x.F_Plant == _BearerClass.Plant
+                    var IsExisted = await _kbContext.TB_Slide_Order_Part.AnyAsync(x => x.F_Plant == _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value
                         && x.F_Delivery_Date == VMObj.DeliveryDate
                         && x.F_Supplier_CD.Trim() + "-" + x.F_Supplier_Plant.Trim() == VMObj.Supplier
                         && x.F_Store_CD == VMObj.StoreCD
@@ -200,7 +203,7 @@ namespace KANBAN.Services.OtherCondition.Repository
 
                 else if (action.ToLower() == "upd")
                 {
-                    var dbObj = await _kbContext.TB_Slide_Order.FirstOrDefaultAsync(x => x.F_Plant == _BearerClass.Plant
+                    var dbObj = await _kbContext.TB_Slide_Order.FirstOrDefaultAsync(x => x.F_Plant == _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value
                         && x.F_Delivery_Date == VMObj.DeliveryDate
                         && x.F_Supplier_CD.Trim() + "-" + x.F_Supplier_Plant.Trim() == VMObj.Supplier
                         && x.F_Store_CD == VMObj.StoreCD
@@ -214,7 +217,7 @@ namespace KANBAN.Services.OtherCondition.Repository
                     dbObj.F_Keep_Order = VMObj.IsSlideOrder ? "1" : "0";
                     dbObj.F_Slide_Date = VMObj.IsSlideOrder ? VMObj.SlideDateTo : "";
                     dbObj.F_Slide_Trip = VMObj.IsSlideOrder ? int.Parse(VMObj.TripNext) : 0;
-                    dbObj.F_Update_By = _BearerClass.UserCode;
+                    dbObj.F_Update_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value;
                     dbObj.F_Update_Date = DateTime.Now;
 
                     _kbContext.TB_Slide_Order.Update(dbObj);
@@ -228,7 +231,7 @@ namespace KANBAN.Services.OtherCondition.Repository
                 {
                     foreach(var each in ListVMObj)
                     {
-                        var DelData = await _kbContext.TB_Slide_Order.FirstOrDefaultAsync(x => x.F_Plant == _BearerClass.Plant
+                        var DelData = await _kbContext.TB_Slide_Order.FirstOrDefaultAsync(x => x.F_Plant == _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value
                             && x.F_Delivery_Date == each.DeliveryDate
                             && x.F_Supplier_CD.Trim() + "-" + x.F_Supplier_Plant.Trim() == each.Supplier
                             && x.F_Store_CD == each.StoreCD
@@ -262,7 +265,7 @@ namespace KANBAN.Services.OtherCondition.Repository
         {
             try
             {
-                var data = await _kbContext.TB_Slide_Order.Where(x=>x.F_Plant == _BearerClass.Plant)
+                var data = await _kbContext.TB_Slide_Order.Where(x=>x.F_Plant == _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value)
                     .OrderBy(x=>x.F_Plant)
                     .ThenBy(x=>x.F_Supplier_CD)
                     .ThenBy(x=>x.F_Supplier_Plant)

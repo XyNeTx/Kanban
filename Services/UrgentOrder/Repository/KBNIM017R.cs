@@ -8,6 +8,7 @@ using KANBAN.Services.Automapper.Interface;
 using KANBAN.Services.UrgentOrder.IRepository;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Security.Claims;
 
 namespace KANBAN.Services.UrgentOrder.Repository
 {
@@ -21,6 +22,7 @@ namespace KANBAN.Services.UrgentOrder.Repository
         private readonly SerilogLibs _log;
         private readonly IEmailService _emailService;
         private readonly IAutoMapService _automapService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
         public KBNIM017R
@@ -32,7 +34,8 @@ namespace KANBAN.Services.UrgentOrder.Repository
                 FillDataTable FillDT,
                 SerilogLibs log,
                 IEmailService emailService,
-                IAutoMapService autoMapService
+                IAutoMapService autoMapService,
+                IHttpContextAccessor httpContextAccessor
             )
         {
             _kbContext = kbContext;
@@ -43,6 +46,7 @@ namespace KANBAN.Services.UrgentOrder.Repository
             _log = log;
             _emailService = emailService;
             _automapService = autoMapService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<List<TB_Transaction_TMP>> GetUrgentOrders(List<VM_KBNIM017R_ImportData> listObj)
@@ -51,8 +55,38 @@ namespace KANBAN.Services.UrgentOrder.Repository
             {
                 var addList = new List<TB_Transaction_TMP>();
                 string PDSNo = listObj[0].PDS_No;
-                var Delivery_Date = DateTime.ParseExact(listObj[0].DeliveryDate, "M/dd/yyyy", null);
+
                 foreach (var obj in listObj) {
+
+                    var Delivery_Date = DateTime.ParseExact(obj.DeliveryDate, "M/dd/yyyy", null).AddDays(-10);
+                    var YM = Delivery_Date.ToString("yyyyMM");
+                    bool isWorkDay = false;
+
+                    do
+                    {
+                        var TB_MS_Calendar = await _kbContext.TB_Calendar
+                            .FirstOrDefaultAsync(x => x.F_YM == YM
+                            && x.F_Store_cd == "3C");
+
+                        if (TB_MS_Calendar == null)
+                        {
+                            throw new CustomHttpException(500, "Please Set Master Working Calendar");
+                        }
+
+                        int date = int.Parse(Delivery_Date.ToString("dd"));
+                        string accessWork = $"F_workCd_D{date}";
+                        var propCalendar = TB_MS_Calendar.GetType().GetProperty(accessWork);
+
+                        if (propCalendar != null && propCalendar.GetValue(TB_MS_Calendar).ToString() == "1")
+                        {
+                            isWorkDay = true;
+                        }
+                        else
+                        {
+                            Delivery_Date = Delivery_Date.AddDays(-1);
+                        }
+                    }
+                    while (!isWorkDay);
 
                     var T_Convert_FG_THPS_PEFF = await _InvenContext.T_Convert_FG_THPS_PEFF.AsNoTracking()
                         .Where(x => x.F_Fg_Part_no.Trim() == obj.PartNo.Trim()).FirstOrDefaultAsync();
@@ -71,6 +105,23 @@ namespace KANBAN.Services.UrgentOrder.Repository
                     if (T_Parent_Part == null)
                     {
                         throw new CustomHttpException(404, $"Parent part not found for {T_Convert_FG_THPS_PEFF.F_Fg_Part_no}");
+                    }
+
+                    var isDuplicate = await _kbContext.TB_Transaction
+                        .AnyAsync(x => x.F_PDS_No == PDSNo
+                        && x.F_Part_Order.Trim() == T_Parent_Part.F_Parent_part.Trim()
+                        && x.F_Ruibetsu_Order == T_Parent_Part.F_Ruibetsu
+                        && x.F_Store_Order == T_Parent_Part.F_store_cd);
+
+                    var isDuplicateTMP = await _kbContext.TB_Transaction_TMP
+                        .AnyAsync(x => x.F_PDS_No == PDSNo
+                        && x.F_Part_Order.Trim() == T_Parent_Part.F_Parent_part.Trim()
+                        && x.F_Ruibetsu_Order == T_Parent_Part.F_Ruibetsu
+                        && x.F_Store_Order == T_Parent_Part.F_store_cd);
+
+                    if (isDuplicateTMP || isDuplicate)
+                    {
+                        throw new CustomHttpException(500, "Duplicate PO & Part No");
                     }
 
                     var T_Child_Part_List = await _PPM3Context.T_Parents_child
@@ -98,17 +149,16 @@ namespace KANBAN.Services.UrgentOrder.Repository
                             continue;
                         }
 
+                        //int Qty = int.Parse(Math.Ceiling(((obj.DeliveryQty * T_Child_Part.F_Use_pieces.Value) * 0.2)).ToString());
+                        //Qty += (obj.DeliveryQty * T_Child_Part.F_Use_pieces.Value);
 
-
-                        int Qty = int.Parse(Math.Ceiling(((obj.DeliveryQty * T_Child_Part.F_Use_pieces.Value) * 0.2)).ToString());
-                        Qty += (obj.DeliveryQty * T_Child_Part.F_Use_pieces.Value);
-
+                        int Qty = (obj.DeliveryQty * T_Child_Part.F_Use_pieces.Value);
 
                         var addObj = new TB_Transaction_TMP
                         {
                             F_Type = "Urgent",
                             F_Type_Spc = "",
-                            F_Plant = _BearerClass.Plant[0],
+                            F_Plant = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value[0],
                             F_PDS_No = PDSNo,
                             F_PDS_Issued_Date = DateTime.Now.ToString("yyyyMMdd"),
                             F_Store_CD = T_Constuction.F_Store_cd,
@@ -139,7 +189,7 @@ namespace KANBAN.Services.UrgentOrder.Repository
                             F_Safty_Stock = T_Constuction.F_Safety_Stk.Value,
                             F_Part_Refer = "",
                             F_Ruibetsu_Refer = "",
-                            F_Update_By = _BearerClass.UserCode,
+                            F_Update_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value,
                             F_Update_Date = DateTime.Now,
                             F_Remark = "",
                             F_Parent_Level2 = "",
@@ -219,14 +269,16 @@ namespace KANBAN.Services.UrgentOrder.Repository
                         continue;
                     }
 
-                    int Qty = int.Parse(Math.Ceiling(((DeliveryQty * T_Child_Part.F_Use_pieces.Value) * 0.2)).ToString());
-                    Qty += (DeliveryQty * T_Child_Part.F_Use_pieces.Value);
+                    //int Qty = int.Parse(Math.Ceiling(((DeliveryQty * T_Child_Part.F_Use_pieces.Value) * 0.2)).ToString());
+                    //Qty += (DeliveryQty * T_Child_Part.F_Use_pieces.Value);
+
+                    int Qty = (DeliveryQty * T_Child_Part.F_Use_pieces.Value);
 
                     var addObj = new TB_Transaction_TMP
                     {
                         F_Type = "Urgent",
                         F_Type_Spc = "",
-                        F_Plant = _BearerClass.Plant[0],
+                        F_Plant = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value[0],
                         F_PDS_No = PDSNo,
                         F_PDS_Issued_Date = DateTime.Now.ToString("yyyyMMdd"),
                         F_Store_CD = T_Constuction.F_Store_cd,
@@ -257,7 +309,7 @@ namespace KANBAN.Services.UrgentOrder.Repository
                         F_Safty_Stock = T_Constuction.F_Safety_Stk.Value,
                         F_Part_Refer = "",
                         F_Ruibetsu_Refer = "",
-                        F_Update_By = _BearerClass.UserCode,
+                        F_Update_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value,
                         F_Update_Date = DateTime.Now,
                         F_Remark = "",
                         F_Parent_Level2 = "",

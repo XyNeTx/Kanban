@@ -8,6 +8,7 @@ using KANBAN.Services.SpecialOrdering.Interface;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Data;
+using System.Security.Claims;
 
 namespace KANBAN.Services.SpecialOrdering.Repository
 {
@@ -21,6 +22,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
         private readonly SerilogLibs _log;
         private readonly IEmailService _emailService;
         private readonly ISpecialLibs _specialLibs;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
         public KBNOR220_2
@@ -31,7 +33,8 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             FillDataTable FillDT,
             SerilogLibs log,
             IEmailService emailService,
-            ISpecialLibs specialLibs
+            ISpecialLibs specialLibs,
+            IHttpContextAccessor httpContextAccessor
             )
         {
             _kbContext = kbContext;
@@ -41,13 +44,14 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             _log = log;
             _emailService = emailService;
             _specialLibs = specialLibs;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<TB_Calendar> GetCalendar(string YM)
         {
             try
             {
-                string storeCD = _BearerClass.Plant switch
+                string storeCD = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value switch
                 {
                     "1" => "1F",
                     "2" => "2B",
@@ -119,7 +123,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
         {
             try
             {
-                var data = _specialLibs.GetPOSurvey("", _BearerClass.Plant, "0", YM, "survey");
+                var data = _specialLibs.GetPOSurvey("", _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value, "0", YM, "survey");
 
                 if (data == null)
                 {
@@ -139,7 +143,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
         {
             try
             {
-                var data = _specialLibs.GetPOSurvey(PO, _BearerClass.Plant, "0", YM, "SuppCD");
+                var data = _specialLibs.GetPOSurvey(PO, _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value, "0", YM, "SuppCD");
 
                 if (data == null)
                 {
@@ -454,7 +458,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
                         item.F_Approve_Position = "";
                         item.F_Approve_Dept = "";
                         item.F_Update_Date = DateTime.Now;
-                        item.F_Update_By = _BearerClass.UserCode;
+                        item.F_Update_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value;
 
                         _kbContext.TB_Survey_Header.Update(item);
 

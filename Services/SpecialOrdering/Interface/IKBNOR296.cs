@@ -1,5 +1,4 @@
 ﻿using HINOSystem.Models.KB3.Master;
-using KANBAN.Models.KB3.Receive_Process;
 
 namespace KANBAN.Services.SpecialOrdering.Interface
 {

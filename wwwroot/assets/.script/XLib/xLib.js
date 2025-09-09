@@ -1,3 +1,4 @@
+
 class DataTableLib {
     constructor() {
         this.width = '100%';
@@ -108,7 +109,7 @@ class DataTableLib {
         });
 
         return data;
-    
+
     }
 
     GetAllDataDT(id) {
@@ -119,7 +120,7 @@ class DataTableLib {
         let data = table.rows().data().toArray();
 
         return data;
-    
+
     }
 }
 
@@ -297,7 +298,7 @@ class xLib {
     }
 
     GetUserName() {
-        return $(".pcoded-navigatio-lavel").text().trim();
+        return $("#spanUser").text().trim().split(' - ')[1];
     }
 
     ResetSelectPicker(id) {
@@ -347,7 +348,7 @@ class xLib {
             error: async function (xhr, status, error) {
                 if (xhr.status == 401) {
                     await xSplash.hide();
-                    
+
                     await xSwal.error("Error", "Session expired. Please login again.", function () {
                         if (window.location.hostname.includes("tpcap")) {
                             return window.open("/kanban/Login", "_self");
@@ -410,7 +411,7 @@ class xLib {
         title = title.split(" - ")[0];
         title = title.split(" : ")[1];
         ajexHeader.title = title;
-        //console.log(ajexHeader);
+        console.log(ajexHeader);
         return $.ajax({
             type: "GET",
             url: url,
@@ -497,13 +498,96 @@ class xLib {
         let title = $(document).find("title").text();
         title = title.split(" - ")[0];
         title = title.split(" : ")[1];
-        ajexHeader.title = title;
+        if (ajexHeader !== undefined) {
+            ajexHeader.title = title;
+        }
         //console.log(ajexHeader);
         return $.ajax({
             type: "POST",
             url: url,
             data: typeof data == 'string' ? data : JSON.stringify(data),
-            headers: ajexHeader,
+            headers: ajexHeader ?? null,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            timeout: 5400000,
+            success: successFn,
+            error: async function (xhr, status, error) {
+                if (xhr.status == 401) {
+                    await xSplash.hide();
+                    await xSwal.error("Error", "Session expired. Please login again.", function () {
+                        if (window.location.hostname.includes("tpcap")) {
+                            return window.open("/kanban/Login", "_self");
+                        }
+                        return window.open("/Login", "_self");
+                    });
+                }
+                else if (xhr.status == 403) {
+                    //console.log(xhr);
+                    // forbidden
+                    await xSplash.hide();
+                    await xSwal.error("Forbidden", "You are not allow to access this page.", function () {
+                        if (window.location.hostname.includes("tpcap")) {
+                            return window.open("/kanban/Home", "_self");
+                        }
+                        return window.open("/Home", "_self");
+                    }
+                    );
+                }
+                else {
+                    await console.error(xhr);
+                    xSplash.hide();
+
+                    // error was return by apicontroller
+                    if (xhr.responseJSON.errors != undefined) {
+
+                        if (xhr.responseJSON.errors.message == undefined || xhr.responseJSON.errors.message == null || !xhr.responseJSON.errors.message) {
+                            var _error = "";
+                            for (var key in xhr.responseJSON.errors) {
+                                _error += xhr.responseJSON.errors[key][0] + "<br>";
+                            }
+                            return xSwal.ErrorHTML("Error", _error)
+                        }
+
+                        return xSwal.error("Error", xhr.responseJSON.message)
+                    }
+
+                    // error was return by developer catch it
+                    else if (xhr.responseJSON.response) {
+                        //xSwal.error(xhr.responseJSON.response, xhr.responseJSON.message)
+                        if (typeof errorFn == 'function') {
+                            return errorFn(xhr, status, error)
+                        }
+                    }
+
+                    else {
+                        return errorFn(xhr, status, error)
+                    }
+
+                }
+            }
+        });
+    }
+
+    AJAX_PostNoHeader(url, data, successFn, errorFn) {
+        $(".btn-toolbar[role='toolbar']").addClass("d-none");
+        if (window.location.hostname.includes("tpcap")) {
+            url = "/kanban" + url;
+        }
+        else if (window.location.hostname.includes("app07")) {
+            url = "/kanban" + url;
+        }
+        //let title = $(document).find("title").text();
+        //title = title.split(" - ")[0];
+        //title = title.split(" : ")[1];
+        //if (ajexHeader !== undefined) {
+        //    ajexHeader.title = title;
+        //}
+        //console.log(ajexHeader);
+        return $.ajax({
+            type: "POST",
+            url: url,
+            data: typeof data == 'string' ? data : JSON.stringify(data),
+            //headers: ajexHeader ?? null,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             timeout: 5400000,
@@ -807,8 +891,8 @@ const _xLib = new xLib();
 
         return $(`label[for='${id}']`).parent().append(
             `
-                <input type="${type}" class="form-control col-${col}" data-live-search="${dls}" data-size="${ds}" 
-                data-val="${dv}" data-val-length="${dvl}" data-val-length-max="${dvlm}" 
+                <input type="${type}" class="form-control col-${col}" data-live-search="${dls}" data-size="${ds}"
+                data-val="${dv}" data-val-length="${dvl}" data-val-length-max="${dvlm}"
                 data-val-required="${dvr}" id="${id}" name="${id}" />
             `);
 
@@ -833,9 +917,9 @@ const _xLib = new xLib();
 
         $(`label[for='${id}']`).parent().append(
             `
-                <select class="selectpicker p-0 col-${col}" data-live-search="${dls}" data-size="${ds}" 
-                data-val="${dv}" data-val-length="${dvl}" data-val-length-max="${dvlm}" 
-                data-val-required="${dvr}" id="${id}" name="${id}" 
+                <select class="selectpicker p-0 col-${col}" data-live-search="${dls}" data-size="${ds}"
+                data-val="${dv}" data-val-length="${dvl}" data-val-length-max="${dvlm}"
+                data-val-required="${dvr}" id="${id}" name="${id}"
                 data-live-search="true" data-size="6">
                 </select>
             `);
@@ -977,3 +1061,92 @@ const _xLib = new xLib();
     };
 
 })(jQuery);
+
+//var _i18n_ = '';
+//var i18nLayout = '';
+//var _swal = '';
+//var _menu_name = "";
+
+//var _PAGE_ = window.location.pathname.split("/")[2];
+//var _CONTROLLER_ = window.location.pathname.split("/")[1];
+//var _APPNAME_ = 'KANBAN';
+//var _PLANT_ = _xLib.GetCookie("plantCode");
+
+
+var ajexHeader = {
+    authorization: `Bearer ${localStorage.getItem('TOKEN')}`,
+    UserCode: sessionStorage.getItem("UserCode"),
+    Plant: sessionStorage.getItem("Factory"),
+    Shift: sessionStorage.getItem("shift"),
+};
+
+$(document).ready(async function () {
+    xSplash.show();
+    _PAGE_ = window.location.pathname.split("/")[2];
+    _CONTROLLER_ = window.location.pathname.split("/")[1];
+    _APPNAME_ = 'KANBAN';
+    _PLANT_ = _xLib.GetCookie("plantCode");
+
+    var onThisPage = $("li.pcoded-hasmenu").find(`a[href='${window.location.pathname}']`);
+
+    onThisPage.css("color", "#00FFFF");
+    if (onThisPage.parent().parent().parent().prop("tagName") == "LI") {
+        onThisPage.parent().parent().parent().addClass("pcoded-trigger")
+    }
+    if (onThisPage.parent().parent().parent().parent().parent().prop("tagName") == "LI") {
+        onThisPage.parent().parent().parent().parent().parent().addClass("pcoded-trigger")
+    }
+
+    if (_xLib.GetCookie("isDev") == 1) {
+        $(".navbar-logo a b").append(" (Dev)");
+    }
+
+    var date = _xLib.GetCookie("loginDate").slice(0, 10);
+    // console.log(date);
+    $("#nr_Date").text(moment(date, "YYYY-MM-DD").format("DD/MM/YYYY"))
+    $("#nr_Plant").text(_xLib.GetCookie("plantCode"));
+    $("#nr_Shift").text(_xLib.GetCookie("loginDate").slice(10) == "D" ? "1 - Day Shift" : "2 - Night Shift");
+
+    //await _xLib.AJAX_Get("/xapi/GetAuthorizeProgram", null,
+    //    async (success) => {
+    //        success = _xLib.JSONparseMixData(success);
+    //        console.log(success);
+    //        $("ul.pcoded-item.pcoded-left-item").find("li").each(function () {
+    //            console.log($(this));
+    //            var id = $(this).attr("id");
+    //            //var href = $(this).attr("href");
+    //            console.log(id);
+    //            //console.log(href);
+    //            !success.data.some(x => id.trim() == x.F_Menu_ID.trim()) ? $(this).remove() : null;
+    //            console.log(success.data.some(x => id == x.F_Menu_ID));
+    //        });
+    //        //console.log(success.data.filter(x => _PAGE_ == x.F_Menu_ID));
+    //        _menu_name = success.data.filter(x => _PAGE_ == x.F_Menu_ID)[0].F_Menu_Name
+
+    //        if (_menu_name == undefined) _menu_name = "";
+    //        if (_menu_name.includes(".")) _menu_name = _menu_name.split(".")[1].trim();
+
+    //        $("#spanTitle").text(`${_PAGE_} : ${_menu_name}`)
+    //        $(document).find("title").text(`${_PAGE_} : ${_menu_name}`)
+
+    //        if (!success.data.some(x => _PAGE_ == x.F_Menu_ID)){
+    //            window.location.href("~/Home/Index")
+    //        }
+    //        $("#txtPlant").val(_PLANT_);
+    //    },
+    //    async (error) => {
+    //        console.error(error);
+    //    }
+    //);
+
+    //$(".btn-toolbar[role='toolbar']").addClass("d-none");
+
+    //var _NAVDATETIME_ = setInterval(function () {
+    //    $('#_NAVDATETIME_').html('Today : ' + moment().format("DD/MM/YYYY HH:mm:ss"));
+    //}, 1000);
+
+    $("#mCSB_1_scrollbar_vertical").attr("class", "");
+    $("#mCSB_1_dragger_vertical").attr("class", "");
+    //$("#mCSB_1_dragger_vertical").css("top", "0px");
+
+})

@@ -2,7 +2,6 @@
 {
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
-    using System.Numerics;
 
     [Table("GroupMenu", Schema = "erp")]
     public class erpGroupMenu

@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using static Org.BouncyCastle.Math.EC.ECCurve;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace KANBAN.Context
 {

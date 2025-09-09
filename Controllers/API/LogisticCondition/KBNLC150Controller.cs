@@ -1,16 +1,16 @@
-﻿using HINOSystem.Context;
-using HINOSystem.Libs;
+﻿using HINOSystem.Libs;
 using KANBAN.Models.KB3.LogisticCondition;
 using KANBAN.Services.Logistical.Interface;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using System.Data;
 
 namespace HINOSystem.Controllers.API.Master
 {
 
-    [ApiController]
+    [ApiController][Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/[controller]/[action]")]
+    [Authorize]
     public class KBNLC150Controller : ControllerBase
     {
         private readonly BearerClass _BearerClass;

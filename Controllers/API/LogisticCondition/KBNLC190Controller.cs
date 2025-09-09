@@ -1,12 +1,16 @@
 ﻿using HINOSystem.Libs;
 using KANBAN.Models.KB3.LogisticCondition;
 using KANBAN.Services.Logistical.Interface;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace HINOSystem.Controllers.API.Master
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class KBNLC190Controller : ControllerBase
     {
         private readonly ILogisticService _services;
@@ -129,7 +133,7 @@ namespace HINOSystem.Controllers.API.Master
                     status = "500",
                     response = "Internal Server Error",
                     message = "Data has not been Interface",
-                    userid = _BearerClass.UserCode,
+                    userid = User.FindFirst(ClaimTypes.UserData).Value,
                 });
             }
             catch (Exception ex)

@@ -1,6 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Drawing;
-using System.Text.Json.Serialization;
 
 namespace KANBAN.Models.KB3.SpecialOrdering
 {

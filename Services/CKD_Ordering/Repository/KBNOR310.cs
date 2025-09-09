@@ -7,6 +7,7 @@ using KANBAN.Services.CKD_Ordering.IRepository;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
 using System.Globalization;
+using System.Security.Claims;
 
 namespace KANBAN.Services.CKD_Ordering.Repository
 {
@@ -59,8 +60,8 @@ namespace KANBAN.Services.CKD_Ordering.Repository
             {
                 await getCKD_ProcessDateTime();
 
-                string sqlQuery = $@"SELECT A.F_Value3 AS Last_Order, B.F_Value2 AS Step_Order 
-                    FROM TB_MS_Parameter A, TB_MS_Parameter B 
+                string sqlQuery = $@"SELECT A.F_Value3 AS Last_Order, B.F_Value2 AS Step_Order
+                    FROM TB_MS_Parameter A, TB_MS_Parameter B
                     WHERE A.F_Code = 'LO_CKD' AND B.F_Code = 'ST_CKD' ";
 
                 var _dt = _FillDT.ExecuteSQL(sqlQuery);
@@ -91,8 +92,10 @@ namespace KANBAN.Services.CKD_Ordering.Repository
             {
                 string strDateLogin = _httpContextAccessor.HttpContext.Request.Cookies.FirstOrDefault(x => x.Key == "loginDate").Value.ToString();
                 DateLogin = DateTime.ParseExact(strDateLogin.Replace("N", string.Empty).Replace("D", string.Empty), "yyyy-MM-dd",null);
-                string sqlQuery = $@"EXEC [CKD_Inhouse].[sp_getProcessDateTime] '{_BearerClass.Plant}' 
-                    ,'{DateLogin.ToString("yyyy-MM-dd")} {(_BearerClass.Shift == "1" ? "07:30:00" : "19:30:00")}' ";
+                var test = _httpContextAccessor.HttpContext.Request.Headers.FirstOrDefault(x => x.Key == "Shift").Value.ToString();
+                string sqlQuery = $@"EXEC [CKD_Inhouse].[sp_getProcessDateTime] '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value}'
+                    ,'{DateLogin.ToString("yyyy-MM-dd")} {(_httpContextAccessor.HttpContext.Request.Headers.FirstOrDefault(x => x.Key == "Shift").Value.ToString() == "1" ? "07:30:00" : "19:30:00")}' ";
+
 
                 var _dt = await _FillDT.ExecuteSQLAsync(sqlQuery);
 

@@ -1,30 +1,8 @@
-﻿using Microsoft.AspNetCore.Http.Extensions;
-using Microsoft.AspNetCore.Mvc;
-using System.Data;
-using System;
-using System.Web;
-using System.Security.Principal;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-
-using System.Reflection.PortableExecutable;
-using System.DirectoryServices;
-using System.DirectoryServices.AccountManagement;
-using Microsoft.Net.Http.Headers;
-using System.Collections.Specialized;
-using System.Net;
-using System.DirectoryServices.ActiveDirectory;
-using System.Net.Http;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Mvc;
 
 using System.Security.Claims;
-using Org.BouncyCastle.Asn1.Ocsp;
 
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-
-using System.Threading.Tasks;
 
 using HINOSystem.Libs;
 using HINOSystem.Context;
@@ -116,7 +94,7 @@ namespace HINOSystem.Controllers.API.Master
 
                 _json = JsonConvert.DeserializeObject(pData);
 
-                _SQL = @" EXEC [exec].[spKBNMS023_SEARCH] '" + _BearerClass.Plant + "' ";
+                _SQL = @" EXEC [exec].[spKBNMS023_SEARCH] '" + User.FindFirst(ClaimTypes.Locality).Value + "' ";
                 string _jsonData = _KBCN.ExecuteJSON(_SQL, pUser: _BearerClass, pControllerName : ControllerContext.ActionDescriptor.ControllerName, pActionName: ControllerContext.ActionDescriptor.ActionName);
 
                 string _result = @"{
@@ -153,14 +131,14 @@ namespace HINOSystem.Controllers.API.Master
                 }
                 //TB_MS_Package
                 TB_MS_OldPart _TB_MS_OldPart = new TB_MS_OldPart();
-                _TB_MS_OldPart.F_Plant = _BearerClass.Plant;
+                _TB_MS_OldPart.F_Plant = User.FindFirst(ClaimTypes.Locality).Value;
                 _TB_MS_OldPart.F_Parent_Part = Request.Form["F_Parent_Part"].ToString();
                 _TB_MS_OldPart.F_Ruibetsu = Request.Form["F_Ruibetsu"].ToString();
                 _TB_MS_OldPart.F_Part_Name = Request.Form["F_Part_Name"].ToString();
                 _TB_MS_OldPart.F_Store_Cd = Request.Form["F_Store_Cd"].ToString();
                 _TB_MS_OldPart.F_Start_Date = Request.Form["F_Start_Date"].ToString();
                 _TB_MS_OldPart.F_End_Date = Request.Form["F_End_Date"].ToString();
-                _TB_MS_OldPart.F_Update_By = _BearerClass.UserCode.ToString();
+                _TB_MS_OldPart.F_Update_By = User.FindFirst(ClaimTypes.UserData).Value.ToString();
                 _TB_MS_OldPart.F_Update_Date = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss"));
                 _KB3Context.TB_MS_OldPart.Add(_TB_MS_OldPart);
                 _KB3Context.SaveChanges();
@@ -209,7 +187,7 @@ namespace HINOSystem.Controllers.API.Master
                     UPDATE [dbo].[TB_MS_OldPart]
                     SET F_Part_Name = '" + Request.Form["F_Part_Name"].ToString().Replace("-", "") + @"'
                         ,F_End_Date = '" + Request.Form["F_End_Date"].ToString().Replace("-","") + @"'
-                        ,F_Update_By = '" + _BearerClass.UserCode + @"'
+                        ,F_Update_By = '" + User.FindFirst(ClaimTypes.UserData).Value + @"'
                         ,F_Update_Date = '" + DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss")) + @"'
                     WHERE 1=1
                     AND F_Plant = '" + Request.Form["F_Plant"].ToString() + @"'

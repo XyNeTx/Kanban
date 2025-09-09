@@ -2,12 +2,15 @@
 using KANBAN.Models.KB3.SpecialOrdering;
 using KANBAN.Services;
 using KANBAN.Services.SpecialOrdering.Interface;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KANBAN.Controllers.API.SpecialOrdering
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class KBNOR220_2Controller : ControllerBase
     {
         private readonly ISpecialOrderingServices _services;
@@ -24,7 +27,7 @@ namespace KANBAN.Controllers.API.SpecialOrdering
         {
             try
             {
-                await _bearer.CheckAuthorize();
+                
                 var data = await _services.IKBNOR220_2.GetCalendar(YM);
 
                 return Ok(new { status = "200", response = "Success", message = "Data Found", data = data });
@@ -40,7 +43,7 @@ namespace KANBAN.Controllers.API.SpecialOrdering
         {
             try
             {
-                await _bearer.CheckAuthorize();
+                
                 var data = await _services.IKBNOR220_2.GetPOList();
 
                 return Ok(new { status = "200", response = "Success", message = "Data Found", data = data });
@@ -56,7 +59,7 @@ namespace KANBAN.Controllers.API.SpecialOrdering
         {
             try
             {
-                await _bearer.CheckAuthorize();
+                
                 var data = _services.IKBNOR220_2.GetSurvey(YM);
 
                 return Ok(new { status = "200", response = "Success", message = "Data Found", data = data });
@@ -72,7 +75,7 @@ namespace KANBAN.Controllers.API.SpecialOrdering
         {
             try
             {
-                await _bearer.CheckAuthorize();
+                
                 var data = _services.IKBNOR220_2.GetSuppCD(Survey, YM);
 
                 return Ok(new { status = "200", response = "Success", message = "Data Found", data = data });
@@ -88,7 +91,7 @@ namespace KANBAN.Controllers.API.SpecialOrdering
         {
             try
             {
-                await _bearer.CheckAuthorize();
+                
                 var data = await _services.IKBNOR220_2.GetPartNo(Survey, SuppCD);
 
                 return Ok(new { status = "200", response = "Success", message = "Data Found", data = data });
@@ -104,7 +107,7 @@ namespace KANBAN.Controllers.API.SpecialOrdering
         {
             try
             {
-                await _bearer.CheckAuthorize();
+                
                 var data = await _services.IKBNOR220_2.PartNoSelected(Survey, SuppCD, PartNo);
 
                 return Ok(new { status = "200", response = "Success", message = "Data Found", data = data });
@@ -120,7 +123,7 @@ namespace KANBAN.Controllers.API.SpecialOrdering
         {
             try
             {
-                await _bearer.CheckAuthorize();
+                
                 var data = await _services.IKBNOR220_2.GetCalendarQty(Survey, SuppCD, YM, PartNo);
 
                 return Ok(new { status = "200", response = "Success", message = "Data Found", data = data });
@@ -136,7 +139,7 @@ namespace KANBAN.Controllers.API.SpecialOrdering
         {
             try
             {
-                await _bearer.CheckAuthorize();
+                
                 await _services.IKBNOR220_2.Save(listObj);
 
                 return Ok(new { status = "200", response = "Success", message = "Data Saved" });
@@ -152,7 +155,7 @@ namespace KANBAN.Controllers.API.SpecialOrdering
         {
             try
             {
-                await _bearer.CheckAuthorize();
+                
                 var data = await _services.IKBNOR220_2.GetSupplierName(SuppCD, SuppPlant);
 
                 return Ok(new { status = "200", response = "Success", message = "Data Found", data = data });

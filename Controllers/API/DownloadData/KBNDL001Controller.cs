@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Spire.Barcode;
 using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 
 
 namespace HINOSystem.Controllers.API.Master
@@ -13,7 +14,7 @@ namespace HINOSystem.Controllers.API.Master
         private readonly IConfiguration _configuration;
         private readonly BearerClass _BearerClass;
         private readonly KanbanConnection _KBCN;
-
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly KB3Context _KB3Context;
 
 
@@ -32,13 +33,15 @@ namespace HINOSystem.Controllers.API.Master
             IConfiguration configuration,
             BearerClass bearerClass,
             KanbanConnection kanbanConnection,
-            KB3Context kB3Context
+            KB3Context kB3Context,
+            IHttpContextAccessor httpContextAccessor
             )
         {
             _configuration = configuration;
             _BearerClass = bearerClass;
             _KBCN = kanbanConnection;
             _KB3Context = kB3Context;
+            _httpContextAccessor = httpContextAccessor;
 
             // Initialize the value
             this.SumDigit["value"] = new string[43];
@@ -306,7 +309,7 @@ namespace HINOSystem.Controllers.API.Master
 
                 //Clear  TB_PDS_DETAIL
                 _SQL = @" EXEC [exec].[spKBNDL001RPT_PDS] 
-                    '" + _BearerClass.UserCode + @"',
+                    '" + _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value + @"',
                     '1',
                     '20240101',
                     '1A24032201U04',
@@ -327,8 +330,8 @@ namespace HINOSystem.Controllers.API.Master
 
                 //        _SQL = @" EXEC [exec].[spKBNOR440_01_D] 
                 //            '" + _data.OrderType.ToString() + @"',
-                //            '" + _BearerClass.Plant + @"',
-                //            '" + _BearerClass.UserCode + @"',
+                //            '" + _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value + @"',
+                //            '" + _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value + @"',
                 //            '" + _dtChk.Rows[i]["F_OrderNo"].ToString() + @"',
                 //            '' ";
                 //        _KBCN.Execute(_SQL, pUser: _BearerClass,
@@ -353,8 +356,8 @@ namespace HINOSystem.Controllers.API.Master
             {
                 _SQL = @" EXEC [exec].[spKBNOR440_EXCEPTION]
                     '" + _data.OrderType.ToString() + @"',
-                    '" + _BearerClass.Plant + @"',
-                    '" + _BearerClass.UserCode + @"' ";
+                    '" + _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value + @"',
+                    '" + _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value + @"' ";
                 _KBCN.Execute(_SQL, pUser: _BearerClass,
                             pControllerName: ControllerContext.ActionDescriptor.ControllerName,
                             pActionName: ControllerContext.ActionDescriptor.ActionName

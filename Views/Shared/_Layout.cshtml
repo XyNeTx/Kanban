@@ -1,11 +1,20 @@
 ﻿@using System.Data
 @using KANBAN.Libs
+@using System.Security.Claims
+@using System.Configuration
 @model System.Data.DataTable
+
+@{
+    var userName = User.FindFirst(ClaimTypes.Name).Value;
+    var userCode = User.FindFirst(ClaimTypes.UserData).Value;
+    var userPlant = User.FindFirst(ClaimTypes.Locality).Value;
+}
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>@ViewData["AppName"] - @ViewData["Title"] </title>
+   @*  <title>@ViewData["AppName"] - @ViewData["Title"] </title> *@
+   <title id="title">KANBAN SYSTEM</title>
     <style>
         /* Chrome, Safari, Edge, Opera */
         input::-webkit-outer-spin-button,
@@ -18,12 +27,14 @@
         input[type=number] {
             -moz-appearance: textfield;
         }
+
     </style>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="@ViewData["Logo"]" />
+    @* <link rel="icon" type="image/x-icon" href="@ViewData["Logo"]" /> *@
+    <link rel="icon" type="image/x-icon" href="~/assets/img/hino_logo.ico" />
 
 
 @*     <link rel="stylesheet" href="~/assets/vendor/bootstrap/5.1.0/dist/css/bootstrap.min.css" />
@@ -54,7 +65,7 @@
     <link rel="stylesheet" type="text/css" href="~/assets/adminty/pages/data-table/css/select.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="~/assets/adminty/pages/data-table/extensions/buttons/css/buttons.dataTables.min.css">
 
-    
+
     <link rel="stylesheet" type="text/css" href="~/assets/adminty/css/jquery.mCustomScrollbar.css">
 
 
@@ -82,7 +93,7 @@
     <link href="~/assets/css/site.css" rel="stylesheet" />
     <link href="~/assets/css/stepsStyle.css" rel="stylesheet" />
 
-   
+
     @*<link href="@Url.Content("~/assets/css/sb-admin-" + ViewData["System"].ToString() + ".css")" rel="stylesheet">*@
 
 
@@ -132,10 +143,11 @@
     <!-- Custom scripts for all pages-->
     @*<script src="~/assets/js/sb-admin-2.min.js"></script>*@
 
-
+@*
     @Html.Partial("_Script")
 
-
+ *@
+    <!-- Site level plugins -->
     <!-- Site level plugins -->
     <script type="text/javascript" src="~/assets/.libs/function/func.Cookies.js"></script>
     <script type="text/javascript" src="~/assets/.libs/config.js"></script>
@@ -162,8 +174,10 @@
                                 <i class="feather icon-menu"></i>
                             </a>
                             <a href="~/Home">
-                                <img class="img-fluid" src="@ViewData["Logo"]" alt="HINO" />
-                                <b>@ViewData["Name"]</b>
+                                @* <img class="img-fluid" src="@ViewData["Logo"]" alt="HINO" />
+                                <b>@ViewData["Name"]</b> *@
+                                <img class="img-fluid" src="~/assets/img/hino_logo.ico" />
+                                <b class="ms-2">Kanban System</b>
                             </a>
                             <a class="mobile-options">
                                 <i class="feather icon-more-horizontal"></i>
@@ -172,80 +186,54 @@
                         <div class="navbar-container">
                             <ul class="nav-left">
                                 <li>
-                                    <a href="#!" onclick="javascript:toggleFullScreen()">
-                                        <i class="feather icon-maximize full-screen"></i>
-                                    </a>
-                                </li>
-                                <li>
                                     <h4 class="mt-3">
-                                        @ViewData["AppName"]
-                                        <a href="#" data-bs-toggle="modal" data-bs-target="#ModalHistorySystem" data-bs-remote="ModalSQL" id="_SYSTEMHISTORY_">
-                                            <i class="fas fa-bug" title="System History"></i>
-                                        </a>
+                                        <span class="ms-2" id="spanTitle" style="color:black;">Home</span>
                                     </h4>
                                 </li>
                             </ul>
                             <ul class="nav-right">
                                 <li style="font-size:0.7rem;font-weight:bold;line-height:1.5;padding-top:3px;color:blue;padding: 0 0px;">
                                     <span>
-                                        <span style="color:#404e67;">Date :</span> @ViewData["_ProcessDate"] <br />
-                                        <span style="color:#404e67;">Plant :</span> @ViewData["_Plant"] <br />
-                                        <span style="color:#404e67;">Shift :</span> @ViewData["_ShiftTitle"]?.ToString()
+                                        <span style="color:#404e67;">Date : </span><span class="fw-bold text-primary" id="nr_Date"></span><br />
+                                        <span style="color:#404e67;">Plant : </span><span class="fw-bold text-primary" id="nr_Plant"></span><br />
+                                        <span style="color:#404e67;">Shift : </span><span class="fw-bold text-primary" id="nr_Shift"></span>
                                     </span>
+
+                                    @* <a class="btn btn-danger text-white" href="~/Login/Logout" id="_Layout_logout">
+                                        Logout
+                                    </a> *@
                                 </li>
-                                <li class="user-profile header-notification">
-                                    <div class="dropdown-primary dropdown">
-                                        <div class="dropdown-toggle" data-bs-toggle="dropdown" id="profileSetting">
-                                            <img 
-                                                 src="~/assets/img/avatars/@ViewData["UserAvatar"]"
-                                                 id="profile-avatar"
-                                                 class="rounded-circle"
-                                                 alt="profile-avatar"
-                                                 data-bs-toggle="tooltip" 
-                                                 data-bs-placement="bottom" 
-                                                 title="@ViewData["_DisplayName"]"><br />
-                                            @*<i>@ViewData["_DisplayName"]</i>*@
-                                            @*<span>@ViewData["_DisplayName"]</span>*@
-                                            @*<i class="feather icon-chevron-down"></i>*@
-                                        </div>
-                                        <ul class="show-notification profile-notification dropdown-menu"
-                                            aria-labelledby="profileSetting"
-                                            data-dropdown-in="fadeIn"
-                                            data-dropdown-out="fadeOut">
+                                @* <li>
+                                    <div class="dropdown">
+                                        <a href="#" class="dropdown-toggle btn btn-outline-dark ti-layout-grid3" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                                        </a>
+                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                                             <li>
-                                                <a href="#" data-bs-toggle="modal" data-bs-target="#ModalUserProfile" id="_Layout_profile">
-                                                    <i class="feather icon-user"></i>Profile
+                                                <a class="dropdown-item" href="#">@userCode</a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" href="#">@userName</a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" href="#">@userPlant</a>
+                                            </li>
+
+                                            <li class="user-profile header-notification">
+                                                <a class="btn btn-danger text-white" href="~/Login/Logout" id="_Layout_logout">
+                                                    Logout
                                                 </a>
-                                            </li>
-                                            <li>
-                                                <div onclick="$('#styleSelector').attr('class','open')">
-                                                    <a href="#!" id="_Layout_setting">
-                                                        <i class="feather icon-settings"></i>Settings
-                                                    </a>
-                                                </div>
-                                            </li>
-                                            @*                                            <li>
-                                            <a href="email-inbox.html">
-                                            <i class="feather icon-mail"></i> My Messages
-                                            </a>
-                                            </li>*@
-                                            <li id="_SYSTEMHISTORYMENU_">
-                                                <a href="#" data-bs-toggle="modal" data-bs-target="#ModalHistoryLogin" data-bs-remote="ModalSQL">
-                                                    <i class="fas fa-bug"></i>Login History
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="~/Login/Logout" id="_Layout_logout">
-                                                    <i class="feather icon-log-out"></i>Logout
-                                                </a>
-                                            </li>
-                                            <li>
-                                                Version : <span style="text-align:center;font-size:12px;">v.@ViewData["Version"]</span>
                                             </li>
                                         </ul>
                                     </div>
+                                </li> *@
+
+                                <li>
+                                    <a class="btn btn-danger text-white" href="~/Login/Logout" id="_Layout_logout">
+                                        Logout
+                                    </a>
                                 </li>
                             </ul>
+
                         </div>
                     </div>
                 </nav>
@@ -254,79 +242,20 @@
                     <div class="pcoded-wrapper">
                         <nav class="pcoded-navbar" navbar-theme="themelight1">
                             <div class="pcoded-inner-navbar main-menu">
-                                <div class="pcoded-navigatio-lavel"><i class="ti-user"></i> @ViewData["_DisplayName"]</div>
+                                <span id="spanUser" class="text-white text-center mt-4 mb-2 d-block fs-6">@userCode - @userName</span>
 
-                                <ul class="pcoded-item pcoded-left-item">
-                                    @Html.Raw(@ViewData["_MENU_"])
-                                </ul>
-                                
+                                @* <ul class="pcoded-item pcoded-left-item">
+
+                                </ul> *@
+
+                                @await Html.PartialAsync("Sidebar");
+
                             </div>
                             <div style="color:greenyellow;text-align:center;font-size:12px;" id="_NAVDATETIME_">Today : </div>
                         </nav>
                         <div class="pcoded-content">
                             <div class="pcoded-inner-content">
-
-                                
-                                @if (ViewData["ComponentToolbar"].ToString() == "true")
-                                {
-                                    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar">
-                                        <div class="btn-group btn-group-sm me-2" role="group" aria-label="Toolbar">
-                                            
-                                            <button type="button" class="btn btn-success"
-                                                    id="ButtonLayoutSearch"
-                                                    title="@(ViewData["ComponentToolbarSearchText"].ToString() != "" ? ViewData["ComponentToolbarSearchText"].ToString() : "Search")"
-                                            @(ViewData["ComponentToolbarSearch"].ToString() == "true" ? "" : "disabled")>
-                                                <i class="ti-search"></i>
-                                            </button>
-                                            <button type="button" class="btn btn-success"
-                                                    id="ButtonLayoutSave"
-                                                    onclick="onSave()"
-                                                    title="@(ViewData["ComponentToolbarSaveText"].ToString() != "" ? ViewData["ComponentToolbarSaveText"].ToString() : "Save")"
-                                            @(ViewData["ComponentToolbarSave"].ToString() == "true" ? "" : "disabled")>
-                                                <i class="ti-save"></i>
-                                            </button>
-                                            @*<div class="btn-group" role="group">*@
-                                            <button type="button" id="ButtonLayoutGroupExport" class="btn btn-success dropdown-toggle" 
-                                                    data-bs-toggle="dropdown" aria-expanded="false"
-                                                    title="@(ViewData["ComponentToolbarExportText"].ToString() != "" ? ViewData["ComponentToolbarExportText"].ToString() : "Export drop down menu")"
-                                            @(ViewData["ComponentToolbarExport"].ToString() == "true" ? "" : "disabled")>
-                                                <i class="fas fa-download"></i>
-                                            </button>
-                                            <ul class="dropdown-menu" aria-labelledby="btnGroupExport">
-                                                <li><a class="dropdown-item" id="ButtonLayoutExport_Copy" href="#"><i class="ti-clipboard"></i>Clipboard</a></li>
-                                                <li><a class="dropdown-item" id="ButtonLayoutExport_CSV" href="#"><i class="fas fa-file-download"></i>CSV</a></li>
-                                                <li><a class="dropdown-item" id="ButtonLayoutExport_XLS" href="#"><i class="far fa-file-excel"></i>Excel</a></li>
-                                                <li><a class="dropdown-item" id="ButtonLayoutExport_PDF" href="#"><i class="far fa-file-pdf"></i>PDF</a></li>
-                                            </ul>
-                                            @*</div>*@
-
-                                            <button type="button" class="btn btn-success"
-                                                    id="ButtonLayoutExport_Print"
-                                                    title="@(ViewData["ComponentToolbarPrintText"].ToString() != "" ? ViewData["ComponentToolbarPrintText"].ToString() : "Print")"
-                                            @(ViewData["ComponentToolbarPrint"].ToString() == "true" ? "" : "disabled")>
-                                                <i class="ti-printer"></i>
-                                            </button>
-                                            <button type="button" class="btn btn-success" 
-                                                    id="ButtonLayoutExecute"
-                                                    onclick="onExecute()"
-                                                    title="@(ViewData["ComponentToolbarExecuteText"].ToString() != "" ? ViewData["ComponentToolbarExecuteText"].ToString() : "Run/Execute")"
-                                            @(ViewData["ComponentToolbarExecute"].ToString() == "true" ? "" : "disabled")>
-                                                <i class="fas fa-bolt"></i>
-                                            </button>
-                                            <button type="button" class="btn btn-success" 
-                                                    id="ButtonLayoutDelete"
-                                                    onclick="onDeleteAll()"
-                                                    title="@(ViewData["ComponentToolbarDeleteText"].ToString() != "" ? ViewData["ComponentToolbarDeleteText"].ToString() : "Delete")"
-                                            @(ViewData["ComponentToolbarDelete"].ToString() == "true" ? "" : "disabled")>
-                                                <i class="far fa-trash-alt"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                }
-                                
                                 @RenderBody()
-
                                 <div id="styleSelector"></div>
                             </div>
                         </div>
@@ -335,7 +264,7 @@
             </div>
         </div>
     </div>
-    
+
     <div id="load-wrapper" class="d-flex justify-content-center">
         <div class="spinner-border" role="status">
             <span class="sr-only">Loading...</span>
@@ -354,142 +283,67 @@
         <div id="splash-content"></div>
     </div>
 
-    
-    @Html.Partial("_Profile")
-    
-    @Html.Partial("_Password")
+        <script type="text/javascript" src="~/assets/.script/XLib/xLib.js" asp-append-version="true"></script>
+        <script type="text/javascript" src="~/assets/.script/_Layout.js" asp-append-version="true"></script>
 
-    @Html.Partial("_ListOfValue")
+        <script type="text/javascript" src="~/assets/adminty/bower_components/jquery-slimscroll/jquery.slimscroll.js"></script>
 
-    @Html.Partial("_HistorySystem")
+        @*<script type="text/javascript" src="~/assets/adminty/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>*@
+        <script type="text/javascript" src="~/assets/adminty/bower_components/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+        <script type="text/javascript" src="~/assets/adminty/bower_components/datatables.net-buttons/js/buttons.print.min.js"></script>
+        <script type="text/javascript" src="~/assets/adminty/bower_components/datatables.net-buttons/js/buttons.html5.min.js"></script>
+        <script type="text/javascript" src="~/assets/adminty/bower_components/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+        <script type="text/javascript" src="~/assets/adminty/bower_components/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
 
-    @Html.Partial("_HistoryLogin")
+        <script type="text/javascript" src="~/assets/adminty/pages/data-table/js/pdfmake.min.js"></script>
+        <script type="text/javascript" src="~/assets/adminty/pages/data-table/js/dataTables.select.min.js"></script>
+        <script type="text/javascript" src="~/assets/adminty/pages/data-table/extensions/buttons/js/dataTables.buttons.min.js"></script>
+        <script type="text/javascript" src="~/assets/adminty/pages/data-table/extensions/buttons/js/buttons.flash.min.js"></script>
+        <script type="text/javascript" src="~/assets/adminty/pages/data-table/extensions/buttons/js/jszip.min.js"></script>
+        <script type="text/javascript" src="~/assets/adminty/pages/data-table/extensions/buttons/js/vfs_fonts.js"></script>
+        <script type="text/javascript" src="~/assets/adminty/pages/data-table/extensions/buttons/js/buttons.colVis.min.js"></script>
+        <script type="text/javascript" src="~/assets/adminty/pages/data-table/extensions/buttons/js/extension-btns-custom.js"></script>
+        <script type="text/javascript" src="~/assets/adminty/js/pcoded.min.js"></script>
 
-    @Html.Partial("_History")
+        <script type="text/javascript" src="~/assets/adminty/js/jquery.mCustomScrollbar.concat.min.js"></script>
+        <script type="text/javascript" src="~/assets/adminty/js/vartical-layout.min.js"></script>
 
-    @Html.Partial("_SessionInformation")
+        <script type="text/javascript" src="~/assets/adminty/js/script.js"></script>
 
-    
+        <script type="text/javascript" src="~/assets/.libs/class/lab.Ajax.js?" asp-append-version="true"></script>
+        <script type="text/javascript" src="~/assets/.libs/class/lab.ChartJS.js?" asp-append-version="true"></script>
+        <script type="text/javascript" src="~/assets/.libs/class/lab.ClockTimer.js?" asp-append-version="true"></script>
+        <script type="text/javascript" src="~/assets/.libs/class/lab.DataTables.js?" asp-append-version="true"></script>
+        <script type="text/javascript" src="~/assets/.libs/class/lab.DataTablesExport.js?" asp-append-version="true"></script>
+        <script type="text/javascript" src="~/assets/.libs/class/lab.Date.js?" asp-append-version="true"></script>
+        <script type="text/javascript" src="~/assets/.libs/class/lab.DropDownList.js?" asp-append-version="true"></script>
+        <script type="text/javascript" src="~/assets/.libs/class/lab.i18n.js?" asp-append-version="true"></script>
+        <script type="text/javascript" src="~/assets/.libs/class/lab.Object.js?" asp-append-version="true"></script>
+        <script type="text/javascript" src="~/assets/.libs/class/lab.Item.js?" asp-append-version="true"></script>
+        <script type="text/javascript" src="~/assets/.libs/class/lab.Log.js?" asp-append-version="true"></script>
+        <script type="text/javascript" src="~/assets/.libs/class/lab.Swal2.js?" asp-append-version="true"></script>
+        <script type="text/javascript" src="~/assets/.libs/class/lab.Splash/lab.Splash.js?" asp-append-version="true"></script>
 
-    <script type="text/javascript" src="~/assets/adminty/bower_components/jquery-slimscroll/jquery.slimscroll.js"></script>
+        <script type="text/javascript" src="~/assets/adminty/vue@3/dist/vue.global.js"></script>
 
-    @*<script type="text/javascript" src="~/assets/adminty/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>*@
-    <script type="text/javascript" src="~/assets/adminty/bower_components/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
-    <script type="text/javascript" src="~/assets/adminty/bower_components/datatables.net-buttons/js/buttons.print.min.js"></script>
-    <script type="text/javascript" src="~/assets/adminty/bower_components/datatables.net-buttons/js/buttons.html5.min.js"></script>
-    <script type="text/javascript" src="~/assets/adminty/bower_components/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
-    <script type="text/javascript" src="~/assets/adminty/bower_components/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
+    <script type="text/javascript" src="~/assets/js/History/UserMaintenance.js?asp-append-version="true""></script>
+    <script type="text/javascript" src="~/assets/.script/Template/Action.js?asp-append-version="true""></script>
+    <script type="text/javascript" src="~/assets/.script/Template/Master.js?asp-append-version="true""></script>
 
-    @*
-
-    <script type="text/javascript" src="~/assets/adminty/bower_components/jquery/dist/jquery.min.js"></script>
-    <script type="text/javascript" src="~/assets/adminty/bower_components/jquery-ui/jquery-ui.min.js"></script>
-    <script type="text/javascript" src="~/assets/adminty/bower_components/popper.js/dist/umd/popper.min.js"></script>
-    <script type="text/javascript" src="~/assets/adminty/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-
-
-
-    <script type="text/javascript" src="~/assets/adminty/bower_components/modernizr/modernizr.js"></script>
-    <script type="text/javascript" src="~/assets/adminty/bower_components/modernizr/feature-detects/css-scrollbars.js"></script>
-
-    <script type="text/javascript" src="~/assets/adminty/bower_components/chart.js/dist/Chart.js"></script>
-
-
-    <script type="text/javascript" src="~/assets/adminty/bower_components/i18next/i18next.min.js"></script>
-    <script type="text/javascript" src="~/assets/adminty/bower_components/i18next-xhr-backend/i18nextXHRBackend.min.js"></script>
-    <script type="text/javascript" src="~/assets/adminty/bower_components/i18next-browser-languagedetector/i18nextBrowserLanguageDetector.min.js"></script>
-
-    <script type="text/javascript" src="~/assets/adminty/bower_components/jquery-i18next/jquery-i18next.min.js"></script>
-
-
-    <script type="text/javascript" src="~/assets/adminty/pages/data-table/js/jszip.min.js"></script>
-    <script type="text/javascript" src="~/assets/adminty/pages/data-table/js/vfs_fonts.js"></script>
-    <script type="text/javascript" src="~/assets/adminty/pages/data-table/js/dataTables.bootstrap4.min.js"></script>
-    <script type="text/javascript" src="~/assets/adminty/pages/widget/amchart/amcharts.js"></script>
-    <script type="text/javascript" src="~/assets/adminty/pages/widget/amchart/serial.js"></script>
-    <script type="text/javascript" src="~/assets/adminty/pages/widget/amchart/light.js"></script>
-    *@
-    <script type="text/javascript" src="~/assets/adminty/pages/data-table/js/pdfmake.min.js"></script>
-    <script type="text/javascript" src="~/assets/adminty/pages/data-table/js/dataTables.select.min.js"></script>
-    <script type="text/javascript" src="~/assets/adminty/pages/data-table/extensions/buttons/js/dataTables.buttons.min.js"></script>
-    <script type="text/javascript" src="~/assets/adminty/pages/data-table/extensions/buttons/js/buttons.flash.min.js"></script>
-    <script type="text/javascript" src="~/assets/adminty/pages/data-table/extensions/buttons/js/jszip.min.js"></script>
-    <script type="text/javascript" src="~/assets/adminty/pages/data-table/extensions/buttons/js/vfs_fonts.js"></script>
-    <script type="text/javascript" src="~/assets/adminty/pages/data-table/extensions/buttons/js/buttons.colVis.min.js"></script>
-    <script type="text/javascript" src="~/assets/adminty/pages/data-table/extensions/buttons/js/extension-btns-custom.js"></script>
-    <script type="text/javascript" src="@FileVersionHelper.VersionedScriptPath("/assets/.script/xLib/xLib.js")"></script>
-    <script type="text/javascript" src="~/assets/adminty/js/pcoded.min.js"></script>
-
-@*     <script type="text/javascript" src="~/assets/adminty/js/SmoothScroll.js"></script>
- *@    <script type="text/javascript" src="~/assets/adminty/js/jquery.mCustomScrollbar.concat.min.js"></script>
-    <script type="text/javascript" src="~/assets/adminty/js/vartical-layout.min.js"></script>
-
-    <script type="text/javascript" src="~/assets/adminty/js/script.js"></script>
-
-    <script type="text/javascript" src="~/assets/.libs/class/lab.Ajax.js?@ViewData["VersionJS"]"></script>
-    <script type="text/javascript" src="~/assets/.libs/class/lab.ChartJS.js?@ViewData["VersionJS"]"></script>
-    <script type="text/javascript" src="~/assets/.libs/class/lab.ClockTimer.js?@ViewData["VersionJS"]"></script>
-    <script type="text/javascript" src="~/assets/.libs/class/lab.DataTables.js?@ViewData["VersionJS"]"></script>
-    <script type="text/javascript" src="~/assets/.libs/class/lab.DataTablesExport.js?@ViewData["VersionJS"]"></script>
-    <script type="text/javascript" src="~/assets/.libs/class/lab.Date.js?@ViewData["VersionJS"]"></script>
-    <script type="text/javascript" src="~/assets/.libs/class/lab.DropDownList.js?@ViewData["VersionJS"]"></script>
-    <script type="text/javascript" src="~/assets/.libs/class/lab.i18n.js?@ViewData["VersionJS"]"></script>
-    <script type="text/javascript" src="~/assets/.libs/class/lab.Object.js?@ViewData["VersionJS"]"></script>
-    <script type="text/javascript" src="~/assets/.libs/class/lab.Item.js?@ViewData["VersionJS"]"></script>
-    <script type="text/javascript" src="~/assets/.libs/class/lab.Log.js?@ViewData["VersionJS"]"></script>
-    <script type="text/javascript" src="~/assets/.libs/class/lab.Swal2.js?@ViewData["VersionJS"]"></script>
-    <script type="text/javascript" src="~/assets/.libs/class/lab.Splash/lab.Splash.js?@ViewData["VersionJS"]"></script>
-
-    <script type="text/javascript" src="~/assets/adminty/vue@3/dist/vue.global.js"></script>
-    @*<script type="text/javascript" src="~/assets/adminty/vue@3/vueApp/Home/home.index.vue.js?@ViewData["VersionJS"]"></script>*@
-@* 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script> *@
-    @*
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    *@
-
-    <script language="javascript" type="text/javascript">
-        xSplash.show();
-
-        $(document).ready(function () {
-            //var _i18n = '@ViewData["UserLanguage"].ToString()';
-            xi18n.initial(_i18n['@ViewData["Action"].ToString()']);
-            //console.log(_i18n_);
-            setCookie('Avatar', '@ViewData["UserAvatar"].ToString()');
-
-            $('#_NAVDATETIME_').html('Today : ' + xDate.Now());
-
-            //console.log($(".navbar-logo a b").text());
-            //console.log(_xLib.GetCookie("isDev"));
-            if (_xLib.GetCookie("isDev") == 1) {
-                $(".navbar-logo a b").append(" (Dev)");
-            }
-        });
-
-        //$(".btn-toolbar[role='toolbar']").addClass("d-none");
-
-
-    </script>
-
-    <script type="text/javascript" src="~/assets/js/History/UserMaintenance.js?@ViewData["VersionJS"]"></script>
-    <script type="text/javascript" src="~/assets/.script/Template/Action.js?@ViewData["VersionJS"]"></script>
-    <script type="text/javascript" src="~/assets/.script/Template/Master.js?@ViewData["VersionJS"]"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
 
-    
-    <script type="text/javascript" src="~/assets/.libs/display/display.Menu.js?@ViewData["VersionJS"]"></script>
-    <script type="text/javascript" src="~/assets/.libs/display/display.DateBox.js?@ViewData["VersionJS"]"></script>
-    <script type="text/javascript" src="~/assets/.libs/display/display.CheckBox.js?@ViewData["VersionJS"]"></script>
-    <script type="text/javascript" src="~/assets/.libs/display/display.CurrencyBox.js?@ViewData["VersionJS"]"></script>
-    <script type="text/javascript" src="~/assets/.libs/display/display.ListOfValues.js?@ViewData["VersionJS"]"></script>
-    <script type="text/javascript" src="~/assets/.libs/display/display.SelectOption.js?@ViewData["VersionJS"]"></script>
-    <script type="text/javascript" src="~/assets/.libs/display/display.Developer.js?@ViewData["VersionJS"]"></script>
-    <script type="text/javascript" src="~/assets/.libs/display/display.DataTable.js?@ViewData["VersionJS"]"></script>
 
-    <script type="text/javascript" src="~/assets/.script/_Layout.js?@ViewData["VersionJS"]"></script>
-    <script type="text/javascript" src="~/assets/.script/_HistoryLog.js?@ViewData["VersionJS"]"></script>
+    <script type="text/javascript" src="~/assets/.libs/display/display.Menu.js?asp-append-version="true""></script>
+    <script type="text/javascript" src="~/assets/.libs/display/display.DateBox.js?asp-append-version="true""></script>
+    <script type="text/javascript" src="~/assets/.libs/display/display.CheckBox.js?asp-append-version="true""></script>
+    <script type="text/javascript" src="~/assets/.libs/display/display.CurrencyBox.js?asp-append-version="true""></script>
+    <script type="text/javascript" src="~/assets/.libs/display/display.ListOfValues.js?asp-append-version="true""></script>
+    <script type="text/javascript" src="~/assets/.libs/display/display.SelectOption.js?asp-append-version="true""></script>
+    <script type="text/javascript" src="~/assets/.libs/display/display.Developer.js?asp-append-version="true""></script>
+    <script type="text/javascript" src="~/assets/.libs/display/display.DataTable.js?asp-append-version="true""></script>
+
+    @* <script type="text/javascript" src="~/assets/.script/_Layout.js?asp-append-version="true""></script> *@
+    <script type="text/javascript" src="~/assets/.script/_HistoryLog.js?asp-append-version="true""></script>
 </body>
 </html>

@@ -8,6 +8,7 @@ using KANBAN.Services.Automapper.Interface;
 using KANBAN.Services.Master.IRepository;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Security.Claims;
 
 namespace KANBAN.Services.Master.Repository
 {
@@ -20,6 +21,7 @@ namespace KANBAN.Services.Master.Repository
         private readonly SerilogLibs _log;
         private readonly IEmailService _emailService;
         private readonly IAutoMapService _automapService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
         public KBNMS014
@@ -30,7 +32,8 @@ namespace KANBAN.Services.Master.Repository
             FillDataTable FillDT,
             SerilogLibs log,
             IEmailService emailService,
-            IAutoMapService autoMapService
+            IAutoMapService autoMapService,
+            IHttpContextAccessor httpContextAccessor
             )
         {
             _kbContext = kbContext;
@@ -40,6 +43,7 @@ namespace KANBAN.Services.Master.Repository
             _log = log;
             _emailService = emailService;
             _automapService = autoMapService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<string> GetSupplierCode(bool isNew)
@@ -204,7 +208,7 @@ namespace KANBAN.Services.Master.Repository
                     var isAny = await _kbContext.TB_MS_PrintKanban
                         .AnyAsync(x => x.F_Supplier_Code == obj.SupplierCode.Trim()
                         && x.F_Supplier_Plant == obj.SupplierPlant
-                        && x.F_Plant == _BearerClass.Plant);
+                        && x.F_Plant == _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value);
 
                     if (isAny)
                     {
@@ -213,14 +217,14 @@ namespace KANBAN.Services.Master.Repository
 
                     TB_MS_PrintKanban addObj = new TB_MS_PrintKanban
                     {
-                        F_Plant = _BearerClass.Plant,
+                        F_Plant = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value,
                         F_Supplier_Code = obj.SupplierCode.Trim(),
                         F_Supplier_Plant = obj.SupplierPlant,
                         F_Flag_Print = obj.FlagPrint,
                         F_Short_Name = obj.SupplierName.Trim(),
-                        F_Create_By = _BearerClass.UserCode,
+                        F_Create_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value,
                         F_Create_Date = DateTime.Now,
-                        F_Update_By = _BearerClass.UserCode,
+                        F_Update_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value,
                         F_Update_Date = DateTime.Now
                     };
 
@@ -233,7 +237,7 @@ namespace KANBAN.Services.Master.Repository
                     var data = await _kbContext.TB_MS_PrintKanban
                         .Where(x => x.F_Supplier_Code == obj.SupplierCode.Trim()
                         && x.F_Supplier_Plant == obj.SupplierPlant
-                        && x.F_Plant == _BearerClass.Plant)
+                        && x.F_Plant == _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value)
                         .FirstOrDefaultAsync();
 
                     if (data == null)
@@ -243,7 +247,7 @@ namespace KANBAN.Services.Master.Repository
 
                     data.F_Flag_Print = obj.FlagPrint;
                     data.F_Update_Date = DateTime.Now;
-                    data.F_Update_By = _BearerClass.UserCode;
+                    data.F_Update_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value;
 
                     _kbContext.TB_MS_PrintKanban.Update(data);
                     _log.WriteLogMsg($"Update TB_MS_PrintKanban : {JsonConvert.SerializeObject(data)}");
@@ -256,7 +260,7 @@ namespace KANBAN.Services.Master.Repository
                         var data = await _kbContext.TB_MS_PrintKanban
                             .Where(x => x.F_Supplier_Code == delObj.SupplierCode.Trim()
                             && x.F_Supplier_Plant == delObj.SupplierPlant
-                            && x.F_Plant == _BearerClass.Plant)
+                            && x.F_Plant == _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value)
                             .FirstOrDefaultAsync();
 
                         if (data == null)
@@ -288,7 +292,7 @@ namespace KANBAN.Services.Master.Repository
             {
                 var data = await _kbContext.TB_MS_PrintKanban
                     .AsNoTracking()
-                    .Where(x => x.F_Plant == _BearerClass.Plant)
+                    .Where(x => x.F_Plant == _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value)
                     .ToListAsync();
 
                 if (!string.IsNullOrWhiteSpace(SupplierCode))

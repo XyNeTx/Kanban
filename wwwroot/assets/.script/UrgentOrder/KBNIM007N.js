@@ -335,17 +335,18 @@ $("#inputDeliveryTrip").on("keypress", function (e) {
 });
 
 $("#buttonOK").click(async function () {
-    xSplash.show("Saving Data");
+    
     try {
         if (_command === 'New') {
             $("#buttonOK").prop("disabled", true);
             var rows = $("input[name='inputChkBox']:checked").closest("tr");
             if (rows.length === 0) return xSwal.error("Error !!", "No data selected.");
             let _arrObj = $("#table").DataTable().rows(rows).data().toArray();
-
+            xSplash.show("Saving Data");
             return await OkClicked(_arrObj);
         }
         else if (_command === 'Update') {
+            xSplash.show("Saving Data");
             $("#buttonOK").prop("disabled", true);
             var rows = $("input[name='inputChkBox']:checked").closest("tr");
             if (rows.length === 0) return xSwal.error("Error !!", "No data selected.");
@@ -397,6 +398,7 @@ $("#buttonOK").click(async function () {
                 var rows = $("input[name='inputChkBox']:checked").closest("tr");
                 if (rows.length === 0) return xSwal.error("Error !!", "No data selected.");
                 let _Obj = $("#table").DataTable().row(rows[0]).data();
+                xSplash.show("Saving Data");
                 await _xLib.AJAX_Post('/api/KBNIM007N/Delete', JSON.stringify(_Obj),
                     function (success) {
                         if (success.status === "200") {
@@ -524,7 +526,9 @@ $("#buttonImport").click(async function () {
 
     for (let _edit in _editRead) {
         // Edit Sheet
-        _editRead[_edit].v = _editRead[_edit].w;
+        let _w = _editRead[_edit].w ?? "";
+        _w = String(_w).trim();
+        _editRead[_edit].v = _w;
     }
 
     const _arrObj = XLSX.utils.sheet_to_json(read.Sheets[read.SheetNames[0]]);

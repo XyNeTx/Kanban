@@ -1,16 +1,12 @@
-﻿using DocumentFormat.OpenXml.Spreadsheet;
-using HINOSystem.Context;
+﻿using HINOSystem.Context;
 using HINOSystem.Libs;
 using KANBAN.Context;
 using KANBAN.Libs;
 using KANBAN.Models.KB3.OtherCondition.ViewModel;
-using KANBAN.Models.KB3.Receive_Process;
 using KANBAN.Services.Automapper.Interface;
 using KANBAN.Services.OtherCondition.IRepository;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
-using NPOI.SS.Formula.Functions;
-using System.Reflection.Metadata.Ecma335;
+using System.Security.Claims;
 
 namespace KANBAN.Services.OtherCondition.Repository
 {
@@ -23,6 +19,7 @@ namespace KANBAN.Services.OtherCondition.Repository
         private readonly SerilogLibs _log;
         private readonly IEmailService _emailService;
         private readonly IAutoMapService _automapService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
         public KBNOC150
@@ -33,7 +30,8 @@ namespace KANBAN.Services.OtherCondition.Repository
             FillDataTable FillDT,
             SerilogLibs log,
             IEmailService emailService,
-            IAutoMapService autoMapService
+            IAutoMapService autoMapService,
+            IHttpContextAccessor httpContextAccessor
             )
         {
             _kbContext = kbContext;
@@ -43,6 +41,7 @@ namespace KANBAN.Services.OtherCondition.Repository
             _log = log;
             _emailService = emailService;
             _automapService = autoMapService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<List<string>> Sup_DropDown()
@@ -64,8 +63,8 @@ namespace KANBAN.Services.OtherCondition.Repository
 
             try
             {
-                var userID = _BearerClass.UserCode;
-                var plant_CTL = _BearerClass.Plant;
+                var userID = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value;
+                var plant_CTL = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value;
 
                 await _kbContext.Database.ExecuteSqlRawAsync($"DELETE FROM [HMMTA-PPM].[NEW_KANBAN_F3].[DBO].RPT_KBNOC_150 WHERE F_Update_By = '{userID}' ");
 

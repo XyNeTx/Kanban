@@ -7,6 +7,7 @@ using KANBAN.Services.Automapper.Interface;
 using KANBAN.Services.Master.IRepository;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Security.Claims;
 
 namespace KANBAN.Services.Master.Repository
 {
@@ -20,6 +21,7 @@ namespace KANBAN.Services.Master.Repository
         private readonly SerilogLibs _log;
         private readonly IEmailService _emailService;
         private readonly IAutoMapService _automapService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
         public KBNMS030
@@ -30,7 +32,8 @@ namespace KANBAN.Services.Master.Repository
             FillDataTable FillDT,
             SerilogLibs log,
             IEmailService emailService,
-            IAutoMapService autoMapService
+            IAutoMapService autoMapService,
+            IHttpContextAccessor httpContextAccessor
             )
         {
             _kbContext = kbContext;
@@ -40,6 +43,7 @@ namespace KANBAN.Services.Master.Repository
             _log = log;
             _emailService = emailService;
             _automapService = autoMapService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public static string strDateNow = DateTime.Now.ToString("yyyyMMdd");
@@ -89,7 +93,7 @@ namespace KANBAN.Services.Master.Repository
                 }
 
                 data.F_Update_Date = DateTime.Now;
-                data.F_Update_By = _BearerClass.UserCode;
+                data.F_Update_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value;
 
                 _kbContext.TB_MS_LineControl.Add(data);
                 _log.WriteLogMsg("INSERT TB_MS_LineControl : " + JsonConvert.SerializeObject(data));
@@ -119,7 +123,7 @@ namespace KANBAN.Services.Master.Repository
                 _log.WriteLogMsg("UPDATE TB_MS_LineControl BEFORE : " + JsonConvert.SerializeObject(data));
 
                 _kbContext.TB_MS_LineControl.Remove(check);
-                data.F_Update_By = _BearerClass.UserCode;
+                data.F_Update_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value;
                 data.F_Update_Date = DateTime.Now;
 
                 _kbContext.TB_MS_LineControl.Add(data);

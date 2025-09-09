@@ -17,6 +17,7 @@ namespace KANBAN.Services.UrgentOrder.Repository
         private readonly SerilogLibs _log;
         private readonly IEmailService _emailService;
         private readonly IAutoMapService _automapService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public UrgentRepo
             (
@@ -27,7 +28,8 @@ namespace KANBAN.Services.UrgentOrder.Repository
                 FillDataTable FillDT,
                 SerilogLibs log,
                 IEmailService emailService,
-                IAutoMapService autoMapService
+                IAutoMapService autoMapService,
+                IHttpContextAccessor httpContextAccessor
             )
         {
             _kbContext = kbContext;
@@ -38,6 +40,7 @@ namespace KANBAN.Services.UrgentOrder.Repository
             _log = log;
             _emailService = emailService;
             _automapService = autoMapService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public IKBNIM017R IKBNIM017R_Repo
@@ -50,7 +53,8 @@ namespace KANBAN.Services.UrgentOrder.Repository
                                     _InvenContext,
                                     _FillDT, _log,
                                     _emailService,
-                                    _automapService);
+                                    _automapService,
+                                    _httpContextAccessor);
             }
         }
 

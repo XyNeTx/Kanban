@@ -8,6 +8,7 @@ using KANBAN.Services.SpecialOrdering.Interface;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Security.Claims;
 
 namespace KANBAN.Services.SpecialOrdering.Repository
 {
@@ -21,6 +22,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
         private readonly IEmailService _emailService;
         private readonly ISpecialLibs _specialLibs;
         private readonly IAutoMapService _automapService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
         public KBNOR261
@@ -32,7 +34,8 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             SerilogLibs log,
             IEmailService emailService,
             ISpecialLibs specialLibs,
-            IAutoMapService autoMapService
+            IAutoMapService autoMapService,
+            IHttpContextAccessor httpContextAccessor
             )
         {
             _kbContext = kbContext;
@@ -43,13 +46,14 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             _emailService = emailService;
             _specialLibs = specialLibs;
             _automapService = autoMapService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public string GetPDSWaitApprove()
         {
             try
             {
-                string sql = $"Select * from dbo.fnPDSWaitApprove('{_BearerClass.UserCode}') Order by F_OrderNO ";
+                string sql = $"Select * from dbo.fnPDSWaitApprove('{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}') Order by F_OrderNO ";
 
                 var dt = _FillDT.ExecuteSQL(sql);
 
@@ -97,8 +101,8 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             {
                 await _kbContext.Database.ExecuteSqlRawAsync("EXEC [exec].[spKBNOR700_PDS] @pUserCode, @pPlant, @pDeliveryDate," +
                     "@F_orderType,@F_OrderNo,@F_OrderNoTo,@F_Supplier_Code,@F_Supplier_CodeTo,@F_Delivery_Date,@F_Delivery_DateTo,@ErrorMessage",
-                    new SqlParameter("@pUserCode", _BearerClass.UserCode),
-                    new SqlParameter("@pPlant", _BearerClass.Plant),
+                    new SqlParameter("@pUserCode", _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value),
+                    new SqlParameter("@pPlant", _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value),
                     new SqlParameter("@pDeliveryDate", ""),
                     new SqlParameter("@F_orderType", "S"),
                     new SqlParameter("@F_OrderNo", obj.F_OrderNO),

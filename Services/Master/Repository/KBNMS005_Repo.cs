@@ -8,8 +8,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Data;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using System.Web.Services.Description;
+using System.Security.Claims;
 
 namespace KANBAN.Services.Master.Repository
 {
@@ -22,8 +21,12 @@ namespace KANBAN.Services.Master.Repository
         private readonly SerilogLibs _log;
         private readonly IEmailService _emailService;
         private readonly IAutoMapService _automapService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public KBNMS005_Repo(KB3Context kbContext, BearerClass bearerClass, PPM3Context ppm3Context, FillDataTable fillDT, SerilogLibs log, IEmailService emailService, IAutoMapService automapService)
+        public KBNMS005_Repo(KB3Context kbContext, BearerClass bearerClass, 
+            PPM3Context ppm3Context, FillDataTable fillDT,
+            SerilogLibs log, IEmailService emailService,
+            IAutoMapService automapService, IHttpContextAccessor httpContextAccessor)
         {
             _kbContext = kbContext;
             _BearerClass = bearerClass;
@@ -32,6 +35,7 @@ namespace KANBAN.Services.Master.Repository
             _log = log;
             _emailService = emailService;
             _automapService = automapService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public static string strDateNow = DateTime.Now.ToString("yyyyMMdd");
@@ -50,7 +54,7 @@ namespace KANBAN.Services.Master.Repository
                 var data = await _kbContext.TB_MS_PartOrder.AsNoTracking()
                     .Where(x => x.F_Start_Date.CompareTo(strDateNow) <= 0
                     && x.F_End_Date.CompareTo(strDateNow) >= 0
-                    && x.F_Store_Code.StartsWith(_BearerClass.Plant)).ToListAsync();
+                    && x.F_Store_Code.StartsWith(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value)).ToListAsync();
 
                 var supList = data.Select(x => x.F_Supplier_Cd.Trim() + "-" + x.F_Supplier_Plant).Distinct().OrderBy(x => x).ToList();
 
@@ -133,20 +137,20 @@ namespace KANBAN.Services.Master.Repository
                     throw new CustomHttpException(404, "No header data found");
                 }
 
-                await _kbContext.Database.ExecuteSqlRawAsync("DELETE FROM TB_BL_Data Where F_UpdateBy = @p0", _BearerClass.UserCode);
+                await _kbContext.Database.ExecuteSqlRawAsync("DELETE FROM TB_BL_Data Where F_UpdateBy = @p0", _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value);
                 await Add_Head();
 
-                await _kbContext.Database.ExecuteSqlRawAsync("DELETE FROM TB_BL_Grid Where F_UpdateBy = @p0", _BearerClass.UserCode);
+                await _kbContext.Database.ExecuteSqlRawAsync("DELETE FROM TB_BL_Grid Where F_UpdateBy = @p0", _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value);
                 await Add_Grid(isOk,isNo,isPartShort);
 
                 string sqlQ = $@"Select * From TB_BL_Grid 
-                    Where F_UpdateBy = '{_BearerClass.UserCode}' 
+                    Where F_UpdateBy = '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}' 
                     Order By F_No,F_Arrange";
 
                 var DT_Grid = await _FillDT.ExecuteSQLAsync(sqlQ);
 
                 sqlQ = $@"Select * From TB_BL_Data 
-                    Where F_UpdateBy = '{_BearerClass.UserCode}' 
+                    Where F_UpdateBy = '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}' 
                     Order By F_No";
 
                 var DT_Data = await _FillDT.ExecuteSQLAsync(sqlQ);
@@ -193,7 +197,7 @@ namespace KANBAN.Services.Master.Repository
 
                     List<SqlParameter> sqlParameters = new List<SqlParameter>
                     {
-                        new SqlParameter("@Plant", _BearerClass.Plant),
+                        new SqlParameter("@Plant", _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value),
                         new SqlParameter("@Supplier_Code", DT_Daily.Rows[intRow]["Supplier_Code"].ToString().Trim()),
                         new SqlParameter("@Supplier_Plant", DT_Daily.Rows[intRow]["Supplier_Plant"].ToString().Trim()),
                         new SqlParameter("@Part_No", DT_Daily.Rows[intRow]["Part_No"].ToString().Trim()),
@@ -241,7 +245,7 @@ namespace KANBAN.Services.Master.Repository
 
                     sqlParameters = new List<SqlParameter>
                     {
-                        new SqlParameter("@Plant", _BearerClass.Plant),
+                        new SqlParameter("@Plant", _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value),
                         new SqlParameter("@Supplier_Code", DT_Daily.Rows[intRow]["Supplier_Code"].ToString().Trim()),
                         new SqlParameter("@Supplier_Plant", DT_Daily.Rows[intRow]["Supplier_Plant"].ToString().Trim()),
                         new SqlParameter("@dateNow", DateTime.Now.AddDays(-1).ToString("yyyyMMdd")),
@@ -344,7 +348,7 @@ namespace KANBAN.Services.Master.Repository
 
                     sqlParameters = new List<SqlParameter>
                     {
-                        new SqlParameter("@Plant", _BearerClass.Plant),
+                        new SqlParameter("@Plant", _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value),
                         new SqlParameter("@Supplier_Code", DT_Daily.Rows[intRow]["Supplier_Code"].ToString().Trim()),
                         new SqlParameter("@Supplier_Plant", DT_Daily.Rows[intRow]["Supplier_Plant"].ToString().Trim()),
                         new SqlParameter("@Part_No", DT_Daily.Rows[intRow]["Part_No"].ToString().Trim()),
@@ -390,7 +394,7 @@ namespace KANBAN.Services.Master.Repository
                         , '{dblSafetyStock}'
                         , '{intFC_Max}','{intCRUse}','{intAvgTrip}','{intSTDStock}'
                         , '{intBF}','{chrBF_State}{(chrShift_SetStock == "D" ? intFirstTrip_Night : 1)}','{Math.Round((double)intCRUse/intCycleB,0)}'
-                        , '{intCRUse/2}','','','{DateTime.Now}','{_BearerClass.UserCode}'
+                        , '{intCRUse/2}','','','{DateTime.Now}','{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}'
                         ,'','','','','','','','','',''
                         ,'','','','','','','','','',''
                         ,'','','','')";
@@ -417,7 +421,7 @@ namespace KANBAN.Services.Master.Repository
             {
                 int intSum = 0;
                 string sqlQ = $@"SELECT * FROM TB_BL_Data 
-                    WHERE F_UpdateBy = '{_BearerClass.UserCode}' 
+                    WHERE F_UpdateBy = '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}' 
                     ORDER BY F_No,F_Date ";
 
                 var DT = await _FillDT.ExecuteSQLAsync(sqlQ);
@@ -458,7 +462,7 @@ namespace KANBAN.Services.Master.Repository
                                 AND F_Supplier_Cd = '{DT.Rows[i]["F_Supplier_Cd"].ToString().Trim()}'
                                 AND F_Supplier_Plant = '{DT.Rows[i]["F_Supplier_Plant"].ToString().Trim()}'
                                 AND F_Sebango = '{DT.Rows[i]["F_Sebango"].ToString().Trim()}'
-                                AND F_UpdateBy = '{_BearerClass.UserCode}'
+                                AND F_UpdateBy = '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}'
                                 ";
                             await _kbContext.Database.ExecuteSqlRawAsync(sqlQ);
                             _log.WriteLogMsg("Update TB_BL_Data " + sqlQ);
@@ -485,7 +489,7 @@ namespace KANBAN.Services.Master.Repository
                 double dblFC = 0, dblPD = 0;
 
                 var DT = await _FillDT.ExecuteSQLAsync($@"SELECT * 
-                    FROM TB_BL_Data WHERE F_UpdateBy = '{_BearerClass.UserCode}' 
+                    FROM TB_BL_Data WHERE F_UpdateBy = '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}' 
                     ORDER BY F_No, F_Date ");
 
                 if(DT.Rows.Count > 0)
@@ -510,7 +514,7 @@ namespace KANBAN.Services.Master.Repository
                             string sqlQ = $@"UPDATE TB_BL_Data SET F_BF{c + 1} = '{(c == intCycleB ? DBNull.Value : intBL)}'
                                 ,F_BL{c} = '{intBL}' 
                                 ,F_FC{c} = '{dblFC}'
-                                WHERE F_UpdateBy = '{_BearerClass.UserCode}' 
+                                WHERE F_UpdateBy = '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}' 
                                 AND F_No = '{i + 1}'";
 
                             await _kbContext.Database.ExecuteSqlRawAsync(sqlQ);
@@ -519,7 +523,7 @@ namespace KANBAN.Services.Master.Repository
                             if (c == intCycleB && i + 2 <= DT.Rows.Count && DT.Rows[i]["F_Sebango"].ToString().Trim() == DT.Rows[i + 1]["F_Sebango"].ToString().Trim())
                             {
                                 sqlQ = $@"UPDATE TB_BL_Data SET F_BF1 = '{intBL}' 
-                                    WHERE F_UpdateBy = '{_BearerClass.UserCode}' 
+                                    WHERE F_UpdateBy = '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}' 
                                     AND F_No = '{i + 2}'
                                     AND F_BF_State NOT LIKE '%Y%'
                                     ";
@@ -536,7 +540,7 @@ namespace KANBAN.Services.Master.Repository
                             {
                                 sqlQ = $@"UPDATE TB_BL_Data SET F_Status = 'OK'
                                     , F_BL = '{intBL}'
-                                    WHERE F_UpdateBy = '{_BearerClass.UserCode}' 
+                                    WHERE F_UpdateBy = '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}' 
                                     AND F_No = '{i + 1}'";
 
                                 await _kbContext.Database.ExecuteSqlRawAsync(sqlQ);
@@ -546,7 +550,7 @@ namespace KANBAN.Services.Master.Repository
                             {
                                 sqlQ = $@"UPDATE TB_BL_Data SET F_Status = 'NO'
                                     , F_BL = '{intBL}'
-                                    WHERE F_UpdateBy = '{_BearerClass.UserCode}' 
+                                    WHERE F_UpdateBy = '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}' 
                                     AND F_No = '{i + 1}'";
 
                                 await _kbContext.Database.ExecuteSqlRawAsync(sqlQ);
@@ -557,7 +561,7 @@ namespace KANBAN.Services.Master.Repository
 
                             sqlQ = $@"UPDATE TB_BL_Data SET F_PD1 = '{Math.Floor(dblPD)}'
                                 , F_PD2 = '{Math.Ceiling(dblPD)}'   
-                                WHERE F_UpdateBy = '{_BearerClass.UserCode}' 
+                                WHERE F_UpdateBy = '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}' 
                                 AND F_No = '{i + 1}'";
 
                             await _kbContext.Database.ExecuteSqlRawAsync(sqlQ);
@@ -566,7 +570,7 @@ namespace KANBAN.Services.Master.Repository
                             for(int j = intCycleB +1; j <= 24; j++)
                             {
                                 sqlQ = $@"UPDATE TB_BL_Data SET F_Order{j} = NULL 
-                                    WHERE F_UpdateBy = '{_BearerClass.UserCode}' 
+                                    WHERE F_UpdateBy = '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}' 
                                     AND F_No = '{i + 1}'";
 
                                 await _kbContext.Database.ExecuteSqlRawAsync(sqlQ);
@@ -595,7 +599,7 @@ namespace KANBAN.Services.Master.Repository
                     ,F_BF11,F_BF12,F_BF13,F_BF14,F_BF15,F_BF16,F_BF17,F_BF18,F_BF19,F_BF20,F_BF21,F_BF22,F_BF23,F_BF24
                     ,F_UpdateBy,getDate(),'1'
                     FROM TB_BL_Data
-                    WHERE F_UpdateBy = '{_BearerClass.UserCode}'";
+                    WHERE F_UpdateBy = '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}'";
 
                 if(isOk && !isNo && !isPartShort)
                 {
@@ -630,7 +634,7 @@ namespace KANBAN.Services.Master.Repository
                     ,F_FC11,F_FC12,F_FC13,F_FC14,F_FC15,F_FC16,F_FC17,F_FC18,F_FC19,F_FC20,F_FC21,F_FC22,F_FC23,F_FC24
                     ,F_UpdateBy,getDate(),'2' 
                     FROM TB_BL_Data 
-                    WHERE F_UpdateBy = '{_BearerClass.UserCode}'";
+                    WHERE F_UpdateBy = '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}'";
 
                 if (isOk && !isNo && !isPartShort)
                 {
@@ -660,7 +664,7 @@ namespace KANBAN.Services.Master.Repository
                 sqlQ = $@"INSERT INTO TB_BL_Grid(F_No,F_TRIP,F_R1,F_R2,F_UpdateBy,F_UpdateDate,F_Arrange) 
                     SELECT F_No,'PD/Day [Pcs.]' AS F_TRIP,F_PD1, F_PD2,F_UpdateBy,getDate(),'3' 
                     FROM TB_BL_Data 
-                    WHERE F_UpdateBy = '{_BearerClass.UserCode}'";
+                    WHERE F_UpdateBy = '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}'";
 
                 if (isOk && !isNo && !isPartShort)
                 {
@@ -694,7 +698,7 @@ namespace KANBAN.Services.Master.Repository
                     ,F_Order11,F_Order12,F_Order13,F_Order14,F_Order15,F_Order16,F_Order17,F_Order18,F_Order19,F_Order20,F_Order21,F_Order22,F_Order23,F_Order24
                     ,F_UpdateBy,getDate(),'4' 
                     FROM TB_BL_Data 
-                    WHERE F_UpdateBy = '{_BearerClass.UserCode}'";
+                    WHERE F_UpdateBy = '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}'";
 
                 if (isOk && !isNo && !isPartShort)
                 {
@@ -724,7 +728,7 @@ namespace KANBAN.Services.Master.Repository
                 sqlQ = $@"INSERT INTO TB_BL_Grid(F_No,F_TRIP,F_R1,F_UpdateBy,F_UpdateDate,F_Arrange) 
                     SELECT F_No,'Order Total' AS F_TRIP,F_Order,F_UpdateBy,getDate(),'5' 
                     FROM TB_BL_Data 
-                    WHERE F_UpdateBy = '{_BearerClass.UserCode}'";
+                    WHERE F_UpdateBy = '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}'";
 
                 if (isOk && !isNo && !isPartShort)
                 {
@@ -758,7 +762,7 @@ namespace KANBAN.Services.Master.Repository
                     ,F_BL11,F_BL12,F_BL13,F_BL14,F_BL15,F_BL16,F_BL17,F_BL18,F_BL19,F_BL20,F_BL21,F_BL22,F_BL23,F_BL24
                     ,F_UpdateBy,getDate(),'6' 
                     FROM TB_BL_Data 
-                    WHERE F_UpdateBy = '{_BearerClass.UserCode}'";
+                    WHERE F_UpdateBy = '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}'";
 
                 if (isOk && !isNo && !isPartShort)
                 {

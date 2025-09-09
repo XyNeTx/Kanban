@@ -2,12 +2,15 @@
 using HINOSystem.Models.KB3.Master;
 using KANBAN.Services;
 using KANBAN.Services.Master.IRepository;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HINOSystem.Controllers.API.Master
 {
-    [ApiController]
+    [ApiController][Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("/api/[controller]/[action]")]
+    [Authorize]
     public class KBNMS016Controller : ControllerBase
     {
         private readonly BearerClass _BearerClass;
@@ -27,7 +30,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
 
                 var data = await _masterRepo.IKBNMS016.List_Data(F_Supplier_Cd, F_Kanban_No, F_Part_No, F_Store_Cd, F_Supplier_Plant, F_Ruibetsu, F_Group);
 
@@ -53,7 +56,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
 
                 if (action == "new")
                 {
@@ -142,7 +145,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
 
                 var data = await _masterRepo.IKBNMS016.GetSupplierDetail(F_Supplier_Cd, F_Supplier_Plant);
 
@@ -167,7 +170,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
 
                 var data = await _masterRepo.IKBNMS016.GetPartNoDetail(F_Part_No, F_Ruibetsu);
 
@@ -192,7 +195,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
 
                 await _masterRepo.IKBNMS016.Save(listObj, action);
 

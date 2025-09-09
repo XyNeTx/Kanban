@@ -4,8 +4,6 @@ using KANBAN.Context;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using NPOI.SS.Formula.Functions;
-using System.Linq;
 
 namespace KANBAN.Controllers.API.OrderReport
 {

@@ -1,5 +1,4 @@
-﻿using HINOSystem.Models.KB3.Master;
-using KANBAN.Models.KB3.OtherCondition.Model;
+﻿using KANBAN.Models.KB3.OtherCondition.Model;
 using KANBAN.Models.KB3.OtherCondition.ViewModel;
 using KANBAN.Models.KB3.Receive_Process;
 using TB_MS_PartOrder = HINOSystem.Models.KB3.Master.TB_MS_PartOrder;

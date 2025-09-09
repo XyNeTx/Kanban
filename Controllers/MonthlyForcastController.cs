@@ -1,7 +1,6 @@
-﻿using HINOSystem.Models;
-using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
+﻿using Microsoft.AspNetCore.Mvc;
 using HINOSystem.Libs;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HINOSystem.Controllers
 {
@@ -15,9 +14,9 @@ namespace HINOSystem.Controllers
 
 
         public MonthlyForcastController(
-            ILogger<HomeController> logger, 
-            DbConnect dbConnect, 
-            AuthenGuard authenGuard, 
+            ILogger<HomeController> logger,
+            DbConnect dbConnect,
+            AuthenGuard authenGuard,
             WarrantyClaimConnect wrtConnect
             )
         {
@@ -31,17 +30,17 @@ namespace HINOSystem.Controllers
             this._conn = _dbConnect.GetConncetionString();
         }
 
-
+        [Authorize(Policy = "KBNIM012")]
         public IActionResult KBNIM012()
         {
             //_authenGuard.ComponentToolbar = false;
-            return _authenGuard.guard(ControllerContext);
+            return View();
         }
-
+        [Authorize(Policy = "KBNIM012M")]
         public IActionResult KBNIM012M()
         {
             //_authenGuard.ComponentToolbar = false;
-            return _authenGuard.guard(ControllerContext);
+            return View();
         }
 
 

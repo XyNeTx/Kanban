@@ -6,6 +6,7 @@ using KANBAN.Models.KB3.SpecialOrdering;
 using KANBAN.Services.SpecialOrdering.Interface;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Security.Claims;
 
 namespace KANBAN.Services.SpecialOrdering.Repository
 {
@@ -18,6 +19,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
         private readonly FillDataTable _FillDT;
         private readonly SerilogLibs _log;
         private readonly IEmailService _emailService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
         public KBNOR293
@@ -27,7 +29,8 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             PPM3Context PPM3Context,
             FillDataTable FillDT,
             SerilogLibs log,
-            IEmailService emailService
+            IEmailService emailService,
+            IHttpContextAccessor httpContextAccessor
             )
         {
             _kbContext = kbContext;
@@ -36,6 +39,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             _FillDT = FillDT;
             _log = log;
             _emailService = emailService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public string LoadColorTag()
@@ -75,11 +79,11 @@ namespace KANBAN.Services.SpecialOrdering.Repository
 
                     if (IsExisted <= 0)
                     {
-                        await _kbContext.Database.ExecuteSqlRawAsync("INSERT INTO TB_MS_TagColor (F_Color_Tag, F_Type,F_RecUser,F_RecDate) VALUES ({0},{1},{2},getDate())", item.F_Color_Tag, item.F_Type, _BearerClass.UserCode);
+                        await _kbContext.Database.ExecuteSqlRawAsync("INSERT INTO TB_MS_TagColor (F_Color_Tag, F_Type,F_RecUser,F_RecDate) VALUES ({0},{1},{2},getDate())", item.F_Color_Tag, item.F_Type, _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value);
                     }
                     else
                     {
-                        await _kbContext.Database.ExecuteSqlRawAsync("UPDATE TB_MS_TagColor SET F_Type = {1} ,F_RecUser = {2}, F_RecDate = getdate() WHERE F_color_Tag = {0}", item.F_Color_Tag, item.F_Type, _BearerClass.UserCode);
+                        await _kbContext.Database.ExecuteSqlRawAsync("UPDATE TB_MS_TagColor SET F_Type = {1} ,F_RecUser = {2}, F_RecDate = getdate() WHERE F_color_Tag = {0}", item.F_Color_Tag, item.F_Type, _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value);
                     }
 
                 }

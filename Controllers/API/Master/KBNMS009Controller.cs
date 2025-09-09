@@ -1,14 +1,15 @@
-﻿using HINOSystem.Context;
-using HINOSystem.Libs;
+﻿using HINOSystem.Libs;
 using HINOSystem.Models.KB3.Master;
 using KANBAN.Services.Master.IRepository;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 
 namespace HINOSystem.Controllers.API.Master
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class KBNMS009Controller : ControllerBase
     {
         private readonly IMasterRepo _masterRepo;
@@ -25,7 +26,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _bearerClass.CheckAuthorize();
+                
 
                 var data = await _masterRepo.IKBNMS009.GetSupplier();
 
@@ -45,7 +46,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _bearerClass.CheckAuthorize();
+                
 
                 var data = await _masterRepo.IKBNMS009.SupplierClicked(Supplier);
 
@@ -62,7 +63,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _bearerClass.CheckAuthorize();
+                
 
                 await _masterRepo.IKBNMS009.Save(listObj);
 

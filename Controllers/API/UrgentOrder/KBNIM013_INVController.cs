@@ -1,13 +1,14 @@
 ﻿using HINOSystem.Libs;
-using KANBAN.Models.KB3.UrgentOrder;
 using KANBAN.Models.PPM;
 using KANBAN.Services.UrgentOrder.IRepository;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 
 namespace HINOSystem.Controllers.API.Master
 {
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/[controller]/[action]")]
     public class KBNIM013_INVController : ControllerBase
     {
@@ -26,7 +27,7 @@ namespace HINOSystem.Controllers.API.Master
         [HttpGet]
         public async Task<IActionResult> GetList_Header()
         {
-            await _BearerClass.CheckAuthorize();
+            
 
             var result = await _UrgentRepo.IKBNIM013_INV_Repo.GetList_Header();
 
@@ -36,7 +37,7 @@ namespace HINOSystem.Controllers.API.Master
         [HttpGet]
         public async Task<IActionResult> GetList_Detail(string inDeclareNo)
         {
-            await _BearerClass.CheckAuthorize();
+            
 
             var result = await _UrgentRepo.IKBNIM013_INV_Repo.GetList_Detail(inDeclareNo);
 
@@ -46,7 +47,7 @@ namespace HINOSystem.Controllers.API.Master
         [HttpPost]
         public async Task<IActionResult> InterfaceDataToTransactionTemp(List<VM_KBNIM013_INV> listObj,string PDS)
         {
-            await _BearerClass.CheckAuthorize();
+            
 
             await _UrgentRepo.IKBNIM013_INV_Repo.InterfaceDataToTransactionTemp(listObj,PDS);
 
@@ -60,7 +61,7 @@ namespace HINOSystem.Controllers.API.Master
         [HttpPost]
         public async Task<IActionResult> Delete(List<VM_KBNIM013_INV> listObj)
         {
-            await _BearerClass.CheckAuthorize();
+            
             await _UrgentRepo.IKBNIM013_INV_Repo.Delete(listObj);
             return Ok(new
             {

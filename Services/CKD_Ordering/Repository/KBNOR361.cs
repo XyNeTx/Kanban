@@ -1,6 +1,5 @@
 ﻿using HINOSystem.Context;
 using HINOSystem.Libs;
-using HINOSystem.Models.KB3.Master;
 using KANBAN.Context;
 using KANBAN.Libs;
 using KANBAN.Models.KB3.CKD_Ordering;
@@ -8,10 +7,10 @@ using KANBAN.Models.KB3.Receive_Process;
 using KANBAN.Models.PPM3;
 using KANBAN.Services.Automapper.Interface;
 using KANBAN.Services.CKD_Ordering.IRepository;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Data;
+using System.Security.Claims;
 using TB_MS_PartOrder = HINOSystem.Models.KB3.Master.TB_MS_PartOrder;
 
 namespace KANBAN.Services.CKD_Ordering.Repository
@@ -27,6 +26,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
         private readonly IAutoMapService _automapService;
         private readonly CKDWH_Context _CKDContext;
         private readonly CKDUSA_Context _CKDUSAContext;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
         public KBNOR361
@@ -39,7 +39,8 @@ namespace KANBAN.Services.CKD_Ordering.Repository
             IEmailService emailService,
             IAutoMapService autoMapService,
             CKDWH_Context CKDContext,
-            CKDUSA_Context CKDUSAContext
+            CKDUSA_Context CKDUSAContext,
+            IHttpContextAccessor httpContextAccessor
             )
         {
             _kbContext = kbContext;
@@ -51,6 +52,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
             _automapService = autoMapService;
             _CKDContext = CKDContext;
             _CKDUSAContext = CKDUSAContext;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<List<List<string>>> GetDataList(string? Supplier_Code, string? Kanban_No, string? Store_Code, string? Part_No,bool IsNew)
@@ -134,7 +136,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                     .Where(x => x.F_Start_Date.CompareTo(now) <= 0
                     && x.F_End_Date.CompareTo(now) >= 0
                     && (x.F_Supplier_Cd == "9999" || x.F_Supplier_Cd == "9995")
-                    && x.F_Plant == _BearerClass.Plant).ToListAsync();
+                    && x.F_Plant == _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value).ToListAsync();
 
                 if(!string.IsNullOrEmpty(Supplier_Code))
                 {
@@ -172,7 +174,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                     .Where(x => x.F_Local_Str.CompareTo(now) <= 0
                     && x.F_Local_End.CompareTo(now) >= 0
                     && (x.F_supplier_cd == "9999" || x.F_supplier_cd == "9995")
-                    && x.F_Store_cd.StartsWith(_BearerClass.Plant)).ToListAsync();
+                    && x.F_Store_cd.StartsWith(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value)).ToListAsync();
 
                 if (!string.IsNullOrEmpty(Supplier_Code))
                 {
@@ -208,7 +210,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                 var now = DateTime.Now.ToString("yyyyMMdd");
                 var data = await _PPM3Context.T_Supplier_MS.AsNoTracking()
                     .Where(x => x.F_supplier_cd + "-" + x.F_Plant_cd == Supplier_Code
-                    && x.F_Store_cd.StartsWith(_BearerClass.Plant)
+                    && x.F_Store_cd.StartsWith(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value)
                     && x.F_TC_Str.CompareTo(now) <= 0
                     && x.F_TC_End.CompareTo(now) >= 0).ToListAsync();
 
@@ -237,7 +239,7 @@ namespace KANBAN.Services.CKD_Ordering.Repository
                 var now = DateTime.Now.ToString("yyyyMMdd");
                 var data = await _PPM3Context.T_Construction.AsNoTracking()
                     .Where(x => x.F_Part_no.Trim() + "-" + x.F_Ruibetsu == Part_No
-                    && x.F_Store_cd.StartsWith(_BearerClass.Plant)
+                    && x.F_Store_cd.StartsWith(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value)
                     && x.F_Local_Str.CompareTo(now) <= 0
                     && x.F_Local_End.CompareTo(now) >= 0
                     && x.F_Cycle_A == '1')

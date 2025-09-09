@@ -6,6 +6,7 @@ using KANBAN.Services.Automapper.Interface;
 using KANBAN.Services.SpecialOrdering.Interface;
 using Newtonsoft.Json;
 using System.Data;
+using System.Security.Claims;
 
 namespace KANBAN.Services.SpecialOrdering.Repository
 {
@@ -19,6 +20,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
         private readonly IEmailService _emailService;
         private readonly ISpecialLibs _specialLibs;
         private readonly IAutoMapService _automapService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
         public KBNOR292
@@ -30,7 +32,8 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             SerilogLibs log,
             IEmailService emailService,
             ISpecialLibs specialLibs,
-            IAutoMapService autoMapService
+            IAutoMapService autoMapService,
+            IHttpContextAccessor httpContextAccessor
             )
         {
             _kbContext = kbContext;
@@ -41,6 +44,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             _emailService = emailService;
             _specialLibs = specialLibs;
             _automapService = autoMapService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public string GetSupplierSurvey(string IssueDate, string? SupplierCD = "")
@@ -53,7 +57,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
                 {
                     sql = sql + $" And F_Supplier_CD = '{SupplierCD}' ";
                 }
-                sql = sql + $"and F_Factory_Code  in ('{_BearerClass.Plant}') ";
+                sql = sql + $"and F_Factory_Code  in ('{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value}') ";
                 sql += "Group by  F_Supplier_CD,F_Supplier_INT,F_Supplier_Name ";
                 sql += "Order by F_Supplier_CD ";
 

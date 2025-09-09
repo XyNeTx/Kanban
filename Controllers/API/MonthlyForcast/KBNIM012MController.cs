@@ -4,14 +4,18 @@ using KANBAN.Models.KB3.ImportData.Model;
 using KANBAN.Models.KB3.ImportData.ViewModel;
 using KANBAN.Services;
 using KANBAN.Services.Import.Interface;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Security.Claims;
 //using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HINOSystem.Controllers.API.Master
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class KBNIM012MController : Controller
     {
         private readonly IConfiguration _configuration;
@@ -55,7 +59,7 @@ namespace HINOSystem.Controllers.API.Master
             string _SQL = "";
             try
             {
-                _BearerClass.Authentication(Request);
+                _BearerClass.Authentication();
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
                 if (pData != null) _json = JsonConvert.DeserializeObject(pData);
@@ -89,7 +93,7 @@ namespace HINOSystem.Controllers.API.Master
         //    string _SQL = "";
         //    try
         //    {
-        //        _BearerClass.Authentication(Request);
+        //        _BearerClass.Authentication();
         //        if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
         //        _json = JsonConvert.DeserializeObject(pData);
@@ -198,9 +202,9 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
-                var userID = _BearerClass.UserCode;
-                var plant_CTL = _BearerClass.Plant;
+                
+                var userID = User.FindFirst(ClaimTypes.UserData).Value;
+                var plant_CTL = User.FindFirst(ClaimTypes.Locality).Value;
                 var result = await _importService.KBNIM012M.Search(model);
 
                 return Ok(new { data = result });
@@ -219,9 +223,9 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
-                var userID = _BearerClass.UserCode;
-                var plant_CTL = _BearerClass.Plant;
+                
+                var userID = User.FindFirst(ClaimTypes.UserData).Value;
+                var plant_CTL = User.FindFirst(ClaimTypes.Locality).Value;
 
                 await _importService.KBNIM012M.Save(model);
 
@@ -257,7 +261,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
                 await _importService.KBNIM012M.Report(model);
                 return Ok(new { data = "Print Report Success!" });
             }
@@ -274,7 +278,7 @@ namespace HINOSystem.Controllers.API.Master
         {
             try
             {
-                await _BearerClass.CheckAuthorize();
+                
                 await _importService.KBNIM012M.Import(model);
                 return Ok(new { data = "Import Completed!" });
             }

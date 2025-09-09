@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using System.Data;
 using KANBAN.Models.KB3.SpecialOrdering;
 using ClosedXML.Excel;
+using System.Security.Claims;
 
 namespace KANBAN.Services.Import.Repository
 {
@@ -23,6 +24,7 @@ namespace KANBAN.Services.Import.Repository
         private readonly SerilogLibs _log;
         private readonly IEmailService _emailService;
         private readonly IAutoMapService _automapService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
         public KBNIM007
@@ -33,7 +35,8 @@ namespace KANBAN.Services.Import.Repository
             FillDataTable FillDT,
             SerilogLibs log,
             IEmailService emailService,
-            IAutoMapService autoMapService
+            IAutoMapService autoMapService,
+            IHttpContextAccessor httpContextAccessor
             )
         {
             _kbContext = kbContext;
@@ -43,6 +46,7 @@ namespace KANBAN.Services.Import.Repository
             _log = log;
             _emailService = emailService;
             _automapService = autoMapService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public string SetCalendar(string YM ,string StoreCD)
@@ -113,7 +117,7 @@ namespace KANBAN.Services.Import.Repository
                     and substring(F_TC_END,1,6) >='{YM}' and substring(F_Store_CD,1,1) ='0' 
                     Union all Select distinct F_Store_Cd as F_Store_Cd 
                     From {getDB}.dbo.T_Construction Where substring(F_Local_Str,1,6) <='{YM}' 
-                    and substring(F_Local_End,1,6) >='{YM}' and F_Store_CD like '{_BearerClass.Plant}%' ) MAIN 
+                    and substring(F_Local_End,1,6) >='{YM}' and F_Store_CD like '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value}%' ) MAIN 
                     Order by F_Store_Cd ";
 
                 DataTable dt = _FillDT.ExecuteSQL(sql);
@@ -187,7 +191,7 @@ namespace KANBAN.Services.Import.Repository
             {
                 string sql = "";
                 string now = DateTime.Now.ToString("yyyyMMdd");
-                var data = _kbContext.TB_MS_OldPart.Where(x=>x.F_Plant == _BearerClass.Plant
+                var data = _kbContext.TB_MS_OldPart.Where(x=>x.F_Plant == _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value
                 && x.F_Start_Date.CompareTo(now) <= 0
                 && x.F_End_Date.CompareTo(now) >= 0
                 && x.F_Parent_Part.Trim() + "-" + x.F_Ruibetsu.Trim() == PartNo).ToList();
@@ -303,7 +307,7 @@ namespace KANBAN.Services.Import.Repository
             {
                 string sql = "";
 
-                await _kbContext.Database.ExecuteSqlRawAsync("EXEC dbo.SP_IM007_FilterData {0}", _BearerClass.UserCode);
+                await _kbContext.Database.ExecuteSqlRawAsync("EXEC dbo.SP_IM007_FilterData {0}", _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value);
 
                 if (action.ToUpper() == "NEW")
                 {
@@ -339,7 +343,7 @@ namespace KANBAN.Services.Import.Repository
                         {
                             await _kbContext.Database.ExecuteSqlRawAsync($@"Exec dbo.SP_IMPORT_SPECIAL 
                                 '{obj.PDS}','Special','{obj.IssuedDate}','{obj.PartNo}','{obj.StoreCD}',
-                                '{obj.DeliveryDate}','{obj.Qty}','{obj.Trip}','{_BearerClass.UserCode}' ");
+                                '{obj.DeliveryDate}','{obj.Qty}','{obj.Trip}','{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}' ");
 
                             _log.WriteLogMsg("Insert to TMP : Special Order | Obj : "+ JsonConvert.SerializeObject(obj));
                         }
@@ -412,7 +416,7 @@ namespace KANBAN.Services.Import.Repository
                         }
                         await _kbContext.Database.ExecuteSqlRawAsync($@"Exec dbo.SP_IMPORT_SPECIAL 
                                 '{obj.PDS}','Special','{obj.IssuedDate}','{obj.PartNo}','{obj.StoreCD}',
-                                '{obj.DeliveryDate}','{obj.Qty}','{obj.Trip}','{_BearerClass.UserCode}' ");
+                                '{obj.DeliveryDate}','{obj.Qty}','{obj.Trip}','{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}' ");
 
                         _log.WriteLogMsg("Update to TMP : Special Order | Obj : " + JsonConvert.SerializeObject(obj));
                     }
@@ -448,9 +452,9 @@ namespace KANBAN.Services.Import.Repository
 
                 ConvertExcelToText();
 
-                //await _kbContext.Database.ExecuteSqlRawAsync("EXEC dbo.SP_IM007_IMPORT {0}", _BearerClass.UserCode);
+                //await _kbContext.Database.ExecuteSqlRawAsync("EXEC dbo.SP_IM007_IMPORT {0}", _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value);
 
-                DataTable dt = _FillDT.ExecuteSQL($"EXEC dbo.SP_IM007_IMPORT '{_BearerClass.UserCode}'");
+                DataTable dt = _FillDT.ExecuteSQL($"EXEC dbo.SP_IM007_IMPORT '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}'");
 
                 if (dt.Rows.Count > 0)
                 {
@@ -501,9 +505,9 @@ namespace KANBAN.Services.Import.Repository
                     stream.Close();
                 }
 
-                await _kbContext.Database.ExecuteSqlRawAsync("EXEC dbo.SP_IM007_IMPORT_SCP {0}, {1} ", _BearerClass.UserCode, int.Parse(BackDate));
+                await _kbContext.Database.ExecuteSqlRawAsync("EXEC dbo.SP_IM007_IMPORT_SCP {0}, {1} ", _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value, int.Parse(BackDate));
 
-                DataTable dt = _FillDT.ExecuteSQL($"EXEC dbo.SP_IM007_IMPORT_SCP '{_BearerClass.UserCode}', '{BackDate}'");
+                DataTable dt = _FillDT.ExecuteSQL($"EXEC dbo.SP_IM007_IMPORT_SCP '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}', '{BackDate}'");
 
                 if (dt.Rows.Count > 0)
                 {
@@ -554,9 +558,9 @@ namespace KANBAN.Services.Import.Repository
                     stream.Close();
                 }
 
-                await _kbContext.Database.ExecuteSqlRawAsync("EXEC dbo.SP_IM007_IMPORT_IPMS {0}, {1} ", _BearerClass.UserCode, int.Parse(BackDate));
+                await _kbContext.Database.ExecuteSqlRawAsync("EXEC dbo.SP_IM007_IMPORT_IPMS {0}, {1} ", _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value, int.Parse(BackDate));
 
-                DataTable dt = _FillDT.ExecuteSQL($"EXEC dbo.SP_IM007_IMPORT_IPMS '{_BearerClass.UserCode}', '{BackDate}'");
+                DataTable dt = _FillDT.ExecuteSQL($"EXEC dbo.SP_IM007_IMPORT_IPMS '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}', '{BackDate}'");
 
                 if (dt.Rows.Count > 0)
                 {

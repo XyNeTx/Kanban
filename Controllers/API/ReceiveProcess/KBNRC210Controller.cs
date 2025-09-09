@@ -7,6 +7,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Globalization;
+using System.Security.Claims;
 
 namespace KANBAN.Controllers.API.ReceiveProcess
 {
@@ -21,6 +22,7 @@ namespace KANBAN.Controllers.API.ReceiveProcess
         private readonly PPMInvenContext _PPMInvenContext;
         private readonly KB3Context _KB3Context;
         private readonly SerilogLibs _SerilogLibs;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
         private readonly string StoragePath = @"wwwroot\Storage\Uploads";
@@ -34,7 +36,8 @@ namespace KANBAN.Controllers.API.ReceiveProcess
             PPMInvenContext pPMInvenContext,
             PPM3Context pPM3Context,
             KB3Context kB3Context,
-            SerilogLibs serilogLibs
+            SerilogLibs serilogLibs,
+            IHttpContextAccessor httpContextAccessor
             )
         {
             _configuration = configuration;
@@ -46,6 +49,7 @@ namespace KANBAN.Controllers.API.ReceiveProcess
             _PPM3Context = pPM3Context;
             _PPMInvenContext = pPMInvenContext;
             _SerilogLibs = serilogLibs;
+            _httpContextAccessor = httpContextAccessor;
         }
 
 
@@ -57,8 +61,8 @@ namespace KANBAN.Controllers.API.ReceiveProcess
             string _SQL = "";
             try
             {
-                _BearerClass.Authentication(Request);
-                var user = _BearerClass.UserCode.ToString();
+                _BearerClass.Authentication();
+                var user = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value.ToString();
                 if (_BearerClass.Status == 401) return Content(JsonConvert.SerializeObject(_BearerClass.Result), "application/json");
 
                 if (pData != null) _json = JsonConvert.DeserializeObject(pData);
@@ -273,9 +277,9 @@ namespace KANBAN.Controllers.API.ReceiveProcess
                         }";
                     return Ok(_result);
                 }
-                _BearerClass.Authentication(Request);
-                var user = _BearerClass.UserCode.ToString();
-                char plant = _BearerClass.Plant[0];
+                _BearerClass.Authentication();
+                var user = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value.ToString();
+                char plant = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value[0];
                 if (data != null)
                 {
                     dynamic _json = JsonConvert.DeserializeObject(data);

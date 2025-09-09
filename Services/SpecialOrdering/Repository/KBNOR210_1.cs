@@ -8,6 +8,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Data;
+using System.Security.Claims;
 
 namespace KANBAN.Services.SpecialOrdering.Repository
 {
@@ -19,6 +20,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
         private readonly FillDataTable _FillDT;
         private readonly SerilogLibs _log;
         private readonly IEmailService _emailService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
         public KBNOR210_1
@@ -28,7 +30,8 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             PPM3Context PPM3Context,
             FillDataTable FillDT,
             SerilogLibs log,
-            IEmailService emailService
+            IEmailService emailService,
+            IHttpContextAccessor httpContextAccessor
             )
         {
             _kbContext = kbContext;
@@ -37,6 +40,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             _FillDT = FillDT;
             _log = log;
             _emailService = emailService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<List<TB_Transaction_Spc>> LoadDataChangeDelivery(string? PDSNo, string? SuppCd, string? PartNo, bool? chkDeli, string? DeliFrom, string? DeliTo)
@@ -133,7 +137,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
                 transaction.CreateSavepoint("Start GetPOMergeData");
 
                 await _kbContext.Database.ExecuteSqlRawAsync("Delete From TB_PO_Merge_Tmp Where F_Rec_user = @p0",
-                    new SqlParameter("@p0", _BearerClass.UserCode));
+                    new SqlParameter("@p0", _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value));
 
                 var data = await _kbContext.TB_Transaction_Spc
                     .Where(x => x.F_PDS_No != "" && x.F_Survey_Flg == "0"
@@ -184,7 +188,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
                         new SqlParameter("@F_Part_No", item.F_Part_No),
                         new SqlParameter("@F_Ruibetsu", item.F_Ruibetsu),
                         new SqlParameter("@F_Supp_CD", item.F_Supplier_CD.Trim() + "-" + item.F_Supplier_Plant.Trim()),
-                        new SqlParameter("@UserCode", _BearerClass.UserCode)
+                        new SqlParameter("@UserCode", _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value)
                         );
 
                     string _sql = $"Select F_PDS_No,F_PDS_NO_New,F_Part_no,F_Ruibetsu,Rtrim(F_Supplier_CD)+'-'+F_Supplier_Plant AS F_Supp_CD, " +
@@ -220,7 +224,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
                                 new SqlParameter("@F_Part_No", item.F_Part_No),
                                 new SqlParameter("@F_Ruibetsu", item.F_Ruibetsu),
                                 new SqlParameter("@F_Supp_CD", item.F_Supplier_CD.Trim() + "-" + item.F_Supplier_Plant.Trim()),
-                                new SqlParameter("@UserCode", _BearerClass.UserCode)
+                                new SqlParameter("@UserCode", _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value)
                                 );
 
                             await _kbContext.Database.ExecuteSqlRawAsync("Update TB_PO_Merge_Tmp Set F_Color_1 = '@color' " +
@@ -231,7 +235,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
                                 new SqlParameter("@F_Qty", _dt.Rows[k]["F_Qty"]),
                                 new SqlParameter("@F_PDS_No_New", _dt.Rows[k]["F_PDS_No_New"]),
                                 new SqlParameter("@F_Delivery_Date", _dt.Rows[k]["F_Delivery_Date"]),
-                                new SqlParameter("@UserCode", _BearerClass.UserCode),
+                                new SqlParameter("@UserCode", _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value),
                                 new SqlParameter("@j", j),
                                 new SqlParameter("@F_Part_No", item.F_Part_No),
                                 new SqlParameter("@F_Ruibetsu", item.F_Ruibetsu)
@@ -260,7 +264,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
                                 new SqlParameter("@F_Qty", _dt.Rows[k]["F_Qty"]),
                                 new SqlParameter("@F_PDS_No_New", _dt.Rows[k]["F_PDS_No_New"]),
                                 new SqlParameter("@F_Delivery_Date", _dt.Rows[k]["F_Delivery_Date"]),
-                                new SqlParameter("@UserCode", _BearerClass.UserCode),
+                                new SqlParameter("@UserCode", _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value),
                                 new SqlParameter("@j", j),
                                 new SqlParameter("@F_Part_No", item.F_Part_No),
                                 new SqlParameter("@F_Ruibetsu", item.F_Ruibetsu)
@@ -274,7 +278,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
                 //transaction.CreateSavepoint("Start GetPOMergeData");
 
                 string sql = "SELECT  CAST (F_ID As integer) as F_ID " +
-                    $"FROM  TB_PO_Merge_Tmp WHERE (F_Rec_User = '{_BearerClass.UserCode}' ) " +
+                    $"FROM  TB_PO_Merge_Tmp WHERE (F_Rec_User = '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}' ) " +
                     $" Order by  CAST (F_ID As integer) ";
 
                 var dt = _FillDT.ExecuteSQL(sql);
@@ -284,8 +288,8 @@ namespace KANBAN.Services.SpecialOrdering.Repository
                     for (int i = 0; i < dt.Rows.Count; i++)
                     {
                         sql = "Insert into TB_PO_Merge_Tmp (F_ID,F_Part_no,F_Delivery_DT_1,F_Delivery_DT_2,F_Delivery_DT_3,F_Delivery_DT_4,F_Delivery_DT_5,F_Delivery_DT_6,F_Rec_Date,F_Rec_User) " +
-                            $"SELECT  CAST(F_ID As Integer)-0.5 , 'PDS',  F_PDS_1, F_PDS_2, F_PDS_3, F_PDS_4, F_PDS_5, F_PDS_6,getDate(),'{_BearerClass.UserCode}' " +
-                            $"FROM  TB_PO_Merge_Tmp WHERE (F_Rec_User = '{_BearerClass.UserCode}' ) " +
+                            $"SELECT  CAST(F_ID As Integer)-0.5 , 'PDS',  F_PDS_1, F_PDS_2, F_PDS_3, F_PDS_4, F_PDS_5, F_PDS_6,getDate(),'{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}' " +
+                            $"FROM  TB_PO_Merge_Tmp WHERE (F_Rec_User = '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}' ) " +
                             $"and F_ID = '{dt.Rows[i]["F_ID"]}'";
 
                         await _kbContext.Database.ExecuteSqlRawAsync(sql);
@@ -298,7 +302,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
                     "F_Flag_4, F_Qty_4, F_Delivery_DT_4, F_Color_4, " +
                     "F_Flag_5, F_Qty_5, F_Delivery_DT_5, F_Color_5, " +
                     "F_Flag_6, F_Qty_6, F_Delivery_DT_6, F_Color_6, F_Rec_Date, F_Rec_User " +
-                    $"From TB_PO_Merge_Tmp Where F_Rec_User = '{_BearerClass.UserCode}' " +
+                    $"From TB_PO_Merge_Tmp Where F_Rec_User = '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}' " +
                     $"Order by CAST(F_ID  AS float)  ";
 
                 var _dtz = _FillDT.ExecuteSQL(sql);
@@ -431,7 +435,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
                             new SqlParameter("@p4", obj.F_Store_Cd),
                             new SqlParameter("@p5", obj.F_OrderNo),
                             new SqlParameter("@p6", obj.F_Use_StockQty),
-                            new SqlParameter("@p7", _BearerClass.UserCode)
+                            new SqlParameter("@p7", _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value)
                         );
 
                 }
@@ -473,7 +477,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
                         , new SqlParameter("@p3", F_Supplier)
                         , new SqlParameter("@p4", Delivery)
                         , new SqlParameter("@p5", F_Use_StockQty)
-                        , new SqlParameter("@p6", _BearerClass.UserCode)
+                        , new SqlParameter("@p6", _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value)
                         );
                     transaction.Commit();
                 }
@@ -523,7 +527,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
                     $"(F_PDS_No, F_PO_Customer, F_Delivery_Date, F_Part_No, F_Store_Cd, " +
                     $"F_Order_Qty, F_Use_Qty, F_Update_By, F_Update_Date) " +
                     $"VALUES ('{obj.F_PDS_No}','{obj.F_PO_Customer}','{obj.F_Delivery_Date}','{obj.F_Part_No}', " +
-                    $"'{obj.F_Store_Cd}',{obj.F_Order_Qty},{obj.F_Use_Qty},'{_BearerClass.UserCode}',getDate()) ");
+                    $"'{obj.F_Store_Cd}',{obj.F_Order_Qty},{obj.F_Use_Qty},'{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}',getDate()) ");
 
                 }
 
@@ -873,7 +877,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
                         existData.F_Stock_Qty = obj.Actual_PCS == 0 ? 0 : obj.Actual_PCS;
                         existData.F_Stock_Date = obj.Stock_Date;
                         existData.F_Prev_Stock_Qty = prevStock;
-                        existData.F_Update_By = _BearerClass.UserCode;
+                        existData.F_Update_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value;
                         existData.F_Update_Date = DateTime.Now;
                         existData.F_Kanban_no = obj.Kanban_No;
                         existData.F_Package = obj.Qty_Pack;
@@ -895,7 +899,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
                             F_Stock_Qty = obj.Actual_PCS == 0 ? 0 : obj.Actual_PCS,
                             F_Stock_Date = obj.Stock_Date,
                             F_Prev_Stock_Qty = 0,
-                            F_Update_By = _BearerClass.UserCode,
+                            F_Update_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value,
                             F_Update_Date = DateTime.Now,
                             F_Kanban_no = obj.Kanban_No,
                             F_Package = obj.Qty_Pack,
@@ -924,7 +928,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
                         existData.F_Stock_Qty = obj.Actual_PCS == 0 ? 0 : obj.Actual_PCS;
                         existData.F_Stock_Date = obj.Stock_Date;
                         existData.F_Prev_Stock_Qty = prevStock;
-                        existData.F_Update_By = _BearerClass.UserCode;
+                        existData.F_Update_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value;
                         existData.F_Update_Date = DateTime.Now;
                         existData.F_Kanban_no = obj.Kanban_No;
                         existData.F_Package = obj.Qty_Pack;
