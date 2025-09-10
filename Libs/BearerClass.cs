@@ -19,7 +19,7 @@ namespace HINOSystem.Libs
 
         private int FormatRow = 0;
 
-        public int Status = 401;
+        public int Status = 200;
         public string Token = "";
         public string UserCode = "";
         public string Device = "";
@@ -77,14 +77,14 @@ namespace HINOSystem.Libs
         public async Task CheckAuthorize()
         {
             this.Authentication();
-            if (this.Status == 401)
-            {
-                throw new CustomHttpException(401, "Unauthorized");
-            }
-            else if (this.Status == 403)
-            {
-                throw new CustomHttpException(403, "Forbidden");
-            }
+            //if (this.Status == 401)
+            //{
+            //    throw new CustomHttpException(401, "Unauthorized");
+            //}
+            //else if (this.Status == 403)
+            //{
+            //    throw new CustomHttpException(403, "Forbidden");
+            //}
 
             await Task.CompletedTask;
         }

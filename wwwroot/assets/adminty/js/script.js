@@ -39,23 +39,23 @@ $(document).ready(function () {
         $(".navbar-container .nav-right").slideToggle('slow');
     });
 
-    $.mCustomScrollbar.defaults.axis = "yx";
-    $("#styleSelector .style-cont").slimScroll({
-        setTop: "10px",
-        height: "calc(120vh - 440px)",
-    });
+    //$.mCustomScrollbar.defaults.axis = "yx";
+    //$("#styleSelector .style-cont").slimScroll({
+    //    setTop: "10px",
+    //    height: "calc(120vh - 440px)",
+    //});
 
     $(".main-menu").mCustomScrollbar({
         setTop: "10px",
         setHeight: "calc(100% - 80px)",
     });
     var a = $(window).height() - 80;
-    $(".main-friend-list").slimScroll({
-        height: a,
-        allowPageScroll: false,
-        wheelStep: 5,
-        color: '#1b8bf9'
-    });
+    //$(".main-friend-list").slimScroll({
+    //    height: a,
+    //    allowPageScroll: false,
+    //    wheelStep: 5,
+    //    color: '#1b8bf9'
+    //});
     $("#search-friends").on("keyup", function () {
         var g = $(this).val().toLowerCase();
         $(".userlist-box .media-body .chat-header").each(function () {

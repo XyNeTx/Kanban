@@ -140,6 +140,12 @@ namespace HINOSystem.Controllers.API.Master
                     string sql = $"EXEC [exec].[spKBNIM003C_CONFIRM] '{Plant}', 'EKanban', '{F_PDS_No}', '{F_PDS_Issued_Date}', '{F_Delivery_Date}', '{UserID}' ";
 
                     await _KB3Context.Database.ExecuteSqlRawAsync(sql);
+
+                    var rowAffected = await _KB3Context.TB_Transaction_TMP
+                        .Where(x => x.F_PDS_No == F_PDS_No
+                        && x.F_PDS_Issued_Date == F_PDS_Issued_Date
+                        && x.F_Delivery_Date == F_Delivery_Date)
+                        .ExecuteDeleteAsync();
                 }
 
                 _KB3Transaction.Commit();

@@ -66,7 +66,7 @@ class libSwal {
     info(pTitle = "", pMessage = "", pCallback = null) {
         if (TypeOf(pTitle) == 'Object') {
             pCallback = (pTitle.then != undefined ? pTitle.then : null);
-            pMessage = (pTitle.message != undefined ? pTitle.message : i18nLayout.modal.swal.info.text);
+            pMessage = (pTitle.message != undefined ? pTitle.message : "");
             pTitle = (pTitle.title != undefined ? pTitle.title : i18nLayout.modal.swal.info.title);
         } else {
             pMessage = (pMessage.length > 0 ? pMessage : i18nLayout.modal.swal.info.text);
@@ -97,11 +97,11 @@ class libSwal {
     warning(pTitle = "", pMessage = "", pCallback = null) {
         if (TypeOf(pTitle) == 'Object') {
             pCallback = (pTitle.then != undefined ? pTitle.then : null);
-            pMessage = (pTitle.message != undefined ? pTitle.message : i18nLayout.modal.swal.info.text);
-            pTitle = (pTitle.title != undefined ? pTitle.title : i18nLayout.modal.swal.info.title);
+            pMessage = (pTitle.message != undefined ? pTitle.message : "This method can't be Undone !!!");
+            pTitle = (pTitle.title != undefined ? pTitle.title : "Are you Sure ?");
         } else {
-            pMessage = (pMessage.length > 0 ? pMessage : i18nLayout.modal.swal.info.text);
-            pTitle = (pTitle.length > 0 ? pTitle : i18nLayout.modal.swal.info.title);
+            pMessage = (pMessage.length > 0 ? pMessage : "This method can't be Undone !!!");
+            pTitle = (pTitle.length > 0 ? pTitle : "Are you Sure ?");
         }
 
         Swal.fire({
@@ -122,11 +122,11 @@ class libSwal {
     error(pTitle = "", pMessage = "", pCallback = null) {
         if (TypeOf(pTitle) == 'Object') {
             pCallback = (pTitle.then != undefined ? pTitle.then : null);
-            pMessage = (pTitle.message != undefined ? pTitle.message : i18nLayout.modal.swal.error.text);
-            pTitle = (pTitle.title != undefined ? pTitle.title : i18nLayout.modal.swal.error.title);
+            pMessage = (pTitle.message != undefined ? pTitle.message : "Please Try Again Later !!!");
+            pTitle = (pTitle.title != undefined ? pTitle.title : "Error");
         } else {
-            pMessage = (pMessage.length > 0 ? pMessage : i18nLayout.modal.swal.error.text);
-            pTitle = (pTitle.length > 0 ? pTitle : i18nLayout.modal.swal.error.title);
+            pMessage = (pMessage.length > 0 ? pMessage : "Please Try Again Later !!!");
+            pTitle = (pTitle.length > 0 ? pTitle : "Error");
         }
 
         if ((pMessage.indexOf('<') >= 0 && pMessage.indexOf('>') >= 0) || (pMessage.indexOf('\n') >= 0)) {
@@ -209,11 +209,11 @@ class libSwal {
         if (TypeOf(pTitle) == 'Object') {
             pCallback = (pTitle.then != undefined ? pTitle.then : null);
             pCancel = (pTitle.cancel != undefined ? pTitle.cancel : null);
-            pMessage = (pTitle.message != undefined ? pTitle.message : i18nLayout.modal.swal.question.text);
-            pTitle = (pTitle.title != undefined ? pTitle.title : i18nLayout.modal.swal.question.title);
+            pMessage = (pTitle.message != undefined ? pTitle.message : "Are you Sure");
+            pTitle = (pTitle.title != undefined ? pTitle.title : "This method can't be Undone !!!");
         } else {
-            pMessage = (pMessage.length > 0 ? pMessage : i18nLayout.modal.swal.question.text);
-            pTitle = (pTitle.length > 0 ? pTitle : i18nLayout.modal.swal.question.title);
+            pMessage = (pMessage.length > 0 ? pMessage : "Are you Sure");
+            pTitle = (pTitle.length > 0 ? pTitle : "This method can't be Undone !!!");
         }
 
         //console.log(pTitle);

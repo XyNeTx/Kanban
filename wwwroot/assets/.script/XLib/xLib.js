@@ -1080,73 +1080,36 @@ var ajexHeader = {
     Shift: sessionStorage.getItem("shift"),
 };
 
-$(document).ready(async function () {
-    xSplash.show();
-    _PAGE_ = window.location.pathname.split("/")[2];
-    _CONTROLLER_ = window.location.pathname.split("/")[1];
-    _APPNAME_ = 'KANBAN';
-    _PLANT_ = _xLib.GetCookie("plantCode");
+//$(document).ready(async function () {
+//    //xSplash.show();
+//    //_PAGE_ = window.location.pathname.split("/")[2];
+//    //_CONTROLLER_ = window.location.pathname.split("/")[1];
+//    //_APPNAME_ = 'KANBAN';
+//    //_PLANT_ = _xLib.GetCookie("plantCode");
 
-    var onThisPage = $("li.pcoded-hasmenu").find(`a[href='${window.location.pathname}']`);
+//    //var onThisPage = $("li.pcoded-hasmenu").find(`a[href='${window.location.pathname}']`);
 
-    onThisPage.css("color", "#00FFFF");
-    if (onThisPage.parent().parent().parent().prop("tagName") == "LI") {
-        onThisPage.parent().parent().parent().addClass("pcoded-trigger")
-    }
-    if (onThisPage.parent().parent().parent().parent().parent().prop("tagName") == "LI") {
-        onThisPage.parent().parent().parent().parent().parent().addClass("pcoded-trigger")
-    }
+//    //onThisPage.css("color", "#00FFFF");
+//    //if (onThisPage.parent().parent().parent().prop("tagName") == "LI") {
+//    //    onThisPage.parent().parent().parent().addClass("pcoded-trigger")
+//    //}
+//    //if (onThisPage.parent().parent().parent().parent().parent().prop("tagName") == "LI") {
+//    //    onThisPage.parent().parent().parent().parent().parent().addClass("pcoded-trigger")
+//    //}
 
-    if (_xLib.GetCookie("isDev") == 1) {
-        $(".navbar-logo a b").append(" (Dev)");
-    }
+//    //if (_xLib.GetCookie("isDev") == 1) {
+//    //    $(".navbar-logo a b").append(" (Dev)");
+//    //}
 
-    var date = _xLib.GetCookie("loginDate").slice(0, 10);
-    // console.log(date);
-    $("#nr_Date").text(moment(date, "YYYY-MM-DD").format("DD/MM/YYYY"))
-    $("#nr_Plant").text(_xLib.GetCookie("plantCode"));
-    $("#nr_Shift").text(_xLib.GetCookie("loginDate").slice(10) == "D" ? "1 - Day Shift" : "2 - Night Shift");
+//    //var date = _xLib.GetCookie("loginDate").slice(0, 10);
+//    //// console.log(date);
+//    //$("#nr_Date").text(moment(date, "YYYY-MM-DD").format("DD/MM/YYYY"))
+//    //$("#nr_Plant").text(_xLib.GetCookie("plantCode"));
+//    //$("#nr_Shift").text(_xLib.GetCookie("loginDate").slice(10) == "D" ? "1 - Day Shift" : "2 - Night Shift");
 
-    //await _xLib.AJAX_Get("/xapi/GetAuthorizeProgram", null,
-    //    async (success) => {
-    //        success = _xLib.JSONparseMixData(success);
-    //        console.log(success);
-    //        $("ul.pcoded-item.pcoded-left-item").find("li").each(function () {
-    //            console.log($(this));
-    //            var id = $(this).attr("id");
-    //            //var href = $(this).attr("href");
-    //            console.log(id);
-    //            //console.log(href);
-    //            !success.data.some(x => id.trim() == x.F_Menu_ID.trim()) ? $(this).remove() : null;
-    //            console.log(success.data.some(x => id == x.F_Menu_ID));
-    //        });
-    //        //console.log(success.data.filter(x => _PAGE_ == x.F_Menu_ID));
-    //        _menu_name = success.data.filter(x => _PAGE_ == x.F_Menu_ID)[0].F_Menu_Name
 
-    //        if (_menu_name == undefined) _menu_name = "";
-    //        if (_menu_name.includes(".")) _menu_name = _menu_name.split(".")[1].trim();
+//    //$("#mCSB_1_scrollbar_vertical").attr("class", "");
+//    //$("#mCSB_1_dragger_vertical").attr("class", "");
+//    //$("#mCSB_1_dragger_vertical").css("top", "0px");
 
-    //        $("#spanTitle").text(`${_PAGE_} : ${_menu_name}`)
-    //        $(document).find("title").text(`${_PAGE_} : ${_menu_name}`)
-
-    //        if (!success.data.some(x => _PAGE_ == x.F_Menu_ID)){
-    //            window.location.href("~/Home/Index")
-    //        }
-    //        $("#txtPlant").val(_PLANT_);
-    //    },
-    //    async (error) => {
-    //        console.error(error);
-    //    }
-    //);
-
-    //$(".btn-toolbar[role='toolbar']").addClass("d-none");
-
-    //var _NAVDATETIME_ = setInterval(function () {
-    //    $('#_NAVDATETIME_').html('Today : ' + moment().format("DD/MM/YYYY HH:mm:ss"));
-    //}, 1000);
-
-    $("#mCSB_1_scrollbar_vertical").attr("class", "");
-    $("#mCSB_1_dragger_vertical").attr("class", "");
-    //$("#mCSB_1_dragger_vertical").css("top", "0px");
-
-})
+//})
