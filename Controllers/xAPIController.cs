@@ -106,7 +106,6 @@ namespace KANBAN.Controllers
             try
             {
 
-
                 string query = $@"	SELECT
 	                DISTINCT
 	                M.i18n AS F_Menu_ID,
@@ -116,10 +115,27 @@ namespace KANBAN.Controllers
 	                ON U._ID = UA.User_ID
 	                INNER JOIN [erp].[Menu] M
 	                ON M._ID = UA.Menu_ID
-	                WHERE U.Code = '{_Http.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}'
-                    AND M.i18n NOT LIKE 'ERP%'";
+	                WHERE U.Code = '{_Http.HttpContext!.User.FindFirst(ClaimTypes.UserData)!.Value}'
+                    AND M.i18n = '{_Http.HttpContext.Request.Headers["Action"].ToString()}' ";
 
-                var data = _FillDT.ExecuteSQL(query);
+                if(_Http.HttpContext.Request.Headers["Action"].ToString() == "KBNOR200")
+                {
+                    query = $@"	SELECT
+	                DISTINCT
+	                M.i18n AS F_Menu_ID,
+                    M.Name AS F_Menu_Name
+	                FROM [erp].[UserAuthorize] UA
+	                INNER JOIN [erp].[User] U
+	                ON U._ID = UA.User_ID
+	                INNER JOIN [erp].[Menu] M
+	                ON M._ID = UA.Menu_ID
+	                WHERE U.Code = '{_Http.HttpContext!.User.FindFirst(ClaimTypes.UserData)!.Value}'
+                    AND M.i18n LIKE '%KBNOR2%' ";
+                }
+
+                //string actionPath = _Http.HttpContext.Request.Headers["Action"].ToString();
+
+                var data = await _FillDT.ExecuteSQLAsync(query);
 
                 return Ok(new
                 {

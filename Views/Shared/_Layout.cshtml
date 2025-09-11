@@ -66,7 +66,7 @@
     <link rel="stylesheet" type="text/css" href="~/assets/adminty/pages/data-table/extensions/buttons/css/buttons.dataTables.min.css">
 
 
-    <link rel="stylesheet" type="text/css" href="~/assets/adminty/css/jquery.mCustomScrollbar.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/adminty/css/jquery.mCustomScrollbar.css" asp-append-version="true">
 
 
     <!-- Datatables -->
@@ -265,7 +265,7 @@
         </div>
     </div>
 
-    <div id="load-wrapper" class="d-flex justify-content-center">
+   @*  <div id="load-wrapper" class="d-flex justify-content-center">
         <div class="spinner-border" role="status">
             <span class="sr-only">Loading...</span>
         </div>
@@ -275,7 +275,7 @@
         <div class="spinner-border text-dark table-wrapper-content" style="width:22px;height:22px;" role="status">
             <span class="sr-only">Loading...</span>
         </div>
-    </div>
+    </div> *@
 
 
     <div id="splash-wrapper">
@@ -286,14 +286,14 @@
         <script type="text/javascript" src="~/assets/.script/XLib/xLib.js" asp-append-version="true"></script>
         <script type="text/javascript" src="~/assets/.script/_Layout.js" asp-append-version="true"></script>
 
-        <script type="text/javascript" src="~/assets/adminty/bower_components/jquery-slimscroll/jquery.slimscroll.js"></script>
+        @* <script type="text/javascript" src="~/assets/adminty/bower_components/jquery-slimscroll/jquery.slimscroll.js"></script> *@
 
         @*<script type="text/javascript" src="~/assets/adminty/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>*@
-        <script type="text/javascript" src="~/assets/adminty/bower_components/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+        @* <script type="text/javascript" src="~/assets/adminty/bower_components/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
         <script type="text/javascript" src="~/assets/adminty/bower_components/datatables.net-buttons/js/buttons.print.min.js"></script>
-        <script type="text/javascript" src="~/assets/adminty/bower_components/datatables.net-buttons/js/buttons.html5.min.js"></script>
+        <script type="text/javascript" src="~/assets/adminty/bower_components/datatables.net-buttons/js/buttons.html5.min.js"></script> 
         <script type="text/javascript" src="~/assets/adminty/bower_components/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
-        <script type="text/javascript" src="~/assets/adminty/bower_components/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
+        <script type="text/javascript" src="~/assets/adminty/bower_components/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script> *@
 
         <script type="text/javascript" src="~/assets/adminty/pages/data-table/js/pdfmake.min.js"></script>
         <script type="text/javascript" src="~/assets/adminty/pages/data-table/js/dataTables.select.min.js"></script>

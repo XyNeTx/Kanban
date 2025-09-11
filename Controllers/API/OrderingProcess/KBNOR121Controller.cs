@@ -1594,7 +1594,7 @@ namespace KANBAN.Controllers.API.OrderingProcess
                     {
                         BLPlan_Solution = "";
                         BLActual_Solution = "";
-                        Console.WriteLine("i => " +i);
+                        //Console.WriteLine("i => " +i);
 
                         if (i > 0)
                         {
@@ -1602,10 +1602,10 @@ namespace KANBAN.Controllers.API.OrderingProcess
                                 && DT.Rows[i]["F_Process_Date"].ToString() == DT.Rows[i - 1]["F_Process_Date"].ToString())
                             {
 
-                                Console.WriteLine(DT.Rows[i]["F_Process_Round"].ToString());
-                                Console.WriteLine(DT.Rows[i - 1]["F_Process_Round"].ToString());
-                                Console.WriteLine(DT.Rows[i]["F_Process_Date"].ToString());
-                                Console.WriteLine(DT.Rows[i-1]["F_Process_Date"].ToString());
+                                //Console.WriteLine(DT.Rows[i]["F_Process_Round"].ToString());
+                                //Console.WriteLine(DT.Rows[i - 1]["F_Process_Round"].ToString());
+                                //Console.WriteLine(DT.Rows[i]["F_Process_Date"].ToString());
+                                //Console.WriteLine(DT.Rows[i-1]["F_Process_Date"].ToString());
 
                                 dateDelivery = DateTime.TryParseExact(DT.Rows[i]["F_Process_Date"].ToString(), "yyyyMMdd", CultureInfo.InvariantCulture, DateTimeStyles.None, out dateDelivery) ? dateDelivery : new DateTime();
 
@@ -1862,10 +1862,8 @@ namespace KANBAN.Controllers.API.OrderingProcess
                             _Log.WriteLogMsg($"Update TB_Calculate_D : Not Complete | Query : {_execSQL} | BLPlan_Solution : {BLPlan_Solution} | BLActual_Solution : {BLActual_Solution}" +
                                 $"Data : {JsonConvert.SerializeObject(DT.Rows[i])}");
                         }
-                        if (_intRow == 5)
-                        {
-                            Console.WriteLine("5");
-                        }
+                       
+
                         if (DT.Rows[i]["F_Not_Recalculate"].ToString() == "True")
                         {
                             Last_BL_Plan = int.TryParse(DT.Rows[i]["F_BL_SET_Plan"].ToString(), out int F_BL_SET_Plan) ? F_BL_SET_Plan : 0;

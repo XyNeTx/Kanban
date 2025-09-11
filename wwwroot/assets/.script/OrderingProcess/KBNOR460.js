@@ -243,9 +243,9 @@ $(document).ready(async function () {
 })
 
 async function SendEmailZeroPrice() {
-    console.log($("div .pcoded-navigatio-lavel ").text());
+    console.log(_xLib.GetUserName());
     var obj = {
-        User_Name: $("div .pcoded-navigatio-lavel ").text().trim(),
+        User_Name: _xLib.GetUserName(),
         Program: "KBNOR460 : Registration Data for Urgent Order",
         ProcessDate: $("#txtProcessDate").val(),
         ProcessShift: $("#txtProcessShift").val().substring(4, 5)

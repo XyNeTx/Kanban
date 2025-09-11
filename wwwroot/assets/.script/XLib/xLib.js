@@ -1073,12 +1073,6 @@ const _xLib = new xLib();
 //var _PLANT_ = _xLib.GetCookie("plantCode");
 
 
-var ajexHeader = {
-    authorization: `Bearer ${localStorage.getItem('TOKEN')}`,
-    UserCode: sessionStorage.getItem("UserCode"),
-    Plant: sessionStorage.getItem("Factory"),
-    Shift: sessionStorage.getItem("shift"),
-};
 
 //$(document).ready(async function () {
 //    //xSplash.show();

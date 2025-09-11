@@ -44,9 +44,9 @@ $(document).ready(function () {
 
 
     let pdsno = '';
-    let currentdate = replaceall(_PROCESSDATE_, '-', '');
-    let issueddate = new Date(currentdate.substring(0, 4), currentdate.substring(4, 6) - 1, currentdate.substring(6));
-    let facflag = (ajexHeader.Plant == 1 ? '9Y' : (ajexHeader.Plant == 3 ? '7Y' : ''));
+    //let currentdate = replaceall(_PROCESSDATE_, '-', '');
+    //let issueddate = new Date(currentdate.substring(0, 4), currentdate.substring(4, 6) - 1, currentdate.substring(6));
+    //let facflag = (ajexHeader.Plant == 1 ? '9Y' : (ajexHeader.Plant == 3 ? '7Y' : ''));
 
     let value = [];
     let data = [];

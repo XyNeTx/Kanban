@@ -60,10 +60,24 @@ $("#btnUnlock").click(function () {
     //console.log(listObj);
 
     _xLib.AJAX_Post("/api/KBNOR470/Unlock", JSON.stringify(listObj),
-        function (success) {
+        async function (success) {
             if(success.status == 200)
             {
                 xSwal.success("Success", "Unlock Data Complete")
+
+                await _xLib.AJAX_Get("/api/KBNOR470/List_Data", '',
+                    function (success) {
+                        if (success.status == 200) {
+                            success = _xLib.JSONparseAndTrim(success);
+                            console.log(success)
+                            $("#tableMain").DataTable().clear().draw();
+                            $("#tableMain").DataTable().rows.add(success.data).draw();
+                        }
+                    },
+                    function (error) {
+                        console.log(error);
+                    }
+                );
             }
         },
         function (error) {
