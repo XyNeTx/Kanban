@@ -7,7 +7,7 @@ class labSplashScreen {
     }
 
 
-    show = function (pData = null) {
+    show = async function (pData = null) {
         //$('.theme-loader').fadeIn('slow', function () {
         //    //console.log('xXx');
         //    //$(this).remove();
@@ -21,12 +21,15 @@ class labSplashScreen {
 
             this.text(pData);
         }
-        $('#splash-wrapper').attr("style", "visibility:visible;");
+
+        await $('#splash-wrapper').attr("style", "visibility:visible;");
+
+        //await $(".pcoded-navbar").addClass("d-none");
 
 
     }
 
-    hide = function (pCallback = null) {
+    hide = async function (pCallback = null) {
         // $('input[data-inputmask="number"]').each(function () {
         //     $(this).val(MaskNumber($(this).val()));
         // })
@@ -38,16 +41,11 @@ class labSplashScreen {
         //    //console.log('xXx');
         //    //$(this).remove();
         //});
-
         this.text('COMPLETE');
-        //$('#splash-wrapper').fadeOut('slow', function () {
-            $('#splash-wrapper').attr("style", "visibility:hidden;");
 
-            $('#table-wrapper').attr("style", "visibility:hidden;");
+        //await $(".pcoded-navbar").removeClass("d-none");
 
-            $('#load-wrapper').attr("style", "visibility:hidden;");
-        //});
-        $('#splash-wrapper').attr("style", "visibility:hidden;");
+        await $('#splash-wrapper').attr("style", "visibility:hidden;");
 
         if (pCallback != undefined && typeof (pCallback) == 'function') {
             pCallback();

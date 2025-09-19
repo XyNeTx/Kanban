@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using System.Net;
+using System.Security.Claims;
 
 
 namespace HINOSystem.Libs
@@ -79,9 +80,9 @@ namespace HINOSystem.Libs
                 return Redirect("~/Login");
             }
 
-            _BearerClass.UserCode = _context.HttpContext.Session.GetString("USER_CODE");
+            _BearerClass.UserCode = _context.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.UserData).Value.ToString();
             _BearerClass.Token = _context.HttpContext.Session.GetString("TOKEN");
-            _BearerClass.Device = _context.HttpContext.Session.GetString("USER_DEVICENAME");
+            _BearerClass.Device = _context.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.WindowsDeviceClaim).Value.ToString();
             _BearerClass.IPAddress = _context.HttpContext.Session.GetString("USER_IPADDRESS");
 
             string _assets = (_context.HttpContext.Request.GetDisplayUrl().ToString().IndexOf("localhost:") > 0 ?

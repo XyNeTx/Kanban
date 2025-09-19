@@ -4,6 +4,7 @@ using KANBAN.Context;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Data;
+using System.Security.Claims;
 
 namespace KANBAN.Controllers.API.OrderReport
 {
@@ -59,7 +60,7 @@ namespace KANBAN.Controllers.API.OrderReport
                 string prodMonth = _json["prodMonth"];
                 prodMonth = prodMonth.Replace("-", string.Empty);
                 string revision = "0.0";
-                string UserName = HttpContext.Session.GetString("USER_NAME");
+                string UserName = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Name).Value.ToString();
                 if (string.IsNullOrWhiteSpace(UserName))
                 {
                     return Redirect($"{Request.Path.ToString()}{Request.QueryString.Value.ToString()}");
@@ -120,7 +121,7 @@ namespace KANBAN.Controllers.API.OrderReport
                 string version = _json["version"];
                 prodMonth = prodMonth.Replace("-", string.Empty);
                 string revision = "0.0";
-                string UserName = HttpContext.Session.GetString("USER_NAME");
+                string UserName = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Name).Value.ToString();
 
                 DataTable revisionDT = _FillDT.ExecuteSQL($"EXEC [dbo].[SP_KBNRT270_MaxRevision] '{prodMonth}','{supFrom}','{supTo}','{kbnFrom}','{kbnTo}','{partFrom}','{partTo}','{storeFrom}','{storeTo}'");
                 if (revisionDT.Rows.Count > 0)

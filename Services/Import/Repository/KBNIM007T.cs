@@ -35,7 +35,8 @@ namespace KANBAN.Services.Import.Repository
             FillDataTable FillDT,
             SerilogLibs log,
             IEmailService emailService,
-            IAutoMapService autoMapService
+            IAutoMapService autoMapService,
+            IHttpContextAccessor httpContextAccessor
             )
         {
             _kbContext = kbContext;
@@ -45,6 +46,7 @@ namespace KANBAN.Services.Import.Repository
             _log = log;
             _emailService = emailService;
             _automapService = autoMapService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public string SetCalendar(string YM, string? StoreCD, string TypeSpc)

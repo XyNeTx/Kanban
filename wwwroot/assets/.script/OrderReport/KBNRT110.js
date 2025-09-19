@@ -50,7 +50,7 @@
             return xSwal.error("Data Error", "Please Select 'Supplier Code From' Less than 'Supplier Code To");
         }
 
-        var userName = $("#profile-avatar").prop("title");
+        var userName = _xLib.GetUserName();
 
         xAjax.Post({
             url: 'KBNRT110/OnReportClick',

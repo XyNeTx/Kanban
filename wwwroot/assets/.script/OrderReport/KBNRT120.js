@@ -212,7 +212,7 @@
             return xSwal.error("Data Error", "Please Select Store Code From Less than Store Code To");
         }
 
-        var userName = $("#profile-avatar").prop("title");
+        var userName = _xLib.GetUserName();
 
         var filename = location.pathname.substring(location.pathname.lastIndexOf('/') + 1);
         var reportUrl = "http://hmmt-app03/Reportserver/report/KB3/";
@@ -266,7 +266,7 @@
             return xSwal.error("Data Error", "Please Select Store Code From Less than Store Code To");
         }
 
-        var userName = $("#profile-avatar").prop("title");
+        var userName = _xLib.GetUserName();
 
         var filename = location.pathname.substring(location.pathname.lastIndexOf('/') + 1);
         var reportUrl = "http://hmmt-app03/Reports/Pages/ReportViewer.aspx?/KB3/";

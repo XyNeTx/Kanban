@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Data;
+using System.Security.Claims;
 
 namespace KANBAN.Controllers.API.OrderReport
 {
@@ -333,8 +334,8 @@ namespace KANBAN.Controllers.API.OrderReport
             string _result = "";
             string date = "";
             string shift = "";
-            string UserName = HttpContext.Session.GetString("USER_NAME");
-            string HostName = HttpContext.Session.GetString("USER_DEVICENAME");
+            string UserName = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Name).Value.ToString();
+            string HostName = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.WindowsDeviceClaim).Value.ToString();
             if (string.IsNullOrWhiteSpace(UserName) || string.IsNullOrWhiteSpace(HostName))
             {
                 return Redirect($"{Request.Path.ToString()}");
@@ -380,8 +381,8 @@ namespace KANBAN.Controllers.API.OrderReport
             string _result = "";
             string date = "";
             string shift = "";
-            string UserName = HttpContext.Session.GetString("USER_NAME");
-            string HostName = HttpContext.Session.GetString("USER_DEVICENAME");
+            string UserName = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Name).Value.ToString();
+            string HostName = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.WindowsDeviceClaim).Value.ToString();
             if (string.IsNullOrWhiteSpace(UserName) || string.IsNullOrWhiteSpace(HostName))
             {
                 return Redirect($"{Request.Path.ToString()}");

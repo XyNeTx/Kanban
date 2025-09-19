@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Data;
+using System.Security.Claims;
 
 namespace KANBAN.Controllers.API.OrderReport
 {
@@ -54,8 +55,8 @@ namespace KANBAN.Controllers.API.OrderReport
             {
                 
                 string _result = "";
-                string UserName = HttpContext.Session.GetString("USER_NAME");
-                string HostName = HttpContext.Session.GetString("USER_DEVICENAME");
+                string UserName = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Name).Value.ToString();
+                string HostName = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.WindowsDeviceClaim).Value.ToString();
 
                 if (string.IsNullOrWhiteSpace(UserName) || string.IsNullOrWhiteSpace(HostName))
                 {
@@ -104,8 +105,8 @@ namespace KANBAN.Controllers.API.OrderReport
                 string dateTo = _json["dateTo"];
                 string DeliveryDateRPT = dateFrom.Substring(6, 2) + "/" + dateFrom.Substring(4, 2) + "/" + dateFrom.Substring(0, 4)
                     + " - " + dateTo.Substring(6, 2) + "/" + dateTo.Substring(4, 2) + "/" + dateTo.Substring(0, 4);
-                string UserName = HttpContext.Session.GetString("USER_NAME");
-                string HostName = HttpContext.Session.GetString("USER_DEVICENAME");
+                string UserName = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Name).Value.ToString();
+                string HostName = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.WindowsDeviceClaim).Value.ToString();
                 string Location = "";
                 string use_line = "";
                 string BL = "";

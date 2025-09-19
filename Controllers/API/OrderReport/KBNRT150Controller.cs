@@ -6,6 +6,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Data;
+using System.Security.Claims;
 
 namespace KANBAN.Controllers.API.OrderReport
 {
@@ -118,8 +119,8 @@ namespace KANBAN.Controllers.API.OrderReport
             {
                 
                 string _result = "";
-                string userName = HttpContext.Session.GetString("USER_NAME");
-                string hostName = HttpContext.Session.GetString("USER_DEVICENAME");
+                string userName = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Name).Value.ToString();
+                string hostName = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.WindowsDeviceClaim).Value.ToString();
                 await _KB3Context.Database.ExecuteSqlRawAsync
                         ("DELETE FROM TB_Imp_Ord_rpt_tmp WHERE F_Update_By = @UserLogon AND F_Host_name = @Host_name",
                         new SqlParameter("@UserLogon", userName),

@@ -293,8 +293,8 @@ namespace HINOSystem.Controllers.API.Master
 
                 string _result = "";
                 _BearerClass.Authentication();
-                string UserName = HttpContext.Session.GetString("USER_ID");
-                string HostName = HttpContext.Session.GetString("USER_DEVICENAME");
+                string UserName = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.UserData).Value.ToString();
+                string HostName = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.WindowsDeviceClaim).Value.ToString();
                 var user = User.FindFirst(ClaimTypes.UserData).Value.ToString();
                 string Plant = HttpContext.Request.Cookies["plantCode"].ToString();
                 if (Plant.ToString() == "3")

@@ -79,7 +79,7 @@ $("#Print").click(async function () {
     await _xLib.AJAX_Post("/api/KBNOC160/Print", postObj,
         function (success) {
 
-            let userName = $("#userId").val();
+            let userName = _xLib.GetUserName();
             let reportUrl = "http://hmmt-app03/Reports/Pages/ReportViewer.aspx?%2fKB3%2fKBNOC160&rs:Command=Render";
             window.open(reportUrl + '&UserName=' + userName, '_blank');
 

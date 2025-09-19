@@ -70,14 +70,14 @@ namespace HINOSystem.Controllers.API.Master
                 message = "Please Login First"
             });
             
-            string UserID = HttpContext.Session.GetString("USER_CODE");
-            string Plant = HttpContext.Session.GetString("USER_PLANT");
+            string UserID = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.UserData).Value.ToString();
+            string Plant = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Locality).Value.ToString();
 
             try
             {
 
-                //string UserID = HttpContext.Session.GetString("USER_CODE");
-                //string Plant = HttpContext.Session.GetString("USER_PLANT");
+                //string UserID = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.UserData).Value.ToString();
+                //string Plant = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Locality).Value.ToString();
 
                 obj.F_Plant_CD = Plant;
                 obj.F_Update_By = UserID;
@@ -128,8 +128,8 @@ namespace HINOSystem.Controllers.API.Master
             using var _KB3Transaction = _KB3Context.Database.BeginTransaction();
             try
             {
-                string UserID = HttpContext.Session.GetString("USER_CODE");
-                string Plant = HttpContext.Session.GetString("USER_PLANT");
+                string UserID = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.UserData).Value.ToString();
+                string Plant = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Locality).Value.ToString();
 
                 await _KB3Context.Database.ExecuteSqlRawAsync($"DELETE From TB_Import_error Where F_Update_By = @p0 AND F_Type = 'KBNIM014' ", UserID);
 

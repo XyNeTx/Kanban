@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 //using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HINOSystem.Controllers.API.Master
@@ -59,8 +60,8 @@ namespace HINOSystem.Controllers.API.Master
                     message = "Please Login First"
                 });
                 // _KB3Transaction.CreateSavepoint("BeforeImport");
-                string Plant = HttpContext.Session.GetString("USER_PLANT")!;
-                string UserID = HttpContext.Session.GetString("USER_CODE")!;
+                string Plant = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Locality).Value.ToString();
+                string UserID = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.UserData).Value.ToString();
 
                 await _KB3Context.Database.ExecuteSqlRawAsync("DELETE FROM TB_Import_VLT WHERE F_Update_By = @p0", UserID!);
 

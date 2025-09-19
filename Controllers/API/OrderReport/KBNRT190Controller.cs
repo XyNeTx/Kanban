@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Security.Claims;
 
 namespace KANBAN.Controllers.API.OrderReport
 {
@@ -133,8 +134,8 @@ namespace KANBAN.Controllers.API.OrderReport
                 int tripFrom = _json["tripFrom"];
                 int tripTo = _json["tripTo"];
                 string plant = HttpContext.Request.Cookies["plantCode"].ToString();
-                string UserName = HttpContext.Session.GetString("USER_NAME");
-                string HostName = HttpContext.Session.GetString("USER_DEVICENAME");
+                string UserName = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Name).Value.ToString();
+                string HostName = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.WindowsDeviceClaim).Value.ToString();
 
                 if (string.IsNullOrWhiteSpace(UserName) || string.IsNullOrWhiteSpace(HostName))
                 {
@@ -247,8 +248,8 @@ namespace KANBAN.Controllers.API.OrderReport
                 string dateFrom = _json["dateFrom"];
                 string dateTo = _json["dateTo"];
                 string plant = HttpContext.Request.Cookies["plantCode"].ToString();
-                string UserName = HttpContext.Session.GetString("USER_NAME");
-                string HostName = HttpContext.Session.GetString("USER_DEVICENAME");
+                string UserName = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Name).Value.ToString();
+                string HostName = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.WindowsDeviceClaim).Value.ToString();
 
                 await _KB3Context.Database.ExecuteSqlRawAsync("DELETE FROM RPT_KBNRT_190 WHERE F_Update_By = @UserName " +
                     " AND F_Host_name = @HostName",

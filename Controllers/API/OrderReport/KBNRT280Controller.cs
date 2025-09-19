@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Data;
 using System.Globalization;
+using System.Security.Claims;
 
 namespace KANBAN.Controllers.API.OrderReport
 {
@@ -56,8 +57,8 @@ namespace KANBAN.Controllers.API.OrderReport
                 bool delayChecked = _json["delayChecked"];
                 string dateFrom = _json["dateFrom"];
                 string dateTo = _json["dateTo"];
-                string UserName = HttpContext.Session.GetString("USER_NAME");
-                string HostName = HttpContext.Session.GetString("USER_DEVICENAME");
+                string UserName = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Name).Value.ToString();
+                string HostName = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.WindowsDeviceClaim).Value.ToString();
                 if (string.IsNullOrWhiteSpace(UserName) || string.IsNullOrWhiteSpace(HostName))
                 {
                     return Redirect($"{Request.Path.ToString()}{Request.QueryString.Value.ToString()}");
@@ -116,8 +117,8 @@ namespace KANBAN.Controllers.API.OrderReport
                 bool delayChecked = _json["delayChecked"];
                 string dateFrom = _json["dateFrom"];
                 string dateTo = _json["dateTo"];
-                string UserName = HttpContext.Session.GetString("USER_NAME");
-                string HostName = HttpContext.Session.GetString("USER_DEVICENAME");
+                string UserName = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Name).Value.ToString();
+                string HostName = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.WindowsDeviceClaim).Value.ToString();
                 if (string.IsNullOrWhiteSpace(UserName) || string.IsNullOrWhiteSpace(HostName))
                 {
                     return Redirect($"{Request.Path.ToString()}{Request.QueryString.Value.ToString()}");

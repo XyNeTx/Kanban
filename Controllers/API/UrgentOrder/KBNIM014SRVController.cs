@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Data;
+using System.Security.Claims;
 
 namespace KANBAN.Controllers.API.UrgentOrder
 {
@@ -72,7 +73,7 @@ namespace KANBAN.Controllers.API.UrgentOrder
                     message = "Please Login First"
                 });
                 
-                string USERID = HttpContext.Session.GetString("USER_CODE");
+                string USERID = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.UserData).Value.ToString();
 
                 await _KB3Context.Database.ExecuteSqlRawAsync($"DELETE FROM TB_IMPORT_SERVICE WHERE F_UPDATE_BY = @p0",USERID);
                 
@@ -166,7 +167,7 @@ namespace KANBAN.Controllers.API.UrgentOrder
                     message = "Please Login First"
                 });
 
-                string USERID = HttpContext.Session.GetString("USER_CODE");
+                string USERID = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.UserData).Value.ToString();
 
                 await _KB3Context.Database.ExecuteSqlRawAsync($"DELETE FROM TB_IMPORT_SERVICE_Excel WHERE F_UPDATE_BY = @p0", USERID);
                 

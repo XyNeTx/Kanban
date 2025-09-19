@@ -35,6 +35,7 @@ var ajexHeader = {
 
 $(document).ready(async function () {
     xSplash.show();
+    //$("#vueApp").toggleClass("d-none");
 
     var date = _xLib.GetCookie("loginDate").slice(0, 10);
     //console.log(date);
@@ -90,11 +91,11 @@ $(document).ready(async function () {
                 $(document).find("title").text(`HOME`)
             }
 
-            return;
+            return //$("#vueApp").toggleClass("d-none");
         },
         async (error) => {
             console.error(error);
-            return;
+            return //$("#vueApp").toggleClass("d-none");
         }
     );
 

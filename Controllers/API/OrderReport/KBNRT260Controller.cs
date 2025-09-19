@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Data;
+using System.Security.Claims;
 
 namespace KANBAN.Controllers.API.OrderReport
 {
@@ -101,7 +102,7 @@ namespace KANBAN.Controllers.API.OrderReport
                 string prodMonth = _json["prodMonth"];
                 prodMonth = prodMonth.Replace("-", string.Empty);
                 string checkedValue = _json["checkedValue"];
-                string UserName = HttpContext.Session.GetString("USER_NAME");
+                string UserName = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Name).Value.ToString();
                 if (string.IsNullOrWhiteSpace(UserName))
                 {
                     return Redirect($"{Request.Path.ToString()}{Request.QueryString.Value.ToString()}");

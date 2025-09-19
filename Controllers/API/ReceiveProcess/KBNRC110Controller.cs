@@ -413,8 +413,8 @@ namespace HINOSystem.Controllers.API.Master
             try
             {
 
-                string UserName = HttpContext.Session.GetString("USER_ID");
-                string HostName = HttpContext.Session.GetString("USER_DEVICENAME");
+                string UserName = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.UserData).Value.ToString();
+                string HostName = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.WindowsDeviceClaim).Value.ToString();
                 _BearerClass.Authentication();
                 string dateTime = DateTime.Now.ToString("yyyyMMdd");
                 string RecCd = "K" + dateTime.Substring(2, 2);

@@ -22,7 +22,7 @@ $(document).ready(function () {
 
             },
             error: function (result) {
-                console.error(_Controller + '.Initial: ' + result.responseText);
+                console.error(result.responseText);
                 xSplash.hide();
             }
         });

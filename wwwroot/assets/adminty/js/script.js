@@ -132,150 +132,152 @@ function toggleFullScreen() {
 }
 
 
-$('#styleSelector').append(`` +
-    `<div class="selector-toggle">` +
-    //`<a href="javascript:void(0)"></a>` +
-    `</div>` +
-    `<ul>` +
-    `    <li>` +
-    `        <button type="button" class="btn-close" id="btnStyleSelectorClose" title="Close" onclick="$('#styleSelector').removeAttr('class')"></button>` +
-    `        <p class="selector-title main-title st-main-title" id="styleSelector_Title"><b>Layout </b>Customizer</p>` +
-    `    </li>` +
-    `</ul>` +
-    `<div class="style-cont m-t-10">` +
-    `    <ul class="nav nav-tabs  tabs" role="tablist">` +
-    `        <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#sel-layout" role="tab">Layouts</a></li>` +
-    `    </ul>` +
-    `    <div class="tab-content tabs">` +
-    `        <ul>` +
-    `            <li>` +
-    `                <p class="selector-title" id="styleSelector_Layout">Main layouts</p>` +
-    `            </li>` +
-    `            <li>` +
-    `                <div class="theme-color">` +
-    `                    <a href="#" class="navbar-theme" navbar-theme="themelight1"><span class="head"></span><span class="cont"></span></a>` +
-    `                    <a href="#" class="navbar-theme" navbar-theme="theme1"><span class="head"></span><span class="cont"></span></a>` +
-    `                </div>` +
-    `            </li>` +
-    `            <li>` +
-    `                <p class="selector-title" id="styleSelector_HeaderBrand">Header Brand color</p>` +
-    `            </li>` +
-    `            <li class="theme-option">` +
-    `                <div class="theme-color">` +
-    `                    <a href="#" class="logo-theme" logo-theme="theme1"><span class="head"></span><span class="cont"></span></a>` +
-    `                    <a href="#" class="logo-theme" logo-theme="theme2"><span class="head"></span><span class="cont"></span></a>` +
-    `                    <a href="#" class="logo-theme" logo-theme="theme3"><span class="head"></span><span class="cont"></span></a>` +
-    `                    <a href="#" class="logo-theme" logo-theme="theme4"><span class="head"></span><span class="cont"></span></a>` +
-    `                    <a href="#" class="logo-theme" logo-theme="theme5"><span class="head"></span><span class="cont"></span></a>` +
-    `                </div>` +
-    `            </li>` +
-    `            <li>` +
-    `                <p class="selector-title" id="styleSelector_Header">Header color</p>` +
-    `            </li>` +
-    `            <li class="theme-option">` +
-    `                <div class="theme-color">` +
-    `                    <a href="#" class="header-theme" header-theme="theme1"><span class="head"></span><span class="cont"></span></a>` +
-    `                    <a href="#" class="header-theme" header-theme="theme2"><span class="head"></span><span class="cont"></span></a>` +
-    `                    <a href="#" class="header-theme" header-theme="theme3"><span class="head"></span><span class="cont"></span></a>` +
-    `                    <a href="#" class="header-theme" header-theme="theme4"><span class="head"></span><span class="cont"></span></a>` +
-    `                    <a href="#" class="header-theme" header-theme="theme5"><span class="head"></span><span class="cont"></span></a>` +
-    `                    <a href="#" class="header-theme" header-theme="theme6"><span class="head"></span><span class="cont"></span></a>` +
-    `                </div>` +
-    `            </li>` +
-    `            <li>` +
-    `                <p class="selector-title" id="styleSelector_LinkColor">Active link color</p>` +
-    `            </li>` +
-    `            <li class="theme-option">` +
-    `                <div class="theme-color">` +
-    `                    <a href="#" class="active-item-theme small" active-item-theme="theme1">&nbsp;</a>` +
-    `                    <a href="#" class="active-item-theme small" active-item-theme="theme2">&nbsp;</a>` +
-    `                    <a href="#" class="active-item-theme small" active-item-theme="theme3">&nbsp;</a>` +
-    `                    <a href="#" class="active-item-theme small" active-item-theme="theme4">&nbsp;</a>` +
-    `                    <a href="#" class="active-item-theme small" active-item-theme="theme5">&nbsp;</a>` +
-    `                    <a href="#" class="active-item-theme small" active-item-theme="theme6">&nbsp;</a>` +
-    `                    <a href="#" class="active-item-theme small" active-item-theme="theme7">&nbsp;</a>` +
-    `                    <a href="#" class="active-item-theme small" active-item-theme="theme8">&nbsp;</a>` +
-    `                    <a href="#" class="active-item-theme small" active-item-theme="theme9">&nbsp;</a>` +
-    `                    <a href="#" class="active-item-theme small" active-item-theme="theme10">&nbsp;</a>` +
-    `                    <a href="#" class="active-item-theme small" active-item-theme="theme11">&nbsp;</a>` +
-    `                    <a href="#" class="active-item-theme small" active-item-theme="theme12">&nbsp;</a>` +
-    `                </div>` +
-    `            </li>` +
-    `            <li class="theme-option">` +
-    `                <p class="sub-title drp-title" id="styleSelector_IconColor">Menu Type</p>` +
-    `                <div class="form-radio" id="menu-effect">` +
-    `                    <div class="radio radio-inverse radio-inline" data-toggle="tooltip" title="simple icon">` +
-    `                        <label>` +
-    `                            <input type="radio" name="radio" value="st6" onclick="handlemenutype(this.value)" checked="true">` +
-    `                            <i class="helper"></i><span class="micon st6"><i class="feather icon-command"></i></span>` +
-    `                        </label>` +
-    `                    </div>` +
-    `                    <div class="radio radio-primary radio-inline" data-toggle="tooltip" title="color icon">` +
-    `                        <label>` +
-    `                            <input type="radio" name="radio" value="st5" onclick="handlemenutype(this.value)">` +
-    `                            <i class="helper"></i><span class="micon st5"><i class="feather icon-command"></i></span>` +
-    `                        </label>` +
-    `                    </div>` +
-    `                </div>` +
-    `            </li>` +
-    `            <li class="theme-option">` +
-    `                <p class="sub-title drp-title" id="styleSelector_ExpandIcon">Expand Icon</p>` +
-    `                <select id="vertical-dropdown-icon" class="form-control minimal">` +
-    `                    <option name="vertical-dropdown-icon" value="style1">Style 1</option>` +
-    `                    <option name="vertical-dropdown-icon" value="style2">style 2</option>` +
-    `                    <option name="vertical-dropdown-icon" value="style3">style 3</option>` +
-    `                </select>` +
-    `            </li>` +
-    `            <li class="theme-option">` +
-    `                <p class="sub-title drp-title" id="styleSelector_MenuIcon">Sub Menu Drop-down Icon</p>` +
-    `                <select id="vertical-subitem-icon" class="form-control minimal">` +
-    `                    <option name="vertical-subitem-icon" value="style1">Style 1</option>` +
-    `                    <option name="vertical-subitem-icon" value="style2">style 2</option>` +
-    `                    <option name="vertical-subitem-icon" value="style3">style 3</option>` +
-    `                    <option name="vertical-subitem-icon" value="style4">style 4</option>` +
-    `                    <option name="vertical-subitem-icon" value="style5">style 5</option>` +
-    `                    <option name="vertical-subitem-icon" value="style6">style 6</option>` +
-    `                </select>` +
-    `            </li>` +
-    `            <li class="theme-option">` +
-    `                <p class="sub-title drp-title" id="styleSelector_SideBar">SideBar Effect</p>` +
-    `                <select id="vertical-menu-effect" class="form-control minimal">` +
-    `                    <option name="vertical-menu-effect" value="shrink">shrink</option>` +
-    `                    <option name="vertical-menu-effect" value="overlay">overlay</option>` +
-    `                    <option name="vertical-menu-effect" value="push">Push</option>` +
-    `                </select>` +
-    `            </li>` +
-    `            <li>` +
-    `                <p class="selector-title" id="styleSelector_MenuColor">Menu Caption Color</p>` +
-    `            </li>` +
-    `            <li class="theme-option">` +
-    `                <div class="theme-color">` +
-    `                    <a href="#" class="leftheader-theme small" lheader-theme="theme1">&nbsp;</a>` +
-    `                    <a href="#" class="leftheader-theme small" lheader-theme="theme2">&nbsp;</a>` +
-    `                    <a href="#" class="leftheader-theme small" lheader-theme="theme3">&nbsp;</a>` +
-    `                    <a href="#" class="leftheader-theme small" lheader-theme="theme4">&nbsp;</a>` +
-    `                    <a href="#" class="leftheader-theme small" lheader-theme="theme5">&nbsp;</a>` +
-    `                    <a href="#" class="leftheader-theme small" lheader-theme="theme6">&nbsp;</a>` +
-    `                </div>` +
-    `            </li>` +
-    //`            <li class="theme-option">` +
-    //`                <p class="sub-title drp-title">Hide/Show Border</p>` +
-    //`                <select id="vertical-border-style" class="form-control minimal">` +
-    //`                    <option name="vertical-border-style" value="solid">Style 1</option>` +
-    //`                    <option name="vertical-border-style" value="dotted">Style 2</option>` +
-    //`                    <option name="vertical-border-style" value="dashed">Style 3</option>` +
-    //`                    <option name="vertical-border-style" value="none">No Border</option>` +
-    //`                </select>` +
-    //`            </li>` +
-    `        </ul>` +
-    `    </div>` +
-    `</div>` +
-    //`<div class="row">` +
-    //`    <div class="col">` +
-    //`        <button type="button" class="btn btn-secondary" id="btnStyleSelectorClose" title="Close" onclick="$('#styleSelector').removeAttr('class')">Close</button>` +
-    //`    </div>` +
-    `</div>` +
-    ``);
+//$('#styleSelector').append(`` +
+//    `<div class="selector-toggle">` +
+//    //`<a href="javascript:void(0)"></a>` +
+//    `</div>` +
+//    `<ul>` +
+//    `    <li>` +
+//    `        <button type="button" class="btn-close" id="btnStyleSelectorClose" title="Close" onclick="$('#styleSelector').removeAttr('class')"></button>` +
+//    `        <p class="selector-title main-title st-main-title" id="styleSelector_Title"><b>Layout </b>Customizer</p>` +
+//    `    </li>` +
+//    `</ul>` +
+//    `<div class="style-cont m-t-10">` +
+//    `    <ul class="nav nav-tabs  tabs" role="tablist">` +
+//    `        <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#sel-layout" role="tab">Layouts</a></li>` +
+//    `    </ul>` +
+//    `    <div class="tab-content tabs">` +
+//    `        <ul>` +
+//    `            <li>` +
+//    `                <p class="selector-title" id="styleSelector_Layout">Main layouts</p>` +
+//    `            </li>` +
+//    `            <li>` +
+//    `                <div class="theme-color">` +
+//    `                    <a href="#" class="navbar-theme" navbar-theme="themelight1"><span class="head"></span><span class="cont"></span></a>` +
+//    `                    <a href="#" class="navbar-theme" navbar-theme="theme1"><span class="head"></span><span class="cont"></span></a>` +
+//    `                </div>` +
+//    `            </li>` +
+//    `            <li>` +
+//    `                <p class="selector-title" id="styleSelector_HeaderBrand">Header Brand color</p>` +
+//    `            </li>` +
+//    `            <li class="theme-option">` +
+//    `                <div class="theme-color">` +
+//    `                    <a href="#" class="logo-theme" logo-theme="theme1"><span class="head"></span><span class="cont"></span></a>` +
+//    `                    <a href="#" class="logo-theme" logo-theme="theme2"><span class="head"></span><span class="cont"></span></a>` +
+//    `                    <a href="#" class="logo-theme" logo-theme="theme3"><span class="head"></span><span class="cont"></span></a>` +
+//    `                    <a href="#" class="logo-theme" logo-theme="theme4"><span class="head"></span><span class="cont"></span></a>` +
+//    `                    <a href="#" class="logo-theme" logo-theme="theme5"><span class="head"></span><span class="cont"></span></a>` +
+//    `                </div>` +
+//    `            </li>` +
+//    `            <li>` +
+//    `                <p class="selector-title" id="styleSelector_Header">Header color</p>` +
+//    `            </li>` +
+//    `            <li class="theme-option">` +
+//    `                <div class="theme-color">` +
+//    `                    <a href="#" class="header-theme" header-theme="theme1"><span class="head"></span><span class="cont"></span></a>` +
+//    `                    <a href="#" class="header-theme" header-theme="theme2"><span class="head"></span><span class="cont"></span></a>` +
+//    `                    <a href="#" class="header-theme" header-theme="theme3"><span class="head"></span><span class="cont"></span></a>` +
+//    `                    <a href="#" class="header-theme" header-theme="theme4"><span class="head"></span><span class="cont"></span></a>` +
+//    `                    <a href="#" class="header-theme" header-theme="theme5"><span class="head"></span><span class="cont"></span></a>` +
+//    `                    <a href="#" class="header-theme" header-theme="theme6"><span class="head"></span><span class="cont"></span></a>` +
+//    `                </div>` +
+//    `            </li>` +
+//    `            <li>` +
+//    `                <p class="selector-title" id="styleSelector_LinkColor">Active link color</p>` +
+//    `            </li>` +
+//    `            <li class="theme-option">` +
+//    `                <div class="theme-color">` +
+//    `                    <a href="#" class="active-item-theme small" active-item-theme="theme1">&nbsp;</a>` +
+//    `                    <a href="#" class="active-item-theme small" active-item-theme="theme2">&nbsp;</a>` +
+//    `                    <a href="#" class="active-item-theme small" active-item-theme="theme3">&nbsp;</a>` +
+//    `                    <a href="#" class="active-item-theme small" active-item-theme="theme4">&nbsp;</a>` +
+//    `                    <a href="#" class="active-item-theme small" active-item-theme="theme5">&nbsp;</a>` +
+//    `                    <a href="#" class="active-item-theme small" active-item-theme="theme6">&nbsp;</a>` +
+//    `                    <a href="#" class="active-item-theme small" active-item-theme="theme7">&nbsp;</a>` +
+//    `                    <a href="#" class="active-item-theme small" active-item-theme="theme8">&nbsp;</a>` +
+//    `                    <a href="#" class="active-item-theme small" active-item-theme="theme9">&nbsp;</a>` +
+//    `                    <a href="#" class="active-item-theme small" active-item-theme="theme10">&nbsp;</a>` +
+//    `                    <a href="#" class="active-item-theme small" active-item-theme="theme11">&nbsp;</a>` +
+//    `                    <a href="#" class="active-item-theme small" active-item-theme="theme12">&nbsp;</a>` +
+//    `                </div>` +
+//    `            </li>` +
+//    `            <li class="theme-option">` +
+//    `                <p class="sub-title drp-title" id="styleSelector_IconColor">Menu Type</p>` +
+//    `                <div class="form-radio" id="menu-effect">` +
+//    `                    <div class="radio radio-inverse radio-inline" data-toggle="tooltip" title="simple icon">` +
+//    `                        <label>` +
+//    `                            <input type="radio" name="radio" value="st6" onclick="handlemenutype(this.value)" checked="true">` +
+//    `                            <i class="helper"></i><span class="micon st6"><i class="feather icon-command"></i></span>` +
+//    `                        </label>` +
+//    `                    </div>` +
+//    `                    <div class="radio radio-primary radio-inline" data-toggle="tooltip" title="color icon">` +
+//    `                        <label>` +
+//    `                            <input type="radio" name="radio" value="st5" onclick="handlemenutype(this.value)">` +
+//    `                            <i class="helper"></i><span class="micon st5"><i class="feather icon-command"></i></span>` +
+//    `                        </label>` +
+//    `                    </div>` +
+//    `                </div>` +
+//    `            </li>` +
+//    `            <li class="theme-option">` +
+//    `                <p class="sub-title drp-title" id="styleSelector_ExpandIcon">Expand Icon</p>` +
+//    `                <select id="vertical-dropdown-icon" class="form-control minimal">` +
+//    `                    <option name="vertical-dropdown-icon" value="style1">Style 1</option>` +
+//    `                    <option name="vertical-dropdown-icon" value="style2">style 2</option>` +
+//    `                    <option name="vertical-dropdown-icon" value="style3">style 3</option>` +
+//    `                </select>` +
+//    `            </li>` +
+//    `            <li class="theme-option">` +
+//    `                <p class="sub-title drp-title" id="styleSelector_MenuIcon">Sub Menu Drop-down Icon</p>` +
+//    `                <select id="vertical-subitem-icon" class="form-control minimal">` +
+//    `                    <option name="vertical-subitem-icon" value="style1">Style 1</option>` +
+//    `                    <option name="vertical-subitem-icon" value="style2">style 2</option>` +
+//    `                    <option name="vertical-subitem-icon" value="style3">style 3</option>` +
+//    `                    <option name="vertical-subitem-icon" value="style4">style 4</option>` +
+//    `                    <option name="vertical-subitem-icon" value="style5">style 5</option>` +
+//    `                    <option name="vertical-subitem-icon" value="style6">style 6</option>` +
+//    `                </select>` +
+//    `            </li>` +
+//    `            <li class="theme-option">` +
+//    `                <p class="sub-title drp-title" id="styleSelector_SideBar">SideBar Effect</p>` +
+//    `                <select id="vertical-menu-effect" class="form-control minimal">` +
+//    `                    <option name="vertical-menu-effect" value="shrink">shrink</option>` +
+//    `                    <option name="vertical-menu-effect" value="overlay">overlay</option>` +
+//    `                    <option name="vertical-menu-effect" value="push">Push</option>` +
+//    `                </select>` +
+//    `            </li>` +
+//    `            <li>` +
+//    `                <p class="selector-title" id="styleSelector_MenuColor">Menu Caption Color</p>` +
+//    `            </li>` +
+//    `            <li class="theme-option">` +
+//    `                <div class="theme-color">` +
+//    `                    <a href="#" class="leftheader-theme small" lheader-theme="theme1">&nbsp;</a>` +
+//    `                    <a href="#" class="leftheader-theme small" lheader-theme="theme2">&nbsp;</a>` +
+//    `                    <a href="#" class="leftheader-theme small" lheader-theme="theme3">&nbsp;</a>` +
+//    `                    <a href="#" class="leftheader-theme small" lheader-theme="theme4">&nbsp;</a>` +
+//    `                    <a href="#" class="leftheader-theme small" lheader-theme="theme5">&nbsp;</a>` +
+//    `                    <a href="#" class="leftheader-theme small" lheader-theme="theme6">&nbsp;</a>` +
+//    `                </div>` +
+//    `            </li>` +
+//    //`            <li class="theme-option">` +
+//    //`                <p class="sub-title drp-title">Hide/Show Border</p>` +
+//    //`                <select id="vertical-border-style" class="form-control minimal">` +
+//    //`                    <option name="vertical-border-style" value="solid">Style 1</option>` +
+//    //`                    <option name="vertical-border-style" value="dotted">Style 2</option>` +
+//    //`                    <option name="vertical-border-style" value="dashed">Style 3</option>` +
+//    //`                    <option name="vertical-border-style" value="none">No Border</option>` +
+//    //`                </select>` +
+//    //`            </li>` +
+//    `        </ul>` +
+//    `    </div>` +
+//    `</div>` +
+//    //`<div class="row">` +
+//    //`    <div class="col">` +
+//    //`        <button type="button" class="btn btn-secondary" id="btnStyleSelectorClose" title="Close" onclick="$('#styleSelector').removeAttr('class')">Close</button>` +
+//    //`    </div>` +
+//    `</div>` +
+//    ``);
+
+
 //$('#styleSelector').append('' +
 //    '<div class="selector-toggle">' +
 //    //'<a href="javascript:void(0)"></a>' +

@@ -263,8 +263,8 @@ namespace KANBAN.Controllers.API.ReceiveProcess
             {
 
                 string _result = "";
-                string UserName = HttpContext.Session.GetString("USER_ID");
-                string HostName = HttpContext.Session.GetString("USER_DEVICENAME");
+                string UserName = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.UserData).Value.ToString();
+                string HostName = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.WindowsDeviceClaim).Value.ToString();
                 var systemControl = await _PPMInvenContext.T_System_Control.SingleOrDefaultAsync(x => x.F_Code == "CTL");
                 string isMonthEnd = systemControl.F_Value1;
                 if (Int32.Parse(DateTime.Now.ToString("yyyyMM")) < Int32.Parse(isMonthEnd))

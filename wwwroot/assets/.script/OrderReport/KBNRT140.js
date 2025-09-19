@@ -87,7 +87,7 @@
 
         var filename = location.pathname.substring(location.pathname.lastIndexOf('/') + 1);
 
-        var userName = $("#profile-avatar").prop("title");
+        var userName = _xLib.GetUserName();
 
         var reportUrl = "http://hmmt-app03/Reports/Pages/ReportViewer.aspx?/KB3/";
         window.location.href = reportUrl + filename + '&StoreFrom=' + storeFrom + '&StoreTo=' + storeTo +

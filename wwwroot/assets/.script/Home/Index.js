@@ -30,7 +30,6 @@
         //console.log('xXx');
 
         console.log(localStorage.getItem("TOKEN"));
-
         xSplash.hide();
     }
     initial();

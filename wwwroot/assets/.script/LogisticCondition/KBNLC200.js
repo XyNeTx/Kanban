@@ -45,7 +45,7 @@
         await _xLib.AJAX_Post("/api/KBNLC200/Print", postObj,
             function (success) {
 
-                let userName = $("#userId").val();
+                let userName = _xLib.GetUserName();
                 let ProdYM = $("#datPeriod").val();
                 let Cmb_SupF = $("#inpSupplierFrom").val();
                 let Cmb_SupT = $("#inpSupplierTo").val();

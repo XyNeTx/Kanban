@@ -32,13 +32,9 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Favicon -->
-    @* <link rel="icon" type="image/x-icon" href="@ViewData["Logo"]" /> *@
     <link rel="icon" type="image/x-icon" href="~/assets/img/hino_logo.ico" />
 
 
-@*     <link rel="stylesheet" href="~/assets/vendor/bootstrap/5.1.0/dist/css/bootstrap.min.css" />
- *@    @*<link rel="stylesheet" href="~/assets/vendor/bootstrap/5.0.2/dist/css/bootstrap.css" />*@
     <link href="~/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 
     <!-- Custom fonts for this template-->
@@ -48,10 +44,6 @@
 
     <link href="~/assets/css/openSanFont.css" rel="stylesheet">
     <link href="~/assets/css/nunitoFont.css" rel="stylesheet">
-
-
-    <!-- Adminty -->
-    @*<link rel="stylesheet" type="text/css" href="~/assets/adminty/bower_components/bootstrap/dist/css/bootstrap.min.css">*@
 
     <link rel="stylesheet" type="text/css" href="~/assets/adminty/icon/themify-icons/themify-icons.css">
     <link rel="stylesheet" type="text/css" href="~/assets/adminty/icon/icofont/css/icofont.css">
@@ -74,89 +66,21 @@
     <link href="~/assets/vendor/datatables/1.13.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
 
     <link href="~/assets/vendor/datatables/buttons/2.4.1/css/buttons.dataTables.min.css" rel="stylesheet">
-    @*<link href="~/assets/vendor/datatables/1.10.24/css/jquery.dataTables.min.css" rel="stylesheet">*@
-    @*<link href="~/assets/vendor/datatables/1.10.24/css/dataTables.bootstrap4.min.css" rel="stylesheet">*@
     <link href="~/assets/vendor/datatables/fixedcolumns/4.2.1/css/fixedColumns.dataTables.min.css" rel="stylesheet">
-    @*<link href="~/assets/vendor/twitter-bootstrap/5.2.0/css/bootstrap.min.css" rel="stylesheet">*@
 
     <!-- Vendor CSS -->
     <link href="~/assets/vendor/swal2/sweetalert2.min.css" rel="stylesheet">
     <link href="~/assets/vendor/daterangepicker/daterangepicker.css" rel="stylesheet" />
     <link href="~/assets/vendor/bootstrap/bootstrap-datepicker/1.9.14/css/bootstrap-datepicker.css" rel="stylesheet" type="text/css" />
-    @*<link href="~/assets/vendor/gijgo/1.9.14/css/gijgo.min.css" rel="stylesheet" />*@
 
     <link href="~/assets/.libs/class/lab.Splash/lab.Splash.css" rel="stylesheet">
 
-
-    @*<link href="~/assets/vendor/bootstrap/bootstrap-typeahead/4.0.2/css/bootstrap-typeahead.css" rel="stylesheet" />*@
-    <!-- Custom styles for this template-->
     <link href="~/assets/css/site.css" rel="stylesheet" />
     <link href="~/assets/css/stepsStyle.css" rel="stylesheet" />
 
-
-    @*<link href="@Url.Content("~/assets/css/sb-admin-" + ViewData["System"].ToString() + ".css")" rel="stylesheet">*@
-
-
-    <!-- Site level plugins -->
-    @*<link href="~/assets/css/site.css" rel="stylesheet" asp-append-version="true" />*@
-
-    <!-- Bootstrap core JavaScript-->
-    <script src="~/assets/vendor/jquery/3.6.0/jquery.min.js"></script>
-    <script src="~/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
-
-    <script src="~/assets/js/bootstrap.bundle.min.js"></script>
-    <link rel="stylesheet" href="~/assets/css/bootstrap-select.min.css">
-    <script src="~/assets/js/bootstrap-select.min.js"></script>
-
-    @*  <script src="~/assets/vendor/bootstrap/5.1.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/assets/vendor/bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script> *@
-    <script src="~/assets/vendor/bootstrap/bootstrap-datepicker/1.9.14/js/bootstrap-datepicker.min.js"></script>
-    <script src="~/assets/vendor/bootstrap/bootstrap-autocomplete-typeahead/5.0.0/autocomplete.js"></script>
-    <script src="~/assets/vendor/gijgo/1.9.14/js/gijgo.min.js"></script>
-    <script type="text/javascript" src="~/assets/js/awesome_all.min.js"></script>
-
-    @*<script src="~/assets/vendor/bootstrap/bootstrap-typeahead/4.0.2/js/typeahead.bundle.js"></script>
-    <script src="~/assets/vendor/bootstrap/bootstrap-typeahead/4.0.2/js/bootstrap-typeahead.min.js"></script>*@
-    @*<script src="https://code.jquery.com/jquery-3.5.1.js"></script>*@
-    @*<script src="~/assets/lib/jquery/dist/jquery.min.js"></script>*@
-
-    <!-- Vendor JScript -->
-    <script src="~/assets/vendor/swal2/sweetalert2.min.js"></script>
-    @*<script src="~/assets/vendor/splash/xSplash.js"></script>*@
-    <script src="~/assets/vendor/datatables/1.13.4/js/jquery.dataTables.min.js"></script>
-    <script src="~/assets/vendor/datatables/1.13.4/js/dataTables.bootstrap5.min.js"></script>
-    <script src="~/assets/vendor/datatables/1.13.4/js/dataTables.sum.js"></script>
-    <script src="~/assets/vendor/datatables/fixedcolumns/4.2.1/js/dataTables.fixedColumns.min.js"></script>
-
-
-
-    <script src="~/assets/vendor/moment/moment.js"></script>
-    <script type="text/javascript" src="@FileVersionHelper.VersionedScriptPath("/assets/.script/XLib/xlsx.full.min.js")"></script>
-   @*<script src="~/assets/vendor/daterangepicker/jquery.min.js"></script>*@
-    @*<script src="~/assets/vendor/daterangepicker/daterangepicker.js"></script>*@
-    @*<script src="~/assets/vendor/chart.js/4.2.0/utils.js"></script>*@
-    <script src="~/assets/vendor/chart.js/4.2.0/chart-utils.min.js"></script>
-    <script src="~/assets/vendor/chart.js/4.2.0/Chart.js"></script>
-
     <link rel="stylesheet" type="text/css" href="~/assets/adminty/css/style.css">
     <link href="~/assets/css/sb-admin-kb3.css" rel="stylesheet">
-    <!-- Custom scripts for all pages-->
-    @*<script src="~/assets/js/sb-admin-2.min.js"></script>*@
-
-@*
-    @Html.Partial("_Script")
-
- *@
-    <!-- Site level plugins -->
-    <!-- Site level plugins -->
-    <script type="text/javascript" src="~/assets/.libs/function/func.Cookies.js"></script>
-    <script type="text/javascript" src="~/assets/.libs/config.js"></script>
-    <script type="text/javascript" src="~/assets/.libs/function/AD.js"></script>
-    <script type="text/javascript" src="~/assets/.libs/function/Functions.js"></script>
-    <script type="text/javascript" src="~/assets/.libs/function/func.DataTable.Export.js"></script>
-    <script type="text/javascript" src="~/assets/.libs/function/func.VB.Net.js"></script>
-
-
+    <link rel="stylesheet" href="~/assets/css/bootstrap-select.min.css">
 
 
 </head>
@@ -174,8 +98,6 @@
                                 <i class="feather icon-menu"></i>
                             </a>
                             <a href="~/Home">
-                                @* <img class="img-fluid" src="@ViewData["Logo"]" alt="HINO" />
-                                <b>@ViewData["Name"]</b> *@
                                 <img class="img-fluid" src="~/assets/img/hino_logo.ico" />
                                 <b class="ms-2">Kanban System</b>
                             </a>
@@ -191,6 +113,7 @@
                                     </h4>
                                 </li>
                             </ul>
+
                             <ul class="nav-right">
                                 <li style="font-size:0.7rem;font-weight:bold;line-height:1.5;padding-top:3px;color:blue;padding: 0 0px;">
                                     <span>
@@ -199,33 +122,7 @@
                                         <span style="color:#404e67;">Shift : </span><span class="fw-bold text-primary" id="nr_Shift"></span>
                                     </span>
 
-                                    @* <a class="btn btn-danger text-white" href="~/Login/Logout" id="_Layout_logout">
-                                        Logout
-                                    </a> *@
                                 </li>
-                                @* <li>
-                                    <div class="dropdown">
-                                        <a href="#" class="dropdown-toggle btn btn-outline-dark ti-layout-grid3" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-                                        </a>
-                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                            <li>
-                                                <a class="dropdown-item" href="#">@userCode</a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item" href="#">@userName</a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item" href="#">@userPlant</a>
-                                            </li>
-
-                                            <li class="user-profile header-notification">
-                                                <a class="btn btn-danger text-white" href="~/Login/Logout" id="_Layout_logout">
-                                                    Logout
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </li> *@
 
                                 <li>
                                     <a class="btn btn-danger text-white" href="~/Login/Logout" id="_Layout_logout">
@@ -256,7 +153,6 @@
                         <div class="pcoded-content">
                             <div class="pcoded-inner-content">
                                 @RenderBody()
-                                <div id="styleSelector"></div>
                             </div>
                         </div>
                     </div>
@@ -265,66 +161,82 @@
         </div>
     </div>
 
-   @*  <div id="load-wrapper" class="d-flex justify-content-center">
-        <div class="spinner-border" role="status">
-            <span class="sr-only">Loading...</span>
-        </div>
-    </div>
-
-    <div id="table-wrapper" class="d-flex justify-content-center" style="">
-        <div class="spinner-border text-dark table-wrapper-content" style="width:22px;height:22px;" role="status">
-            <span class="sr-only">Loading...</span>
-        </div>
-    </div> *@
-
 
     <div id="splash-wrapper">
         <div id="splash-text">LOADING</div>
         <div id="splash-content"></div>
     </div>
 
-        <script type="text/javascript" src="~/assets/.script/XLib/xLib.js" asp-append-version="true"></script>
-        <script type="text/javascript" src="~/assets/.script/_Layout.js" asp-append-version="true"></script>
+    <script src="~/assets/vendor/jquery/3.6.0/jquery.min.js"></script>
+    <script src="~/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
 
-        @* <script type="text/javascript" src="~/assets/adminty/bower_components/jquery-slimscroll/jquery.slimscroll.js"></script> *@
+    <script src="~/assets/js/bootstrap.bundle.min.js"></script>
+    <script src="~/assets/js/bootstrap-select.min.js"></script>
+    <script src="~/assets/vendor/gijgo/1.9.14/js/gijgo.min.js"></script>
 
-        @*<script type="text/javascript" src="~/assets/adminty/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>*@
-        @* <script type="text/javascript" src="~/assets/adminty/bower_components/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
-        <script type="text/javascript" src="~/assets/adminty/bower_components/datatables.net-buttons/js/buttons.print.min.js"></script>
-        <script type="text/javascript" src="~/assets/adminty/bower_components/datatables.net-buttons/js/buttons.html5.min.js"></script> 
-        <script type="text/javascript" src="~/assets/adminty/bower_components/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
-        <script type="text/javascript" src="~/assets/adminty/bower_components/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script> *@
 
-        <script type="text/javascript" src="~/assets/adminty/pages/data-table/js/pdfmake.min.js"></script>
-        <script type="text/javascript" src="~/assets/adminty/pages/data-table/js/dataTables.select.min.js"></script>
-        <script type="text/javascript" src="~/assets/adminty/pages/data-table/extensions/buttons/js/dataTables.buttons.min.js"></script>
-        <script type="text/javascript" src="~/assets/adminty/pages/data-table/extensions/buttons/js/buttons.flash.min.js"></script>
-        <script type="text/javascript" src="~/assets/adminty/pages/data-table/extensions/buttons/js/jszip.min.js"></script>
-        <script type="text/javascript" src="~/assets/adminty/pages/data-table/extensions/buttons/js/vfs_fonts.js"></script>
-        <script type="text/javascript" src="~/assets/adminty/pages/data-table/extensions/buttons/js/buttons.colVis.min.js"></script>
-        <script type="text/javascript" src="~/assets/adminty/pages/data-table/extensions/buttons/js/extension-btns-custom.js"></script>
-        <script type="text/javascript" src="~/assets/adminty/js/pcoded.min.js"></script>
+    <script src="~/assets/vendor/bootstrap/bootstrap-datepicker/1.9.14/js/bootstrap-datepicker.min.js"></script>
+    <script src="~/assets/vendor/bootstrap/bootstrap-autocomplete-typeahead/5.0.0/autocomplete.js"></script>
+    <script type="text/javascript" src="~/assets/js/awesome_all.min.js"></script>
 
-        <script type="text/javascript" src="~/assets/adminty/js/jquery.mCustomScrollbar.concat.min.js"></script>
-        <script type="text/javascript" src="~/assets/adminty/js/vartical-layout.min.js"></script>
 
-        <script type="text/javascript" src="~/assets/adminty/js/script.js"></script>
+    <!-- Vendor JScript -->
+    <script src="~/assets/vendor/swal2/sweetalert2.min.js"></script>
+    <script src="~/assets/vendor/datatables/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script src="~/assets/vendor/datatables/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+    <script src="~/assets/vendor/datatables/1.13.4/js/dataTables.sum.js"></script>
+    <script src="~/assets/vendor/datatables/fixedcolumns/4.2.1/js/dataTables.fixedColumns.min.js"></script>
 
-        <script type="text/javascript" src="~/assets/.libs/class/lab.Ajax.js?" asp-append-version="true"></script>
-        <script type="text/javascript" src="~/assets/.libs/class/lab.ChartJS.js?" asp-append-version="true"></script>
-        <script type="text/javascript" src="~/assets/.libs/class/lab.ClockTimer.js?" asp-append-version="true"></script>
-        <script type="text/javascript" src="~/assets/.libs/class/lab.DataTables.js?" asp-append-version="true"></script>
-        <script type="text/javascript" src="~/assets/.libs/class/lab.DataTablesExport.js?" asp-append-version="true"></script>
-        <script type="text/javascript" src="~/assets/.libs/class/lab.Date.js?" asp-append-version="true"></script>
-        <script type="text/javascript" src="~/assets/.libs/class/lab.DropDownList.js?" asp-append-version="true"></script>
-        <script type="text/javascript" src="~/assets/.libs/class/lab.i18n.js?" asp-append-version="true"></script>
-        <script type="text/javascript" src="~/assets/.libs/class/lab.Object.js?" asp-append-version="true"></script>
-        <script type="text/javascript" src="~/assets/.libs/class/lab.Item.js?" asp-append-version="true"></script>
-        <script type="text/javascript" src="~/assets/.libs/class/lab.Log.js?" asp-append-version="true"></script>
-        <script type="text/javascript" src="~/assets/.libs/class/lab.Swal2.js?" asp-append-version="true"></script>
-        <script type="text/javascript" src="~/assets/.libs/class/lab.Splash/lab.Splash.js?" asp-append-version="true"></script>
 
-        <script type="text/javascript" src="~/assets/adminty/vue@3/dist/vue.global.js"></script>
+
+    <script src="~/assets/vendor/moment/moment.js"></script>
+    <script type="text/javascript" src="~/assets/.script/XLib/xlsx.full.min.js" asp-append-version="true"></script>
+    <script src="~/assets/vendor/chart.js/4.2.0/chart-utils.min.js"></script>
+    <script src="~/assets/vendor/chart.js/4.2.0/Chart.js"></script>
+
+    <!-- Site level plugins -->
+    <!-- Site level plugins -->
+    <script type="text/javascript" src="~/assets/.libs/function/func.Cookies.js"></script>
+    <script type="text/javascript" src="~/assets/.libs/config.js"></script>
+    <script type="text/javascript" src="~/assets/.libs/function/AD.js"></script>
+    <script type="text/javascript" src="~/assets/.libs/function/Functions.js"></script>
+    <script type="text/javascript" src="~/assets/.libs/function/func.DataTable.Export.js"></script>
+    <script type="text/javascript" src="~/assets/.libs/function/func.VB.Net.js"></script>
+
+
+    <script type="text/javascript" src="~/assets/adminty/pages/data-table/js/pdfmake.min.js"></script>
+    <script type="text/javascript" src="~/assets/adminty/pages/data-table/js/dataTables.select.min.js"></script>
+    <script type="text/javascript" src="~/assets/adminty/pages/data-table/extensions/buttons/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" src="~/assets/adminty/pages/data-table/extensions/buttons/js/buttons.flash.min.js"></script>
+    <script type="text/javascript" src="~/assets/adminty/pages/data-table/extensions/buttons/js/jszip.min.js"></script>
+    <script type="text/javascript" src="~/assets/adminty/pages/data-table/extensions/buttons/js/vfs_fonts.js"></script>
+    <script type="text/javascript" src="~/assets/adminty/pages/data-table/extensions/buttons/js/buttons.colVis.min.js"></script>
+    <script type="text/javascript" src="~/assets/adminty/pages/data-table/extensions/buttons/js/extension-btns-custom.js"></script>
+    <script type="text/javascript" src="~/assets/adminty/js/pcoded.min.js"></script>
+
+    <script type="text/javascript" src="~/assets/adminty/js/jquery.mCustomScrollbar.concat.min.js"></script>
+    <script type="text/javascript" src="~/assets/adminty/js/vartical-layout.min.js"></script>
+
+    <script type="text/javascript" src="~/assets/.script/XLib/xLib.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/assets/.script/_Layout.js" asp-append-version="true"></script>
+
+    <script type="text/javascript" src="~/assets/adminty/js/script.js"></script>
+
+    <script type="text/javascript" src="~/assets/.libs/class/lab.Ajax.js?" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/assets/.libs/class/lab.ChartJS.js?" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/assets/.libs/class/lab.ClockTimer.js?" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/assets/.libs/class/lab.DataTables.js?" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/assets/.libs/class/lab.DataTablesExport.js?" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/assets/.libs/class/lab.Date.js?" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/assets/.libs/class/lab.DropDownList.js?" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/assets/.libs/class/lab.i18n.js?" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/assets/.libs/class/lab.Object.js?" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/assets/.libs/class/lab.Item.js?" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/assets/.libs/class/lab.Log.js?" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/assets/.libs/class/lab.Swal2.js?" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/assets/.libs/class/lab.Splash/lab.Splash.js?" asp-append-version="true"></script>
+
+    <script type="text/javascript" src="~/assets/adminty/vue@3/dist/vue.global.js"></script>
 
     <script type="text/javascript" src="~/assets/js/History/UserMaintenance.js?asp-append-version="true""></script>
     <script type="text/javascript" src="~/assets/.script/Template/Action.js?asp-append-version="true""></script>

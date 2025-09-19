@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Security.Claims;
 
 namespace KANBAN.Controllers.API.OrderReport
 {
@@ -85,8 +86,8 @@ namespace KANBAN.Controllers.API.OrderReport
                     string monthTo = _json["monthTo"];
                     string supFrom = _json["supFrom"];
                     string supTo = _json["supTo"];
-                    string userName = HttpContext.Session.GetString("USER_NAME");
-                    string hostName = HttpContext.Session.GetString("USER_DEVICENAME");
+                    string userName = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Name).Value.ToString();
+                    string hostName = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.WindowsDeviceClaim).Value.ToString();
                     if (userName == null || hostName == null)
                     {
                         return Content("Please Re-Login");

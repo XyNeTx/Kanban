@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Security.Claims;
 namespace KANBAN.Controllers.API.OrderReport
 {
     public class KBNRT210Controller : Controller
@@ -50,8 +51,8 @@ namespace KANBAN.Controllers.API.OrderReport
             {
                 
                 string _result = "";
-                string UserName = HttpContext.Session.GetString("USER_NAME");
-                string HostName = HttpContext.Session.GetString("USER_DEVICENAME");
+                string UserName = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Name).Value.ToString();
+                string HostName = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.WindowsDeviceClaim).Value.ToString();
 
                 if (string.IsNullOrWhiteSpace(UserName) || string.IsNullOrWhiteSpace(HostName))
                 {
@@ -93,8 +94,8 @@ namespace KANBAN.Controllers.API.OrderReport
                 string partTo = _json["partTo"];
                 string dateFrom = _json["dateFrom"];
                 string dateTo = _json["dateTo"];
-                string UserName = HttpContext.Session.GetString("USER_NAME");
-                string HostName = HttpContext.Session.GetString("USER_DEVICENAME");
+                string UserName = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Name).Value.ToString();
+                string HostName = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.WindowsDeviceClaim).Value.ToString();
                 string Plant = HttpContext.Request.Cookies["plantCode"].ToString();
 
                 if (string.IsNullOrWhiteSpace(UserName) || string.IsNullOrWhiteSpace(HostName))
@@ -185,12 +186,12 @@ namespace KANBAN.Controllers.API.OrderReport
                     if (forecast != null)
                     {
                         int j = int.Parse(processDate.Substring(0, 2));
-                        string property = "F_Amount_MD" + processDate.Substring(0, 2);
+                        string property = "F_Amount_MD" + j;
                         int Max_Std = 0;
                         string MaxForecastDate = "";
                         if (Max_Std == 0)
                         {
-                            Max_Std = (int)forecast.GetType().GetProperty(property).GetValue(forecast);
+                            Max_Std = (int)forecast.GetType().GetProperty(property)!.GetValue(forecast)!;
                             int Use_Day = Max_Std;
                             await _KB3Context.Database.ExecuteSqlRawAsync("UPDATE TB_Inquriy_KB_rpt_TMP SET F_max_forcast = @Max_Std " +
                                                 "WHERE chk_deli_date = @Deli_Date AND F_Part_no = @PartNo AND F_kb_no = @KanbanNo AND F_Sup_cd = @SupCodePlant " +

@@ -61,7 +61,8 @@ namespace KANBAN.Services.Import.Repository
                 fillDT,
                 log,
                 emailService,
-                autoMapService);
+                autoMapService,
+                httpContextAccessor);
 
             KBNIM007C = new KBNIM007C(kbContext,
                 bearerClass,
@@ -69,7 +70,8 @@ namespace KANBAN.Services.Import.Repository
                 fillDT,
                 log,
                 emailService,
-                autoMapService);
+                autoMapService,
+                httpContextAccessor);
 
             KBNIM0044 = new KBNIM0044(kbContext,
                 bearerClass,

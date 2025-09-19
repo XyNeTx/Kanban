@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Data;
+using System.Security.Claims;
 //using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HINOSystem.Controllers.API.Master
@@ -65,8 +66,8 @@ namespace HINOSystem.Controllers.API.Master
             try
             {
                 string now = DateTime.Now.ToString("yyyyMMdd");
-                string UserID = HttpContext.Session.GetString("USER_CODE");
-                string Plant = HttpContext.Session.GetString("USER_PLANT");
+                string UserID = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.UserData).Value.ToString();
+                string Plant = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Locality).Value.ToString();
 
                 DataTable dt = _FillDT.ExecuteSQL($"EXEC [exec].[spKBNIM003C_SEARCH] '{Plant}' , '{UserID}' ");
 
@@ -134,8 +135,8 @@ namespace HINOSystem.Controllers.API.Master
                     F_PDS_Issued_Date = F_PDS_Issued_Date.Substring(4, 4) + F_PDS_Issued_Date.Substring(2, 2) + F_PDS_Issued_Date.Substring(0, 2);
                     F_Delivery_Date = F_Delivery_Date.Substring(4, 4) + F_Delivery_Date.Substring(2, 2) + F_Delivery_Date.Substring(0, 2);
 
-                    string Plant = HttpContext.Session.GetString("USER_PLANT");
-                    string UserID = HttpContext.Session.GetString("USER_CODE");
+                    string Plant = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Locality).Value.ToString();
+                    string UserID = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.UserData).Value.ToString();
 
                     string sql = $"EXEC [exec].[spKBNIM003C_CONFIRM] '{Plant}', 'EKanban', '{F_PDS_No}', '{F_PDS_Issued_Date}', '{F_Delivery_Date}', '{UserID}' ";
 

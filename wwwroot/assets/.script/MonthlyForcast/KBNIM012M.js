@@ -404,7 +404,7 @@
                 xSplash.hide();
                 Swal.fire("Report!", success.data, "success");
 
-                let userName = $("#userId").val();
+                let userName = _xLib.GetUserName();
                 let reportUrl = " http://hmmt-app03/Reports/Pages/ReportViewer.aspx?%2fKB3%2fKBNIM012M&rs:Command=Render";
                 window.open(reportUrl + '&UserName=' + userName , '_blank');
             },
@@ -588,7 +588,7 @@
                 xSwal.error(xhr.responseJSON.response, xhr.responseJSON.message);
                 if (xhr.responseJSON.message == "Please Check Data Again") {
 
-                    let userName = $("#userId").val();
+                    let userName = _xLib.GetUserName();
                     let reportUrl = " http://hmmt-app03/Reports/Pages/ReportViewer.aspx?%2fKB3%2fKBNIM012_ERR&rs:Command=Render";
                     window.open(reportUrl + '&UserName=' + userName, '_blank');
                 }

@@ -6,6 +6,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Data;
+using System.Security.Claims;
 
 namespace KANBAN.Controllers.API.OrderReport
 {
@@ -75,8 +76,8 @@ namespace KANBAN.Controllers.API.OrderReport
                 string _jsonData2 = JsonConvert.SerializeObject(kanbanDB.OrderBy(x => x.F_Sebango).Distinct());
                 string _jsonData3 = JsonConvert.SerializeObject(storeDB.OrderBy(x => x.F_Store_CD).Distinct());
                 string _jsonData4 = JsonConvert.SerializeObject(partDB.OrderBy(x => x.prt_no).Distinct());
-                string userName = HttpContext.Session.GetString("USER_NAME");
-                string hostName = HttpContext.Session.GetString("USER_DEVICENAME");
+                string userName = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Name).Value.ToString();
+                string hostName = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.WindowsDeviceClaim).Value.ToString();
 
                 _result = @"{
                                     ""status"":""200"",
@@ -102,8 +103,8 @@ namespace KANBAN.Controllers.API.OrderReport
             {
                 
                 string _result = "";
-                string UserName = HttpContext.Session.GetString("USER_NAME");
-                string HostName = HttpContext.Session.GetString("USER_DEVICENAME");
+                string UserName = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Name).Value.ToString();
+                string HostName = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.WindowsDeviceClaim).Value.ToString();
 
                 if (string.IsNullOrWhiteSpace(UserName) || string.IsNullOrWhiteSpace(HostName))
                 {
@@ -338,8 +339,8 @@ namespace KANBAN.Controllers.API.OrderReport
             {
                 
                 string _result = "";
-                string userName = HttpContext.Session.GetString("USER_NAME");
-                string hostName = HttpContext.Session.GetString("USER_DEVICENAME");
+                string userName = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Name).Value.ToString();
+                string hostName = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.WindowsDeviceClaim).Value.ToString();
                 string Plant = HttpContext.Request.Cookies["plantCode"].ToString();
                 await _KB3Context.Database.ExecuteSqlRawAsync
                         ("DELETE FROM RPT_KBNRT_160 WHERE F_Update_By = @UserLogon AND F_Host_name = @Host_name",

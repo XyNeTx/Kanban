@@ -21,7 +21,7 @@
     xAjax.onClick("#ReportBtn", function () {
         var devDate = $("#F_DeliveryFrom").val().replaceAll('-', '');
         var toDate = $("#F_DeliveryTo").val().replaceAll('-', '');
-        var userName = $("#profile-avatar").prop("title");
+        var userName = _xLib.GetUserName();
 
         if (devDate > toDate) {
             return alert("Please Don't select Delivery date to less than Delivery date from");

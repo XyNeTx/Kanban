@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Data;
+using System.Security.Claims;
 
 namespace KANBAN.Controllers.API.OrderReport
 {
@@ -49,8 +50,8 @@ namespace KANBAN.Controllers.API.OrderReport
             {
                 
                 string _result = "";
-                string UserName = HttpContext.Session.GetString("USER_NAME");
-                string HostName = HttpContext.Session.GetString("USER_DEVICENAME");
+                string UserName = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Name).Value.ToString();
+                string HostName = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.WindowsDeviceClaim).Value.ToString();
 
                 if (string.IsNullOrWhiteSpace(UserName) || string.IsNullOrWhiteSpace(HostName))
                 {
@@ -96,8 +97,8 @@ namespace KANBAN.Controllers.API.OrderReport
             {
                 
                 string _result = "";
-                string UserName = HttpContext.Session.GetString("USER_ID");
-                string HostName = HttpContext.Session.GetString("USER_DEVICENAME");
+                string UserName = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.UserData).Value.ToString();
+                string HostName = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.WindowsDeviceClaim).Value.ToString();
                 dynamic _json = JsonConvert.DeserializeObject(data);
                 string flagFrom = _json["flagFrom"];
                 string flagTo = _json["flagTo"];
@@ -147,8 +148,8 @@ namespace KANBAN.Controllers.API.OrderReport
             }
             catch (Exception ex)
             {
-                string UserName = HttpContext.Session.GetString("USER_NAME");
-                string HostName = HttpContext.Session.GetString("USER_DEVICENAME");
+                string UserName = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Name).Value.ToString();
+                string HostName = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.WindowsDeviceClaim).Value.ToString();
                 _Serilog.WriteLog($"ERROR IMPORT to TB_VLT_INTERFACE_TEMP : {ex.Message}", UserName, HostName);
                 await _KB3Context.Database.ExecuteSqlRawAsync("DELETE FROM TB_VLT_INTERFACE_TEMP WHERE F_UPDATE_BY = {0}", UserName);
                 return Content(ex.Message);

@@ -82,7 +82,7 @@ $("#Print").click(async function () {
         function (success) {
 
             let conditionReport = $('input[name="ConditionForReport"]:checked').val();
-            let userName = $("#userId").val();
+            let userName = _xLib.GetUserName();
             let reportUrl = "http://hmmt-app03/Reports/Pages/ReportViewer.aspx?%2fKB3%2fKBNOC150&rs:Command=Render";
             window.open(reportUrl + '&UserName=' + userName + '&Type=' + conditionReport, '_blank');
 

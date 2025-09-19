@@ -9,6 +9,7 @@ using HINOSystem.Context;
 using KANBAN.Context;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 //using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HINOSystem.Controllers.API.Master
@@ -103,8 +104,8 @@ namespace HINOSystem.Controllers.API.Master
             });
             try
             {
-                string UserID = HttpContext.Session.GetString("USER_CODE");
-                string Plant =  HttpContext.Session.GetString("USER_PLANT");
+                string UserID = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.UserData).Value.ToString();
+                string Plant =  HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Locality).Value.ToString();
                 F_DeliveryFrom = F_DeliveryFrom == null ? "" : F_DeliveryFrom.Replace("-",string.Empty);
                 F_DeliveryTo = F_DeliveryTo == null ? "" : F_DeliveryTo.Replace("-", string.Empty);
 
@@ -162,7 +163,7 @@ namespace HINOSystem.Controllers.API.Master
                     F_PDS_No = dynamic["F_PDS_No"],
                     F_PDS_Issued_Date = dynamic["F_PDS_Issued_Date"];
 
-                string UserID = HttpContext.Session.GetString("USER_CODE");
+                string UserID = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.UserData).Value.ToString();
 
                 await _KB3Context.Database.ExecuteSqlRawAsync($"EXEC [exec].[spKBNIM014Confirm_SAVE] '{F_PDS_No}','{F_PDS_Issued_Date}','{F_Delivery_Date}','{UserID}' ");
 
