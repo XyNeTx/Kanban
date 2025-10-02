@@ -186,6 +186,9 @@ $("#btnSave").click(function () {
             await xSwal.success(success.response, success.message);
 
             $(document).find("div[class='card-body'").find("input[type='text']").each(function () {
+                if ($(this).attr("id") == "inpCreditCode") {
+                    return;
+                }
                 $(this).val("");
                 $(this).prop("readonly", true);
             });
@@ -199,7 +202,7 @@ $("#btnSave").click(function () {
                 $(this).selectpicker("refresh");
             });
 
-
+            $("#inpCreditCode").val("2133102");
             LoadListView();
         },
         function (error) {

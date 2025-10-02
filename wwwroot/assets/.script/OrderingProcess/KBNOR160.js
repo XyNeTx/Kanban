@@ -87,10 +87,10 @@ $("#inputFile").change(async function (e) {
     _xLib.AJAX_Post('/api/KBNOR160/ImportData', JSON.stringify(data),
         function (success) {
             if (success.status == "200") {
-                xSwal.success("Success", success.message);
                 if (success.message.includes("Error") || success.message.includes("error")) {
-                    _xLib.OpenReport("/KBNIMERR", `UserID=${ajexHeader.UserCode}&Type=KBNOR160`);
+                    return _xLib.OpenReport("/KBNIMERR", `UserID=${ajexHeader.UserCode}&Type=KBNOR160`);
                 }
+                xSwal.success("Success", success.message);
             }
         },
         function (error) {

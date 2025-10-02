@@ -113,6 +113,10 @@ $("#btnInq").click(async () => {
 });
 
 $("#mthDeliYM").change(async () => {
+    var yyyy_MM = $("#mthDeliYM").val();
+    if (moment($("#inpDate"), "DD/MM/YYYY").format("YYYY-MM") != yyyy_MM) {
+        $("#inpDate").val(moment(yyyy_MM + "-01", "YYYY-MM-DD").format("DD/MM/YYYY"));
+    }
     await ShowCalendar();
     await GetPO();
 });

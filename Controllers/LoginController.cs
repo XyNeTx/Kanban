@@ -57,23 +57,6 @@ namespace HINOSystem.Controllers
         {
             this.fncCheckEnvironment();
 
-            //### Check user for recovery
-            //_SQL = @"
-            //    SELECT Code
-            //    FROM [erp].[User]
-            //    WHERE [ResetToken] = '" + Request.Query["ref"].ToString() + @"' 
-            //";
-            //DataTable _dataTable = _erpConnect.ExecuteSQL(_SQL, skipLog: true);
-
-            //if (_dataTable == null) return View();
-
-            //if (_dataTable.Rows.Count > 0)
-            //{
-            //    ViewBag.refReset = _dataTable.Rows[0]["Code"].ToString();
-            //    ViewData["txtUserName"] = _dataTable.Rows[0]["Code"].ToString();
-            //}
-
-
             string _version = _BearerClass.versions();
             ViewData["Version"] = _version;
 

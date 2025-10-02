@@ -31,6 +31,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddDbContext<KB3Context>();
+builder.Services.AddResponseCaching();
 
 builder.Services.AddDbContext<ERPContext>(options =>
     options.UseSqlServer(
@@ -293,6 +294,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseCors();
+app.UseResponseCaching();
 
 app.UseWebSockets();
 //app.UseStatusCodePagesWithRedirects("~/Home/Index");

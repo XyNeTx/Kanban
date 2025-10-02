@@ -84,6 +84,7 @@ namespace KANBAN.Services.Master.Repository
         {
             try
             {
+                var datenow = DateTime.Now.ToString("yyyyMMdd");
                 await _kbContext.Database.ExecuteSqlRawAsync($"DELETE FROM TB_MS_Print_Replace_KB WHERE F_Update_By = '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}'");
 
                 // Step 1: Retrieve T_Construction data from _PPM3Context
@@ -116,7 +117,19 @@ namespace KANBAN.Services.Master.Repository
                         F_Number = 0,
                         F_Update_Date = DateTime.Now,
                         F_Update_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value // Adjust as necessary
-                    }).ToList();
+                    }).OrderBy(x => x.F_Supplier_Code).ThenBy(x => x.F_Supplier_Plant).ThenBy(x => x.F_Kanban_No).ToList();
+
+                data = data.DistinctBy(x=> new
+                {
+                    x.F_Supplier_Code,
+                    x.F_Supplier_Plant,
+                    x.F_Store_Code,
+                    x.F_Kanban_No,
+                    x.F_Part_No,
+                    x.F_Ruibetsu,
+                    x.F_Supply_Code,
+                    x.F_Update_By
+                }).ToList();
 
                 // Step 4: Add the filtered data to _kbContext and save changes
                 _kbContext.TB_MS_Print_Replace_KB.AddRange(data);

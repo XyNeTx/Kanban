@@ -76,6 +76,12 @@ $(document).on("click", "#tableSup tbody tr", async function () {
     await _xLib.AJAX_Get("/api/KBNMS009/SupplierClicked", { Supplier: data.f_supplier_cd },
         async function (success) {
             await _xDataTable.ClearAndAddDataDT("tableMain", success);
+            if (success.length == 0) {
+                xSwal.error("Data Not Found");
+            }
+        },
+        async function (error) {
+            xSwal.xError(error);
         }
     );
     xSplash.hide();

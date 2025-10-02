@@ -64,7 +64,14 @@ $(document).ready(async function () {
 
     var _NAVDATETIME_ = setInterval(function () {
         $('#_NAVDATETIME_').html('Today : ' + moment().format("DD/MM/YYYY HH:mm:ss"));
+        
     }, 1000);
+
+
+    var deleteMarginInDatePicker = setTimeout(function () {
+        $("div.gj-datepicker.gj-datepicker-bootstrap.gj-unselectable.mb-3").removeClass("mb-3");
+        $("div.gj-datepicker.gj-datepicker-bootstrap.gj-unselectable.input-group.mb-3").removeClass("mb-3");
+    }, 500);
 
     await _xLib.AJAX_Get("/xapi/GetAuthorizeProgram", null,
         async (success) => {

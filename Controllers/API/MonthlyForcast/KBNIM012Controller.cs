@@ -63,8 +63,11 @@ namespace HINOSystem.Controllers.API.Master
                         message = "Unauthorized Access!"
                     });
                 }
-
                 string sql = "Select Top 1 F_PO,F_Version From VW_MaxVersionForecast Order by substring(F_PO,1,6) desc,F_Version";
+                if(User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Locality).Value == "3")
+                {
+                    sql = "Select Top 1 F_PO,F_Version From VW_MaxVersionForecast_F3 Order by substring(F_PO,1,6) desc,F_Version";
+                }
 
                 DataTable dt = _FillDT.ExecuteSQLProcDB(sql);
 

@@ -1,10 +1,13 @@
-﻿using HINOSystem.Context;
+﻿using DocumentFormat.OpenXml.Spreadsheet;
+using HINOSystem.Context;
 using HINOSystem.Libs;
 using KANBAN.Context;
 using KANBAN.Models.KB3.UrgentOrder;
+using KANBAN.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Data;
@@ -126,21 +129,35 @@ namespace HINOSystem.Controllers.API.Master
                 message = "Please Login First"
             });
             using var _KB3Transaction = _KB3Context.Database.BeginTransaction();
+            string UserID = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.UserData).Value.ToString();
+            string Plant = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Locality).Value.ToString();
+
             try
             {
-                string UserID = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.UserData).Value.ToString();
-                string Plant = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Locality).Value.ToString();
-
                 await _KB3Context.Database.ExecuteSqlRawAsync($"DELETE From TB_Import_error Where F_Update_By = @p0 AND F_Type = 'KBNIM014' ", UserID);
 
-                _KB3Transaction.CreateSavepoint("Start_AfterImported");
+                await _KB3Transaction.CreateSavepointAsync("Start_AfterImported");
 
                 var ImportList = await _KB3Context.TB_Import_EKanban_Pack.AsNoTracking()
                     .Where(x => x.F_Update_By == _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value && x.F_Update_Date.Value.Date == DateTime.Now.Date)
                     .Select(x => x.F_PDS_No)
                     .ToListAsync();
 
-                var row = await _KB3Context.Database.ExecuteSqlRawAsync($"EXEC [exec].[spKBNIM014] @p0,@p1", Plant, UserID);
+                var dataTable = await _FillDT.ExecuteStoreSQLAsync($"[exec].[spKBNIM014]",
+                    new SqlParameter[]
+                    {
+                        new SqlParameter("@pPlant",Plant),
+                        new SqlParameter("@pUser",UserID)
+                    });
+
+                if(dataTable.Rows.Count > 0)
+                {
+                    if (dataTable.Rows[0]["F_Data"].ToString().ToLower() == "error")
+                    {
+                        throw new CustomHttpException(500, dataTable.Rows[0]["F_Error_message"].ToString());
+                    }
+                }
+
 
                 var _delList = await _KB3Context.TB_Import_EKanban_Pack.Where(x => x.F_Plant_CD == Plant && x.F_Update_By == UserID).ToListAsync();
 
@@ -198,7 +215,12 @@ namespace HINOSystem.Controllers.API.Master
             }
             catch (Exception ex)
             {
-                _KB3Transaction.RollbackToSavepoint("Start_AfterImported");
+                await _KB3Transaction.RollbackToSavepointAsync("Start_AfterImported");
+                var _delList = await _KB3Context.Database.ExecuteSqlRawAsync("DELETE FROM TB_Import_EKanban_Pack WHERE F_Update_By = '" + UserID + "' ");
+                await _KB3Transaction.CommitAsync();
+
+                //_KB3Context.RemoveRange(_delList);
+                //await _KB3Context.SaveChangesAsync();
                 return StatusCode(500, new
                 {
                     status = "500",

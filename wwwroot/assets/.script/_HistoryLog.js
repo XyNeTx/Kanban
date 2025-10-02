@@ -1,4 +1,12 @@
-﻿//$(document).ready(function (e, context) {
+﻿$(document).ready(function () {
+    $("div.gj-datepicker.gj-datepicker-bootstrap.gj-unselectable.mb-3").removeClass("mb-3");
+    $("div.gj-datepicker.gj-datepicker-bootstrap.gj-unselectable.input-group.mb-3").removeClass("mb-3");
+    //console.log($("div.gj-datepicker.gj-datepicker-bootstrap.gj-unselectable.mb-3"));
+
+});
+
+
+//$(document).ready(function (e, context) {
        
 
 
