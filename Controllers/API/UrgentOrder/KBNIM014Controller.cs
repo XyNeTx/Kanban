@@ -128,20 +128,52 @@ namespace HINOSystem.Controllers.API.Master
                 title = "Unauthorized",
                 message = "Please Login First"
             });
-            using var _KB3Transaction = _KB3Context.Database.BeginTransaction();
             string UserID = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.UserData).Value.ToString();
             string Plant = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Locality).Value.ToString();
 
+            var ImportList = await _KB3Context.TB_Import_EKanban_Pack
+                .Where(x => x.F_Update_By == _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value && x.F_Update_Date.Value.Date == DateTime.Now.Date)
+                .ToListAsync();
+
+            var DuplicateList = ImportList.GroupBy(x => new
+            {
+                x.F_PDS_No,
+                x.F_Part_No,
+                x.F_Kanban_No
+            }).ToList().Where(g => g.Count() > 1).Select(g => new
+            {
+                g.Key.F_PDS_No,
+                g.Key.F_Part_No,
+                g.Key.F_Kanban_No,
+                Sum = g.Sum(x=>x.F_Qty)
+            });
+
+            if (DuplicateList.Count() > 0) {
+
+                foreach (var item in DuplicateList)
+                {
+                    var SumObj = ImportList.FirstOrDefault(x => x.F_PDS_No == item.F_PDS_No
+                    && x.F_Kanban_No == item.F_Kanban_No && x.F_Part_No == item.F_Part_No);
+
+                    SumObj.F_Qty = item.Sum;
+
+                    await _KB3Context.TB_Import_EKanban_Pack.Where(x => x.F_PDS_No == item.F_PDS_No
+                        && x.F_Kanban_No == item.F_Kanban_No && x.F_Part_No == item.F_Part_No).ExecuteDeleteAsync();
+
+                    await _KB3Context.TB_Import_EKanban_Pack.AddAsync(SumObj);
+
+                }
+                await _KB3Context.SaveChangesAsync();
+
+            }
+
+            using var _KB3Transaction = _KB3Context.Database.BeginTransaction();
             try
             {
                 await _KB3Context.Database.ExecuteSqlRawAsync($"DELETE From TB_Import_error Where F_Update_By = @p0 AND F_Type = 'KBNIM014' ", UserID);
 
                 await _KB3Transaction.CreateSavepointAsync("Start_AfterImported");
 
-                var ImportList = await _KB3Context.TB_Import_EKanban_Pack.AsNoTracking()
-                    .Where(x => x.F_Update_By == _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value && x.F_Update_Date.Value.Date == DateTime.Now.Date)
-                    .Select(x => x.F_PDS_No)
-                    .ToListAsync();
 
                 var dataTable = await _FillDT.ExecuteStoreSQLAsync($"[exec].[spKBNIM014]",
                     new SqlParameter[]
@@ -183,7 +215,7 @@ namespace HINOSystem.Controllers.API.Master
                 }
 
                 var TransList = await _KB3Context.TB_Transaction.AsNoTracking()
-                    .Where(x => ImportList.Any(y => x.F_PDS_No == y)).ToListAsync();
+                    .Where(x => ImportList.Select(x => x.F_PDS_No).Any(y => x.F_PDS_No == y)).ToListAsync();
 
                 TransList = TransList.DistinctBy(x => x.F_PDS_No).ToList();
 

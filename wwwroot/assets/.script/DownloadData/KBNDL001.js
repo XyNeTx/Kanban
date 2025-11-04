@@ -32,13 +32,23 @@ $(document).ready(async function () {
     KBNDL001.prepare();
     KBNDL001.initial(function (result) {
         //console.log(result);
-        xDropDownList.bind('#frmCondition #itmPDS', result.data.PDSNo, 'F_OrderNo', 'F_OrderNo');
+
+        $('#itmPDSFrom').empty();
+        $('#itmPDSTo').empty();
+
+        $("#itmPDSFrom").selectpicker('refresh');
+        $("#itmPDSTo").selectpicker('refresh');
+
+        xDropDownList.bind('#frmCondition #itmPDSFrom', result.data.PDSNo, 'F_OrderNo', 'F_OrderNo');
         xDropDownList.bind('#frmCondition #itmPDSTo', result.data.PDSNo, 'F_OrderNo', 'F_OrderNo');
         xDropDownList.bind('#frmCondition #itmSupplier', result.data.Supplier, 'SupplierCode', 'SupplierCode');
         xDropDownList.bind('#frmCondition #itmSupplierTo', result.data.Supplier, 'SupplierCode', 'SupplierCode');
 
         $('#itmSupplier').val('8888-A');
         $('#itmSupplierTo').val('8888-A');
+
+        $("#itmPDSFrom").selectpicker('refresh');
+        $("#itmPDSTo").selectpicker('refresh');
 
         xAjax.onClick('#chkPDSNo', function () {
             if ($('#chkPDSNo').val() == 0) $('#fldPDSNo').prop('disabled', 'disabled');
@@ -76,20 +86,26 @@ $(document).ready(async function () {
             },
             function (success) {
                 console.log(success);
-                $("#itmPDS").empty();
+                $("#itmPDSFrom").empty();
                 $("#itmPDSTo").empty();
                 $("#itmSupplier").empty();
                 $("#itmSupplierTo").empty();
-                $("#itmPDS").append(`<option value="" hidden></option>`);
+                $("#itmPDSFrom").append(`<option value="" hidden></option>`);
                 $("#itmPDSTo").append(`<option value="" hidden></option>`);
+
                 success.data.PDSNo.forEach(function (item) {
-                    $("#itmPDS").append(`<option value="${item.F_OrderNo}">${item.F_OrderNo}</option>`);
+                    $("#itmPDSFrom").append(`<option value="${item.F_OrderNo}">${item.F_OrderNo}</option>`);
                     $("#itmPDSTo").append(`<option value="${item.F_OrderNo}">${item.F_OrderNo}</option>`);
                 });
+
+                $("#itmPDSFrom").selectpicker('refresh');
+                $("#itmPDSTo").selectpicker('refresh');
+
                 success.data.Supplier.forEach(function (item) {
                     $("#itmSupplier").append(`<option value="${item.SupplierCode}">${item.SupplierCode}</option>`);
                     $("#itmSupplierTo").append(`<option value="${item.SupplierCode}">${item.SupplierCode}</option>`);
                 });
+
             },
             function (error) {
                 console.log(error);
@@ -114,16 +130,18 @@ $(document).ready(async function () {
 
         _xLib.AJAX_Post("/KBNDL001/initial", pData,
             function (success) {
-                $("#itmPDS").empty();
+                $("#itmPDSFrom").empty();
                 $("#itmPDSTo").empty();
                 $("#itmSupplier").empty();
                 $("#itmSupplierTo").empty();
-                $("#itmPDS").append(`<option value="" hidden></option>`);
+                $("#itmPDSFrom").append(`<option value="" hidden></option>`);
                 $("#itmPDSTo").append(`<option value="" hidden></option>`);
                 success.data.PDSNo.forEach(function (item) {
-                    $("#itmPDS").append(`<option value="${item.F_OrderNo}">${item.F_OrderNo}</option>`);
+                    $("#itmPDSFrom").append(`<option value="${item.F_OrderNo}">${item.F_OrderNo}</option>`);
                     $("#itmPDSTo").append(`<option value="${item.F_OrderNo}">${item.F_OrderNo}</option>`);
                 });
+                $("#itmPDSFrom").selectpicker('refresh');
+                $("#itmPDSTo").selectpicker('refresh');
                 success.data.Supplier.forEach(function (item) {
                     $("#itmSupplier").append(`<option value="${item.SupplierCode}">${item.SupplierCode}</option>`);
                     $("#itmSupplierTo").append(`<option value="${item.SupplierCode}">${item.SupplierCode}</option>`);
@@ -156,7 +174,7 @@ $(document).ready(async function () {
         //console.log($('#chkPDSNo').val());
         //console.log($('#itmPDSFrom').val());
         //console.log($('#itmPDSTo').val());
-        if ($('#chkPDSNo').val() == 1 && ($('#itmPDS').val() == null || $('#itmPDSTo').val() == null)) {
+        if ($('#chkPDSNo').val() == 1 && ($('#itmPDSFrom').val() == null || $('#itmPDSTo').val() == null)) {
             MsgBox("Please input PDS From, To before print PDS...", MsgBoxStyle.Exclamation, "Exclamation");
             return false;
         }
@@ -182,13 +200,13 @@ $(document).ready(async function () {
                 "@pUserCode": ajexHeader.UserCode,
                 "@pPlant": '1',
                 "@pDeliveryDate": xDate.Date('yyyyMMdd', 'MM=-3'),
-                "@F_OrderNo": ($('#chkPDSNo').val() == 1 ? $('#itmPDS').val() : ''),
+                "@F_OrderNo": ($('#chkPDSNo').val() == 1 ? $('#itmPDSFrom').val() : ''),
                 "@F_OrderNoTo": ($('#chkPDSNo').val() == 1 ? $('#itmPDSTo').val() : ''),
                 "@F_Delivery_Date": ($('#chkDeliveryDate').val() == 1 ? ReplaceAll($('#itmDelivery').val(),'-','') : ''),
                 "@F_Delivery_DateTo": ($('#chkDeliveryDate').val() == 1 ? ReplaceAll($('#itmDeliveryTo').val(), '-', '') : '')
             },
         });
-        //console.log(($('#chkPDSNo').val() == 1 ? $('#itmPDS').val() : ''));
+        //console.log(($('#chkPDSNo').val() == 1 ? $('#itmPDSFrom').val() : ''));
         //console.log(($('#chkPDSNo').val() == 1 ? $('#itmPDSTo').val() : ''));
         //console.log(($('#chkDeliveryDate').val() == 1 ? ReplaceAll($('#itmDelivery').val(), '-', '') : ''));
         //console.log(($('#chkDeliveryDate').val() == 1 ? ReplaceAll($('#itmDeliveryTo').val(), '-', '') : ''));
@@ -216,7 +234,7 @@ $(document).ready(async function () {
                     window.open(
                         _REPORTINGSERVER_ + '%2fKB3%2fKBNDL001PDS&rs:Command=Render'
                         + '&pUserCode=' + ajexHeader.UserCode
-                        + '&OrderNo=' + ($('#chkPDSNo').val() == 1 ? $('#itmPDS').val() : '')
+                        + '&OrderNo=' + ($('#chkPDSNo').val() == 1 ? $('#itmPDSFrom').val() : '')
                         + '&OrderNoTo=' + ($('#chkPDSNo').val() == 1 ? $('#itmPDSTo').val() : '')
                         + '&DeliveryDate=' + ($('#chkDeliveryDate').val() == 1 ? ReplaceAll($('#itmDelivery').val(), '-', '') : '')
                         + '&DeliveryDateTo=' + ($('#chkDeliveryDate').val() == 1 ? ReplaceAll($('#itmDeliveryTo').val(), '-', '') : '')
@@ -235,7 +253,7 @@ $(document).ready(async function () {
 
     xAjax.onClick('#btnPrintKanban', async function () {
 
-        if ($('#chkPDSNo').val() == 1 && ($('#itmPDS').val() == null || $('#itmPDSTo').val() == null)) {
+        if ($('#chkPDSNo').val() == 1 && ($('#itmPDSFrom').val() == null || $('#itmPDSTo').val() == null)) {
             MsgBox("Please input PDS From, To before print PDS...", MsgBoxStyle.Exclamation, "Exclamation");
             return false;
         }
@@ -275,7 +293,7 @@ $(document).ready(async function () {
                 "@pUserCode": ajexHeader.UserCode,
                 "@pPlant": '1',
                 "@pDeliveryDate": xDate.Date('yyyyMMdd', 'MM=-3'),
-                "@F_OrderNo": ($('#chkPDSNo').val() == 1 ? $('#itmPDS').val() : ''),
+                "@F_OrderNo": ($('#chkPDSNo').val() == 1 ? $('#itmPDSFrom').val() : ''),
                 "@F_OrderNoTo": ($('#chkPDSNo').val() == 1 ? $('#itmPDSTo').val() : ''),
                 "@F_Delivery_Date": ($('#chkDeliveryDate').val() == 1 ? ReplaceAll($('#itmDelivery').val(), '-', '') : ''),
                 "@F_Delivery_DateTo": ($('#chkDeliveryDate').val() == 1 ? ReplaceAll($('#itmDeliveryTo').val(), '-', '') : '')
@@ -368,7 +386,7 @@ $(document).ready(async function () {
                     window.open(
                         _REPORTINGSERVER_ + '%2fKB3%2f' + pRPTNAME +'&rs:Command=Render'
                         + '&pUserCode=' + ajexHeader.UserCode
-                        + '&OrderNo=' + $('#itmPDS').val()
+                        + '&OrderNo=' + $('#itmPDSFrom').val()
                         + '&OrderNoTo=' + $('#itmPDSTo').val()
                         + '&DeliveryDate=' + ($('#chkDeliveryDate').val() == 1 ? ReplaceAll($('#itmDelivery').val(), '-', '') : '')
                         + '&DeliveryDateTo=' + ($('#chkDeliveryDate').val() == 1 ? ReplaceAll($('#itmDeliveryTo').val(), '-', '') : '')

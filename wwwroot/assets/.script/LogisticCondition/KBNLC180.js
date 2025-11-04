@@ -88,7 +88,7 @@ $("#btnPrintTruck").click(function () {
 
     _xLib.AJAX_Get("/api/KBNLC180/Truck_Card_Report", obj,
         function (success) {
-
+            window.open("http://hmmt-app03/Reports/Pages/ReportViewer.aspx?/KB3/KBNLC180_TY");
             xSwal.success(success.response, success.message);
 
         },

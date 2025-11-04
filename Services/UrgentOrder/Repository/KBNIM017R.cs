@@ -54,10 +54,11 @@ namespace KANBAN.Services.UrgentOrder.Repository
             try
             {
                 var addList = new List<TB_Transaction_TMP>();
-                string PDSNo = listObj[0].PDS_No;
+                //string PDSNo = listObj[0].PDS_No;
 
                 foreach (var obj in listObj) {
 
+                    string PDSNo = obj.PDS_No;
                     var Delivery_Date = DateTime.ParseExact(obj.DeliveryDate, "M/dd/yyyy", null).AddDays(-10);
                     var YM = Delivery_Date.ToString("yyyyMM");
                     bool isWorkDay = false;

@@ -62,9 +62,11 @@ $(document).ready(async function () {
     $("#mCSB_1_scrollbar_vertical").attr("class", "");
     $("#mCSB_1_dragger_vertical").attr("class", "");
 
-    var _NAVDATETIME_ = setInterval(function () {
-        $('#_NAVDATETIME_').html('Today : ' + moment().format("DD/MM/YYYY HH:mm:ss"));
-        
+    var _NAVDATETIME_ = $('#_NAVDATETIME_');
+
+    setInterval(function () {
+        _NAVDATETIME_.html('Today : ' + moment().format("DD/MM/YYYY HH:mm:ss"));
+        //console.log("interval");
     }, 1000);
 
 
@@ -107,5 +109,19 @@ $(document).ready(async function () {
     );
 
 
+    $("#mobile-collapse").on("click", async function () {
+       //console.log($(this).find("i").attr("class"));
 
+        if ($(this).find("i").hasClass("icon-toggle-left")) {
+            await $(this).css("color", "#404e67");
+            await $(".navbar-logo").find("a b.ms-2").css("color", "#404e67");
+            await $(".navbar-logo").css("background-color", "#ffffff");
+        } else {
+            await $(this).css("color", "#ffffff");
+            await $(".navbar-logo").find("a b.ms-2").css("color", "#ffffff");
+            await $(".navbar-logo").css("background-color", "#404e67");
+        }
+
+        return;
+    });
 });

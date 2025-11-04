@@ -145,7 +145,7 @@ namespace KANBAN.Services.Logistical.Repository
                 && x.F_Plant == _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Locality).Value && x.F_Flag == "0")
                 .ToListAsync();
 
-                if (checkImportSuccess.Count == 0)
+                if (checkImportSuccess.Count > 0)
                 {
                     //await transaction.RollbackAsync();
                     throw new Exception("Error Found, Delivery Time is not Imported");
