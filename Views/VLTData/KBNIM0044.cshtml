@@ -133,10 +133,10 @@
                                     <th>Trip/Shift</th>
                                     <td><input type="number" min="0" class="form-control" id="inpTripShift" /></td>
                                 </tr>
-                                <tr>
+                                @* <tr>
                                     <th>Seq.q'ty'</th>
                                     <td><input type="number" min="0" class="form-control" id="inpSeqQty" readonly /></td>
-                                </tr>
+                                </tr> *@
                             </thead>
                         </table>
                         <div class="row justify-content-center">
@@ -144,22 +144,22 @@
                         </div>
                     </div>
 
-                    <div class="pe-0" style="flex:0 0 80%;">
+                    <div class="pe-0" style="flex:0 0 70%;">
 
-                        <table id="tableMain" class="table table-bordered border-2 border-dark w-100 ps-1"></table>
+                        <table id="tableMain" class="table table-bordered border-2 border-dark w-100"></table>
                         
                         <div class="row">
                             <div class="col">
                                 <div class="row mt-2 justify-content-start">
-                                    <button type="button" class="btn btn-warning btn-rounded col-3 me-2" id="btnPost">Postpone</button>
-                                    <button type="button" class="btn btn-primary btn-rounded col-3 me-2 d-none" id="btnRest">Restore</button>
+                                    <button type="button" class="btn btn-warning btn-rounded col-3 me-2 ms-3" id="btnPost">Postpone</button>
+                                    <button type="button" class="btn btn-primary btn-rounded col-3 me-2 ms-3 d-none" id="btnRest">Restore</button>
                                     @* <button type="button" class="btn btn-danger btn-rounded col-3" id="btnDel">Delete</button> *@
                                 </div>
                             </div>
                             <div class="col">
                                 <div class="row mt-2 justify-content-end">
                                     <button type="button" class="btn btn-primary btn-rounded col-3 me-2" id="btnMain">Maintainance</button>
-                                    <button type="button" class="btn btn-success btn-rounded col-3" id="btnConf">Confirm Data</button>
+                                    <button type="button" class="btn btn-success btn-rounded col-3 me-2" id="btnConf">Confirm Data</button>
                                 </div>
                             </div>
                         </div>
@@ -183,7 +183,7 @@
             </div>
             <div class="modal-body">
                 <select class="form-select" id="inpUserInfModal">
-                    <option value="20062084">20062084 : Chirawan Charoram</option>
+                    @* <option value="20062084">20062084 : Chirawan Charoram</option> *@
                     <option value="20112494">20112494 : Prayut Laprom</option>
                     <option value="20173658">20173658 : Anan Takamson</option>
                 </select>

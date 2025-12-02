@@ -500,6 +500,13 @@ namespace KANBAN.Services.SpecialOrdering.Repository
 
                     _log.WriteLogMsg("DELETE TB_Survey_Header => " + JsonConvert.SerializeObject(updHead, Formatting.Indented));
                     await _kbContext.Database.ExecuteSqlRawAsync($"Delete From TB_Survey_Header Where F_Survey_Doc = '{listObj[0].Survey}'");
+                    await _kbContext.Database.ExecuteSqlRawAsync($"Delete From TB_Survey_Detail Where F_Survey_Doc = '{listObj[0].Survey}'");
+                    
+                    await _kbContext.Database.ExecuteSqlRawAsync($"UPDATE [hmmt-app03].[proc_db].[dbo].[tb_survey_header] SET F_Download_Flg = '0' Where F_Survey_Doc = '{listObj[0].Survey}'");
+                    await _kbContext.Database.ExecuteSqlRawAsync($"UPDATE [hmmt-app03].[proc_db].[dbo].[tb_survey_detail] SET F_Status = 'D' Where F_Survey_Doc = '{listObj[0].Survey}'");
+                    
+                    await _kbContext.Database.ExecuteSqlRawAsync($"UPDATE [192.168.10.18].[proc_web].[dbo].[tb_survey_header] SET F_Status = 'D',F_Status_D = 'D' Where F_Survey_Doc = '{listObj[0].Survey}'");
+                    await _kbContext.Database.ExecuteSqlRawAsync($"UPDATE [192.168.10.18].[proc_web].[dbo].[tb_survey_detail] SET F_Status = 'D' Where F_Survey_Doc = '{listObj[0].Survey}'");
                 }
 
                 await _kbContext.SaveChangesAsync();

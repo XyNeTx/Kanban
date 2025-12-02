@@ -1,18 +1,11 @@
 ﻿let isSimulate = false;
 var listObjChecked = [];
 var files = [];
-$(document).ready(function () {
+$(document).ready(async function () {
     _xDataTable.InitialDataTable("#tableMain",
     {
-        "processing": false,
-        "serverSide": false,
         width: '100%',
-        paging: false,
-        sorting: false,
-        searching: false,
-        scrollX: "100%",
         scrollY: "245px",
-        scrollCollapse: false,
         "columns": [
             {
                 title: "Flag", render(data, type, row) {
@@ -55,41 +48,40 @@ $(document).ready(function () {
                 title: "Delivery Trip", data: "f_Deli_Trip"
             },
         ],
-        select: false,
         order: [[0, "asc"]]
     });
 
     $("table tbody tr td").addClass("text-center");
     $("table thead tr th").addClass("text-center");
-
+    $(".dataTables_scrollHeadInner").addClass("pe-0")
     $("#inpDeliveryDate").initDatepicker();
 
-    GetListData();
+    await GetListData();
 
 });
 
 $("#inpFile").on("change", function (e) {
     files = e.target.files;
 });
-let SeqQtyPds = 0;
-let TripShift = 0;
-let SeqQty = 0;
-$("#inpSeqPds").change(function () {
-    SeqQtyPds = parseInt($("#inpSeqPds").val());
-    TripShift = parseInt($("#inpTripShift").val());
+//let SeqQtyPds = 0;
+//let TripShift = 0;
+//let SeqQty = 0;
+//$("#inpSeqPds").change(function () {
+//    SeqQtyPds = parseInt($("#inpSeqPds").val());
+//    TripShift = parseInt($("#inpTripShift").val());
 
-    SeqQty = SeqQtyPds * TripShift;
+//    SeqQty = SeqQtyPds * TripShift;
 
-    $("#inpSeqQty").val(SeqQty);
-});
-$("#inpTripShift").change(function () {
-    SeqQtyPds = parseInt($("#inpSeqPds").val());
-    TripShift = parseInt($("#inpTripShift").val());
+//    $("#inpSeqQty").val(SeqQty);
+//});
+//$("#inpTripShift").change(function () {
+//    SeqQtyPds = parseInt($("#inpSeqPds").val());
+//    TripShift = parseInt($("#inpTripShift").val());
 
-    SeqQty = SeqQtyPds * TripShift;
+//    SeqQty = SeqQtyPds * TripShift;
 
-    $("#inpSeqQty").val(SeqQty);
-});
+//    $("#inpSeqQty").val(SeqQty);
+//});
 
 $("#btnImp").on("click", async function () {
     if (files.length == 0) {
@@ -158,27 +150,31 @@ $("#btnImp").on("click", async function () {
     }
 });
 
-$("#btnSimulate").on("click", function () {
+$("#btnSimulate").on("click", async function () {
+    xSplash.show();
     isSimulate = true;
     //$("#tableMain tbody tr td input[type='checkbox']").prop("readonly", isSimulate);
 
     let listObj = $("#tableMain").DataTable().rows().data().toArray();
-    if (listObj.length < SeqQty) {
+    //console.log(listObj);
+    let notFlaggedLength = listObj.filter(x => x.f_Flag == null).length;
+    //console.log(notFlaggedLength);
+    if (listObj.length < notFlaggedLength) {
         return xSwal.error("Error", "Data in table is not enough.");
     }
 
-    listObj.forEach(function (item) {
-        item.f_Flag = null;
-        item.f_Deli_Date = null;
-        item.f_Deli_Shift = null;
-        item.f_Deli_Trip = null;
-    });
+    //listObj.forEach(function (item) {
+    //    item.f_Flag = null;
+    //    item.f_Deli_Date = null;
+    //    item.f_Deli_Shift = null;
+    //    item.f_Deli_Trip = null;
+    //});
 
-    UpdateFlag("S");
+    await UpdateFlag("S");
 
     $("#btnPost").prop("disabled", true);
-    _xDataTable.ClearData("tableMain");
-    GetListData();
+    await _xDataTable.ClearData("tableMain");
+    await GetListData();
     //$("#btnDel").prop("disabled", true);
 
 });
@@ -190,7 +186,7 @@ $("#btnSimulate").on("click", function () {
 //    $(this).closest("tr").find("input[type='checkbox']").prop("checked", !$(this).closest("tr").find("input[type='checkbox']").prop("checked"));
 //});
 
-$("#chkSlider").on("change", function () {
+$("#chkSlider").on("change", async function () {
     _xDataTable.ClearData("tableMain");
     if ($(this).prop("checked")) {
         $("#btnPost").addClass("d-none");
@@ -204,7 +200,7 @@ $("#chkSlider").on("change", function () {
         $("#btnRest").removeClass("d-block");
         $("#btnRest").addClass("d-none");
     }
-    GetListData();
+    await GetListData();
 });
 
 async function GetListData() {
@@ -213,7 +209,7 @@ async function GetListData() {
         isAll : !$("#chkSlider").prop("checked")
     };
     _xDataTable.ClearData("tableMain");
-    _xLib.AJAX_Get("/api/KBNIM0044/GetListData", obj,
+    await _xLib.AJAX_Get("/api/KBNIM0044/GetListData", obj,
         async function (success) {
             //success = _xLib.JSONparseMixData(success);
             //console.log(success);
@@ -243,15 +239,12 @@ $("#btnMain").click(function () {
 
 });
 
-$("#btnPost").click(function () {
-    UpdateFlag("P");
+$("#btnPost").click(async function () {
+    await UpdateFlag("P"); //Postpone
 });
-$("#btnRest").click(function () {
-    UpdateFlag("R");
+$("#btnRest").click(async function () {
+    await UpdateFlag("R"); //Restore
 });
-//$("#btnDel").click(function () {
-//    UpdateFlag("D");
-//});
 
 $("#btnConf").click(function () {
     $("#exampleModal").modal('show');
@@ -270,9 +263,9 @@ async function Confirm() {
     if (listObj.length == 0) {
         return xSwal.error("Error", "Please Select Data before Confirm");
     }
-    if (listObj.length < SeqQty) {
-        return xSwal.error("Error", "Data in table is not enough.");
-    }
+    //if (listObj.length < SeqQty) {
+    //    return xSwal.error("Error", "Data in table is not enough.");
+    //}
     //return console.log(listObj);
 
     if (InchargeUser == null) {
@@ -294,8 +287,11 @@ async function Confirm() {
 async function UpdateFlag(Flag) {
     xSplash.show();
 
-    let listObj = $("#tableMain").DataTable().rows().data().toArray();
-
+    let listObj = $("#tableMain").DataTable().rows().data().toArray()
+    console.log(listObj)
+    console.log(listObj.map(x => x.f_Flag));
+    let listUpdateObj = listObj.filter(x => !x.f_Flag || x.f_Flag === "");
+    console.log(listUpdateObj)
     if (Flag === "P" || Flag === "D") {
         listObj = _xDataTable.GetSelectedDataDT("#tableMain");
         listObj.forEach(function (item) {
@@ -315,8 +311,9 @@ async function UpdateFlag(Flag) {
         });
     }
     else if (Flag === "S") {
-        let Trip = 1;
-        let n = 0;
+        let Trip = $("#inpTripShift").val();
+        let Seq = $("#inpSeqPds").val();
+        //let n = 0;
         if ($("#chkSlider").prop("checked")) {
             let TMP_ListObj = [];
             for (let x = 0; x < SeqQty; x++) {
@@ -325,21 +322,26 @@ async function UpdateFlag(Flag) {
             listObj = TMP_ListObj;
             console.log(listObj);
         }
-        for (j = 0; j < TripShift; j++) {
-            for (i = 0; i < SeqQtyPds; i++) {
-                listObj[n].f_Flag = "S";
-                listObj[n].f_Deli_Trip = Trip;
-                listObj[n].f_Deli_Shift = $("#inpShift").val().substring(0, 1);
-                listObj[n].f_Deli_Date = moment($("#inpDeliveryDate").val(), "DD/MM/YYYY").format("YYYYMMDD");
-                n++;
-            }
-            Trip++;
+        for (let i = 0; i < Seq; i++) {
+            listUpdateObj[i].f_Flag = "S";
+            listUpdateObj[i].f_Deli_Trip = Trip;
+            listUpdateObj[i].f_Deli_Date = moment($("#inpDeliveryDate").val(), "DD/MM/YYYY").format("YYYYMMDD");
+            listUpdateObj[i].f_Deli_Shift = $("#inpShift").val().substring(0, 1);
         }
     }
     else if (Flag === "M") {
         const changeList = listObjChecked.map(obj => ({ ...obj }));
         let listObj = $("#tableMain").DataTable().rows().data().toArray();
         let listCheckBox = $("#tableMain tbody tr td input[type='checkbox']");
+        let objTrip = {
+            Trip1: 0,
+            Trip2: 0
+        }
+        listObj.forEach((item) => {
+            console.log(`${'Trip' + item.f_Deli_Trip}`);
+            console.log(item.f_Deli_Trip);
+            objTrip[`${'Trip' + item.f_Deli_Trip}`] = item.f_Deli_Trip ? objTrip[`${'Trip' + item.f_Deli_Trip}`] += 1 : objTrip[`${'Trip' + item.f_Deli_Trip}`]
+        })
 
         let j = -1;
         for (let i = 0; i < listObj.length; i++) {
@@ -371,10 +373,10 @@ async function UpdateFlag(Flag) {
 
     let shift = $("#inpShift").val();
 
-    _xLib.AJAX_Post("/api/KBNIM0044/UpdateFlag?shift=" + shift, listObj,
+    await _xLib.AJAX_Post("/api/KBNIM0044/UpdateFlag?shift=" + shift, listObj,
         async function (success) {
             await GetListData();
-            xSplash.hide();
+            await xSplash.hide();
             xSwal.success(success.response, success.message);
         },
         function (error) {

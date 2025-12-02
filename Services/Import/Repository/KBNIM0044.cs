@@ -142,15 +142,15 @@ namespace KANBAN.Services.Import.Repository
         {
             try
             {
-                var isConfirmed = await _kbContext.TB_Import_VHD
-                    .AsNoTracking()
-                    .AnyAsync(x => x.F_Flag == "C"
-                    && x.F_Deli_Shift == listData[0].F_Deli_Shift
-                    && x.F_Deli_Date == listData[0].F_Deli_Date);
+                //var isConfirmed = await _kbContext.TB_Import_VHD
+                //    .AsNoTracking()
+                //    .AnyAsync(x => x.F_Flag == "C"
+                //    && x.F_Deli_Shift == listData[0].F_Deli_Shift
+                //    && x.F_Deli_Date == listData[0].F_Deli_Date);
 
                 int sumDeliveryTrip = 0;
 
-                if (isConfirmed) throw new CustomHttpException(400, "This Date and Shift already confirmed");
+                //if (isConfirmed) throw new CustomHttpException(400, "This Date and Shift already confirmed");
 
                 foreach (var data in listData)
                 {
@@ -245,7 +245,6 @@ namespace KANBAN.Services.Import.Repository
                     sim.F_Flag = "C";
                     sim.F_Update_By = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value;
                     sim.F_Update_Date = DateTime.Now;
-
                 }
 
                 _kbContext.TB_Import_VHD.UpdateRange(listData);

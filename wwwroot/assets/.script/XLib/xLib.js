@@ -55,7 +55,7 @@ class DataTableLib {
 
         $(`${id} tbody tr td`).css("text-align", "center");
         $(`${id} tbody tr td`).css("vertical-align", "middle");
-
+        $(`${id}`).DataTable().columns.adjust().draw();
 
         return dataTable;
     }
