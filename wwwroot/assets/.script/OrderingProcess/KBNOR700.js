@@ -149,6 +149,7 @@
                 "@F_Delivery_DateTo": ($('#chkDeliveryDate').val() == 1 ? ReplaceAll(itmDeliveryTo.value, '-', '') : '')
             },
         });
+        console.log(_dt);
         if (_dt.rows == null) MsgBox("Order data not found.", MsgBoxStyle.Information, "Information");
         if (_dt.rows != null) {
             var _pds = '';

@@ -88,6 +88,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             emailService, httpContextAccessor);
 
             IKBNOR295 = new KBNOR295(kbContext,
+                procDBContext,
             bearerClass,
             ppm3Context,
             fillDT,

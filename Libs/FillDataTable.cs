@@ -13,6 +13,7 @@ namespace HINOSystem.Libs
         private readonly IConfiguration _configuration;
         private readonly PPM3Context _PPM3Context;
         private readonly ProcDBContext _ProcDB;
+        private readonly ProcWebContext _ProcWeb;
         private readonly IHttpContextAccessor _IHttp;
         private readonly CKDWH_Context _CKD;
         private readonly CKDUSA_Context _CKDUSA;
@@ -23,6 +24,7 @@ namespace HINOSystem.Libs
             IConfiguration configuration,
             PPM3Context pPM3Context,
             ProcDBContext procDB,
+            ProcWebContext procWeb,
             IHttpContextAccessor iHttp,
             CKDWH_Context cKDContext,
             CKDUSA_Context cKDUSAContext
@@ -33,6 +35,7 @@ namespace HINOSystem.Libs
             _configuration = configuration;
             _PPM3Context = pPM3Context;
             _ProcDB = procDB;
+            _ProcWeb = procWeb;
             _IHttp = iHttp;
             _CKD = cKDContext;
             _CKDUSA = cKDUSAContext;
@@ -437,7 +440,7 @@ namespace HINOSystem.Libs
 
             try
             {
-                using (SqlConnection con = new SqlConnection(_ProcDB.Database.GetConnectionString()))
+                using (SqlConnection con = new SqlConnection(_ProcWeb.Database.GetConnectionString()))
                 {
                     using (SqlCommand cmd = new SqlCommand(sql, con))
                     {

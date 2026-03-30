@@ -14,6 +14,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
     {
 
         private readonly KB3Context _kbContext;
+        private readonly ProcDBContext _procDBContext;
         private readonly BearerClass _BearerClass;
         private readonly PPM3Context _PPM3Context;
         private readonly FillDataTable _FillDT;
@@ -25,6 +26,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
         public KBNOR295
             (
             KB3Context kbContext,
+            ProcDBContext procDBContext,
             BearerClass BearerClass,
             PPM3Context PPM3Context,
             FillDataTable FillDT,
@@ -34,6 +36,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
             )
         {
             _kbContext = kbContext;
+            _procDBContext = procDBContext;
             _BearerClass = BearerClass;
             _PPM3Context = PPM3Context;
             _FillDT = FillDT;
@@ -104,14 +107,14 @@ namespace KANBAN.Services.SpecialOrdering.Repository
                                 SET Signature = (SELECT BulkColumn FROM OPENROWSET(BULK N'{obj.F_Path_File}', SINGLE_BLOB))
                                 WHERE Approval = '{obj.F_User_ID}';";
 
-                            await _kbContext.Database.ExecuteSqlRawAsync(sql);
+                            await _procDBContext.Database.ExecuteSqlRawAsync(sql);
 
                             sql = $@"
                                 UPDATE [192.168.10.18].[E-Report].dbo.Signature
                                 SET Signature = (SELECT BulkColumn FROM OPENROWSET(BULK N'{obj.F_Path_File}', SINGLE_BLOB))
                                 WHERE Approval = '{obj.F_User_ID}';";
 
-                            await _kbContext.Database.ExecuteSqlRawAsync(sql);
+                            await _procDBContext.Database.ExecuteSqlRawAsync(sql);
                         }
                     }
                 }

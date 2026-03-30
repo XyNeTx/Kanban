@@ -461,6 +461,11 @@ namespace KANBAN.Controllers.API.OrderingProcess
                         Plant, obj.Supplier.Substring(0, 4), obj.Supplier.Substring(5, 1), tmpProcessDate.ToString("yyyyMMdd"), Proc_Shift.Substring(0, 1), DBNull.Value,
                         string.IsNullOrWhiteSpace(obj.Store) ? DBNull.Value : obj.Store, string.IsNullOrWhiteSpace(obj.StoreTo) ? DBNull.Value : obj.StoreTo);
 
+                    if(strAction == "Process" && DT_DeliveryDate.Rows.Count == 0)
+                    {
+                        throw new Exception("Data Not Found");
+                    }
+
                     tmpProcessDate = tmpProcessDate.AddDays(+1);
                 } 
                 while (DT_DeliveryDate.Rows.Count == 0 && tmpProcessDate < ProcessDate.AddDays(14));

@@ -32,20 +32,6 @@ namespace KANBAN.Services
 
                 await context.Response.WriteAsync(result);
             }
-            //catch (Exception ex)
-            //{
-            //    context.Response.ContentType = JsonContentType;
-            //    context.Response.StatusCode = 500;
-
-            //    var result = JsonConvert.SerializeObject(new
-            //    {
-            //        status = 500,
-            //        response = "Internal Server Error",
-            //        message = ex.Message,
-            //    });
-
-            //    await context.Response.WriteAsync(result);
-            //}
         }
 
     }

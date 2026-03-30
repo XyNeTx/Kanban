@@ -400,6 +400,7 @@ namespace KANBAN.Services.SpecialOrdering.Repository
                                 insDetail.F_Revise_Rev = DTY[0].d.F_Revise_Rev;
                                 insDetail.F_No = insDetailList.Count + 1;
                                 insDetail.F_Qty = obj.Qty.Value;
+                                insDetail.F_Status = "N";
                                 insDetail.F_Delivery_Date = obj.Delivery_Date;
 
                                 _kbContext.TB_Survey_Detail.Add(insDetail);

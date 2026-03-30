@@ -80,6 +80,12 @@ Log.Logger = new LoggerConfiguration()
 builder.Services.AddControllersWithViews();
 builder.Services.AddSwaggerGen(c=>
 {
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Version = "v1",
+        Title = "API Test Service",
+        Description = "A Swagger Web Service for Testing API Endpoints in .NET 7",
+    });
 
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
@@ -157,19 +163,6 @@ builder.Services.AddAutoMapper
 builder.Services.AddTransient(typeof(IAutoMapRepo<,>), typeof(AutoMapRepo<,>));
 builder.Services.AddTransient<IAutoMapService, AutoMapService>();
 
-
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new OpenApiInfo
-    {
-        Version = "v1",
-        Title = "API Test Service",
-        Description = "A Swagger Web Service for Testing API Endpoints in .NET 7",
-    });
-
-});
-
-
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromHours(12);
@@ -232,28 +225,6 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
             RoleClaimType = ClaimTypes.Role,
             ClockSkew = TimeSpan.Zero
         };
-
-        //options.Events = new JwtBearerEvents
-        //{
-        //    OnMessageReceived = context =>
-        //    {
-        //        // Read from cookie
-        //        if (context.Request.Cookies.TryGetValue("AccessToken", out var token))
-        //        {
-        //            context.Token = token;
-        //        }
-
-        //        // (Optional) also support query param for specific endpoints
-        //        // if (string.IsNullOrEmpty(context.Token) &&
-        //        //     context.Request.Query.TryGetValue("access_token", out var q))
-        //        // {
-        //        //     context.Token = q;
-        //        // }
-
-        //        return Task.CompletedTask;
-        //    }
-        //};
-
     });
 
 

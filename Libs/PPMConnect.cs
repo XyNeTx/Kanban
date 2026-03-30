@@ -17,7 +17,7 @@ namespace HINOSystem.Libs
         public PPMConnect(IConfiguration configuration)
         {
             _configuration = configuration;
-            _connectionStirng = _configuration.GetValue<string>("ConnectionStrings:PPMConnection");
+            _connectionStirng = _configuration.GetValue<string>("ConnectionStrings:PPM3Connection");
         }
 
         public string GetConncetionString() => _connectionStirng;

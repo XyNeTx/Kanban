@@ -8,7 +8,7 @@
       },
       "dotnetRunMessages": true,
       "applicationUrl": "http://localhost:7277",
-      "hotReloadEnabled": true,
+      "hotReloadEnabled": true
       
     },
     "IIS Express": {

@@ -37,9 +37,9 @@ $(document).ready(async function () {
 
 });
 
-function LoadListView() {
+async function LoadListView() {
 
-    _xLib.AJAX_Get("/api/KBNOR220/LoadListView", null,
+    await _xLib.AJAX_Get("/api/KBNOR220/LoadListView", null,
         function (success) {
             success = _xLib.JSONparseMixData(success);
             console.log(success);
@@ -213,7 +213,7 @@ $("#btnSave").click(function () {
 
 });
 
-$("#btnGen").click(function () {
+$("#btnGen").click(async function () {
 
     let data = [];
 
@@ -230,13 +230,13 @@ $("#btnGen").click(function () {
         return;
     }
 
-    _xLib.AJAX_Post("/api/KBNOR220/Generate", data,
+    await _xLib.AJAX_Post("/api/KBNOR220/Generate", data,
         async function (success) {
             await xSwal.success(success.response, success.message);
             $("#tableMain input[type='checkbox']:checked").each(function () {
                 $("#tableMain").DataTable().row($(this).closest("tr")).remove().draw(false);
             });
-            LoadListView();
+            await LoadListView();
         },
         function (error) {
             console.log(error);

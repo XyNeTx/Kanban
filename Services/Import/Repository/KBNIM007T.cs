@@ -839,7 +839,7 @@ namespace KANBAN.Services.Import.Repository
 
                 await _kbContext.Database.ExecuteSqlRawAsync($"Delete From TB_Import_Error Where F_Update_BY='{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}' and F_Type='TRIAL'");
 
-                await _kbContext.Database.ExecuteSqlRawAsync($"EXEC dbo.SP_IM005_IMPORT '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}' , '{TypeSpc}'");
+                //await _kbContext.Database.ExecuteSqlRawAsync($"EXEC dbo.SP_IM005_IMPORT '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}' , '{TypeSpc}'");
 
                 DataTable dt = _FillDT.ExecuteSQL($"EXEC dbo.SP_IM005_IMPORT '{_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.UserData).Value}' , '{TypeSpc}'");
 

@@ -197,6 +197,7 @@ $("#selectSupplier").change(async function () {
                 $("#readSupplierName").val(success.data.f_Supplier_Name);
                 $("#readSafetyStock").val(success.data.f_Safety_Stk);
                 $("#readCycle").val(success.cycle.slice(0, 2) + "-" + success.cycle.slice(2, 4) + "-" + success.cycle.slice(4, 6));
+                //$("#readCycle").val("01-10-10");
                 await GetTrip();
             }
         },
@@ -220,6 +221,7 @@ $("#selectSupplier").change(async function () {
 
 function GetTrip() {
     let cycle = $("#readCycle").val().substring(3,5);
+    //let cycle = "10";
     let columnTrip = [];
 
     for (let i = 1; i <= parseInt(cycle); i++) {
@@ -362,7 +364,7 @@ $("#selectDeliveryTo").change(function () {
 
 let selectDateChg = "";
 
-$("#selectDate").change(function () {
+$("#selectDate").change(async function () {
     if ($("#selectDate").val() == "") {
         return;
     }
@@ -372,6 +374,29 @@ $("#selectDate").change(function () {
     console.log($(this).val());
     console.log(selectDateChg);
     selectDateChg = $(this).val();
+
+    var obj = {
+        supplier: $("#selectSupplier").val(),
+        orderDate: moment(selectDateChg, "DD/MM/YYYY").format("YYYYMMDD"),
+    }
+    await _xLib.AJAX_Get("/api/KBNMS008/GetSupplierDetail", obj,
+        async function (success) {
+            if (success.status == "200") {
+                //console.log(success.data);
+                $("#readSupplier").val(obj.supplier);
+                $("#readSupplierName").val(success.data.f_Supplier_Name);
+                $("#readSafetyStock").val(success.data.f_Safety_Stk);
+                $("#readCycle").val(success.cycle.slice(0, 2) + "-" + success.cycle.slice(2, 4) + "-" + success.cycle.slice(4, 6));
+                //$("#readCycle").val("01-10-10");
+                await GetTrip();
+                //$("#tableMain").DataTable().clear().rows.add(_json).draw();
+            }
+        },
+        function (error) {
+            console.error(error);
+            xSwal.error("Error", "Can't Get Supplier Detail");
+        }
+    );
 
     let cycle = $("#readCycle").val().split("-")[2];
 
@@ -550,6 +575,8 @@ $("#btnSearch").click(async function () {
             xSwal.error("Error", "Can't Get Data");
         }
     );
+
+    $("#selectDate").trigger("change");
 });
 
 $(document).on("click", "#tableMain tbody tr td", function (e) {
@@ -687,34 +714,57 @@ $("#btnImport").click(async function () {
 
         $("#selectSupplier").selectpicker("val", _json[0].f_Supplier_Code + "-" + _json[0].f_Supplier_Plant);
 
-        var obj = {
-            supplier: $("#selectSupplier").val()
-        }
+        //var obj = {
+        //    supplier: $("#selectSupplier").val()
+        //    delivery_date: 
+        //}
 
-        await _xLib.AJAX_Get("/api/KBNMS008/GetSupplierDetail", obj,
-            async function (success) {
-                if (success.status == "200") {
-                    //console.log(success.data);
-                    $("#readSupplier").val(obj.supplier);
-                    $("#readSupplierName").val(success.data.f_Supplier_Name);
-                    $("#readSafetyStock").val(success.data.f_Safety_Stk);
-                    $("#readCycle").val(success.cycle.slice(0, 2) + "-" + success.cycle.slice(2, 4) + "-" + success.cycle.slice(4, 6));
-                    await GetTrip();
-                    //$("#tableMain").DataTable().clear().rows.add(_json).draw();
-                }
-            },
-            function (error) {
-                console.error(error);
-                xSwal.error("Error", "Can't Get Supplier Detail");
-            }
-        );
+        //await _xLib.AJAX_Get("/api/KBNMS008/GetSupplierDetail", obj,
+        //    async function (success) {
+        //        if (success.status == "200") {
+        //            //console.log(success.data);
+        //            $("#readSupplier").val(obj.supplier);
+        //            $("#readSupplierName").val(success.data.f_Supplier_Name);
+        //            $("#readSafetyStock").val(success.data.f_Safety_Stk);
+        //            //$("#readCycle").val(success.cycle.slice(0, 2) + "-" + success.cycle.slice(2, 4) + "-" + success.cycle.slice(4, 6));
+        //            $("#readCycle").val("01-10-10");
+        //            await GetTrip();
+        //            //$("#tableMain").DataTable().clear().rows.add(_json).draw();
+        //        }
+        //    },
+        //    function (error) {
+        //        console.error(error);
+        //        xSwal.error("Error", "Can't Get Supplier Detail");
+        //    }
+        //);
 
         await _xLib.AJAX_Post("/api/KBNMS008/GetImportList", JSON.stringify(_json),
             async function (success) {
                 if (success.status == "200") {
-
                     for (let i = 0; i < _json.length; i++) {
                         //console.log(_json[i]);
+                        var obj = {
+                            supplier: $("#selectSupplier").val(),
+                            deliveryDate: _json[i].f_Delivery_Date
+                        }
+                        await _xLib.AJAX_Get("/api/KBNMS008/GetSupplierDetail", obj,
+                            async function (success) {
+                                if (success.status == "200") {
+                                    //console.log(success.data);
+                                    $("#readSupplier").val(obj.supplier);
+                                    $("#readSupplierName").val(success.data.f_Supplier_Name);
+                                    $("#readSafetyStock").val(success.data.f_Safety_Stk);
+                                    $("#readCycle").val(success.cycle.slice(0, 2) + "-" + success.cycle.slice(2, 4) + "-" + success.cycle.slice(4, 6));
+                                    //$("#readCycle").val("01-10-10");
+                                    await GetTrip();
+                                    //$("#tableMain").DataTable().clear().rows.add(_json).draw();
+                                }
+                            },
+                            function (error) {
+                                console.error(error);
+                                xSwal.error("Error", "Can't Get Supplier Detail");
+                            }
+                        );
                         _json[i]["f_Cycle"] = $("#readCycle").val().replaceAll("-", "");
                         await _xLib.AJAX_Post("/api/KBNMS008/SelectDateChange?isImport=true", JSON.stringify(_json[i]),
                             async function (success) {

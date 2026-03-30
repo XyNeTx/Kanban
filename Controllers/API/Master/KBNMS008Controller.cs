@@ -1,5 +1,6 @@
 ﻿using HINOSystem.Context;
 using HINOSystem.Libs;
+using HINOSystem.Models.KB3.Master;
 using KANBAN.Context;
 using KANBAN.Libs;
 using KANBAN.Models.KB3.Master;
@@ -108,7 +109,7 @@ namespace HINOSystem.Controllers.API.Master
         }
 
         [HttpGet]
-        public IActionResult GetSupplierDetail(string supplier, string? store, string? storeTo)
+        public IActionResult GetSupplierDetail(string supplier, string? store, string? storeTo,string? orderDate)
         {
             try
             {
@@ -129,9 +130,20 @@ namespace HINOSystem.Controllers.API.Master
                     x.F_Plant_cd == supplier[5] && x.F_TC_Str.CompareTo(yyyyMMdd) <= 0 && x.F_TC_End.CompareTo(yyyyMMdd) >= 0
                     && x.F_Store_cd.StartsWith(User.FindFirst(ClaimTypes.Locality).Value)).AsNoTracking().AsQueryable();
 
-                var cycle = _KB3Context.TB_MS_DeliveryTime.AsNoTracking().Where(x => x.F_Supplier_Code == supplier.Substring(0, 4) &&
-                        x.F_Supplier_Plant == supplier[5].ToString() && x.F_Start_Date.CompareTo(yyyyMMdd) <= 0 && x.F_End_Date.CompareTo(yyyyMMdd) >= 0
-                        && x.F_Plant.StartsWith(User.FindFirst(ClaimTypes.Locality).Value)).AsQueryable();
+                IQueryable<TB_MS_DeliveryTime> cycle;
+
+                if (string.IsNullOrWhiteSpace(orderDate))
+                {
+                    cycle = _KB3Context.TB_MS_DeliveryTime.AsNoTracking().Where(x => x.F_Supplier_Code == supplier.Substring(0, 4) &&
+                            x.F_Supplier_Plant == supplier[5].ToString() && x.F_Start_Date.CompareTo(yyyyMMdd) <= 0 && x.F_End_Date.CompareTo(yyyyMMdd) >= 0
+                            && x.F_Plant.StartsWith(User.FindFirst(ClaimTypes.Locality).Value)).AsQueryable();
+                }
+                else
+                {
+                    cycle = _KB3Context.TB_MS_DeliveryTime.AsNoTracking().Where(x => x.F_Supplier_Code == supplier.Substring(0, 4) &&
+                            x.F_Supplier_Plant == supplier[5].ToString() && x.F_Start_Date.CompareTo(orderDate) <= 0 && x.F_End_Date.CompareTo(orderDate) >= 0
+                            && x.F_Plant.StartsWith(User.FindFirst(ClaimTypes.Locality).Value)).AsQueryable();
+                }
 
                 if (!string.IsNullOrWhiteSpace(store) && (!string.IsNullOrWhiteSpace(storeTo)))
                 {
